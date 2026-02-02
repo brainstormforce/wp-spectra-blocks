@@ -1,0 +1,132 @@
+/**
+ * Styles for the Container Layout Guide component
+ */
+
+.spectra-layout-guide {
+	&.components-modal__frame.components-guide {
+		max-height: 800px;
+	}
+	.components-guide__container {
+		gap: 10px;
+	}
+
+	.components-button:hover svg {
+		fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) !important;
+	}
+
+	// Featured image area styles
+	.components-guide__page-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #f8f9fa;
+		border-radius: 8px;
+		margin-bottom: 1rem;
+	}
+
+	&__page {
+		padding: 2rem;
+		max-width: 600px;
+		margin: 0 auto;
+
+		h2 {
+			margin: 1rem 0;
+			font-size: 1.5rem;
+			font-weight: 600;
+			color: #1e1e1e;
+			line-height: 1.2;
+		}
+
+		p {
+			margin: 1rem 0;
+			line-height: 1.6;
+			color: #757575;
+			font-size: 1rem;
+			font-style: normal;
+			font-weight: 400;
+		}
+	}
+
+	&__icon {
+		margin-bottom: 1rem;
+
+		.dashicon,
+		svg {
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		}
+	}
+
+
+	&__features {
+		text-align: left;
+		margin: 1.5rem 0;
+		padding: 1rem;
+		background: #f0f6ff;
+		border-radius: 6px;
+		border-left: 4px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+
+		strong {
+			display: block;
+			margin-bottom: 0.5rem;
+			color: #1e1e1e;
+			font-weight: 600;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 1.25rem;
+
+			li {
+				margin: 0.25rem 0;
+				color: #555;
+				line-height: 1.4;
+			}
+		}
+	}
+
+	&__tip {
+		text-align: left;
+		margin: 1.5rem 0;
+		padding: 1rem;
+		background: #fff8e1;
+		border-radius: 6px;
+		border-left: 4px solid #ffc107;
+
+		strong {
+			display: block;
+			margin-bottom: 0.5rem;
+			color: #1e1e1e;
+			font-weight: 600;
+		}
+
+		p {
+			margin: 0;
+			color: #666;
+			line-height: 1.5;
+		}
+	}
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+	.spectra-layout-guide {
+		&__page {
+			padding: 1.5rem;
+		}
+
+		&__layout-demo {
+			padding: 1rem;
+			margin: 1.5rem 0;
+
+			&.flex-demo {
+				flex-direction: column;
+				gap: 0.5rem;
+			}
+
+			&.grid-demo {
+				grid-template-columns: repeat(2, 1fr);
+				grid-template-rows: repeat(3, 1fr);
+			}
+		}
+	}
+}

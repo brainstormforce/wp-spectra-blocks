@@ -1,0 +1,143 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/content",
+	"version": "3.0.0",
+	"title": "Text",
+	"category": "spectra",
+	"description": "Add a block with text content.",
+	"textdomain": "spectra",
+	"keywords": [
+		"text",
+		"paragraph",
+		"content",
+		"heading",
+		"typography",
+		"rich text",
+		"copy",
+		"writing",
+		"body text",
+		"editorial",
+		"prose",
+		"textual content",
+		"text content",
+		"blockquote",
+		"quote",
+		"pullquote",
+		"citation",
+		"add text",
+		"create paragraph",
+		"insert text",
+		"advanced text",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"splitting": true,
+		"shadow": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"textAlign": true,
+			"__experimentalFontFamily":true,
+			"__experimentalFontStyle":true,
+			"__experimentalFontWeight":true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalWritingMode": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily":true
+			}
+		},
+		"__experimentalSlashInserter": true,
+		"__experimentalBorder": {
+			"style": true,
+			"width": true,
+			"color": true,
+			"radius": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"style": true,
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"__experimentalDefaultControls": {
+				"margin": true,
+				"padding": true
+			}
+		},
+		"color": {
+			"gradients": true,
+			"link": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"attributes": {
+		"anchor": {
+			"type": "string"
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"tagName": {
+			"type": "string"
+		},
+		"text": {
+			"type": "string"
+		},
+		"textColorHover": {
+			"type": "string"
+		},
+		"backgroundColorHover": {
+			"type": "string"
+		},
+		"backgroundGradientHover": {
+			"type": "string"
+		},
+		"dropCap": {
+			"type": "boolean",
+			"default": false
+		},
+		"isRootBlock": {
+			"type": "boolean"
+		},
+		"enableTextShadow": {
+			"type": "boolean"
+		},
+		"textShadowColor": {
+			"type": "string"
+		},
+		"textShadowBlur": {
+			"type": "number"
+		},
+		"textShadowOffsetX": {
+			"type": "number"
+		},
+		"textShadowOffsetY": {
+			"type": "number"
+		}
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "brainstormforce/spectra",
+	"description": "Spectra extends the block editor with powerful, modern blocks built on the Interactivity API.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.5",
+		"wp-coding-standards/wpcs": "^2.2",
+		"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+		"phpcompatibility/php-compatibility": "^9.3"
+	},
+	"scripts": {
+		"format": "phpcbf",
+		"lint": "phpcs"
+	},
+	"autoload": {
+		"psr-4": {
+			"Spectra\\": "includes/"
+		}
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	}
+}

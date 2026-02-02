@@ -1,0 +1,149 @@
+/**
+ * Spectra Responsive Device Controls
+ *
+ * Clean, accessible, and integrated UI styles for Spectra's device control buttons
+ * in the WordPress block editor.
+ *
+ * @package Spectra
+ * @since x.x.x
+ */
+
+// === Variables ===
+$icon-size: 0.825rem;
+$gap-xs: 0.4rem;
+$transition-duration: 0.15s;
+$transition-easing: ease;
+
+// === Icon Container ===
+.spectra-responsive-icons {
+	display: inline-flex;
+	align-items: last baseline;
+	padding: 0;
+	margin: 0 0 0 $gap-xs;
+	gap: $gap-xs;
+
+	// === Responsive Icon Button ===
+	button.spectra-responsive-icon {
+		padding: 0;
+		margin: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		width: $icon-size;
+		height: $icon-size;
+		transition:
+			opacity $transition-duration $transition-easing,
+			transform $transition-duration $transition-easing;
+		backface-visibility: hidden;
+		line-height: 1;
+
+		// SVG Icon Styles
+		svg {
+			width: 100%;
+			height: 100%;
+			fill: none;
+			shape-rendering: geometricPrecision;
+			display: block;
+			will-change: transform;
+		}
+
+		&:hover svg,
+		&.is-active svg {
+			stroke: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+		}
+
+		&:focus {
+			outline: none;
+			box-shadow: none;
+		}
+	}
+}
+
+// === Panel Layout Adjustments ===
+.components-tools-panel.spectra-enhanced-panel {
+	// Panel Header
+	.components-tools-panel-header h2 {
+		display: inline-flex;
+		width: 100%;
+	}
+
+	// Help Notice Component
+	.spectra-responsive-help-notice {
+		grid-column: span 2;
+		position: relative;
+		z-index: 1;
+
+		&.components-notice.is-info {
+			display: block !important;
+		}
+
+		// Adjacent Item Spacing Fix
+		& + .components-tools-panel__item:first-of-type {
+			margin-top: 0;
+		}
+	}
+}
+
+// === Responsive Control Indicators ===
+// Applies to all controls in these containers
+.components-panel__body.spectra-enhanced-panel,
+.typography-block-support-panel.spectra-enhanced-panel .components-tools-panel-item,
+.spectra-enhanced-panel .spectra-enhanced-control {
+	// Target all label types
+	.components-base-control__label,
+	.components-input-control__label,
+	.spacing-sizes-control__label,
+	.components-toggle-control__label,
+	label {
+		position: relative;
+		display: inline-flex;
+		align-items: center;
+
+		// Responsive Icon Indicator
+		&::after {
+			content: "";
+			display: inline-block;
+			width: $icon-size;
+			height: $icon-size;
+			margin-left: $gap-xs;
+			background-position: center;
+			background-size: contain;
+			background-repeat: no-repeat;
+			vertical-align: middle;
+			transform: translateZ(0);
+			backface-visibility: hidden;
+			will-change: transform;
+
+			image-rendering: crisp-edges;
+			transition: background-image 0.1s ease-out;
+
+			/* stylelint-disable-next-line function-url-quotes */
+			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M18 8V6C18 5.46957 17.7893 4.96086 17.4142 4.58579C17.0391 4.21071 16.5304 4 16 4H4C3.46957 4 2.96086 4.21071 2.58579 4.58579C2.21071 4.96086 2 5.46957 2 6V13C2 13.5304 2.21071 14.0391 2.58579 14.4142C2.96086 14.7893 3.46957 15 4 15H12M10 19V15.04V18.19M7 19H12M18 12H20C21.1046 12 22 12.8954 22 14V20C22 21.1046 21.1046 22 20 22H18C16.8954 22 16 21.1046 16 20V14C16 12.8954 16.8954 12 18 12Z" stroke="%231E1E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.25 9.91602C21.8734 9.91602 24 7.78937 24 5.16602C24 2.54266 21.8734 0.416016 19.25 0.416016C16.6266 0.416016 14.5 2.54266 14.5 5.16602C14.5 7.78937 16.6266 9.91602 19.25 9.91602Z" fill="%231E1E1E"/><path d="M17.8122 3.60515C17.0658 4.03943 17.2422 5.22015 18.0972 5.43729L19.5086 5.81729C19.6308 5.84443 19.6444 6.00729 19.5358 6.07515L18.1786 6.87586L18.0294 8.28729L20.6758 6.72658C21.4222 6.29229 21.2458 5.11158 20.3908 4.89443L18.9794 4.51443C18.8572 4.48729 18.8436 4.32443 18.9522 4.25657L20.3094 3.45586L20.4586 2.04443L17.8122 3.60515Z" fill="white"/></svg>');
+		}
+	}
+}
+
+// === Exceptions for Responsive Indicators ===
+// 1. Drop Cap control in Typography panel
+// 2. First two controls in Slider Settings panel
+.typography-block-support-panel.spectra-enhanced-panel .components-tools-panel-item[aria-label="Drop cap"],
+.spectra-enhanced-control[aria-label="Slider Settings"] .components-flex .components-base-control:not(:first-child):not(:nth-child(2)) {
+	// Remove indicator icons from these specific controls
+	label::after,
+	.components-toggle-control__label::after {
+		display: none;
+	}
+}
+
+// === Anti-Flickering Styles ===
+// Temporary class to hide elements during updates
+.spectra-updating {
+	visibility: hidden !important;
+	transition: none !important;
+}
+
+// Prevent flickering during injection
+.spectra-responsive-icons.spectra-injecting {
+	opacity: 0;
+	transition: none;
+}
