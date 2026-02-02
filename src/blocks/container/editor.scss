@@ -1,0 +1,359 @@
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+/*
+ * Apply the background image properties.
+ *
+ * $image-variable The CSS var used for the image.
+ */
+@mixin background-image( $image-variable: var(--spectra-background-image) ) {
+	background-image: $image-variable; // Overlay for gradients is handled in this.
+	background-size: var(--spectra-background-size, cover);
+	background-position: var(--spectra-background-position, center center);
+	background-repeat: var(--spectra-background-repeat, no-repeat);
+	background-attachment: var(--spectra-background-attachment, scroll);
+}
+
+// Make inner blocks inherit height from container.
+.wp-block-spectra-container {
+
+	// Reset CSS variables for nested containers to prevent inheritance
+	.wp-block-spectra-container {
+		--spectra-overlay-opacity: initial;
+	}
+
+	&.spectra-is-root-container {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	// Orientation reverse functionality - reverses the visual order of flex items
+	&.spectra-orientation-reverse {
+		// Only target the DIRECT child flex layout, prevent cascade to nested containers
+		> .block-editor-inner-blocks > .wp-block-spectra-container-is-layout-flex {
+			flex-direction: row-reverse;
+
+			// For vertical layouts, use column-reverse
+			&.is-vertical {
+				flex-direction: column-reverse;
+			}
+		}
+	}
+
+	// Variable based CSS - Background Color when overlay is not applied.
+	&.spectra-background-color:not(.spectra-background-overlay) {
+		background: var(--spectra-background-color);
+
+		// Variable based CSS - Background Image over Color.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Variable based CSS - Background Gradient when overlay is not applied.
+	&.spectra-background-gradient:not(.spectra-background-overlay) {
+		background: var(--spectra-background-gradient);
+
+		// Variable based CSS - Background Image over Gradient.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Variable based CSS - Background image without any colors.
+	&.spectra-background-image:not(.spectra-background-color):not(.spectra-background-gradient) {
+
+		@include background-image();
+	}
+
+	// Variable based CSS - Background Overlay.
+	&.spectra-background-overlay {
+		position: relative;
+		// Create isolation to prevent opacity from affecting children
+		isolation: isolate;
+
+		// Variable based CSS - Background Image below Overlay.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+
+		// The before pseudo-element, with either the Gradient or Color.
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// All the direct children of the overlay except the background video wrapper should be relative to avoid appearing underneath it.
+		& > *:not(.spectra-background-video__wrapper) {
+			position: relative;
+		}
+	}
+
+	&[class*="wp-block"] {
+		// WordPress core color picker support in editor - ensure children inherit colors.
+		&.has-text-color {
+			// All children should inherit the WordPress core color.
+			* {
+				color: inherit;
+			}
+		}
+
+		&.has-video-background {
+			z-index: 0;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+
+		&.spectra-overlay-color {
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color for Editor (only when no background image).
+		&.spectra-background-color:not(.spectra-background-image) {
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-color);
+				opacity: var(--spectra-overlay-opacity);
+				pointer-events: none;
+				z-index: 0;
+			}
+		}
+
+		// Variable based CSS - Simple Background Gradient for Editor (only when no background image).
+		&.spectra-background-gradient:not(.spectra-background-image) {
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-gradient);
+				opacity: var(--spectra-overlay-opacity);
+				pointer-events: none;
+				z-index: 0;
+			}
+		}
+
+		// Variable based CSS - Background Color with Background Image for Editor.
+		&.spectra-background-color.spectra-background-image {
+			position: relative;
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-color);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
+
+			> *:not(.spectra-background-video__wrapper) {
+				position: relative;
+				z-index: 3;
+			}
+		}
+
+		// Variable based CSS - Background Gradient with Background Image for Editor.
+		&.spectra-background-gradient.spectra-background-image {
+			position: relative;
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
+
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-gradient);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
+
+			> *:not(.spectra-background-video__wrapper) {
+				position: relative;
+				z-index: 3;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color Hover (only when no background image).
+		&.spectra-background-color-hover:not(.spectra-background-image):hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover (only when no background image).
+		&.spectra-background-gradient-hover:not(.spectra-background-image):hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Background Color Hover with Background Image for Editor.
+		&.spectra-background-color-hover.spectra-background-image:hover {
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-color-hover);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
+		}
+
+		// Variable based CSS - Background Gradient Hover with Background Image for Editor.
+		&.spectra-background-gradient-hover.spectra-background-image:hover {
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-gradient-hover);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
+		}
+
+		// Variable based CSS - Container Overlay for Editor.
+		&.has-container-overlay {
+			position: relative;
+			// Create stacking context for blend modes
+			isolation: isolate;
+
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-image: var(--spectra-overlay-image, none);
+				background-position: var(--spectra-overlay-position, center);
+				background-attachment: var(--spectra-overlay-attachment, scroll);
+				background-repeat: var(--spectra-overlay-repeat, no-repeat);
+				background-size: var(--spectra-overlay-size, cover);
+				opacity: var(--spectra-overlay-opacity-value, 0);
+				pointer-events: none;
+				z-index: 1;
+				border-radius: inherit;
+				mix-blend-mode: var(--spectra-overlay-blend-mode, normal);
+				background-blend-mode: var(--spectra-overlay-blend-mode, normal);
+			}
+
+			> *:not(.spectra-background-video__wrapper) {
+				position: relative;
+				z-index: 2;
+			}
+
+			// Ensure overlay is hidden when no image is set
+			&[style*="--spectra-overlay-image: none"]::after {
+				display: none;
+			}
+		}
+	}
+
+	// -------------------------------- //
+	// The hover states for background. //
+	// -------------------------------- //
+
+	// Variable based CSS - Background Color Hover when overlay is not applied.
+	&.spectra-background-color-hover:hover:not(.spectra-background-overlay) {
+
+		// Variable based CSS - Background Image over Color Hover.
+		&.spectra-background-image {
+
+			@include background-image( var(--spectra-background-image-hover) );
+		}
+	}
+
+	// Variable based CSS - Background Gradient Hover when overlay is not applied.
+	&.spectra-background-gradient-hover:hover:not(.spectra-background-overlay) {
+
+		// Variable based CSS - Background Image over Gradient Hover.
+		&.spectra-background-image {
+
+			@include background-image( var(--spectra-background-image-hover) );
+		}
+	}
+
+	// Variable based CSS - Background Overlay.
+	// Note: background-image-hover is not applied in overlay mode because the variable is not set
+	// when backgroundOverlay=true (see helpers/background.js line 43). Re-applying it causes
+	// SVG opacity compounding issues on hover.
+	&.spectra-background-overlay:hover {
+		// The before pseudo-element, with either the Gradient or Color.
+		&::before {
+			background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+		}
+	}
+
+	// Target the inner blocks wrapper to make it inherit height.
+	.block-editor-inner-blocks {
+		height: 100%;
+		min-block-size: inherit;
+		// Target the block list layout to make it inherit height.
+		& > .block-editor-block-list__layout {
+			height: 100%;
+			min-block-size: inherit;
+		}
+	}
+
+	// Ensure core WordPress image blocks respect container width constraints in editor
+	// Only apply these constraints in flex/grid layouts to prevent overflow
+	// In flow layout, the image resizer should work normally with its inline width
+	&.wp-block-spectra-container-is-layout-flex,
+	&.wp-block-spectra-container-is-layout-grid {
+		.wp-block-image {
+			// Constrain the figure wrapper in flex/grid layouts
+			max-width: 100%;
+
+			// Target the resizable box container - this has inline width that causes overflow in flex layouts
+			.components-resizable-box__container {
+				max-width: 100%;
+				width: 100%;
+				flex-shrink: 1; // Allow shrinking in flex context
+			}
+		}
+	}
+}
+

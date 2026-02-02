@@ -1,0 +1,79 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-content {
+	letter-spacing: inherit;
+	word-spacing: inherit;
+	overflow-wrap: break-word;
+	word-break: break-word;
+
+	&:not(h1,h2,h3,h4,h5,h6) {
+		line-height: inherit;
+	}
+	// Override theme heading colors with equal/higher specificity.
+	&h1,
+	&h2,
+	&h3,
+	&h4,
+	&h5,
+	&h6 {
+		color: inherit;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color, inherit);
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// The hover state for this block.
+		&:hover {
+
+			// Variable based CSS - Text Hover Color.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Color Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+
+		// Focus style fix: ensures keyboard users see the same hover effect when using Tab.
+		&.spectra-link-hover-color a:focus {
+			color: var(--spectra-link-hover-color);
+		}
+	}
+}
+
+// Conditional inheritance: Only inherit when parent container has text color
+.wp-block-spectra-container.has-text-color .wp-block-spectra-content,
+.wp-block-spectra-container.spectra-text-color .wp-block-spectra-content {
+	color: inherit;
+
+	// Ensure headings also inherit when container has text color
+	&h1,
+	&h2,
+	&h3,
+	&h4,
+	&h5,
+	&h6 {
+		color: inherit;
+	}
+}
+

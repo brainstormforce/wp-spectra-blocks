@@ -1,0 +1,257 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/container",
+	"version": "3.0.0",
+	"title": "Container",
+	"category": "spectra",
+	"description": "Create beautiful layouts with flexbox and grid-powered container block.",
+	"textdomain": "spectra",
+	"keywords": [
+		"container",
+		"section",
+		"wrapper",
+		"row",
+		"layout",
+		"grid",
+		"column",
+		"div",
+		"inner section",
+		"group",
+		"flexbox",
+		"content area",
+		"block wrapper",
+		"info box",
+		"infobox",
+		"design",
+		"responsive",
+		"dynamic",
+		"create section",
+		"add container",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true
+			}
+		},
+		"anchor": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"textAlign": true,
+			"__experimentalFontFamily":true,
+			"__experimentalFontStyle":true,
+			"__experimentalFontWeight":true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalWritingMode": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily":true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		},
+		"layout": {
+			"default": {
+				"type": "flex",
+				"orientation": "vertical",
+				"flexWrap": "nowrap",
+				"justifyContent": "left",
+				"verticalAlignment": "center",
+				"gap": "20px"
+			},
+			"allowSwitching": true,
+			"allowSizingOnChildren": true
+		},
+		"color": {
+			"gradients": false,
+			"background": false,
+			"__experimentalDefaultControls": {
+				"text": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"attributes": {
+		"anchor": {
+			"type": "string"
+		},
+		"align": {
+			"type": "string"
+		},
+		"layout": {
+			"type": "object",
+			"default": {
+				"type": "flex",
+				"flexWrap": "nowrap",
+				"orientation": "vertical",
+				"justifyContent": "left",
+				"verticalAlignment": "center"
+			}
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"variationSelected": {
+			"type": "boolean",
+			"default": false
+		},
+		"htmlTag": {
+			"type": "string",
+			"default": "div"
+		},
+		"linkURL": {
+			"type": "string"
+		},
+		"linkRel": {
+			"type": "array"
+		},
+		"linkTarget": {
+			"type": "string"
+		},
+		"overflow": {
+			"type": "string",
+			"default": "visible"
+		},
+		"minWidth": {
+			"type": "string"
+		},
+		"minHeight": {
+			"type": "string"
+		},
+		"maxWidth": {
+			"type": "string"
+		},
+		"maxHeight": {
+			"type": "string"
+		},
+		"width": {
+			"type": "string"
+		},
+		"height": {
+			"type": "string",
+			"default": "auto"
+		},
+		"textColorHover": {
+			"type": "string"
+		},
+		"backgroundColorHover": {
+			"type": "string"
+		},
+		"backgroundGradientHover": {
+			"type": "string"
+		},
+		"background": {
+			"type": "object"
+		},
+		"dimRatio": {
+			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"backgroundGradient": {
+			"type": "string"
+		},
+		"enableAdvGradients": {
+			"type": "boolean",
+			"default": false
+		},
+		"enableAdvBgGradient": {
+			"type": "boolean",
+			"default": true
+		},
+		"enableAdvBgGradientHover": {
+			"type": "boolean",
+			"default": true
+		},
+		"advBgGradient": {
+			"type": "string"
+		},
+		"advBgGradientHover": {
+			"type": "string"
+		},
+		"isBlockRootParent": {
+			"type": "boolean",
+			"default": false
+		},
+		"boxShadow": {
+			"type": "string"
+		},
+		"boxShadowHover": {
+			"type": "string"
+    },
+		"overlayType": {
+			"type": "string",
+			"default": "none"
+		},
+		"overlayImage": {
+			"type": "object"
+		},
+		"overlayPosition": {
+			"type": "object"
+		},
+		"overlayPositionMode": {
+			"type": "string"
+		},
+		"overlayPositionCentered": {
+			"type": "boolean"
+		},
+		"overlayPositionX": {
+			"type": "string"
+		},
+		"overlayPositionY": {
+			"type": "string"
+		},
+		"overlayAttachment": {
+			"type": "string",
+			"default": "scroll"
+		},
+		"overlayRepeat": {
+			"type": "string",
+			"default": "no-repeat"
+		},
+		"overlaySize": {
+			"type": "string",
+			"default": "cover"
+		},
+		"overlayCustomWidth": {
+			"type": "string"
+		},
+		"overlayBlendMode": {
+			"type": "string",
+			"default": "normal"
+		},
+		"overlayOpacity": {
+			"type": "number",
+			"default": 50
+		},
+		"orientationReverse": {
+			"type": "boolean",
+			"default": false
+		}
+	}
+}

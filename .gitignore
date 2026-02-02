@@ -10,11 +10,8 @@ node_modules/
 # map files
 *.map
 
-# Skip package file from versoning
+# Skip package file from versioning
 *.zip
-
-# ignore git inside subproject
-admin/bsf-core/.git
 
 # ignore PHPCS report files
 phpcs-summary.log
@@ -26,19 +23,22 @@ phpcs-full.log
 # Exclude composer's directories
 vendor/
 
-# Exclude exported settings
-cghooks.lock
-index.asset.php
-
-# E2E test artifacts.
-artifacts/
+# Auth
+auth.json
+.env
+.env.*
 
 # phpunit
 .phpunit.result.cache
-wordpress/
 
-# Playwright
-test-results
-playwright-report
-blob-report
-playwright/.cache
+# nvmrc
+.nvmrc
+
+# VScode
+.vscode
+
+# Artifact
+artifact/
+
+# Build directory (generated)
+build/

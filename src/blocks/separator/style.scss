@@ -1,0 +1,28 @@
+/**
+ * Separator Block Styles
+ */
+
+.wp-block-spectra-separator {
+	display: flex;
+	padding: 5px 5px;
+	width: 100%;
+
+	.spectra-separator-line {
+		display: block;
+		border: 0;
+		flex-shrink: 0;
+
+		// Default separator color
+		border-color: #333;
+	}
+}
+
+// Editor specific styles
+.editor-styles-wrapper {
+	.wp-block-spectra-separator {
+		.spectra-separator-line {
+			// Ensure visibility in editor
+			min-height: 1px;
+		}
+	}
+}

@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/separator",
+	"version": "3.0.0",
+	"title": "Separator",
+	"category": "spectra",
+	"description": "Add a modern separator to divide your page content.",
+	"textdomain": "spectra",
+	"keywords": [
+		"separator",
+		"divider",
+		"spacer",
+		"line divider",
+		"section divider",
+		"hr",
+		"horizontal rule",
+		"break",
+		"visual separator",
+		"content divider",
+		"page break",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"gradients": false,
+			"background": false,
+			"text": false
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./view.php",
+	"attributes": {
+		"anchor": {
+			"type": "string"
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"separatorStyle": {
+			"type": "string"
+		},
+		"separatorAlign": {
+			"type": "string"
+		},
+		"separatorWidth": {
+			"type": "string"
+		},
+		"separatorHeight": {
+			"type": "string"
+		},
+		"separatorColor": {
+			"type": "string"
+		},
+		"separatorSize": {
+			"type": "string"
+		}
+	}
+}
