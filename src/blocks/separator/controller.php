@@ -7,6 +7,8 @@
  * @package Spectra\Blocks\Separator
  */
 
+defined( 'ABSPATH' ) || exit;
+
 use Spectra\Helpers\BlockAttributes;
 
 // Note: Separator style, alignment, and color logic has been moved to ResponsiveAttributeCSS.php

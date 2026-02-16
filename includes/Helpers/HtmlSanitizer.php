@@ -5,6 +5,8 @@
  * @package Spectra\Helpers
  */
 
+defined( 'ABSPATH' ) || exit;
+
 namespace Spectra\Helpers;
 
 /**
@@ -946,9 +948,9 @@ class HtmlSanitizer {
 		remove_all_filters( 'safe_style_css' );
 		remove_all_filters( 'safecss_filter_attr_allow_css' );
 		
-		// Restore style tag if it was extracted.
+		// Restore style tag if it was extracted, with sanitization to prevent CSS injection.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
-			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
+			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . wp_strip_all_tags( $style_content ) . '</style>', $sanitized );
 		}
 		
 		if ( $should_echo ) {

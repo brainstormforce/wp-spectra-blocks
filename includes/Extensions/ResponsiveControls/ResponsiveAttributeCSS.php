@@ -9,6 +9,8 @@
  * @since 3.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 namespace Spectra\Extensions\ResponsiveControls;
 
 /**

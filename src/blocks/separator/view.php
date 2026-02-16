@@ -7,6 +7,8 @@
  * @package Spectra\Blocks\Separator
  */
 
+defined( 'ABSPATH' ) || exit;
+
 ?>
 <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<div class="spectra-separator-line"></div>

@@ -5,6 +5,8 @@
  * @package Spectra\Traits
  */
 
+defined( 'ABSPATH' ) || exit;
+
 namespace Spectra\Traits;
 
 /**

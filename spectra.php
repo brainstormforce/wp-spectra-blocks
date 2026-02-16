@@ -93,13 +93,3 @@ function spectra_init() {
 	( \Spectra\ExtensionManager::instance() )->init();
 }
 add_action( 'plugins_loaded', 'spectra_init' );
-
-/**
- * Load plugin textdomain.
- *
- * @since 1.0.0
- */
-function spectra_load_textdomain() {
-	load_plugin_textdomain( 'spectra', false, dirname( plugin_basename( SPECTRA_FILE ) ) . '/languages' );
-}
-add_action( 'init', 'spectra_load_textdomain' );

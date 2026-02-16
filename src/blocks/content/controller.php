@@ -7,6 +7,8 @@
  * @package Spectra\Blocks\Content
  */
 
+defined( 'ABSPATH' ) || exit;
+
 use Spectra\Helpers\BlockAttributes;
 
 // Get the text content from attributes with empty string fallback.

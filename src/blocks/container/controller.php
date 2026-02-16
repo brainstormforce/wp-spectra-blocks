@@ -7,6 +7,8 @@
  * @package Spectra\Blocks\Container
  */
 
+defined( 'ABSPATH' ) || exit;
+
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 use Spectra\Helpers\Shadow;

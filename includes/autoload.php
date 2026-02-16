@@ -7,6 +7,8 @@
  * @package Spectra
  */
 
+defined( 'ABSPATH' ) || exit;
+
 spl_autoload_register(
 	function ( $class ) {
 		// Define the base namespace.

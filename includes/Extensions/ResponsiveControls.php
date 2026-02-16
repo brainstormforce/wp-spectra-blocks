@@ -11,6 +11,8 @@
  * @since 3.0.0
  */
 
+defined( 'ABSPATH' ) || exit;
+
 namespace Spectra\Extensions;
 
 use Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
@@ -792,12 +794,17 @@ class ResponsiveControls {
 		if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || empty( $post->post_content ) ) {
 			return;
 		}
-		
+
+		// Verify the user has permission to edit this post.
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+
 		// Skip during WordPress customizer saves to prevent JSON encoding conflicts.
 		// The customizer has its own save process and calling wp_update_post during
 		// it can cause wp_send_json_error with empty messages.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification already handled by WordPress before save_post hook.
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === $_POST['action'] ) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			return;
 		}
 

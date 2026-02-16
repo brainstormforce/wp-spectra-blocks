@@ -4,8 +4,10 @@
  * 
  * @since 3.0.0
  *
- * @package Spectra\Blocks\Button
+ * @package Spectra\Blocks\Container
  */
+
+defined( 'ABSPATH' ) || exit;
 
 use Spectra\Helpers\Renderer;
 use Spectra\Helpers\HtmlSanitizer;

@@ -178,7 +178,7 @@ const ResponsiveControlsClickHandler = {
 
 			// Check Spectra plugin translation (for Spectra-specific panels)
 			// eslint-disable-next-line @wordpress/i18n-no-variables
-			const spectraTranslation = normalize( __( panel, 'ultimate-addons-for-gutenberg' ) );
+			const spectraTranslation = normalize( __( panel, 'spectra' ) );
 			return normalizedPanelName === spectraTranslation;
 		} );
 
