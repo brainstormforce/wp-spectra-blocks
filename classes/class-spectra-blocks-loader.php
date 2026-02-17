@@ -37,7 +37,7 @@ if ( ! class_exists( 'Spectra_Blocks_Loader' ) ) {
 		/**
 		 * Block analytics instance
 		 *
-		 * @var Spectra_Blocks_Block_Analytics
+		 * @var UAGB_Block_Analytics
 		 */
 		public $block_analytics;
 
@@ -122,7 +122,7 @@ if ( ! class_exists( 'Spectra_Blocks_Loader' ) ) {
 			add_filter( 'bsf_core_stats', array( $this, 'spectra_blocks_get_specific_stats' ) );
 
 			// Initialize block analytics after BSF analytics is set up.
-			$this->block_analytics = Spectra_Blocks_Block_Analytics::get_instance();
+			$this->block_analytics = UAGB_Block_Analytics::get_instance();
 		}
 
 		/**
