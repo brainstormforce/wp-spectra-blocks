@@ -52,27 +52,8 @@ class Spectra_Init_Blocks {
 		// Hook: Editor assets.
 		add_action( 'enqueue_block_editor_assets', array( $this, 'editor_assets' ) );
 
-		if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
-			add_filter( 'block_categories_all', array( $this, 'register_block_category' ), 999999, 2 );
-		} else {
-			add_filter( 'block_categories', array( $this, 'register_block_category' ), 999999, 2 );
-		}
-
-		add_action( 'wp_ajax_uagb_get_taxonomy', array( $this, 'get_taxonomy' ) );
-
-		add_action( 'wp_ajax_uagb_gf_shortcode', array( $this, 'gf_shortcode' ) );
-		add_action( 'wp_ajax_nopriv_uagb_gf_shortcode', array( $this, 'gf_shortcode' ) );
-
-		add_action( 'wp_ajax_uagb_cf7_shortcode', array( $this, 'cf7_shortcode' ) );
-		add_action( 'wp_ajax_nopriv_uagb_cf7_shortcode', array( $this, 'cf7_shortcode' ) );
-
-		add_action( 'wp_ajax_uagb_forms_recaptcha', array( $this, 'forms_recaptcha' ) );
-
-		// For Spectra Global Block Styles.
-		add_action( 'wp_ajax_uag_global_block_styles', array( $this, 'uag_global_block_styles' ) );
-		// For Spectra Global Quick Action Bar.
-		add_action( 'wp_ajax_uag_global_sidebar_enabled', array( $this, 'uag_global_sidebar_enabled' ) );
-		add_action( 'wp_ajax_uag_global_update_allowed_block', array( $this, 'uag_global_update_allowed_block' ) );
+		// Legacy block category registration removed — handled by v3 BlockManager.
+		// Legacy uagb AJAX handlers removed — handled by ultimate-addons-for-gutenberg plugin.
 
 		if ( ! is_admin() ) {
 			add_action( 'render_block', array( $this, 'render_block' ), 5, 2 );
@@ -206,15 +187,7 @@ class Spectra_Init_Blocks {
 	 * @return mixed Returns the new block content.
 	 */
 	public function render_block( $block_content, $block ) {
-		// Register only UAG blocks.
-		if ( ! empty( $block['blockName'] ) && strpos( $block['blockName'], 'uagb/' ) !== false ) {
-			// Register block on server-side to support WP Hide blocks feature introduce in WP 6.9.
-			$registry = WP_Block_Type_Registry::get_instance();
-			// Only register if the block is NOT already registered.
-			if ( ! $registry->is_registered( $block['blockName'] ) ) {
-				$registry->register( $block['blockName'], $block['attrs'] );
-			}
-		}
+		// Legacy uagb/ runtime block registration removed — handled by ultimate-addons-for-gutenberg plugin.
 
 		if ( ! empty( $block['attrs']['UAGDisplayConditions'] ) ) {
 			switch ( $block['attrs']['UAGDisplayConditions'] ) {
@@ -818,62 +791,7 @@ class Spectra_Init_Blocks {
 		wp_send_json_success( $data );
 	}
 
-	/**
-	 * Gutenberg block category for Spectra.
-	 *
-	 * @param array  $categories Block categories.
-	 * @param object $post Post object.
-	 * @since 0.0.1
-	 */
-	public function register_block_category( $categories, $post ) {
-		$categories = array_merge(
-			array(
-				array(
-					'slug'  => 'spectra-blocks',
-					'title' => __( 'Spectra Blocks', 'spectra' ),
-				),
-			),
-			$categories
-		);
-		// Define the new category to be added.
-		$new_category = array(
-			'slug'  => 'extension',
-			'title' => __( 'Extensions', 'spectra' ),
-			'icon'  => '',
-		);
-
-		// Find the index where the new category should be inserted.
-		$insert_after_slug = 'spectra-pro'; // Default insertion point.
-		$insert_index      = false;
-
-		// Look for the 'spectra-pro' category.
-		foreach ( $categories as $index => $category ) {
-			if ( $insert_after_slug === $category['slug'] ) {
-				$insert_index = $index + 1;
-				break;
-			}
-		}
-
-		// If 'spectra-pro' is not found, look for 'spectra-blocks'.
-		if ( false === $insert_index ) {
-			$insert_after_slug = 'spectra-blocks';
-			foreach ( $categories as $index => $category ) {
-				if ( $insert_after_slug === $category['slug'] ) {
-					$insert_index = $index + 1;
-					break;
-				}
-			}
-		}
-
-		// If neither is found, append the new category at the end.
-		if ( false === $insert_index ) {
-			$categories[] = $new_category;
-		} else {
-			array_splice( $categories, $insert_index, 0, array( $new_category ) );
-		}
-
-		return $categories;
-	}
+	// Legacy register_block_category method removed — block category registration handled by v3 BlockManager.
 
 	/**
 	 * Localize SVG icon scripts in chunks.
@@ -1059,46 +977,8 @@ class Spectra_Init_Blocks {
 			)
 		);
 
-		wp_enqueue_script( 'uagb-deactivate-block-js', SPECTRA_URL . 'admin/assets/legacy/blocks-deactivate.js', array( 'wp-blocks' ), SPECTRA_VER, true );
+		// Legacy uagb/ block deactivation removed — handled by ultimate-addons-for-gutenberg plugin.
 
-		$blocks       = array();
-		$saved_blocks = Spectra_Admin_Helper::get_admin_settings_option( '_uagb_blocks' );
-
-		if ( is_array( $saved_blocks ) ) {
-			foreach ( $saved_blocks as $slug => $data ) {
-
-				$_slug       = 'uagb/' . $slug;
-				$blocks_info = Spectra_Block_Module::get_blocks_info();
-
-				if ( ! isset( $blocks_info[ $_slug ] ) ) {
-					continue;
-				}
-
-				$current_block = $blocks_info[ $_slug ];
-
-				if ( isset( $current_block['is_child'] ) && $current_block['is_child'] ) {
-					continue;
-				}
-
-				if ( isset( $current_block['is_active'] ) && ! $current_block['is_active'] ) {
-					continue;
-				}
-
-				if ( isset( $saved_blocks[ $slug ] ) ) {
-					if ( 'disabled' === $saved_blocks[ $slug ] ) {
-						array_push( $blocks, $_slug );
-					}
-				}
-			}
-		}
-
-		wp_localize_script(
-			'uagb-deactivate-block-js',
-			'spectra_deactivate_blocks',
-			array(
-				'deactivated_blocks' => $blocks,
-			)
-		);
 		$display_condition            = Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_condition', 'enabled' );
 		$display_responsive_condition = Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' );
 

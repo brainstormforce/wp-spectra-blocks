@@ -521,10 +521,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			// Load the text domain for translation.
 			$this->load_textdomain();
 
-			// Register all UAG Lite Blocks. This is done by calling the register_blocks method
-			// on the spectra_block() instance. This method is responsible for registering all the
-			// blocks in the plugin.
-			spectra_block()->register_blocks();
+			// Legacy UAG block registration removed — v3 blocks are registered by BlockManager.
 
 			$theme_folder = get_template();
 
