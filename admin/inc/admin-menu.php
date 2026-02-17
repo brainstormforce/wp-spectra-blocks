@@ -753,7 +753,7 @@ class Admin_Menu {
 		wp_enqueue_script( $handle );
 		wp_set_script_translations( $handle, 'spectra', SPECTRA_DIR . 'languages' );
 		wp_enqueue_style( 'uag-admin-google-fonts' );
-		if ( isset( $_GET['page'] ) && 'spectra' === $_GET['page'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- $_GET['page'] does not provide nonce.
+		if ( isset( $_GET['page'] ) && 'spectra-blocks' === $_GET['page'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- $_GET['page'] does not provide nonce.
 			wp_enqueue_style( $handle );
 		}
 		wp_style_add_data( $handle, 'rtl', 'replace' );
