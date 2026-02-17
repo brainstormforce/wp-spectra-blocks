@@ -507,6 +507,7 @@ class Admin_Menu {
 				'spectra_blocks_pro_status'        => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
 				'spectra_blocks_pro_ver'           => defined( 'SPECTRA_PRO_VER' ) ? SPECTRA_PRO_VER : null,
 				'spectra_blocks_custom_fonts'      => apply_filters( 'spectra_blocks_system_fonts', array() ),
+				'spectra_custom_fonts'      => apply_filters( 'spectra_blocks_system_fonts', array() ),
 				'spectra_blocks_admin_video'       => apply_filters( 'spectra_blocks_display_admin_video', true ),
 				'is_allow_registration'     => (bool) get_option( 'users_can_register' ),
 				'theme_fonts'               => $theme_font_families,
@@ -539,6 +540,7 @@ class Admin_Menu {
 				'enable_v2_blocks'          => get_option( 'register-v2-blocks' ),
 				'enable_register_v2_blocks' => get_option( 'register-v2-blocks' ),
 				'spectra_blocks_old_user_less_than_3' => \Spectra_Blocks_Helper::is_old_user_less_than_current_version() ? 'yes' : 'no',
+				'uagb_old_user_less_than_3' => \Spectra_Blocks_Helper::is_old_user_less_than_current_version() ? 'yes' : 'no',
 				// Nonces for settings pages
 				'clear_blocks_cache_nonce'      => wp_create_nonce( 'uag_clear_blocks_cache' ),
 				'clear_v3_cache_nonce'      => wp_create_nonce( 'uag_clear_v3_cache' ),
