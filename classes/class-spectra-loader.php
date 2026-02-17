@@ -662,9 +662,9 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 				'product_slug'                          => 'spectra-blocks',
 				'product_logo'                          => file_get_contents( SPECTRA_DIR . 'assets/images/logos/spectra.svg' ),
 				'product_primary_color'                 => '#5733ff',
-				'ai_assistant_learn_more_url'           => admin_url( 'admin.php?page=spectra&path=ai-features' ),
-				'ai_assistant_authorized_disable_url'   => admin_url( 'admin.php?page=spectra&path=ai-features&manage-features=yes' ),
-				'ai_assistant_unauthorized_disable_url' => admin_url( 'admin.php?page=spectra&path=ai-features&manage-features=yes' ),
+				'ai_assistant_learn_more_url'           => admin_url( 'admin.php?page=spectra-blocks&path=ai-features' ),
+				'ai_assistant_authorized_disable_url'   => admin_url( 'admin.php?page=spectra-blocks&path=ai-features&manage-features=yes' ),
+				'ai_assistant_unauthorized_disable_url' => admin_url( 'admin.php?page=spectra-blocks&path=ai-features&manage-features=yes' ),
 			);
 			// Return the Spectra product details.
 			return $product_details;
@@ -704,7 +704,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 		 * @return string The Spectra redirection URL.
 		 */
 		public function add_zip_ai_redirection_url( $auth_url ) {
-			return admin_url( 'admin.php?page=spectra&path=ai-features' );
+			return admin_url( 'admin.php?page=spectra-blocks&path=ai-features' );
 		}
 
 		/**

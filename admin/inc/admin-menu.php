@@ -52,7 +52,7 @@ class Admin_Menu {
 	 * @var string Class object.
 	 * @since 0.0.1
 	 */
-	private $menu_slug = 'spectra';
+	private $menu_slug = 'spectra-blocks';
 
 	/**
 	 * Constructor
@@ -296,7 +296,7 @@ class Admin_Menu {
 	public function add_action_links( $links ) {
 
 		$default_url = admin_url( 'admin.php?page=' . $this->menu_slug );
-		$rollback    = admin_url( 'admin.php?page=spectra&path=settings&settings=version-control' );
+		$rollback    = admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=version-control' );
 		$spectra_pro = \Spectra_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'plugin-list', 'plugin-list' );
 
 		$free_links = array(
@@ -344,10 +344,10 @@ class Admin_Menu {
 
 		$icon = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDcwIDcwIiBmaWxsPSJub25lIiBjbGFzcz0ic3BlY3RyYS1wYWdlLXNldHRpbmdzLWJ1dHRvbiIgYXJpYS1oaWRkZW49InRydWUiIGZvY3VzYWJsZT0iZmFsc2UiPiA8cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGNsaXAtcnVsZT0iZXZlbm9kZCIgZD0iTTM1IDcwQzU0LjMzIDcwIDcwIDU0LjMzIDcwIDM1QzcwIDE1LjY3IDU0LjMzIDAgMzUgMEMxNS42NyAwIDAgMTUuNjcgMCAzNUMwIDU0LjMzIDE1LjY3IDcwIDM1IDcwWk0yNC40NDcxIDIzLjUxMTJDMTguOTcyMiAyNi43NDAzIDIwLjI4NTIgMzUuMzc1OSAyNi41MDMyIDM3LjAzNTFMMzYuODg3NSAzOS44MDZDMzcuNzUzMyA0MC4wMzcgMzcuOTEgNDEuMjI0IDM3LjEzNSA0MS42ODExTDI3LjA5NzIgNDcuNTc5OUwyNi4wMzYgNThMNDUuNTUyOSA0Ni40ODg4QzUxLjAyNzggNDMuMjU5NyA0OS43MTQ4IDM0LjYyNDEgNDMuNDk2OCAzMi45NjQ5TDMzLjExMjUgMzAuMTk0MUMzMi4yNDY3IDI5Ljk2MyAzMi4wOSAyOC43NzYgMzIuODY1IDI4LjMxODlMNDIuOTAyOCAyMi40MjAyTDQzLjk2NCAxMkwyNC40NDcxIDIzLjUxMTJaIj48L3BhdGg+IDwvc3ZnPg==';
 
-		// Add the Spectra Menu.
+		// Add the Spectra Blocks Menu.
 		add_menu_page(
-			__( 'Spectra', 'spectra' ),
-			__( 'Spectra', 'spectra' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
 			$capability,
 			$menu_slug,
 			array( $this, 'render' ),
@@ -358,8 +358,8 @@ class Admin_Menu {
 		// Add the Dashboard Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra' ),
-			__( 'Dashboard', 'spectra' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
+			__( 'Dashboard', 'spectra-blocks' ),
 			$capability,
 			$menu_slug,
 			array( $this, 'render' )
@@ -368,8 +368,8 @@ class Admin_Menu {
 		// Finally, add the Settings Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra' ),
-			__( 'Settings', 'spectra' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
+			__( 'Settings', 'spectra-blocks' ),
 			$capability,
 			$menu_slug . '&path=settings',
 			array( $this, 'render' )
@@ -379,8 +379,8 @@ class Admin_Menu {
 		if ( defined( 'ZIP_AI_VERSION' ) ) {
 			add_submenu_page(
 				$menu_slug,
-				__( 'Spectra', 'spectra' ),
-				__( 'AI Features', 'spectra' ),
+				__( 'Spectra Blocks', 'spectra-blocks' ),
+				__( 'AI Features', 'spectra-blocks' ),
 				$capability,
 				$menu_slug . '&path=ai-features',
 				array( $this, 'render' )
@@ -393,8 +393,8 @@ class Admin_Menu {
 		// Add the Learn tab in Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra' ),
-			__( 'Learn', 'spectra' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
+			__( 'Learn', 'spectra-blocks' ),
 			$capability,
 			$menu_slug . '&path=learn',
 			array( $this, 'render' )
@@ -404,8 +404,8 @@ class Admin_Menu {
 		if ( ! file_exists( SPECTRA_DIR . '../spectra-pro/spectra-pro.php' ) ) {
 			add_submenu_page(
 				$menu_slug,
-				__( 'Free vs Pro', 'spectra' ),
-				__( 'Get Spectra Pro', 'spectra' ),
+				__( 'Free vs Pro', 'spectra-blocks' ),
+				__( 'Get Spectra Pro', 'spectra-blocks' ),
 				$capability,
 				$menu_slug . '&path=free-vs-pro',
 				array( $this, 'render' )

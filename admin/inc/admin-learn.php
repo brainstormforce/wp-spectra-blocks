@@ -76,7 +76,7 @@ class Admin_Learn {
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra' ),
-							'url'        => ( 'yes' === \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_templates_button', 'yes' ) ? $homepage_url . '#learn-insert-ready-made-sections' : admin_url( 'admin.php?page=spectra&path=settings&settings=editor-enhancements' ) ),
+							'url'        => ( 'yes' === \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_templates_button', 'yes' ) ? $homepage_url . '#learn-insert-ready-made-sections' : admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ) ),
 							'isExternal' => true,
 						),
 						'completed'   => false,
@@ -233,7 +233,7 @@ class Admin_Learn {
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra' ),
-							'url'        => admin_url( 'admin.php?page=spectra&path=global-styles&learn=open-global-styles' ),
+							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&learn=open-global-styles' ),
 							'isExternal' => false,
 						),
 						'isPro'       => true,
@@ -277,7 +277,7 @@ class Admin_Learn {
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra' ),
-							'url'        => admin_url( 'admin.php?page=spectra&path=global-styles&settings=colors&learn=set-global-colors-fonts-spacing' ),
+							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&settings=colors&learn=set-global-colors-fonts-spacing' ),
 							'isExternal' => false,
 						),
 						'isPro'       => true,
@@ -299,7 +299,7 @@ class Admin_Learn {
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra' ),
-							'url'        => admin_url( 'admin.php?page=spectra&path=global-styles&settings=block-defaults&learn=use-block-defaults' ),
+							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&settings=block-defaults&learn=use-block-defaults' ),
 							'isExternal' => false,
 						),
 						'isPro'       => true,

@@ -1165,7 +1165,7 @@ class Spectra_Init_Blocks {
 		// An array of all the required Spectra Admin URLs.
 		$spectra_admin_urls = array(
 			'settings' => array(
-				'editor_enhancements' => admin_url( 'admin.php?page=spectra&path=settings&settings=editor-enhancements' ),
+				'editor_enhancements' => admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ),
 			),
 		);
 
