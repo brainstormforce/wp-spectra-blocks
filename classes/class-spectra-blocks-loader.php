@@ -140,6 +140,20 @@ if ( ! class_exists( 'Spectra_Blocks_Loader' ) ) {
 			define( 'SPECTRA_BLOCKS_SLUG', 'spectra-blocks' );
 			define( 'SPECTRA_BLOCKS_URI', trailingslashit( 'https://wpspectra.com/' ) );
 
+tt// Define UAGB constants as aliases for backward compatibility with old class files
+ttif ( ! defined( 'UAGB_BASE' ) ) {
+tttdefine( 'UAGB_BASE', SPECTRA_BLOCKS_BASE );
+tt}
+ttif ( ! defined( 'UAGB_DIR' ) ) {
+tttdefine( 'UAGB_DIR', SPECTRA_BLOCKS_DIR );
+tt}
+ttif ( ! defined( 'UAGB_URL' ) ) {
+tttdefine( 'UAGB_URL', SPECTRA_BLOCKS_URL );
+tt}
+ttif ( ! defined( 'UAGB_VER' ) ) {
+tttdefine( 'UAGB_VER', SPECTRA_BLOCKS_VER );
+tt}
+
 			if ( ! defined( 'SPECTRA_BLOCKS_TABLET_BREAKPOINT' ) ) {
 				define( 'SPECTRA_BLOCKS_TABLET_BREAKPOINT', '976' );
 			}
