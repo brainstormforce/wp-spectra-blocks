@@ -33,8 +33,15 @@ const commonAliases = {
 };
 
 /**
- * Custom webpack plugin to copy block.json and PHP files from src/blocks to build/blocks.
- * These files are required at runtime but are not processed by webpack.
+ * Custom webpack plugin to copy block.json, PHP files, and frontend styles
+ * from src/blocks to build/blocks.
+ *
+ * Webpack 4 with @wordpress/scripts splits block CSS into two locations:
+ *   - build/blocks/<name>/index.css      (editor styles)
+ *   - build/style-blocks/<name>/index.css (frontend styles)
+ *
+ * WordPress block.json expects frontend styles at build/blocks/<name>/style-index.css,
+ * so this plugin copies them into the expected location after each build.
  */
 class CopyBlockFilesPlugin {
 	apply( compiler ) {
@@ -45,6 +52,10 @@ class CopyBlockFilesPlugin {
 				const buildBlocksDir = path.resolve(
 					__dirname,
 					'build/blocks'
+				);
+				const styleBlocksDir = path.resolve(
+					__dirname,
+					'build/style-blocks'
 				);
 
 				const blockDirs = glob.sync( './src/blocks/*/', {
@@ -70,6 +81,21 @@ class CopyBlockFilesPlugin {
 						const destFile = path.resolve( destDir, fileName );
 						fs.copyFileSync( srcFile, destFile );
 					} );
+
+					// Copy frontend style: style-blocks/<name>/index.css → blocks/<name>/style-index.css
+					// This bridges the webpack 4 output naming with the block.json "style" field convention.
+					const styleSource = path.resolve(
+						styleBlocksDir,
+						blockName,
+						'index.css'
+					);
+					if ( fs.existsSync( styleSource ) ) {
+						const styleDest = path.resolve(
+							destDir,
+							'style-index.css'
+						);
+						fs.copyFileSync( styleSource, styleDest );
+					}
 				} );
 
 				callback();

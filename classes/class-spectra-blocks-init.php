@@ -807,7 +807,7 @@ class Spectra_Init_Blocks {
 		}
 
 		foreach ( $localize_icon_chunks as $chunk_index => $value ) {
-			wp_localize_script( 'uagb-block-editor-js', "spectra_svg_icons_{$chunk_index}", $value );
+			wp_localize_script( 'uagb-essential-vars', "spectra_svg_icons_{$chunk_index}", $value );
 		}
 	}
 
@@ -850,21 +850,21 @@ class Spectra_Init_Blocks {
 	private function enqueue_minimal_v3_block_assets() {
 		// Get all installed plugins to check Spectra Pro status.
 		$installed_plugins = get_plugins();
-		
+
 		// Determine Spectra Pro plugin status (not-installed, inactive, or active).
-		$spectra_pro_status = isset( $installed_plugins['spectra-pro/spectra-pro.php'] ) 
-			? ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) 
-				? 'active' 
-				: 'inactive' ) 
+		$spectra_pro_status = isset( $installed_plugins['spectra-pro/spectra-pro.php'] )
+			? ( is_plugin_active( 'spectra-pro/spectra-pro.php' )
+				? 'active'
+				: 'inactive' )
 			: 'not-installed';
 
-		// Build array of minimal variables matching exactly what v2 provides.
+		// Build array of variables for spectra_blocks_info.
 		$minimal_block_variables = array(
-			'is_rtl'                  => is_rtl(), // Check if current site is RTL.
-			'spectra_pro_status'      => $spectra_pro_status, // Spectra Pro plugin status.
-			'spectra_url'                => SPECTRA_URL, // Ultimate Addons plugin URL.
-			'font_awesome_5_polyfill' => spectra_blocks_get_font_awesome_polyfiller(), // Font Awesome 5 polyfill data.
-			'current_post_id'         => get_the_ID(), // Current post ID for popup builder close class functionality.
+			'is_rtl'                  => is_rtl(),
+			'spectra_pro_status'      => $spectra_pro_status,
+			'spectra_url'             => SPECTRA_URL,
+			'font_awesome_5_polyfill' => spectra_blocks_get_font_awesome_polyfiller(),
+			'current_post_id'         => get_the_ID(),
 		);
 
 		// Enqueue minimal script for localization.
@@ -878,8 +878,8 @@ class Spectra_Init_Blocks {
 
 		// Get merged SVG icons for v3 compatibility.
 		$localize_icon_chunks = Spectra_Helper::backend_load_font_awesome_icons();
+		$merged_icons         = array();
 		if ( $localize_icon_chunks ) {
-			$merged_icons = array();
 			foreach ( $localize_icon_chunks as $chunk_index => $value ) {
 				if ( is_array( $value ) ) {
 					$merged_icons = array_merge( $merged_icons, $value );
@@ -889,8 +889,30 @@ class Spectra_Init_Blocks {
 			$minimal_block_variables['spectra_svg_icons'] = $merged_icons;
 		}
 
-		// Localize minimal variables using same spectra_blocks_info namespace.
+		// Localize spectra_blocks_info for v3 blocks.
 		wp_localize_script( 'uagb-essential-vars', 'spectra_blocks_info', $minimal_block_variables );
+
+		// Provide uagb_blocks_info for v3 block JS that references it.
+		// This ensures blocks work correctly whether or not the legacy plugin is active.
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		wp_localize_script(
+			'uagb-essential-vars',
+			'uagb_blocks_info',
+			array(
+				'uagb_url'                 => SPECTRA_URL,
+				'uagb_svg_icons'           => $merged_icons,
+				'font_awesome_5_polyfill'  => spectra_blocks_get_font_awesome_polyfiller(),
+				'tablet_breakpoint'        => SPECTRA_TABLET_BREAKPOINT,
+				'mobile_breakpoint'        => SPECTRA_MOBILE_BREAKPOINT,
+				'spectra_pro_status'       => $spectra_pro_status,
+				'is_rtl'                   => is_rtl(),
+				'current_post_id'          => get_the_ID(),
+				'uagb_old_user_less_than_2' => get_option( 'uagb-old-user-less-than-2' ),
+				'is_customize_preview'     => is_customize_preview(),
+				'is_site_editor'           => $screen ? $screen->id : '',
+				'exclude_crops_iframes'    => apply_filters( 'spectra_exclude_crops_iframes', array( '__privateStripeMetricsController8690' ) ),
+			)
+		);
 
 		// Add inline JavaScript to process SVG icons exactly like v2.
 		$inline_js = '
@@ -916,255 +938,11 @@ class Spectra_Init_Blocks {
 			return; // Early return to prevent loading assets.
 		}
 
-		$should_load_full_assets = Spectra_Helper::is_old_user_less_than_v3() || Spectra_Helper::is_v2_blocks_enabled();
-
-		// If not loading full assets, provide minimal assets for v3 blocks.
-		if ( ! $should_load_full_assets ) {
-			$this->enqueue_minimal_v3_block_assets();
-			return;
-		}
-
-		$spectra_ajax_nonce = wp_create_nonce( 'spectra_ajax_nonce' );
-
-		$script_dep_path = SPECTRA_DIR . 'dist/blocks.min.asset.php';
-		$script_info     = file_exists( $script_dep_path )
-			? include $script_dep_path
-			: array(
-				'dependencies' => array(),
-				'version'      => SPECTRA_VER,
-			);
-		global $pagenow;
-
-		$script_dep = array_merge( $script_info['dependencies'], array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-api-fetch' ) );
-
-		if ( 'widgets.php' !== $pagenow ) {
-			$script_dep = array_merge( $script_info['dependencies'], array( 'wp-editor' ) );
-		}
-
-		$js_ext = ( SCRIPT_DEBUG ) ? '.js' : '.min.js';
-
-		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
-		wp_enqueue_script( 'wp-theme-plugin-editor' );
-		wp_enqueue_style( 'wp-codemirror' );
-
-		// Scripts.
-		$blocks_script = file_exists( SPECTRA_DIR . 'dist/blocks.min.js' ) ? 'blocks.min.js' : 'blocks.js';
-		wp_enqueue_script(
-			'uagb-block-editor-js', // Handle.
-			SPECTRA_URL . 'dist/' . $blocks_script,
-			$script_dep, // Dependencies, defined above.
-			$script_info['version'], // SPECTRA_VER.
-			true // Enqueue the script in the footer.
-		);
-
-		wp_set_script_translations( 'uagb-block-editor-js', 'spectra', SPECTRA_DIR . 'languages' );
-
-		// Common Editor style.
-		wp_enqueue_style(
-			'uagb-block-common-editor-css', // Handle.
-			SPECTRA_URL . 'dist/common-editor.css', // Block editor CSS.
-			array( 'wp-edit-blocks' ), // Dependency to include the CSS after it.
-			SPECTRA_VER
-		);
-
-		wp_localize_script( 'uagb-block-editor-js', 'uag_react', array( 'pro_plugin_status' => self::get_plugin_status( 'spectra-pro/spectra-pro.php' ) ) );
-
-		wp_localize_script(
-			'uagb-block-editor-js',
-			'uagb_blocks_info',
-			array(
-				'uagb_url' => SPECTRA_URL,
-			)
-		);
-
-		// Legacy uagb/ block deactivation removed — handled by ultimate-addons-for-gutenberg plugin.
-
-		$display_condition            = Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_condition', 'enabled' );
-		$display_responsive_condition = Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' );
-
-		$enable_selected_fonts = Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_select_font_globally', 'disabled' );
-		$selected_fonts        = array();
-
-		if ( 'enabled' === $enable_selected_fonts ) {
-
-			/**
-			 * Selected fonts variable
-			 *
-			 * @var array
-			 */
-			$selected_fonts = Spectra_Admin_Helper::get_admin_settings_option( 'uag_select_font_globally', array() );
-
-			if ( ! empty( $selected_fonts ) ) {
-				usort(
-					$selected_fonts,
-					function( $a, $b ) {
-						return strcmp( $a['label'], $b['label'] );
-					}
-				);
-
-				$default_selected = array(
-					array(
-						'value' => 'Default',
-						'label' => __( 'Default', 'spectra' ),
-					),
-				);
-				$selected_fonts   = array_merge( $default_selected, $selected_fonts );
-			}
-		}
-
-		$spectra_exclude_blocks_from_extension = array( 'core/archives', 'core/calendar', 'core/latest-comments', 'core/tag-cloud', 'core/rss' );
-		// Get all registered blocks from WordPress.
-		$blocks = WP_Block_Type_Registry::get_instance()->get_all_registered();
-		// Filter blocks to get only Spectra and Spectra Pro blocks.
-		// This creates an array of block names that start with 'spectra/' or 'spectra-pro/'.
-		$spectra_blocks = array_filter(
-			array_keys( $blocks ),
-			function( $name ) {
-				return str_starts_with( $name, 'spectra/' ) || str_starts_with( $name, 'spectra-pro/' );
-			}
-		);
-		// Merge the core excluded blocks with Spectra blocks.
-		// This ensures both core blocks and Spectra blocks are excluded from extensions.
-		$spectra_exclude_blocks_from_extension = array_merge( $spectra_exclude_blocks_from_extension, $spectra_blocks );
-
-		$content_width = \Spectra_Admin_Helper::get_global_content_width();
-
-
-		$container_padding = Spectra_Admin_Helper::get_admin_settings_option( 'uag_container_global_padding', 'default' );
-
-		if ( 'default' === $container_padding ) {
-			\Spectra_Admin_Helper::update_admin_settings_option( 'uag_container_global_padding', 10 );
-			$container_padding = 10;
-		}
-
-		$container_elements_gap = Spectra_Admin_Helper::get_admin_settings_option( 'uag_container_global_elements_gap', 20 );
-		$screen                 = get_current_screen();
-
-		$uag_enable_quick_action_sidebar = apply_filters( 'uag_enable_quick_action_sidebar', Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_quick_action_sidebar', 'enabled' ) );
-
-		// An array of all the required Spectra Admin URLs.
-		$spectra_admin_urls = array(
-			'settings' => array(
-				'editor_enhancements' => admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ),
-			),
-		);
-
-		$inherit_from_theme               = 'deleted' !== Spectra_Admin_Helper::get_admin_settings_option( 'uag_btn_inherit_from_theme_fallback', 'deleted' ) ? 'disabled' : Spectra_Admin_Helper::get_admin_settings_option( 'uag_btn_inherit_from_theme', 'disabled' );
-		$astra_theme_settings_available   = defined( 'ASTRA_THEME_SETTINGS' );
-		$astra_theme_body_text_decoration = $astra_theme_settings_available && function_exists( 'astra_get_font_extras' ) && function_exists( 'astra_get_option' ) ? astra_get_font_extras( astra_get_option( 'body-font-extras' ), 'text-decoration' ) : '';
-		$installed_plugins                = get_plugins();
-		$status                           = isset( $installed_plugins['spectra-pro/spectra-pro.php'] ) 
-					? ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) 
-						? 'active' 
-						: 'inactive' ) 
-					: 'not-installed';
-		$status_of_surecart               = isset( $installed_plugins['surecart/surecart.php'] ) 
-					? ( is_plugin_active( 'surecart/surecart.php' ) 
-						? 'active' 
-						: 'inactive' ) 
-					: 'not-installed';
-		$status_of_sureforms              = isset( $installed_plugins['sureforms/sureforms.php'] ) 
-					? ( is_plugin_active( 'sureforms/sureforms.php' ) 
-						? 'active' 
-						: 'inactive' ) 
-					: 'not-installed';
-
-		$localized_params = array(
-			'cf7_is_active'                           => class_exists( 'WPCF7_ContactForm' ),
-			'gf_is_active'                            => class_exists( 'GFForms' ),
-			'category'                                => 'uagb',
-			'premium_category'                        => 'extension',
-			'ajax_url'                                => admin_url( 'admin-ajax.php' ),
-			'spectra_admin_urls'                      => $spectra_admin_urls,
-			'cf7_forms'                               => $this->get_cf7_forms(),
-			'gf_forms'                                => $this->get_gravity_forms(),
-			'tablet_breakpoint'                       => SPECTRA_TABLET_BREAKPOINT,
-			'mobile_breakpoint'                       => SPECTRA_MOBILE_BREAKPOINT,
-			'image_sizes'                             => Spectra_Helper::get_image_sizes(),
-			'post_types'                              => Spectra_Helper::get_post_types(),
-			'spectra_ajax_nonce'                         => $spectra_ajax_nonce,
-			'spectra_svg_confirmation_nonce'             => current_user_can( 'edit_posts' ) ? wp_create_nonce( 'spectra_confirm_svg_nonce' ) : '',
-			'svg_confirmation'                        => current_user_can( 'edit_posts' ) ? get_option( 'spectra_svg_confirmation' ) : '',
-			'spectra_home_url'                           => home_url(),
-			'user_role'                               => $this->get_user_role(),
-			'spectra_url'                                => SPECTRA_URL,
-			'spectra_mime_type'                          => Spectra_Helper::get_mime_type(),
-			'spectra_site_url'                           => SPECTRA_URI,
-			'enableConditions'                        => apply_filters_deprecated( 'enable_block_condition', array( $display_condition ), '1.23.4', 'uag_enable_block_condition' ),
-			'enableConditionsForCoreBlocks'           => apply_filters( 'enable_block_condition_for_core', true ),
-			'enableResponsiveConditionsForCoreBlocks' => apply_filters( 'enable_responsive_condition_for_core', true ),
-			'enableMasonryGallery'                    => apply_filters( 'uag_enable_masonry_gallery', Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_masonry_gallery', 'enabled' ) ),
-			'enableQuickActionSidebar'                => $uag_enable_quick_action_sidebar,
-			'enableAnimationsExtension'               => apply_filters( 'uag_enable_animations_extension', Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_animations_extension', 'enabled' ) ),
-			'enableResponsiveConditions'              => apply_filters( 'enable_block_responsive', Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' ) ),
-			'number_of_icon_chunks'                   => Spectra_Helper::$number_of_icon_chunks,
-			'spectra_enable_extensions_for_blocks'       => apply_filters( 'spectra_enable_extensions_for_blocks', array() ),
-			'spectra_exclude_blocks_from_extension'      => $spectra_exclude_blocks_from_extension,
-			'uag_load_select_font_globally'           => $enable_selected_fonts,
-			'uag_select_font_globally'                => $selected_fonts,
-			'spectra_old_user_less_than_2'               => get_option( 'uagb-old-user-less-than-2' ),
-			'collapse_panels'                         => Spectra_Admin_Helper::get_admin_settings_option( 'uag_collapse_panels', 'enabled' ),
-			'copy_paste'                              => Spectra_Admin_Helper::get_admin_settings_option( 'uag_copy_paste', 'enabled' ),
-			'enable_on_page_css_button'               => Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_on_page_css_button', 'yes' ),
-			'content_width'                           => $content_width,
-			'container_global_padding'                => $container_padding,
-			'container_elements_gap'                  => $container_elements_gap,
-			'recaptcha_site_key_v2'                   => Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_site_key_v2', '' ),
-			'recaptcha_site_key_v3'                   => Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_site_key_v3', '' ),
-			'recaptcha_secret_key_v2'                 => Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_secret_key_v2', '' ),
-			'recaptcha_secret_key_v3'                 => Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_secret_key_v3', '' ),
-			'blocks_editor_spacing'                   => apply_filters( 'spectra_default_blocks_editor_spacing', Spectra_Admin_Helper::get_admin_settings_option( 'uag_blocks_editor_spacing', 0 ) ),
-			'load_font_awesome_5'                     => Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_font_awesome_5' ),
-			'auto_block_recovery'                     => Spectra_Admin_Helper::get_admin_settings_option( 'uag_auto_block_recovery' ),
-			'font_awesome_5_polyfill'                 => array(),
-			'spectra_custom_fonts'                    => apply_filters( 'spectra_system_fonts', array() ),
-			'spectra_pro_status'                      => $status,
-			'spectra_custom_css_example'              => __(
-				'Use custom class added in block\'s advanced settings to target your desired block. Examples:
-		.my-class {text-align: center;} // my-class is a custom selector',
-				'spectra'
-			),
-			'is_rtl'                                  => is_rtl(),
-			'insta_linked_accounts'                   => Spectra_Admin_Helper::get_admin_settings_option( 'uag_insta_linked_accounts', array() ),
-			'insta_all_users_media'                   => apply_filters( 'uag_instagram_transients', array() ),
-			'is_site_editor'                          => $screen->id,
-			'current_post_id'                         => get_the_ID(),
-			'btn_inherit_from_theme'                  => Spectra_Admin_Helper::get_admin_settings_option( 'uag_btn_inherit_from_theme', 'disabled' ),
-			'btn_inherit_from_theme_fallback'         => $inherit_from_theme,
-			'wp_version'                              => get_bloginfo( 'version' ),
-			'is_block_theme'                          => Spectra_Admin_Helper::is_block_theme(),
-			'is_customize_preview'                    => is_customize_preview(),
-			'uag_enable_gbs_extension'                => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_gbs_extension', 'enabled' ),
-			'current_theme'                           => wp_get_theme()->get( 'Name' ),
-			'is_gutenberg_activated'                  => is_plugin_active( 'gutenberg/gutenberg.php' ), // TODO: Once Gutenberg merged the rename functionality code in WP then we need to remove localization part for is_gutenberg_activated.
-			'header_titlebar_status'                  => Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_header_titlebar', 'enabled' ),
-			'is_astra_based_theme'                    => $astra_theme_settings_available,
-			'astra_body_text_decoration'              => $astra_theme_body_text_decoration,
-			// creating an array of iframe names to ignore and checking against that array.
-			// Add more iframe names to ignore, this is done by using the 'spectra_exclude_crops_iframes' filter.
-			'exclude_crops_iframes'                   => apply_filters( 'spectra_exclude_crops_iframes', array( '__privateStripeMetricsController8690' ) ),
-			'status_of_sureforms'                     => $status_of_sureforms,
-			'status_of_surecart'                      => $status_of_surecart,
-			'docsUrl'                                 => \Spectra_Admin_Helper::get_spectra_pro_url( '/docs/', 'free-plugin', 'uagb-editor-page', 'uagb-plugin' ),
-			'upsellModalEditor'                       => \Spectra_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-editor', 'upsell-popup-view-plan' ),
-			'contry_code'                             => \Spectra_Admin_Helper::get_user_country_code(),
-			'enable_v2_blocks'                        => get_option( 'register-v2-blocks' ),
-			'is_user_less_than_3'                     => get_option( 'uagb-old-user-less-than-3' ),
-		);
-
-		wp_localize_script(
-			'uagb-block-editor-js',
-			'spectra_blocks_info',
-			$localized_params
-		);
-
-		// Enqueue the assets for editor upsells.
-		wp_enqueue_style(
-			'spectra-upsell-banner-tailwind-style',
-			SPECTRA_URL . 'dist/blocks.css',
-			array(),
-			SPECTRA_VER
-		);
+		// Legacy v2 blocks have been removed from spectra-blocks — they load from
+		// the ultimate-addons-for-gutenberg plugin instead.  V3 blocks register
+		// their own editor/view scripts via block.json metadata, so there is no
+		// need to enqueue a combined dist/blocks.js bundle.
+		$this->enqueue_minimal_v3_block_assets();
 
 		// To match the editor with frontend.
 		// Scripts Dependency.

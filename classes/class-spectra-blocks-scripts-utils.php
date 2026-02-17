@@ -139,14 +139,9 @@ final class Spectra_Scripts_Utils {
 				array(),
 				SPECTRA_VER
 			);
-		} else {
-			wp_enqueue_style(
-				'uagb-block-css', // Handle.
-				SPECTRA_URL . 'dist/style-blocks.css', // Block style CSS.
-				array(),
-				SPECTRA_VER
-			);
 		}
+		// Legacy dist/style-blocks.css fallback removed — the dist/ directory
+		// no longer exists.  V3 blocks provide their own styles via block.json.
 	}
 
 	/**
