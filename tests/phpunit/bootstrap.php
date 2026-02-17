@@ -955,13 +955,13 @@ if ( ! class_exists( 'WP_UnitTestCase' ) ) {
 }
 
 // Include test helpers
-$test_helpers_file = dirname( __FILE__ ) . '/includes/class-spectra-test-case.php';
+$test_helpers_file = dirname( __FILE__ ) . '/includes/class-spectra-blocks-test-case.php';
 if ( file_exists( $test_helpers_file ) ) {
     require_once $test_helpers_file;
 }
 
 // Include Spectra namespace functions
-$spectra_functions_file = dirname( __FILE__ ) . '/includes/spectra-namespace-functions.php';
+$spectra_functions_file = dirname( __FILE__ ) . '/includes/spectra-blocks-namespace-functions.php';
 if ( file_exists( $spectra_functions_file ) ) {
     require_once $spectra_functions_file;
 }

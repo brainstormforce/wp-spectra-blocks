@@ -10,4 +10,4 @@ if ( ! defined( 'ABSPATH' ) || ! defined( 'SPECTRA_DIR' ) ) {
 }
 
 // Require the popup builder class (used by both v2 and v3).
-require_once SPECTRA_DIR . 'blocks-config/popup-builder/class-spectra-popup-builder.php';
+require_once SPECTRA_DIR . 'blocks-config/popup-builder/class-spectra-blocks-popup-builder.php';

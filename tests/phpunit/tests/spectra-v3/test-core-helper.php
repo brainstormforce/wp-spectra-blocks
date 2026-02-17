@@ -237,7 +237,7 @@ class Test_Core_Helper extends Spectra_Test_Case {
         $this->assertIsArray( $result );
         
         // If icon files exist, we should have data, otherwise empty
-        if ( defined( 'SPECTRA_DIR' ) && file_exists( SPECTRA_DIR . 'blocks-config/uagb-controls/spectra-icons-v6-0.php' ) ) {
+        if ( defined( 'SPECTRA_DIR' ) && file_exists( SPECTRA_DIR . 'blocks-config/uagb-controls/spectra-blocks-icons-v6-0.php' ) ) {
             $this->assertNotEmpty( $result );
         } else {
             $this->assertEmpty( $result );

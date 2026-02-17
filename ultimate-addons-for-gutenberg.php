@@ -23,7 +23,7 @@ if ( ! version_compare( PHP_VERSION, '5.6', '>=' ) ) {
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '4.7', '>=' ) ) {
 	add_action( 'admin_notices', 'spectra_fail_wp_version' );
 } else {
-	require_once 'classes/class-spectra-loader.php';
+	require_once 'classes/class-spectra-blocks-loader.php';
 }
 
 /**

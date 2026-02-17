@@ -69,8 +69,8 @@ if ( ! class_exists( 'Spectra_Block_Analytics' ) ) {
 		 */
 		public function __construct() {
 			// Load the stats processor and incremental tracker.
-			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-block-stats-processor.php';
-			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-incremental-block-tracker.php';
+			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-blocks-stats-processor.php';
+			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-incremental-blocks-tracker.php';
 
 			$this->stats_processor     = new Spectra_Block_Stats_Processor();
 			$this->incremental_tracker = Spectra_Incremental_Block_Tracker::get_instance();
