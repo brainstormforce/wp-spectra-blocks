@@ -4,7 +4,7 @@
 	"name": "spectra/counter-child-number",
 	"version": "3.0.0",
 	"title": "Number",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Number display for the counter block.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": ["spectra/counter", "spectra/counter-child-wrapper", "spectra/container"],

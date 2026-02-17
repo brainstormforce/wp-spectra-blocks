@@ -4,7 +4,7 @@
 	"name": "spectra/modal-child-popup-close-icon",
 	"version": "3.0.0",
 	"title": "Icon",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add an icon.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": [ "spectra/modal-popup" ],

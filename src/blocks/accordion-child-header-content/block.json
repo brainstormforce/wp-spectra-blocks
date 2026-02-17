@@ -4,7 +4,7 @@
 	"name": "spectra/accordion-child-header-content",
 	"version": "3.0.0",
 	"title": "Title",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add a title to this accordion header.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": [ "spectra/accordion-child-header" ],

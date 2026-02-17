@@ -28,7 +28,7 @@ class Test_Integration_Scenarios extends Spectra_Test_Case {
 			'apiVersion' => 3,
 			'name' => 'spectra/test-integration-block',
 			'title' => 'Test Integration Block',
-			'category' => 'spectra',
+			'category' => 'spectra-blocks',
 			'attributes' => array(
 				'content' => array(
 					'type' => 'string',

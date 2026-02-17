@@ -4,7 +4,7 @@
 	"name": "spectra/countdown-child-label",
 	"version": "3.0.0",
 	"title": "Label",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add a block with text content.",
 	"ancestor": [ "spectra/countdown" ],
 	"parent": [ "spectra/countdown-child-day", "spectra/countdown-child-hour", "spectra/countdown-child-minute", "spectra/countdown-child-second", "spectra/container" ],

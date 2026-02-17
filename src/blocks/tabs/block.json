@@ -4,7 +4,7 @@
 	"name": "spectra/tabs",
 	"version": "3.0.0",
 	"title": "Tabs",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "A tabbed content",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

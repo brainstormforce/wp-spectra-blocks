@@ -100,11 +100,11 @@ class BlockManager {
 	public function add_block_category( $categories ) {
 		$slugs = wp_list_pluck( $categories, 'slug' );
 
-		if ( ! in_array( 'spectra', $slugs, true ) ) {
+		if ( ! in_array( 'spectra-blocks', $slugs, true ) ) {
 			array_unshift( $categories, $this->get_spectra_block_category() );
 		}
 
-		if ( ! in_array( 'spectra-inner-blocks', $slugs, true ) ) {
+		if ( ! in_array( 'spectra-blocks-inner', $slugs, true ) ) {
 			$categories[] = $this->get_spectra_inner_block_category();
 		}
 
@@ -174,8 +174,8 @@ class BlockManager {
 	 */
 	private function get_spectra_block_category() {
 		return array(
-			'slug'  => 'spectra',
-			'title' => __( 'Spectra', 'spectra' ),
+			'slug'  => 'spectra-blocks',
+			'title' => __( 'Spectra Blocks', 'spectra' ),
 			'icon'  => '',
 		);
 	}
@@ -189,8 +189,8 @@ class BlockManager {
 	 */
 	private function get_spectra_inner_block_category() {
 		return array(
-			'slug'  => 'spectra-inner-blocks',
-			'title' => __( 'Spectra Inner Blocks', 'spectra' ),
+			'slug'  => 'spectra-blocks-inner',
+			'title' => __( 'Spectra Blocks Inner', 'spectra' ),
 			'icon'  => '',
 		);
 	}

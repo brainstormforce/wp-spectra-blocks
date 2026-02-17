@@ -4,7 +4,7 @@
 	"name": "spectra/separator",
 	"version": "3.0.0",
 	"title": "Separator",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Add a modern separator to divide your page content.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

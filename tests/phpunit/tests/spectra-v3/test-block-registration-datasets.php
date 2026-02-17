@@ -67,7 +67,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/simple-block',
 					'title' => 'Simple Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'attributes' => array(
 						'content' => array(
 							'type' => 'string',
@@ -86,7 +86,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/complex-block',
 					'title' => 'Complex Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'attributes' => array(
 						'text' => array(
 							'type' => 'string',
@@ -127,7 +127,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/supported-block',
 					'title' => 'Supported Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'supports' => array(
 						'html' => false,
 						'anchor' => true,
@@ -157,7 +157,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/parent-block',
 					'title' => 'Parent Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'providesContext' => array(
 						'spectra/parentId' => 'blockId',
 						'spectra/parentSettings' => 'settings',
@@ -182,7 +182,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/child-block',
 					'title' => 'Child Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'parent' => array( 'spectra/parent-block' ),
 					'usesContext' => array( 'spectra/parentId', 'spectra/parentSettings' ),
 				),
@@ -195,7 +195,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 				'block_config' => array(
 					'apiVersion' => 3,
 					'title' => 'Invalid Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 				),
 				'expected_result' => array(
 					'should_register' => false,
@@ -207,7 +207,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					'apiVersion' => 3,
 					'name' => 'spectra/malformed-block',
 					'title' => 'Malformed Block',
-					'category' => 'spectra',
+					'category' => 'spectra-blocks',
 					'attributes' => 'not-an-object',
 				),
 				'expected_result' => array(
@@ -234,12 +234,12 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 		
 			// Verify Spectra category is always first
 			$spectra_category = $result[0];
-			$this->assertEquals( 'spectra', $spectra_category['slug'], "Failed for case: {$name}" );
-			// If spectra already existed, the title might be different
+			$this->assertEquals( 'spectra-blocks', $spectra_category['slug'], "Failed for case: {$name}" );
+			// If spectra-blocks already existed, the title might be different
 			if ( $name === 'spectra already exists' ) {
-				$this->assertEquals( 'Existing Spectra', $spectra_category['title'], "Failed for case: {$name}" );
+				$this->assertEquals( 'Existing Spectra Blocks', $spectra_category['title'], "Failed for case: {$name}" );
 			} else {
-				$this->assertEquals( 'Spectra', $spectra_category['title'], "Failed for case: {$name}" );
+				$this->assertEquals( 'Spectra Blocks', $spectra_category['title'], "Failed for case: {$name}" );
 				$this->assertEquals( 'superhero', $spectra_category['icon'], "Failed for case: {$name}" );
 			}
 		}
@@ -253,9 +253,9 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 			'empty categories' => array(
 				'existing_categories' => array(),
 				'expected_count' => 1,
-				'expected_first_slug' => 'spectra',
+				'expected_first_slug' => 'spectra-blocks',
 			),
-			
+
 			'with core categories' => array(
 				'existing_categories' => array(
 					array( 'slug' => 'text', 'title' => 'Text' ),
@@ -263,24 +263,24 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 					array( 'slug' => 'design', 'title' => 'Design' ),
 				),
 				'expected_count' => 4,
-				'expected_first_slug' => 'spectra',
+				'expected_first_slug' => 'spectra-blocks',
 			),
-			
+
 			'spectra already exists' => array(
 				'existing_categories' => array(
-					array( 'slug' => 'spectra', 'title' => 'Existing Spectra' ),
+					array( 'slug' => 'spectra-blocks', 'title' => 'Existing Spectra Blocks' ),
 					array( 'slug' => 'other', 'title' => 'Other' ),
 				),
 				'expected_count' => 2,
-				'expected_first_slug' => 'spectra',
+				'expected_first_slug' => 'spectra-blocks',
 			),
-			
+
 			'large category list' => array(
 				'existing_categories' => array_map( function( $i ) {
 					return array( 'slug' => "category-$i", 'title' => "Category $i" );
 				}, range( 1, 50 ) ),
 				'expected_count' => 51,
-				'expected_first_slug' => 'spectra',
+				'expected_first_slug' => 'spectra-blocks',
 			),
 		);
 	}
@@ -444,7 +444,7 @@ class Test_Block_Registration_Datasets extends Spectra_Test_Case {
 				'apiVersion' => 3,
 				'name' => "spectra/test-block-$i",
 				'title' => "Test Block $i",
-				'category' => 'spectra',
+				'category' => 'spectra-blocks',
 				'attributes' => array(
 					'content' => array(
 						'type' => 'string',

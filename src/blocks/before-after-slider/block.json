@@ -4,7 +4,7 @@
 	"name": "spectra/before-after-slider",
 	"version": "3.0.0",
 	"title": "Before After Slider",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Compare two images with an interactive before/after slider.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

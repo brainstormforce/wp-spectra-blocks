@@ -4,7 +4,7 @@
 	"name": "spectra/google-map",
 	"version": "3.0.0",
 	"title": "Google Map",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Display an interactive Google Map with customizable features.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

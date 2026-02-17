@@ -829,8 +829,8 @@ class Spectra_Init_Blocks {
 		$categories = array_merge(
 			array(
 				array(
-					'slug'  => 'uagb',
-					'title' => __( 'Spectra', 'spectra' ),
+					'slug'  => 'spectra-blocks',
+					'title' => __( 'Spectra Blocks', 'spectra' ),
 				),
 			),
 			$categories
@@ -854,9 +854,9 @@ class Spectra_Init_Blocks {
 			}
 		}
 
-		// If 'spectra-pro' is not found, look for 'uagb'.
+		// If 'spectra-pro' is not found, look for 'spectra-blocks'.
 		if ( false === $insert_index ) {
-			$insert_after_slug = 'uagb';
+			$insert_after_slug = 'spectra-blocks';
 			foreach ( $categories as $index => $category ) {
 				if ( $insert_after_slug === $category['slug'] ) {
 					$insert_index = $index + 1;

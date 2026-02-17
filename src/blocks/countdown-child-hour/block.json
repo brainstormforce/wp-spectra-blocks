@@ -4,7 +4,7 @@
 	"name": "spectra/countdown-child-hour",
 	"version": "3.0.0",
 	"title": "Hours",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add hours to the countdown.",
 	"parent": [ "spectra/countdown" ],
 	"allowedBlocks": [ "spectra/countdown-child-label", "spectra/countdown-child-number", "spectra/container" ],

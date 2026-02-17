@@ -4,7 +4,7 @@
 	"name": "spectra/icons",
 	"version": "3.0.0",
 	"title": "Icons",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Add multiple icons in a single block",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

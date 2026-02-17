@@ -4,7 +4,7 @@
 	"name": "spectra/counter-child-wrapper",
 	"version": "3.0.0",
 	"title": "Wrapper",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Wrapper for counter child blocks.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": ["spectra/counter"],

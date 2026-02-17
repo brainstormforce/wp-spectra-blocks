@@ -4,7 +4,7 @@
 	"name": "spectra/countdown-child-second",
 	"version": "3.0.0",
 	"title": "Seconds",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add seconds to the countdown.",
 	"parent": [ "spectra/countdown" ],
 	"allowedBlocks": [ "spectra/countdown-child-label", "spectra/countdown-child-number", "spectra/container" ],
