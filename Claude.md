@@ -1,67 +1,69 @@
-# Spectra Blocks Plugin - Development Notes
+# Claude.md
 
-## Overview
-This plugin is a fork of Ultimate Addons for Gutenberg (UAGB), renamed to Spectra Blocks with version 0.0.1.
+## Plugin Overview
 
-## Comprehensive Renaming Completed
+**Spectra Blocks** is the new WordPress plugin that replaces the legacy `ultimate-addons-for-gutenberg` plugin. This is an active development project where the Spectra Blocks code should always load first and take priority.
 
-All UAG and UAGB references have been systematically replaced throughout the entire codebase. This ensures clean separation from the original plugin and prevents naming conflicts.
+## Critical Plugin Conflict Issue
 
-### Renaming Patterns Applied
+### Problem
+There are TWO versions of essentially the same plugin installed:
+1. **spectra-blocks/** (NEW - active development)
+2. **ultimate-addons-for-gutenberg/** (LEGACY - old name)
 
-**PHP Constants:**
-- `UAGB_*` → `SPECTRA_BLOCKS_*`
-- `UAG_*` → `SPECTRA_*`
+Both plugins share common function names, causing fatal PHP errors when both are active:
+- `get_spectra_font_awesome_polyfiller()`
+- `spectra_get_post_assets()`
 
-**PHP Classes:**
-- `UAGB_*` → `Spectra_Blocks_*`
-- `Uagb_*` → `Spectra_Blocks_*`
+### Solution Strategy
 
-**PHP Functions:**
-- `uagb_*()` → `spectra_blocks_*()`
-- `uag_*()` → `spectra_*()`
+**Priority**: Spectra Blocks code must ALWAYS load first and take precedence.
 
-**PHP Namespaces:**
-- `UagAdmin` → `SpectraAdmin`
-- `\UagAdmin\` → `\SpectraAdmin\`
+**Implementation**:
+All shared functions in `classes/utils.php` and similar files must be wrapped with `function_exists()` checks:
 
-**File Names:**
-- `class-uagb-*.php` → `class-spectra-blocks-*.php`
-- All PHP class files have been renamed to match the new naming convention
-
-**String Literals:**
-- `'uagb_'` → `'spectra_blocks_'`
-- `"uagb_"` → `"spectra_blocks_"`
-- `'uag_'` → `'spectra_'`
-- Database option names and transient keys updated accordingly
-
-## Plugin Information
-
-- **Plugin Name:** Spectra Blocks
-- **Version:** 0.0.1
-- **Text Domain:** spectra-blocks
-- **Main File:** spectra-blocks.php
-- **Namespace:** SpectraBlocks (classes), SpectraAdmin (admin)
-
-## Important Notes
-
-### No UAG/UAGB References Remain
-- ✅ All function names updated
-- ✅ All class names updated
-- ✅ All file names updated
-- ✅ All constants updated
-- ✅ All namespaces updated
-- ✅ All string literals updated
-
-### Plugin Structure
+```php
+if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
+    function get_spectra_font_awesome_polyfiller() {
+        // Function implementation
+    }
+}
 ```
-spectra-blocks/
-├── admin/                    # Admin assets and views
-├── admin-core/              # Admin panel (uses SpectraAdmin namespace)
-├── assets/                   # Frontend assets
-├── blocks-config/           # Block configuration files
-├── classes/                  # Core PHP classes (uses SpectraBlocks namespace)
-├── includes/                # Additional includes
-├── lib/                     # Third-party libraries
-└── spectra-blocks.php       # Main plugin file
-```
+
+This ensures:
+1. Spectra Blocks functions are declared first
+2. Legacy plugin's duplicate functions are silently skipped
+3. No fatal "Cannot redeclare function" errors
+4. Smooth migration path for users
+
+### Files Requiring Protection
+
+When adding or modifying global functions, always check:
+- `classes/utils.php` - Utility functions
+- Any file with standalone functions (not class methods)
+- Functions that exist in both plugins
+
+### Development Guidelines
+
+1. **Always use `function_exists()` checks** for any global function that might exist in the legacy plugin
+2. **Load order matters**: Spectra Blocks should load before ultimate-addons-for-gutenberg
+3. **Test with both plugins active** to ensure no conflicts
+4. **Gradual migration**: Users may have both plugins during transition period
+
+### Testing Checklist
+
+Before committing function changes:
+- [ ] Wrapped in `function_exists()` check
+- [ ] Tested with both plugins active
+- [ ] No fatal errors on plugin activation
+- [ ] Spectra Blocks functionality works correctly
+
+## Related Files
+
+- `/docs/V3-CLAUDE.md` - Comprehensive development guide for Spectra v3
+- `classes/utils.php` - Main utility functions file
+- `ultimate-addons-for-gutenberg.php` - Main plugin file
+
+## Commands
+
+See `/docs/V3-CLAUDE.md` for full list of development commands and architecture details.
