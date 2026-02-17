@@ -540,6 +540,7 @@ class Admin_Menu {
 				'enable_register_v2_blocks' => get_option( 'register-v2-blocks' ),
 				'spectra_blocks_old_user_less_than_3' => \Spectra_Blocks_Helper::is_old_user_less_than_current_version() ? 'yes' : 'no',
 				'clear_blocks_cache_nonce'      => wp_create_nonce( 'uag_clear_blocks_cache' ),
+				'clear_v3_cache_nonce'      => wp_create_nonce( 'uag_clear_v3_cache' ),
 				'disable_css_cache_nonce'   => wp_create_nonce( 'uag_disable_css_cache' ),
 			)
 		);
