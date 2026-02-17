@@ -94,11 +94,11 @@ if ( ! class_exists( 'Spectra_FSE_Fonts_Compatibility' ) ) {
 				return;
 			}
 
-			$spectra_filesystem   = spectra_filesystem();
+			$spectra_blocks_filesystem   = spectra_blocks_filesystem();
 			$fonts_folder_path = get_stylesheet_directory() . '/assets/fonts/spectra';
 
 			if ( file_exists( $fonts_folder_path ) ) {
-				$spectra_filesystem->delete( $fonts_folder_path, true, 'd' );
+				$spectra_blocks_filesystem->delete( $fonts_folder_path, true, 'd' );
 			}
 
 			self::delete_all_theme_font_family();

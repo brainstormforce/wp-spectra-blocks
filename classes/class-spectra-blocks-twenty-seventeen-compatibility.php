@@ -59,7 +59,7 @@ if ( ! class_exists( 'Spectra_Twenty_Seventeen_Compatibility' ) ) {
 				return;
 			}
 			$panel_count     = twentyseventeen_panel_count();
-			$post_assets_obj = spectra_get_front_post_assets();
+			$post_assets_obj = spectra_blocks_get_front_post_assets();
 			$all_posts       = array();
 
 			for ( $i = 1; $i <= $panel_count; $i++ ) {

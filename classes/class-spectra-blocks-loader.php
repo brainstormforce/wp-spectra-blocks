@@ -485,7 +485,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			$has_activated_before = get_option( '__uagb_activated_before', false );
 
 			if ( ! $has_activated_before ) {
-				spectra_install()->create_files();
+				spectra_blocks_install()->create_files();
 		
 				update_option( '__uagb_do_redirect', true );
 				update_option( '__uagb_activated_before', true );

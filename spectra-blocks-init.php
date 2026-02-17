@@ -45,13 +45,13 @@ if ( file_exists( $composer_autoload ) ) {
  * 
  * @since 0.0.1
  */
-function spectra_init() {
+function spectra_blocks_init() {
 	( BlockManager::instance() )->init();
 	( AssetLoader::instance() )->init();
 	( ExtensionManager::instance() )->init();
 	( AnalyticsManager::instance() )->init();
 }
-add_action( 'plugins_loaded', 'spectra_init' );
+add_action( 'plugins_loaded', 'spectra_blocks_init' );
 
 /**
  * Enable SVG uploads for Spectra v3 with server-side sanitization

@@ -135,7 +135,7 @@ Spectra_Install::get_instance();
  *
  * @return object
  */
-function spectra_install() {
+function spectra_blocks_install() {
 	return Spectra_Install::get_instance();
 }
 

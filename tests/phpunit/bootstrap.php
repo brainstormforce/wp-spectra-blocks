@@ -893,7 +893,7 @@ if ( $_tests_dir && file_exists( $_tests_dir . '/includes/functions.php' ) ) {
         require_once $spectra_autoloader;
     }
     
-    // Load spectra_init function (suppress warnings for redefined constants)
+    // Load spectra_blocks_init function (suppress warnings for redefined constants)
     $spectra_init_file = dirname( dirname( dirname( __FILE__ ) ) ) . '/spectra-v3/index.php';
     if ( file_exists( $spectra_init_file ) ) {
         // Temporarily suppress warnings

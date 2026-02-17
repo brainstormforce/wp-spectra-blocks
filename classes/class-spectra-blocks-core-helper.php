@@ -613,7 +613,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			// Create the upload dir if it doesn't exist.
 			if ( ! file_exists( $dir_info['path'] ) ) {
 
-				spectra_install()->create_files();
+				spectra_blocks_install()->create_files();
 			}
 
 			return apply_filters( 'uag_get_upload_dir', $dir_info );
@@ -637,7 +637,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			// Check the upload dir if it doesn't exist or not.
 			if ( file_exists( $dir_info['path'] ) ) {
 				// Remove the directory.
-				$wp_filesystem = spectra_filesystem();
+				$wp_filesystem = spectra_blocks_filesystem();
 				return $wp_filesystem->rmdir( $dir_info['path'], true );
 			}
 
@@ -691,7 +691,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 				// Check the dir if it exists or not.
 				if ( file_exists( $path ) ) {
 
-					$wp_filesystem = spectra_filesystem();
+					$wp_filesystem = spectra_blocks_filesystem();
 
 					// Remove the directory.
 					$wp_filesystem->rmdir( $path, true );
@@ -699,7 +699,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			}
 
 			// Create empty files.
-			spectra_install()->create_files();
+			spectra_blocks_install()->create_files();
 			Spectra_Admin_Helper::create_specific_stylesheet();
 			do_action( 'spectra_delete_uag_asset_dir' );
 			return true;
@@ -741,7 +741,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 
 			$upload_dir = self::get_upload_dir();
 
-			return spectra_filesystem()->is_writable( $upload_dir['path'] );
+			return spectra_blocks_filesystem()->is_writable( $upload_dir['path'] );
 		}
 		/**
 		 * Gives the paged Query var.
@@ -1010,7 +1010,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * Get Post Assets Instance.
 		 */
 		public function get_post_assets_instance() {
-			return spectra_get_front_post_assets();
+			return spectra_blocks_get_front_post_assets();
 		}
 
 		/** Generates stylesheet in loop.

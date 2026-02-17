@@ -1463,7 +1463,7 @@ class Common_Settings extends Ajax_Base {
 			}
 			$_block_css = $desktop . $tab_styling_css . $mob_styling_css;
 
-			$wp_filesystem = spectra_filesystem();
+			$wp_filesystem = spectra_blocks_filesystem();
 			$wp_filesystem->put_contents( $path_and_file_name, $_block_css, FS_CHMOD_FILE );
 		}
 	}

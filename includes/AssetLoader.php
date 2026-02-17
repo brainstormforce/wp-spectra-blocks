@@ -59,7 +59,7 @@ class AssetLoader {
 	 * @return void
 	 */
 	private function load_gt_utils() {
-		if ( ! function_exists( 'spectra_get_v3_blocks_css_for_preview' ) ) {
+		if ( ! function_exists( 'spectra_blocks_get_v3_blocks_css_for_preview' ) ) {
 			require_once SPECTRA_DIR . 'includes/utils.php';
 		}
 	}
@@ -205,11 +205,11 @@ class AssetLoader {
 	 */
 	public static function get_v3_css( $post_id = 0 ) {
 		// Ensure utils are loaded.
-		if ( ! function_exists( 'spectra_get_v3_blocks_css_for_preview' ) ) {
+		if ( ! function_exists( 'spectra_blocks_get_v3_blocks_css_for_preview' ) ) {
 			require_once SPECTRA_DIR . 'includes/utils.php';
 		}
 		
-		return spectra_get_v3_blocks_css_for_preview( $post_id );
+		return spectra_blocks_get_v3_blocks_css_for_preview( $post_id );
 	}
 
 	/**
@@ -227,7 +227,7 @@ class AssetLoader {
 			return false;
 		}
 		
-		if ( ! class_exists( 'Spectra_Helper' ) || ! function_exists( 'spectra_filesystem' ) ) {
+		if ( ! class_exists( 'Spectra_Helper' ) || ! function_exists( 'spectra_blocks_filesystem' ) ) {
 			return false;
 		}
 		
@@ -239,7 +239,7 @@ class AssetLoader {
 		$filename      = $post_id > 0 ? "spectra-v3-blocks-{$post_id}.css" : 'spectra-v3-blocks.css';
 		$v3_cache_path = $upload_dir . $filename;
 		
-		$wp_filesystem = spectra_filesystem();
+		$wp_filesystem = spectra_blocks_filesystem();
 		if ( ! $wp_filesystem ) {
 			return false;
 		}

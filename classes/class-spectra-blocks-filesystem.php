@@ -102,7 +102,7 @@ Spectra_Filesystem::get_instance();
  *
  * @since 0.0.1
  */
-function spectra_filesystem() {
+function spectra_blocks_filesystem() {
 	return Spectra_Filesystem::get_instance()->get_filesystem();
 }
 

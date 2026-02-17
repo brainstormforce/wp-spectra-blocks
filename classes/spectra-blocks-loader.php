@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 0.0.1
  */
-function spectra_load_v3_blocks_list() {
+function spectra_blocks_load_v3_blocks_list() {
 	if ( ! defined( 'SPECTRA_3_DIR' ) ) {
 		return;
 	}
@@ -72,4 +72,4 @@ function spectra_load_v3_blocks_list() {
 }
 
 // Load blocks immediately when file is included, before any hooks
-spectra_load_v3_blocks_list();
+spectra_blocks_load_v3_blocks_list();

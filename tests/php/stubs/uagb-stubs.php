@@ -9341,7 +9341,7 @@ namespace {
      *
      * @since 0.0.1
      */
-    function spectra_get_front_post_assets()
+    function spectra_blocks_get_front_post_assets()
     {
     }
     /**
@@ -9356,7 +9356,7 @@ namespace {
      *
      * @return object
      */
-    function spectra_install()
+    function spectra_blocks_install()
     {
     }
     /**
@@ -9374,7 +9374,7 @@ namespace {
      *
      * @since 0.0.1
      */
-    function spectra_filesystem()
+    function spectra_blocks_filesystem()
     {
     }
     /**
@@ -10612,7 +10612,7 @@ namespace {
      *
      * @return void
      */
-    function spectra_fail_php_version()
+    function spectra_blocks_fail_php_version()
     {
     }
     /**
@@ -10624,7 +10624,7 @@ namespace {
      *
      * @return void
      */
-    function spectra_fail_wp_version()
+    function spectra_blocks_fail_wp_version()
     {
     }
 }

@@ -1082,9 +1082,9 @@ class ResponsiveControls {
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
 		foreach ( $backtrace as $trace ) {
 			if ( isset( $trace['function'] ) && 
-				( 'spectra_get_v3_blocks_css_for_preview' === $trace['function'] ||
+				( 'spectra_blocks_get_v3_blocks_css_for_preview' === $trace['function'] ||
 				'spectra_get_comprehensive_responsive_css_for_post' === $trace['function'] ||
-				'spectra_process_blocks_for_comprehensive_css' === $trace['function'] ||
+				'spectra_blocks_process_blocks_for_comprehensive_css' === $trace['function'] ||
 				'spectra_get_static_css_for_pro_v2_blocks' === $trace['function'] ||
 				'spectra_process_blocks_for_responsive_css' === $trace['function'] ) ) {
 				$is_pattern_preview = true;
