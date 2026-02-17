@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @param int $post_id current step ID.
  * @since 0.0.1
  */
-if ( ! function_exists( 'spectra_get_post_assets' ) ) {
-	function spectra_get_post_assets( $post_id ) {
+if ( ! function_exists( 'spectra_blocks_get_post_assets' ) ) {
+	function spectra_blocks_get_post_assets( $post_id ) {
 
 		if ( ! isset( spectra()->post_assets_objs[ $post_id ] ) ) {
 
@@ -27,14 +27,21 @@ if ( ! function_exists( 'spectra_get_post_assets' ) ) {
 	}
 }
 
+// Backward compatibility alias
+if ( ! function_exists( 'spectra_get_post_assets' ) ) {
+	function spectra_get_post_assets( $post_id ) {
+		return spectra_blocks_get_post_assets( $post_id );
+	}
+}
+
 
 /**
  * Get Spectra Font Awesome Polyfiller.
  *
  * @since 0.0.1
  */
-if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
-	function get_spectra_font_awesome_polyfiller() {
+if ( ! function_exists( 'spectra_blocks_get_font_awesome_polyfiller' ) ) {
+	function spectra_blocks_get_font_awesome_polyfiller() {
 
 	$font_awesome_5_polyfiller = array(
 		'ad'                                  => 'rectangle-ad',
@@ -1378,5 +1385,12 @@ if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
 	);
 
 	return $font_awesome_5_polyfiller;
+	}
+}
+
+// Backward compatibility alias
+if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
+	function get_spectra_font_awesome_polyfiller() {
+		return spectra_blocks_get_font_awesome_polyfiller();
 	}
 }

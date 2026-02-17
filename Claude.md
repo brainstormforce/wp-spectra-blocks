@@ -17,24 +17,31 @@ Both plugins share common function names, causing fatal PHP errors when both are
 
 ### Solution Strategy
 
-**Priority**: Spectra Blocks code must ALWAYS load first and take precedence.
+**Unique Function Names + Backward Compatibility Aliases**
 
-**Implementation**:
-All shared functions in `classes/utils.php` and similar files must be wrapped with `function_exists()` checks:
+To avoid conflicts regardless of plugin load order, all new functions use unique `spectra_blocks_*` naming:
 
 ```php
+// Primary function with unique name
+if ( ! function_exists( 'spectra_blocks_get_font_awesome_polyfiller' ) ) {
+    function spectra_blocks_get_font_awesome_polyfiller() {
+        // Function implementation
+    }
+}
+
+// Backward compatibility alias (only if legacy plugin hasn't declared it)
 if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
     function get_spectra_font_awesome_polyfiller() {
-        // Function implementation
+        return spectra_blocks_get_font_awesome_polyfiller();
     }
 }
 ```
 
 This ensures:
-1. Spectra Blocks functions are declared first
-2. Legacy plugin's duplicate functions are silently skipped
-3. No fatal "Cannot redeclare function" errors
-4. Smooth migration path for users
+1. **No conflicts**: Spectra Blocks uses unique function names that won't collide
+2. **Works in any load order**: Both plugins can be active simultaneously
+3. **Backward compatibility**: Aliases maintain compatibility when legacy plugin isn't active
+4. **Smooth migration**: Users can have both plugins active during transition
 
 ### Files Requiring Protection
 
@@ -45,16 +52,26 @@ When adding or modifying global functions, always check:
 
 ### Development Guidelines
 
-1. **Always use `function_exists()` checks** for any global function that might exist in the legacy plugin
-2. **Load order matters**: Spectra Blocks should load before ultimate-addons-for-gutenberg
-3. **Test with both plugins active** to ensure no conflicts
-4. **Gradual migration**: Users may have both plugins during transition period
+1. **Use unique function names**: Prefix all new global functions with `spectra_blocks_*`
+2. **Add backward compatibility aliases**: For functions that might be called by external code
+3. **Always use `function_exists()` checks**: Wrap both primary functions and aliases
+4. **Test with both plugins active**: Ensure no conflicts regardless of load order
+5. **No load order dependency**: Code should work whether loaded first or second
+
+### Function Naming Convention
+
+- **New functions**: `spectra_blocks_*` (e.g., `spectra_blocks_get_post_assets()`)
+- **Legacy aliases**: Original names only if legacy plugin hasn't declared them
+- **Internal calls**: Always use the new `spectra_blocks_*` function names
 
 ### Testing Checklist
 
 Before committing function changes:
+- [ ] Uses unique `spectra_blocks_*` naming
 - [ ] Wrapped in `function_exists()` check
+- [ ] Has backward compatibility alias (if needed for external usage)
 - [ ] Tested with both plugins active
+- [ ] Tested with only spectra-blocks active
 - [ ] No fatal errors on plugin activation
 - [ ] Spectra Blocks functionality works correctly
 
