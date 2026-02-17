@@ -17,31 +17,23 @@ Both plugins share common function names, causing fatal PHP errors when both are
 
 ### Solution Strategy
 
-**Unique Function Names + Backward Compatibility Aliases**
+**Complete Separation with Unique Function Names**
 
-To avoid conflicts regardless of plugin load order, all new functions use unique `spectra_blocks_*` naming:
+To ensure both plugins can work independently and simultaneously, all `spectra-blocks` functions use unique `spectra_blocks_*` naming with NO function_exists() checks or backward compatibility aliases:
 
 ```php
-// Primary function with unique name
-if ( ! function_exists( 'spectra_blocks_get_font_awesome_polyfiller' ) ) {
-    function spectra_blocks_get_font_awesome_polyfiller() {
-        // Function implementation
-    }
-}
-
-// Backward compatibility alias (only if legacy plugin hasn't declared it)
-if ( ! function_exists( 'get_spectra_font_awesome_polyfiller' ) ) {
-    function get_spectra_font_awesome_polyfiller() {
-        return spectra_blocks_get_font_awesome_polyfiller();
-    }
+// Clean, unique function - no conditional checks needed
+function spectra_blocks_get_font_awesome_polyfiller() {
+    // Function implementation
 }
 ```
 
 This ensures:
-1. **No conflicts**: Spectra Blocks uses unique function names that won't collide
-2. **Works in any load order**: Both plugins can be active simultaneously
-3. **Backward compatibility**: Aliases maintain compatibility when legacy plugin isn't active
-4. **Smooth migration**: Users can have both plugins active during transition
+1. **Complete independence**: Each plugin uses its own uniquely-named functions
+2. **No conflicts**: Different function names mean zero collision risk
+3. **Works in any load order**: Both plugins can be active simultaneously
+4. **Clean separation**: No shared code or dependencies between plugins
+5. **Independent functionality**: Users can use features from both plugins at the same time
 
 ### Files Requiring Protection
 
@@ -52,28 +44,30 @@ When adding or modifying global functions, always check:
 
 ### Development Guidelines
 
-1. **Use unique function names**: Prefix all new global functions with `spectra_blocks_*`
-2. **Add backward compatibility aliases**: For functions that might be called by external code
-3. **Always use `function_exists()` checks**: Wrap both primary functions and aliases
-4. **Test with both plugins active**: Ensure no conflicts regardless of load order
-5. **No load order dependency**: Code should work whether loaded first or second
+1. **Use unique function names**: ALL global functions MUST use `spectra_blocks_*` prefix
+2. **NO function_exists() checks**: Functions should be declared directly without conditionals
+3. **NO backward compatibility aliases**: No duplicate function names that could conflict
+4. **Complete separation**: spectra-blocks and ultimate-addons-for-gutenberg are independent
+5. **Update all calls**: When renaming functions, update ALL references in the codebase
 
 ### Function Naming Convention
 
-- **New functions**: `spectra_blocks_*` (e.g., `spectra_blocks_get_post_assets()`)
-- **Legacy aliases**: Original names only if legacy plugin hasn't declared them
-- **Internal calls**: Always use the new `spectra_blocks_*` function names
+- **All functions**: `spectra_blocks_*` (e.g., `spectra_blocks_get_post_assets()`)
+- **Class names**: `Spectra_Blocks_*` (e.g., `Spectra_Blocks_Helper`)
+- **File names**: `class-spectra-blocks-*.php` or descriptive names
+- **NO shared names**: Never use function/class names that exist in ultimate-addons-for-gutenberg
 
 ### Testing Checklist
 
 Before committing function changes:
-- [ ] Uses unique `spectra_blocks_*` naming
-- [ ] Wrapped in `function_exists()` check
-- [ ] Has backward compatibility alias (if needed for external usage)
-- [ ] Tested with both plugins active
+- [ ] Uses unique `spectra_blocks_*` naming (no shared names with legacy plugin)
+- [ ] NO function_exists() checks (clean declaration)
+- [ ] NO backward compatibility aliases
+- [ ] All function calls updated throughout codebase
+- [ ] Tested with both plugins active simultaneously
 - [ ] Tested with only spectra-blocks active
 - [ ] No fatal errors on plugin activation
-- [ ] Spectra Blocks functionality works correctly
+- [ ] Both plugins work independently with full functionality
 
 ## Related Files
 
