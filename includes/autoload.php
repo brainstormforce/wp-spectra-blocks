@@ -1,22 +1,27 @@
 <?php
 /**
+ * Exit if accessed directly.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
  * Custom Autoloader for Spectra Namespace.
  *
- * @since 1.0.0
+ * @since 3.0.0
  *
- * @package Spectra
+ * @package SpectraBlocks
  */
-
-defined( 'ABSPATH' ) || exit;
 
 spl_autoload_register(
 	function ( $class ) {
 		// Define the base namespace.
-		$namespace = 'Spectra\\';
+		$namespace = 'SpectraBlocks\\';
 
-		// Ensure the class belongs to the Spectra namespace.
+		// Ensure the class belongs to the SpectraBlocks namespace.
 		if ( strpos( $class, $namespace ) !== 0 ) {
-			return; // Not part of Spectra, ignore.
+			return; // Not part of SpectraBlocks, ignore.
 		}
 
 		// Define the base directory for class files.
