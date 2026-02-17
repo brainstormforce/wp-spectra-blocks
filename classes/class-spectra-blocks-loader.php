@@ -174,7 +174,6 @@ if ( ! class_exists( 'Spectra_Blocks_Loader' ) ) {
 		 * @return void
 		 */
 		public function loader() {
-			require_once SPECTRA_BLOCKS_DIR . 'spectra-init.php';
 
 			require_once SPECTRA_BLOCKS_DIR . 'classes/utils.php';
 			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-block-prioritization.php';
