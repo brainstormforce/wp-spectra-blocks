@@ -152,7 +152,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-			require SPECTRA_DIR . 'classes/class-spectra-block-helper.php';
+			require SPECTRA_DIR . 'classes/class-spectra-blocks-helper.php';
 
 			/**
 			 * Add action hook to initialize block list during WordPress initialization.
@@ -195,7 +195,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * @return void
 		 */
 		public function initialize_block_list() {
-			// V2 blocks removed - v3 blocks are loaded via v3-blocks-loader.php
+			// V2 blocks removed - v3 blocks are loaded via spectra-blocks-loader.php
 		}
 
 		/**

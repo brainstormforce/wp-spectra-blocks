@@ -177,11 +177,11 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			require_once SPECTRA_DIR . 'spectra-init.php';
 
 			require_once SPECTRA_DIR . 'classes/utils.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block-prioritization.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-prioritization.php';
 			require_once SPECTRA_DIR . 'classes/class-spectra-install.php';
 			require_once SPECTRA_DIR . 'classes/class-spectra-filesystem.php';
 			require_once SPECTRA_DIR . 'classes/class-spectra-update.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks.php';
 			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-block-analytics.php';
 		}
 
@@ -197,11 +197,11 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			// SECURITY: Load security helper class first.
 		require_once SPECTRA_DIR . 'classes/class-spectra-security-helper.php';
 		require_once SPECTRA_DIR . 'classes/class-spectra-scripts-utils.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block-module.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-module.php';
 			require_once SPECTRA_DIR . 'classes/class-spectra-admin-helper.php';
 			require_once SPECTRA_DIR . 'classes/class-spectra-helper.php';
 			require_once SPECTRA_DIR . 'blocks-config/blocks-config.php';
-			require_once SPECTRA_DIR . 'classes/v3-blocks-loader.php';
+			require_once SPECTRA_DIR . 'classes/spectra-blocks-loader.php';
 			require_once SPECTRA_DIR . 'lib/astra-notices/class-astra-notices.php';
 			require_once SPECTRA_DIR . 'lib/class-spectra-zipwp-images.php';
 			require_once SPECTRA_DIR . 'lib/class-spectra-nps-survey.php';

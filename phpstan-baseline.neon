@@ -2245,37 +2245,37 @@ parameters:
 		-
 			message: "#^Binary operation \"\\+\" between int\\|string\\|false and 1 results in an error\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Method Spectra_Block_Prioritization\\:\\:get_block_priority\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Method Spectra_Block_Prioritization\\:\\:get_instance\\(\\) has no return type specified\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Property Spectra_Block_Prioritization\\:\\:\\$blocks type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Property Spectra_Block_Prioritization\\:\\:\\$instance has unknown class instance as its type\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Static property Spectra_Block_Prioritization\\:\\:\\$instance \\(instance\\) does not accept Spectra_Block_Prioritization\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Static property Spectra_Block_Prioritization\\:\\:\\$instance \\(instance\\) in isset\\(\\) is not nullable\\.$#"
 			count: 1
-			path: classes/class-spectra-block-prioritization.php
+			path: classes/class-spectra-blocks-prioritization.php
 
 		-
 			message: "#^Call to function is_array\\(\\) with instance will always evaluate to false\\.$#"
