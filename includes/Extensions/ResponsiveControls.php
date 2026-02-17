@@ -1,23 +1,28 @@
 <?php
 /**
  * ResponsiveControls Extension.
- * 
+ *
  * Provides responsive control functionality for Spectra blocks, allowing
  * different styling for mobile, tablet, and desktop devices. This extension
  * handles the generation of responsive CSS and ensures proper fallback
  * between device sizes following WordPress core patterns.
- * 
- * @package Spectra\Extensions
+ *
+ * @package SpectraBlocks\Extensions
  * @since 3.0.0
  */
 
-defined( 'ABSPATH' ) || exit;
+namespace SpectraBlocks\Extensions;
 
-namespace Spectra\Extensions;
+/**
+ * Exit if accessed directly.
+ */
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-use Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
-use Spectra\Helpers\Core;
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
@@ -396,7 +401,7 @@ class ResponsiveControls {
 	 */
 	public function init() {
 		// Hook into the CSS cache filter to respect the disable cache option.
-		add_filter( 'spectra_enable_css_cache', array( $this, 'maybe_disable_css_cache' ) );
+		add_filter( 'spectra_blocks_enable_css_cache', array( $this, 'maybe_disable_css_cache' ) );
 
 		// Register responsive stylesheet early to ensure it's available for all blocks.
 		add_action( 'init', array( $this, 'register_responsive_style' ) );
@@ -435,6 +440,12 @@ class ResponsiveControls {
 	 * @return bool False if cache is disabled in settings, original value otherwise.
 	 */
 	public function maybe_disable_css_cache( $enable_cache ) {
+		$disable_cache = \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'uag_disable_css_cache', 'disabled' );
+
+		if ( 'enabled' === $disable_cache ) {
+			return false;
+		}
+
 		return $enable_cache;
 	}
 
@@ -473,7 +484,7 @@ class ResponsiveControls {
 			$this->style_handle,       // Stylesheet handle.
 			false,                     // No source file (inline styles only).
 			array(),                   // No dependencies.
-			SPECTRA_VER                // Version for cache busting.
+			SPECTRA_BLOCKS_VER                   // Version for cache busting.
 		);
 	}
 
@@ -500,9 +511,9 @@ class ResponsiveControls {
 
 		wp_enqueue_script(
 			'spectra-responsive-videos',
-			SPECTRA_URL . 'assets/js/responsive-videos.js',
+			SPECTRA_BLOCKS_URL . 'assets/js/responsive-videos.js',
 			array(),
-			filemtime( SPECTRA_DIR . 'assets/js/responsive-videos.js' ),
+			filemtime( SPECTRA_BLOCKS_DIR . 'assets/js/responsive-videos.js' ),
 			true
 		);
 	}
@@ -697,12 +708,12 @@ class ResponsiveControls {
 		// Ensure the block has a unique ID for CSS targeting.
 		$this->ensure_block_has_id( $attrs );
 
-		$spectra_id          = $attrs['spectraId'] ?? '';
+		$spectra_blocks_id          = $attrs['spectraId'] ?? '';
 		$responsive_controls = $attrs['responsiveControls'] ?? array();
 		$block_name          = $block['blockName'] ?? '';
 
 		// Skip processing if no ID or responsive controls exist.
-		if ( empty( $spectra_id ) || empty( $responsive_controls ) ) {
+		if ( empty( $spectra_blocks_id ) || empty( $responsive_controls ) ) {
 			return $block_content;
 		}
 
@@ -713,7 +724,7 @@ class ResponsiveControls {
 		if ( $processor->next_tag() ) {
 			$processor->set_attribute(
 				'data-spectra-id',
-				esc_attr( $spectra_id )
+				esc_attr( $spectra_blocks_id )
 			);
 
 			// Get the updated HTML with our attribute added.
@@ -726,13 +737,13 @@ class ResponsiveControls {
 		}
 
 		// Only generate and add inline CSS once per unique spectraId.
-		if ( ! isset( $this->inline_css_added[ $spectra_id ] ) ) {
-			$responsive_css = $this->get_cached_responsive_css( $spectra_id, $responsive_controls, $block_name, $attrs );
+		if ( ! isset( $this->inline_css_added[ $spectra_blocks_id ] ) ) {
+			$responsive_css = $this->get_cached_responsive_css( $spectra_blocks_id, $responsive_controls, $block_name, $attrs );
 
 			// Generate orientation reverse CSS for container blocks.
 			$orientation_reverse_css = '';
 			if ( 'spectra/container' === $block_name ) {
-				$orientation_reverse_css = $this->generate_orientation_reverse_css( $spectra_id, $attrs );
+				$orientation_reverse_css = $this->generate_orientation_reverse_css( $spectra_blocks_id, $attrs );
 			}
 
 			// Combine all CSS.
@@ -747,7 +758,7 @@ class ResponsiveControls {
 				wp_add_inline_style( $this->style_handle, $combined_css );
 
 				// Mark as added to avoid duplicates.
-				$this->inline_css_added[ $spectra_id ] = true;
+				$this->inline_css_added[ $spectra_blocks_id ] = true;
 			}
 		}
 
@@ -794,17 +805,12 @@ class ResponsiveControls {
 		if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || empty( $post->post_content ) ) {
 			return;
 		}
-
-		// Verify the user has permission to edit this post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
+		
 		// Skip during WordPress customizer saves to prevent JSON encoding conflicts.
 		// The customizer has its own save process and calling wp_update_post during
 		// it can cause wp_send_json_error with empty messages.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification already handled by WordPress before save_post hook.
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === $_POST['action'] ) {
 			return;
 		}
 
@@ -938,8 +944,8 @@ class ResponsiveControls {
 			$attrs['spectraId'] = 'spectra-' . wp_generate_uuid4();
 
 			// Disable caching for dynamically generated IDs to ensure fresh CSS.
-			if ( ! has_filter( 'spectra_enable_css_cache', '__return_false' ) ) {
-				add_filter( 'spectra_enable_css_cache', '__return_false' );
+			if ( ! has_filter( 'spectra_blocks_enable_css_cache', '__return_false' ) ) {
+				add_filter( 'spectra_blocks_enable_css_cache', '__return_false' );
 			}
 		}
 	}
@@ -947,19 +953,19 @@ class ResponsiveControls {
 	/**
 	 * Retrieve or generate cached responsive CSS for a block instance.
 	 *
-	 * Uses a stable cache key (`spectra_responsive_css_{$spectra_id}`) and stores
+	 * Uses a stable cache key (`spectra_blocks_responsive_css_{$spectra_blocks_id}`) and stores
 	 * a hash fingerprint of `responsive_controls` alongside the CSS. If the hash
 	 * matches, the cached CSS is returned. Otherwise, new CSS is generated and cached.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param string $spectra_id Unique ID of the block instance.
+	 * @param string $spectra_blocks_id Unique ID of the block instance.
 	 * @param array  $responsive_controls Responsive controls data.
 	 * @param string $block_name The name of the block.
 	 * @param array  $attrs Block attributes.
 	 * @return string Cached or newly generated CSS.
 	 */
-	private function get_cached_responsive_css( $spectra_id, $responsive_controls, $block_name, $attrs ) {
+	private function get_cached_responsive_css( $spectra_blocks_id, $responsive_controls, $block_name, $attrs ) {
 		/**
 		 * Filter whether to enable caching for responsive CSS.
 		 * 
@@ -968,10 +974,10 @@ class ResponsiveControls {
 		 * @param bool $enable_cache Whether to enable caching. Default is true.
 		 * @return bool True to enable caching, false to disable.
 		 */
-		$enable_cache = apply_filters( 'spectra_enable_css_cache', true );
+		$enable_cache = apply_filters( 'spectra_blocks_enable_css_cache', true );
 
 		// Generate cache key.
-		$cache_key = 'spectra_responsive_css_' . $spectra_id . '_' . SPECTRA_VER;
+		$cache_key = 'spectra_blocks_responsive_css_' . $spectra_blocks_id . '_' . SPECTRA_BLOCKS_VER;
 
 		// Generate hash fingerprint including block name for proper cache invalidation.
 		$cache_data    = array(
@@ -989,7 +995,7 @@ class ResponsiveControls {
 		}
 
 		// Cache miss or outdated hash: regenerate CSS and store it.
-		$css = $this->generate_responsive_css( $spectra_id, $responsive_controls, $block_name, $attrs );
+		$css = $this->generate_responsive_css( $spectra_blocks_id, $responsive_controls, $block_name, $attrs );
 
 		// Store the hash and CSS in the cache if caching is enabled and CSS is not empty.
 		if ( $enable_cache && ! empty( $css ) ) {
@@ -1015,13 +1021,13 @@ class ResponsiveControls {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param string $spectra_id         The unique block instance ID for CSS targeting.
+	 * @param string $spectra_blocks_id         The unique block instance ID for CSS targeting.
 	 * @param array  $responsive_controls The responsive controls data from block attributes.
 	 * @param string $block_name         The name of the block.
 	 * @param array  $attrs              Block attributes.
 	 * @return string The complete generated CSS for all breakpoints.
 	 */
-	public function generate_responsive_css( $spectra_id, $responsive_controls, $block_name, $attrs ) {
+	public function generate_responsive_css( $spectra_blocks_id, $responsive_controls, $block_name, $attrs ) {
 		$styles = array();
 
 		// Create CSS selector using the block's unique ID for targeting.
@@ -1037,7 +1043,7 @@ class ResponsiveControls {
 		}
 
 		// This creates specificity of 0-2-1 (2 classes + 1 attribute).
-		$selector = "{$block_class}{$block_class}[data-spectra-id='{$spectra_id}']";
+		$selector = "{$block_class}{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
 
 		/**
 		 * Filter to modify the responsive CSS selector for a block.
@@ -1051,10 +1057,10 @@ class ResponsiveControls {
 		 * 
 		 * Example usage:
 		 * ```php
-		 * add_filter( 'spectra_responsive_css_selector', function( $selector, $block_name, $spectra_id ) {
+		 * add_filter( 'spectra_blocks_responsive_css_selector', function( $selector, $block_name, $spectra_blocks_id ) {
 		 *     // Use lower specificity for theme compatibility
 		 *     if ( 'spectra/container' === $block_name ) {
-		 *         return ".wp-block-spectra-container[data-spectra-id='{$spectra_id}']";
+		 *         return ".wp-block-spectra-container[data-spectra-id='{$spectra_blocks_id}']";
 		 *     }
 		 *     
 		 *     // Target blocks within specific contexts
@@ -1070,10 +1076,10 @@ class ResponsiveControls {
 		 *
 		 * @param string $selector   The CSS selector for the block.
 		 * @param string $block_name The name of the block (e.g., 'spectra/container').
-		 * @param string $spectra_id The unique ID of the block instance.
+		 * @param string $spectra_blocks_id The unique ID of the block instance.
 		 * @return string Modified CSS selector.
 		 */
-		$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
+		$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_blocks_id );
 
 		// Detect if we're in pattern preview context by checking if we're being called from the pattern preview function.
 		$is_pattern_preview = false;
@@ -1083,11 +1089,11 @@ class ResponsiveControls {
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
 		foreach ( $backtrace as $trace ) {
 			if ( isset( $trace['function'] ) && 
-				( 'spectra_get_v3_blocks_css_for_preview' === $trace['function'] ||
-				'spectra_get_comprehensive_responsive_css_for_post' === $trace['function'] ||
-				'spectra_process_blocks_for_comprehensive_css' === $trace['function'] ||
-				'spectra_get_static_css_for_pro_v2_blocks' === $trace['function'] ||
-				'spectra_process_blocks_for_responsive_css' === $trace['function'] ) ) {
+				( 'spectra_blocks_get_blocks_css_for_preview' === $trace['function'] ||
+				'spectra_blocks_get_comprehensive_responsive_css_for_post' === $trace['function'] ||
+				'spectra_blocks_process_blocks_for_comprehensive_css' === $trace['function'] ||
+				'spectra_blocks_get_static_css_for_pro_v2_blocks' === $trace['function'] ||
+				'spectra_blocks_process_blocks_for_responsive_css' === $trace['function'] ) ) {
 				$is_pattern_preview = true;
 				break;
 			}
@@ -1099,12 +1105,12 @@ class ResponsiveControls {
 		// For pattern preview, use more robust selectors that don't rely on complex nesting.
 		if ( $is_pattern_preview ) {
 			// Simplified selectors for pattern preview context.
-			$layout_specificity_selector     = "{$block_class}[data-spectra-id='{$spectra_id}']";
-			$background_specificity_selector = "{$block_class}[data-spectra-id='{$spectra_id}']";
-			$child_reset_selector            = "{$block_class}[data-spectra-id='{$spectra_id}']";
+			$layout_specificity_selector     = "{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
+			$background_specificity_selector = "{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
+			$child_reset_selector            = "{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
 			
 			// Override main selector for pattern preview to be less specific.
-			$selector = "{$block_class}[data-spectra-id='{$spectra_id}']";
+			$selector = "{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
 
 			/**
 			 * Filter to modify the responsive CSS selector for a block.
@@ -1114,57 +1120,57 @@ class ResponsiveControls {
 			 *
 			 * @param string $selector   The CSS selector for the block.
 			 * @param string $block_name The name of the block (e.g., 'spectra/container').
-			 * @param string $spectra_id The unique ID of the block instance.
+			 * @param string $spectra_blocks_id The unique ID of the block instance.
 			 * @return string Modified CSS selector.
 			 */
-			$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
+			$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_blocks_id );
 
 			// Special handling for slider-child in pattern preview.
 			if ( 'spectra/slider-child' === $block_name ) {
-				$layout_specificity_selector = "{$block_class}[data-spectra-id='{$spectra_id}'] .slide-content";
-				$child_reset_selector        = "{$block_class}[data-spectra-id='{$spectra_id}'] .slide-content";
+				$layout_specificity_selector = "{$block_class}[data-spectra-id='{$spectra_blocks_id}'] .slide-content";
+				$child_reset_selector        = "{$block_class}[data-spectra-id='{$spectra_blocks_id}'] .slide-content";
 			}
 
 			// Special handling for counter in pattern preview.
 			if ( 'spectra/counter' === $block_name ) {
-				$counter_main_preview        = "{$block_class}[data-spectra-id='{$spectra_id}']";
-				$counter_content_preview     = "{$block_class}[data-spectra-id='{$spectra_id}'] .spectra-counter-content-wrapper";
+				$counter_main_preview        = "{$block_class}[data-spectra-id='{$spectra_blocks_id}']";
+				$counter_content_preview     = "{$block_class}[data-spectra-id='{$spectra_blocks_id}'] .spectra-counter-content-wrapper";
 				$layout_specificity_selector = $counter_main_preview . ', ' . $counter_content_preview;
 				$child_reset_selector        = $counter_main_preview . ', ' . $counter_content_preview;
 			}
 		} else {
 			// Use lower specificity 0-1-1 selector for layout CSS to allow Global Styles to override.
-			$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}'])";
+			$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_blocks_id}'])";
 
 			// Special handling for slider-child: target the inner .slide-content div for layout CSS.
 			if ( 'spectra/slider-child' === $block_name ) {
-				$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}']) .slide-content";
+				$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_blocks_id}']) .slide-content";
 			}
 
 			// Special handling for counter: target both main block and content wrapper for layout CSS.
 			if ( 'spectra/counter' === $block_name ) {
 				// Target both the main block container and the content wrapper.
-				$counter_main_selector       = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}'])";
-				$counter_content_selector    = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}']) .spectra-counter-content-wrapper";
+				$counter_main_selector       = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_blocks_id}'])";
+				$counter_content_selector    = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_blocks_id}']) .spectra-counter-content-wrapper";
 				$layout_specificity_selector = $counter_main_selector . ', ' . $counter_content_selector;
 			}
 
 			// Use lower specificity 0-1-0 selector for background CSS to allow Global Styles to override.
-			$background_specificity_selector = "{$block_class}:where([data-spectra-id='{$spectra_id}'])";
+			$background_specificity_selector = "{$block_class}:where([data-spectra-id='{$spectra_blocks_id}'])";
 
 			// Use 0-1-1 specificity to override Astra theme's 0-1-1 via CSS cascade order.
 			// Using universal selector + :where() + attribute to work with any HTML tag (div, section, etc.).
-			$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}']";
+			$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_blocks_id}']";
 			
 			// For slider-child, also update child reset selector to target content inside .slide-content.
 			if ( 'spectra/slider-child' === $block_name ) {
-				$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}'] .slide-content";
+				$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_blocks_id}'] .slide-content";
 			}
 
 			// For counter, also update child reset selector to target both main block and content wrapper.
 			if ( 'spectra/counter' === $block_name ) {
-				$counter_main_reset    = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}']";
-				$counter_content_reset = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}'] .spectra-counter-content-wrapper";
+				$counter_main_reset    = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_blocks_id}']";
+				$counter_content_reset = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_blocks_id}'] .spectra-counter-content-wrapper";
 				$child_reset_selector  = $counter_main_reset . ', ' . $counter_content_reset;
 			}
 		}
@@ -1220,7 +1226,7 @@ class ResponsiveControls {
 			}
 
 			// Extract justify-content for flex blocks.
-			$justify_content = $device_styles['spectra_flex']['justifyContent'] ?? '';
+			$justify_content = $device_styles['spectra_blocks_flex']['justifyContent'] ?? '';
 
 			// Use WordPress Style Engine to generate standard CSS.
 			// For core/image blocks, separate border styles from other styles.
@@ -1285,7 +1291,7 @@ class ResponsiveControls {
 				// Apply overflow clip when has background AND border-radius (matching style.scss).
 				// This ensures video/image backgrounds are properly clipped by border-radius.
 				if ( $has_border_radius && $has_background ) {
-					$overflow_css = "{$selector}{overflow:hidden;overflow:clip !important;}";
+					$overflow_css = "{$selector}{overflow:hidden;overflow:clip;}";
 				}
 			}
 
@@ -1324,7 +1330,7 @@ class ResponsiveControls {
 		 * 
 		 * Example usage:
 		 * ```php
-		 * add_filter( 'spectra_responsive_css', function( $css, $spectra_id, $block_name ) {
+		 * add_filter( 'spectra_blocks_responsive_css', function( $css, $spectra_blocks_id, $block_name ) {
 		 *     // Fix z-index issues for modal blocks
 		 *     if ( 'spectra/modal' === $block_name ) {
 		 *         $css = str_replace( 'z-index: 999', 'z-index: 9999', $css );
@@ -1332,13 +1338,13 @@ class ResponsiveControls {
 		 * 
 		 *     // Add dark mode compatibility
 		 *     if ( 'spectra/container' === $block_name ) {
-		 *         $selector = "[data-spectra-id='{$spectra_id}']";
+		 *         $selector = "[data-spectra-id='{$spectra_blocks_id}']";
 		 *         $css .= " @media (prefers-color-scheme: dark) { {$selector} { filter: invert(1); } }";
 		 *     }
 		 * 
 		 *     // Override styles for specific post types
 		 *     if ( is_singular( 'product' ) && 'spectra/button' === $block_name ) {
-		 *         $css .= " body.single-product [data-spectra-id='{$spectra_id}'] { border-radius: 0 !important; }";
+		 *         $css .= " body.single-product [data-spectra-id='{$spectra_blocks_id}'] { border-radius: 0 !important; }";
 		 *     }
 		 * 
 		 *     return $css;
@@ -1348,11 +1354,11 @@ class ResponsiveControls {
 		 * @since 3.0.0
 		 * 
 		 * @param string $css        The complete generated CSS for the block instance, including media queries.
-		 * @param string $spectra_id The unique ID of the block instance (e.g., 'spectra-123abc').
+		 * @param string $spectra_blocks_id The unique ID of the block instance (e.g., 'spectra-123abc').
 		 * @param string $block_name The name of the block (e.g., 'spectra/container').
 		 * @return string Modified CSS string that will be injected into the page.
 		 */
-		$css = apply_filters( 'spectra_responsive_css', $css, $spectra_id, $block_name );
+		$css = apply_filters( 'spectra_blocks_responsive_css', $css, $spectra_blocks_id, $block_name );
 		
 		return $css;
 	}
@@ -1951,7 +1957,7 @@ class ResponsiveControls {
 		 * @return array Filtered list of flex text alignment blocks.
 		 */
 		$flex_blocks = apply_filters(
-			'spectra_flex_text_align_blocks',
+			'spectra_blocks_flex_text_align_blocks',
 			array(
 				// Core Spectra blocks with button-like flex behavior.
 				'spectra/button',                      // Button block.
@@ -2053,7 +2059,7 @@ class ResponsiveControls {
 						}
 						
 						// Store in a custom section for manual CSS generation.
-						$compiled_styles['spectra_flex']['justifyContent'] = $justify_content_value;
+						$compiled_styles['spectra_blocks_flex']['justifyContent'] = $justify_content_value;
 					} else {
 						$compiled_styles['typography'][ $property ] =
 							$responsive_controls[ $device ]['style']['typography'][ $property ];
@@ -2064,8 +2070,8 @@ class ResponsiveControls {
 		}
 
 		// Set default center alignment for flex blocks if no alignment was set.
-		if ( $this->is_flex_text_align_block( $block_name ) && ! isset( $compiled_styles['spectra_flex']['justifyContent'] ) ) {
-			$compiled_styles['spectra_flex']['justifyContent'] = 'center';
+		if ( $this->is_flex_text_align_block( $block_name ) && ! isset( $compiled_styles['spectra_blocks_flex']['justifyContent'] ) ) {
+			$compiled_styles['spectra_blocks_flex']['justifyContent'] = 'center';
 		}
 	}
 
@@ -2391,7 +2397,8 @@ class ResponsiveControls {
 				$margin_right    = 'right' === $justify_content ? '0' : 'auto';
 				
 				// Constrained-specific styles for content width.
-				$css .= "{$selector} > :where(:not(.alignleft):not(.alignright):not(.alignfull)) { max-width: {$content_size}; margin-left: {$margin_left} !important; margin-right: {$margin_right} !important; }";
+				// Exclude shape dividers and video backgrounds from constrained layout margins.
+				$css .= "{$selector} > :where(:not(.alignleft):not(.alignright):not(.alignfull):not(.spectra-container__shape):not(.spectra-background-video__wrapper)) { max-width: {$content_size}; margin-left: {$margin_left} !important; margin-right: {$margin_right} !important; }";
 				$css .= "{$selector} > .alignwide { max-width: {$wide_size}; }";
 				
 				$css .= $spacing_styles;
@@ -2728,11 +2735,11 @@ class ResponsiveControls {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @param string $spectra_id The unique block instance ID for CSS targeting.
+	 * @param string $spectra_blocks_id The unique block instance ID for CSS targeting.
 	 * @param array  $attrs      The block attributes including responsiveControls.
 	 * @return string Generated CSS or empty string if no orientation reverse is needed.
 	 */
-	private function generate_orientation_reverse_css( $spectra_id, $attrs ) {
+	private function generate_orientation_reverse_css( $spectra_blocks_id, $attrs ) {
 		$responsive_controls = $attrs['responsiveControls'] ?? array();
 		$layout              = $attrs['layout'] ?? array();
 		$orientation_reverse = $attrs['orientationReverse'] ?? false;
@@ -2753,7 +2760,7 @@ class ResponsiveControls {
 		}
 		
 		$css_rules = array();
-		$selector  = ".wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='{$spectra_id}']";
+		$selector  = ".wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='{$spectra_blocks_id}']";
 		
 		// Collect orientation data for each device from responsive controls.
 		$orientation_devices = array();

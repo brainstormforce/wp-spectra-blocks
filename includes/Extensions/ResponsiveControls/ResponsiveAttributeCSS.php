@@ -1,17 +1,13 @@
 <?php
 /**
- * Responsive Attribute CSS Generator.
- *
- * Handles the generation of CSS for block-specific responsive attributes.
- * Uses WordPress Style Engine for consistent, optimized CSS output.
- *
- * @package Spectra\Extensions\ResponsiveControls
- * @since 3.0.0
+ * Exit if accessed directly.
  */
+namespace SpectraBlocks\Extensions\ResponsiveControls;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-namespace Spectra\Extensions\ResponsiveControls;
 
 /**
  * Handles CSS generation for block-specific responsive attributes.
@@ -97,6 +93,10 @@ class ResponsiveAttributeCSS {
 			'overlayOpacity'          => array(
 				'formatter' => 'format_overlay_opacity',
 			),
+			'topWidth'                => array(),
+			'topHeight'               => array(),
+			'bottomWidth'             => array(),
+			'bottomHeight'            => array(),
 		),
 		'spectra/content'                      => array(
 			// Text shadow attributes - handled specially in generate_css method.
@@ -111,6 +111,16 @@ class ResponsiveAttributeCSS {
 				'property' => 'height',
 				'default'  => '400px',
 				'selector' => '.wp-block-spectra-google-map',
+			),
+		),
+		'spectra/svg-animator'                 => array(
+			'svgWidth'  => array(
+				'property' => '--spectra-svg-animator-width',
+				'default'  => '200px',
+			),
+			'svgHeight' => array(
+				'property' => '--spectra-svg-animator-height',
+				'default'  => 'auto',
 			),
 		),
 		'spectra/button'                       => array(
@@ -276,11 +286,10 @@ class ResponsiveAttributeCSS {
 			),
 		),
 		'spectra/modal-popup-content'          => array(
-			'contentHeight'      => array(),
-			'containerWidth'     => array(),
-			'containerHeight'    => array(),
-			'maxContainerHeight' => array(),
-			'background'         => array(
+			'contentHeight'   => array(),
+			'containerWidth'  => array(),
+			'containerHeight' => array(),
+			'background'      => array(
 				'formatter' => 'format_background',
 			),
 		),
@@ -328,7 +337,7 @@ class ResponsiveAttributeCSS {
 	 */
 	public static function get_responsive_attributes( string $block_name ): array {
 		// Get attribute definitions with filter applied.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 		
 		return array_keys( $attr_definitions[ $block_name ] ?? array() );
 	}
@@ -352,7 +361,7 @@ class ResponsiveAttributeCSS {
 		array $block_attrs = array()
 	): string {
 		// Get attribute definitions with filter applied.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 
 		// Return empty string if no definitions exist for this block.
 		if ( ! isset( $attr_definitions[ $block_name ] ) ) {
@@ -494,6 +503,47 @@ class ResponsiveAttributeCSS {
 				$css_rules[] = array(
 					'selector'   => $selector . ' .spectra-separator-line',
 					'style_attr' => $mask_css,
+				);
+			}
+		}
+
+		// Special handling for spectra/container shape divider responsive attributes.
+		if ( 'spectra/container' === $block_name ) {
+			// Get topType and bottomType from original block_attrs (they don't change per device).
+			$top_type    = $block_attrs['topType'] ?? 'none';
+			$bottom_type = $block_attrs['bottomType'] ?? 'none';
+
+			// Handle top shape divider dimensions.
+			// Use direct child selector (>) to prevent targeting nested container shape dividers.
+			if ( 'none' !== $top_type ) {
+				$top_width  = ! empty( $attrs['topWidth'] ) ? $attrs['topWidth'] : '100%';
+				$top_height = ! empty( $attrs['topHeight'] ) ? $attrs['topHeight'] : '100px';
+
+				$top_declarations = array(
+					'--spectra-shape-divider-top-width'  => $top_width,
+					'--spectra-shape-divider-top-height' => $top_height,
+				);
+
+				$css_rules[] = array(
+					'selector'     => $selector . ' > .spectra-container__shape-top svg',
+					'declarations' => $top_declarations,
+				);
+			}
+
+			// Handle bottom shape divider dimensions.
+			// Use direct child selector (>) to prevent targeting nested container shape dividers.
+			if ( 'none' !== $bottom_type ) {
+				$bottom_width  = ! empty( $attrs['bottomWidth'] ) ? $attrs['bottomWidth'] : '100%';
+				$bottom_height = ! empty( $attrs['bottomHeight'] ) ? $attrs['bottomHeight'] : '100px';
+
+				$bottom_declarations = array(
+					'--spectra-shape-divider-bottom-width' => $bottom_width,
+					'--spectra-shape-divider-bottom-height' => $bottom_height,
+				);
+
+				$css_rules[] = array(
+					'selector'     => $selector . ' > .spectra-container__shape-bottom svg',
+					'declarations' => $bottom_declarations,
 				);
 			}
 		}
@@ -2046,3 +2096,4 @@ class ResponsiveAttributeCSS {
 		return isset( $scale_map[ $val ] ) ? $scale_map[ $val ] : 'fill';
 	}
 }
+

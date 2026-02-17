@@ -1,13 +1,13 @@
 <?php
 /**
- * Utility for re-using WP Kses-based sanitization rules.
- * 
- * @package Spectra\Helpers
+ * Exit if accessed directly.
  */
+namespace SpectraBlocks\Helpers;
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
-namespace Spectra\Helpers;
 
 /**
  * Utility for re-using WP Kses-based sanitization rules.
@@ -87,35 +87,38 @@ class HtmlSanitizer {
 				'class' => true,
 			),
 			'svg'           => array(
-				'aria-controls'     => true,
-				'aria-current'      => true,
-				'aria-describedby'  => true,
-				'aria-details'      => true,
-				'aria-expanded'     => true,
-				'aria-hidden'       => true,
-				'aria-label'        => true,
-				'aria-labelledby'   => true,
-				'aria-live'         => true,
-				'class'             => true,
-				'role'              => true,
-				'xmlns'             => true,
-				'width'             => true,
-				'height'            => true,
-				'viewBox'           => true,
-				'viewbox'           => true,
-				'fill'              => true,
-				'focusable'         => true,
-				'stroke'            => true,
-				'stroke-width'      => true,
-				'fill-rule'         => true,
-				'stroke-linecap'    => true,
-				'stroke-linejoin'   => true,
-				'stroke-miterlimit' => true,
-				'style'             => true, // Inline styles.
+				'aria-controls'       => true,
+				'aria-current'        => true,
+				'aria-describedby'    => true,
+				'aria-details'        => true,
+				'aria-expanded'       => true,
+				'aria-hidden'         => true,
+				'aria-label'          => true,
+				'aria-labelledby'     => true,
+				'aria-live'           => true,
+				'class'               => true,
+				'role'                => true,
+				'xmlns'               => true,
+				'width'               => true,
+				'height'              => true,
+				'viewBox'             => true,
+				'viewbox'             => true,
+				'preserveAspectRatio' => true,
+				'preserveaspectratio' => true,
+				'fill'                => true,
+				'focusable'           => true,
+				'stroke'              => true,
+				'stroke-width'        => true,
+				'fill-rule'           => true,
+				'stroke-linecap'      => true,
+				'stroke-linejoin'     => true,
+				'stroke-miterlimit'   => true,
+				'style'               => true, // Inline styles.
 			),
 			'path'          => array(
 				'd'               => true,
 				'fill'            => true,
+				'opacity'         => true,
 				'stroke'          => true,
 				'stroke-width'    => true,
 				'stroke-linecap'  => true,
@@ -948,9 +951,9 @@ class HtmlSanitizer {
 		remove_all_filters( 'safe_style_css' );
 		remove_all_filters( 'safecss_filter_attr_allow_css' );
 		
-		// Restore style tag if it was extracted, with sanitization to prevent CSS injection.
+		// Restore style tag if it was extracted.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
-			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . wp_strip_all_tags( $style_content ) . '</style>', $sanitized );
+			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 		
 		if ( $should_echo ) {
@@ -1058,31 +1061,33 @@ class HtmlSanitizer {
 		// Define allowed SVG tags and attributes.
 		$allowed_svg_tags = array(
 			'svg'      => array(
-				'aria-controls'     => true,
-				'aria-current'      => true,
-				'aria-describedby'  => true,
-				'aria-details'      => true,
-				'aria-expanded'     => true,
-				'aria-hidden'       => true,
-				'aria-label'        => true,
-				'aria-labelledby'   => true,
-				'aria-live'         => true,
-				'class'             => true,
-				'role'              => true,
-				'xmlns'             => true,
-				'width'             => true,
-				'height'            => true,
-				'viewBox'           => true,
-				'viewbox'           => true,
-				'fill'              => true,
-				'focusable'         => true,
-				'stroke'            => true,
-				'stroke-width'      => true,
-				'fill-rule'         => true,
-				'stroke-linecap'    => true,
-				'stroke-linejoin'   => true,
-				'stroke-miterlimit' => true,
-				'style'             => true,
+				'aria-controls'       => true,
+				'aria-current'        => true,
+				'aria-describedby'    => true,
+				'aria-details'        => true,
+				'aria-expanded'       => true,
+				'aria-hidden'         => true,
+				'aria-label'          => true,
+				'aria-labelledby'     => true,
+				'aria-live'           => true,
+				'class'               => true,
+				'role'                => true,
+				'xmlns'               => true,
+				'width'               => true,
+				'height'              => true,
+				'viewBox'             => true,
+				'viewbox'             => true,
+				'preserveAspectRatio' => true,
+				'preserveaspectratio' => true,
+				'fill'                => true,
+				'focusable'           => true,
+				'stroke'              => true,
+				'stroke-width'        => true,
+				'fill-rule'           => true,
+				'stroke-linecap'      => true,
+				'stroke-linejoin'     => true,
+				'stroke-miterlimit'   => true,
+				'style'               => true,
 			),
 			'g'        => array(
 				'transform' => true,
@@ -1094,6 +1099,7 @@ class HtmlSanitizer {
 			'path'     => array(
 				'd'               => true,
 				'fill'            => true,
+				'opacity'         => true,
 				'stroke'          => true,
 				'stroke-width'    => true,
 				'stroke-linecap'  => true,
@@ -1266,3 +1272,4 @@ class HtmlSanitizer {
 		return $sanitized;
 	}
 }
+
