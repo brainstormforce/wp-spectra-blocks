@@ -29,7 +29,7 @@ const commonConfig = {
 			),
 			'@Controls': path.resolve(
 				newPath,
-				'blocks-config/uagb-controls/'
+				'blocks-config/spectra-blocks-controls/'
 			),
 			'@Common': path.resolve(
 				__dirname,
