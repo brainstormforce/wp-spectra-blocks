@@ -176,12 +176,12 @@ if ( ! class_exists( 'Spectra_Blocks_Loader' ) ) {
 		public function loader() {
 
 			require_once SPECTRA_BLOCKS_DIR . 'classes/utils.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-block-prioritization.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-install.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-filesystem.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-update.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-block.php';
-			require_once SPECTRA_BLOCKS_DIR . 'classes/analytics/class-spectra-blocks-block-analytics.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-block-prioritization.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/class-uagb-install.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/class-uagb-filesystem.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/class-uagb-update.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/class-uagb-block.php';
+			require_once SPECTRA_BLOCKS_DIR . 'classes/analytics/class-uagb-block-analytics.php';
 		}
 
 		/**
