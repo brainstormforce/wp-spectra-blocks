@@ -1,0 +1,24 @@
+/**
+ * Counter Child Wrapper Block Styles
+ *
+ * @since x.x.x
+ */
+
+// This wrapper inherits layout from block supports
+// No additional styles needed - layout controls handle everything
+
+.wp-block-spectra-counter-child-wrapper {
+	&[class*="wp-block"] {
+		// Text color of content inside counter (following container block pattern)
+		&.p {
+			margin-bottom: 0;
+		}
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			* {
+				color: inherit;
+			}
+		}
+	}
+}

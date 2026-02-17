@@ -1,0 +1,17 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-tabs {
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background-color: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+	}
+}

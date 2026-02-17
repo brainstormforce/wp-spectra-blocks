@@ -1,0 +1,27 @@
+// In the editor, we have to specifically override the default text color with the Core Provided inherit for the current block.
+.has-text-color .wp-block-spectra-icon {
+
+	// The block editor block-list block selector for specificity.
+	&.block-editor-block-list__block {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			// For custom SVGs, set color on the SVG element so currentColor works for both fill and stroke
+			svg.spectra-custom-svg {
+				color: currentColor;
+			}
+		}
+
+		// Variable based CSS - Text Color on Hover.
+		&:hover.spectra-text-color-hover {
+			color: var(--spectra-text-color-hover) !important;
+
+			// For custom SVGs on hover, set color on the SVG element so currentColor works
+			svg.spectra-custom-svg {
+				color: currentColor;
+			}
+		}
+	}
+}

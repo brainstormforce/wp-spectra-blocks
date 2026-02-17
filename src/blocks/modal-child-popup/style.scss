@@ -1,0 +1,114 @@
+// padding above modal popup for gap between trigger and popup.
+.block-editor-block-list__block.spectra-modal-popup {
+	padding: 60px;
+}
+
+// css for smooth transistion.
+[data-spectra-modal] {
+	opacity: 0;
+	transition: none;
+}
+
+[data-spectra-modal].active {
+	opacity: 1;
+}
+
+// Disable z-index and stacking context interference when modal is active
+body.spectra-modal-active {
+	overflow: hidden;
+	// Reset problematic stacking context on container backgrounds when modal is open
+	:where(.wp-block-spectra-container) {
+		z-index: auto !important;
+		// Reset isolation to break the stacking context created by background colors/gradients
+		isolation: auto !important;
+
+		// Also reset z-index on direct children that could interfere with modal stacking
+		> *:not(.spectra-background-video__wrapper) {
+			z-index: auto !important;
+		}
+	}
+}
+
+// Static styles - specificity (0,1,0) and higher.
+.spectra-modal-popup {
+	pointer-events: none;
+	visibility: hidden;
+	position: fixed;
+	transition: none;
+
+	// css for modal popup when popup is open.
+	&:where(.active) {
+		top: 0;
+		bottom: 0;
+		justify-content: center;
+		align-items: center;
+		background: rgba(0, 0, 0, 0.7);
+		left: 0;
+		right: 0;
+		display: flex;
+		opacity: 1;
+		pointer-events: auto;
+		visibility: visible;
+		z-index: 999999;
+		box-sizing: border-box;
+
+	}
+
+	// default css for popup content.
+	.wp-block-spectra-modal-popup-content {
+		overflow-x: hidden;
+		overflow-y: overlay;
+	}
+
+	// horizontal and vertical custom position css - with proper specificity for CSS variables.
+	&[class*="spectra-modal"] {
+		.horizontal-position,
+		.vertical-position {
+			&.spectra-modal-popup-wrap {
+				position: absolute;
+				left: var(--spectra-modal-h-position);
+				top: var(--spectra-modal-v-position);
+			}
+		}
+	}
+
+	// css for popup wrap.
+	:where(.spectra-modal-popup-wrap) {
+		justify-content: flex-start;
+		max-width: 100%;
+		box-sizing: border-box;
+		color: #333;
+		position: relative;
+		opacity: 1;
+		transition: opacity 0.3s ease;
+
+		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar-thumb {
+			box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+			border-radius: 100px;
+		}
+	}
+
+	// css for window positioning wrap - position static allows close icon to position relative to outer container.
+	:where(.spectra-modal-window-wrap) {
+		justify-content: flex-start;
+		max-width: 100%;
+		box-sizing: border-box;
+		color: #333;
+		position: static;
+		opacity: 1;
+		transition: opacity 0.3s ease;
+
+		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar {
+			width: 5px;
+		}
+
+		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar-thumb {
+			box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+			border-radius: 100px;
+		}
+	}
+}

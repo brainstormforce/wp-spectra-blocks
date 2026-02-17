@@ -1,0 +1,231 @@
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+/*
+ * Apply the background image properties.
+ *
+ * $image-variable The CSS var used for the image.
+ */
+@mixin background-image($image-variable: var(--spectra-background-image)) {
+	background-image: $image-variable;
+	background-size: var(--spectra-background-size, cover);
+	background-position: var(--spectra-background-position, center center);
+	background-repeat: var(--spectra-background-repeat, no-repeat);
+	background-attachment: var(--spectra-background-attachment, scroll);
+}
+
+// Slider tab panel.
+.spectra-tab-panel {
+	// Slider tab panel tabs.
+	.components-tab-panel__tabs {
+		display: flex;
+		border-bottom: 1px solid #e0e0e0;
+		margin-bottom: 16px;
+
+		// Slider tab panel tab item for navigation arrow icon.
+		.components-tab-panel__tabs-item {
+			flex: 1;
+			justify-content: center;
+			padding: 8px 12px;
+			margin-bottom: -1px; // Compensate for bottom border at the tab nav.
+			border-bottom: 2px solid transparent; // Transparent border color for inactive tab.
+
+			// Slider tab panel tab item active
+			&.is-active {
+				border-bottom-color: var(--wp-admin-theme-color); // Active tab border color.
+			}
+		}
+	}
+
+	// Slider tab panel tab content.
+	.spectra-tab-panel__tab-content {
+		padding: 16px 0;
+
+		// Ensure icon picker dropdown appears above other elements.
+		.components-dropdown {
+			z-index: 9999;
+		}
+	}
+}
+
+.wp-block-spectra-slider {
+	// Apply overflow clip when has video background and border-radius
+	&.has-video-background,
+	&.has-image-background {
+		&[style*="border-radius"] {
+			overflow: hidden; // Fallback for older browsers
+			overflow: clip !important;   // Modern standard for proper border-radius clipping
+		}
+
+		&.spectra-background-overlay::before {
+			border-radius: unset;
+		}
+	}
+
+	// Background Overlay handling - static structure and dynamic styles
+	&.spectra-background-overlay {
+		position: relative;
+
+		// Background Image below Overlay
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+
+		// Overlay pseudo-element
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			border-radius: inherit;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			opacity: var(--spectra-overlay-opacity);
+		}
+		// All the direct children of the overlay should be relative to avoid appearing underneath background/video elements for overlay fix.
+		& > *:not(.spectra-slider-background):not(.spectra-background-video__wrapper):not(video) {
+			position: relative;
+			z-index: 3;
+		}
+		& > .spectra-background-video__wrapper {
+			z-index: 1;
+		}
+	}
+
+	// Background image container
+	&.spectra-background-image {
+		position: relative;
+
+		@include background-image();
+	}
+
+	// Dynamic video background styles
+	&.wp-block-spectra-slider__background {
+		video {
+			object-position: var(--spectra-background-position, center);
+		}
+	}
+
+	// Dynamic overlay color
+	&.wp-block-spectra-slider__overlay {
+		background-color: var(--spectra-overlay-color);
+	}
+
+	// Background color handling
+	&.spectra-background-color:not(.spectra-background-overlay) {
+		background: var(--spectra-background-color);
+
+		// Background Image over Color
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Background gradient handling
+	&.spectra-background-gradient:not(.spectra-background-overlay) {
+		background: var(--spectra-background-gradient);
+
+		// Background Image over Gradient
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Background image without colors
+	&.spectra-background-image:not(.spectra-background-color):not(.spectra-background-gradient) {
+
+		@include background-image();
+	}
+
+	// Swiper container.
+	.swiper {
+		// swiper-slides.
+		.swiper-slide {
+			height: var(--spectra-slider-height, auto);
+		}
+	}
+
+	.swiper-button-prev,
+	.swiper-button-next {
+		width: var(--spectra-slider-nav-size, 40px);
+		height: var(--spectra-slider-nav-size, 40px);
+
+		svg {
+			width: var(--spectra-slider-nav-icon-size, 20px);
+			height: var(--spectra-slider-nav-icon-size, 20px);
+		}
+	}
+
+	// Override Swiper's default pagination positioning to prevent conflicts
+	.swiper-pagination,
+	.swiper-horizontal > .swiper-pagination-bullets,
+	.swiper-pagination-bullets.swiper-pagination-horizontal,
+	.swiper-pagination-custom,
+	.swiper-pagination-fraction {
+		bottom: var(--spectra-pagination-margin-top, 0%) !important;
+	}
+
+	// Wide alignment
+	&.alignwide {
+		// Slider navigation button prev with wide alignment is wide
+		.swiper-button-prev {
+			left: var(--spectra-arrow-distance, 1px);
+		}
+
+		// Slider navigation button next with wide alignment is wide
+		.swiper-button-next {
+			right: var(--spectra-arrow-distance, 1px);
+		}
+	}
+
+	// Full width alignment
+	&.alignfull {
+		// Slider navigation button prev with full width alignment is wide
+		.swiper-button-prev {
+			left: var(--spectra-arrow-distance, 1px);
+		}
+
+		// Slider navigation button next with full width alignment is wide
+		.swiper-button-next {
+			right: var(--spectra-arrow-distance, 1px);
+		}
+	}
+
+	// Default alignment
+	&:not(.alignfull):not(.alignwide) {
+		// Slider navigation button prev
+		.swiper-button-prev {
+			left: var(--spectra-arrow-distance, 1px);
+		}
+
+		// Slider navigation button next
+		.swiper-button-next {
+			right: var(--spectra-arrow-distance, 1px);
+		}
+	}
+
+	&[class*="wp-block"] {
+
+		&.has-video-background {
+			z-index: 0;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+	}
+}
+
+// // Make inner blocks inherit height from the block.
+// .wp-block-spectra-slider-child {
+// 	// Target the block list layout to make it inherit height.
+// 	.slide-content.block-editor-block-list__layout {
+// 		height: var(--spectra-slider-height, 250px);
+// 		min-block-size: inherit;
+// 	}
+// }

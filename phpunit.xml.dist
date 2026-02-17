@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	bootstrap="tests/phpunit/bootstrap.php"
+	backupGlobals="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	verbose="true"
+	>
+	<testsuites>
+		<testsuite name="main">
+			<directory prefix="test-" suffix=".php">./tests/</directory>
+			<exclude>./tests/test-sample.php</exclude>
+		</testsuite>
+		<testsuite name="Spectra V3">
+			<directory prefix="test-" suffix=".php">./tests/phpunit/tests/spectra-v3</directory>
+		</testsuite>
+	</testsuites>
+	<coverage processUncoveredFiles="true">
+		<include>
+			<directory suffix=".php">./spectra-v3/includes</directory>
+		</include>
+		<exclude>
+			<directory>./node_modules</directory>
+			<directory>./tests</directory>
+			<directory>./vendor</directory>
+			<directory>./spectra-v3/build</directory>
+			<directory>./spectra-v3/vendor</directory>
+		</exclude>
+	</coverage>
+</phpunit>

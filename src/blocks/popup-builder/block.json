@@ -1,0 +1,547 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/popup-builder",
+	"version": "3.0.0",
+	"title": "Popup Builder",
+	"description": "Create custom popups and info bars with advanced triggers and animations.",
+	"category": "spectra",
+	"keywords": [
+		"popup",
+		"modal",
+		"popup builder",
+		"lightbox",
+		"overlay",
+		"banner",
+		"notification",
+		"info bar",
+		"dialog",
+		"modal window",
+		"exit intent",
+		"popup form",
+		"promotional popup",
+		"alert popup",
+		"popup widget",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"attributes": {
+		"setCookiesOn": {
+			"type": "string",
+			"default": "close-action"
+		},
+		"hideForDays": {
+			"type": "number",
+			"default": 2
+		},
+		"anchor": {
+			"type": "string"
+		},
+		"block_id": {
+			"type": "string"
+		},
+		"popupId": {
+			"type": "string"
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"variationSelected": {
+			"type": "boolean",
+			"default": false
+		},
+		"variantType": {
+			"type": "string",
+			"default": "banner"
+		},
+		"popupPositionV": {
+			"type": "string"
+		},
+		"popupContentAlignmentV": {
+			"type": "string"
+		},
+		"popupWidth": {
+			"type": "number"
+		},
+		"popupWidthTablet": {
+			"type": "number"
+		},
+		"popupWidthMobile": {
+			"type": "number"
+		},
+		"popupWidthUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupWidthUnitTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupWidthUnitMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupHeight": {
+			"type": "string"
+		},
+		"popupMaxHeight": {
+			"type": "number"
+		},
+		"popupMaxHeightTablet": {
+			"type": "number"
+		},
+		"popupMaxHeightMobile": {
+			"type": "number"
+		},
+		"popupHeightUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupHeightUnitTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupHeightUnitMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"hasFixedHeight": {
+			"type": "boolean",
+			"default": false
+		},
+		"popupBehaviour": {
+			"type": "string",
+			"default": "overlay"
+		},
+		"hasOverlay": {
+			"type": "boolean",
+			"default": true
+		},
+		"isDismissable": {
+			"type": "boolean",
+			"default": true
+		},
+		"haltBackgroundInteraction": {
+			"type": "boolean",
+			"default": true
+		},
+		"willPushContent": {
+			"type": "boolean",
+			"default": true
+		},
+		"flipForRTL": {
+			"type": "boolean",
+			"default": false
+		},
+		"size": {
+			"type": "string"
+		},
+		"rotation": {
+			"type": "number"
+		},
+		"accessibilityMode": {
+			"type": "string"
+		},
+		"accessibilityLabel": {
+			"type": "string"
+		},
+		"closeIcon": {
+			"type": [ "string", "object" ],
+			"default": "xmark"
+		},
+		"closeIconPosition": {
+			"type": "string",
+			"default": "top-right"
+		},
+		"closeOverlayClick": {
+			"type": "boolean",
+			"default": true
+		},
+		"closeEscapePress": {
+			"type": "boolean",
+			"default": true
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"backgroundColorHover": {
+			"type": "string"
+		},
+		"backgroundGradient": {
+			"type": "string"
+		},
+		"backgroundGradientHover": {
+			"type": "string"
+		},
+		"background": {
+			"type": "object"
+		},
+		"dimRatio": {
+			"type": "number"
+		},
+		"customPosition": {
+			"type": "string",
+			"default": "default"
+		},
+		"xPositionDesktop": {
+			"type": "number",
+			"default": ""
+		},
+		"xPositionTablet": {
+			"type": "number"
+		},
+		"xPositionMobile": {
+			"type": "number"
+		},
+		"xPositionType": {
+			"type": "string",
+			"default": "px"
+		},
+		"xPositionTypeTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"xPositionTypeMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"yPositionDesktop": {
+			"type": "number",
+			"default": ""
+		},
+		"yPositionTablet": {
+			"type": "number"
+		},
+		"yPositionMobile": {
+			"type": "number"
+		},
+		"yPositionType": {
+			"type": "string",
+			"default": "px"
+		},
+		"yPositionTypeTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"yPositionTypeMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupOverlayColor": {
+			"type": "string"
+		},
+		"closeIconSize": {
+			"type": "number",
+			"default": 25
+		},
+		"closeIconSizeTablet": {
+			"type": "number"
+		},
+		"closeIconSizeMobile": {
+			"type": "number"
+		},
+		"closeIconColor": {
+			"type": "string",
+			"default": ""
+		},
+		"closeIconColorHover": {
+			"type": "string",
+			"default": ""
+		},
+		"useSeparateBoxShadows": {
+			"type": "boolean",
+			"default": false
+		},
+		"boxShadowColor": {
+			"type": "string",
+			"default": "#00000070"
+		},
+		"boxShadowHOffset": {
+			"type": "number",
+			"default": 0
+		},
+		"boxShadowVOffset": {
+			"type": "number",
+			"default": 0
+		},
+		"boxShadowBlur": {
+			"type": "number"
+		},
+		"boxShadowSpread": {
+			"type": "number"
+		},
+		"boxShadowPosition": {
+			"type": "string",
+			"default": "outset"
+		},
+		"boxShadowColorHover": {
+			"type": "string"
+		},
+		"boxShadowHOffsetHover": {
+			"type": "number",
+			"default": 0
+		},
+		"boxShadowVOffsetHover": {
+			"type": "number",
+			"default": 0
+		},
+		"boxShadowBlurHover": {
+			"type": "number"
+		},
+		"boxShadowSpreadHover": {
+			"type": "number"
+		},
+		"boxShadowPositionHover": {
+			"type": "string",
+			"default": "outset"
+		},
+		"popupPaddingTop": {
+			"type": "number",
+			"default": 32
+		},
+		"popupPaddingRight": {
+			"type": "number",
+			"default": 32
+		},
+		"popupPaddingBottom": {
+			"type": "number",
+			"default": 32
+		},
+		"popupPaddingLeft": {
+			"type": "number",
+			"default": 32
+		},
+		"popupPaddingTopTablet": {
+			"type": "number"
+		},
+		"popupPaddingRightTablet": {
+			"type": "number"
+		},
+		"popupPaddingBottomTablet": {
+			"type": "number"
+		},
+		"popupPaddingLeftTablet": {
+			"type": "number"
+		},
+		"popupPaddingTopMobile": {
+			"type": "number"
+		},
+		"popupPaddingRightMobile": {
+			"type": "number"
+		},
+		"popupPaddingBottomMobile": {
+			"type": "number"
+		},
+		"popupPaddingLeftMobile": {
+			"type": "number"
+		},
+		"popupPaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupPaddingUnitTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupPaddingUnitMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupPaddingLink": {
+			"type": "boolean",
+			"default": true
+		},
+		"popupMarginTop": {
+			"type": "number"
+		},
+		"popupMarginRight": {
+			"type": "number"
+		},
+		"popupMarginBottom": {
+			"type": "number"
+		},
+		"popupMarginLeft": {
+			"type": "number"
+		},
+		"popupMarginTopTablet": {
+			"type": "number"
+		},
+		"popupMarginRightTablet": {
+			"type": "number"
+		},
+		"popupMarginBottomTablet": {
+			"type": "number"
+		},
+		"popupMarginLeftTablet": {
+			"type": "number"
+		},
+		"popupMarginTopMobile": {
+			"type": "number"
+		},
+		"popupMarginRightMobile": {
+			"type": "number"
+		},
+		"popupMarginBottomMobile": {
+			"type": "number"
+		},
+		"popupMarginLeftMobile": {
+			"type": "number"
+		},
+		"popupMarginUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupMarginUnitTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupMarginUnitMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"popupMarginLink": {
+			"type": "boolean",
+			"default": true
+		},
+		"closePaddingTop": {
+			"type": "number"
+		},
+		"closePaddingRight": {
+			"type": "number"
+		},
+		"closePaddingBottom": {
+			"type": "number"
+		},
+		"closePaddingLeft": {
+			"type": "number"
+		},
+		"closePaddingTopTablet": {
+			"type": "number"
+		},
+		"closePaddingRightTablet": {
+			"type": "number"
+		},
+		"closePaddingBottomTablet": {
+			"type": "number"
+		},
+		"closePaddingLeftTablet": {
+			"type": "number"
+		},
+		"closePaddingTopMobile": {
+			"type": "number"
+		},
+		"closePaddingRightMobile": {
+			"type": "number"
+		},
+		"closePaddingBottomMobile": {
+			"type": "number"
+		},
+		"closePaddingLeftMobile": {
+			"type": "number"
+		},
+		"closePaddingUnit": {
+			"type": "string",
+			"default": "px"
+		},
+		"closePaddingUnitTablet": {
+			"type": "string",
+			"default": "px"
+		},
+		"closePaddingUnitMobile": {
+			"type": "string",
+			"default": "px"
+		},
+		"closePaddingLink": {
+			"type": "boolean",
+			"default": true
+		},
+		"htmlTag": {
+			"type": "string",
+			"default": "div"
+		},
+		"overflow": {
+			"type": "string",
+			"default": "visible"
+		},
+		"width": {
+			"type": "string"
+		},
+		"height": {
+			"type": "string",
+			"default": "auto"
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"supports": {
+	
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"anchor": true,
+		"shadow": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"textAlign": false,
+			"__experimentalFontFamily": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalWritingMode": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": false
+		},
+		"align": [ "wide", "full" ],
+		"color": {
+			"gradients": false,
+			"background": false,
+			"text": false
+		}
+	},
+	"allowedBlocks": true,
+	"usesContext": [
+		"spectra/popup-builder/enableCookies",
+		"spectra/popup-builder/setCookiesOn",
+		"spectra/popup-builder/hideForDays"
+	],
+	"providesContext": {
+		"spectra/popup-builder/block_id": "block_id",
+		"spectra/popup-builder/variantType": "variantType",
+		"spectra/popup-builder/variationSelected": "variationSelected"
+	},
+	"textdomain": "ultimate-addons-for-gutenberg",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": [
+		"file:./style-index.css",
+		"spectra-components-variation-picker"
+	],
+	"render": "file:./view.php"
+}

@@ -1,0 +1,31 @@
+// Defaults for the button block.
+$default-icon-size: 16px;
+$default-text-icon-gap: 10px;
+
+.wp-block-spectra-tabs-child-tab-button:where(div, button) {
+
+	// Text align styles.
+	&.has-text-align-right {
+		justify-content: right;
+	}
+	&.has-text-align-left {
+		justify-content: left;
+	}
+	&.has-text-align-center {
+		justify-content: center;
+	}
+	&:not(.has-text-align-right):not(.has-text-align-left) {
+		justify-content: center;
+	}
+
+	gap: var(--spectra-gap, $default-text-icon-gap);
+
+	// Styles for the spectra button in this block.
+	.spectra-button {
+		// The icon styling.
+		&__icon {
+			width: $default-icon-size;
+			height: $default-icon-size;
+		}
+	}
+}

@@ -1,0 +1,74 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-list-child-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 24px;
+	font-size: inherit;
+
+	// When parent list-child-item is hovered, inherit its hover color if icon doesn't have its own
+	.wp-block-spectra-list-child-item:hover &:not(.spectra-text-color):not(.spectra-text-color-hover),
+	.wp-block-spectra-list-child-item:focus-within &:not(.spectra-text-color):not(.spectra-text-color-hover) {
+		color: inherit;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+		}
+
+		// When parent list-child-item is hovered, apply icon's hover color if it has one
+		.wp-block-spectra-list-child-item:hover &.spectra-text-color-hover,
+		.wp-block-spectra-list-child-item:focus-within &.spectra-text-color-hover {
+			color: var(--spectra-text-color-hover);
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// The hover state for this block, or focus within for the anchor inside.
+		&:hover,
+		&:focus-within {
+			// Variable based CSS - Text Color on Hover.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover);
+			}
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover);
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover);
+			}
+		}
+	}
+
+	// Ensure custom SVG elements inherit color properly for both fill and stroke.
+	&[class*="wp-block"].spectra-text-color svg.spectra-custom-svg {
+		color: currentColor;
+	}
+
+	// Ensure custom SVG elements inherit hover color properly for both fill and stroke.
+	&[class*="wp-block"].spectra-text-color-hover:hover svg.spectra-custom-svg {
+		color: currentColor;
+	}
+
+	// Handle parent hover states for custom SVGs
+	.wp-block-spectra-list-child-item:hover &.spectra-text-color-hover svg.spectra-custom-svg,
+	.wp-block-spectra-list-child-item:focus-within &.spectra-text-color-hover svg.spectra-custom-svg {
+		color: currentColor;
+	}
+}

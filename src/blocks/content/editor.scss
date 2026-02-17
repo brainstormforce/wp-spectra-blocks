@@ -1,0 +1,24 @@
+// In the editor, we have to specifically override the default text color with the Core Provided inherit for the current block.
+.has-text-color .wp-block-spectra-content {
+
+	// The block editor block-list block selector for specificity.
+	&.block-editor-block-list__block {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+		}
+
+		// Variable based CSS - Text Color on Hover.
+		&:hover.spectra-text-color-hover {
+			color: var(--spectra-text-color-hover) !important;
+		}
+	}
+}
+
+// Variable based CSS - Text Shadow for editor.
+.wp-block-spectra-content {
+	&.spectra-text-shadow {
+		text-shadow: var(--spectra-text-shadow);
+	}
+}

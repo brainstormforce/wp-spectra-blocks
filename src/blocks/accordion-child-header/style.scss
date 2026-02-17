@@ -1,0 +1,102 @@
+// This block will be a div in the editor, but a button on the front-end for accessibility purposes.
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-accordion-child-header:where(div, button) {
+	cursor: pointer;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	// Styles to reset for buttons on most themes.
+	background-color: transparent;
+	color: inherit;
+	outline: 0;
+	border-width: 0;
+	border-radius: 0;
+	box-shadow: none;
+	text-align: start;
+	text-transform: initial;
+	text-decoration: none;
+	// Additional styles to reset, mainly for Core themes - but good for all.
+	font: inherit;
+	letter-spacing: inherit;
+	word-spacing: inherit;
+	line-height: normal;
+
+	// CSS for the disabled button, visible on the front-end.
+	&:disabled,
+	&[data-disabled="true"] {
+		cursor: not-allowed;
+	}
+
+	// Static hover/focus styles
+	&:hover,
+	&:focus,
+	&:focus-visible {
+		// Default CSS.
+		background-color: transparent;
+		color: inherit;
+		outline: 0;
+		border-width: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background-color: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// The focus and active (expanded) styling for this button.
+		&:hover,
+		&:focus,
+		&:focus-visible,
+		&.is-active {
+			// Variable based CSS - Text Color on Focus.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover);
+			}
+
+			// Variable based CSS - Background Color on Focus.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover);
+			}
+
+			// Variable based CSS - Background Gradient on Focus.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover);
+			}
+
+			// Updating the icon innerblock of the header when the item is hovered.
+			.wp-block-spectra-icon.inside-accordion-header {
+
+				// Variable based CSS - Text Color on Hover.
+				&.spectra-text-color-hover {
+					color: var(--spectra-text-color-hover);
+				}
+
+				// Variable based CSS - Background Color on Hover.
+				&.spectra-background-color-hover {
+					background: var(--spectra-background-color-hover);
+				}
+
+				// Variable based CSS - Background Gradient.
+				&.spectra-background-gradient-hover {
+					background: var(--spectra-background-gradient-hover);
+				}
+			}
+		}
+	}
+}

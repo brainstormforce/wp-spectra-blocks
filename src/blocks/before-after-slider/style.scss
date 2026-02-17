@@ -1,0 +1,234 @@
+/**
+ * Frontend styles for the Before After Slider block.
+ *
+ * @since x.x.x
+ * @package Spectra\Blocks\BeforeAfterSlider
+ */
+
+.wp-block-spectra-before-after-slider {
+	--_ba-handle-color: var(--spectra-ba-handle-color, #fff);
+	--_ba-handle-thickness: var(--spectra-ba-handle-thickness, 3px);
+	--_ba-handle-circle-size: var(--spectra-ba-handle-circle-size, 40px);
+	--_ba-overlay-color: var(--spectra-ba-overlay-color, transparent);
+	--_ba-before-overlay-color: var(--spectra-ba-before-overlay-color, var(--_ba-overlay-color));
+	--_ba-after-overlay-color: var(--spectra-ba-after-overlay-color, var(--_ba-overlay-color));
+	--_ba-label-color: var(--spectra-ba-label-color, #fff);
+	--_ba-label-bg-color: var(--spectra-ba-label-bg-color, rgba(0, 0, 0, 0.5));
+
+	position: relative;
+	overflow: hidden;
+	line-height: 0;
+	user-select: none;
+}
+
+// Container.
+.spectra-ba-slider__container {
+	position: relative;
+	overflow: hidden;
+}
+
+// Image layers.
+.spectra-ba-slider__after,
+.spectra-ba-slider__before {
+	position: relative;
+
+	// Overlay.
+	.spectra-ba-slider__overlay {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+}
+
+.spectra-ba-slider__before .spectra-ba-slider__overlay {
+	background-color: var(--_ba-before-overlay-color);
+}
+
+.spectra-ba-slider__after .spectra-ba-slider__overlay {
+	background-color: var(--_ba-after-overlay-color);
+}
+
+.spectra-ba-slider__before {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+.spectra-ba-slider__image {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+// Labels.
+.spectra-ba-slider__label {
+	position: absolute;
+	z-index: 2;
+	padding: 6px 14px;
+	font-size: 14px;
+	line-height: 1.4;
+	color: var(--_ba-label-color);
+	background-color: var(--_ba-label-bg-color);
+	border-radius: 4px;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+// Label positioning for horizontal orientation.
+.spectra-ba-slider--horizontal {
+	.spectra-ba-slider__label--before {
+		top: 50%;
+		left: 16px;
+		transform: translateY(-50%);
+	}
+
+	.spectra-ba-slider__label--after {
+		top: 50%;
+		right: 16px;
+		transform: translateY(-50%);
+	}
+}
+
+// Label positioning for vertical orientation.
+.spectra-ba-slider--vertical {
+	.spectra-ba-slider__label--before {
+		top: 16px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.spectra-ba-slider__label--after {
+		bottom: 16px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
+// Label visibility modes.
+.spectra-ba-slider--labels-hover {
+	.spectra-ba-slider__label {
+		opacity: 0;
+	}
+
+	&:hover .spectra-ba-slider__label {
+		opacity: 1;
+	}
+}
+
+.spectra-ba-slider--labels-always {
+	.spectra-ba-slider__label {
+		opacity: 1;
+	}
+}
+
+.spectra-ba-slider--labels-none {
+	.spectra-ba-slider__label {
+		display: none;
+	}
+}
+
+// Handle (divider).
+.spectra-ba-slider__handle {
+	position: absolute;
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+// Horizontal handle.
+.spectra-ba-slider--horizontal .spectra-ba-slider__handle {
+	top: 0;
+	bottom: 0;
+	flex-direction: column;
+	transform: translateX(-50%);
+
+	.spectra-ba-slider__handle-line {
+		flex: 1;
+		width: var(--_ba-handle-thickness);
+		background-color: var(--_ba-handle-color);
+	}
+}
+
+// Vertical handle.
+.spectra-ba-slider--vertical .spectra-ba-slider__handle {
+	left: 0;
+	right: 0;
+	flex-direction: row;
+	transform: translateY(-50%);
+
+	.spectra-ba-slider__handle-line {
+		flex: 1;
+		height: var(--_ba-handle-thickness);
+		background-color: var(--_ba-handle-color);
+	}
+}
+
+// Handle circle.
+.spectra-ba-slider__handle-circle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--_ba-handle-circle-size);
+	height: var(--_ba-handle-circle-size);
+	border: var(--_ba-handle-thickness) solid var(--_ba-handle-color);
+	border-radius: 50%;
+	background-color: rgba(0, 0, 0, 0.3);
+	pointer-events: auto;
+	cursor: ew-resize;
+}
+
+.spectra-ba-slider--vertical .spectra-ba-slider__handle-circle {
+	cursor: ns-resize;
+}
+
+// Arrows inside the handle circle.
+.spectra-ba-slider__arrow {
+	display: block;
+	width: 0;
+	height: 0;
+	border-style: solid;
+}
+
+.spectra-ba-slider__arrow--left {
+	border-width: 5px 7px 5px 0;
+	border-color: transparent var(--_ba-handle-color) transparent transparent;
+	margin-right: 4px;
+}
+
+.spectra-ba-slider__arrow--right {
+	border-width: 5px 0 5px 7px;
+	border-color: transparent transparent transparent var(--_ba-handle-color);
+	margin-left: 4px;
+}
+
+.spectra-ba-slider__arrow--up {
+	border-width: 0 5px 7px 5px;
+	border-color: transparent transparent var(--_ba-handle-color) transparent;
+	margin-bottom: 4px;
+}
+
+.spectra-ba-slider__arrow--down {
+	border-width: 7px 5px 0 5px;
+	border-color: var(--_ba-handle-color) transparent transparent transparent;
+	margin-top: 4px;
+}
+
+// Cursor for the container during drag.
+.spectra-ba-slider--horizontal .spectra-ba-slider__container {
+	cursor: ew-resize;
+}
+
+.spectra-ba-slider--vertical .spectra-ba-slider__container {
+	cursor: ns-resize;
+}
+
+// Active state (during drag) - prevent text selection.
+.spectra-ba-slider--active {
+	* {
+		user-select: none !important;
+	}
+}

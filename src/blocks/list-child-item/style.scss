@@ -1,0 +1,83 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-list-child-item {
+	display: flex;
+	margin-bottom: 10px;
+	list-style-type: none; /* Hide the default marker */
+	align-items: flex-start;
+
+	// Indentation levels for frontend
+	&.spectra-list-item-level-0 {
+		margin-left: 0;
+	}
+
+	&.spectra-list-item-level-1 {
+		margin-left: 20px;
+	}
+
+	&.spectra-list-item-level-2 {
+		margin-left: 40px;
+	}
+
+	&.spectra-list-item-level-3 {
+		margin-left: 60px;
+	}
+
+	> .block-editor-block-list__layout {
+		display: flex;
+		width: 100%;
+
+		// Make container fill remaining width after icon
+		> .wp-block-spectra-container {
+			width: stretch;
+		}
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
+				color: inherit;
+			}
+		}
+
+		// The hover and focus within state for this block.
+		&:hover,
+		&:focus-within {
+
+			// Variable based CSS - Text Color on Hover.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+				// When there's a hover color, all child blocks should inherit it (except those with their own colors)
+				[class*="wp-block"]:not(.spectra-text-color):not(.spectra-text-color-hover) {
+					color: inherit;
+				}
+
+				// Ensure all text elements inherit the hover color
+				p,
+				span,
+				div,
+				a {
+					color: inherit;
+				}
+			}
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+	}
+}

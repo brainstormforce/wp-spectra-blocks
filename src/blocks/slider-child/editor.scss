@@ -1,0 +1,125 @@
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+/*
+ * Apply the background image properties.
+ *
+ * $image-variable The CSS var used for the image.
+ */
+@mixin background-image($image-variable: var(--spectra-background-image)) {
+	background-image: $image-variable;
+	background-size: var(--spectra-background-size, cover);
+	background-position: var(--spectra-background-position, center center);
+	background-repeat: var(--spectra-background-repeat, no-repeat);
+	background-attachment: var(--spectra-background-attachment, scroll);
+}
+
+.wp-block-spectra-slider-child {
+	// Apply overflow clip when has video background and border-radius
+	&.has-video-background,
+	&.has-image-background {
+		&[style*="border-radius"] {
+			overflow: hidden; // Fallback for older browsers
+			overflow: clip !important;   // Modern standard for proper border-radius clipping
+		}
+
+		&.spectra-background-overlay::before {
+			border-radius: unset;
+		}
+	}
+
+	&.spectra-background-color.spectra-background-overlay::before {
+		border-radius: unset;
+	}
+
+	// Background Overlay handling - static structure and dynamic styles
+	&.spectra-background-overlay {
+		position: relative;
+
+		// Background Image below Overlay
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+
+		// Overlay pseudo-element
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			border-radius: inherit;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			opacity: var(--spectra-overlay-opacity);
+		}
+		// All the direct children of the overlay should be relative to avoid appearing underneath background/video elements for overlay fix.
+		& > *:not(.spectra-slider-background):not(.spectra-background-video__wrapper):not(video) {
+			position: relative;
+			z-index: 3;
+		}
+		& > .spectra-background-video__wrapper {
+			z-index: 1;
+		}
+	}
+
+	// Background image container
+	&.spectra-background-image {
+		position: relative;
+
+		@include background-image();
+	}
+
+	// Dynamic video background styles
+	&.wp-block-spectra-slider__background {
+		video {
+			object-position: var(--spectra-background-position, center);
+		}
+	}
+
+	// Dynamic overlay color
+	&.wp-block-spectra-slider__overlay {
+		background-color: var(--spectra-overlay-color);
+	}
+
+	// Background color handling
+	&.spectra-background-color:not(.spectra-background-overlay) {
+		background: var(--spectra-background-color);
+
+		// Background Image over Color
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Background gradient handling
+	&.spectra-background-gradient:not(.spectra-background-overlay) {
+		background: var(--spectra-background-gradient);
+
+		// Background Image over Gradient
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Background image without colors
+	&.spectra-background-image:not(.spectra-background-color):not(.spectra-background-gradient) {
+
+		@include background-image();
+	}
+
+	&[class*="wp-block"] {
+
+		&.has-video-background {
+			z-index: 0;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+	}
+}

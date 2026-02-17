@@ -1,0 +1,162 @@
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+/*
+ * Apply the background image properties.
+ *
+ * $image-variable The CSS var used for the image.
+ */
+@mixin background-image( $image-variable: var(--spectra-background-image) ) {
+	background-image: $image-variable; // Overlay for gradients is handled in this.
+	background-size: var(--spectra-background-size, cover);
+	background-position: var(--spectra-background-position, center center);
+	background-repeat: var(--spectra-background-repeat, no-repeat);
+	background-attachment: var(--spectra-background-attachment, scroll);
+}
+
+// Default CSS for this block.
+.wp-block-spectra-modal-popup-content {
+	max-width: 100%;
+	box-sizing: border-box;
+	overflow: hidden;
+	width: 100%;
+	align-content: center;
+	border-radius: 3px;
+	background: #fff;
+	overflow-x: auto;
+	position: relative;
+
+	// Apply overflow clip when has video background and border-radius
+	&.has-video-background,
+	&.has-image-background {
+		&[style*="border-radius"] {
+			overflow: hidden; // Fallback for older browsers
+			overflow: clip !important;   // Modern standard for proper border-radius clipping
+		}
+	}
+
+	// Variable based CSS - Background Color when overlay is not applied.
+	&.spectra-background-color:not(.spectra-background-overlay) {
+		background: var(--spectra-background-color, #fff);
+
+		// Variable based CSS - Background Image over Color.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Variable based CSS - Background Gradient when overlay is not applied.
+	&.spectra-background-gradient:not(.spectra-background-overlay) {
+		background: var(--spectra-background-gradient);
+
+		// Variable based CSS - Background Image over Gradient.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+	}
+
+	// Variable based CSS - Background image without any colors.
+	&.spectra-background-image:not(.spectra-background-color):not(.spectra-background-gradient) {
+
+		@include background-image();
+	}
+
+	// Variable based CSS - Background Overlay.
+	&.spectra-background-overlay {
+		position: relative;
+
+		// Variable based CSS - Background Image below Overlay.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+
+		// The before pseudo-element, with either the Gradient or Color.
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			// z-index: 1;
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// All the direct children of the overlay except the background video wrapper should be relative to avoid appearing underneath it.
+		& > *:not(.spectra-background-video__wrapper) {
+			position: relative;
+			z-index: 2;
+		}
+	}
+
+
+	&[class*="wp-block"] {
+
+		&.has-video-background {
+			z-index: 0;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+
+		&.spectra-overlay-color {
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color Hover.
+		&.spectra-background-color-hover:hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover.
+		&.spectra-background-gradient-hover:hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+	}
+
+	// -------------------------------- //
+	// The hover states for this block. //
+	// -------------------------------- //
+	&:hover {
+		// Variable based CSS - Background Color Hover when overlay is not applied.
+		&.spectra-background-color-hover:not(.spectra-background-overlay) {
+
+			// Variable based CSS - Background Image over Color Hover.
+			&.spectra-background-image {
+
+				@include background-image( var(--spectra-background-image-hover) );
+			}
+		}
+
+		// Variable based CSS - Background Gradient Hover when overlay is not applied.
+		&.spectra-background-gradient-hover:not(.spectra-background-overlay) {
+
+			// Variable based CSS - Background Image over Gradient Hover.
+			&.spectra-background-image {
+
+				@include background-image( var(--spectra-background-image-hover) );
+			}
+		}
+
+		// Variable based CSS - Background Overlay.
+		// Note: background-image-hover is not applied in overlay mode because the variable is not set
+		// when backgroundOverlay=true (see helpers/background.js line 43). Re-applying it causes
+		// SVG opacity compounding issues on hover.
+		&.spectra-background-overlay {
+			// The before pseudo-element, with either the Gradient or Color.
+			&::before {
+				background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+			}
+		}
+	}
+}

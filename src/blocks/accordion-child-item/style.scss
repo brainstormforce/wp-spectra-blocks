@@ -1,0 +1,107 @@
+// Defaults for the Accordion Item child block.
+$default-border-width: 1px;
+$default-border-style: solid;
+$default-border-color: #d2d2d2;
+$default-border-radius: 2px;
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-accordion-child-item {
+	border: $default-border-width $default-border-style $default-border-color;
+	border-radius: $default-border-radius;
+	transition: max-height 250ms;
+	overflow: hidden;
+	box-sizing: content-box;
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			// When there's a text color, everything inside should inherit.
+			[class*="wp-block"]:not(.spectra-text-color) {
+				color: inherit;
+			}
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background-color: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// The hover, focus within, and active (expanded) state for this block.
+		&:hover,
+		&:focus-within,
+		&.is-active {
+
+			// Variable based CSS - Text Color on Hover.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+
+				// When there's a text color, everything inside should inherit.
+				[class*="wp-block"]:not(.spectra-text-color-hover) {
+					color: inherit;
+				}
+			}
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+
+			// Updating the header innerblock when the item is hovered.
+			.wp-block-spectra-accordion-child-header,
+			button.wp-block-spectra-accordion-child-header {
+
+				// Variable based CSS - Text Color on Hover.
+				&.spectra-text-color-hover {
+					color: var(--spectra-text-color-hover) !important;
+
+					// When there's a text color, everything inside should inherit.
+					[class*="wp-block"] {
+						color: inherit;
+					}
+				}
+
+				// Variable based CSS - Background Color on Hover.
+				&.spectra-background-color-hover {
+					background: var(--spectra-background-color-hover) !important;
+				}
+
+				// Variable based CSS - Background Gradient on Hover.
+				&.spectra-background-gradient-hover {
+					background: var(--spectra-background-gradient-hover) !important;
+				}
+
+				// Updating the icon innerblock of the header when the item is hovered.
+				.wp-block-spectra-accordion-child-header-icon {
+
+					// Variable based CSS - Text Color on Hover.
+					&.spectra-text-color-hover {
+						color: var(--spectra-text-color-hover) !important;
+					}
+
+					// Variable based CSS - Background Color on Hover.
+					&.spectra-background-color-hover {
+						background: var(--spectra-background-color-hover) !important;
+					}
+
+					// Variable based CSS - Background Gradient on Hover.
+					&.spectra-background-gradient-hover {
+						background: var(--spectra-background-gradient-hover) !important;
+					}
+				}
+			}
+		}
+	}
+}

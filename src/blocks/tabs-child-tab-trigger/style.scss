@@ -1,0 +1,151 @@
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-tabs-child-tab-trigger {
+	padding: 10px;
+	box-sizing: border-box;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
+
+	.wp-block-spectra-container.spectra-is-root-container { // Ensure root container inside tab trigger takes full width. To resolve reported issue here - https://d.pr/v/BKKtOa.
+		width: 100%;
+	}
+
+	// Default flex-wrap overriding for flex layout.
+	&.wp-block-spectra-tabs-child-tab-trigger-is-layout-flex {
+		flex-wrap: nowrap;
+	}
+
+	// Static structural styles for text color
+	&.spectra-text-color {
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6 {
+			color: inherit;
+		}
+	}
+
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Simple Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Border hover support.
+		&.spectra-border-color-hover:hover,
+		&.spectra-border-color-hover:focus-visible {
+			border-color: var(--spectra-border-color-hover) !important;
+		}
+
+		// Border active support.
+		&.spectra-border-color-active.spectra-block-is-active {
+			border-color: var(--spectra-border-color-active) !important;
+		}
+
+		.wp-block-spectra-icons {
+			// Variable based CSS - Icon Color when this is the current tab when set.
+			&.spectra-icon-color-active:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color-active, --spectra-text-color-active) !important;
+			}
+
+			// For custom SVGs when active, set color on the SVG element so currentColor works
+			&.spectra-custom-svg:not(.spectra-icon-color-active) {
+				fill: none !important;
+				color: currentColor !important;
+			}
+		}
+
+		// The active styling for this tab trigger
+		&.spectra-block-is-active {
+			z-index: 1;
+
+			// Variable based CSS - Background Color when this is the current tab.
+			&.spectra-background-color-active {
+				background: var(--spectra-background-color-active) !important;
+			}
+
+			// Variable based CSS - Background Gradient when this is the current tab.
+			&.spectra-background-gradient-active {
+				background: var(--spectra-background-gradient-active) !important;
+			}
+
+			// Variable based CSS - Text Color when this is the current tab.
+			&.spectra-text-color-active {
+				color: var(--spectra-text-color-active) !important;
+			}
+
+			// The hover styles for the active tab trigger.
+			&:hover,
+			&:focus-visible {
+				// Variable based CSS - Background Color when this is the current tab.
+				&.spectra-background-color-active-hover {
+					background: var(--spectra-background-color-active-hover) !important;
+				}
+
+				// Variable based CSS - Background Gradient when this is the current tab.
+				&.spectra-background-gradient-active-hover {
+					background: var(--spectra-background-gradient-active-hover) !important;
+				}
+
+				// Variable based CSS - Text Color when this is the current tab.
+				&.spectra-text-color-active-hover {
+					color: var(--spectra-text-color-active-hover) !important;
+				}
+
+				// Variable based CSS - Border Color when this is the current tab and hovered.
+				&.spectra-border-color-active-hover {
+					border-color: var(--spectra-border-color-active-hover) !important;
+				}
+			}
+		}
+
+		// The hover styling for this tab trigger.
+		&:hover:not(.spectra-block-is-active) {
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+				opacity: var(--spectra-overlay-opacity);
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+				opacity: var(--spectra-overlay-opacity);
+			}
+
+			// Variable based CSS - Text Color on Hover.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color Hover.
+		&.spectra-background-color-hover:hover {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover.
+		&.spectra-background-gradient-hover:hover {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+	}
+}

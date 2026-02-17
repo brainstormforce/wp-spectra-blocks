@@ -1,0 +1,39 @@
+{
+	"name": "spectra-v3",
+	"version": "3.0.0",
+	"description": "An interactive block with the Interactivity API.",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build --experimental-modules --webpack-copy-php",
+		"build:fresh": "del-cli build/* && wp-scripts build --experimental-modules --webpack-copy-php",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
+		"start:fresh": "del-cli build/* && wp-scripts start --experimental-modules --webpack-copy-php"
+	},
+	"files": [
+		"[^.]*"
+	],
+	"dependencies": {
+		"@wordpress/block-editor": "^14.12.0",
+		"@wordpress/blocks": "^14.6.0",
+		"@wordpress/compose": "^7.17.0",
+		"@wordpress/data": "^10.17.0",
+		"@wordpress/element": "^6.17.0",
+		"@wordpress/interactivity": "^6.17.0",
+		"@wordpress/keycodes": "^4.17.0",
+		"countup.js": "^2.9.0",
+		"html-react-parser": "^5.2.5",
+		"react-virtualized": "^9.22.6",
+		"swiper": "^11.2.4"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^30.10.0",
+		"del-cli": "^6.0.0"
+	}
+}

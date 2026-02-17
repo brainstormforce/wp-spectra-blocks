@@ -1,0 +1,12 @@
+.wp-block-image.spectra-mask {
+	img {
+		mask-image: var(--spectra-mask-image);
+		mask-repeat: var(--spectra-mask-repeat, no-repeat);
+		mask-size: var(--spectra-mask-size, contain);
+		mask-position: var(--spectra-mask-position, center center);
+		-webkit-mask-image: var(--spectra-mask-image);
+		-webkit-mask-repeat: var(--spectra-mask-repeat, no-repeat);
+		-webkit-mask-size: var(--spectra-mask-size, contain);
+		-webkit-mask-position: var(--spectra-mask-position, center center);
+	}
+}

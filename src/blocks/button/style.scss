@@ -1,0 +1,212 @@
+// overriding ast text-decoration for anchor tag.
+.ast-single-post .entry-content a.wp-block-spectra-button {
+	text-decoration: none;
+}
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-button:where(div, button, a) {
+	display: inline-flex;
+	align-items: center;
+	width: auto;
+	height: auto;
+
+	&.wp-block-button__link {
+		display: inline-flex;
+	}
+
+	// Hide regular icons when hover icons are enabled.
+	&.has-hover-icon {
+		&:focus,
+		&:hover {
+			.spectra-button__icon {
+				display: none;
+			}
+			.spectra-button__hover-icon {
+				display: flex;
+			}
+		}
+	}
+	// Styles for the spectra button in this block.
+	:where(.spectra-button__link) {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: inherit;
+	}
+
+	:where(.spectra-button__icon) {
+		display: flex;
+		align-items: center;
+		font-size: inherit;
+	}
+
+	:where(.spectra-button__hover-icon) {
+		display: none; // Hidden by default.
+		align-items: center;
+		font-size: inherit;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient Color.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color, inherit);
+			.spectra-button__link {
+				color: var(--spectra-text-color, inherit);
+			}
+		}
+
+		// Variable based CSS - Gap.
+		&.spectra-gap {
+			gap: var(--spectra-gap);
+		}
+
+		// Variable based CSS - Icon Gap override.
+		&.spectra-icon-gap {
+			gap: var(--spectra-icon-gap);
+		}
+
+		// Dynamic icon styling.
+		.spectra-button__icon {
+			// Default fill for FontAwesome icons (not custom SVGs)
+			&:not(.spectra-custom-svg) {
+				fill: currentColor;
+			}
+
+			// Variable based CSS - Icon Color.
+			&.spectra-icon-color:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color);
+			}
+		}
+
+		// When icon color is set but NO icon hover color, FontAwesome icons should inherit text hover
+		&:hover .spectra-button__icon.spectra-icon-color:not(.spectra-icon-color-hover):not(.spectra-custom-svg),
+		&:focus .spectra-button__icon.spectra-icon-color:not(.spectra-icon-color-hover):not(.spectra-custom-svg) {
+			fill: var(--spectra-text-color-hover, var(--spectra-icon-color));
+		}
+
+		// Variable based CSS - Icon Color for custom SVGs.
+		&.spectra-icon-color {
+			svg.spectra-custom-svg {
+				color: var(--spectra-icon-color);
+			}
+		}
+
+		// When icon color is set but NO icon hover color, still inherit text hover on hover
+		&.spectra-icon-color:not(.spectra-icon-color-hover) {
+			&:hover,
+			&:focus {
+				svg.spectra-custom-svg {
+					color: var(--spectra-text-color-hover, var(--spectra-icon-color));
+				}
+			}
+		}
+
+		// Dynamic hover icon styling.
+		.spectra-button__hover-icon {
+			// Default fill for FontAwesome icons (not custom SVGs)
+			&:not(.spectra-custom-svg) {
+				fill: currentColor;
+			}
+
+			// Variable based CSS - Icon Color.
+			&.spectra-icon-color:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color);
+			}
+		}
+
+		// The focus styling for this button.
+		&:focus,
+		&:hover {
+
+			// Variable based CSS - Background Color on Focus.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient Color on Focus.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+
+			// Variable based CSS - Text Color on Focus.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover, inherit) !important;
+				.spectra-button__link {
+					color: var(--spectra-text-color-hover) !important;
+					text-decoration-color: var(--spectra-text-color-hover) !important;
+				}
+			}
+
+			// Variable based CSS - Icon Color on Focus.
+			.spectra-button__icon.spectra-icon-color-hover:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+			}
+
+			// Variable based CSS - Hover Icon Color on Focus.
+			.spectra-button__hover-icon.spectra-icon-color-hover:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+			}
+
+			// Variable based CSS - Icon Color on Focus - Generic fallback.
+			.spectra-icon-color-hover:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor)) !important;
+			}
+
+			// Variable based CSS - Icon Color on Hover for custom SVGs.
+			&.spectra-icon-color-hover {
+				svg.spectra-custom-svg {
+					color: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+				}
+			}
+		}
+
+		// Border hover support - only change color, preserve responsive width/style from WordPress core.
+		&.spectra-border-hover:focus,
+		&.spectra-border-hover:hover {
+			border-color: var(--spectra-border-hover-color) !important;
+		}
+
+		// Shadow hover support.
+		&.spectra-shadow-hover:focus,
+		&.spectra-shadow-hover:hover {
+			box-shadow: var(--spectra-shadow-hover) !important;
+		}
+
+		// Border hover override - reset core WordPress border styles.
+		:where(&.spectra-border-hover-override) {
+			&:focus,
+			&:hover {
+				border-color: unset !important;
+			}
+
+			&.spectra-border-hover:focus,
+			&.spectra-border-hover:hover {
+				border-color: var(--spectra-border-hover-color) !important;
+			}
+		}
+
+		// Shadow hover override - reset core WordPress shadow styles.
+		:where(&.spectra-shadow-hover-override) {
+			&:focus,
+			&:hover {
+				box-shadow: unset !important;
+			}
+
+			&.spectra-shadow-hover:focus,
+			&.spectra-shadow-hover:hover {
+				box-shadow: var(--spectra-shadow-hover) !important;
+			}
+		}
+	}
+}

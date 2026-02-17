@@ -1,0 +1,36 @@
+/**
+ * Counter Number Block Editor Styles
+ *
+ * @since x.x.x
+ */
+
+.wp-block-spectra-counter-child-number {
+	min-height: 2rem;
+	color: currentColor;
+	// Display the number in the center of the block
+	.spectra-counter-number {
+		display: inline;
+		color: inherit;
+	}
+
+	.spectra-counter-number-display {
+		color: inherit;
+	}
+
+	// Prefix and suffix styling with colors from CSS variables.
+	.spectra-counter-prefix {
+		display: inline;
+		margin-right: var(--spectra-prefix-right-margin, 0);
+		color: var(--spectra-prefix-color, currentColor);
+	}
+
+	.spectra-counter-suffix {
+		display: inline;
+		margin-left: var(--spectra-suffix-left-margin, 0);
+		color: var(--spectra-suffix-color, currentColor);
+	}
+
+	.spectra-counter-value {
+		display: inline;
+	}
+}

@@ -1,0 +1,69 @@
+// Defaults for the accordion block.
+$default-border-width: 1px;
+$default-border-style: solid;
+$default-border-color: #d2d2d2;
+$default-border-radius: 2px;
+$default-padding: var(--wp--preset--spacing--30, 0.67rem);
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-tabs-child-tabpanel {
+	border: $default-border-width $default-border-style $default-border-color;
+	border-radius: $default-border-radius;
+	overflow: hidden;
+	box-sizing: border-box;
+	padding: $default-padding;
+
+	// The hidden class that's added to hide the non-active tab contents.
+	// Class duplication is used to make the specificity (0,4,0) to override Responsive CSS.
+	&.spectra-block-is-hidden.spectra-block-is-hidden.spectra-block-is-hidden {
+		display: none;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			// When there's a text color, everything inside should inherit.
+			*:not(.spectra-text-color) {
+				color: inherit;
+			}
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background-color: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+
+		// The hover and focus within state for this block.
+		&:hover,
+		&:focus-within {
+
+			// Variable based CSS - Text Color on Hover.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+
+				// When there's a text color, everything inside should inherit.
+				*:not(.spectra-text-color-hover) {
+					color: inherit;
+				}
+			}
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+	}
+}

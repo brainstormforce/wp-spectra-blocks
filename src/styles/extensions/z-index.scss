@@ -1,0 +1,14 @@
+/**
+ * Z-Index Extension Styles
+ *
+ * Provides CSS utilities for z-index functionality across blocks.
+ * Uses CSS custom properties for dynamic z-index values.
+ *
+ * @since 0.0.1
+ */
+
+/* Higher specificity to override WordPress core position hook */
+.has-z-index.has-z-index {
+	position: relative;
+	z-index: var(--spectra-z-index, auto) !important;
+}

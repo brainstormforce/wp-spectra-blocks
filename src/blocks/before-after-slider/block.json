@@ -1,0 +1,136 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/before-after-slider",
+	"version": "3.0.0",
+	"title": "Before After Slider",
+	"category": "spectra",
+	"description": "Compare two images with an interactive before/after slider.",
+	"textdomain": "ultimate-addons-for-gutenberg",
+	"keywords": [
+		"before",
+		"after",
+		"slider",
+		"comparison",
+		"image compare",
+		"before after",
+		"image slider",
+		"twentytwenty",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"anchor": true,
+		"align": [ "wide", "full" ],
+		"html": false,
+		"shadow": true,
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"viewScriptModule": "file:./view.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"attributes": {
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"anchor": {
+			"type": "string"
+		},
+		"beforeImageId": {
+			"type": "number",
+			"default": 0
+		},
+		"beforeImageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"beforeImageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"afterImageId": {
+			"type": "number",
+			"default": 0
+		},
+		"afterImageUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"afterImageAlt": {
+			"type": "string",
+			"default": ""
+		},
+		"beforeLabel": {
+			"type": "string",
+			"default": "Before"
+		},
+		"afterLabel": {
+			"type": "string",
+			"default": "After"
+		},
+		"orientation": {
+			"type": "string",
+			"default": "horizontal"
+		},
+		"initialOffset": {
+			"type": "number",
+			"default": 50
+		},
+		"moveOnHover": {
+			"type": "boolean",
+			"default": false
+		},
+		"showLabels": {
+			"type": "string",
+			"default": "hover"
+		},
+		"overlayColor": {
+			"type": "string"
+		},
+		"beforeOverlayColor": {
+			"type": "string"
+		},
+		"afterOverlayColor": {
+			"type": "string"
+		},
+		"handleColor": {
+			"type": "string"
+		},
+		"handleThickness": {
+			"type": "number"
+		},
+		"handleCircleSize": {
+			"type": "number"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"labelBackgroundColor": {
+			"type": "string"
+		}
+	}
+}

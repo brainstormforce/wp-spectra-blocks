@@ -1,0 +1,65 @@
+/**
+ * Counter Number Block Styles
+ *
+ * @since x.x.x
+ */
+
+.wp-block-spectra-counter-child-number {
+	color: currentColor;
+	font-size: 52px;
+
+	.spectra-counter-number {
+		display: inline;
+		color: inherit;
+		transition: all 0.2s ease;
+		align-items: baseline;
+		min-width: fit-content;
+		white-space: nowrap;
+	}
+	// Counter value styling to prevent animation flickering
+	.spectra-counter-value {
+		display: inline;
+		// Use tabular numerals for consistent digit width (works with any font)
+		font-variant-numeric: tabular-nums;
+		font-feature-settings: "tnum"; // Ensure consistent character width without changing font family.
+		white-space: nowrap;// Stable width during animation.
+		// min-width: 1ch; // At least one character width.
+		text-align: center;
+		transform: none !important;
+		zoom: 1 !important;
+		font-size: inherit;
+	}
+	// Prefix and suffix styling with colors from CSS variables.
+	.spectra-counter-prefix {
+		display: inline;
+		margin-right: var(--spectra-prefix-right-margin, 0);
+		color: var(--spectra-prefix-color, currentColor);
+		flex-shrink: 0; // Ensure prefix doesn't affect counter width calculations.
+	}
+	.spectra-counter-suffix {
+		display: inline;
+		margin-left: var(--spectra-suffix-left-margin, 0);
+		color: var(--spectra-suffix-color, currentColor);
+		flex-shrink: 0; // Ensure suffix doesn't affect counter width calculations.
+	}
+}
+
+// Higher specificity rules to override container text color inheritance
+.wp-block-spectra-container[class*="wp-block"] .wp-block-spectra-counter-child-number {
+	.spectra-counter-prefix {
+		color: var(--spectra-prefix-color, currentColor);
+	}
+	.spectra-counter-suffix {
+		color: var(--spectra-suffix-color, currentColor);
+	}
+}
+
+// Higher specificity rules to override counter text color inheritance.
+.wp-block-spectra-counter[class*="wp-block"].spectra-text-color .wp-block-spectra-counter-child-number {
+	.spectra-counter-prefix {
+		color: var(--spectra-prefix-color, currentColor) !important;
+	}
+	.spectra-counter-suffix {
+		color: var(--spectra-suffix-color, currentColor) !important;
+	}
+}

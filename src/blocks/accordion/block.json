@@ -1,0 +1,198 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/accordion",
+	"version": "3.0.0",
+	"title": "Accordion",
+	"category": "spectra",
+	"description": "Create a group of collapsible accordions.",
+	"textdomain": "ultimate-addons-for-gutenberg",
+	"allowedBlocks": [ "spectra/accordion-child-item" ],
+	"keywords": [
+		"accordion",
+		"faq",
+		"collapsible",
+		"expandable",
+		"toggle",
+		"collapsible content",
+		"expandable sections",
+		"accordion panels",
+		"dropdown content",
+		"show hide",
+		"expandable list",
+		"collapsible sections",
+		"schema",
+		"add faq",
+		"create accordion",
+		"insert faq",
+		"advanced accordion",
+		"questions answers",
+		"q&a",
+		"frequently asked",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"interactivity": true,
+		"anchor": true,
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"layout": {
+			"default": {
+				"type": "flex",
+				"flexWrap": "nowrap",
+				"orientation": "vertical",
+				"justifyContent": "stretch"
+			},
+			"allowEditing": false
+		},
+		"shadow": true,
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily":true,
+			"__experimentalFontStyle":true,
+			"__experimentalFontWeight":true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalTextTransform": true,
+			"__experimentalWritingMode": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily":true
+			}
+		},
+		"color": {
+			"gradients": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": [
+		"file:./style-index.css",
+		"spectra-components-icon-picker"
+	],
+	"render": "file:./view.php",
+	"viewScriptModule": "file:./view.js",
+	"providesContext": {
+		"spectra/accordion/activeAccordion": "activeAccordion",
+		"spectra/accordion/icon": "icon",
+		"spectra/accordion/iconSecondary": "iconSecondary",
+		"spectra/accordion/flipForRTL": "flipForRTL",
+		"spectra/accordion/flipForRTLSecondary": "flipForRTLSecondary",
+		"spectra/accordion/size": "size",
+		"spectra/accordion/rotation": "rotation",
+		"spectra/accordion/textColor": "textColor",
+		"spectra/accordion/textColorHover": "textColorHover",
+		"spectra/accordion/textColorSecondary": "textColorSecondary",
+		"spectra/accordion/textColorHoverSecondary": "textColorHoverSecondary",
+		"spectra/accordion/backgroundColor": "backgroundColor",
+		"spectra/accordion/backgroundColorHover": "backgroundColorHover",
+		"spectra/accordion/backgroundColorSecondary": "backgroundColorSecondary",
+		"spectra/accordion/backgroundColorHoverSecondary": "backgroundColorHoverSecondary",
+		"spectra/accordion/backgroundGradient": "backgroundGradient",
+		"spectra/accordion/backgroundGradientHover": "backgroundGradientHover",
+		"spectra/accordion/backgroundGradientSecondary": "backgroundGradientSecondary",
+		"spectra/accordion/backgroundGradientHoverSecondary": "backgroundGradientHoverSecondary"
+	},
+	"attributes": {
+		"anchor": {
+			"type": "string"
+		},
+		"layout": {
+			"type": "object",
+			"default": {
+				"type": "flex",
+				"flexWrap": "nowrap",
+				"orientation": "vertical",
+				"justifyContent": "stretch"
+			}
+		},
+		"activeAccordion": {
+			"type": "number",
+			"default": 0,
+			"source": "attribute",
+			"selector": ".wp-block"
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"icon": {
+			"type": ["string", "object"]
+		},
+		"iconSecondary": {
+			"type": ["string", "object"]
+		},
+		"flipForRTL": {
+			"type": "boolean",
+			"default": true
+		},
+		"flipForRTLSecondary": {
+			"type": "boolean",
+			"default": true
+		},
+		"size": {
+			"type": "string"
+		},
+		"rotation": {
+			"type": "number"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"textColorHover": {
+			"type": "string"
+		},
+		"textColorSecondary": {
+			"type": "string"
+		},
+		"textColorHoverSecondary": {
+			"type": "string"
+		},
+		"backgroundColorHover": {
+			"type": "string"
+		},
+		"backgroundColorSecondary": {
+			"type": "string"
+		},
+		"backgroundColorHoverSecondary": {
+			"type": "string"
+		},
+		"backgroundGradientHover": {
+			"type": "string"
+		},
+		"backgroundGradientSecondary": {
+			"type": "string"
+		},
+		"backgroundGradientHoverSecondary": {
+			"type": "string"
+		}
+	}
+}

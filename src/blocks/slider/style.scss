@@ -1,0 +1,261 @@
+// Slider triggers CSS for the custom navigation.
+.spectra-slider-triggers {
+	cursor: pointer;
+}
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-slider {
+	position: relative;
+	box-sizing: border-box;
+	width: inherit;
+	max-width: 100%;
+	height: auto;
+	padding: 20px 0;
+	--spectra-text-color: inherit;
+	--spectra-text-color-hover: inherit;
+
+	// Ensure all ::before pseudo-elements inherit border-radius for overlay effects
+	&::before {
+		border-radius: inherit;
+	}
+
+	// Swiper container.
+	.swiper {
+		width: 100%;
+		display: flex;
+		position: relative;
+		z-index: 3; // Combined z-index from duplicate.
+		// swiper-wrapper
+		.swiper-wrapper {
+			height: auto;
+			align-items: center;
+			padding: 0;
+		}
+		// swiper-slides.
+		.swiper-slide {
+			box-sizing: border-box;
+
+			// Slider slide content
+			.slide-content {
+				width: auto;
+			}
+		}
+	}
+
+	// Navigation buttons - combined styles.
+	.swiper-button-prev,
+	.swiper-button-next {
+		// Positioning and styling.
+		position: absolute;
+		z-index: 20;
+		top: 44%;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.3s ease;
+		border: 0;
+
+		// Slider navigation button after
+		&::after {
+			display: none;
+		}
+
+		// Slider navigation button svg
+		svg {
+			overflow: visible;
+			transition: fill 0.3s ease;
+		}
+
+		&:hover,
+		&:focus {
+			outline: none; // Remove default browser focus outline.
+		}
+		// Enhanced focus styles for better accessibility
+		&:focus-visible {
+			outline: 2px solid currentColor;
+			outline-offset: 2px;
+		}
+	}
+
+	// Pagination - combined styles.
+	.swiper-pagination,
+	.swiper-horizontal > .swiper-pagination-bullets,
+	.swiper-pagination-bullets.swiper-pagination-horizontal,
+	.swiper-pagination-custom,
+	.swiper-pagination-fraction {
+		position: absolute;
+		z-index: 19;
+		width: 100%;
+		left: 0;
+		right: 0;
+		bottom: calc(-0.3 * var(--spectra-pagination-margin-top, 0%)); // Uniform pixel-based positioning
+
+		// Remove all pointer events from the pagination bullets, but add then back to the individual bullet.
+		&.swiper-pagination-bullets {
+			pointer-events: none;
+		}
+
+		// swiper-pagination-bullet
+		.swiper-pagination-bullet {
+			pointer-events: all;
+			opacity: 0.7;
+			transition: all 0.3s ease;
+
+			// swiper-pagination-bullet hover and focus.
+			&:hover,
+			&:focus {
+				opacity: 0.9;
+				outline: none; // Remove default browser focus outline
+			}
+			// Enhanced focus styles for pagination bullets.
+			&:focus-visible {
+				outline-offset: 2px;
+			}
+
+			// swiper-pagination-bullet-active.
+			&.swiper-pagination-bullet-active,
+			&-active {
+				opacity: 1;
+				transform: scale(1.2);
+			}
+		}
+	}
+
+	// Slider container
+	.spectra-slider-container {
+		position: relative;
+		z-index: 2;
+		display: contents;
+	}
+
+	// Slider video overlay
+	.spectra-slider__overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+	}
+
+	// Slider overlay background video setup
+	&__background {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 1;
+		overflow: hidden;
+
+		// Slider background video
+		video {
+			width: 100%;
+			height: 100%;
+			min-block-size: inherit;
+			object-fit: cover;
+		}
+	}
+
+	// Slider overlay
+	&__overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 2;
+	}
+
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Simple Background Color.
+		&.spectra-background-color::before {
+			background: var(--spectra-background-color);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient.
+		&.spectra-background-gradient::before {
+			background: var(--spectra-background-gradient);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Text color for slider block itself (not child blocks to allow global styles)
+		&.spectra-text-color {
+			color: var(--spectra-text-color, inherit);
+		}
+
+		// Dynamic navigation button styles
+		.swiper-button-prev,
+		.swiper-button-next {
+			color: var(--spectra-navigation-color, #fff);
+			background-color: var(--spectra-arrow-background-color, rgba(0, 0, 0, 0.5));
+
+			svg {
+				&:not(.spectra-custom-svg) {
+					fill: var(--spectra-arrow-color, currentcolor);
+				}
+
+				// For custom SVGs, set color on the SVG element so currentColor works for both fill and stroke
+				&.spectra-custom-svg {
+					color: var(--spectra-arrow-color, currentcolor);
+				}
+			}
+
+			&:hover,
+			&:focus {
+				color: var(--spectra-arrow-color-hover, #fff);
+				background-color: var(--spectra-arrow-background-color-hover, rgba(0, 0, 0, 0.7));
+
+				svg {
+					&:not(.spectra-custom-svg) {
+						fill: var(--spectra-arrow-color-hover, #fff);
+					}
+
+					// For custom SVGs on hover, set color on the SVG element so currentColor works
+					&.spectra-custom-svg {
+						color: var(--spectra-arrow-color-hover, #fff);
+					}
+				}
+			}
+		}
+
+		// Dynamic pagination styles
+		.swiper-pagination {
+			.swiper-pagination-bullet {
+				background-color: var(--spectra-pagination-color, #aeacac);
+				width: var(--dot-size, 8px);
+				height: var(--dot-size, 8px);
+				margin: 0 var(--dot-spacing, 4px);
+
+				&:hover,
+				&:focus {
+					background-color: var(--spectra-pagination-color-hover, var(--spectra-pagination-color, #363434));
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--spectra-pagination-color-active, #20030388);
+				}
+
+				&.swiper-pagination-bullet-active,
+				&-active {
+					background-color: var(--spectra-pagination-color-active, var(--dot-active-color, #20030388));
+				}
+			}
+		}
+
+		// Slider child - only apply when slider has text color set
+		&.spectra-text-color .spectra-slider-child {
+			color: var(--spectra-text-color);
+			transition: color 0.3s ease;
+
+			&:hover {
+				color: var(--spectra-text-color-hover);
+			}
+		}
+	}
+}

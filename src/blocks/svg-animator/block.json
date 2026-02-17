@@ -1,0 +1,164 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/svg-animator",
+	"version": "3.0.0",
+	"title": "SVG Animator",
+	"category": "spectra",
+	"description": "Add animated SVG graphics with customizable draw, fade, scale, and rotate effects.",
+	"textdomain": "ultimate-addons-for-gutenberg",
+	"keywords": [
+		"svg",
+		"animator",
+		"animation",
+		"draw",
+		"path",
+		"stroke",
+		"line",
+		"animated",
+		"vector",
+		"graphic",
+		"motion",
+		"effect",
+		"fade",
+		"scale",
+		"rotate",
+		"scroll",
+		"trigger",
+		"spectra",
+		"uag",
+		"uagb"
+	],
+	"supports": {
+		"anchor": true,
+		"html": false,
+		"align": [ "wide", "full" ],
+		"shadow": true,
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"__experimentalDefaultControls": {
+				"margin": true,
+				"padding": true
+			}
+		},
+		"color": {
+			"text": false,
+			"background": false,
+			"gradients": false
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"viewScriptModule": "file:./view.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"attributes": {
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"anchor": {
+			"type": "string"
+		},
+		"svgSource": {
+			"type": "string",
+			"default": "upload"
+		},
+		"svgContent": {
+			"type": "string",
+			"default": ""
+		},
+		"svgUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"svgId": {
+			"type": "number"
+		},
+		"svgWidth": {
+			"type": "string"
+		},
+		"svgHeight": {
+			"type": "string"
+		},
+		"svgAlignment": {
+			"type": "string"
+		},
+		"strokeColor": {
+			"type": "string"
+		},
+		"strokeColorHover": {
+			"type": "string"
+		},
+		"strokeWidth": {
+			"type": "string"
+		},
+		"fillColor": {
+			"type": "string"
+		},
+		"fillBehavior": {
+			"type": "string",
+			"default": "none"
+		},
+		"animationType": {
+			"type": "string",
+			"default": "draw"
+		},
+		"animationTrigger": {
+			"type": "string",
+			"default": "viewport"
+		},
+		"animationDuration": {
+			"type": "number",
+			"default": 2000
+		},
+		"animationDelay": {
+			"type": "number",
+			"default": 0
+		},
+		"animationEasing": {
+			"type": "string",
+			"default": "ease"
+		},
+		"animationLoop": {
+			"type": "boolean",
+			"default": false
+		},
+		"animationReverse": {
+			"type": "boolean",
+			"default": false
+		},
+		"animationYoyo": {
+			"type": "boolean",
+			"default": false
+		},
+		"animationStagger": {
+			"type": "number",
+			"default": 0
+		},
+		"accessibilityMode": {
+			"type": "string"
+		},
+		"accessibilityLabel": {
+			"type": "string"
+		}
+	}
+}

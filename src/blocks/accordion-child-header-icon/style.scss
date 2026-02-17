@@ -1,0 +1,37 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-accordion-child-header-icon {
+	// Default CSS for this block.
+	color: inherit;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+		}
+
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+	}
+
+	// Ensure custom SVG elements inherit color properly for both fill and stroke.
+	&[class*="wp-block"].spectra-text-color svg.spectra-custom-svg {
+		color: currentColor;
+	}
+
+	// Ensure custom SVG elements inherit hover color properly for both fill and stroke.
+	&[class*="wp-block"].spectra-text-color-hover:hover svg.spectra-custom-svg {
+		color: currentColor;
+	}
+}

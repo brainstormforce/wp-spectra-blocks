@@ -1,0 +1,35 @@
+/**
+ * Editor-only styles for the SVG Animator block.
+ *
+ * @since x.x.x
+ * @package Spectra\Blocks\SvgAnimator
+ */
+
+.wp-block-spectra-svg-animator {
+	// Ensure the placeholder looks good in the editor.
+	.components-placeholder {
+		min-height: 200px;
+	}
+
+	// Preview container styling.
+	.spectra-svg-animator__container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+
+		svg {
+			max-width: 100%;
+			height: auto;
+		}
+	}
+}
+
+// SVG preview image in the inspector settings panel.
+.spectra-svg-animator__preview-image {
+	max-width: 100%;
+	height: auto;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 8px;
+}

@@ -1,0 +1,170 @@
+$color-accent: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+$color-dark: #1e1e1e;
+$color-medium: #7e7e7e;
+$color-light: #ddd;
+
+// The icon picker control wrapper.
+.spectra-icon-picker {
+	width: 100%;
+	aspect-ratio: 16/9;
+	overflow: hidden;
+	position: relative;
+	padding: 3px;
+	border: 1px solid $color-light;
+	border-radius: 2px;
+	transition: border-color 100ms;
+
+	// Hover effects for the entire control.
+	&:hover {
+		border-color: $color-dark;
+
+		.spectra-icon-picker__button--select {
+			transform: translateY(0);
+		}
+
+		.spectra-icon-picker__control--value {
+			color: $color-accent;
+		}
+	}
+
+	// Stylings for buttons.
+	button {
+
+		// Styling for the remove button.
+		&.spectra-icon-picker__button--remove {
+			position: absolute;
+			top: 3px;
+			right: 3px;
+			width: 20px;
+			height: 20px;
+			background: transparent;
+			color: $color-dark;
+			border: none;
+			box-shadow: none;
+			outline: none;
+			cursor: pointer;
+			transition-duration: 100ms;
+			transition-property: color, background-color;
+
+			&:hover,
+			&:focus,
+			&:focus-visible {
+				background: $color-dark;
+				color: #fff;
+				border: none;
+				box-shadow: none;
+				outline: none;
+			}
+
+			svg {
+				max-width: 100%;
+				max-height: 100%;
+			}
+		}
+
+
+		// Styling for the select button.
+		&.spectra-icon-picker__button--select {
+			position: absolute;
+			bottom: 3px;
+			left: 3px;
+			width: calc(100% - 6px);
+			height: 2em;
+			transform: translateY(calc(100% + 3px));
+			background: $color-dark;
+			color: #fff;
+			border: none;
+			box-shadow: none;
+			outline: none;
+			cursor: pointer;
+			transition: transform 100ms;
+
+			&:hover,
+			&:focus,
+			&:focus-visible {
+				transform: translateY(0);
+				background: $color-dark;
+				color: #fff;
+				border: none;
+				box-shadow: none;
+				outline: none;
+			}
+
+			svg {
+				// fill: currentColor;
+				max-width: 100%;
+				max-height: 100%;
+			}
+		}
+	}
+
+	// The control area.
+	&__control {
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+
+		&--value {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: $color-medium;
+			transition: color 100ms;
+
+			svg {
+				// fill: currentColor;
+				max-width: 32px;
+				max-height: 32px;
+			}
+		}
+
+		&--empty {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: $color-light;
+
+			svg {
+				// fill: currentColor;
+				max-width: 32px;
+				max-height: 32px;
+			}
+		}
+
+		&--image {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			img {
+				max-width: 100%;
+				max-height: 100%;
+				object-fit: contain;
+			}
+
+			// Styles for uploaded SVG content
+			> div {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 100%;
+				height: 100%;
+
+				svg,
+				div {
+					max-width: 32px;
+					max-height: 32px;
+				}
+			}
+		}
+	}
+
+	// Additional spacing when toggle is present
+	&--with-toggle {
+		margin-top: 8px;
+	}
+}

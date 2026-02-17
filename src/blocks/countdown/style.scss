@@ -1,0 +1,46 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-countdown {
+	color: inherit;
+	box-sizing: border-box;
+	width: 100%;
+	font-size: 2.5rem;
+	font-weight: 500;
+	text-transform: uppercase;
+
+	// Fix spacing for flow and constrained layouts when blockGap is not set.
+	&.countdown-is-layout-flow-constrained {
+		// Remove vertical margins from all direct children.
+		> * {
+			margin-block-start: 0;
+			margin-block-end: 0;
+		}
+
+		// Remove additional margins from adjacent siblings.
+		> * + * {
+			margin-block-start: 0;
+		}
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// The hover state for this block.
+		&:hover {
+
+			// Variable based CSS - Text Hover Color.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Color Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+	}
+}

@@ -1,0 +1,133 @@
+// Defaults for the button block.
+$default-icon-size: 16px;
+$default-text-icon-gap: 10px;
+
+.wp-block-spectra-modal-child-button:where(div, button) {
+	// Text align styles.
+	&.has-text-align-right {
+		justify-content: right;
+	}
+	&.has-text-align-left {
+		justify-content: left;
+	}
+	&.has-text-align-center {
+		justify-content: center;
+	}
+	&:not(.has-text-align-right):not(.has-text-align-left) {
+		justify-content: center;
+	}
+
+	// Default CSS for this block.
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-decoration: none;
+	gap: var(--spectra-icon-gap, $default-text-icon-gap);
+
+	&.is-hidden {
+		display: none;
+	}
+
+	// Variable based CSS - Background Color.
+	&.spectra-background-color {
+		background: var(--spectra-background-color);
+	}
+
+	// Variable based CSS - Background Gradient Color.
+	&.spectra-background-gradient {
+		background: var(--spectra-background-gradient);
+	}
+
+	// Variable based CSS - Text Color.
+	&.spectra-text-color {
+		.spectra-button__link {
+			color: var(--spectra-text-color, #fff);
+		}
+	}
+
+	// Styles for the spectra button in this block.
+	.spectra-button {
+		// The link styling.
+		&__link {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-decoration: none;
+		}
+		// The icon styling.
+		&__icon {
+			display: flex;
+			align-items: center;
+			font-size: inherit;
+			width: $default-icon-size;
+			height: $default-icon-size;
+
+			// Default fill for FontAwesome icons (not custom SVGs)
+			&:not(.spectra-custom-svg) {
+				fill: currentColor;
+			}
+
+			// Variable based CSS - Icon Color for FontAwesome icons.
+			&.spectra-icon-color:not(.spectra-custom-svg) {
+				fill: var(--spectra-icon-color);
+			}
+
+			// Variable based CSS - Icon Color for custom SVGs.
+			&.spectra-custom-svg.spectra-icon-color {
+				color: var(--spectra-icon-color);
+			}
+
+			// For custom SVGs without specific icon color, inherit text color
+			&.spectra-custom-svg:not(.spectra-icon-color) {
+				color: currentColor;
+			}
+		}
+
+	}
+
+	// The focus styling for this button.
+	&:focus,
+	&:hover {
+
+		// Variable based CSS - Icon Color on Focus and Hover for FontAwesome icons.
+		.spectra-button__icon:not(.spectra-custom-svg) {
+			fill: var(--spectra-text-color-hover, currentColor);
+		}
+
+		// Variable based CSS - Icon Color on Focus and Hover for custom SVGs.
+		.spectra-button__icon.spectra-custom-svg {
+			color: var(--spectra-text-color-hover, currentColor);
+		}
+
+		// Variable based CSS - Background Color on Focus.
+		&.spectra-background-color-hover {
+			background: var(--spectra-background-color-hover);
+		}
+
+		// Variable based CSS - Background Gradient Color on Focus.
+		&.spectra-background-gradient-hover {
+			background: var(--spectra-background-gradient-hover);
+		}
+
+		// Variable based CSS - Text Color on Focus.
+		&.spectra-text-color-hover {
+			.spectra-button__link {
+				color: var(--spectra-text-color-hover);
+			}
+		}
+
+		// Variable based CSS - Icon Color on Focus for FontAwesome icons.
+		.spectra-button__icon.spectra-icon-color-hover:not(.spectra-custom-svg) {
+			fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+		}
+
+		// Variable based CSS - Icon Color on Focus for custom SVGs.
+		.spectra-button__icon.spectra-custom-svg.spectra-icon-color-hover {
+			color: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+		}
+	}
+}
+
+.is-hidden {
+	display: none;
+}

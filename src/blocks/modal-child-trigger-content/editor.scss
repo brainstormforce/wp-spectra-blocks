@@ -1,0 +1,6 @@
+// In the editor, we have to specifically override the default text color with the Core Provided inherit for the current block.
+.wp-block-spectra-modal-child-content {
+	&.is-hidden {
+		display: none;
+	}
+}

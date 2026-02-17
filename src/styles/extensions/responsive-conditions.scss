@@ -1,0 +1,24 @@
+/**
+ * Responsive Conditions Extension - Editor Styles
+ *
+ * CSS styles for the block editor interface when working with responsive conditions.
+ * These styles provide visual feedback to editors about which responsive conditions are active.
+ * Visual indicators are applied based on classes only - the editor's device preview handles context.
+ *
+ * @since x.x.x
+ */
+
+/**
+ * Visual indicators for blocks with responsive visibility settings in the editor.
+ * Shows a striped background pattern and reduced opacity when blocks are hidden on current device.
+ * The editor's device preview mode determines which blocks should show the indicator.
+ */
+
+/**
+ * Visual indicator for blocks with responsive conditions active.
+ * Applied when a block is hidden on the current device preview mode.
+ */
+.spectra-responsive-hidden {
+	background: repeating-linear-gradient(125deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05) 1px, transparent 2px, transparent 9px);
+	opacity: 0.4;
+}

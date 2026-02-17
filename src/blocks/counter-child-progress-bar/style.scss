@@ -1,0 +1,108 @@
+/**
+ * Counter Progress Bar Block Styles
+ *
+ * @since x.x.x
+ */
+
+.wp-block-spectra-counter-child-progress-bar {
+	display: block;
+	margin: 10px 0;
+	// In horizontal layouts, use a reasonable default width but allow flexibility
+	width: auto;
+	min-width: 200px;
+
+	// Progress bar track
+	.spectra-counter-progress-track {
+		width: 100%;
+		min-width: auto; // Minimum readable width
+		height: var(--spectra-counter-bar-height, 32px);
+		background-color: var(--spectra-counter-progress-bg-color, #e6e6e6);
+		border-radius: var(--spectra-counter-bar-border-radius, 4px);
+		overflow: hidden; // Clip the progress bar to rounded corners
+		position: relative;
+		text-decoration: inherit; // Ensure text-decoration flows through
+	}
+
+	// Progress bar fill
+	.spectra-counter-progress-bar {
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		background-color: var(--spectra-counter-progress-color, #4a90e2);
+		border-radius: var(--spectra-counter-bar-border-radius, 4px);
+		transition: none; // Animation is handled by JavaScript with linear easing
+		min-width: 0;
+		text-decoration: inherit; // Ensure text-decoration flows through
+	}
+
+	// Progress bar label (text on top of the bar, always visible)
+	.spectra-counter-progress-label {
+		position: absolute;
+		right: 12px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: var(--spectra-counter-progress-bar-text-color, inherit);
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		pointer-events: none;
+		z-index: 2; // Above the progress bar
+		text-decoration: inherit; // Ensure text-decoration flows through.
+
+		// Wrapper for inline text.
+		.spectra-counter-text {
+			display: inline;
+			text-decoration: inherit;
+		}
+
+		.spectra-counter-prefix {
+			display: inline;
+			color: var(--spectra-prefix-color, inherit) !important;
+			text-decoration: inherit;
+		}
+
+		.spectra-counter-value {
+			display: inline;
+			text-decoration: inherit;
+		}
+
+		.spectra-counter-suffix {
+			display: inline;
+			color: var(--spectra-suffix-color, inherit) !important;
+			text-decoration: inherit;
+		}
+	}
+
+	// Circular style (hidden)
+	&.spectra-counter-progress-bar--circular {
+		display: none;
+	}
+}
+
+// Color classes applied at block level
+.spectra-progress-color {
+	--spectra-counter-progress-color: var(--wp--preset--color--primary, #4a90e2);
+}
+
+.spectra-progress-background-color {
+	--spectra-counter-progress-bg-color: var(--wp--preset--color--background, #e6e6e6);
+}
+
+// Size and dimension classes
+.spectra-progress-size {
+	--spectra-counter-progress-size: 300px;
+}
+
+.spectra-progress-stroke-width {
+	--spectra-counter-stroke-width: 8px;
+}
+
+.spectra-bar-height {
+	--spectra-counter-bar-height: 32px;
+}
+
+.spectra-bar-border-radius {
+	--spectra-counter-bar-border-radius: 4px;
+}

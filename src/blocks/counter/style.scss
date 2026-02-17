@@ -1,0 +1,223 @@
+/**
+ * Counter Block Styles
+ *
+ * @since x.x.x
+ */
+
+.wp-block-spectra-counter {
+	position: relative;
+
+	&[data-spectra-id] > * {
+		margin: 0;
+	}
+	&[data-spectra-id] .spectra-counter-content-wrapper > * {
+		margin: 0;
+	}
+	// Circular progress style
+	&.spectra-counter--circular {
+		.spectra-counter-circular-wrapper {
+			position: relative;
+			display: inline-flex;
+			// Fixed size prevents stretching while allowing parent alignment to work
+			width: var(--spectra-counter-progress-size, 300px);
+			height: var(--spectra-counter-progress-size, 300px);
+			flex-shrink: 0; // Prevent shrinking
+
+			.spectra-counter-progress {
+				position: relative;
+				width: var(--spectra-counter-progress-size, 300px);
+				height: var(--spectra-counter-progress-size, 300px);
+				z-index: 1;
+
+				svg {
+					width: 100%;
+					height: 100%;
+					display: block;
+					transform: rotate(-90deg);
+				}
+
+				.spectra-counter-progress-bg {
+					fill: none;
+					stroke: var(--spectra-counter-progress-bg-color, #e0e0e0);
+					stroke-width: var(--spectra-counter-stroke-width, 8px);
+				}
+
+				.spectra-counter-progress-circle {
+					fill: none;
+					stroke: var(--spectra-counter-progress-color, #007cba);
+					stroke-width: var(--spectra-counter-stroke-width, 8px);
+					stroke-linecap: butt;
+					transition: none; // Animation is handled by JavaScript with linear easing
+				}
+			}
+
+			.spectra-counter-content {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				z-index: 2;
+				max-width: calc(var(--spectra-counter-progress-size, 300px) - 60px);
+				width: 100%;
+
+				// Ensure content wrapper maintains normal document flow for proper spacing
+				// Layout controls are applied via inline styles from innerBlocksProps
+				// This allows layout alignment and block spacing (gap) to work properly
+				// The wrapper stays in normal flow, preserving spacing between child blocks
+
+				.spectra-counter-content-wrapper {
+					// Inherit layout properties from innerBlocksProps for proper spacing
+					// This ensures gap, justify-content, align-items work correctly
+					min-height: 0; // Allow content to size naturally
+					padding: 1.2rem;
+					// Remove any background to avoid double background in circular counter
+					background: none !important;
+					background-color: transparent !important;
+					background-image: none !important;
+				}
+			}
+		}
+
+		.wp-block-spectra-icon {
+			margin: 0 0 0.5rem 0;
+			padding: 0;
+			font-size: 2em; // Make icon prominent
+		}
+
+		.wp-block-spectra-counter-child-number {
+			margin: 0;
+			padding: 0;
+			line-height: 1;
+		}
+	}
+	// Child elements
+	.spectra-counter-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: currentColor;
+
+		svg {
+			width: 1em;
+			height: 1em;
+			fill: currentColor;
+		}
+	}
+
+	.spectra-counter-number {
+		color: currentColor; // Prevent layout shifts during counter animation.
+		contain: layout; // Ensure stable positioning without blocking text decoration
+		position: relative;
+	}
+
+	.spectra-counter-text {
+		color: currentColor;
+		line-height: 1.4;
+	}
+
+	// Override container block behavior inside counter to respect parent layout.
+	.wp-block-spectra-container {
+		// Remove auto margins that prevent flex alignment from working.
+		margin-left: 0;
+		margin-right: 0; // Allow container to stretch to full width when parent uses stretch alignment.
+		// while still allowing it to size naturally otherwise.
+		min-width: 0;
+		max-width: 100%;
+	}
+
+	// Simple and bar counter styles should have the same large font-size
+	// as circular counter to ensure consistent visual appearance
+	&.spectra-counter--simple,
+	&.spectra-counter--bar {
+		.wp-block-spectra-counter-child-number {
+			line-height: 1;
+		}
+
+		.wp-block-spectra-container {
+			margin: 0.5rem 0 0 0;
+			padding: 0;
+			// Keep width: 100% here for proper text wrapping within max-width constraint
+			width: 100%;
+			font-size: 0.9em;
+
+			// Text inside container should wrap properly
+			p {
+				margin: 0;
+				padding: 0;
+				word-break: break-word;
+			}
+		}
+	}
+
+	// Hover effects
+	&:hover {
+		.spectra-counter-progress-circle {
+			stroke: var(--spectra-text-color-hover, var(--spectra-counter-progress-color, #007cba));
+		}
+
+		.spectra-counter-progress-bar {
+			background-color: var(--spectra-text-color-hover, var(--spectra-counter-progress-color, #007cba));
+		}
+	}
+
+	// Responsive adjustments
+	@media (max-width: 768px) {
+		&.spectra-counter--circular {
+			.spectra-counter-progress {
+				width: calc(var(--spectra-counter-progress-size, 300px) * 0.8);
+				height: calc(var(--spectra-counter-progress-size, 300px) * 0.8);
+			}
+		}
+	}
+
+	// Screen reader only text for accessibility
+	.screen-reader-text {
+		position: absolute !important;
+		clip: rect(1px, 1px, 1px, 1px);
+		clip-path: inset(50%);
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		word-wrap: normal !important;
+		border: 0;
+		padding: 0;
+		margin: -1px;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Text color of content inside counter (following container block pattern)
+		&.p {
+			margin-bottom: 0;
+		}
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			* {
+				color: inherit;
+			}
+		}
+		// Text color of content inside counter (following container block pattern.
+		// Variable based CSS - Background Color.
+		&.spectra-background-color {
+			background: var(--spectra-background-color);
+		}
+
+		// Variable based CSS - Background Gradient.
+		&.spectra-background-gradient {
+			background: var(--spectra-background-gradient);
+		}
+	}
+}
+
+// Editor-only margins using CSS variables (lower specificity than responsive controls)
+// Note: These rules are outside the main block to have lower specificity
+.wp-block-spectra-counter .spectra-counter-progress-label {
+	.spectra-counter-prefix {
+		margin-right: var(--spectra-prefix-right-margin, 0);
+	}
+
+	.spectra-counter-suffix {
+		margin-left: var(--spectra-suffix-left-margin, 0);
+	}
+}

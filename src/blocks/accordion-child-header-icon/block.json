@@ -1,0 +1,91 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/accordion-child-header-icon",
+	"version": "3.0.0",
+	"title": "Icon",
+	"category": "spectra-inner-blocks",
+	"description": "Add an icon indicator for this accordion header.",
+	"parent": [ "spectra/accordion-child-header" ],
+	"textdomain": "ultimate-addons-for-gutenberg",
+	"supports": {
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"shadow": true
+			}
+		},
+		"shadow": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"gradients": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": [
+		"file:./style-index.css",
+		"spectra-components-icon-picker"
+	],
+	"usesContext": [
+		"spectra/accordion/icon",
+		"spectra/accordion/iconSecondary",
+		"spectra/accordion/size",
+		"spectra/accordion/rotation",
+		"spectra/accordion/item/isActiveInEditor"
+	],
+	"attributes": {
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"icon": {
+			"type": ["string", "object"]
+		},
+		"iconSecondary": {
+			"type": ["string", "object"]
+		},
+		"flipForRTL": {
+			"type": "boolean",
+			"default": true
+		},
+		"flipForRTLSecondary": {
+			"type": "boolean",
+			"default": true
+		},
+		"size": {
+			"type": "string"
+		},
+		"rotation": {
+			"type": "number"
+		},
+		"textColorHover": {
+			"type": "string"
+		},
+		"backgroundColorHover": {
+			"type": "string"
+		},
+		"backgroundGradientHover": {
+			"type": "string"
+		}
+	}
+}

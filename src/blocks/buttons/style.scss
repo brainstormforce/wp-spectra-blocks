@@ -1,0 +1,22 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-buttons {
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// The hover and focus within state for this block.
+		&:hover,
+		&:focus-within {
+
+			// Variable based CSS - Background Color on Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient on Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+	}
+}

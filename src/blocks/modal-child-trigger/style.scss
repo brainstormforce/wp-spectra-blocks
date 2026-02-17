@@ -1,0 +1,7 @@
+// Static styles - specificity (0,1,0) for default block CSS that should be overridable by Global Styles.
+.wp-block-spectra-modal-child-trigger {
+	// State-based styles using :where() to maintain (0,1,0) specificity.
+	&:where(.is-hidden) {
+		display: none !important;
+	}
+}

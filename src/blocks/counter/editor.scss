@@ -1,0 +1,101 @@
+/**
+ * Counter Block Editor Styles
+ *
+ * @since x.x.x
+ *
+ * Note: Most styles are in style.scss which applies to both editor and frontend.
+ * This file contains ONLY editor-specific overrides and enhancements.
+ */
+
+// Ensure proper spacing in editor
+.wp-block-editor .wp-block-spectra-counter {
+	.spectra-counter-content {
+		gap: 0.5rem;
+	}
+
+	// Override container block behavior to respect counter's layout controls in editor
+	.wp-block-spectra-container {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		// Allow container to stretch to full width when parent uses stretch alignment
+		min-width: 0 !important;
+		max-width: 100%;
+	}
+
+	// Minimum sizes for preview mode in editor
+	&.spectra-counter--circular {
+		min-height: 300px;
+		min-width: 300px;
+	}
+
+	&.spectra-counter--bar {
+		min-height: 100px;
+	}
+
+	// // Fix for horizontal bar counter layout
+	// &.spectra-counter--bar.is-layout-flex:not(.is-vertical) {
+	// 	.spectra-counter-progress {
+	// 		max-width: 60%;
+	// 	}
+
+	// 	// Prevent child blocks from shrinking in horizontal layout
+	// 	> .wp-block-spectra-icon,
+	// 	> .wp-block-spectra-counter-child-number,
+	// 	> .wp-block-spectra-content,
+	// 	> .wp-block-spectra-container {
+	// 		flex-shrink: 0 !important;
+	// 	}
+	// }
+}
+
+.wp-block-spectra-counter {
+	// Editor-specific overrides for circular counter
+	&.spectra-counter--circular {
+		// Allow clicking through SVG to content in editor
+		> .spectra-counter-circular-wrapper > .spectra-counter-progress {
+			pointer-events: none;
+		}
+
+		// Visual feedback when blocks are selected in editor
+		.wp-block-spectra-icon.is-selected,
+		.wp-block-spectra-counter-child-number.is-selected {
+			outline: 1px dashed rgba(0, 124, 186, 0.4);
+			outline-offset: 2px;
+		}
+
+		// Ensure block spacing works properly in circular counter content
+		.spectra-counter-content-wrapper {
+			// Inherit layout properties from innerBlocksProps for proper spacing
+			// This ensures gap, justify-content, align-items work correctly
+			min-height: 0; // Allow content to size naturally
+		}
+
+		// When variation picker is shown, temporarily convert to simple layout
+		// This gives the variation picker full space to display properly
+		&:has(.spectra-variation-picker) {
+			// Hide the circular wrapper (SVG circle)
+			.spectra-counter-circular-wrapper {
+				position: static;
+				display: block;
+				width: 100%;
+				height: auto;
+				min-width: auto;
+				min-height: auto;
+
+				// Hide the circular progress SVG
+				.spectra-counter-progress {
+					display: none;
+				}
+
+				// Make content display in normal flow (like simple style)
+				.spectra-counter-content {
+					position: static;
+					transform: none;
+					max-width: none;
+					padding: 0;
+					width: 100%;
+				}
+			}
+		}
+	}
+}

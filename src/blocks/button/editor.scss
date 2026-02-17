@@ -1,0 +1,51 @@
+// Defaults for the button block.
+$default-icon-size: 16px;
+$default-text-icon-gap: 10px;
+
+.wp-block-spectra-button:where(div, button) {
+	gap: var(--spectra-gap, $default-text-icon-gap);
+
+	// Styles for the spectra button in this block.
+	.spectra-button {
+		// The icon styling.
+		&__icon {
+			width: $default-icon-size;
+			height: $default-icon-size;
+		}
+	}
+
+	// Ensure custom SVG elements inherit color properly in the editor for both fill and stroke.
+	&[class*="wp-block"] {
+		// Variable based CSS - Icon Color for custom SVGs.
+		&.spectra-icon-color {
+			.spectra-button__icon svg.spectra-custom-svg,
+			.spectra-button__hover-icon svg.spectra-custom-svg {
+				color: var(--spectra-icon-color);
+			}
+		}
+
+		// Variable based CSS - Text Color (fallback when no icon color is set).
+		&.spectra-text-color {
+			.spectra-button__icon svg.spectra-custom-svg:not(.spectra-icon-color),
+			.spectra-button__hover-icon svg.spectra-custom-svg:not(.spectra-icon-color) {
+				color: currentColor;
+			}
+		}
+
+		// Variable based CSS - Icon Color on Hover for custom SVGs.
+		&.spectra-icon-color-hover:hover {
+			.spectra-button__icon svg.spectra-custom-svg,
+			.spectra-button__hover-icon svg.spectra-custom-svg {
+				color: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+			}
+		}
+
+		// Variable based CSS - Text Color on Hover (fallback when no icon color hover is set).
+		&.spectra-text-color-hover:hover {
+			.spectra-button__icon svg.spectra-custom-svg:not(.spectra-icon-color-hover),
+			.spectra-button__hover-icon svg.spectra-custom-svg:not(.spectra-icon-color-hover) {
+				color: currentColor;
+			}
+		}
+	}
+}

@@ -1,0 +1,53 @@
+/* CSS file that store all common CSS that can be loaded into blocks if required. */
+
+// WordPress core button compatibility - default border-radius for button blocks.
+// These rules are set to zero specificity to keep the default styles for buttons.
+// They are needed for backwards compatibility with WordPress core button blocks.
+:where(.wp-block-button__link) {
+	// 100% causes an oval, but any explicit but really high value retains the pill shape.
+	border-radius: 9999px;
+}
+
+// Styles for the Spectra video background type.
+.spectra-background-video {
+	position: relative;
+
+	// The video background wrapper.
+	&__wrapper {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+		border-radius: unset;
+
+		// The video inside the background wrapper.
+		video {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			min-width: 100%;
+			min-height: 100%;
+			min-block-size: inherit;
+			width: auto;
+			height: auto;
+			object-fit: cover;
+		}
+
+		// All the sibling elements after the video wrapper should be relative to appear above the video.
+		& ~ * {
+			position: relative;
+			z-index: 2;
+		}
+	}
+
+	// When the block is hovered.
+	&:hover {
+
+		// Update the overlay.
+		.spectra-background-video__wrapper--overlay::after {
+			background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+			opacity: var(--spectra-overlay-opacity); // Default opacity if not set.
+		}
+	}
+}

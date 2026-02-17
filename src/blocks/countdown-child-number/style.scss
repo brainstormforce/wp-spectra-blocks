@@ -1,0 +1,33 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-countdown-child-number {
+	color: inherit;
+	font-size: 1em;
+	font-weight: inherit;
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// Variable based CSS - Number Color.
+		&.spectra-number-color {
+			color: var(--spectra-number-color) !important;
+		}
+
+		// The hover state for this block.
+		&:hover {
+
+			// Variable based CSS - Number Hover Color.
+			&.spectra-number-color-hover {
+				color: var(--spectra-number-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Color Hover.
+			&.spectra-background-color-hover {
+				background: var(--spectra-background-color-hover) !important;
+			}
+
+			// Variable based CSS - Background Gradient Hover.
+			&.spectra-background-gradient-hover {
+				background: var(--spectra-background-gradient-hover) !important;
+			}
+		}
+	}
+}

@@ -1,0 +1,108 @@
+// Defaults for the modal content block.
+$default-padding: var(--wp--preset--spacing--30, 0.67rem);
+
+// Static styles - specificity (0,1,0) for default block CSS that should be overridable by Global Styles.
+.wp-block-spectra-modal-popup-content {
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+	border-radius: 3px;
+	background: #fff;
+	padding: $default-padding;
+
+	// Ensure all ::before pseudo-elements inherit border-radius for overlay effects
+	&::before {
+		border-radius: inherit;
+	}
+
+	> * {
+		z-index: 0;
+		position: relative;
+	}
+
+	// Apply overflow clip when has video background and border-radius
+	&.has-video-background,
+	&.has-image-background {
+		&[style*="border-radius"] {
+			overflow: hidden; // Fallback for older browsers
+			overflow: clip !important;   // Modern standard for proper border-radius clipping
+		}
+	}
+
+	// Content overflow handling like v2
+	:where(.spectra-modal-popup-content) {
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+
+	// Default flex-wrap overriding for flex layout.
+	&:where(.wp-block-spectra-modal-popup-content-is-layout-flex) {
+		flex-wrap: nowrap;
+	}
+
+	// Dynamic styles - specificity (0,2,0) and higher for block settings that should NOT be overridden by Global Styles.
+	&[class*="wp-block"] {
+
+		&.has-video-background {
+			z-index: 0;
+			overflow: clip !important;
+		}
+
+		// Positioning for modal content when wrapper is not present (window positioning)
+		&.horizontal-position,
+		&.vertical-position {
+			position: absolute;
+			left: var(--spectra-modal-h-position);
+			top: var(--spectra-modal-v-position);
+		}
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
+				color: inherit;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color.
+		&.spectra-background-color::before {
+			background-color: var(--spectra-background-color);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient.
+		&.spectra-background-gradient::before {
+			background: var(--spectra-background-gradient);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// -------------------------------- //
+		// The hover states for this block. //
+		// -------------------------------- //
+		&:hover {
+			// Variable based CSS - Text Hover Color.
+			&.spectra-text-color-hover {
+				color: var(--spectra-text-color-hover);
+			}
+		}
+
+		// Variable based CSS - Simple Background Color Hover.
+		&.spectra-background-color-hover:hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover.
+		&.spectra-background-gradient-hover:hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+	}
+}

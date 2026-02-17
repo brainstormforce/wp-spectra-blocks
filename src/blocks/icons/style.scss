@@ -1,0 +1,17 @@
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-icons {
+
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+
+		// Applies a solid background color on hover if both background and hover classes are set to color.
+		&.spectra-background-color-hover:hover {
+			background: var(--spectra-background-color-hover) !important;
+		}
+
+		// Applies a gradient background on hover if hover is set to gradient, regardless of the initial background type.
+		&.spectra-background-gradient-hover:hover {
+			background: var(--spectra-background-gradient-hover) !important;
+		}
+	}
+}

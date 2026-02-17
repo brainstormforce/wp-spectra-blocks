@@ -1,0 +1,44 @@
+// Editor styles for list item
+.wp-block-spectra-list-child-item {
+	color: inherit;
+	// Variable based CSS - Background Color
+	&.spectra-background-color {
+		background: var(--spectra-background-color);
+	}
+
+	// Variable based CSS - Background Gradient
+	&.spectra-background-gradient {
+		background: var(--spectra-background-gradient);
+	}
+
+	// The hover state for this block
+	&:hover {
+		// Variable based CSS - Background Color on Hover
+		&.spectra-background-color-hover {
+			background: var(--spectra-background-color-hover);
+		}
+
+		// Variable based CSS - Background Gradient on Hover
+		&.spectra-background-gradient-hover {
+			background: var(--spectra-background-gradient-hover);
+		}
+	}
+}
+
+// In the editor, we have to specifically override the default text color with the Core Provided inherit for the current block.
+.has-text-color .wp-block-spectra-list-child-item {
+
+	// The block editor block-list block selector for specificity.
+	&.block-editor-block-list__block {
+
+		// Variable based CSS - Text Color.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
+		}
+
+		// Variable based CSS - Text Hover/Focus Color.
+		&.spectra-text-color-hover:hover {
+			color: var(--spectra-text-color-hover);
+		}
+	}
+}

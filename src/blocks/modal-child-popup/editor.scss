@@ -1,0 +1,69 @@
+.editor-styles-wrapper {
+	.spectra-modal-wrapper {
+		.wp-block-spectra-modal-popup {
+
+			&.spectra-modal-type-right-off-canvas {
+				justify-content: end;
+				.spectra-modal-popup-wrap {
+					margin: 0 !important;
+				}
+
+				&.active {
+					padding: 0 !important;
+				}
+			}
+
+			&.spectra-modal-type-left-off-canvas {
+				justify-content: left;
+				.spectra-modal-popup-wrap {
+					margin: 0;
+				}
+
+				&.active {
+					padding: 0;
+				}
+			}
+
+			.spectra-modal-popup-wrap {
+				margin: 30px;
+			}
+
+			// Window wrap should not create positioning context for close icon.
+			.spectra-modal-window-wrap {
+				position: static;
+			}
+
+			&.active {
+				border: 2px none #ddd;
+				display: flex;
+				margin-top: 20px;
+				padding: 60px;
+				position: relative;
+			}
+			&:not(.active) {
+				display: none;
+			}
+
+			.block-editor-inner-blocks {
+				max-width: 100%;
+			}
+		}
+	}
+}
+
+.spectra-modal-popup {
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+
+.spectra-modal-popup.active {
+	opacity: 1;
+}
+
+.rtl .editor-styles-wrapper {
+	.spectra-modal-button-link .spectra-modal-content-wrapper > svg {
+		// Fixed 5px left/right margin when before/after button icon.
+		margin-left: 5px;
+		margin-right: 5px;
+	}
+}

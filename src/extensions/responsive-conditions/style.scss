@@ -1,0 +1,43 @@
+/**
+ * Responsive Conditions Extension - Frontend Styles
+ *
+ * Provides CSS classes for hiding blocks on specific devices using media queries.
+ * This approach ensures optimal performance by using pure CSS without JavaScript.
+ *
+ * Media query breakpoints match Spectra's responsive controls system:
+ * - Mobile (sm): max-width: 767.98px
+ * - Tablet (md): min-width: 768px and max-width: 1023.98px
+ * - Desktop (lg): min-width: 1024px
+ *
+ * @since x.x.x
+ */
+
+/**
+ * Mobile (767.98px and below)
+ * Hide blocks when .spectra-hide-mobile class is present
+ */
+@media (max-width: 767.98px) {
+	.spectra-hide-mobile {
+		display: none !important;
+	}
+}
+
+/**
+ * Tablet (768px to 1023.98px)
+ * Hide blocks when .spectra-hide-tablet class is present
+ */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+	.spectra-hide-tablet {
+		display: none !important;
+	}
+}
+
+/**
+ * Desktop (1024px and above)
+ * Hide blocks when .spectra-hide-desktop class is present
+ */
+@media (min-width: 1024px) {
+	.spectra-hide-desktop {
+		display: none !important;
+	}
+}

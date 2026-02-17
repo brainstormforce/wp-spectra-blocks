@@ -1,0 +1,547 @@
+/**
+ * Editor styles for Popup Builder block
+ */
+
+/* Note that '@' rules like mixin and include have been stable and known for a long time. */
+/* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
+/* stylelint-disable at-rule-no-unknown */
+
+/*
+ * Apply the background image properties.
+ *
+ * $image-variable The CSS var used for the image.
+ */
+@mixin background-image( $image-variable: var(--spectra-background-image) ) {
+	background-image: $image-variable; // Overlay for gradients is handled in this.
+	background-size: var(--spectra-background-size, cover);
+	background-position: var(--spectra-background-position, center center);
+	background-repeat: var(--spectra-background-repeat, no-repeat);
+	background-attachment: var(--spectra-background-attachment, scroll);
+}
+
+.wp-block-spectra-popup-builder {
+	display: flex;
+	opacity: 1;
+	// Important is added to override the theme's CSS in the Editor.
+	width: 100% !important;
+	height: 1px !important;
+	min-height: 100vh !important;
+	max-width: 100% !important;
+	z-index: initial !important;
+	padding: 0 !important;
+	justify-content: center;
+	align-items: center;
+
+	// Apply overflow clip when has video background and border-radius
+	&.has-video-background,
+	&.has-image-background {
+		&[style*="border-radius"] {
+			overflow: hidden; // Fallback for older browsers
+			overflow: clip !important;   // Modern standard for proper border-radius clipping
+		}
+	}
+
+	&[style*="border-radius"] {
+		overflow: hidden; // Fallback for older browsers
+		overflow: clip !important;   // Modern standard for proper border-radius clipping
+	}
+
+	&.spectra-popup-banner {
+		min-height: var(--spectra-popup-height, 100vh) !important;
+	}
+
+	&.spectra-popup-popup {
+		min-height: 100vh !important;
+	}
+
+	// The z-index is lowered in the editor to avoid overlapping the Block Controls.
+	&__close {
+		z-index: 30;
+	}
+
+	// This selector is added to style the block appender drop zone for Popup Builder without affecting children Containers.
+	&__container > .block-editor-inner-blocks > .block-editor-block-list__layout > .block-list-appender > .block-editor-inserter > .block-editor-button-block-appender {
+		box-shadow: none;
+		padding: 16px;
+		border-radius: 2px;
+		border: 1px dashed #555d66;
+
+		svg {
+			fill: #a0a7ac;
+		}
+	}
+
+	&.spectra-popup-has-overlay {
+		background-color: var(--spectra-popup-overlay-color);
+		justify-content: center;
+		align-items: center;
+	}
+
+	&.spectra-has-fixed-height {
+		.spectra-popup-builder__container.spectra-popup-builder__container--popup {
+			height: var(--spectra-popup-height, 100px);
+		}
+		.spectra-popup-builder__container.spectra-popup-builder__container--banner {
+			height: var(--spectra-popup-height, 100px);
+			box-shadow: 0 0 0 #00000070;
+			padding: var(--spectra-popup-padding);
+		}
+		&.spectra-popup-builder--content-align-flex-end {
+			.spectra-popup-builder__container.spectra-popup-builder__container--banner {
+				justify-content: flex-end;
+				overflow-y: hidden;
+			}
+			.spectra-popup-builder__container.spectra-popup-builder__container--popup {
+				justify-content: flex-end;
+				overflow-y: hidden;
+			}
+		}
+		&.spectra-popup-builder--content-align-center {
+			.spectra-popup-builder__container.spectra-popup-builder__container--banner {
+				justify-content: center;
+				overflow-y: hidden;
+			}
+			.spectra-popup-builder__container.spectra-popup-builder__container--popup {
+				justify-content: center;
+				overflow-y: hidden;
+			}
+		}
+		&.spectra-popup-builder--content-align-flex-start {
+			.spectra-popup-builder__container.spectra-popup-builder__container--banner {
+				justify-content: flex-start;
+			}
+		}
+		&.spectra-popup-builder--content-align-flex-start .spectra-popup-builder__container {
+			justify-content: flex-start;
+		}
+	}
+	&.spectra-has-auto-height {
+		height: auto !important;
+		overflow: visible;
+		.spectra-popup-builder__wrapper.spectra-popup-builder__wrapper--banner {
+			min-height: var(--spectra-popup-height, auto);
+			height: auto;
+		}
+		.spectra-popup-builder__wrapper.spectra-popup-builder__wrapper--popup {
+			max-height: var(--spectra-popup-height);
+			width: var(--spectra-popup-width);
+		}
+		.spectra-popup-builder__container.spectra-popup-builder__container--popup {
+			max-height: var(--spectra-popup-height);
+		}
+		.spectra-popup-builder__container.spectra-popup-builder__container--banner {
+			min-height: var(--spectra-popup-height);
+			box-shadow: 0 0 0 #00000070;
+			padding: var(--spectra-popup-padding);
+		}
+		&.spectra-popup-builder--content-align-center .spectra-popup-builder__container {
+			justify-content: center;
+		}
+
+		&.spectra-popup-builder--content-align-flex-end .spectra-popup-builder__container {
+			justify-content: flex-end;
+		}
+	}
+
+	.spectra-popup-builder__container.spectra-popup-builder__container--popup {
+		box-shadow: 0 0 0 #00000070;
+		padding: var(--spectra-popup-padding, 32px);
+		border-style: none;
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+		border-bottom-left-radius: 4px;
+	}
+
+	&.spectra-popup-close-icon-position-top-left .spectra-popup-builder__close {
+		left: 0;
+		right: auto;
+	}
+
+	&.spectra-popup-close-icon-position-top-right .spectra-popup-builder__close {
+		left: auto;
+		right: 0;
+	}
+
+	// &.spectra-popup-popup {
+	// 	position: absolute !important;
+	// 	top: 0;
+	// 	z-index: 999999999;
+	// 	box-shadow: unset;
+	// }
+
+	button.spectra-popup-builder__close {
+		border: none;
+		background: transparent;
+		background-color: transparent;
+		padding: 12px;
+
+		svg {
+			width: var(--spectra-close-icon-size, 20px) !important;
+			height: var(--spectra-close-icon-size, 20px) !important;
+			line-height: var(--spectra-close-icon-size);
+			font-size: var(--spectra-close-icon-size);
+			fill: var(--spectra-close-icon-color);
+		}
+		&:hover svg {
+			fill: var(--spectra-close-icon-color-hover),;
+		}
+		&:focus svg {
+			fill: var(--spectra-close-icon-color-hover),;
+		}
+	}
+
+	&:not(.spectra-has-auto-height) .spectra-popup-builder__wrapper {
+		height: var(--spectra-popup-height, auto);
+		width: var(--spectra-popup-width, 100%);
+	}
+
+	// Variable based CSS - Background image without any colors.
+	&.spectra-background-image:not(.spectra-popup-popup):not(.spectra-background-color):not(.spectra-background-gradient) {
+
+		@include background-image();
+	}
+
+	// Variable based CSS - Background Overlay.
+	&.spectra-background-overlay:not(.spectra-popup-popup) {
+		position: relative;
+
+		// Variable based CSS - Background Image below Overlay.
+		&.spectra-background-image {
+
+			@include background-image();
+		}
+
+		// The before pseudo-element, with either the Gradient or Color.
+		&::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// All the direct children of the overlay except the background video wrapper should be relative to avoid appearing underneath it.
+		& > *:not(.spectra-background-video__wrapper) {
+			position: relative;
+		}
+	}
+
+	// Variable based CSS - Background Color when overlay is not applied.
+	&.spectra-background-color:not(.spectra-background-overlay):not(.spectra-popup-banner) {
+		background: var(--spectra-background-color);
+
+		// Variable based CSS - Background Image over Color.
+		&.spectra-background-image .spectra-popup-builder__wrapper--popup {
+
+			@include background-image();
+		}
+	}
+
+	// Variable based CSS - Background Gradient when overlay is not applied.
+	&.spectra-background-gradient:not(.spectra-background-overlay):not(.spectra-popup-banner) {
+		background: var(--spectra-background-gradient);
+
+		// Variable based CSS - Background Image over Gradient.
+		&.spectra-background-image .spectra-popup-builder__wrapper--popup {
+
+			@include background-image();
+		}
+	}
+
+	&.spectra-background-overlay:not(.spectra-popup-banner) {
+		position: relative;
+
+		// Variable based CSS - Background Image below Overlay.
+		&.spectra-background-image .spectra-popup-builder__wrapper--popup {
+
+			@include background-image();
+		}
+
+		// The before pseudo-element, with either the Gradient or Color.
+		.spectra-popup-builder__wrapper--popup::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// All the direct children of the overlay except the background video wrapper should be relative to avoid appearing underneath it.
+		.spectra-popup-builder__wrapper--popup > *:not(.spectra-background-video__wrapper) {
+			position: relative;
+		}
+	}
+
+	// Overlay in editor
+	.spectra-popup-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		background-color: var(--spectra-popup-overlay-color, rgba(0, 0, 0, 0.75));
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.05) 10px, rgba(0, 0, 0, 0.05) 20px);
+		}
+	}
+
+	// Banner variant in editor
+	&.spectra-popup-builder--banner {
+		.spectra-popup-wrapper {
+			min-height: 80px;
+			background-color: transparent;
+			border: none;
+
+			// Banner positioning
+			&.banner-top {
+				position: sticky;
+				top: 0;
+				z-index: 1000;
+			}
+
+			&.banner-bottom {
+				position: sticky;
+				bottom: 0;
+				z-index: 1000;
+			}
+		}
+
+		.spectra-popup-container {
+			max-width: 100%;
+			width: 100%;
+			box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+		}
+	}
+
+	// Video background support for popup variants in editor
+	// Mirror the same CSS from style.scss for editor compatibility
+	&.spectra-popup-builder--popup.has-video-background,
+	&.spectra-popup-builder--popup.spectra-background-video {
+		.spectra-popup-builder__wrapper {
+			position: relative;
+			overflow: hidden;
+
+			> .spectra-background-video__wrapper {
+				position: absolute;
+				inset: 0;
+				z-index: 0;
+				display: block !important;
+				overflow: hidden;
+				border-radius: inherit;
+
+				// The video inside the background wrapper
+				video {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					min-width: 100%;
+					min-height: 100%;
+					width: auto;
+					height: auto;
+					object-fit: cover;
+					z-index: 0;
+				}
+
+				// All the sibling elements after the video wrapper should be relative to appear above the video
+				& ~ * {
+					position: relative;
+					z-index: 2;
+				}
+			}
+
+			// Position all children above the video
+			> .spectra-popup-builder__container {
+				position: relative;
+				z-index: 1;
+			}
+		}
+
+		// Override any display none rules for popup variants with high specificity
+		&.has-video-background .spectra-background-video__wrapper,
+		.spectra-popup-builder__wrapper > .spectra-background-video__wrapper {
+			display: block !important;
+		}
+
+		// Ensure hover states work correctly for video backgrounds in popup
+		&:hover {
+			.spectra-background-video__wrapper::after {
+				background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+				opacity: var(--spectra-overlay-opacity);
+			}
+		}
+
+		// Specific CSS for popup container when video background exists
+		.spectra-popup-builder__container--popup {
+			background-color: transparent; // Ensure container background doesn't block video
+		}
+	}
+
+
+	// Ensure editor inherits the video background styles from common.scss
+	// This ensures consistency between editor and frontend
+	&.spectra-background-video {
+		position: relative;
+
+		// The video background wrapper in editor
+		.spectra-background-video__wrapper {
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			overflow: hidden;
+			border-radius: unset;
+
+			// The video inside the background wrapper
+			video {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				min-width: 100%;
+				min-height: 100%;
+				min-block-size: inherit;
+				width: auto;
+				height: auto;
+				object-fit: cover;
+			}
+
+			// All the sibling elements after the video wrapper should be relative to appear above the video
+			& ~ * {
+				position: unset;
+				z-index: unset;
+			}
+		}
+
+		// When the block is hovered in editor
+		&:hover {
+			// Update the overlay
+			.spectra-background-video__wrapper--overlay::after {
+				background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+				opacity: var(--spectra-overlay-opacity, 1);
+			}
+		}
+	}
+
+	&[class*="wp-block"] {
+
+		// Text color of content inside container
+		&.spectra-text-color {
+			color: var(--spectra-text-color) !important;
+
+			* {
+				color: inherit;
+			}
+		}
+
+		&.has-video-background {
+			z-index: 0 !important;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+
+		&.has-video-background .spectra-popup-builder__wrapper--popup {
+			z-index: 0 !important;
+			overflow: clip !important;
+
+			> .spectra-background-video__wrapper {
+				z-index: -1;
+			}
+		}
+
+		&.spectra-overlay-color.spectra-popup-banner {
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+			}
+		}
+
+		&.spectra-overlay-color .spectra-popup-builder__wrapper--popup {
+			&::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+			}
+		}
+
+		// Variable based CSS - Simple Background Color Hover.
+		&.spectra-background-color-hover:not(.spectra-popup-popup):hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover.
+		&.spectra-background-gradient-hover .spectra-popup-builder__wrapper--popup:hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Color Hover.
+		&.spectra-background-color-hover .spectra-popup-builder__wrapper--popup:hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+
+		// Variable based CSS - Simple Background Gradient Hover.
+		&.spectra-background-gradient-hover:hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity);
+		}
+	}
+
+
+}
+
+// Selected state
+.wp-block-spectra-popup-builder.is-selected {
+	.spectra-popup-container {
+		box-shadow: 0 0 0 2px var(--wp-admin-theme-color);
+	}
+}
+// Variation picker button icon color fix.
+[data-title="Popup Builder"][data-type="spectra/popup-builder"].spectra-variation-picker {
+	.block-editor-block-variation-picker__variations {
+		.components-button {
+			&:hover:not(:disabled) svg {
+				color: #1e1e1e !important;
+			}
+
+			svg,
+			&.is-secondary svg,
+			&.is-tertiary svg,
+			:hover:not(:disabled) svg {
+				fill: #d5dadf00 !important;
+			}
+		}
+	}
+}
+
+.spectra-popup__close-class-option-element-notice {
+	display: grid;
+	grid-column: 1 / -1;
+	margin-top: -1px;
+
+	.dashicons-clipboard {
+		margin-right: 10px;
+	}
+
+	.spectra-popup__notice--secondary {
+		font-style: italic;
+		font-size: 11px;
+		line-height: 1.4;
+		color: #a4afb7;
+		margin-bottom: 25px;
+	}
+}
