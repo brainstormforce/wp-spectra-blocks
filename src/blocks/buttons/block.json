@@ -4,7 +4,7 @@
 	"name": "spectra/buttons",
 	"version": "3.0.0",
 	"title": "Buttons",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Add a group of customizable buttons.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [

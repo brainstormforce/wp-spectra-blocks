@@ -854,9 +854,9 @@ class PatternCSSService {
 				in_array(
 					$trace['function'],
 					array(
-						'spectra_get_v3_blocks_css_for_preview',
+						'spectra_blocks_get_v3_blocks_css_for_preview',
 						'spectra_get_comprehensive_responsive_css_for_post',
-						'spectra_process_blocks_for_comprehensive_css',
+						'spectra_blocks_process_blocks_for_comprehensive_css',
 					),
 					true
 				) ) {

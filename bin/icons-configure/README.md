@@ -46,7 +46,7 @@ grunt.registerTask( 'font-awesome-v6', function () {
 					fonts = keep_category_list( fonts, getCategoriesCustomTitle );
 
 					fs.writeFile(
-						'blocks-config/uagb-controls/SpectraIconsV6.json',
+						'blocks-config/spectra-blocks-controls/SpectraIconsV6.json',
 						JSON.stringify( fonts, null, 4 ),
 						function ( err ) {
 							if ( ! err ) {

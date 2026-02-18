@@ -4,7 +4,7 @@
 	"name": "spectra/counter",
 	"version": "3.0.0",
 	"title": "Counter",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Create animated numeric counters with customizable styles and layouts.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [
@@ -93,7 +93,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

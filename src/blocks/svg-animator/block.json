@@ -4,7 +4,7 @@
 	"name": "spectra/svg-animator",
 	"version": "3.0.0",
 	"title": "SVG Animator",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Add animated SVG graphics with customizable draw, fade, scale, and rotate effects.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [
@@ -67,7 +67,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

@@ -4,7 +4,7 @@
 	"name": "spectra/modal-child-content",
 	"version": "3.0.0",
 	"title": "Text",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add a block with text content.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": [ "spectra/modal-child-trigger" ],

@@ -5,7 +5,7 @@
 	"version": "3.0.0",
 	"title": "Popup Builder",
 	"description": "Create custom popups and info bars with advanced triggers and animations.",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"keywords": [
 		"popup",
 		"modal",

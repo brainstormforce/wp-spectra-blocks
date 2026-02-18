@@ -174,15 +174,15 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 		 * @return void
 		 */
 		public function loader() {
-			require_once SPECTRA_DIR . 'spectra-init.php';
+			require_once SPECTRA_DIR . 'spectra-blocks-init.php';
 
 			require_once SPECTRA_DIR . 'classes/utils.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block-prioritization.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-install.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-filesystem.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-update.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block.php';
-			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-block-analytics.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-prioritization.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-install.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-filesystem.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-update.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks.php';
+			require_once SPECTRA_DIR . 'classes/analytics/class-spectra-blocks-analytics.php';
 		}
 
 		/**
@@ -195,38 +195,38 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 		public function load_plugin() {
 
 			// SECURITY: Load security helper class first.
-		require_once SPECTRA_DIR . 'classes/class-spectra-security-helper.php';
-		require_once SPECTRA_DIR . 'classes/class-spectra-scripts-utils.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-block-module.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-admin-helper.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-helper.php';
+		require_once SPECTRA_DIR . 'classes/class-spectra-blocks-security-helper.php';
+		require_once SPECTRA_DIR . 'classes/class-spectra-blocks-scripts-utils.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-module.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-admin-helper.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-core-helper.php';
 			require_once SPECTRA_DIR . 'blocks-config/blocks-config.php';
-			require_once SPECTRA_DIR . 'classes/v3-blocks-loader.php';
+			require_once SPECTRA_DIR . 'classes/spectra-blocks-loader.php';
 			require_once SPECTRA_DIR . 'lib/astra-notices/class-astra-notices.php';
-			require_once SPECTRA_DIR . 'lib/class-spectra-zipwp-images.php';
-			require_once SPECTRA_DIR . 'lib/class-spectra-nps-survey.php';
+			require_once SPECTRA_DIR . 'lib/class-spectra-blocks-zipwp-images.php';
+			require_once SPECTRA_DIR . 'lib/class-spectra-blocks-nps-survey.php';
 			/**
 			 * UTM Analytics lib file.
 			 */
-			require_once SPECTRA_DIR . 'lib/class-spectra-utm-analytics.php';
+			require_once SPECTRA_DIR . 'lib/class-spectra-blocks-utm-analytics.php';
 
 			if ( is_admin() ) {
-				require_once SPECTRA_DIR . 'classes/class-spectra-admin.php';
+				require_once SPECTRA_DIR . 'classes/class-spectra-blocks-admin.php';
 			}
 
-			require_once SPECTRA_DIR . 'classes/class-spectra-post-assets.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-front-assets.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-init-blocks.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-rest-api.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-visibility.php';
-			require_once SPECTRA_DIR . 'classes/class-spectra-caching.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-post-assets.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-front-assets.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-init.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-rest-api.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-visibility.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-caching.php';
 
 			if ( 'twentyseventeen' === get_template() ) {
-				require_once SPECTRA_DIR . 'classes/class-spectra-twenty-seventeen-compatibility.php';
+				require_once SPECTRA_DIR . 'classes/class-spectra-blocks-twenty-seventeen-compatibility.php';
 			}
 
 			if ( 'twentysixteen' === get_template() ) {
-				require_once SPECTRA_DIR . 'compatibility/class-spectra-twenty-sixteen-compatibility.php';
+				require_once SPECTRA_DIR . 'compatibility/class-spectra-blocks-twenty-sixteen-compatibility.php';
 			}
 
 			require_once SPECTRA_DIR . 'admin/admin-loader.php';
@@ -239,7 +239,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			add_filter( 'zip_ai_library_textdomain', array( $this, 'sync_library_textdomain' ) );
 
 			if ( 'yes' === $enable_templates_button ) {
-				require_once SPECTRA_DIR . 'lib/class-spectra-ast-block-templates.php';
+				require_once SPECTRA_DIR . 'lib/class-spectra-blocks-ast-templates.php';
 			} else {
 				add_filter( 'ast_block_templates_disable', '__return_true' );
 			}
@@ -251,7 +251,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			add_filter( 'zip_ai_auth_redirection_url', array( $this, 'add_zip_ai_redirection_url' ), 20, 1 );
 			add_filter( 'zip_ai_revoke_redirection_url', array( $this, 'add_zip_ai_redirection_url' ), 20, 1 );
 
-			require_once SPECTRA_DIR . 'lib/class-spectra-zip-ai.php';
+			require_once SPECTRA_DIR . 'lib/class-spectra-blocks-zip-ai.php';
 		}
 
 		/**
@@ -273,7 +273,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 		 * @return void
 		 */
 		public function load_compatibility() {
-			require_once SPECTRA_DIR . 'classes/class-spectra-fse-fonts-compatibility.php';
+			require_once SPECTRA_DIR . 'classes/class-spectra-blocks-fse-fonts-compatibility.php';
 		}
 		/**
 		 * Fix REST API issue with blocks registered via PHP register_block_type.
@@ -485,7 +485,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			$has_activated_before = get_option( '__uagb_activated_before', false );
 
 			if ( ! $has_activated_before ) {
-				spectra_install()->create_files();
+				spectra_blocks_install()->create_files();
 		
 				update_option( '__uagb_do_redirect', true );
 				update_option( '__uagb_activated_before', true );
@@ -521,21 +521,18 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			// Load the text domain for translation.
 			$this->load_textdomain();
 
-			// Register all UAG Lite Blocks. This is done by calling the register_blocks method
-			// on the spectra_block() instance. This method is responsible for registering all the
-			// blocks in the plugin.
-			spectra_block()->register_blocks();
+			// Legacy UAG block registration removed — v3 blocks are registered by BlockManager.
 
 			$theme_folder = get_template();
 
 			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 				if ( 'twentytwentytwo' === $theme_folder ) {
-					require_once SPECTRA_DIR . 'compatibility/class-spectra-twenty-twenty-two-compatibility.php';
+					require_once SPECTRA_DIR . 'compatibility/class-spectra-blocks-twenty-twenty-two-compatibility.php';
 				}
 			}
 
 			if ( 'astra' === $theme_folder ) {
-				require_once SPECTRA_DIR . 'compatibility/class-spectra-astra-compatibility.php';
+				require_once SPECTRA_DIR . 'compatibility/class-spectra-blocks-astra-compatibility.php';
 			}
 			
 			register_meta(

@@ -4,7 +4,7 @@
 	"name": "spectra/button",
 	"version": "3.0.0",
 	"title": "Button",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add a customizable button.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": ["spectra/buttons"],

@@ -55,17 +55,17 @@ class Test_Block_Manager extends Spectra_Test_Case {
         // Assert
         $this->assertIsArray( $result );
         
-        // Check if Spectra category was added
+        // Check if Spectra Blocks category was added
         $spectra_category_found = false;
         foreach ( $result as $category ) {
-            if ( 'spectra' === $category['slug'] ) {
+            if ( 'spectra-blocks' === $category['slug'] ) {
                 $spectra_category_found = true;
-                $this->assertEquals( 'Spectra', $category['title'] );
+                $this->assertEquals( 'Spectra Blocks', $category['title'] );
                 break;
             }
         }
-        
-        $this->assertTrue( $spectra_category_found, 'Spectra category should be added' );
+
+        $this->assertTrue( $spectra_category_found, 'Spectra Blocks category should be added' );
         
         // Original categories should still exist
         $this->assertCount( count( $categories ) + 1, $result );
@@ -144,7 +144,7 @@ class Test_Block_Manager extends Spectra_Test_Case {
         // Arrange
         $settings = array(
             'title' => 'Test Block',
-            'category' => 'spectra',
+            'category' => 'spectra-blocks',
             'attributes' => array(
                 'content' => array(
                     'type' => 'string',
@@ -269,7 +269,7 @@ class Test_Block_Manager extends Spectra_Test_Case {
             'apiVersion' => 2,
             'name' => 'spectra/test-block',
             'title' => 'Test Block',
-            'category' => 'spectra',
+            'category' => 'spectra-blocks',
             'attributes' => array(
                 'content' => array(
                     'type' => 'string',

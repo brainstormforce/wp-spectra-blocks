@@ -5,7 +5,7 @@
 const NUMBER_OF_ICON_CHUNKS = 5;
 const ICONS_PHP_FILE_CHUNKS = {};
 for ( let i = 0; i < NUMBER_OF_ICON_CHUNKS; i++ ) {
-	ICONS_PHP_FILE_CHUNKS[ `blocks-config/uagb-controls/spectra-icons-v6-${i}.php` ] = `blocks-config/uagb-controls/SpectraIconsV6-${i}.json`;
+	ICONS_PHP_FILE_CHUNKS[ `blocks-config/spectra-blocks-controls/spectra-icons-v6-${i}.php` ] = `blocks-config/spectra-blocks-controls/SpectraIconsV6-${i}.json`;
 }
 
 module.exports = function ( grunt ) {
@@ -78,7 +78,7 @@ module.exports = function ( grunt ) {
 		clean: {
 			main: [ 'ultimate-addons-for-gutenberg' ],
 			zip: [ '*.zip' ],
-			SpectraIconsV6: [ 'blocks-config/uagb-controls/*.json' ]
+			SpectraIconsV6: [ 'blocks-config/spectra-blocks-controls/*.json' ]
 		},
 		makepot: {
 			target: {
@@ -433,7 +433,7 @@ module.exports = function ( grunt ) {
 				fonts = JSON.stringify( fonts );
 				const keepFont = `const fonts = ${ fonts }; export default fonts;`;
 
-				fs.writeFile( 'blocks-config/uagb-controls/fonts.js', keepFont, function ( err ) {
+				fs.writeFile( 'blocks-config/spectra-blocks-controls/fonts.js', keepFont, function ( err ) {
 					if ( ! err ) {
 						console.log( 'Google font update successfully !' ); // eslint-disable-line no-console
 					}
@@ -565,7 +565,7 @@ module.exports = function ( grunt ) {
 
 		for ( const chunkKey in createChunks ) {
 			const pieceOfIcon = createChunks[ chunkKey ];
-			const configFilePath = `blocks-config/uagb-controls/SpectraIconsV6-${chunkKey}.json`;
+			const configFilePath = `blocks-config/spectra-blocks-controls/SpectraIconsV6-${chunkKey}.json`;
 			fs.writeFile( configFilePath ,
 				JSON.stringify( pieceOfIcon, null, 4 ),
 				function ( err ) {
@@ -644,7 +644,7 @@ module.exports = function ( grunt ) {
 		mergeCustomCategories( getDownloadedIcons, getCategoriesCustomTitle, getCustomCategoryTitle );
 
 		// Save as single chunk (chunk 4).
-		const configFilePath = 'blocks-config/uagb-controls/SpectraIconsV6-4.json';
+		const configFilePath = 'blocks-config/spectra-blocks-controls/SpectraIconsV6-4.json';
 		fs.writeFile( configFilePath,
 			JSON.stringify( getDownloadedIcons, null, 4 ),
 			function ( err ) {

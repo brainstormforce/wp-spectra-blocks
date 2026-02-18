@@ -4,7 +4,7 @@
 	"name": "spectra/before-after-slider",
 	"version": "3.0.0",
 	"title": "Before After Slider",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Compare two images with an interactive before/after slider.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [
@@ -49,7 +49,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

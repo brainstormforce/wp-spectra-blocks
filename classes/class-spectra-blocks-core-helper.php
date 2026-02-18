@@ -152,7 +152,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * Constructor
 		 */
 		public function __construct() {
-			require SPECTRA_DIR . 'classes/class-spectra-block-helper.php';
+			require SPECTRA_DIR . 'classes/class-spectra-blocks-helper.php';
 
 			/**
 			 * Add action hook to initialize block list during WordPress initialization.
@@ -195,7 +195,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * @return void
 		 */
 		public function initialize_block_list() {
-			// V2 blocks removed - v3 blocks are loaded via v3-blocks-loader.php
+			// V2 blocks removed - v3 blocks are loaded via spectra-blocks-loader.php
 		}
 
 		/**
@@ -318,7 +318,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 
 			$icons_chunks = array();
 			for ( $i = 0; $i < self::$number_of_icon_chunks; $i++ ) {
-				$json_file = SPECTRA_DIR . "blocks-config/uagb-controls/spectra-icons-v6-{$i}.php";
+				$json_file = SPECTRA_DIR . "blocks-config/spectra-blocks-controls/spectra-blocks-icons-v6-{$i}.php";
 				if ( file_exists( $json_file ) ) {
 					$icons_chunks[] = include $json_file;
 				}
@@ -613,7 +613,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			// Create the upload dir if it doesn't exist.
 			if ( ! file_exists( $dir_info['path'] ) ) {
 
-				spectra_install()->create_files();
+				spectra_blocks_install()->create_files();
 			}
 
 			return apply_filters( 'uag_get_upload_dir', $dir_info );
@@ -637,7 +637,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			// Check the upload dir if it doesn't exist or not.
 			if ( file_exists( $dir_info['path'] ) ) {
 				// Remove the directory.
-				$wp_filesystem = spectra_filesystem();
+				$wp_filesystem = spectra_blocks_filesystem();
 				return $wp_filesystem->rmdir( $dir_info['path'], true );
 			}
 
@@ -691,7 +691,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 				// Check the dir if it exists or not.
 				if ( file_exists( $path ) ) {
 
-					$wp_filesystem = spectra_filesystem();
+					$wp_filesystem = spectra_blocks_filesystem();
 
 					// Remove the directory.
 					$wp_filesystem->rmdir( $path, true );
@@ -699,7 +699,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 			}
 
 			// Create empty files.
-			spectra_install()->create_files();
+			spectra_blocks_install()->create_files();
 			Spectra_Admin_Helper::create_specific_stylesheet();
 			do_action( 'spectra_delete_uag_asset_dir' );
 			return true;
@@ -741,7 +741,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 
 			$upload_dir = self::get_upload_dir();
 
-			return spectra_filesystem()->is_writable( $upload_dir['path'] );
+			return spectra_blocks_filesystem()->is_writable( $upload_dir['path'] );
 		}
 		/**
 		 * Gives the paged Query var.
@@ -1010,7 +1010,7 @@ if ( ! class_exists( 'Spectra_Helper' ) ) {
 		 * Get Post Assets Instance.
 		 */
 		public function get_post_assets_instance() {
-			return spectra_get_front_post_assets();
+			return spectra_blocks_get_front_post_assets();
 		}
 
 		/** Generates stylesheet in loop.

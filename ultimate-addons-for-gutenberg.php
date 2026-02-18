@@ -19,11 +19,11 @@ define( 'SPECTRA_PLUGIN_SHORT_NAME', 'Spectra' );
 define( 'SPECTRA_BLOCKS_PRO_PLUGIN_URL', 'https://wpspectra.com/pro' );
 
 if ( ! version_compare( PHP_VERSION, '5.6', '>=' ) ) {
-	add_action( 'admin_notices', 'spectra_fail_php_version' );
+	add_action( 'admin_notices', 'spectra_blocks_fail_php_version' );
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '4.7', '>=' ) ) {
-	add_action( 'admin_notices', 'spectra_fail_wp_version' );
+	add_action( 'admin_notices', 'spectra_blocks_fail_wp_version' );
 } else {
-	require_once 'classes/class-spectra-loader.php';
+	require_once 'classes/class-spectra-blocks-loader.php';
 }
 
 /**
@@ -35,7 +35,7 @@ if ( ! version_compare( PHP_VERSION, '5.6', '>=' ) ) {
  *
  * @return void
  */
-function spectra_fail_php_version() {
+function spectra_blocks_fail_php_version() {
 	/* translators: %s: PHP version */
 	$message      = sprintf( esc_html__( 'Spectra requires PHP version %s+, plugin is currently NOT RUNNING.', 'spectra' ), '5.6' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );
@@ -52,7 +52,7 @@ function spectra_fail_php_version() {
  *
  * @return void
  */
-function spectra_fail_wp_version() {
+function spectra_blocks_fail_wp_version() {
 	/* translators: %s: WordPress version */
 	$message      = sprintf( esc_html__( 'Spectra requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT RUNNING.', 'spectra' ), '4.7' );
 	$html_message = sprintf( '<div class="error">%s</div>', wpautop( $message ) );

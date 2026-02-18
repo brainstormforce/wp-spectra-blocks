@@ -4,7 +4,7 @@
 	"name": "spectra/countdown",
 	"version": "3.0.0",
 	"title": "Countdown",
-	"category": "spectra",
+	"category": "spectra-blocks",
 	"description": "Create a sense of urgency among your visitors.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"keywords": [
@@ -103,7 +103,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

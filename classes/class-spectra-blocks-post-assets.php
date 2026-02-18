@@ -671,14 +671,14 @@ class Spectra_Post_Assets {
 			}
 
 			if ( $version_updated ) {
-				$spectra_filesystem = spectra_filesystem();
+				$spectra_blocks_filesystem = spectra_blocks_filesystem();
 
 				if ( ! empty( $css_file_path ) ) {
-					$spectra_filesystem->delete( $css_file_path );
+					$spectra_blocks_filesystem->delete( $css_file_path );
 				}
 
 				if ( ! empty( $js_file_path ) ) {
-					$spectra_filesystem->delete( $js_file_path );
+					$spectra_blocks_filesystem->delete( $js_file_path );
 				}
 
 				// Delete keys.
@@ -1636,7 +1636,7 @@ class Spectra_Post_Assets {
 	public function create_file( $file_data, $type, $file_state = 'new', $old_file_name = '' ) {
 
 		$uploads_dir = Spectra_Helper::get_upload_dir();
-		$file_system = spectra_filesystem();
+		$file_system = spectra_blocks_filesystem();
 
 		// Example 'uag-css-15.css'.
 		$file_name = 'uag-' . $type . '-' . $this->post_id . '.' . $type;
@@ -1690,7 +1690,7 @@ class Spectra_Post_Assets {
 			return false;
 		}
 
-		$file_system = spectra_filesystem();
+		$file_system = spectra_blocks_filesystem();
 
 		// Get timestamp - Already saved OR new one.
 		$file_name   = get_post_meta( $this->post_id, '_uag_' . $type . '_file_name', true );
@@ -1795,7 +1795,7 @@ class Spectra_Post_Assets {
 
 		if ( file_exists( $block_static_css_path ) ) {
 
-			$file_system = spectra_filesystem();
+			$file_system = spectra_blocks_filesystem();
 
 			$css = $file_system->get_contents( $block_static_css_path );
 		}

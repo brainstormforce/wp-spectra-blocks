@@ -52,7 +52,7 @@ class Core {
 		// Create an array, and iterate through the number of chunks.
 		$icons_chunks = array();
 		for ( $i = 0; $i < self::$number_of_icon_chunks; $i++ ) {
-			$json_file = SPECTRA_DIR . 'blocks-config/uagb-controls/spectra-icons-v6-' . $i . '.php';
+			$json_file = SPECTRA_DIR . 'blocks-config/spectra-blocks-controls/spectra-blocks-icons-v6-' . $i . '.php';
 			if ( file_exists( $json_file ) ) {
 				$icons_chunks[] = include $json_file;
 			}

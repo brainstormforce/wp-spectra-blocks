@@ -4,7 +4,7 @@
 	"name": "spectra/accordion-child-details",
 	"version": "3.0.0",
 	"title": "Details",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add details to this accordion.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": [ "spectra/accordion-child-item" ],

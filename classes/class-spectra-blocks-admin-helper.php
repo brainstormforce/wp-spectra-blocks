@@ -316,7 +316,7 @@ if ( ! class_exists( 'Spectra_Admin_Helper' ) ) {
 
 			$style = '';
 
-			$wp_filesystem = spectra_filesystem();
+			$wp_filesystem = spectra_blocks_filesystem();
 
 			foreach ( $combined as $key => $c_block ) {
 

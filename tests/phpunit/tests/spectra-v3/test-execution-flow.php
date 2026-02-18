@@ -19,8 +19,8 @@ class Test_Spectra_V3_Execution_Flow extends Spectra_Test_Case {
 		$this->assertTrue( defined( 'SPECTRA_3_DIR' ), 'SPECTRA_3_DIR constant should be defined' );
 		$this->assertTrue( defined( 'SPECTRA_3_URL' ), 'SPECTRA_3_URL constant should be defined' );
 
-		// Test that spectra_init function exists
-		$this->assertTrue( function_exists( 'spectra_init' ), 'spectra_init function should exist' );
+		// Test that spectra_blocks_init function exists
+		$this->assertTrue( function_exists( 'spectra_blocks_init' ), 'spectra_blocks_init function should exist' );
 
 		// Test that all manager classes can be instantiated
 		$this->assertTrue( class_exists( 'Spectra\BlockManager' ), 'BlockManager should be autoloadable' );

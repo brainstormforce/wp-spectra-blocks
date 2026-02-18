@@ -4,7 +4,7 @@
 	"name": "spectra/accordion-child-header-icon",
 	"version": "3.0.0",
 	"title": "Icon",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add an icon indicator for this accordion header.",
 	"parent": [ "spectra/accordion-child-header" ],
 	"textdomain": "ultimate-addons-for-gutenberg",

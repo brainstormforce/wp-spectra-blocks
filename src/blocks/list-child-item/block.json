@@ -4,7 +4,7 @@
 	"name": "spectra/list-child-item",
 	"version": "3.0.0",
 	"title": "List Item",
-	"category": "spectra-inner-blocks",
+	"category": "spectra-blocks-inner",
 	"description": "Add a list item with icon and content.",
 	"textdomain": "ultimate-addons-for-gutenberg",
 	"parent": ["spectra/list"],

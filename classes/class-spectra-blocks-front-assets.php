@@ -241,6 +241,6 @@ Spectra_Front_Assets::get_instance();
  *
  * @since 0.0.1
  */
-function spectra_get_front_post_assets() {
+function spectra_blocks_get_front_post_assets() {
 	return Spectra_Front_Assets::get_instance()->get_post_assets_obj();
 }
