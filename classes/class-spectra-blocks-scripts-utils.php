@@ -15,109 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class Spectra_Scripts_Utils {
 
 	/**
-	 * Enqueue Gutenberg block assets for both frontend + backend.
+	 * Legacy v2 block dependency enqueuing.
+	 *
+	 * V2 blocks have been removed from spectra-blocks. This method is kept as a
+	 * no-op stub because it is still called from editor_assets() and
+	 * class-spectra-blocks-post-assets.php.  V3 blocks register their own
+	 * dependencies via block.json metadata.
 	 *
 	 * @since 0.0.1
 	 */
 	public static function enqueue_blocks_dependency_both() {
-
-		$blocks       = Spectra_Block_Module::get_blocks_info();
-		$saved_blocks = Spectra_Admin_Helper::get_admin_settings_option( '_uagb_blocks', array() );
-		$block_assets = Spectra_Block_Module::get_block_dependencies();
-
-		foreach ( $blocks as $slug => $value ) {
-			$_slug = str_replace( 'uagb/', '', $slug );
-
-			if ( ! ( isset( $saved_blocks[ $_slug ] ) && 'disabled' === $saved_blocks[ $_slug ] ) ) {
-
-				if ( 'cf7-styler' === $_slug ) {
-					if ( ! wp_script_is( 'contact-form-7', 'enqueued' ) ) {
-						wp_enqueue_script( 'contact-form-7' );
-					}
-
-					if ( ! wp_script_is( ' wpcf7-admin', 'enqueued' ) ) {
-						wp_enqueue_script( ' wpcf7-admin' );
-					}
-				}
-				foreach ( $block_assets as $handle => $asset ) {
-
-					if ( isset( $asset['type'] ) ) {
-
-						if ( 'js' === $asset['type'] ) {
-
-							// Scripts.
-							wp_register_script(
-								$handle, // Handle.
-								$asset['src'],
-								$asset['dep'],
-								SPECTRA_VER,
-								true
-							);
-
-							$skip_editor = isset( $asset['skipEditor'] ) ? $asset['skipEditor'] : false;
-
-							if ( is_admin() && false === $skip_editor ) {
-								wp_enqueue_script( $handle );
-							}
-						} elseif ( 'css' === $asset['type'] ) {
-
-							// Styles.
-							wp_register_style(
-								$handle, // Handle.
-								$asset['src'],
-								$asset['dep'],
-								SPECTRA_VER
-							);
-
-							if ( is_admin() ) {
-								wp_enqueue_style( $handle );
-							}
-						}
-					}
-				}
-			}
-		}
-
-		$spectra_masonry_ajax_nonce = wp_create_nonce( 'spectra_masonry_ajax_nonce' );
-		wp_localize_script(
-			'uagb-post-js',
-			'spectra_data',
-			array(
-				'ajax_url'                => admin_url( 'admin-ajax.php' ),
-				'spectra_masonry_ajax_nonce' => $spectra_masonry_ajax_nonce,
-			)
-		);
-
-		$spectra_forms_ajax_nonce = wp_create_nonce( 'spectra_forms_ajax_nonce' );
-		wp_localize_script(
-			'uagb-forms-js',
-			'spectra_forms_data',
-			array(
-				'ajax_url'              => admin_url( 'admin-ajax.php' ),
-				'spectra_forms_ajax_nonce' => $spectra_forms_ajax_nonce,
-			)
-		);
-
-		$spectra_image_gallery_masonry_ajax_nonce         = wp_create_nonce( 'spectra_image_gallery_masonry_ajax_nonce' );
-		$spectra_image_gallery_grid_pagination_ajax_nonce = wp_create_nonce( 'spectra_image_gallery_grid_pagination_ajax_nonce' );
-		wp_localize_script(
-			'uagb-image-gallery-js',
-			'spectra_image_gallery',
-			array(
-				'ajax_url'                              => admin_url( 'admin-ajax.php' ),
-				'spectra_image_gallery_masonry_ajax_nonce' => $spectra_image_gallery_masonry_ajax_nonce,
-				'spectra_image_gallery_grid_pagination_ajax_nonce' => $spectra_image_gallery_grid_pagination_ajax_nonce,
-			)
-		);
-
-		wp_localize_script(
-			'uagb-countdown-js',
-			'spectra_countdown_data',
-			array(
-				'site_name_slug' => sanitize_title( get_bloginfo( 'name' ) ),
-			)
-		);
-
+		// No-op — legacy v2 block dependencies removed.
 	}
 
 	/**

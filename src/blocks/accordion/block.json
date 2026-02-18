@@ -99,7 +99,7 @@
 		"spectra-components-icon-picker"
 	],
 	"render": "file:./view.php",
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"providesContext": {
 		"spectra/accordion/activeAccordion": "activeAccordion",
 		"spectra/accordion/icon": "icon",

@@ -95,7 +95,7 @@
 		"file:./style-index.css",
 		"spectra-components-variation-picker"
 	],
-	"viewScriptModule": "file:./view.js",
+	"viewScript": "file:./view.js",
 	"providesContext": {
 		"spectra/tabs/currentTab": "currentTab",
 		"spectra/tabs/icon": "icon",
