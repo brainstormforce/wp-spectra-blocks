@@ -19,7 +19,7 @@
 		<exclude name="WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get" />
 	</rule>
 	<!-- Setting textdomain. -->
-	<config name="text_domain" value="ultimate-addons-for-gutenberg"/>
+	<config name="text_domain" value="spectra-blocks"/>
 	<!-- Setting prefix. -->
 	<config name="prefixes" value=""/>
 	<!-- WP version. -->

@@ -84,8 +84,8 @@ module.exports = function ( grunt ) {
 			target: {
 				options: {
 					domainPath: '/',
-					mainFile: 'ultimate-addons-for-gutenberg.php',
-					potFilename: 'languages/ultimate-addons-for-gutenberg.pot',
+					mainFile: 'spectra-blocks.php',
+					potFilename: 'languages/spectra-blocks.pot',
 					exclude: [ 'admin/bsf-core' ],
 					potHeaders: {
 						'poedit': true,
@@ -161,7 +161,7 @@ module.exports = function ( grunt ) {
 				],
 			},
 			plugin_main: {
-				src: [ 'ultimate-addons-for-gutenberg.php' ],
+				src: [ 'spectra-blocks.php' ],
 				overwrite: true,
 				replacements: [
 					{

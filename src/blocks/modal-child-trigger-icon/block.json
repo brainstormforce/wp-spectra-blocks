@@ -6,7 +6,7 @@
 	"title": "Icon",
 	"category": "spectra-blocks-inner",
 	"description": "Add an icon.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/modal-child-trigger" ],
 	"supports": {
 		"__experimentalBorder": {

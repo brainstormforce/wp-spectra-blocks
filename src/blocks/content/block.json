@@ -6,7 +6,7 @@
 	"title": "Text",
 	"category": "spectra-blocks",
 	"description": "Add a block with text content.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"keywords": [
 		"text",
 		"paragraph",

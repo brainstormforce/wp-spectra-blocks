@@ -6,7 +6,7 @@
 	"title": "Title",
 	"category": "spectra-blocks-inner",
 	"description": "Add a title to this accordion header.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/accordion-child-header" ],
 	"usesContext": [
 		"spectra/accordion-child-header/headerElement"

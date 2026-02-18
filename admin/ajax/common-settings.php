@@ -771,7 +771,7 @@ class Common_Settings extends Ajax_Base {
 
 		// Get the beta version from WordPress.org with timeout.
 		$response = wp_remote_get(
-			'https://plugins.svn.wordpress.org/ultimate-addons-for-gutenberg/trunk/readme.txt',
+			'https://plugins.svn.wordpress.org/spectra-blocks/trunk/readme.txt',
 			array(
 				'timeout'   => 15, //phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
 				'sslverify' => true,

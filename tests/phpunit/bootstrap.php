@@ -840,7 +840,7 @@ if ( $_tests_dir && file_exists( $_tests_dir . '/includes/functions.php' ) ) {
  * Manually load the plugin main file.
  */
 function _manually_load_plugin() {
-    require dirname( dirname( dirname( __FILE__ ) ) ) . '/ultimate-addons-for-gutenberg.php';
+    require dirname( dirname( dirname( __FILE__ ) ) ) . '/spectra-blocks.php';
 }
 
 // If we have WordPress test environment, use it

@@ -8,7 +8,7 @@
 	"description": "Add hours to the countdown.",
 	"parent": [ "spectra/countdown" ],
 	"allowedBlocks": [ "spectra/countdown-child-label", "spectra/countdown-child-number", "spectra/container" ],
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"usesContext": [
 		"countdown",
 		"spectra/countdown/showDays",

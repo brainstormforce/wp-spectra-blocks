@@ -23,7 +23,7 @@ warning () {
 }
 
 
-status "💃 Time to build the plugin ZIP file 🕺"
+status "Time to build the plugin ZIP file"
 
 if [ ! -d "artifact" ]; then
   mkdir "artifact"
@@ -31,15 +31,15 @@ fi
 
 
 # Copy files for zip.
-rsync -rc --exclude-from ".distignore" "./" "artifact/ultimate-addons-for-gutenberg"
+rsync -rc --exclude-from ".distignore" "./" "artifact/spectra-blocks"
 
 # Go to directory
 cd artifact
 
 # Create a zip copied files.
-zip -r ultimate-addons-for-gutenberg.zip "./ultimate-addons-for-gutenberg"
+zip -r spectra-blocks.zip "./spectra-blocks"
 
 # Removed copied files folder.
-rm -rf ultimate-addons-for-gutenberg
+rm -rf spectra-blocks
 
-success "Done. Your Spectra zip is ready..! 🎉"
+success "Done. Your Spectra Blocks zip is ready..!"

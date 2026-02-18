@@ -7,7 +7,7 @@
 	"category": "spectra-blocks-inner",
 	"description": "Add a separator to the countdown.",
 	"parent": [ "spectra/countdown" ],
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"usesContext": [ 
 		"countdown",
 		"spectra/countdown/showSeparator",

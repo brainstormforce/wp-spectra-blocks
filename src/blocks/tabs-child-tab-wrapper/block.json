@@ -6,7 +6,7 @@
 	"title": "Tab Area",
 	"category": "spectra-blocks-inner",
 	"description": "Add tabs to this tab block",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"allowedBlocks": [
 		"spectra/tabs-child-tab-button",
 		"spectra/tabs-child-tab-trigger"

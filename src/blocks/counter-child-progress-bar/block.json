@@ -6,7 +6,7 @@
 	"title": "Progress",
 	"category": "spectra-blocks-inner",
 	"description": "Progress bar display for the counter block.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": ["spectra/counter", "spectra/counter-child-wrapper"],
 	"usesContext": [
 		"spectra/counter/counterStyle",

@@ -8,7 +8,7 @@
 	"description": "Add a block with text content.",
 	"ancestor": [ "spectra/countdown" ],
 	"parent": [ "spectra/countdown-child-day", "spectra/countdown-child-hour", "spectra/countdown-child-minute", "spectra/countdown-child-second", "spectra/container" ],
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"usesContext": [
 		"label", 
 		"showLabels",

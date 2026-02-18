@@ -6,7 +6,7 @@
 	"title": "Google Map",
 	"category": "spectra-blocks",
 	"description": "Display an interactive Google Map with customizable features.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"keywords": [
 		"google map",
 		"map",

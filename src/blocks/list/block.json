@@ -6,7 +6,7 @@
 	"title": "List",
 	"category": "spectra-blocks",
 	"description": "Create ordered and unordered lists with custom styling.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"keywords": [
 		"list",
 		"bullet list",

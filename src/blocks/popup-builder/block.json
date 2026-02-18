@@ -536,7 +536,7 @@
 		"spectra/popup-builder/variantType": "variantType",
 		"spectra/popup-builder/variationSelected": "variationSelected"
 	},
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": [

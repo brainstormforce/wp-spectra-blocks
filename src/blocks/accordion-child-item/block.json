@@ -6,7 +6,7 @@
 	"title": "Item",
 	"category": "spectra-blocks-inner",
 	"description": "An accordion item in this set of accordions.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/accordion" ],
 	"allowedBlocks": [ "spectra/accordion-child-header", "spectra/accordion-child-details" ],
 	"supports": {

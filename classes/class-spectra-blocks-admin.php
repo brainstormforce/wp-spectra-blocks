@@ -927,7 +927,7 @@ if ( ! class_exists( 'Spectra_Admin' ) ) {
 		 * @param array $plugins TOC plugins.
 		 */
 		public function toc_plugin( $plugins ) {
-			$plugins['ultimate-addons-for-gutenberg/ultimate-addons-for-gutenberg.php'] = 'Spectra';
+			$plugins['spectra-blocks/spectra-blocks.php'] = 'Spectra Blocks';
 			return $plugins;
 		}
 	}

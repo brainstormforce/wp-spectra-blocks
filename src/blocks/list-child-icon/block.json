@@ -6,7 +6,7 @@
 	"title": "List Child Icon",
 	"category": "spectra-blocks-inner",
 	"description": "Icon or number for list items.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": ["spectra/list-child-item"],
 	"supports": {
 		"html": false,
