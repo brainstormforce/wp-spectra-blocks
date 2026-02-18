@@ -6,7 +6,7 @@
 	"title": "Content",
 	"category": "spectra-blocks-inner",
 	"description": "This block allows you to add modal popup.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/modal-popup" ],
 	"keywords": [
 		"modal",

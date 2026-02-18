@@ -6,7 +6,7 @@
 	"title": "Wrapper",
 	"category": "spectra-blocks-inner",
 	"description": "Wrapper for counter child blocks.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": ["spectra/counter"],
 	"usesContext": [
 		"spectra/counter/counterStyle"

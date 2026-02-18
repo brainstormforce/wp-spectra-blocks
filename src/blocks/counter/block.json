@@ -6,7 +6,7 @@
 	"title": "Counter",
 	"category": "spectra-blocks",
 	"description": "Create animated numeric counters with customizable styles and layouts.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"keywords": [
 		"counter",
 		"number",

@@ -53,7 +53,7 @@ class Spectra_Init_Blocks {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'editor_assets' ) );
 
 		// Legacy block category registration removed — handled by v3 BlockManager.
-		// Legacy uagb AJAX handlers removed — handled by ultimate-addons-for-gutenberg plugin.
+		// Legacy uagb AJAX handlers removed — handled by legacy plugin.
 
 		if ( ! is_admin() ) {
 			add_action( 'render_block', array( $this, 'render_block' ), 5, 2 );
@@ -184,7 +184,7 @@ class Spectra_Init_Blocks {
 	 * @return mixed Returns the new block content.
 	 */
 	public function render_block( $block_content, $block ) {
-		// Legacy uagb/ runtime block registration removed — handled by ultimate-addons-for-gutenberg plugin.
+		// Legacy uagb/ runtime block registration removed — handled by legacy plugin.
 
 		if ( ! empty( $block['attrs']['UAGDisplayConditions'] ) ) {
 			switch ( $block['attrs']['UAGDisplayConditions'] ) {
@@ -936,7 +936,7 @@ class Spectra_Init_Blocks {
 		}
 
 		// Legacy v2 blocks have been removed from spectra-blocks — they load from
-		// the ultimate-addons-for-gutenberg plugin instead.  V3 blocks register
+		// the legacy plugin instead.  V3 blocks register
 		// their own editor/view scripts via block.json metadata, so there is no
 		// need to enqueue a combined dist/blocks.js bundle.
 		$this->enqueue_minimal_v3_block_assets();

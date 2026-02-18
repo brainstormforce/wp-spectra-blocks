@@ -6,7 +6,7 @@
 	"title": "Trigger",
 	"category": "spectra-blocks-inner",
 	"description": "This block allows you to add modal popup..",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/modal" ],
 	"allowedBlocks": [ "spectra/spectra/modal-child-button", "spectra/spectra/modal-child-icon", "spectra/modal-child-text" ],
 	"keywords": [

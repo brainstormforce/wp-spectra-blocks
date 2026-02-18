@@ -6,7 +6,7 @@
 	"title": "Details",
 	"category": "spectra-blocks-inner",
 	"description": "Add details to this accordion.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/accordion-child-item" ],
 	"supports": {
 		"shadow": true,

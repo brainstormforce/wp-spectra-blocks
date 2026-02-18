@@ -6,7 +6,7 @@
 	"title": "Tab (Div)",
 	"category": "spectra-blocks-inner",
 	"description": "Add a customizable tab trigger with inner blocks.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/tabs-child-tab-wrapper" ],
 	"supports": {
 		"__experimentalBorder": {

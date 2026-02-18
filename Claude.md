@@ -73,7 +73,7 @@ Before committing function changes:
 
 - `/docs/V3-CLAUDE.md` - Comprehensive development guide for Spectra v3
 - `classes/utils.php` - Main utility functions file
-- `ultimate-addons-for-gutenberg.php` - Main plugin file
+- `spectra-blocks.php` - Main plugin file
 
 ## Commands
 

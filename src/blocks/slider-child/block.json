@@ -7,7 +7,7 @@
 	"category": "spectra-blocks-inner",
 	"parent": [ "spectra/slider" ],
 	"description": "Individual slides for the Slider block.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"usesContext": [
 		"spectra/slider/textColor"
 	],

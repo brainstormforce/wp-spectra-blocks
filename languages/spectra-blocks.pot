@@ -15,7 +15,7 @@ msgstr ""
 "X-Domain: ultimate-addons-for-gutenberg\n"
 
 #. Plugin Name of the plugin
-#: ultimate-addons-for-gutenberg.php
+#: spectra-blocks.php
 #: admin-core/inc/admin-menu.php:349
 #: admin-core/inc/admin-menu.php:350
 #: admin-core/inc/admin-menu.php:361
@@ -31,17 +31,17 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
-#: ultimate-addons-for-gutenberg.php
+#: spectra-blocks.php
 msgid "https://www.brainstormforce.com"
 msgstr ""
 
 #. Description of the plugin
-#: ultimate-addons-for-gutenberg.php
+#: spectra-blocks.php
 msgid "The Spectra extends the Gutenberg functionality with several unique and feature-rich blocks that help build websites faster."
 msgstr ""
 
 #. Author of the plugin
-#: ultimate-addons-for-gutenberg.php
+#: spectra-blocks.php
 msgid "Brainstorm Force"
 msgstr ""
 
@@ -10407,13 +10407,13 @@ msgid "Invalid SVG file."
 msgstr ""
 
 #. translators: %s: PHP version
-#: ultimate-addons-for-gutenberg.php:40
+#: spectra-blocks.php:40
 #, php-format
 msgid "Spectra requires PHP version %s+, plugin is currently NOT RUNNING."
 msgstr ""
 
 #. translators: %s: WordPress version
-#: ultimate-addons-for-gutenberg.php:57
+#: spectra-blocks.php:57
 #, php-format
 msgid "Spectra requires WordPress version %s+. Because you are using an earlier version, the plugin is currently NOT RUNNING."
 msgstr ""

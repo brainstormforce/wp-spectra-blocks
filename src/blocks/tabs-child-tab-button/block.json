@@ -6,7 +6,7 @@
 	"title": "Tab",
 	"category": "spectra-blocks-inner",
 	"description": "Add a customizable tab.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/tabs-child-tab-wrapper" ],
 	"supports": {
 		"__experimentalBorder": {

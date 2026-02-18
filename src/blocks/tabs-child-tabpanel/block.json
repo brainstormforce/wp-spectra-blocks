@@ -6,7 +6,7 @@
 	"title": "Panel",
 	"category": "spectra-blocks-inner",
 	"description": "A content area associated with a tab.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/tabs" ],
 	"supports": {
 		"__experimentalBorder": {

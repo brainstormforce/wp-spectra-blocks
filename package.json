@@ -1,7 +1,7 @@
 {
-  "name": "ultimate-addons-for-gutenberg",
+  "name": "spectra-blocks",
   "version": "0.0.1",
-  "description": "The Ultimate Addons for Gutenberg extends the Gutenberg functionality with several unique and feature-rich blocks that help build websites faster.",
+  "description": "Spectra Blocks extends Gutenberg functionality with unique and feature-rich blocks that help build websites faster.",
   "author": "Brainstorm Force",
   "license": "ISC",
   "keywords": [
@@ -11,13 +11,13 @@
     "editor",
     "block"
   ],
-  "homepage": "https://github.com/brainstormforce/ultimate-addons-for-gutenberg/",
+  "homepage": "https://github.com/brainstormforce/spectra-blocks/",
   "repository": {
     "type": "git",
-    "url": "git@git.brainstormforce.com:wp-sharks/ultimate-addons-for-gutenberg.git",
+    "url": "git@github.com:brainstormforce/spectra-blocks.git",
     "gpt-po": "1.1.1"
   },
-  "bugs": "https://github.com/brainstormforce/ultimate-addons-for-gutenberg/issues/",
+  "bugs": "https://github.com/brainstormforce/spectra-blocks/issues/",
   "main": "src/blocks.js",
   "dependencies": {
     "@bsf/force-ui": "git+https://github.com/brainstormforce/bsf-admin-ui#v1.7.7",
@@ -124,7 +124,7 @@
     "lint:pkg-json": "wp-scripts lint-pkg-json",
     "check-engines": "wp-scripts check-engines",
     "makepot": "grunt rename-unminify && grunt synctextdomains && grunt addtextdomain && ./vendor/wp-cli/wp-cli/bin/wp i18n make-pot . --skip-audit --exclude='.dev,.github,.wordpress-org,docs,src,node_modules,vendor,wordpress,block-icons.js,blocks-deactivate.js' languages/spectra.pot && grunt rename-minify",
-    "package": "rm *.zip && wp dist-archive . ultimate-addons-for-gutenberg",
+    "package": "rm *.zip && wp dist-archive . spectra-blocks",
     "packages-update": "wp-scripts packages-update",
     "i18n:po": "wp i18n update-po languages/spectra.pot",
     "i18n:mo": "wp i18n make-mo languages",

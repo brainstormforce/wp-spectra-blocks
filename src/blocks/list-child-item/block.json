@@ -6,7 +6,7 @@
 	"title": "List Item",
 	"category": "spectra-blocks-inner",
 	"description": "Add a list item with icon and content.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": ["spectra/list"],
 	"providesContext": {
 		"spectra/list-child-item/index": "index",

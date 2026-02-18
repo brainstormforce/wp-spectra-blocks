@@ -6,7 +6,7 @@
 	"title": "Container",
 	"category": "spectra-blocks",
 	"description": "Create beautiful layouts with flexbox and grid-powered container block.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"keywords": [
 		"container",
 		"section",

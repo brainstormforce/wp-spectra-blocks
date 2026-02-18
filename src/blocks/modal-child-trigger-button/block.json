@@ -6,7 +6,7 @@
 	"title": "Button",
 	"category": "spectra-blocks-inner",
 	"description": "Add a customizable trigger button for this modal popup.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/modal-child-trigger" ],
 	"supports": {
 		"__experimentalBorder": {

@@ -20,7 +20,7 @@ parameters:
 		- tests/php/stubs/uagb-stubs.php
 		- vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
 	paths:
-		- ultimate-addons-for-gutenberg.php
+		- spectra-blocks.php
 		- templates
 		- includes
 		- compatibility

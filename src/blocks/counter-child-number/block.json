@@ -6,7 +6,7 @@
 	"title": "Number",
 	"category": "spectra-blocks-inner",
 	"description": "Number display for the counter block.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"parent": ["spectra/counter", "spectra/counter-child-wrapper", "spectra/container"],
 	"usesContext": [
 		"spectra/counter/startNumber",

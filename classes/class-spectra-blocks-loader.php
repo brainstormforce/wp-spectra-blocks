@@ -102,7 +102,7 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 								'spectra_deactivation_survey_data',
 								array(
 									array(
-										'id'              => 'deactivation-survey-ultimate-addons-for-gutenberg',
+										'id'              => 'deactivation-survey-spectra-blocks',
 										'popup_logo'      => esc_url( plugin_dir_url( __DIR__ ) . 'assets/images/logos/spectra.svg' ),
 										'plugin_slug'     => 'spectra-blocks',
 										'popup_title'     => 'Quick Feedback',
@@ -403,10 +403,10 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 		}
 
 		/**
-		 * Load Ultimate Gutenberg Text Domain.
+		 * Load Spectra Blocks Text Domain.
 		 * This will load the translation textdomain depending on the file priorities.
-		 *      1. Global Languages /wp-content/languages/ultimate-addons-for-gutenberg/ folder
-		 *      2. Local directory /wp-content/plugins/ultimate-addons-for-gutenberg/languages/ folder
+		 *      1. Global Languages /wp-content/languages/spectra-blocks/ folder
+		 *      2. Local directory /wp-content/plugins/spectra-blocks/languages/ folder
 		 *
 		 * @since  1.0.0
 		 * @return void
@@ -442,10 +442,10 @@ if ( ! class_exists( 'Spectra_Loader' ) ) {
 			$mofile_local  = $lang_dir . $mofile;
 			// Load the text domain.
 			if ( file_exists( $mofile_global ) ) {
-				// Look in global /wp-content/languages/ultimate-addons-for-gutenberg/ folder.
+				// Look in global /wp-content/languages/spectra-blocks/ folder.
 				load_textdomain( 'spectra-blocks', $mofile_global );
 			} elseif ( file_exists( $mofile_local ) ) {
-				// Look in local /wp-content/plugins/ultimate-addons-for-gutenberg/languages/ folder.
+				// Look in local /wp-content/plugins/spectra-blocks/languages/ folder.
 				load_textdomain( 'spectra-blocks', $mofile_local );
 			} else {
 				// Load the default language files.

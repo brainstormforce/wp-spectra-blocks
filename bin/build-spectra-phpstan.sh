@@ -21,7 +21,7 @@ success () {
 warning () {
     echo -e "\n${YELLOW_BOLD}$1${COLOR_RESET}\n"
 }
-status "💃 Time to build spectra plugin duplicate folder 🕺"
+status "Time to build spectra plugin duplicate folder"
 if [ ! -d "artifact" ]; then
   mkdir "artifact"
 fi
@@ -31,6 +31,6 @@ if [ ! -d "phpstan" ]; then
 fi
 cd ../
 # Copy files for zip.
-rsync -rc --exclude-from ".distignore" "./" "artifact/phpstan/ultimate-addons-for-gutenberg"
+rsync -rc --exclude-from ".distignore" "./" "artifact/phpstan/spectra-blocks"
 
-success "Done. Your Spectra Folder is copied for creating stubs..! 🎉"
+success "Done. Your Spectra Blocks folder is copied for creating stubs..!"

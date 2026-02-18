@@ -7,7 +7,7 @@
 	"category": "spectra-blocks-inner",
 	"description": "Add an icon indicator for this accordion header.",
 	"parent": [ "spectra/accordion-child-header" ],
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"supports": {
 		"__experimentalBorder": {
 			"width": true,

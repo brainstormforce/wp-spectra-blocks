@@ -38,7 +38,7 @@
 		"test:spectra-v3-coverage": "vendor/bin/phpunit -c phpunit.xml.dist --testsuite \"Spectra V3\" --coverage-text",
 		"test:coverage": "vendor/bin/phpunit --coverage-html coverage",
 		"phpstan": "vendor/bin/phpstan analyse --memory-limit=2G",
-		"gen-stubs": "vendor/bin/generate-stubs artifact/phpstan/ultimate-addons-for-gutenberg/ --out=tests/php/stubs/uagb-stubs.php && rm -rf artifact/phpstan",
+		"gen-stubs": "vendor/bin/generate-stubs artifact/phpstan/spectra-blocks/ --out=tests/php/stubs/uagb-stubs.php && rm -rf artifact/phpstan",
 		"update-stubs": "rm -f tests/php/stubs/uagb-stubs.php && bash bin/build-spectra-phpstan.sh && composer gen-stubs",
 		"commit:hook:pre": [
 			"cp .scripts/git-hooks/pre-commit .git/hooks/",

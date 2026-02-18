@@ -6,7 +6,7 @@
 	"title": "Accordion",
 	"category": "spectra-blocks",
 	"description": "Create a group of collapsible accordions.",
-	"textdomain": "ultimate-addons-for-gutenberg",
+	"textdomain": "spectra-blocks",
 	"allowedBlocks": [ "spectra/accordion-child-item" ],
 	"keywords": [
 		"accordion",
