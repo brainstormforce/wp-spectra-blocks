@@ -147,7 +147,6 @@ const ModalContainer = ( props ) => {
 	const [ categoryListName, setCategoryListName ] = useState( 'all' );
 	const [ iconListByCategory, setIconListByCategory ] = useState( defaultIcons );
 	const [ insertIcon, setInsertIcon ] = useState( '' );
-	const inputElement = useRef();
 
 	// Extract the raw icon name string from either the new object format or legacy string.
 	const iconName = ( typeof value === 'object' && value?.name ) ? value.name : value;
@@ -163,12 +162,6 @@ const ModalContainer = ( props ) => {
 		const initialList = setIconListWithChunks( defaultIcons );
 		return initialList.findIndex( ( row_value ) => row_value.includes( iconName ) );
 	} );
-
-	// Only focus the search input — no state updates here, so ModalContainer
-	// never re-renders on mount and useFocusReturn stays undisturbed.
-	useEffect( () => {
-		inputElement.current.focus();
-	}, [] );
 
 	// Click on category list.
 	const clickToCategoryList = ( category ) => {
@@ -248,6 +241,7 @@ const ModalContainer = ( props ) => {
 			onRequestClose={ closeModal }
 			overlayClassName="spectra-blocks-ip-modal-wrapper-overlay"
 			shouldCloseOnClickOutside={ false }
+			focusOnMount={ false }
 			closeButtonLabel={ __( 'Close', 'spectra-blocks' ) }
 		>
 			{ /* Header  */ }
@@ -258,7 +252,6 @@ const ModalContainer = ( props ) => {
 					setSearchIconInputValue( '' );
 				} }
 				searchIcon={ searchIcon }
-				inputElement={ inputElement }
 			/>
 			{ /* middle  */ }
 			<section className="spectra-blocks-ip-lr-container">
