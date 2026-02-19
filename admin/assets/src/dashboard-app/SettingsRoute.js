@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
-import Welcome from '@DashboardApp/pages/welcome/Welcome';
-import Blocks from '@DashboardApp/pages/blocks/Blocks';
-import Settings from '@DashboardApp/pages/settings/Settings';
-import AiFeatures from '@DashboardApp/pages/ai-features/AiFeatures';
-import FreeVPro from './pages/free-vs-pro/Comparison';
-import Learn from './pages/learn/Learn';
+import PageSkeleton from './PageSkeleton';
+
+const Welcome    = lazy( () => import( /* webpackChunkName: "page-welcome"      */ '@DashboardApp/pages/welcome/Welcome' ) );
+const Blocks     = lazy( () => import( /* webpackChunkName: "page-blocks"       */ '@DashboardApp/pages/blocks/Blocks' ) );
+const Settings   = lazy( () => import( /* webpackChunkName: "page-settings"     */ '@DashboardApp/pages/settings/Settings' ) );
+const AiFeatures = lazy( () => import( /* webpackChunkName: "page-ai-features"  */ '@DashboardApp/pages/ai-features/AiFeatures' ) );
+const FreeVPro   = lazy( () => import( /* webpackChunkName: "page-free-vs-pro"  */ './pages/free-vs-pro/Comparison' ) );
+const Learn      = lazy( () => import( /* webpackChunkName: "page-learn"        */ './pages/learn/Learn' ) );
 
 function SettingsRoute() {
 	const query = new URLSearchParams( useLocation().search );
@@ -66,7 +68,11 @@ function SettingsRoute() {
 		}
 	}
 
-	return <>{ routePage }</>;
+	return (
+		<Suspense fallback={ <PageSkeleton /> }>
+			{ routePage }
+		</Suspense>
+	);
 }
 
 export default SettingsRoute;

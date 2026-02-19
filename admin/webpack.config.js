@@ -38,15 +38,6 @@ const commonConfig = {
 	},
 	module: {
 		...defaultConfig.module,
-		rules: [
-			...defaultConfig.module.rules,
-			{
-                test: /\.(png|jpg|jpeg|gif|ico|svg)$/,
-                use: [
-                    'file-loader'
-                ]
-            }
-		]
 	},
 	plugins: [
 		...defaultConfig.plugins.filter( function ( plugin ) {
@@ -72,7 +63,39 @@ const dashboardConfig = Object.assign( {}, commonConfig, {
 	},
 	output: {
 		filename: '[name].js',
+		chunkFilename: 'chunks/[name].[contenthash].js',
 		path: path.resolve( __dirname, 'assets/build' ),
+		publicPath: 'auto',
+	},
+	optimization: {
+		...( commonConfig.optimization || {} ),
+		splitChunks: {
+			chunks: 'all',
+			cacheGroups: {
+				// Extract @bsf/force-ui into a shared chunk (used on every page).
+				forceUi: {
+					test: /[\\/]node_modules[\\/]@bsf[\\/]/,
+					name: 'vendor-bsf',
+					chunks: 'all',
+					priority: 30,
+				},
+				// Extract react-related packages shared across pages.
+				reactVendor: {
+					test: /[\\/]node_modules[\\/](react|react-dom|react-redux|react-router|redux|scheduler)[\\/]/,
+					name: 'vendor-react',
+					chunks: 'all',
+					priority: 20,
+				},
+				// General vendor chunk for remaining node_modules.
+				vendors: {
+					test: /[\\/]node_modules[\\/]/,
+					name: 'vendor',
+					chunks: 'async',
+					priority: 10,
+					minChunks: 2,
+				},
+			},
+		},
 	},
 } );
 

@@ -5,9 +5,7 @@ import { useInnerBlocksProps, store as blockEditorStore, useBlockProps } from '@
 import { useRefEffect } from '@wordpress/compose';
 import { select, subscribe, useSelect } from '@wordpress/data';
 import { memo, useEffect, useRef, } from '@wordpress/element';
-// Import Swiper styles.
-import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+// Swiper CSS (extracted at build time, no JS bundle cost).
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -188,9 +186,13 @@ const Render = memo( ( props ) => {
 			};
 
 			// Initialize the slider based on the breakpoints.
-			const initSwiper = () => {
-				
-		
+			const initSwiper = async () => {
+				// Dynamically import Swiper only when the editor renders a slider block.
+				const [ { default: Swiper }, { Navigation, Pagination, Autoplay } ] = await Promise.all( [
+					import( /* webpackChunkName: "swiper-core" */ 'swiper' ),
+					import( /* webpackChunkName: "swiper-modules" */ 'swiper/modules' ),
+				] );
+
 		// Use correct document context for navigation and pagination selectors.
 		const targetDoc = getEditorDocument();
 
@@ -264,15 +266,18 @@ const Render = memo( ( props ) => {
 		return slider;
 			};
 
-			// Save the slider instance.
-			const slider = initSwiper();
-
-		// PERFORMANCE FIX: Initialize refs with current state
+			// PERFORMANCE FIX: Initialize refs with current state (synchronous, no slider needed).
 		slideOrderRef.current = select( blockEditorStore ).getBlockOrder( clientId );
 		currentSelectedBlockRef.current = select( blockEditorStore ).getSelectedBlock();
-		
-		// Store slider instance in ref for access outside useRefEffect
-		sliderInstanceRef.current = slider;
+
+		// Mutable reference for the async slider instance used in cleanup.
+		let slider = null;
+
+		// initSwiper is async — store the instance once resolved.
+		initSwiper().then( ( instance ) => {
+			slider = instance;
+			sliderInstanceRef.current = instance;
+		} );
 
 		return () => {
 			// PERFORMANCE FIX: Clean shutdown without subscribe listeners
@@ -281,53 +286,45 @@ const Render = memo( ( props ) => {
 				clearTimeout( navigationTimeoutRef.current );
 				navigationTimeoutRef.current = null;
 			}
-			
-				slider.updateProgress();	
+
+			// Guard: Swiper may not have resolved yet if block was removed very quickly.
+			if ( slider && typeof slider.destroy === 'function' ) {
+				slider.updateProgress();
 				slider.update();
 				slider.updateSlides();
-				
-				// If the slider exists and the destroy method exists, destroy the slider.
-				if ( slider && typeof slider.destroy === 'function' ) {
-					// Clean up pagination element and navigation buttons before destroying
+
+				// Clean up pagination element and navigation buttons before destroying
 				const paginationEl = element.querySelector( '.swiper-pagination' );
 				if ( paginationEl ) {
 					paginationEl.innerHTML = '';
-						paginationEl.removeAttribute( 'style' );
-					}
-
-					// Clean up navigation buttons  
-					const prevButton = element.querySelector( '.swiper-button-prev' );
-					const nextButton = element.querySelector( '.swiper-button-next' );
-					if ( prevButton ) prevButton.removeAttribute( 'style' );
-					if ( nextButton ) nextButton.removeAttribute( 'style' );
-					
-					// Preserve the spectra-slider-child elements.
-					if ( slider.slides && slider.slides.length > 0 ) {
-						// Process each slide to preserve the spectra-slider-child elements
-						Array.from( slider.slides ).forEach( slide => {
-							// Find the spectra-slider-child element in this slide.
-							const spectraSliderChild = slide.querySelector( '.spectra-slider-child' );
-							
-							if ( spectraSliderChild ) {
-								// Ensure the spectra-slider-child keeps its class.
-								spectraSliderChild.className = 'spectra-slider-child swiper-slide';
-								
-								// Reset any inline styles that might affect layout.
-								spectraSliderChild.style.width = '';
-								spectraSliderChild.style.transform = '';
-								spectraSliderChild.style.transition = '';
-							}
-							
-							// Reset the slide itself.
-							slide.style.width = '';
-							slide.style.transform = '';
-						} );
-					}
-					
-					// Destroy the Swiper instance but keep the DOM elements.
-					slider.destroy( true, false );
+					paginationEl.removeAttribute( 'style' );
 				}
-			};
+
+				// Clean up navigation buttons
+				const prevButton = element.querySelector( '.swiper-button-prev' );
+				const nextButton = element.querySelector( '.swiper-button-next' );
+				if ( prevButton ) prevButton.removeAttribute( 'style' );
+				if ( nextButton ) nextButton.removeAttribute( 'style' );
+
+				// Preserve the spectra-slider-child elements.
+				if ( slider.slides && slider.slides.length > 0 ) {
+					Array.from( slider.slides ).forEach( slide => {
+						const spectraSliderChild = slide.querySelector( '.spectra-slider-child' );
+						if ( spectraSliderChild ) {
+							spectraSliderChild.className = 'spectra-slider-child swiper-slide';
+							spectraSliderChild.style.width = '';
+							spectraSliderChild.style.transform = '';
+							spectraSliderChild.style.transition = '';
+						}
+						slide.style.width = '';
+						slide.style.transform = '';
+					} );
+				}
+
+				// Destroy the Swiper instance but keep the DOM elements.
+				slider.destroy( true, false );
+			}
+		};
 		},
 		[ navigation, pagination, slidesPerView, spaceBetween, breakpoints ]
 	);
