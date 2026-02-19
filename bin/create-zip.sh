@@ -20,10 +20,15 @@ npm run build
 echo "→ Running admin build..."
 (cd admin && npm run build)
 
-# 3. Remove old zip if exists
+# 3. Install production-only Composer dependencies (strip dev packages from zip)
+echo "→ Installing production Composer dependencies..."
+cd "$PLUGIN_ROOT"
+composer install --no-dev --quiet
+
+# 4. Remove old zip if exists
 [ -f "$ZIP_FILE" ] && rm "$ZIP_FILE"
 
-# 4. Create zip from parent directory
+# 5. Create zip from parent directory
 echo "→ Creating zip..."
 cd "$PARENT_DIR"
 
@@ -56,6 +61,11 @@ zip -r "$ZIP_FILE" "$PLUGIN_SLUG" \
   --exclude "**/.DS_Store" \
   --exclude "**/*.log" \
   --exclude "**/*.map"
+
+# 6. Restore dev dependencies for local development
+echo "→ Restoring dev Composer dependencies..."
+cd "$PLUGIN_ROOT"
+composer install --quiet
 
 echo ""
 echo "✓ Created: ${ZIP_FILE}"

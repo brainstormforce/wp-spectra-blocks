@@ -6,10 +6,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Title, Badge } from '@bsf/force-ui';
 import AssetsGeneration from '@DashboardApp/pages/settings/AssetsGeneration';
-import RegenerateAssets from '@DashboardApp/pages/settings/RegenerateAssets';
 import OnPageCSS from '@DashboardApp/pages/settings/OnPageCSS';
-import RollBack from '@DashboardApp/pages/settings/RollBack';
-import BetaUpdates from '@DashboardApp/pages/settings/BetaUpdates';
 import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
 import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
@@ -121,11 +118,6 @@ const Settings = () => {
 			name: 'Utilities',
 			children: [
 				{
-					name: __( 'Version Control', 'spectra-blocks' ),
-					slug: 'version-control',
-					icon: SettingsIcons[ 'version-control' ],
-				},
-				{
 					name: __( 'Performance', 'spectra-blocks' ),
 					slug: 'fonts-performance',
 					icon: SettingsIcons[ 'fonts-performance' ],
@@ -152,7 +144,6 @@ const Settings = () => {
 	const tabTitles = {
 		'global-settings': __( 'Editor Options', 'spectra-blocks' ),
 		'editor-enhancements': __( 'Editor Enhancements', 'spectra-blocks' ),
-		'version-control': __( 'Version Control', 'spectra-blocks' ),
 		'fonts-performance': __( 'Performance', 'spectra-blocks' ),
 		'fse-support': __( 'Theme Fonts', 'spectra-blocks' ),
 		'block-settings': __( 'Integrations', 'spectra-blocks' ),
@@ -333,12 +324,6 @@ const Settings = () => {
 						{ 'editor-enhancements' === currentTab && (
 							<TemplatesButton />
 						) }
-						{ 'version-control' === currentTab && (
-							<>
-								<RollBack />
-								<BetaUpdates />
-							</>
-						) }
 						{ 'fonts-performance' === currentTab && (
 							<>
 								<DisableCSSCache />
@@ -378,8 +363,6 @@ const Settings = () => {
 									return applyFilters( 'spectra.adminSettings.globalSettings', null );
 								case 'editor-enhancements':
 									return applyFilters( 'spectra.adminSettings.editorEnhancements', null );
-								case 'version-control':
-									return applyFilters( 'spectra.adminSettings.versionControl', null );
 								case 'fonts-performance':
 									return applyFilters( 'spectra.adminSettings.fontsPerformance', null );
 								case 'site-visibility':

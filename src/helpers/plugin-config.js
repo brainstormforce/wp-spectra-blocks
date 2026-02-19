@@ -13,4 +13,3 @@ export const getIconCategoryList = () => window.spectraBlocksIconCategoryList ||
 export const isRtl = () => getConfig().is_rtl || false;
 export const getSpectraProStatus = () => getConfig().spectra_pro_status || '';
 export const getCurrentPostId = () => getConfig().current_post_id || 0;
-export const getFontAwesomePolyfill = () => getConfig().font_awesome_5_polyfill || {};

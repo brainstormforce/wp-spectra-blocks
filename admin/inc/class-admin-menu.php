@@ -296,12 +296,10 @@ class Admin_Menu {
 	public function add_action_links( $links ) {
 
 		$default_url = admin_url( 'admin.php?page=' . $this->menu_slug );
-		$rollback    = admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=version-control' );
 		$spectra_pro = \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'plugin-list', 'plugin-list' );
 
 		$free_links = array(
 			'<a href="' . esc_url( $default_url ) . '">' . __( 'Settings', 'spectra-blocks' ) . '</a>',
-			'<a href="' . esc_url( $rollback ) . '">' . __( 'Rollback', 'spectra-blocks' ) . '</a>',
 		);
 
 		// Check if Spectra Pro plugin is not active.
@@ -479,7 +477,6 @@ class Admin_Menu {
 				'ajax_url'                            => admin_url( 'admin-ajax.php' ),
 				'wp_pages_url'                        => admin_url( 'post-new.php?post_type=page' ),
 				'home_slug'                           => $this->menu_slug,
-				'rollback_url'                        => esc_url( add_query_arg( 'version', 'VERSION', wp_nonce_url( admin_url( 'admin-post.php?action=spectra_blocks_rollback' ), 'spectra_blocks_rollback' ) ) ),
 				'blocks_info'                         => $blocks_info,
 				'reusable_url'                        => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
 				'global_data'                         => Admin_Helper::get_options(),
@@ -736,14 +733,6 @@ class Admin_Menu {
 		wp_style_add_data( $handle, 'rtl', 'replace' );
 		wp_localize_script( $handle, 'spectra_blocks_admin_react', $localize );
 		wp_localize_script( $handle, 'spectra_blocks_react', $localize );
-
-		// Expose a Spectra Pro compatibility shim so Pro extensions (e.g. Global Styles)
-		// can detect the current plugin's menu slug via the shared `uag_react.home_slug` key.
-		wp_add_inline_script(
-			$handle,
-			'window.uag_react = window.uag_react || {}; if ( ! window.uag_react.home_slug ) { window.uag_react.home_slug = spectra_blocks_react.home_slug; }',
-			'after'
-		);
 
 		$current_user = wp_get_current_user();
 

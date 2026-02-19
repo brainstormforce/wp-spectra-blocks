@@ -19,11 +19,6 @@ const globalDataReducer = ( state = {}, action ) => {
                 ...state,
                 activeSettingsNavigationTab: action.payload
             };
-        case 'UPDATE_FILE_GENERATION':
-            return {
-                ...state,
-                enableFileGeneration: action.payload,
-            };
         case 'UPDATE_TEMPLATES_BUTTON':
             return {
                 ...state,
@@ -34,11 +29,6 @@ const globalDataReducer = ( state = {}, action ) => {
 				...state,
 				enableOnPageCSS: action.payload,
 			};
-        case 'UPDATE_BETA':
-            return {
-                ...state,
-                enableBeta: action.payload,
-            };
         case 'UPDATE_ENABLE_SELECTED_FONT_FAMILIES':
             return {
                 ...state,

@@ -100,8 +100,6 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			}
 
 			return array(
-				'spectra_blocks_beta'                      => self::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
-				'_spectra_blocks_allow_file_generation'    => self::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
 				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
 				'spectra_blocks_enable_on_page_css_button' => self::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
 				'spectra_blocks_enable_block_condition'    => self::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
@@ -220,89 +218,5 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			return 'US';
 		}
 
-		// -------------------------------------------------------------------------
-		// Rollback
-		// -------------------------------------------------------------------------
-
-		/**
-		 * Get available rollback versions from the WordPress.org plugin API.
-		 *
-		 * @return array
-		 */
-		public function get_rollback_versions() {
-			$transient_key     = 'spectra_blocks_rollback_versions_' . SPECTRA_BLOCKS_VER;
-			$rollback_versions = get_transient( $transient_key );
-
-			if ( ! empty( $rollback_versions ) ) {
-				return $rollback_versions;
-			}
-
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-
-			$plugin_information = plugins_api(
-				'plugin_information',
-				array(
-					'slug' => 'spectra-blocks',
-				)
-			);
-
-			if ( is_wp_error( $plugin_information ) || empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
-				return array();
-			}
-
-			krsort( $plugin_information->versions );
-
-			$rollback_versions = array();
-			$max_versions      = 10;
-
-			foreach ( $plugin_information->versions as $version => $download_link ) {
-				if ( preg_match( '/(trunk|beta|rc|dev)/i', strtolower( $version ) ) ) {
-					continue;
-				}
-
-				if ( version_compare( $version, SPECTRA_BLOCKS_VER, '>=' ) ) {
-					continue;
-				}
-
-				$rollback_versions[] = $version;
-			}
-
-			usort( $rollback_versions, array( __CLASS__, 'sort_rollback_versions' ) );
-			$rollback_versions = array_slice( $rollback_versions, 0, $max_versions, true );
-
-			set_transient( $transient_key, $rollback_versions, WEEK_IN_SECONDS );
-
-			return $rollback_versions;
-		}
-
-		/**
-		 * Sort rollback versions descending.
-		 *
-		 * @param string $prev Previous version.
-		 * @param string $next Next version.
-		 * @return int
-		 */
-		public static function sort_rollback_versions( $prev, $next ) {
-			if ( version_compare( $prev, $next, '==' ) ) {
-				return 0;
-			}
-			return version_compare( $prev, $next, '>' ) ? -1 : 1;
-		}
-
-		// -------------------------------------------------------------------------
-		// CSS Asset
-		// -------------------------------------------------------------------------
-
-		/**
-		 * Create the combined stylesheet for enabled blocks.
-		 * For V3 (spectra-blocks), CSS is handled via block.json registered stylesheets.
-		 * This method is a no-op placeholder to satisfy call sites carried over from V2.
-		 *
-		 * @return void
-		 */
-		public static function create_specific_stylesheet() {
-			// V3 blocks use block.json stylesheets — no combined stylesheet needed.
-			do_action( 'spectra_blocks_create_specific_stylesheet' );
-		}
 	}
 }

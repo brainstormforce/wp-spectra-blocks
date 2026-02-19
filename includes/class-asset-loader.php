@@ -163,7 +163,6 @@ class AssetLoader {
 			'is_rtl'                   => is_rtl() ? '1' : '0',
 			'spectra_pro_status'       => $spectra_pro_status,
 			'current_post_id'          => (int) get_the_ID(),
-			'font_awesome_5_polyfill'  => spectra_blocks_get_font_awesome_polyfiller(),
 			'spectra_blocks_svg_icons' => $merged_icons,
 		);
 

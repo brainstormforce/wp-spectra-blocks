@@ -6,13 +6,11 @@ import BuildWebsite from '@Common/components/BuildWebsite';
 import QuickAccess from '@Common/components/QuickAccess';
 
 import HeroSection from './HeroSection/HeroSection';
-import BetaDetails from './BetaDetails/BetaDetails';
 import Blocks from './Blocks/Blocks';
 import ProBlocks from './Blocks/ProBlocks';
 import BlocksExtensions from './Blocks/BlocksExtensions';
 import LicenseKey from '../settings/LicenseKey';
 import ProFeatures from './ProFeatures/ProFeatures';
-// import BetaUpdateNotice from './BetaUpdateNotice/BetaUpdateNotice';
 
 const Welcome = () => {
 	return (
@@ -21,9 +19,6 @@ const Welcome = () => {
 			<Container className="md:p-8 sm:p-6 p-[0.7rem]" cols={12} containerType="grid" gap="2xl">
 				<Container.Item className="flex flex-col gap-8" colSpan={{ lg: 8, md: 12, sm: 12 }}>
 					<HeroSection />
-					{/* Note: This component should only be rendered if the plugin is in beta */}
-					<BetaDetails />
-					{/* <BetaUpdateNotice /> */}
 
 					{ 'Activated' === spectra_blocks_react.pro_plugin_status && <ProFeatures /> }
 

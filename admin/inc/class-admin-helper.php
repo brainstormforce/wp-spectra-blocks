@@ -40,8 +40,6 @@ class Admin_Helper {
 	 */
 	public static function get_common_settings() {
 
-		$spectra_versions = self::get_rollback_versions_options();
-
 		$theme_data          = \WP_Theme_JSON_Resolver::get_theme_data();
 		$theme_settings      = $theme_data->get_settings();
 		$theme_font_families = isset( $theme_settings['typography']['fontFamilies']['theme'] ) && is_array( $theme_settings['typography']['fontFamilies']['theme'] ) ? $theme_settings['typography']['fontFamilies']['theme'] : array();
@@ -54,12 +52,7 @@ class Admin_Helper {
 			$zip_ai_modules = Zip_Ai_Module::get_all_modules();
 		}
 
-		$inherit_from_theme = false !== get_option( 'spectra_blocks_btn_inherit_from_theme_fallback' ) ? 'disabled' : \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' );
-
 		$options = array(
-			'rollback_to_previous_version'        => isset( $spectra_versions[0]['value'] ) ? $spectra_versions[0]['value'] : '',
-			'enable_beta_updates'                 => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
-			'enable_file_generation'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
 			'blocks_activation_and_deactivation'  => self::get_blocks(),
 			'enable_templates_button'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
 			'enable_on_page_css_button'           => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
@@ -78,7 +71,6 @@ class Admin_Helper {
 			'copy_paste'                          => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
 			'preload_local_fonts'                 => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
 			'btn_inherit_from_theme'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
-			'btn_inherit_from_theme_fallback'     => $inherit_from_theme,
 			'social'                              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option(
 				'spectra_blocks_social',
 				array(
@@ -91,9 +83,6 @@ class Admin_Helper {
 			'dynamic_content_mode'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_dynamic_content_mode', 'popup' ),
 			'visibility_mode'                     => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
 			'visibility_page'                     => self::get_visibility_page(),
-			'spectra_blocks_previous_versions'    => $spectra_versions,
-			'spectra_blocks_old_user_less_than_2' => get_option( 'spectra-blocks-old-user-less-than-2' ),
-			'spectra_blocks_old_user_less_than_3' => \Spectra_Blocks_Helper::is_old_user_less_than_v3(),
 			'recaptcha_site_key_v2'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v2', '' ),
 			'recaptcha_secret_key_v2'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v2', '' ),
 			'recaptcha_site_key_v3'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v3', '' ),
@@ -161,52 +150,4 @@ class Admin_Helper {
 		return $options;
 	}
 
-	/**
-	 * Get Rollback versions.
-	 *
-	 * @since 1.23.0
-	 * @return array
-	 * @access public
-	 */
-	public static function get_rollback_versions_options() {
-
-		$rollback_versions = \Spectra_Blocks_Admin_Helper::get_instance()->get_rollback_versions();
-
-		$rollback_versions_options = array();
-
-		foreach ( $rollback_versions as $version ) {
-
-			$version = array(
-				'label' => $version,
-				'value' => $version,
-
-			);
-
-			$rollback_versions_options[] = $version;
-		}
-
-		return $rollback_versions_options;
-	}
-	/**
-	 * Sort Rollback versions.
-	 *
-	 * @param string $prev Previous Version.
-	 * @param string $next Next Version.
-	 *
-	 * @since 1.23.0
-	 * @return array
-	 * @access public
-	 */
-	public static function sort_rollback_versions( $prev, $next ) {
-
-		if ( version_compare( $prev, $next, '==' ) ) {
-			return 0;
-		}
-
-		if ( version_compare( $prev, $next, '>' ) ) {
-			return -1;
-		}
-
-		return 1;
-	}
 }
