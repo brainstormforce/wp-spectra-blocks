@@ -12,12 +12,13 @@ ZIP_FILE="${PARENT_DIR}/${PLUGIN_SLUG}.${VERSION}.zip"
 
 echo "Building ${PLUGIN_SLUG} v${VERSION}..."
 
-# 1. Build blocks & extensions
-echo "→ Running npm run build..."
-npm run build
+# 1. Build blocks & extensions (clean to remove stale hashed chunks)
+echo "→ Running npm run build:fresh..."
+npm run build:fresh
 
-# 2. Build admin dashboard
-echo "→ Running admin build..."
+# 2. Build admin dashboard (clean to remove stale hashed chunks)
+echo "→ Running admin build:fresh..."
+rm -rf admin/assets/build
 (cd admin && npm run build)
 
 # 3. Install production-only Composer dependencies (strip dev packages from zip)
@@ -48,6 +49,8 @@ zip -r "$ZIP_FILE" "$PLUGIN_SLUG" \
   --exclude "${PLUGIN_SLUG}/phpcs.xml" \
   --exclude "${PLUGIN_SLUG}/phpunit.xml.dist" \
   --exclude "${PLUGIN_SLUG}/CLAUDE.md" \
+  --exclude "${PLUGIN_SLUG}/Claude.md" \
+  --exclude "${PLUGIN_SLUG}/.claude/*" \
   --exclude "${PLUGIN_SLUG}/README.md" \
   --exclude "${PLUGIN_SLUG}/.gitignore" \
   --exclude "${PLUGIN_SLUG}/.gitattributes" \
@@ -60,7 +63,14 @@ zip -r "$ZIP_FILE" "$PLUGIN_SLUG" \
   --exclude "${PLUGIN_SLUG}/admin/postcss.config.js" \
   --exclude "**/.DS_Store" \
   --exclude "**/*.log" \
-  --exclude "**/*.map"
+  --exclude "**/*.map" \
+  --exclude "**/auth.json" \
+  --exclude "**/changelog.txt" \
+  --exclude "**/webpack-block.config.js" \
+  --exclude "**/lib/*/composer.json" \
+  --exclude "**/lib/*/composer.lock" \
+  --exclude "**/lib/*/package.json" \
+  --exclude "**/lib/*/package-lock.json"
 
 # 6. Restore dev dependencies for local development
 echo "→ Restoring dev Composer dependencies..."
