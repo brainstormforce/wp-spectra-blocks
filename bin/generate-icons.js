@@ -1,0 +1,271 @@
+#!/usr/bin/env node
+/**
+ * Font Awesome Icon Generator
+ *
+ * Downloads the latest Font Awesome 6.x free icon metadata from GitHub,
+ * processes it (strips unused fields, merges categories), and outputs
+ * PHP chunk files to blocks-config/spectra-blocks-controls/.
+ *
+ * Each PHP file returns a PHP array with translatable labels via __().
+ *
+ * Usage:
+ *   npm run update-icons
+ *
+ * To use a local icons.json instead of downloading:
+ *   node bin/generate-icons.js --local=bin/icons-configure/spectra-icons-v6.json
+ */
+
+'use strict';
+
+const fs   = require( 'fs' );
+const path = require( 'path' );
+const https = require( 'https' );
+
+// ---------------------------------------------------------------------------
+// Config
+// ---------------------------------------------------------------------------
+
+const ROOT          = path.resolve( __dirname, '..' );
+const CONFIG_DIR    = path.join( ROOT, 'bin/icons-configure' );
+const OUTPUT_DIR    = path.join( ROOT, 'blocks-config/spectra-blocks-controls' );
+const NUM_CHUNKS    = 5;
+const TEXT_DOMAIN   = 'spectra-blocks';
+const FA_ICONS_URL  = 'https://raw.githubusercontent.com/FortAwesome/Font-Awesome/6.x/metadata/icons.json';
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function download( url ) {
+	return new Promise( ( resolve, reject ) => {
+		https.get( url, ( res ) => {
+			let data = '';
+			res.on( 'data', chunk => ( data += chunk ) );
+			res.on( 'end', () => resolve( data ) );
+			res.on( 'error', reject );
+		} ).on( 'error', reject );
+	} );
+}
+
+function chunkObject( obj, numChunks ) {
+	const entries   = Object.entries( obj );
+	const chunkSize = Math.ceil( entries.length / numChunks );
+	const chunks    = [];
+	for ( let i = 0; i < entries.length; i += chunkSize ) {
+		chunks.push( Object.fromEntries( entries.slice( i, i + chunkSize ) ) );
+	}
+	return chunks;
+}
+
+// ---------------------------------------------------------------------------
+// Category helpers (ported from UAG Gruntfile)
+// ---------------------------------------------------------------------------
+
+function keepCategory( icons, iconKey, categories ) {
+	for ( const category in categories ) {
+		if ( Array.isArray( categories[ category ].icons ) && categories[ category ].icons.includes( iconKey ) ) {
+			icons[ iconKey ].custom_categories.push( category );
+		}
+	}
+}
+
+function keepCustomCategory( icons, iconKey, customCategories ) {
+	for ( const shortKey in customCategories ) {
+		const shortCategory = customCategories[ shortKey ];
+		if ( typeof shortCategory === 'object' && Object.prototype.hasOwnProperty.call( shortCategory, 'icons' ) ) {
+			if ( shortCategory.icons.includes( iconKey ) ) {
+				icons[ iconKey ].custom_categories.push( shortKey );
+			}
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// PHP array serialiser
+// ---------------------------------------------------------------------------
+
+/**
+ * Escape a string for use inside a PHP single-quoted string.
+ *
+ * @param {string} str
+ * @returns {string}
+ */
+function phpEscape( str ) {
+	return String( str ).replace( /\\/g, '\\\\' ).replace( /'/g, "\\'" );
+}
+
+/**
+ * Serialise a JS value into a PHP literal.
+ * The label field is wrapped in __() for translation.
+ *
+ * @param {*}      value
+ * @param {string} key     Parent key (used to detect 'label')
+ * @param {string} indent  Current indentation string
+ * @returns {string}
+ */
+function toPhp( value, key, indent ) {
+	const nextIndent = indent + '\t';
+
+	if ( Array.isArray( value ) ) {
+		if ( value.length === 0 ) {
+			return 'array()';
+		}
+		const items = value.map( item => `${ nextIndent }${ toPhp( item, '', nextIndent ) }` );
+		return `array(\n${ items.join( ',\n' ) },\n${ indent })`;
+	}
+
+	if ( value !== null && typeof value === 'object' ) {
+		const entries = Object.entries( value );
+		if ( entries.length === 0 ) {
+			return 'array()';
+		}
+		const items = entries.map( ( [ k, v ] ) => {
+			return `${ nextIndent }'${ phpEscape( k ) }' => ${ toPhp( v, k, nextIndent ) }`;
+		} );
+		return `array(\n${ items.join( ',\n' ) },\n${ indent })`;
+	}
+
+	if ( typeof value === 'number' ) {
+		return String( value );
+	}
+
+	if ( typeof value === 'boolean' ) {
+		return value ? 'true' : 'false';
+	}
+
+	// String value — wrap label in __() for translation.
+	if ( key === 'label' ) {
+		return `__( '${ phpEscape( value ) }', '${ TEXT_DOMAIN }' )`;
+	}
+
+	return `'${ phpEscape( value ) }'`;
+}
+
+/**
+ * Build the PHP file content for one chunk.
+ *
+ * @param {object} chunk  Plain JS object (icon name → icon data).
+ * @param {number} index  Chunk index (for the docblock comment).
+ * @returns {string}
+ */
+function buildPhpFile( chunk, index ) {
+	const lines = [
+		'<?php',
+		'/**',
+		` * Font Awesome 6 icon data — chunk ${ index } of ${ NUM_CHUNKS }.`,
+		' *',
+		' * Auto-generated by bin/generate-icons.js — do not edit manually.',
+		' * Run: npm run update-icons',
+		' *',
+		` * @package Spectra`,
+		' */',
+		'',
+		"defined( 'ABSPATH' ) || exit;",
+		'',
+		'// phpcs:disable',
+		'return array(',
+	];
+
+	for ( const [ iconKey, iconData ] of Object.entries( chunk ) ) {
+		lines.push( `\t'${ phpEscape( iconKey ) }' => ${ toPhp( iconData, iconKey, '\t' ) },` );
+	}
+
+	lines.push( ');' );
+	lines.push( '// phpcs:enable' );
+	lines.push( '' );
+
+	return lines.join( '\n' );
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+async function main() {
+	// Determine source: local file or download.
+	const localArg = process.argv.find( a => a.startsWith( '--local=' ) );
+	let rawIcons;
+
+	if ( localArg ) {
+		const localFile = path.resolve( ROOT, localArg.replace( '--local=', '' ) );
+		console.log( `→ Reading icons from local file: ${ localFile }` );
+		rawIcons = JSON.parse( fs.readFileSync( localFile, 'utf8' ) );
+	} else {
+		console.log( `→ Downloading Font Awesome icon metadata from GitHub...` );
+		const json = await download( FA_ICONS_URL );
+		rawIcons   = JSON.parse( json );
+		// Save a local copy for future offline use.
+		fs.writeFileSync( path.join( CONFIG_DIR, 'spectra-icons-v6.json' ), json );
+		console.log( `  Saved to bin/icons-configure/spectra-icons-v6.json` );
+	}
+
+	// Load category configs.
+	const faCategories     = JSON.parse( fs.readFileSync( path.join( CONFIG_DIR, 'fontawesome-category.json' ), 'utf8' ) );
+	const customCategories = JSON.parse( fs.readFileSync( path.join( CONFIG_DIR, 'fontawesome-custom-shorted-category.json' ), 'utf8' ) );
+
+	console.log( `→ Processing ${ Object.keys( rawIcons ).length } icons...` );
+
+	const processed = {};
+
+	for ( const [ iconKey, iconData ] of Object.entries( rawIcons ) ) {
+		const entry = {
+			label           : iconData.label ?? iconKey,
+			styles          : iconData.styles ?? [],
+			search          : { terms: iconData.search?.terms ?? [] },
+			custom_categories: [],
+			svg             : {},
+		};
+
+		// Keep only width/height/path per style — discard raw SVG strings and metadata.
+		for ( const style of [ 'solid', 'brands', 'regular' ] ) {
+			const svgData = iconData.svg?.[ style ];
+			if ( svgData && svgData.path ) {
+				entry.svg[ style ] = {
+					width : svgData.width,
+					height: svgData.height,
+					path  : svgData.path,
+				};
+			}
+		}
+
+		// Skip icons with no usable SVG data.
+		if ( Object.keys( entry.svg ).length === 0 ) {
+			continue;
+		}
+
+		// Merge FA categories.
+		keepCategory( { [ iconKey ]: entry }, iconKey, faCategories );
+
+		// Merge custom/shortened categories.
+		keepCustomCategory( { [ iconKey ]: entry }, iconKey, customCategories );
+
+		processed[ iconKey ] = entry;
+	}
+
+	console.log( `→ ${ Object.keys( processed ).length } icons after processing` );
+
+	// Split into chunks and write PHP files.
+	const chunks = chunkObject( processed, NUM_CHUNKS );
+
+	for ( let i = 0; i < chunks.length; i++ ) {
+		const outputPath = path.join( OUTPUT_DIR, `spectra-icons-v6-${ i }.php` );
+		fs.writeFileSync( outputPath, buildPhpFile( chunks[ i ], i ) );
+		console.log( `  ✓ ${ outputPath } (${ Object.keys( chunks[ i ] ).length } icons)` );
+	}
+
+	// Remove old JSON chunk files if they exist.
+	for ( let i = 0; i < NUM_CHUNKS; i++ ) {
+		const oldFile = path.join( OUTPUT_DIR, `spectra-icons-v6-${ i }.json` );
+		if ( fs.existsSync( oldFile ) ) {
+			fs.unlinkSync( oldFile );
+			console.log( `  ✗ Removed old JSON file: spectra-icons-v6-${ i }.json` );
+		}
+	}
+
+	console.log( `\n✓ Done. ${ NUM_CHUNKS } PHP chunks written to blocks-config/spectra-blocks-controls/` );
+}
+
+main().catch( err => {
+	console.error( 'Error:', err.message );
+	process.exit( 1 );
+} );

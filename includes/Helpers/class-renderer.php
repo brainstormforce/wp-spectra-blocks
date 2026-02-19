@@ -30,7 +30,7 @@ class Renderer {
 	 * Generate SVG.
 	 *
 	 * @since 3.0.0
-	 * @param string  $icon             Icon name or raw SVG content.
+	 * @param mixed   $icon             Icon name, FA object, or raw SVG content.
 	 * @param boolean $flip_for_rtl     Indicated if the current SVG needs to be flipped in RTL mode.
 	 * @param array   $additional_props Any additional props.
 	 * @return void
@@ -58,89 +58,114 @@ class Renderer {
 			return;
 		}
 
-		// Handle FontAwesome icon names (existing logic).
-		$icon = sanitize_text_field( esc_attr( $icon ) );
-		$json = Core::backend_load_font_awesome_icons();
+		// Resolve icon SVG data: new FA object format or legacy string name.
+		$icon_svg_data = array();
 
-		if ( ! empty( $json ) ) {
-			if ( empty( $icon_array_merged ) ) {
-				foreach ( $json as $value ) {
-					self::$icon_array_merged = array_merge( self::$icon_array_merged, $value );
+		if ( ! empty( $icon ) && is_array( $icon ) && isset( $icon['name'], $icon['svg'] ) ) {
+			// New FA object format: { name, svg: { solid|brands|regular: { width, height, path } } }
+			// Use embedded SVG data directly — no icon library lookup needed.
+			$icon_svg_data = $icon['svg']['brands'] ?? $icon['svg']['solid'] ?? $icon['svg']['regular'] ?? array();
+		} elseif ( ! empty( $icon ) && is_string( $icon ) ) {
+			// Legacy FA icon name string — look up from library.
+			$icon = sanitize_text_field( esc_attr( $icon ) );
+			$json = Core::backend_load_font_awesome_icons();
+
+			if ( ! empty( $json ) ) {
+				if ( empty( self::$icon_array_merged ) ) {
+					foreach ( $json as $chunk ) {
+						self::$icon_array_merged = array_merge( self::$icon_array_merged, $chunk );
+					}
 				}
+				$merged        = self::$icon_array_merged;
+				$icon_svg_data = $merged[ $icon ]['svg']['brands'] ?? $merged[ $icon ]['svg']['solid'] ?? array();
 			}
-			$json = self::$icon_array_merged;
 		}
 
-		$icon_brand_or_solid = isset( $json[ $icon ]['svg']['brands'] ) ? $json[ $icon ]['svg']['brands'] : ( isset( $json[ $icon ]['svg']['solid'] ) ? $json[ $icon ]['svg']['solid'] : array() );
-		$path                = $icon_brand_or_solid['path'] ?? '';
-		$view                = isset( $icon_brand_or_solid['width'] ) && isset( $icon_brand_or_solid['height'] ) ? '0 0 ' . $icon_brand_or_solid['width'] . ' ' . $icon_brand_or_solid['height'] : null;
+		$path = $icon_svg_data['path'] ?? '';
+		$view = isset( $icon_svg_data['width'], $icon_svg_data['height'] )
+			? '0 0 ' . $icon_svg_data['width'] . ' ' . $icon_svg_data['height']
+			: null;
 
 		if ( $path && $view ) {
-			// Build the class attribute, checking if spectra-icon is already in additional_props.
-			$existing_classes = $additional_props['class'] ?? '';
-			$class_array      = array_filter( explode( ' ', $existing_classes ) );
+			self::render_fa_svg( $path, $view, $additional_props, $flip_for_rtl );
+		}
+	}
 
-			// Add spectra-icon if it's not already present.
-			if ( ! in_array( 'spectra-icon', $class_array, true ) ) {
-				$class_array[] = 'spectra-icon';
+	/**
+	 * Render a Font Awesome-style SVG element from resolved path/viewBox data.
+	 *
+	 * @since x.x.x
+	 * @param string  $path             The SVG path data string.
+	 * @param string  $view             The SVG viewBox string (e.g. "0 0 512 512").
+	 * @param array   $additional_props Additional HTML attributes to add.
+	 * @param boolean $flip_for_rtl     Whether to mirror the SVG in RTL mode.
+	 * @return void
+	 */
+	private static function render_fa_svg( $path, $view, $additional_props, $flip_for_rtl ) {
+		// Build the class attribute, checking if spectra-icon is already in additional_props.
+		$existing_classes = $additional_props['class'] ?? '';
+		$class_array      = array_filter( explode( ' ', $existing_classes ) );
+
+		// Add spectra-icon if it's not already present.
+		if ( ! in_array( 'spectra-icon', $class_array, true ) ) {
+			$class_array[] = 'spectra-icon';
+		}
+
+		$svg_classes = implode( ' ', $class_array );
+		?>
+		<svg class="<?php echo esc_attr( $svg_classes ); ?>" xmlns="https://www.w3.org/2000/svg" viewBox="<?php echo esc_attr( $view ); ?>"
+			<?php
+			// If RTL inversion is required, mirror the SVG.
+			$rtl_css_for_svg = array();
+			if ( is_rtl() && $flip_for_rtl ) {
+				$rtl_css_for_svg = array( 'transform' => 'scaleX(-1)' );
 			}
 
-			$svg_classes = implode( ' ', $class_array );
-			?>
-			<svg class="<?php echo esc_attr( $svg_classes ); ?>" xmlns="https://www.w3.org/2000/svg" viewBox= "<?php echo esc_attr( $view ); ?>"
-				<?php
-				// If RTL inversion is required, mirror the SVG.
-				$rtl_css_for_svg = array();
-				if ( is_rtl() && $flip_for_rtl ) {
-					$rtl_css_for_svg = array( 'transform' => 'scaleX(-1)' );
-				}
+			// If there are additional props, add them.
+			if ( ! empty( $additional_props ) ) {
 
-				// If there are additional props, add them.
-				if ( ! empty( $additional_props ) ) {
+				// First check if we need to add the RTL styles.
+				if ( ! empty( $rtl_css_for_svg ) ) {
 
-					// First check if we need to add the RTL styles.
-					if ( ! empty( $rtl_css_for_svg ) ) {
+					// If there is a style prop, then concatenate it with the RTL styles.
+					if ( array_key_exists( 'style', $additional_props ) && is_array( $additional_props['style'] ) ) {
 
-						// If there is a style prop, then concatenate it with the RTL styles.
-						if ( array_key_exists( 'style', $additional_props ) && is_array( $additional_props['style'] ) ) {
-
-							// Check if there is a transform property already. If so, merge the scale of RTL into the transform property.
-							if ( array_key_exists( 'transform', $additional_props['style'] ) && is_string( $additional_props['style']['transform'] ) ) {
-								$additional_props['style']['transform'] = $rtl_css_for_svg['transform'] . ' ' . $additional_props['style']['transform'];
-							} else {
-								// Else just add the RTL transform to the style array.
-								$additional_props['style'] = array_merge( $additional_props['style'], $rtl_css_for_svg );
-							}
+						// Check if there is a transform property already. If so, merge the scale of RTL into the transform property.
+						if ( array_key_exists( 'transform', $additional_props['style'] ) && is_string( $additional_props['style']['transform'] ) ) {
+							$additional_props['style']['transform'] = $rtl_css_for_svg['transform'] . ' ' . $additional_props['style']['transform'];
 						} else {
-							// Else just add the RTL css string if needed.
-							$additional_props['style'] = $rtl_css_for_svg;
+							// Else just add the RTL transform to the style array.
+							$additional_props['style'] = array_merge( $additional_props['style'], $rtl_css_for_svg );
 						}
+					} else {
+						// Else just add the RTL css string if needed.
+						$additional_props['style'] = $rtl_css_for_svg;
 					}
-
-					// Add the additional props in a loop.
-					foreach ( $additional_props as $item => $details ) {
-						// Skip the class attribute as it's already handled above.
-						if ( 'class' === $item ) {
-							continue;
-						}
-
-						// If this is the style attribute, then get the style string.
-						if ( 'style' === $item ) {
-							$rendered_styles = Core::concatenate_array( $details, 'style' );
-							echo ' style="' . esc_attr( $rendered_styles ) . '"';
-						} elseif ( ! empty( $details ) ) {
-							// Else if there are details, then structure this attribute.
-							echo ' ' . esc_attr( $item ) . '="' . esc_attr( $details ) . '"';
-						}
-					}
-				} elseif ( ! empty( $rtl_css_for_svg ) ) {
-					// If there are no additional props, but this is RTL, then just add transformation style.
-					echo ' style="transform: scaleX(-1);"';
 				}
-				?>
-			><path d="<?php echo esc_attr( $path ); ?>"></path></svg>
-			<?php
-		}
+
+				// Add the additional props in a loop.
+				foreach ( $additional_props as $item => $details ) {
+					// Skip the class attribute as it's already handled above.
+					if ( 'class' === $item ) {
+						continue;
+					}
+
+					// If this is the style attribute, then get the style string.
+					if ( 'style' === $item ) {
+						$rendered_styles = Core::concatenate_array( $details, 'style' );
+						echo ' style="' . esc_attr( $rendered_styles ) . '"';
+					} elseif ( ! empty( $details ) ) {
+						// Else if there are details, then structure this attribute.
+						echo ' ' . esc_attr( $item ) . '="' . esc_attr( $details ) . '"';
+					}
+				}
+			} elseif ( ! empty( $rtl_css_for_svg ) ) {
+				// If there are no additional props, but this is RTL, then just add transformation style.
+				echo ' style="transform: scaleX(-1);"';
+			}
+			?>
+		><path d="<?php echo esc_attr( $path ); ?>"></path></svg>
+		<?php
 	}
 
 	/**
@@ -214,7 +239,12 @@ class Renderer {
 			return 'custom SVG';
 		}
 
-		// Handle icon library icons (string format).
+		// Handle new FA object format: { name, svg: {...} }.
+		if ( is_array( $icon_value ) && isset( $icon_value['name'] ) ) {
+			return $icon_value['name'];
+		}
+
+		// Handle icon library icons (legacy string format).
 		if ( is_string( $icon_value ) ) {
 			return $icon_value;
 		}

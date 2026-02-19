@@ -49,11 +49,14 @@ const ModalContainer = ( props ) => {
 		return 'w' === property ? element.offsetWidth : element.offsetHeight;
 	};
 
+	// Extract the raw icon name string from either the new object format or legacy string.
+	const iconName = ( typeof value === 'object' && value?.name ) ? value.name : value;
+
 	useEffect( () => {
 		inputElement.current.focus();
 		setIconContainerHeight( getContainerHeight( 'h' ) );
 		setIconContainerWidth( getContainerHeight( 'w' ) );
-		const selectedIconRowIndex = iconList.findIndex( ( row_value ) => row_value.includes( value ) );
+		const selectedIconRowIndex = iconList.findIndex( ( row_value ) => row_value.includes( iconName ) );
 		setRowIndexForFirstTime( selectedIconRowIndex );
 	}, [] );
 
@@ -127,7 +130,7 @@ const ModalContainer = ( props ) => {
 
 			const iconClass = spectraClassNames( [
 				'spectra-blocks-icon-item',
-				value === currentIcon && 'default',
+				iconName === currentIcon && 'default',
 				currentIcon === insertIcon && 'selected',
 			] );
 
@@ -237,7 +240,13 @@ const ModalContainer = ( props ) => {
 					onClick={
 						'' !== insertIcon
 							? () => {
-									onChange( insertIcon );
+									const iconData = defaultIconsWithKeys[ insertIcon ];
+									const svgEntry = iconData?.svg?.brands ?? iconData?.svg?.solid ?? iconData?.svg?.regular ?? null;
+									onChange(
+										svgEntry
+											? { name: insertIcon, svg: { width: svgEntry.width, height: svgEntry.height, path: svgEntry.path } }
+											: insertIcon
+									);
 									closeModal();
 							  }
 							: null

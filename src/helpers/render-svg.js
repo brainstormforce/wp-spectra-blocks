@@ -324,20 +324,28 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
         return <RenderRawSVG svgContent={svg} needsRTL={needsRTL} extraProps={extraProps} className={className} />;
     }
 
-    // For icon names (not uploaded SVGs), proceed with original logic
-    const fontAwesomeElement = window.spectra_blocks_info?.spectra_blocks_svg_icons?.[ svg ];
-
-    // If this SVG is not set, abandon ship.
-    if ( ! fontAwesomeElement ) {
+    // New FA object format: { name, svg: { solid/brands/regular: { width, height, path } } }
+    // Use embedded SVG data directly — no icon library lookup needed.
+    let fontAwesomeSvg;
+    if ( svg && typeof svg === 'object' && svg.name && svg.svg ) {
+        fontAwesomeSvg = svg.svg.brands ?? svg.svg.solid ?? svg.svg.regular ?? null;
+    } else {
+        // Legacy string format — look up from the icon library.
+        const fontAwesomeElement = window.spectra_blocks_info?.spectra_blocks_svg_icons?.[ svg ];
+        if ( ! fontAwesomeElement ) {
+            return null;
+        }
+        fontAwesomeSvg = fontAwesomeElement.svg?.brands ? fontAwesomeElement.svg.brands : fontAwesomeElement.svg.solid;
+    }
+    
+    // If no SVG data found, abandon ship.
+    if ( ! fontAwesomeSvg ) {
         return null;
     }
 
-    // Get the required variant of the SVG.
-    const fontAwesomeSvg = fontAwesomeElement.svg?.brands ? fontAwesomeElement.svg.brands : fontAwesomeElement.svg.solid;
-    
     // Create a copy of extraProps to avoid mutating the original
     const processedExtraProps = { ...extraProps };
-    
+
     // If RTL inversion is required, mirror the SVG.
     if ( window?.spectra_blocks_info?.is_rtl && needsRTL ) {
         const rtlTransform = 'scaleX(-1)';

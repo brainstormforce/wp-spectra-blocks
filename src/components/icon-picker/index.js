@@ -237,6 +237,10 @@ const IconPickerInternal = ( props ) => {
 		if ( value && typeof value === 'object' && value.library === 'svg' ) {
 			return 'image';
 		}
+		// New FA object format: { name, svg: { solid/brands/regular } }
+		if ( value && typeof value === 'object' && value.name && value.svg ) {
+			return 'icon';
+		}
 		if ( value && typeof value === 'string' ) {
 			return 'icon';
 		}
