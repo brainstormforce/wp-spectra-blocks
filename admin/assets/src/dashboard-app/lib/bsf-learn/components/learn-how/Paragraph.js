@@ -1,5 +1,5 @@
 import { Text } from '@bsf/force-ui';
-import { classnames } from '../../helpers';
+import { classNames as classnames } from '../../helpers';
 
 /**
  * Paragraph Component

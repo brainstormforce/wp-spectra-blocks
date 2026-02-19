@@ -1,7 +1,7 @@
 node_modules/
 vendor/
-lib/
-build/
+/lib/
+/build/
 admin/assets/build/
 *.zip
 *.log
