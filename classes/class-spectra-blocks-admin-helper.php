@@ -217,6 +217,5 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 
 			return 'US';
 		}
-
 	}
 }
