@@ -12,6 +12,7 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
+		"makepot": "wp i18n make-pot . languages/spectra-blocks.pot --skip-audit --exclude=node_modules,vendor,lib,build,admin/assets/build,admin/assets/src,bin",
 		"zip": "bash bin/create-zip.sh",
 		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
 		"start:fresh": "del-cli build/* && wp-scripts start --experimental-modules --webpack-copy-php"
