@@ -5,7 +5,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { X } from 'lucide-react';
 import { Button } from '@bsf/force-ui';
 import { __, sprintf } from '@wordpress/i18n';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from 'html-react-parser';
 import getApiData from '@Controls/getApiData';
 
 const InstagramUnlinkPopup = ( props ) => {

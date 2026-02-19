@@ -9,7 +9,7 @@ import { ExclamationIcon } from '@heroicons/react/outline';
 import InstagramUnlinkPopup from './InstagramUnlinkPopup';
 import getApiData from '@Controls/getApiData';
 import { spectraBlocksClassNames } from '@Helpers/Helpers';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from 'html-react-parser';
 import { Container, Label } from '@bsf/force-ui';
 
 const InstagramUsers = () => {

@@ -1,7 +1,7 @@
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useDispatch } from 'react-redux';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from 'html-react-parser';
 import getApiData from '@Controls/getApiData';
 import { Key, Unlock } from 'lucide-react';
 import { Input, Label, Text } from '@bsf/force-ui';

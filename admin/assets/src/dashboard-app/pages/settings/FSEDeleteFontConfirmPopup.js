@@ -3,7 +3,7 @@
 import { Fragment, useRef, useState, useEffect } from '@wordpress/element';
 import { Dialog, Transition } from '@headlessui/react';
 import { __, sprintf } from '@wordpress/i18n';
-import ReactHtmlParser from 'react-html-parser';
+import ReactHtmlParser from 'html-react-parser';
 import { useDispatch } from 'react-redux';
 import getApiData from '@Controls/getApiData';
 import { X } from 'lucide-react';
