@@ -4,6 +4,7 @@ lib/
 build/
 admin/assets/build/
 *.zip
+*.log
 .DS_Store
 .claude/
 wp-org-submission-report*.md

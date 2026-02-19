@@ -8,8 +8,6 @@ composer.json
 composer.lock
 phpcs.xml
 webpack.config.js
-Gruntfile.js
-Makefile
 babel.config.js
 jest.config.js
 
@@ -23,24 +21,26 @@ phpunit.xml.dist
 playwright.config.js
 e2e/
 
-# CI / git config
+# CI / git
 .github/
 .travis.yml
 .circleci/
 .gitignore
 .gitattributes
-CLAUDE.md
+.editorconfig
 
 # Docs & IDE
 *.md
-.editorconfig
 .vscode/
 
 # Log files
 *.log
-debug.log
 
-# Admin source (admin/build/ is included, admin source not needed)
+# Private / internal
+CLAUDE.md
+wp-org-submission-report*.md
+
+# Admin source (admin/assets/build/ is included, raw source is not needed)
 admin/assets/src/
 admin/src/
 admin/node_modules/
