@@ -324,11 +324,11 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
         return <RenderRawSVG svgContent={svg} needsRTL={needsRTL} extraProps={extraProps} className={className} />;
     }
 
-    // New FA object format: { name, svg: { solid/brands/regular: { width, height, path } } }
-    // Use embedded SVG data directly — no icon library lookup needed.
+    // New FA object format: { name, svg: { width, height, path } }
+    // The svg.svg field is the already-resolved flat SVG variant — use it directly.
     let fontAwesomeSvg;
     if ( svg && typeof svg === 'object' && svg.name && svg.svg ) {
-        fontAwesomeSvg = svg.svg.brands ?? svg.svg.solid ?? svg.svg.regular ?? null;
+        fontAwesomeSvg = svg.svg.path ? svg.svg : ( svg.svg.brands ?? svg.svg.solid ?? svg.svg.regular ?? null );
     } else {
         // Legacy string format — look up from the icon library.
         const fontAwesomeElement = window.spectra_blocks_info?.spectra_blocks_svg_icons?.[ svg ];

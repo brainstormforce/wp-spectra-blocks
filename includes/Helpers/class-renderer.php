@@ -62,9 +62,10 @@ class Renderer {
 		$icon_svg_data = array();
 
 		if ( ! empty( $icon ) && is_array( $icon ) && isset( $icon['name'], $icon['svg'] ) ) {
-			// New FA object format: { name, svg: { solid|brands|regular: { width, height, path } } }
-			// Use embedded SVG data directly — no icon library lookup needed.
-			$icon_svg_data = $icon['svg']['brands'] ?? $icon['svg']['solid'] ?? $icon['svg']['regular'] ?? array();
+			// New FA object format: { name, svg: { width, height, path } }
+			// svg is the already-resolved flat variant — use it directly.
+			$svg           = $icon['svg'];
+			$icon_svg_data = isset( $svg['path'] ) ? $svg : ( $svg['brands'] ?? $svg['solid'] ?? $svg['regular'] ?? array() );
 		} elseif ( ! empty( $icon ) && is_string( $icon ) ) {
 			// Legacy FA icon name string — look up from library.
 			$icon = sanitize_text_field( esc_attr( $icon ) );
