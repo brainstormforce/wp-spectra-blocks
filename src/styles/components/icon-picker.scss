@@ -358,15 +358,17 @@ $popup-color-border: #e6e7e9;
 			max-width: 90%;
 			max-height: 90%;
 
+			// Currently saved icon — green "applied" indicator.
 			&.default {
-				border-color: $color-accent;
-				box-shadow: 0 0 0 2px $color-accent;
+				border-color: #00a32a;
+				box-shadow: 0 0 0 2px #00a32a;
 				pointer-events: none;
 			}
 
+			// Newly selected icon (about to be inserted) — blue accent highlight.
 			&.selected {
 				border-color: $color-accent;
-				box-shadow: 0 0 0 2px #dcf2ff;
+				box-shadow: 0 0 0 2px $color-accent;
 				pointer-events: none;
 			}
 
