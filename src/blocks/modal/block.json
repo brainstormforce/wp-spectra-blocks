@@ -24,8 +24,7 @@
 		"interactive modal",
 		"content modal",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"interactivity": true,
@@ -85,7 +84,7 @@
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
-	"viewScript": "file:./view.js",
+	"viewScriptModule": "file:./view.js",
 	"attributes": {
 		"isPreview": {
 			"type": "boolean",

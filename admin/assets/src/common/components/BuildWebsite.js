@@ -11,12 +11,12 @@ const BuildWebsite = () => {
 
 			<Container.Item>
 				<div className="text-base font-semibold text-text-primary my-1">
-					{ __( 'Build Website 10x Faster With AI', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Build Website 10x Faster With AI', 'spectra-blocks' ) }
 				</div>
 				<p className="text-sm text-text-secondary my-1">
 					{ __(
 						'Beautiful pages, persuasive content, and custom code in seconds. The possibilities are endless!',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				</p>
 			</Container.Item>
@@ -25,13 +25,13 @@ const BuildWebsite = () => {
 			<Link
 				to={ {
 					pathname: 'admin.php',
-					search: '?page=spectra&path=ai-features',
+					search: '?page=spectra-blocks&path=ai-features',
 				} }
 			>
-					<Button variant="primary" className="uagb-remove-ring">{ __( 'Explore', 'ultimate-addons-for-gutenberg' ) }</Button>
+					<Button variant="primary" className="spectra-blocks-remove-ring">{ __( 'Explore', 'spectra-blocks' ) }</Button>
 			</Link>
 				<p className="text-xs text-text-tertiary">
-					{ __( 'Get 1000 Free Monthly Credits', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Get 1000 Free Monthly Credits', 'spectra-blocks' ) }
 				</p>
 			</Container.Item>
 		</Container>

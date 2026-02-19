@@ -1,8 +1,8 @@
 <?php
 /**
- * Load the Spectra 3 Requirements.
- * 
- * @package Spectra
+ * Load the Spectra Blocks Requirements.
+ *
+ * @package SpectraBlocks
  */
 
 use Spectra\AssetLoader;
@@ -15,25 +15,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Define constants for V3 paths.
- *
- * Note: These now point to the root plugin directory since v3
- * is the only version and structure has been flattened.
- */
-define( 'SPECTRA_3_FILE', SPECTRA_FILE );
-define( 'SPECTRA_3_DIR', SPECTRA_DIR );
-define( 'SPECTRA_3_URL', SPECTRA_URL );
-
-/**
  * Include the autoloaders safely.
  */
-$autoload_file     = SPECTRA_DIR . 'includes/autoload.php';
-$composer_autoload = SPECTRA_DIR . 'vendor/autoload.php';
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+$autoload_file     = SPECTRA_BLOCKS_DIR . 'includes/autoload.php';
+$composer_autoload = SPECTRA_BLOCKS_DIR . 'vendor/autoload.php';
+// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 if ( file_exists( $autoload_file ) ) {
 	require_once $autoload_file;
 } else {
-	wp_die( esc_html__( 'Required file missing. Plugin cannot be initialized.', 'spectra' ) ); // Stop execution with a message.
+	wp_die( esc_html__( 'Required file missing. Plugin cannot be initialized.', 'spectra-blocks' ) ); // Stop execution with a message.
 }
 
 if ( file_exists( $composer_autoload ) ) {
@@ -42,8 +34,8 @@ if ( file_exists( $composer_autoload ) ) {
 
 /**
  * Initialize the plugin.
- * 
- * @since 0.0.1
+ *
+ * @since 1.0.0
  */
 function spectra_blocks_init() {
 	( BlockManager::instance() )->init();
@@ -51,10 +43,12 @@ function spectra_blocks_init() {
 	( ExtensionManager::instance() )->init();
 	( AnalyticsManager::instance() )->init();
 }
-add_action( 'plugins_loaded', 'spectra_blocks_init' );
+
+// Call directly since this file is loaded inside a plugins_loaded callback.
+spectra_blocks_init();
 
 /**
- * Enable SVG uploads for Spectra v3 with server-side sanitization
+ * Enable SVG uploads for Spectra Blocks with server-side sanitization.
  */
 add_action(
 	'init',
@@ -66,46 +60,59 @@ add_action(
 			function( $mimes ) {
 				$mimes['svg'] = 'image/svg+xml';
 				return $mimes;
-			} 
+			}
 		);
-	
+
 		// Fix WordPress SVG detection issues.
 		add_filter(
 			'wp_check_filetype_and_ext',
 			function( $data, $file, $filename, $mimes ) {
 				$filetype = wp_check_filetype( $filename, $mimes );
-		
+
 				if ( 'svg' === $filetype['ext'] ) {
 					$data['ext']  = 'svg';
 					$data['type'] = 'image/svg+xml';
 				}
-		
+
 				return $data;
 			},
 			10,
-			4 
+			4
 		);
-	
-		// Basic SVG upload support - no processing to avoid loading delays.
+
+		// SVG upload sanitization using enshrined/svg-sanitize.
 		add_filter(
 			'wp_handle_upload_prefilter',
 			function( $file ) {
 				if ( 'image/svg+xml' !== $file['type'] ) {
 					return $file;
 				}
-		
-				// Only basic validation - no heavy processing.
-				$svg_content = file_get_contents( $file['tmp_name'] );
-				if ( empty( $svg_content ) || strpos( $svg_content, '<svg' ) === false ) {
-					$file['error'] = __( 'Invalid SVG file.', 'spectra' );
+
+				$svg_content = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+				if ( empty( $svg_content ) ) {
+					$file['error'] = __( 'Invalid SVG file.', 'spectra-blocks' );
 					return $file;
 				}
-		
-				return $file; // Allow upload without processing.
+
+				// Sanitize using enshrined/svg-sanitize to strip scripts and external entity refs.
+				if ( class_exists( '\enshrined\svgSanitize\Sanitizer' ) ) {
+					$sanitizer      = new \enshrined\svgSanitize\Sanitizer();
+					$clean_svg      = $sanitizer->sanitize( $svg_content );
+					if ( false === $clean_svg || empty( $clean_svg ) ) {
+						$file['error'] = __( 'SVG file failed security check.', 'spectra-blocks' );
+						return $file;
+					}
+					file_put_contents( $file['tmp_name'], $clean_svg ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
+				} elseif ( strpos( $svg_content, '<svg' ) === false ) {
+					// Fallback: reject if no <svg> tag found (sanitizer unavailable).
+					$file['error'] = __( 'Invalid SVG file.', 'spectra-blocks' );
+					return $file;
+				}
+
+				return $file;
 			},
 			10,
-			1 
+			1
 		);
-	} 
+	}
 );
-

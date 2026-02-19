@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/tabs-child-tabpanel",
+  "version": "3.0.0",
+  "title": "Panel",
+  "category": "spectra-blocks-inner",
+  "description": "A content area associated with a tab.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/tabs"
+  ],
+  "supports": {
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "top",
+        "orientation": "vertical"
+      },
+      "allowSwitching": true
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "usesContext": [
+    "spectra/tabs/currentTab",
+    "spectra/tabs/textColorSecondary",
+    "spectra/tabs/textColorHoverSecondary",
+    "spectra/tabs/styleColorText",
+    "spectra/tabs/backgroundColorSecondary",
+    "spectra/tabs/backgroundColorHoverSecondary",
+    "spectra/tabs/backgroundGradientSecondary",
+    "spectra/tabs/backgroundGradientHoverSecondary"
+  ],
+  "attributes": {
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "top",
+        "orientation": "vertical"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "currentTab": {
+      "type": "number"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

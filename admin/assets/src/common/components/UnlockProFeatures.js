@@ -8,7 +8,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 	const [ productsList, setProductsList ] = useState( [] );
 	const [ selectedProduct, setSelectedProduct ] = useState( '' );
 	const [ loading, setLoading ] = useState( true );
-	const contryCode = uag_admin_react.contry_code;
+	const contryCode = spectra_blocks_admin_react.contry_code;
 	useEffect( () => {
 		// Fetch pricing data from the API
 		const fetchPricingData = async () => {
@@ -73,7 +73,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<div className=" text-brand-primary-600 flex space-x-1">
 						<Zap size={ 14 } />
 						<div className="font-semibold text-xs">
-							{ __( 'Unlock Pro Features', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Unlock Pro Features', 'spectra-blocks' ) }
 						</div>
 					</div>
 
@@ -82,7 +82,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 						<p className="text-sm text-text-secondary m-0">
 							{ __(
 								'Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						</p>
 					</div>
@@ -91,30 +91,30 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 						<ul className="list-none pl-0 space-y-2">
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Instagram Feed Block', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'Instagram Feed Block', 'spectra-blocks' ) }</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Popup Builder', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'Popup Builder', 'spectra-blocks' ) }</span>
 							</li>
 						</ul>
 
 						<ul className="list-none pl-0 space-y-2">
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Global Block Styles', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'Global Block Styles', 'spectra-blocks' ) }</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Loop Builder', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'Loop Builder', 'spectra-blocks' ) }</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'And More…', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span>{ __( 'And More…', 'spectra-blocks' ) }</span>
 							</li>
 						</ul>
 					</div>
@@ -162,7 +162,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 									{ productsList[ selectedProduct ]?.variant?.includes( 'Annual Subscription' ) ||
 									productsList[ selectedProduct ]?.product?.includes( 'Annual Subscription' ) ? (
 										<span className="text-text-tertiary">
-											{ __( '/year', 'ultimate-addons-for-gutenberg' ) }
+											{ __( '/year', 'spectra-blocks' ) }
 										</span>
 									) : null }
 								</Button>
@@ -174,7 +174,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 									className="no-underline text-text-on-color"
 								>
 									<Button className="" size="sm" tag="button" type="button" variant="primary">
-										{ __( 'Buy Now', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Buy Now', 'spectra-blocks' ) }
 									</Button>
 								</a>
 							</div>
@@ -183,12 +183,12 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 						<div className="flex gap-3 mt-2">
 							<a
 								className="no-underline"
-									href={uag_admin_react.spectra_website?.uagDashboard}
+									href={spectra_blocks_admin_react.spectra_website?.uagDashboard}
 								target="_blank"
 								rel="noreferrer"
 							>
-								<Button variant="secondary" className="uagb-remove-ring">
-									{ __( 'Upgrade Now', 'ultimate-addons-for-gutenberg' ) }
+								<Button variant="secondary" className="spectra-blocks-remove-ring">
+									{ __( 'Upgrade Now', 'spectra-blocks' ) }
 								</Button>
 							</a>
 
@@ -196,11 +196,11 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 								className="no-underline"
 								to={ {
 									pathname: 'admin.php',
-									search: '?page=spectra&path=free-vs-pro',
+									search: '?page=spectra-blocks&path=free-vs-pro',
 								} }
 							>
-								<Button variant="ghost" className="uagb-remove-ring">
-									{ __( 'Free VS Pro', 'ultimate-addons-for-gutenberg' ) }
+								<Button variant="ghost" className="spectra-blocks-remove-ring">
+									{ __( 'Free VS Pro', 'spectra-blocks' ) }
 								</Button>
 							</Link>
 						</div>
@@ -208,12 +208,12 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 					{ freeVPro && (
 						<a
-							href={uag_admin_react.spectra_website?.uagDashboard + '-view-plan'}
+							href={spectra_blocks_admin_react.spectra_website?.uagDashboard + '-view-plan'}
 							target="_blank"
 							rel="noreferrer"
 							className="text-xxs text-brand-primary-600 w-full flex justify-end md:pr-[10px] pr-2 -mt-2"
 						>
-							{ __( 'View plans', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'View plans', 'spectra-blocks' ) }
 						</a>
 					) }
 				</Container.Item>
@@ -240,7 +240,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				<div className=" text-brand-primary-600 flex space-x-1">
 					<Zap size={ 14 } />
 					<div className="font-semibold text-xs">
-						{ __( 'Unlock Pro Features', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Unlock Pro Features', 'spectra-blocks' ) }
 					</div>
 				</div>
 
@@ -249,7 +249,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<p className="text-sm text-text-secondary m-0">
 						{ __(
 							'Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					</p>
 				</div>
@@ -258,30 +258,30 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<ul className="list-none pl-0 space-y-2">
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Instagram Feed Block', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'Instagram Feed Block', 'spectra-blocks' ) }</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Popup Builder', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'Popup Builder', 'spectra-blocks' ) }</span>
 						</li>
 					</ul>
 
 					<ul className="list-none pl-0 space-y-2">
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Global Block Styles', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'Global Block Styles', 'spectra-blocks' ) }</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Loop Builder', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'Loop Builder', 'spectra-blocks' ) }</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'And More…', 'ultimate-addons-for-gutenberg' ) }</span>
+							<span>{ __( 'And More…', 'spectra-blocks' ) }</span>
 						</li>
 					</ul>
 				</div>
@@ -327,7 +327,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 								{ productsList[ selectedProduct ]?.variant?.includes( 'Annual Subscription' ) ||
 								productsList[ selectedProduct ]?.product?.includes( 'Annual Subscription' ) ? (
 									<span className="text-text-tertiary">
-										{ __( '/year', 'ultimate-addons-for-gutenberg' ) }
+										{ __( '/year', 'spectra-blocks' ) }
 									</span>
 								) : null }
 							</Button>
@@ -339,7 +339,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 								className="no-underline text-text-on-color"
 							>
 								<Button className="" size="sm" tag="button" type="button" variant="primary">
-									{ __( 'Buy Now', 'ultimate-addons-for-gutenberg' ) }
+									{ __( 'Buy Now', 'spectra-blocks' ) }
 								</Button>
 							</a>
 						</div>
@@ -348,12 +348,12 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<div className="flex gap-3 my-2">
 						<a
 							className="no-underline"
-							href={uag_admin_react.spectra_website?.uagDashboard}
+							href={spectra_blocks_admin_react.spectra_website?.uagDashboard}
 							target="_blank"
 							rel="noreferrer"
 						>
-							<Button variant="secondary" className="uagb-remove-ring">
-								{ __( 'Upgrade Now', 'ultimate-addons-for-gutenberg' ) }
+							<Button variant="secondary" className="spectra-blocks-remove-ring">
+								{ __( 'Upgrade Now', 'spectra-blocks' ) }
 							</Button>
 						</a>
 
@@ -361,11 +361,11 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 							className="no-underline"
 							to={ {
 								pathname: 'admin.php',
-								search: '?page=spectra&path=free-vs-pro',
+								search: '?page=spectra-blocks&path=free-vs-pro',
 							} }
 						>
-							<Button variant="ghost" className="uagb-remove-ring">
-								{ __( 'Free VS Pro', 'ultimate-addons-for-gutenberg' ) }
+							<Button variant="ghost" className="spectra-blocks-remove-ring">
+								{ __( 'Free VS Pro', 'spectra-blocks' ) }
 							</Button>
 						</Link>
 					</div>
@@ -373,12 +373,12 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 				{ freeVPro && (
 					<a
-						href={uag_admin_react.spectra_website?.freeVsPro}
+						href={spectra_blocks_admin_react.spectra_website?.freeVsPro}
 						target="_blank"
 						rel="noreferrer"
 						className="text-xxs text-brand-primary-600 w-full flex justify-end md:pr-[10px] pr-2 -mt-2"
 					>
-						{ __( 'View plans', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'View plans', 'spectra-blocks' ) }
 					</a>
 				) }
 			</Container.Item>

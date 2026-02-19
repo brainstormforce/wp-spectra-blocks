@@ -4,7 +4,7 @@
  *
  * @package Spectra
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 
 namespace Spectra;
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
  * - Usage patterns and adoption rates
  * - How many of the provided features are actually used by users
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class AnalyticsManager {
 
@@ -32,7 +32,7 @@ class AnalyticsManager {
 	/**
 	 * Initialize the block and extension analytics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function init() {
 		// Initialize block usage tracker.
@@ -45,7 +45,7 @@ class AnalyticsManager {
 	/**
 	 * Get comprehensive block and extension analytics summary.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Block and extension analytics summary.
 	 */
@@ -70,7 +70,7 @@ class AnalyticsManager {
 	/**
 	 * Calculate what percentage of available blocks are actually being used.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Block adoption statistics.
 	 */
@@ -95,7 +95,7 @@ class AnalyticsManager {
 	/**
 	 * Calculate what percentage of available extensions are actually being used.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Extension adoption statistics.
 	 */

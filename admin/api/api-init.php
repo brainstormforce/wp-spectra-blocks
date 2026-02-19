@@ -2,7 +2,7 @@
 /**
  * Api Init.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Api;
@@ -22,14 +22,14 @@ class Api_Init {
 	 *
 	 * @access private
 	 * @var object Class object.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance;
 
 	/**
 	 * Dynamic properties container
 	 *
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 * @var array
 	 */
 	private $dynamic_properties = array();
@@ -37,7 +37,7 @@ class Api_Init {
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -50,7 +50,7 @@ class Api_Init {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->initialize_hooks();
@@ -59,7 +59,7 @@ class Api_Init {
 	/**
 	 * Init Hooks.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function initialize_hooks() {
@@ -74,7 +74,7 @@ class Api_Init {
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value.
 	 *
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 * @return void
 	 */
 	public function __set( $name, $value ) {
@@ -86,7 +86,7 @@ class Api_Init {
 	 *
 	 * @param string $name Property name.
 	 *
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 * @return mixed Property value if set, null otherwise.
 	 */
 	public function __get( $name ) {

@@ -14,18 +14,18 @@ const FreeVPro = () => {
 					<UpgradeToPro
 						className="hidden lg:flex !flex-row"
 						items={[
-							__( 'Advanced blocks', 'ultimate-addons-for-gutenberg' ),
-							__( 'Advanced animations', 'ultimate-addons-for-gutenberg' ),
-							__( 'Premium pre-built templates', 'ultimate-addons-for-gutenberg' ),
-							__( 'Priority support and updates', 'ultimate-addons-for-gutenberg' ),
-							__( 'Global Design Consistency', 'ultimate-addons-for-gutenberg' ),
+							__( 'Advanced blocks', 'spectra-blocks' ),
+							__( 'Advanced animations', 'spectra-blocks' ),
+							__( 'Premium pre-built templates', 'spectra-blocks' ),
+							__( 'Priority support and updates', 'spectra-blocks' ),
+							__( 'Global Design Consistency', 'spectra-blocks' ),
 						]}
 						columnView
 					/>
 				</Container.Item>
 
 				<Container.Item className="flex flex-col gap-8 lg:sticky lg:top-8 lg:self-start" colSpan={{ lg: 4, md: 12, sm: 12 }}>
-					{ uag_react.pro_plugin_status !== 'Activated' && (
+					{ spectra_blocks_react.pro_plugin_status !== 'Activated' && (
 						<UpgradeToPro />
 					) }
 					<QuickAccess />

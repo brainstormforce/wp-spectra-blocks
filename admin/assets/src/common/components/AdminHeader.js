@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 const AdminHeader = ( props ) => {
 	// Initialize RSS library hook.
 	useWhatsNewRSS( {
-		rssFeedURL: uag_admin_react.spectra_website?.whatsNewFeedUrl,
+		rssFeedURL: spectra_blocks_admin_react.spectra_website?.whatsNewFeedUrl,
 		selector: '#spectra-whats-new',
 		triggerButton: {
 			beforeBtn:
@@ -19,7 +19,7 @@ const AdminHeader = ( props ) => {
 			afterBtn: '</div>',
 		},
 		flyout: {
-			title: __( "What's New?", 'ultimate-addons-for-gutenberg' ),
+			title: __( "What's New?", 'spectra-blocks' ),
 			formatDate: ( date ) => {
 				const dayOfWeek = date.toLocaleDateString( 'en-US', { weekday: 'long' } );
 				const month = date.toLocaleDateString( 'en-US', { month: 'long' } );
@@ -41,7 +41,7 @@ const AdminHeader = ( props ) => {
 	const [ isDropOpen2, setIsDropOpen2 ] = useState( false );
 	const [ showHeader, setShowHeader ] = useState( true );
 
-	const creditDetails = uag_react.zip_ai_credit_details;
+	const creditDetails = spectra_blocks_react.zip_ai_credit_details;
 
 	useEffect( () => {
 		const rssButton = document.querySelector( '.whats-new-rss-trigger-button' );
@@ -180,16 +180,16 @@ const AdminHeader = ( props ) => {
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow border border-solid border-border-subtle">
-			{ 'Install' === uag_react.pro_plugin_status && showHeader && (
+			{ 'Install' === spectra_blocks_react.pro_plugin_status && showHeader && (
 				<Container align="center" justify="center" className="py-2 relative bg-[#E9E4FF]">
 					<div className="space-x-1 text-text-primary text-xs">
 						<span className="font-semibold">
-							{ __( "Unlock Spectra's Full Potential!", 'ultimate-addons-for-gutenberg' ) }
+							{ __( "Unlock Spectra's Full Potential!", 'spectra-blocks' ) }
 						</span>
 						<span className="font-normal">
 							{ __(
 								'Get exclusive features and unbeatable performance.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						</span>
 						<a
@@ -200,11 +200,11 @@ const AdminHeader = ( props ) => {
 							onFocus={ () => {
 								this.style.textDecoration = 'underline';
 							} }
-							href={uag_admin_react.spectra_website?.banner}
+							href={spectra_blocks_admin_react.spectra_website?.banner}
 							target="_blank"
 							rel="noreferrer"
 						>
-							{ __( 'Upgrade now', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Upgrade now', 'spectra-blocks' ) }
 						</a>
 					</div>
 					<button
@@ -222,7 +222,7 @@ const AdminHeader = ( props ) => {
 						<Link
 							to={ {
 								pathname: 'admin.php',
-								search: `?page=${ uag_react.home_slug }`,
+								search: `?page=${ spectra_blocks_react.home_slug }`,
 							} }
 							className="flex-shrink-0 flex items-center justify-start"
 						>
@@ -277,46 +277,46 @@ const AdminHeader = ( props ) => {
 							<DropdownMenu.Trigger>
 								<Badge
 									label={
-										uag_react.spectra_pro_installed && uag_react.spectra_pro_ver
-											? __( 'Pro', 'ultimate-addons-for-gutenberg' )
-											: __( 'Free', 'ultimate-addons-for-gutenberg' )
+										spectra_blocks_react.spectra_pro_installed && spectra_blocks_react.spectra_pro_ver
+											? __( 'Pro', 'spectra-blocks' )
+											: __( 'Free', 'spectra-blocks' )
 									}
 									size="xs"
 									variant="neutral"
 									closable={ false }
 									className={ `m-1 font-[Figtree] ${
-										uag_react.spectra_pro_installed &&
-										uag_react.spectra_pro_ver &&
+										spectra_blocks_react.spectra_pro_installed &&
+										spectra_blocks_react.spectra_pro_ver &&
 										'bg-gradient-to-b from-[#A78BFA] to-[#6005FF] text-white'
 									}` }
 								/>
-								<span className="sr-only">{ __( 'Open Menu', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span className="sr-only">{ __( 'Open Menu', 'spectra-blocks' ) }</span>
 							</DropdownMenu.Trigger>
 							<DropdownMenu.ContentWrapper>
 							<DropdownMenu.Content className="w-60">
 								<DropdownMenu.List>
 									<DropdownMenu.Item>
 										<div className="text-text-tertiary font-[Figtree]">
-											{ __( 'Version', 'ultimate-addons-for-gutenberg' ) }
+											{ __( 'Version', 'spectra-blocks' ) }
 										</div>
 									</DropdownMenu.Item>
 									<DropdownMenu.Item>
 										<div className="flex justify-between w-full font-[Figtree]">
-											{ `${ uag_react.plugin_ver }` }
+											{ `${ spectra_blocks_react.plugin_ver }` }
 											<Badge
-												label={ __( 'Core', 'ultimate-addons-for-gutenberg' ) }
+												label={ __( 'Core', 'spectra-blocks' ) }
 												size="xs"
 												variant="neutral"
 												className="font-[Figtree]"
 											/>
 										</div>
 									</DropdownMenu.Item>
-									{ uag_react.spectra_pro_status && (
+									{ spectra_blocks_react.spectra_pro_status && (
 										<DropdownMenu.Item>
 											<div className="flex justify-between w-full font-[Figtree]">
-												{ `${ uag_react.spectra_pro_ver }` }
+												{ `${ spectra_blocks_react.spectra_pro_ver }` }
 												<Badge
-													label={ __( 'Pro', 'ultimate-addons-for-gutenberg' ) }
+													label={ __( 'Pro', 'spectra-blocks' ) }
 													size="xs"
 													variant="inverse"
 													className="font-[Figtree]"
@@ -333,7 +333,7 @@ const AdminHeader = ( props ) => {
 
 					<Topbar.Item>
 						<a
-							href={uag_admin_react.spectra_website?.docsUrl}
+							href={spectra_blocks_admin_react.spectra_website?.docsUrl}
 							target="_blank"
 							rel="noreferrer"
 							className="text-slate-600 m-0 p-0 flex items-center justify-center"
@@ -348,11 +348,11 @@ const AdminHeader = ( props ) => {
 						<DropdownMenu placement="bottom-end" isOpen={ isDropOpen2 } onOpenChange={ setIsDropOpen2 }>
 							<DropdownMenu.Trigger>
 								{ /* <Avatar size="xs"> */ }
-								{ uag_react.spectra_pro_installed &&
-								uag_react.spectra_pro_ver &&
-								typeof ( uagb_user_data.firstName[ 0 ] + uagb_user_data.lastName[ 0 ] ) === 'string' ? (
+								{ spectra_blocks_react.spectra_pro_installed &&
+								spectra_blocks_react.spectra_pro_ver &&
+								typeof ( spectra_blocks_user_data.firstName[ 0 ] + spectra_blocks_user_data.lastName[ 0 ] ) === 'string' ? (
 									<div className="bg-[#f3f0ff] text-black p-1 rounded-full font-[Figtree]">
-										{ uagb_user_data.firstName[ 0 ] + uagb_user_data.lastName[ 0 ] }
+										{ spectra_blocks_user_data.firstName[ 0 ] + spectra_blocks_user_data.lastName[ 0 ] }
 									</div>
 								) : (
 									<div className="bg-[#f3f0ff] w-6 h-6 rounded-full flex justify-center items-center">
@@ -360,7 +360,7 @@ const AdminHeader = ( props ) => {
 									</div>
 								) }
 								{ /* </Avatar> */ }
-								<span className="sr-only">{ __( 'Open Menu', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span className="sr-only">{ __( 'Open Menu', 'spectra-blocks' ) }</span>
 							</DropdownMenu.Trigger>
 						<DropdownMenu.ContentWrapper>
 							<DropdownMenu.Content className="w-60">
@@ -369,17 +369,17 @@ const AdminHeader = ( props ) => {
 										<div className="flex w-full justify-between items-center font-[Figtree]">
 											<div className="flex gap-1 font-[Figtree]">
 												{ license() }
-												{ __( 'License Status', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'License Status', 'spectra-blocks' ) }
 											</div>
 
 											<Badge
 												label={ sprintf(
 													/* translators: credits in k format */
-													__( ' %s', 'ultimate-addons-for-gutenberg' ),
-													uag_react.license_status ? 'Active' : 'Inactive'
+													__( ' %s', 'spectra-blocks' ),
+													spectra_blocks_react.license_status ? 'Active' : 'Inactive'
 												) }
 												size="xxs"
-												variant={ uag_react.license_status ? 'green' : 'yellow' }
+												variant={ spectra_blocks_react.license_status ? 'green' : 'yellow' }
 											/>
 										</div>
 									</DropdownMenu.Item>
@@ -389,13 +389,13 @@ const AdminHeader = ( props ) => {
 											<div className="flex gap-1">
 												{ ai() }
 
-												<div>{ __( 'AI Credits', 'ultimate-addons-for-gutenberg' ) }</div>
+												<div>{ __( 'AI Credits', 'spectra-blocks' ) }</div>
 											</div>
 
 											<Badge
 												label={ sprintf(
 													/* translators: credits in k format */
-													__( ' %s', 'ultimate-addons-for-gutenberg' ),
+													__( ' %s', 'spectra-blocks' ),
 													formattedCredits()
 												) }
 												size="xxs"
@@ -410,7 +410,7 @@ const AdminHeader = ( props ) => {
 											<div className="flex gap-1">
 												{ plan() }
 
-												{ __( 'Manage Plan', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'Manage Plan', 'spectra-blocks' ) }
 											</div>
 
 											<SquareArrowOutUpRight size={ 16 } className="text-text-tertiary" />

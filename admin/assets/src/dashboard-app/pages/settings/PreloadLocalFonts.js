@@ -25,13 +25,13 @@ const PreloadLocalFonts = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.preload_local_fonts_nonce,
+			security: spectra_blocks_react.preload_local_fonts_nonce,
 			value: assetStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_preload_local_fonts',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_preload_local_fonts',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -44,25 +44,25 @@ const PreloadLocalFonts = () => {
 		<>
 			{ enableLoadFontsLocally !== 'disabled' ? (
 				<SettingsItem
-					title={ __( 'Preload Local Fonts', 'ultimate-addons-for-gutenberg' ) }
+					title={ __( 'Preload Local Fonts', 'spectra-blocks' ) }
 					settingText={ __(
 						'This option will load the font files right away on page load. Preloading Local Fonts can speeds up your website even further.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				>
 					<Switch
 						value={ enablePreloadLocalFontsStatus }
 						onChange={ updatePreloadLocalFontsStatus }
 						size="md"
-						className="uagb-remove-ring border-none"
+						className="spectra-blocks-remove-ring border-none"
 					/>
 				</SettingsItem>
 			) : (
 				<SettingsItemDisabled
-					title={ __( 'Preload Local Fonts', 'ultimate-addons-for-gutenberg' ) }
+					title={ __( 'Preload Local Fonts', 'spectra-blocks' ) }
 					settingText={ __(
 						'This option will load the font files right away on page load. Preloading Local Fonts can speeds up your website even further.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				>
 					<Switch
@@ -70,7 +70,7 @@ const PreloadLocalFonts = () => {
 						onChange={ updatePreloadLocalFontsStatus }
 						size="md"
 						disabled
-						className="uagb-remove-ring border-none"
+						className="spectra-blocks-remove-ring border-none"
 					/>
 				</SettingsItemDisabled>
 			) }

@@ -13,7 +13,7 @@ const Blocks = () => {
 
 	const blocks = [
 		{
-			title: __( 'Container', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Container', 'spectra-blocks' ),
 			slug: 'container',
 			icon: 'container',
 			is_pro: false,
@@ -21,7 +21,7 @@ const Blocks = () => {
 			link: 'container-v3'
 		},
 		{
-			title: __( 'Button', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Button', 'spectra-blocks' ),
 			slug: 'button',
 			icon: 'button',
 			is_pro: false,
@@ -29,7 +29,7 @@ const Blocks = () => {
 			link: 'button-v3'
 		},
 		{
-			title: __( 'Text', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Text', 'spectra-blocks' ),
 			slug: 'text',
 			icon: 'content',
 			is_pro: false,
@@ -37,7 +37,7 @@ const Blocks = () => {
 			link: 'text-v3'
 		},
 		{
-			title: __( 'Icon', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Icon', 'spectra-blocks' ),
 			slug: 'icon',
 			icon: 'icon',
 			is_pro: false,
@@ -45,7 +45,7 @@ const Blocks = () => {
 			link: 'icon-v3'
 		},
 		{
-			title: __( 'Accordions', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Accordions', 'spectra-blocks' ),
 			slug: 'accordions',
 			icon: 'accordion',
 			is_pro: false,
@@ -53,7 +53,7 @@ const Blocks = () => {
 			link: 'accordion-v3'
 		},
 		{
-			title: __( 'Countdown', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Countdown', 'spectra-blocks' ),
 			slug: 'countdown',
 			icon: 'countdown',
 			is_pro: false,
@@ -61,7 +61,7 @@ const Blocks = () => {
 			link: 'countdown-v3'
 		},
 		{
-			title: __( 'Slider', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Slider', 'spectra-blocks' ),
 			slug: 'slider',
 			icon: 'slider',
 			is_pro: false,
@@ -69,7 +69,7 @@ const Blocks = () => {
 			link: 'slider-v3'
 		},
 		{
-			title: __( 'Tabs', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Tabs', 'spectra-blocks' ),
 			slug: 'tabs',
 			icon: 'tabs',
 			is_pro: false,
@@ -77,7 +77,7 @@ const Blocks = () => {
 			link: 'tabs-v3'
 		},
 		{
-			title: __( 'Google Map', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Google Map', 'spectra-blocks' ),
 			slug: 'google-map',
 			icon: 'google-map',
 			is_pro: false,
@@ -85,7 +85,7 @@ const Blocks = () => {
 			link: 'google-maps-v3'
 		},
 		{
-			title: __( 'Modal', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Modal', 'spectra-blocks' ),
 			slug: 'modal',
 			icon: 'modal',
 			is_pro: false,
@@ -93,7 +93,7 @@ const Blocks = () => {
 			link: 'modal-v3'
 		},
 		{
-			title: __( 'List', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'List', 'spectra-blocks' ),
 			slug: 'list',
 			icon: 'list',
 			is_pro: false,
@@ -101,28 +101,12 @@ const Blocks = () => {
 			link: 'list-v3'
 		},
 		{
-			title: __( 'Separator', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Separator', 'spectra-blocks' ),
 			slug: 'separator',
 			icon: 'separator',
 			is_pro: false,
 			is_active: true,
 			link: 'separator-v3'
-		},
-		{
-			title: __( 'SVG Animator', 'ultimate-addons-for-gutenberg' ),
-			slug: 'svg-animator',
-			icon: 'svg-animator',
-			is_pro: false,
-			is_active: true,
-			link: 'svg-animator-v3'
-		},
-		{
-			title: __( 'Before After Slider', 'ultimate-addons-for-gutenberg' ),
-			slug: 'before-after-slider',
-			icon: 'before-after-slider',
-			is_pro: false,
-			is_active: true,
-			link: 'before-after-slider-v3'
 		},
 	];
 
@@ -157,7 +141,7 @@ const Blocks = () => {
 				} }
 			>
 				<p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Free blocks', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Free blocks', 'spectra-blocks' ) }
 				</p>
 			</div>
 			<div className="flex flex-col rounded-lg p-4">

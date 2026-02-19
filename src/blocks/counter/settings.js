@@ -51,7 +51,7 @@ const BlockSettings = memo( ( props ) => {
 		<>
 			<InspectorControls group="settings">
 				<ToolsPanel
-					label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'General', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
 							counterStyle: undefined,
@@ -68,7 +68,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => !! counterStyle }
-				label={ __( 'Counter Style', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Counter Style', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { counterStyle: undefined } ) }
 				resetAllFilter={ () => ( { counterStyle: undefined } ) }
 				isShownByDefault
@@ -78,20 +78,20 @@ const BlockSettings = memo( ( props ) => {
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
 							isBlock
-							label={ __( 'Counter Style', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Counter Style', 'spectra-blocks' ) }
 							value={ counterStyle || 'simple' }
 							onChange={ ( value ) => setAttributes( { counterStyle: value } ) }
 						>
 							<ToggleGroupControlOption
-								label={ __( 'Simple', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Simple', 'spectra-blocks' ) }
 								value="simple"
 							/>
 							<ToggleGroupControlOption
-								label={ __( 'Circular', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Circular', 'spectra-blocks' ) }
 								value="circular"
 							/>
 							<ToggleGroupControlOption
-								label={ __( 'Bar', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Bar', 'spectra-blocks' ) }
 								value="bar"
 							/>
 						</ToggleGroupControl>
@@ -103,7 +103,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => startNumber !== undefined }
-				label={ __( 'Starting Number', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Starting Number', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { startNumber: undefined } ) }
 				resetAllFilter={ () => ( { startNumber: undefined } ) }
 				isShownByDefault
@@ -112,7 +112,7 @@ const BlockSettings = memo( ( props ) => {
 					<NumberControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'Starting Number', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Starting Number', 'spectra-blocks' ) }
 						min={ 0 }
 						value={ startNumber }
 						onChange={ ( value ) => {
@@ -122,7 +122,7 @@ const BlockSettings = memo( ( props ) => {
 							setAttributes( { startNumber: numValue } );
 						} }
 						step={ 0.1 }
-						help={ __( 'Only positive values are allowed.', 'ultimate-addons-for-gutenberg' ) }
+						help={ __( 'Only positive values are allowed.', 'spectra-blocks' ) }
 					/>
 			</ToolsPanelItem>
 
@@ -132,7 +132,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => endNumber !== undefined }
-				label={ __( 'Ending Number', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Ending Number', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { endNumber: undefined } ) }
 				resetAllFilter={ () => ( { endNumber: undefined } ) }
 				isShownByDefault
@@ -141,7 +141,7 @@ const BlockSettings = memo( ( props ) => {
 					<NumberControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'Ending Number', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Ending Number', 'spectra-blocks' ) }
 						min={ 0 }
 						value={ endNumber }
 						onChange={ ( value ) => {
@@ -151,7 +151,7 @@ const BlockSettings = memo( ( props ) => {
 							setAttributes( { endNumber: numValue } );
 						} }
 						step={ 0.1 }
-						help={ __( 'Only positive values are allowed.', 'ultimate-addons-for-gutenberg' ) }
+						help={ __( 'Only positive values are allowed.', 'spectra-blocks' ) }
 					/>
 			</ToolsPanelItem>
 
@@ -163,7 +163,7 @@ const BlockSettings = memo( ( props ) => {
 			{ isCircularOrBar && (
 				<ToolsPanelItem
 					hasValue={ () => totalNumber !== undefined }
-					label={ __( 'Total Number', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Total Number', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { totalNumber: undefined } ) }
 					resetAllFilter={ () => ( { totalNumber: undefined } ) }
 					isShownByDefault
@@ -172,7 +172,7 @@ const BlockSettings = memo( ( props ) => {
 						<NumberControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Total Number', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Total Number', 'spectra-blocks' ) }
 							min={ 0 }
 							value={ totalNumber }
 							onChange={ ( value ) => {
@@ -182,14 +182,14 @@ const BlockSettings = memo( ( props ) => {
 								setAttributes( { totalNumber: numValue } );
 							} }
 							step={ 0.1 }
-							help={ __( 'Total Number should be more than or equal to the Ending Number. Only positive values are allowed.', 'ultimate-addons-for-gutenberg' ) }
+							help={ __( 'Total Number should be more than or equal to the Ending Number. Only positive values are allowed.', 'spectra-blocks' ) }
 						/>
 					</ToolsPanelItem>
 				) }
 				</ToolsPanel>
 
 				<ToolsPanel
-					label={ __( 'Counter Animation', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Counter Animation', 'spectra-blocks' ) }
 			resetAll={ () => {
 				setAttributes( {
 					animationDuration: undefined,
@@ -203,7 +203,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => !! animationDuration }
-				label={ __( 'Duration', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Duration', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { animationDuration: undefined } ) }
 				resetAllFilter={ () => ( { animationDuration: undefined } ) }
 				isShownByDefault
@@ -211,7 +211,7 @@ const BlockSettings = memo( ( props ) => {
 			>
 					<RangeControl
 						__nextHasNoMarginBottom
-						label={ __( 'Duration (ms)', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Duration (ms)', 'spectra-blocks' ) }
 						value={ animationDuration }
 						onChange={ ( value ) => setAttributes( { animationDuration: value } ) }
 						min={ 500 }
@@ -223,7 +223,7 @@ const BlockSettings = memo( ( props ) => {
 				</ToolsPanel>
 
 			<ToolsPanel
-				label={ __( 'Number Format', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Number Format', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						prefix: '',
@@ -240,7 +240,7 @@ const BlockSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => prefix && prefix !== '' }
-					label={ __( 'Prefix', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Prefix', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { prefix: '' } ) }
 					resetAllFilter={ () => ( { prefix: '' } ) }
 					isShownByDefault
@@ -249,10 +249,10 @@ const BlockSettings = memo( ( props ) => {
 						<TextControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Prefix', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Prefix', 'spectra-blocks' ) }
 							value={ prefix || '' }
 							onChange={ ( value ) => setAttributes( { prefix: value || '' } ) }
-							placeholder={ __( 'e.g., $, #, +', 'ultimate-addons-for-gutenberg' ) }
+							placeholder={ __( 'e.g., $, #, +', 'spectra-blocks' ) }
 						/>
 				</ToolsPanelItem>
 
@@ -262,7 +262,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => suffix && suffix !== '' }
-				label={ __( 'Suffix', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Suffix', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { suffix: '' } ) }
 				resetAllFilter={ () => ( { suffix: '' } ) }
 				isShownByDefault
@@ -271,10 +271,10 @@ const BlockSettings = memo( ( props ) => {
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'Suffix', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Suffix', 'spectra-blocks' ) }
 						value={ suffix || '' }
 						onChange={ ( value ) => setAttributes( { suffix: value || '' } ) }
-						placeholder={ __( 'e.g., %, +, K, M', 'ultimate-addons-for-gutenberg' ) }
+						placeholder={ __( 'e.g., %, +, K, M', 'spectra-blocks' ) }
 					/>
 			</ToolsPanelItem>
 
@@ -284,7 +284,7 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => !! thousandSeparator }
-				label={ __( 'Thousand Separator', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Thousand Separator', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { thousandSeparator: undefined } ) }
 				resetAllFilter={ () => ( { thousandSeparator: undefined } ) }
 				isShownByDefault
@@ -293,10 +293,10 @@ const BlockSettings = memo( ( props ) => {
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'Thousand Separator', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Thousand Separator', 'spectra-blocks' ) }
 						value={ thousandSeparator || '' }
 						onChange={ ( value ) => setAttributes( { thousandSeparator: value || undefined } ) }
-						placeholder={ __( 'e.g., , or . or space', 'ultimate-addons-for-gutenberg' ) }
+						placeholder={ __( 'e.g., , or . or space', 'spectra-blocks' ) }
 					/>
 				</ToolsPanelItem>
 
@@ -306,14 +306,14 @@ const BlockSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => decimalPlaces !== 0 }
-				label={ __( 'Decimal Places', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Decimal Places', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { decimalPlaces: 0 } ) }
 				resetAllFilter={ () => ( { decimalPlaces: 0 } ) }
 				isShownByDefault
 				panelId={ clientId }
 			>
 					<DebouncedRangeControl
-						label={ __( 'Decimal Places', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Decimal Places', 'spectra-blocks' ) }
 						value={ decimalPlaces }
 						onChange={ ( value ) => setAttributes( { decimalPlaces: value } ) }
 						min={ 0 }
@@ -355,7 +355,7 @@ const DimensionSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => prefixRightMargin !== undefined && prefixRightMargin !== 0 }
-				label={ __( 'Prefix Right Margin', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Prefix Right Margin', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { prefixRightMargin: undefined } ) }
 				resetAllFilter={ () => ( { prefixRightMargin: undefined } ) }
 				isShownByDefault
@@ -363,7 +363,7 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<RangeControl
 					__nextHasNoMarginBottom
-					label={ __( 'Prefix Right Margin', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Prefix Right Margin', 'spectra-blocks' ) }
 					value={ prefixRightMargin ?? 0 }
 					onChange={ ( value ) => setAttributes( { prefixRightMargin: value } ) }
 					min={ 0 }
@@ -379,7 +379,7 @@ const DimensionSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => suffixLeftMargin !== undefined && suffixLeftMargin !== 0 }
-				label={ __( 'Suffix Left Margin', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Suffix Left Margin', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { suffixLeftMargin: undefined } ) }
 				resetAllFilter={ () => ( { suffixLeftMargin: undefined } ) }
 				isShownByDefault
@@ -387,7 +387,7 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<RangeControl
 					__nextHasNoMarginBottom
-					label={ __( 'Suffix Left Margin', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Suffix Left Margin', 'spectra-blocks' ) }
 					value={ suffixLeftMargin ?? 0 }
 					onChange={ ( value ) => setAttributes( { suffixLeftMargin: value } ) }
 					min={ 0 }
@@ -429,7 +429,7 @@ const ProgressSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="styles">
 			<ToolsPanel
-				label={ __( 'Circular Progress', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Circular Progress', 'spectra-blocks' ) }
 			resetAll={ () => {
 				setAttributes( {
 					progressColor: undefined,
@@ -448,7 +448,7 @@ const ProgressSettings = memo( ( props ) => {
 			{ counterStyle === 'circular' && (
 				<ToolsPanelItem
 					hasValue={ () => !! progressSize }
-					label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Size', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { progressSize: undefined } ) }
 					resetAllFilter={ () => ( { progressSize: undefined } ) }
 					isShownByDefault
@@ -456,7 +456,7 @@ const ProgressSettings = memo( ( props ) => {
 				>
 					<UnitControl
 						__next40pxDefaultSize
-						label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Size', 'spectra-blocks' ) }
 						labelPosition="top"
 						value={ progressSize }
 						min={ 0 }
@@ -475,7 +475,7 @@ const ProgressSettings = memo( ( props ) => {
 			{ counterStyle === 'circular' && (
 				<ToolsPanelItem
 					hasValue={ () => !! progressStrokeWidth }
-					label={ __( 'Stroke Width', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Stroke Width', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { progressStrokeWidth: undefined } ) }
 					resetAllFilter={ () => ( { progressStrokeWidth: undefined } ) }
 					isShownByDefault
@@ -483,7 +483,7 @@ const ProgressSettings = memo( ( props ) => {
 				>
 					<RangeControl
 						__nextHasNoMarginBottom
-						label={ __( 'Stroke Width', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Stroke Width', 'spectra-blocks' ) }
 						value={ progressStrokeWidth }
 						onChange={ ( value ) => setAttributes( { progressStrokeWidth: value } ) }
 						min={ 4 }
@@ -521,13 +521,13 @@ const ColorSettings = memo( ( props ) => {
 	const colorSettings = [
 		{
 			colorValue: prefixColor,
-			label: __( 'Prefix Color', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Prefix Color', 'spectra-blocks' ),
 			onColorChange: ( value ) => setAttributes( { prefixColor: value } ),
 			resetAllFilter: () => setAttributes( { prefixColor: undefined } ),
 		},
 		{
 			colorValue: suffixColor,
-			label: __( 'Suffix Color', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Suffix Color', 'spectra-blocks' ),
 			onColorChange: ( value ) => setAttributes( { suffixColor: value } ),
 			resetAllFilter: () => setAttributes( { suffixColor: undefined } ),
 		},
@@ -538,13 +538,13 @@ const ColorSettings = memo( ( props ) => {
 		colorSettings.push(
 			{
 				colorValue: progressColor,
-				label: __( 'Progress Color', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Progress Color', 'spectra-blocks' ),
 				onColorChange: ( value ) => setAttributes( { progressColor: value } ),
 				resetAllFilter: () => setAttributes( { progressColor: undefined } ),
 			},
 			{
 				colorValue: progressBackgroundColor,
-				label: __( 'Progress Background', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Progress Background', 'spectra-blocks' ),
 				onColorChange: ( value ) => setAttributes( { progressBackgroundColor: value } ),
 				resetAllFilter: () => setAttributes( { progressBackgroundColor: undefined } ),
 			}

@@ -4,7 +4,7 @@
  * This module provides utility functions for the z-index extension system.
  * It includes block validation, attribute extension, and CSS generation helpers.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 
 /**
@@ -15,7 +15,7 @@ import { EXCLUDED_BLOCKS, SUPPORTED_BLOCKS, ALLOWED_PREFIXES } from './constants
 /**
  * Check if a block is allowed for z-index controls.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Object} block The block object.
  * @return {boolean} Whether the block is allowed.
@@ -36,7 +36,7 @@ export const isAllowedBlock = ( block ) => {
 /**
  * Extends block settings with z-index related attributes.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Object} settings - The original block settings object.
  * @param {string} name     - The name of the block.
@@ -62,7 +62,7 @@ export const extendBlockAttributes = ( settings, name ) => {
 /**
  * Generate CSS custom properties for z-index values.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {number} zIndex - The z-index value.
  * @return {Object} CSS custom properties object.

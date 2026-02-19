@@ -53,7 +53,7 @@ const Render = ( props ) => {
 	// Context for number and label inner blocks.
 	const staticContext = useMemo(
 		() => ( {
-			label: minutesLabel || __( 'Minutes', 'ultimate-addons-for-gutenberg' ),
+			label: minutesLabel || __( 'Minutes', 'spectra-blocks' ),
 			showLabels,
 		} ),
 		[ minutesLabel, showLabels ]

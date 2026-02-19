@@ -66,7 +66,7 @@ const Render = ( props ) => {
 			identifier="text"
 			{ ...blockProps }
 			tagName={ effectiveTagName }
-			placeholder={ __( 'Accordion Title', 'ultimate-addons-for-gutenberg' ) }
+			placeholder={ __( 'Accordion Title', 'spectra-blocks' ) }
 			value={ text }
 			onChange={ ( value ) => setAttributes( { text: value } ) }
 			onMerge={ mergeBlocks }

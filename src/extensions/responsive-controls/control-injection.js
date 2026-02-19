@@ -36,17 +36,17 @@ import { isAllowedBlock } from './utils/helpers';
  */
 const DEVICES = Object.freeze( {
 	[ DESKTOP ]: {
-		label: __( 'Desktop', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Desktop', 'spectra-blocks' ),
 		icon:
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-monitor-icon lucide-monitor"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>',
 	},
 	[ TABLET ]: {
-		label: __( 'Tablet', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Tablet', 'spectra-blocks' ),
 		icon:
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tablet-icon lucide-tablet"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>',
 	},
 	[ MOBILE ]: {
-		label: __( 'Mobile', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Mobile', 'spectra-blocks' ),
 		icon:
 			'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone-icon lucide-smartphone"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>',
 	},
@@ -941,7 +941,7 @@ class ControlInjectionManager {
 					return true;
 				}
 				// Check across multiple domains
-				const textDomains = [ 'ultimate-addons-for-gutenberg', 'spectra-pro' ];
+				const textDomains = [ 'spectra-blocks', 'spectra-pro' ];
 
 				return textDomains.some( ( domain ) => {
 					// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
@@ -963,7 +963,7 @@ class ControlInjectionManager {
 				}
 				// Check translated version (Spectra textdomain for container controls)
 				// eslint-disable-next-line @wordpress/i18n-no-variables
-				const translated = __( includedControl, 'ultimate-addons-for-gutenberg' ).toLowerCase();
+				const translated = __( includedControl, 'spectra-blocks' ).toLowerCase();
 				return allTexts.includes( translated );
 			} );
 			this.domCache.set( control, isIncluded );
@@ -1004,7 +1004,7 @@ class ControlInjectionManager {
 				}
 				// Check translated version (Spectra textdomain for container controls).
 				// eslint-disable-next-line @wordpress/i18n-no-variables
-				const translated = __( excludedControl, 'ultimate-addons-for-gutenberg' ).toLowerCase();
+				const translated = __( excludedControl, 'spectra-blocks' ).toLowerCase();
 				return allTexts.includes( translated );
 			} );
 			if ( isExcluded ) {
@@ -1078,7 +1078,7 @@ class ControlInjectionManager {
 		// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
 		const coreTranslation = __( englishName, 'default' ).toLowerCase();
 		// eslint-disable-next-line @wordpress/i18n-no-variables
-		const spectraTranslation = __( englishName, 'ultimate-addons-for-gutenberg' ).toLowerCase();
+		const spectraTranslation = __( englishName, 'spectra-blocks' ).toLowerCase();
 
 		return panelTitle === coreTranslation || panelTitle === spectraTranslation;
 	}
@@ -1113,7 +1113,7 @@ class ControlInjectionManager {
 			// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
 			const coreTranslation = __( panelName, 'default' ).toLowerCase();
 			// eslint-disable-next-line @wordpress/i18n-no-variables
-			const spectraTranslation = __( panelName, 'ultimate-addons-for-gutenberg' ).toLowerCase();
+			const spectraTranslation = __( panelName, 'spectra-blocks' ).toLowerCase();
 			return panelTitle === coreTranslation || panelTitle === spectraTranslation;
 		} );
 
@@ -1132,12 +1132,12 @@ class ControlInjectionManager {
 				}
 				// Check translated version - use appropriate textdomain based on block type.
 				// Core blocks (like core/image) use WordPress core textdomain 'default'.
-				// Spectra blocks use 'ultimate-addons-for-gutenberg' textdomain.
+				// Spectra blocks use 'spectra-blocks' textdomain.
 				const isCore = currentBlock.name?.startsWith( 'core/' );
 				// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
 				const translatedName = __(
 					includedPanel,
-					isCore ? 'default' : 'ultimate-addons-for-gutenberg'
+					isCore ? 'default' : 'spectra-blocks'
 				).toLowerCase();
 				return panelTitle === translatedName;
 			} );
@@ -1198,14 +1198,14 @@ class ControlInjectionManager {
 		if ( this.currentDevice === TABLET ) {
 			helpText = sprintf(
 				// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
-				__( '%1$sNote:%2$s Inherits from Desktop on reset.', 'ultimate-addons-for-gutenberg' ),
+				__( '%1$sNote:%2$s Inherits from Desktop on reset.', 'spectra-blocks' ),
 				'<b>',
 				'</b>'
 			);
 		} else if ( this.currentDevice === MOBILE ) {
 			helpText = sprintf(
 				// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
-				__( '%1$sNote:%2$s Inherits from Tablet or Desktop on reset.', 'ultimate-addons-for-gutenberg' ),
+				__( '%1$sNote:%2$s Inherits from Tablet or Desktop on reset.', 'spectra-blocks' ),
 				'<b>',
 				'</b>'
 			);

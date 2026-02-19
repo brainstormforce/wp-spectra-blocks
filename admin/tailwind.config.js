@@ -1,12 +1,25 @@
-const withTW = require( '@bsf/force-ui/withTW' );
-
-module.exports = withTW( {
+module.exports = {
 	content: [
-		'./src/**/*.{js, jsx}',
-		'./assets/src/dashboard-app/**/*.{html,js}',
-		'./assets/src/common/components/**/*.{html,js}',
-		'./assets/src/**/*.{js, jsx}',
-		'./assets/src/editor/**/*.{js, jsx}',
+		'./src/**/*.{js,jsx}',
+		'./assets/src/dashboard-app/**/*.{html,js,jsx}',
+		'./assets/src/common/components/**/*.{html,js,jsx}',
+		'./assets/src/**/*.{js,jsx}',
+		'./assets/src/editor/**/*.{js,jsx}',
+		'./node_modules/@bsf/force-ui/dist/components/**/*.js',
+	],
+	safelist: [
+		{
+			pattern: /^col-span-(\d+)$/,
+			variants: [ 'sm', 'md', 'lg', 'xl', '2xl' ],
+		},
+		{
+			pattern: /^grid-cols-(\d+)$/,
+			variants: [ 'sm', 'md', 'lg', 'xl', '2xl' ],
+		},
+		{
+			pattern: /^gap-/,
+			variants: [ 'sm', 'md', 'lg', 'xl', '2xl' ],
+		},
 	],
 	theme: {
 		extend: {
@@ -243,5 +256,5 @@ module.exports = withTW( {
 	corePlugins: {
 		preflight: false,
 	},
-	important: ':is(.uag-dashboard-app,.toplevel_page_spectra,#spectra-pro-banner,.components-modal__frame,[data-floating-ui-portal])',
-} );
+	important: ':is(#spectra-blocks-dashboard-app,.toplevel_page_spectra-blocks,#spectra-pro-banner,.components-modal__frame,[data-floating-ui-portal])',
+};

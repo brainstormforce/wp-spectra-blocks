@@ -50,13 +50,13 @@ const ProFeatures = () => {
 					<div className="flex items-center gap-x-2">
 						<Badge
 							label={
-								uag_react.zip_ai_admin_nonce
-									? __( 'Connected', 'ultimate-addons-for-gutenberg' )
-									: __( 'Connect', 'ultimate-addons-for-gutenberg' )
+								spectra_blocks_react.zip_ai_admin_nonce
+									? __( 'Connected', 'spectra-blocks' )
+									: __( 'Connect', 'spectra-blocks' )
 							}
 							size="xs"
 							type="pill"
-							variant={ uag_react.zip_ai_admin_nonce ? 'green' : 'blue' }
+							variant={ spectra_blocks_react.zip_ai_admin_nonce ? 'green' : 'blue' }
 						/>
 					</div>
 				</div>
@@ -67,11 +67,11 @@ const ProFeatures = () => {
 						<Link
 							to={ {
 								pathname: 'admin.php',
-								search: '?page=spectra&path=ai-features',
+								search: '?page=spectra-blocks&path=ai-features',
 							} }
 							className="text-text-tertiary no-underline"
 						>
-							{ __( 'Launch', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Launch', 'spectra-blocks' ) }
 						</Link>
 					</div>
 				</div>
@@ -97,7 +97,7 @@ const ProFeatures = () => {
 							target="_blank"
 							className="mt-1 text-text-tertiary no-underline" rel="noreferrer"
 						>
-							{ __( 'Open a ticket', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Open a ticket', 'spectra-blocks' ) }
 						</a>
 					</div>
 				</div>

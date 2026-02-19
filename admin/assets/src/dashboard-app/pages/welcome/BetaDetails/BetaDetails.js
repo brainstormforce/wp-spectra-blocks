@@ -3,12 +3,12 @@ import { Container, Title, Button } from '@bsf/force-ui';
 import { TestTubeDiagonal } from 'lucide-react';
 
 const BetaDetails = () => {
-	const betaVersion = uag_admin_react?.plugin_ver || 'Beta';
+	const betaVersion = spectra_blocks_admin_react?.plugin_ver || 'Beta';
 
 	return (
 		<Container className="bg-white p-6 shadow-sm rounded-lg border border-solid border-border-subtle relative">
 			<div className="absolute top-6 right-6 text-sm text-text-tertiary">
-				{ __( 'Beta Version: ', 'ultimate-addons-for-gutenberg' ) }
+				{ __( 'Beta Version: ', 'spectra-blocks' ) }
 				<span className="font-semibold text-text-primary">{ betaVersion }</span>
 			</div>
 			
@@ -16,7 +16,7 @@ const BetaDetails = () => {
 				<div className="text-brand-primary-600 flex space-x-1">
 					<TestTubeDiagonal size={ 14 } />
 					<div className="font-semibold text-xs">
-						{ __( 'Beta Testing Program', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Beta Testing Program', 'spectra-blocks' ) }
 					</div>
 				</div>
 
@@ -25,7 +25,7 @@ const BetaDetails = () => {
 					<p className="text-sm text-text-secondary m-0">
 						{ __(
 							'You\'re helping us build a better Spectra by testing new features before they\'re released. Your feedback is invaluable to us!',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					</p>
 				</div>
@@ -37,8 +37,8 @@ const BetaDetails = () => {
 						rel="noreferrer"
 						className="no-underline"
 					>
-						<Button variant="primary" className="uagb-remove-ring">
-							{ __( 'Help Us Improve', 'ultimate-addons-for-gutenberg' ) }
+						<Button variant="primary" className="spectra-blocks-remove-ring">
+							{ __( 'Help Us Improve', 'spectra-blocks' ) }
 						</Button>
 					</a>
 				</div>

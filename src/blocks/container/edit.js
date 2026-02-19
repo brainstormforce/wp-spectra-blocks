@@ -294,8 +294,8 @@ const Edit = ( props ) => {
 			<VariationPicker { ...{
 				...props,
 				icon: blockIcons.container(),
-				label: __( 'Container', 'ultimate-addons-for-gutenberg' ),
-				instructions: __( 'Select a container layout', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Container', 'spectra-blocks' ),
+				instructions: __( 'Select a container layout', 'spectra-blocks' ),
 				variations,
 				defaultVariation,
 				onSelect: handleVariationSelection

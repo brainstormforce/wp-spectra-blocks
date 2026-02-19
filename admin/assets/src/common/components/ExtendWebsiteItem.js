@@ -7,16 +7,16 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 	const { path, slug, siteUrl, icon, type, name, zipUrl, desc, isFree, status, settings_url } = plugin;
 	const [ pluginData, setPluginData ] = useState( null );
 
-	const translatedActivated = __( 'Activated', 'ultimate-addons-for-gutenberg' );
-	const translatedActive = __( 'Activate', 'ultimate-addons-for-gutenberg' );
+	const translatedActivated = __( 'Activated', 'spectra-blocks' );
+	const translatedActive = __( 'Activate', 'spectra-blocks' );
 
 	const getAction = ( pluginStatus ) => {
 		if ( pluginStatus === 'Activated' ) {
 			return 'site_redirect';
 		} else if ( pluginStatus === 'Installed' ) {
-			return 'uagb_recommended_plugin_activate';
+			return 'spectra_blocks_recommended_plugin_activate';
 		}
-		return 'uagb_recommended_plugin_install';
+		return 'spectra_blocks_recommended_plugin_install';
 	};
 
 	const handlePluginAction = ( e ) => {
@@ -30,7 +30,7 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 		};
 
 		switch ( action ) {
-			case 'uagb_recommended_plugin_activate':
+			case 'spectra_blocks_recommended_plugin_activate':
 				// Confirmation only for theme activation
 				if ( currentPluginData.type === 'theme' ) {
 					// Show dialog for confirmation
@@ -41,37 +41,37 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 				}
 				break;
 
-			case 'uagb_recommended_plugin_install':
+			case 'spectra_blocks_recommended_plugin_install':
 				// Installation process without any confirmation
 				formData.append(
 					'action',
 					currentPluginData.type === 'theme'
-						? 'uagb_recommended_theme_install'
-						: 'uagb_recommended_plugin_install'
+						? 'spectra_blocks_recommended_theme_install'
+						: 'spectra_blocks_recommended_plugin_install'
 				);
-				formData.append( '_ajax_nonce', uag_react.installer_nonce );
+				formData.append( '_ajax_nonce', spectra_blocks_react.installer_nonce );
 				formData.append( 'slug', currentPluginData.slug );
 
-				e.target.innerText = __( 'Installing..', 'ultimate-addons-for-gutenberg' );
+				e.target.innerText = __( 'Installing..', 'spectra-blocks' );
 
 				apiFetch( {
-					url: uag_react.ajax_url,
+					url: spectra_blocks_react.ajax_url,
 					method: 'POST',
 					body: formData,
 				} ).then( ( data ) => {
 					if ( data.success || data.errorCode === 'folder_exists' ) {
-						e.target.innerText = __( 'Installed', 'ultimate-addons-for-gutenberg' );
+						e.target.innerText = __( 'Installed', 'spectra-blocks' );
 
 						if ( currentPluginData.type === 'theme' ) {
 							// Change button state to "Activate" after successful installation.
 							const buttonElement = document.querySelector( `[data-slug="${ currentPluginData.slug }"]` );
-							buttonElement.dataset.action = 'uagb_recommended_plugin_activate';
+							buttonElement.dataset.action = 'spectra_blocks_recommended_plugin_activate';
 							e.target.innerText = translatedActive;
 						} else {
 							activatePlugin( currentPluginData );
 						}
 					} else {
-						e.target.innerText = __( 'Install', 'ultimate-addons-for-gutenberg' );
+						e.target.innerText = __( 'Install', 'spectra-blocks' );
 					}
 				} );
 				break;
@@ -88,8 +88,8 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 
 	const activatePlugin = ( currentPluginData ) => {
 		const formData = new window.FormData();
-		formData.append( 'action', 'uagb_recommended_plugin_activate' );
-		formData.append( 'nonce', uag_react.installer_nonce );
+		formData.append( 'action', 'spectra_blocks_recommended_plugin_activate' );
+		formData.append( 'nonce', spectra_blocks_react.installer_nonce );
 		formData.append( 'plugin', currentPluginData.init );
 		formData.append( 'type', currentPluginData.type );
 		formData.append( 'slug', currentPluginData.slug );
@@ -97,10 +97,10 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 		const buttonElement = document.querySelector( `[data-slug="${ currentPluginData.slug }"]` );
 		const spanElement = buttonElement.querySelector( 'span' );
 
-		spanElement.innerText = __( 'Activating..', 'ultimate-addons-for-gutenberg' );
+		spanElement.innerText = __( 'Activating..', 'spectra-blocks' );
 
 		apiFetch( {
-			url: uag_react.ajax_url,
+			url: spectra_blocks_react.ajax_url,
 			method: 'POST',
 			body: formData,
 		} ).then( ( data ) => {
@@ -109,7 +109,7 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 					// Check if spanElement is not null.
 					buttonElement.style.color = '#16A34A';
 					buttonElement.dataset.action = 'site_redirect';
-					buttonElement.classList.add( 'uagb-plugin-activated' );
+					buttonElement.classList.add( 'spectra-blocks-plugin-activated' );
 					spanElement.innerText = translatedActivated;
 					window.open( settings_url, '_blank' );
 				}
@@ -140,23 +140,23 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 	};
 
 	const translatedName = sprintf(
-		/* translators: abbreviation for units */ __( ' %s', 'ultimate-addons-for-gutenberg' ),
+		/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
 		name
 	)
 
 	const translatedDesc = sprintf(
-		/* translators: abbreviation for units */ __( ' %s', 'ultimate-addons-for-gutenberg' ),
+		/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
 		desc
 	)
 
 	return (
 		<Container align="center" containerType="flex" direction="column" justify="between">
-			<h2 className="sr-only">{ __( 'Build Website with AI', 'ultimate-addons-for-gutenberg' ) }</h2>
+			<h2 className="sr-only">{ __( 'Build Website with AI', 'spectra-blocks' ) }</h2>
 
 			<Container.Item className="flex items-center justify-between w-full p-1">
 				{ icon() }
 				<div className="flex items-center justify-between gap-2">
-					{ isFree && <Badge label={ __( 'Free', 'ultimate-addons-for-gutenberg' ) } size="xs" type="pill" variant="green" /> }
+					{ isFree && <Badge label={ __( 'Free', 'spectra-blocks' ) } size="xs" type="pill" variant="green" /> }
 					<Button
 						size="xs"
 						variant="link"

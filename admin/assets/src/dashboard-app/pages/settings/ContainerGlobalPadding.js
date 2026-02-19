@@ -24,19 +24,19 @@ const ContainerGlobalPadding = () => {
 
 		// Create an object with the security and value properties
         const data = {
-            security: uag_react.container_global_padding_nonce,
+            security: spectra_blocks_react.container_global_padding_nonce,
             value,
         };
 		// Call the getApiData function with the specified parameters
         const getApiFetchData = getApiData( {
-            url: uag_react.ajax_url,
-            action: 'uag_container_global_padding',
+            url: spectra_blocks_react.ajax_url,
+            action: 'spectra_blocks_container_global_padding',
             data,
         } );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
         getApiFetchData.then( () => {
             if ( showNotice ) {
-				dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ) } );
+				dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'spectra-blocks' ) } );
 			}
         } );
 	};
@@ -48,8 +48,8 @@ const ContainerGlobalPadding = () => {
     return (
         <>
 			<SettingsItem
-				title={ __( 'Container Padding', 'ultimate-addons-for-gutenberg' ) }
-				settingText={ __( 'This setting will apply default padding in the Container Block.', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Container Padding', 'spectra-blocks' ) }
+				settingText={ __( 'This setting will apply default padding in the Container Block.', 'spectra-blocks' ) }
 			>
 				<Input
 					defaultValue={ 1140 }

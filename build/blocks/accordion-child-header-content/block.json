@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/accordion-child-header-content",
+  "version": "3.0.0",
+  "title": "Title",
+  "category": "spectra-blocks-inner",
+  "description": "Add a title to this accordion header.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/accordion-child-header"
+  ],
+  "usesContext": [
+    "spectra/accordion-child-header/headerElement"
+  ],
+  "supports": {
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "splitting": true
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "text": {
+      "type": "string"
+    },
+    "tagName": {
+      "type": "string",
+      "default": "span"
+    }
+  }
+}

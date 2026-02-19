@@ -13,8 +13,7 @@
 		"modal",
 		"popup",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"interactivity": true,

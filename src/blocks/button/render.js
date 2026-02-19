@@ -90,34 +90,34 @@ const Render = ( props ) => {
 	const config = [
 		{ key: 'textColor' },
 		{ key: 'textColorHover' },
-		{ key: 'iconColor' },
-		{ key: 'iconColorHover' },
 		{ key: 'backgroundColor' },
 		{ key: 'backgroundColorHover' },
 		{ key: 'backgroundGradient' },
 		{ key: 'backgroundGradientHover' },
-		{ 
-			key: 'shadowHover', 
-			cssVar: '--spectra-shadow-hover', 
+		{ key: 'iconColor', cssVar: '--spectra-icon-color', className: null },
+		{ key: 'iconColorHover', cssVar: '--spectra-icon-color-hover', className: null },
+		{
+			key: 'shadowHover',
+			cssVar: '--spectra-shadow-hover',
 			className: 'spectra-shadow-hover',
 			value: getShadowHoverValue(),
 		},
+		{ key: 'gap', cssVar: '--spectra-icon-gap', className: null },
 		/**
 		 * Border hover color configuration.
-		 * 
+		 *
 		 * Sets --spectra-border-hover-color CSS variable with just the color value.
 		 * The CSS uses `border-color: var(--spectra-border-hover-color)` on hover,
 		 * preserving the border width/style from WordPress core's responsive settings.
 		 */
 		...( borderHoverColor ? [
-			{ 
-				key: 'borderHoverColor', 
-				cssVar: '--spectra-border-hover-color', 
+			{
+				key: 'borderHoverColor',
+				cssVar: '--spectra-border-hover-color',
 				className: 'spectra-border-hover',
 				value: borderHoverColor,
 			}
 		] : [] ),
-		{ key: 'gap', cssVar: '--spectra-icon-gap', className: null },
 	];
 
 	const customClassNames = [ 
@@ -238,7 +238,7 @@ const Render = ( props ) => {
 		}
 		return (
 			<RichText
-				placeholder={ __( 'Add text…', 'ultimate-addons-for-gutenberg' ) }
+				placeholder={ __( 'Add text…', 'spectra-blocks' ) }
 				value={ text }
 				tagName="div"
 				onChange={ ( value ) => setAttributes( { text: value } ) }

@@ -6,11 +6,11 @@ import { useEffect, useState } from '@wordpress/element';
 import RenderBlockPreview from '@Common/components/RenderBlockPreview';
 
 const defaultUpgradeItems = [
-	__( 'Advanced blocks', 'ultimate-addons-for-gutenberg' ),
-	__( 'Premium pre-built templates', 'ultimate-addons-for-gutenberg' ),
-	__( 'Consistent design with Global Styles', 'ultimate-addons-for-gutenberg' ),
-	__( 'Advanced animations', 'ultimate-addons-for-gutenberg' ),
-	__( 'Priority support and updates', 'ultimate-addons-for-gutenberg' ),
+	__( 'Advanced blocks', 'spectra-blocks' ),
+	__( 'Premium pre-built templates', 'spectra-blocks' ),
+	__( 'Consistent design with Global Styles', 'spectra-blocks' ),
+	__( 'Advanced animations', 'spectra-blocks' ),
+	__( 'Priority support and updates', 'spectra-blocks' ),
 ];
 
 /**
@@ -24,10 +24,10 @@ const classNames = ( ...classes ) => classes.filter( Boolean ).join( ' ' );
 
 const MyAccountUpgradeToPro = ( {
 	className = '',
-	title = __( 'Build Beyond Boundaries with Spectra Pro', 'ultimate-addons-for-gutenberg' ),
+	title = __( 'Build Beyond Boundaries with Spectra Pro', 'spectra-blocks' ),
 	description = __(
 		'Get access to advanced blocks and premium features.',
-		'ultimate-addons-for-gutenberg'
+		'spectra-blocks'
 	),
 	items = defaultUpgradeItems,
 	columnView = false,
@@ -35,7 +35,7 @@ const MyAccountUpgradeToPro = ( {
 } ) => {
 	const [productsList, setProductsList] = useState( [] );
 	const [selectedProduct, setSelectedProduct] = useState( '' );
-	const contryCode = uag_admin_react.contry_code;
+	const contryCode = spectra_blocks_admin_react.contry_code;
 
 	useEffect( () => {
 		// Fetch pricing data from the API
@@ -129,7 +129,7 @@ const MyAccountUpgradeToPro = ( {
 							{productsList[selectedProduct]?.variant?.includes( 'Annual Subscription' ) ||
 								productsList[selectedProduct]?.product?.includes( 'Annual Subscription' ) ? (
 								<span className="text-text-tertiary">
-									{__( '/year', 'ultimate-addons-for-gutenberg' )}
+									{__( '/year', 'spectra-blocks' )}
 								</span>
 							) : null}
 						</Button>
@@ -141,7 +141,7 @@ const MyAccountUpgradeToPro = ( {
 							className="no-underline text-text-on-color"
 						>
 							<Button className="" size="sm" tag="button" type="button" variant="primary">
-								{__( 'Buy Now', 'ultimate-addons-for-gutenberg' )}
+								{__( 'Buy Now', 'spectra-blocks' )}
 							</Button>
 						</a>
 					</div>
@@ -150,12 +150,12 @@ const MyAccountUpgradeToPro = ( {
 				<div className="flex gap-3 my-2">
 					<a
 						className="no-underline"
-						href={uag_admin_react.spectra_website?.uagDashboard}
+						href={spectra_blocks_admin_react.spectra_website?.uagDashboard}
 						target="_blank"
 						rel="noreferrer"
 					>
-						<Button variant="primary" className="uagb-remove-ring">
-							{__( 'Upgrade Now', 'ultimate-addons-for-gutenberg' )}
+						<Button variant="primary" className="spectra-blocks-remove-ring">
+							{__( 'Upgrade Now', 'spectra-blocks' )}
 						</Button>
 					</a>
 
@@ -163,11 +163,11 @@ const MyAccountUpgradeToPro = ( {
 						className="no-underline"
 						to={ {
 							pathname: 'admin.php',
-							search: '?page=spectra&path=free-vs-pro',
+							search: '?page=spectra-blocks&path=free-vs-pro',
 						} }
 					>
-						<Button variant="ghost" className="uagb-remove-ring">
-							{ __( 'Free VS Pro', 'ultimate-addons-for-gutenberg' ) }
+						<Button variant="ghost" className="spectra-blocks-remove-ring">
+							{ __( 'Free VS Pro', 'spectra-blocks' ) }
 						</Button>
 					</Link> */}
 				</div>
@@ -175,12 +175,12 @@ const MyAccountUpgradeToPro = ( {
 
 			{freeVPro && (
 				<a
-					href={uag_admin_react.spectra_website?.freeVsPro}
+					href={spectra_blocks_admin_react.spectra_website?.freeVsPro}
 					target="_blank"
 					rel="noreferrer"
 					className="text-xxs text-brand-primary-600 w-full flex justify-end md:pr-[10px] pr-2 -mt-2"
 				>
-					{__( 'View plans', 'ultimate-addons-for-gutenberg' )}
+					{__( 'View plans', 'spectra-blocks' )}
 				</a>
 			)}
 		</Container.Item>

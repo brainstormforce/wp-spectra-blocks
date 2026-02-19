@@ -1,80 +1,51 @@
-# Distribution Ignore File
-# Files and folders listed here will be excluded from the plugin distribution ZIP
+# Development files — excluded from WordPress.org submission zip
 
-# Git
-.git
-.gitignore
-.gitattributes
-
-# GitHub
-.github
-
-# Development files
-.distignore
-.editorconfig
-.eslintignore
-.eslintrc
-.eslintrc.js
-.prettierrc
-.prettierrc.js
-.stylelintrc
-.stylelintrc.js
-.browserslistrc
-
-# Node.js
-node_modules
+# Build tools & dependency manifests
+node_modules/
 package.json
 package-lock.json
-
-# PHP Development
-vendor
 composer.json
 composer.lock
 phpcs.xml
-phpcs.xml.dist
-phpunit.xml
-phpunit.xml.dist
-
-# Build tools
 webpack.config.js
 Gruntfile.js
-gulpfile.js
+Makefile
+babel.config.js
+jest.config.js
 
-# Source files (compiled versions are in build/)
-src
+# Source files (compiled build/ is included, raw src/ is not needed)
+src/
 
-# Tests
-tests
-bin
+# Test files
+tests/
+phpunit.xml
+phpunit.xml.dist
+playwright.config.js
+e2e/
 
-# Documentation (README.md is for GitHub, readme.txt is for WP.org)
-README.md
-CHANGELOG.md
-CONTRIBUTING.md
-CODE_OF_CONDUCT.md
+# CI / git config
+.github/
+.travis.yml
+.circleci/
+.gitignore
+.gitattributes
+CLAUDE.md
 
-# IDE and Editor
-.idea
-.vscode
-*.sublime-project
-*.sublime-workspace
+# Docs & IDE
+*.md
+.editorconfig
+.vscode/
 
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs
+# Log files
 *.log
-npm-debug.log*
+debug.log
 
-# Temporary files
-*.tmp
-*.temp
-*.bak
-
-# WordPress.org assets (these go in SVN assets/ folder, not plugin)
-.wordpress-org
-
-# Misc
-*.zip
-*.tar.gz
+# Admin source (admin/build/ is included, admin source not needed)
+admin/assets/src/
+admin/src/
+admin/node_modules/
+admin/package.json
+admin/package-lock.json
+admin/webpack.config.js
+admin/tailwind.config.js
+admin/postcss.config.js

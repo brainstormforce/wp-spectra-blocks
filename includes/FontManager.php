@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class to manage font caching, registration, and deletion.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class FontManager {
 
@@ -30,7 +30,7 @@ class FontManager {
 	/**
 	 * The key used to store the cached font data in the transients API.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var string
 	 */
@@ -39,7 +39,7 @@ class FontManager {
 	/**
 	 * Initializes the font manager by hooking into the 'wp_enqueue_scripts' action.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -51,7 +51,7 @@ class FontManager {
 	/**
 	 * Filters theme.json to add custom fonts.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param WP_Theme_JSON_Data $theme_json Theme JSON object.
 	 * @return WP_Theme_JSON_Data Updated theme JSON.
@@ -144,7 +144,7 @@ class FontManager {
 	/**
 	 * Clears the transient cache for the google fonts when the `FONT_CACHE_KEY` option is updated.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $option   The name of the option that was updated.
 	 * @param mixed  $old_value The old value of the option.
@@ -154,7 +154,7 @@ class FontManager {
 	public function handle_option_update( $option, $old_value, $new_value ) {
 		wp_raise_memory_limit();
 
-		if ( 'uag_load_gfonts_locally' === $option ) {
+		if ( 'spectra_blocks_load_fonts_locally' === $option ) {
 			$fonts = self::get_spectra_selected_font_names();
 
 			if ( 'disabled' === $new_value ) {
@@ -166,7 +166,7 @@ class FontManager {
 			set_transient( self::FONT_CACHE_KEY, $updated_fonts );
 		}
 
-		if ( 'uag_select_font_globally' !== $option ) {
+		if ( 'spectra_blocks_global_fonts' !== $option ) {
 			return;
 		}
 
@@ -213,7 +213,7 @@ class FontManager {
 	/**
 	 * Deletes a list of fonts from the local storage.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $fonts List of fonts to delete. Each font should have a 'slug' key with the font slug.
 	 * @return void
@@ -282,7 +282,7 @@ class FontManager {
 	/**
 	 * Registers the given fonts locally using the `/wp/v2/font-families` REST endpoint.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $fonts The list of font families to register, where each item is an associative array.
 	 * @return array|WP_Error An array of registered font families or a WP_Error object on failure.
@@ -318,7 +318,7 @@ class FontManager {
 	/**
 	 * Create font family via REST API
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $font Font data.
 	 * @return int|WP_Error
@@ -340,7 +340,7 @@ class FontManager {
 		$response = rest_do_request( $request );
 
 		if ( $response->is_error() ) {
-			return new WP_Error( 'font_create_failed', __( 'Font creation failed', 'spectra' ) );
+			return new WP_Error( 'font_create_failed', __( 'Font creation failed', 'spectra-blocks' ) );
 		}
 
 		$data = $response->get_data();
@@ -349,13 +349,13 @@ class FontManager {
 			return $data['id'];
 		}
 
-		return new WP_Error( 'font_create_failed', __( 'Invalid response from font creation', 'spectra' ) );
+		return new WP_Error( 'font_create_failed', __( 'Invalid response from font creation', 'spectra-blocks' ) );
 	}
 
 	/**
 	 * Register font faces for a font family
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int   $font_family_id Font family ID.
 	 * @param array $font_faces Font face data.
@@ -416,7 +416,7 @@ class FontManager {
 	/**
 	 * Checks if a font is already registered.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $slug The font slug.
 	 * @return int|false The font family ID if the font is registered, false otherwise.
@@ -439,7 +439,7 @@ class FontManager {
 	/**
 	 * Checks if a font face is already registered.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $settings The font face settings used to generate the title.
 	 * @return int|false The font face ID if the font face is registered, false otherwise.
@@ -460,12 +460,9 @@ class FontManager {
 	}
 
 	/**
-	 * Downloads a file from a URL with security validation.
-	 *
-	 * SECURITY: Enhanced with MIME type validation and file signature verification.
-	 *
-	 * @since 0.0.1
-	 * @since 0.0.1 Added MIME validation and signature verification.
+	 * Downloads a file from a URL.
+	 * 
+	 * @since 3.0.0
 	 *
 	 * @param string $file_url URL of the file.
 	 * @return array File array with name and tmp_name.
@@ -478,95 +475,16 @@ class FontManager {
 		$allowed_extensions = array( 'ttf', 'otf', 'woff', 'woff2', 'eot' );
 		preg_match( '/[^\?]+\.(' . implode( '|', $allowed_extensions ) . ')\b/i', $file_url, $matches );
 
-		// Download the file.
-		$tmp_file = download_url( $file_url );
-
-		// Check for download errors.
-		if ( is_wp_error( $tmp_file ) ) {
-			return array(
-				'name'     => '',
-				'tmp_name' => $tmp_file,
-			);
-		}
-
-		// SECURITY: Validate MIME type.
-		$file_type = wp_check_filetype_and_ext( $tmp_file, wp_basename( $file_url ) );
-		$allowed_mimes = WP_Font_Utils::get_allowed_font_mime_types();
-
-		if ( empty( $file_type['type'] ) || ! in_array( $file_type['type'], $allowed_mimes, true ) ) {
-			@unlink( $tmp_file );
-			\Spectra_Security_Helper::log_security_event(
-				'invalid_font_mime_type',
-				array(
-					'url'       => $file_url,
-					'mime_type' => $file_type['type'],
-				)
-			);
-			return array(
-				'name'     => '',
-				'tmp_name' => new \WP_Error( 'invalid_font_type', __( 'Invalid font file type.', 'spectra' ) ),
-			);
-		}
-
-		// SECURITY: Validate file signature (magic bytes).
-		$file_content = file_get_contents( $tmp_file, false, null, 0, 1024 );
-		if ( false === $file_content ) {
-			@unlink( $tmp_file );
-			return array(
-				'name'     => '',
-				'tmp_name' => new \WP_Error( 'font_read_error', __( 'Unable to read font file.', 'spectra' ) ),
-			);
-		}
-
-		// Check for valid font file signatures.
-		$valid_signature = false;
-		$signatures = array(
-			'woff'  => "\x77\x4F\x46\x46", // 'wOFF'
-			'woff2' => "\x77\x4F\x46\x32", // 'wOF2'
-			'ttf'   => "\x00\x01\x00\x00",
-			'otf'   => "\x4F\x54\x54\x4F", // 'OTTO'
-		);
-
-		foreach ( $signatures as $sig ) {
-			if ( substr( $file_content, 0, strlen( $sig ) ) === $sig ) {
-				$valid_signature = true;
-				break;
-			}
-		}
-
-		if ( ! $valid_signature ) {
-			@unlink( $tmp_file );
-			\Spectra_Security_Helper::log_security_event(
-				'invalid_font_signature',
-				array(
-					'url' => $file_url,
-				)
-			);
-			return array(
-				'name'     => '',
-				'tmp_name' => new \WP_Error( 'invalid_font_signature', __( 'Invalid font file signature.', 'spectra' ) ),
-			);
-		}
-
-		// SECURITY: Log successful download.
-		\Spectra_Security_Helper::log_security_event(
-			'font_download_successful',
-			array(
-				'url'       => $file_url,
-				'mime_type' => $file_type['type'],
-			)
-		);
-
 		return array(
 			'name'     => wp_basename( $matches[0] ? $matches[0] : '' ),
-			'tmp_name' => $tmp_file,
+			'tmp_name' => download_url( $file_url ),
 		);
 	}
 
 	/**
 	 * Handles font file uploads.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $file Single file item from $_FILES.
 	 * @return array Array containing uploaded file attributes on success, or error on failure.
@@ -599,7 +517,7 @@ class FontManager {
 	/**
 	 * Sanitizes font face src.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $value Source value.
 	 * @return string Sanitized src.
@@ -612,7 +530,7 @@ class FontManager {
 	/**
 	 * Handles font upload errors.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array  $file File data.
 	 * @param string $message Error message.
@@ -625,7 +543,7 @@ class FontManager {
 	/**
 	 * Get an array of all Google font families.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array An array of Google font families.
 	 */
@@ -654,7 +572,7 @@ class FontManager {
 	/**
 	 * Get font names if they exist in the font collection.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string|array $font_names Single font name or an array of font names.
 	 * @return array List of matched font names.
@@ -681,18 +599,18 @@ class FontManager {
 	/**
 	 * Get the names of all selected fonts in the Spectra global settings.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array List of font names.
 	 */
 	public static function get_spectra_selected_font_names() {
 		// Check if the setting to load Google fonts globally is enabled.
 		// If not, return an empty array.
-		if ( 'enabled' !== \Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_select_font_globally', 'disabled' ) ) {
+		if ( 'enabled' !== get_option( 'spectra_blocks_load_select_font_globally', 'disabled' ) ) {
 			return array();
 		}
 
-		$selected_fonts = \Spectra_Admin_Helper::get_admin_settings_option( 'uag_select_font_globally', array() );
+		$selected_fonts = get_option( 'spectra_blocks_global_fonts', array() );
 
 		if ( ! is_array( $selected_fonts ) ) {
 			return array();
@@ -704,18 +622,18 @@ class FontManager {
 	/**
 	 * Check if the Load Google Fonts Locally setting is enabled.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return bool True if the setting is enabled, false otherwise.
 	 */
 	public static function is_enabled_load_locally() {
-		return 'enabled' === \Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_gfonts_locally', 'disabled' );
+		return 'enabled' === get_option( 'spectra_blocks_load_fonts_locally', 'disabled' );
 	}
 
 	/**
 	 * Retrieve cached Google fonts or fetch and cache them if not available.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array The cached font data.
 	 */
@@ -740,7 +658,7 @@ class FontManager {
 	/**
 	 * Retrieve the default Google fonts used in Spectra.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array The default font data.
 	 */
@@ -756,7 +674,7 @@ class FontManager {
 						'fontStretch' => 'normal',
 						'fontStyle'   => 'normal',
 						'fontWeight'  => '300 900',
-						'src'         => array( SPECTRA_URL . '/assets/fonts/Inter-VariableFont_slnt,wght.woff2' ),
+						'src'         => array( SPECTRA_BLOCKS_URL . '/assets/fonts/Inter-VariableFont-slnt-wght.woff2' ),
 					),
 				),
 			),
@@ -769,7 +687,7 @@ class FontManager {
 						'fontFamily' => 'Cardo',
 						'fontStyle'  => 'normal',
 						'fontWeight' => '400',
-						'src'        => array( SPECTRA_URL . '/assets/fonts/cardo_normal_400.woff2' ),
+						'src'        => array( SPECTRA_BLOCKS_URL . '/assets/fonts/cardo_normal_400.woff2' ),
 					),
 				),
 			),

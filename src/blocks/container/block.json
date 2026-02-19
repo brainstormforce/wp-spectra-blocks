@@ -29,8 +29,7 @@
 		"create section",
 		"add container",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"__experimentalBorder": {

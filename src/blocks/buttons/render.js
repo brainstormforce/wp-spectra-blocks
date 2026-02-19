@@ -47,7 +47,7 @@ const Render = ( props ) => {
 
 	const innerBlocksProps = useInnerBlocksProps( blockProps, {
 		allowedBlocks: ['spectra/button'],
-		template: [['spectra/button', { Placeholder: __( 'Add Text…', 'ultimate-addons-for-gutenberg' ) }]],
+		template: [['spectra/button', { Placeholder: __( 'Add Text…', 'spectra-blocks' ) }]],
 	} );
 
 	return <div {...innerBlocksProps} />;

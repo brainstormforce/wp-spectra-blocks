@@ -13,7 +13,7 @@ if ( ! class_exists( 'NPS_Survey_Plugin_Loader' ) ) {
 	/**
 	 * Plugin_Loader
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	class NPS_Survey_Plugin_Loader {
 		/**
@@ -21,14 +21,14 @@ if ( ! class_exists( 'NPS_Survey_Plugin_Loader' ) ) {
 		 *
 		 * @access private
 		 * @var object Class Instance.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private static $instance;
 
 		/**
 		 * Constructor
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function __construct() {
 
@@ -39,7 +39,7 @@ if ( ! class_exists( 'NPS_Survey_Plugin_Loader' ) ) {
 		/**
 		 * Initiator
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @return object initialized object of class.
 		 */
 		public static function get_instance() {
@@ -84,7 +84,7 @@ if ( ! class_exists( 'NPS_Survey_Plugin_Loader' ) ) {
 		/**
 		 * Load Files
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 *
 		 * @return void
 		 */

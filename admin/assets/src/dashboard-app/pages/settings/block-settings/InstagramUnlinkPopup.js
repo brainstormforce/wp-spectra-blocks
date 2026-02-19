@@ -29,13 +29,13 @@ const InstagramUnlinkPopup = ( props ) => {
 		dispatch( { type: 'UPDATE_INSTA_LINKED_ACCOUNTS', payload: updatedUserMatrix } );
 
 		const data = {
-			security: uag_react.insta_linked_accounts_nonce,
+			security: spectra_blocks_react.insta_linked_accounts_nonce,
 			value: JSON.stringify( updatedUserMatrix ),
 		};
 
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_insta_linked_accounts',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_insta_linked_accounts',
 			data,
 		} );
 
@@ -84,7 +84,7 @@ const InstagramUnlinkPopup = ( props ) => {
 							<div className="mb-2 p-2">
 								<div className="flex w-full justify-between items-center mb-2">
 									<div className="text-base font-semibold text-text-primary">
-										{ __( 'Unlink User', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Unlink User', 'spectra-blocks' ) }
 									</div>
 
 									<X size={ 16 } onClick={ onCancelClick } className="cursor-pointer" />
@@ -96,7 +96,7 @@ const InstagramUnlinkPopup = ( props ) => {
 											// translators: %1$s: span tag start, %2$s: Instagram account name, %3$s: span tag end.
 											__(
 												'Are you sure you wish to unlink %1$s@%2$s%3$s?',
-												'ultimate-addons-for-gutenberg'
+												'spectra-blocks'
 											),
 											'<span class="font-bold">',
 											poppedUser,
@@ -109,7 +109,7 @@ const InstagramUnlinkPopup = ( props ) => {
 							<div className="p-2">
 								<div className="flex justify-end items-center w-full gap-3">
 									<Button
-										className="uagb-outline-button"
+										className="spectra-blocks-outline-button"
 										size="md"
 										tag="button"
 										type="button"
@@ -117,18 +117,18 @@ const InstagramUnlinkPopup = ( props ) => {
 										onClick={ onCancelClick }
 										ref={ cancelButtonRef }
 									>
-										{ __( 'Cancel', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Cancel', 'spectra-blocks' ) }
 									</Button>
 
 									<Button
-										className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover"
+										className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover"
 										size="md"
 										tag="button"
 										type="button"
 										variant="primary"
 										onClick={ onContinueClick }
 									>
-										{ __( 'Unlink', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Unlink', 'spectra-blocks' ) }
 									</Button>
 								</div>
 							</div>

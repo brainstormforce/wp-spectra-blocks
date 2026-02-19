@@ -30,7 +30,7 @@ const Edit = ( props ) => {
 	return (
 		<>
 			{ isSelected && <SliderChildBlockControls { ...props } /> }
-			<Settings { ...props } />
+			{ isSelected && <Settings { ...props } /> }
 			<Render { ...props } />
 		</>
 	);

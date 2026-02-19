@@ -22,7 +22,7 @@ const Checklist = ( { items } ) => {
 					>
 						{ sprintf(
 							// translators: %s is the step number.
-							__( 'Step %d:', 'ultimate-addons-for-gutenberg' ),
+							__( 'Step %d:', 'spectra-blocks' ),
 							index + 1
 						) }
 					</Text>

@@ -53,42 +53,42 @@ const ResponsiveConditionsOptions = ( props ) => {
 	return (
 		<>
 			<ToolsPanelItem
-				label={ __( 'Hide on Desktop', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Hide on Desktop', 'spectra-blocks' ) }
 				hasValue={ () => responsiveConditions.hideOnDesktop }
 				onDeselect={ () => updateResponsiveCondition( 'hideOnDesktop', false ) }
 				isShownByDefault={ true }
 			>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Hide on Desktop', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Hide on Desktop', 'spectra-blocks' ) }
 					checked={ responsiveConditions.hideOnDesktop }
 					onChange={ ( value ) => updateResponsiveCondition( 'hideOnDesktop', value ) }
 				/>
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				label={ __( 'Hide on Tablet', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Hide on Tablet', 'spectra-blocks' ) }
 				hasValue={ () => responsiveConditions.hideOnTablet }
 				onDeselect={ () => updateResponsiveCondition( 'hideOnTablet', false ) }
 				isShownByDefault={ true }
 			>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Hide on Tablet', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Hide on Tablet', 'spectra-blocks' ) }
 					checked={ responsiveConditions.hideOnTablet }
 					onChange={ ( value ) => updateResponsiveCondition( 'hideOnTablet', value ) }
 				/>
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				label={ __( 'Hide on Mobile', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Hide on Mobile', 'spectra-blocks' ) }
 				hasValue={ () => responsiveConditions.hideOnMobile }
 				onDeselect={ () => updateResponsiveCondition( 'hideOnMobile', false ) }
 				isShownByDefault={ true }
 			>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Hide on Mobile', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Hide on Mobile', 'spectra-blocks' ) }
 					checked={ responsiveConditions.hideOnMobile }
 					onChange={ ( value ) => updateResponsiveCondition( 'hideOnMobile', value ) }
 				/>
@@ -125,7 +125,7 @@ const addResponsiveConditionsControls = createHigherOrderComponent( ( BlockEdit 
 				{ isSelected && (
 					<InspectorControls>
 						<ToolsPanel
-							label={ __( 'Responsive Conditions', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Responsive Conditions', 'spectra-blocks' ) }
 							resetAll={ resetAll }
 						>
 							<ResponsiveConditionsOptions { ...props } />
@@ -138,7 +138,7 @@ const addResponsiveConditionsControls = createHigherOrderComponent( ( BlockEdit 
 								<BaseControl
 									help={ __(
 										'Hide this block on desktop, tablet, or mobile devices. Striped blocks in the editor indicate hidden blocks that will not appear on the live site.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 								/>
 							</div>

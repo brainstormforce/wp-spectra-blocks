@@ -4,7 +4,7 @@ import { Skeleton } from '@bsf/force-ui';
  * Skeleton loading component for BsfLearn
  * Shows loading state while fetching chapters data from API
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 const BsfLearnSkeleton = () => {
 	return (

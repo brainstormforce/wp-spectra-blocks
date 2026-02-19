@@ -24,7 +24,7 @@ class Sidebar_Configurations {
 	/**
 	 * The namespace for the Rest Routes.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @var string
 	 */
 	private $namespace = 'zip_ai';
@@ -32,7 +32,7 @@ class Sidebar_Configurations {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @var object Class object.
 	 */
 	private static $instance;
@@ -40,7 +40,7 @@ class Sidebar_Configurations {
 	/**
 	 * Initiator of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of this class.
 	 */
 	public static function get_instance() {
@@ -53,7 +53,7 @@ class Sidebar_Configurations {
 	/**
 	 * Constructor of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function __construct() {
@@ -85,7 +85,7 @@ class Sidebar_Configurations {
 	 * Register All Routes.
 	 *
 	 * @hooked - rest_api_init
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function register_route() {
@@ -113,7 +113,7 @@ class Sidebar_Configurations {
 	 * Checks whether the value is boolean or not.
 	 *
 	 * @param mixed $value value to be checked.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return boolean
 	 */
 	public function sanitize_boolean_field( $value ) {
@@ -124,7 +124,7 @@ class Sidebar_Configurations {
 	 * Update ZIP AI Assistant options.
 	 *
 	 * @param array $params Parameters for updating options.
-	 * @since 0.0.1
+	 * @since 1.1.6
 	 * @return void
 	 */
 	public function update_zip_ai_assistant_options( $params ) {
@@ -158,7 +158,7 @@ class Sidebar_Configurations {
 		if ( ! empty( $last_message_tone ) ) {
 			$current_options['last_used']['changeTone'] = [
 				'value' => $last_message_tone,
-				'label' => __( ucfirst( $last_message_tone ), 'spectra' ), //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				'label' => __( ucfirst( $last_message_tone ), 'ultimate-addons-for-gutenberg' ), //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 			];
 		}
 
@@ -172,7 +172,7 @@ class Sidebar_Configurations {
 	 * Fetches ai data from the middleware server.
 	 *
 	 * @param \WP_REST_Request $request request object.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function generate_ai_content( $request ) {
@@ -185,7 +185,7 @@ class Sidebar_Configurations {
 
 		// If the nessage array doesn't exist, abandon ship.
 		if ( empty( $params['message_array'] ) || ! is_array( $params['message_array'] ) ) {
-			wp_send_json_error( array( 'message' => __( 'The message array was not supplied', 'spectra' ) ) );
+			wp_send_json_error( array( 'message' => __( 'The message array was not supplied', 'ultimate-addons-for-gutenberg' ) ) );
 		}
 
 		// Set the character count to 0, and create messages array.
@@ -267,7 +267,7 @@ class Sidebar_Configurations {
 			// If you've reached here, then something has definitely gone amuck. Abandon ship.
 			wp_send_json_error(
 				array(
-					'message' => __( 'Something went wrong', 'spectra' ),
+					'message' => __( 'Something went wrong', 'ultimate-addons-for-gutenberg' ),
 					'code'    => $response['code'],
 				)
 			);
@@ -279,18 +279,18 @@ class Sidebar_Configurations {
 	 * Useful to provide better language for error codes.
 	 *
 	 * @param string $code error code received from SCS ( Credits server ).
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string
 	 */
 	private function custom_message( $code ) {
 		$message_array = array(
-			'no_auth'              => __( 'Authentication failed. Invalid or missing bearer token.', 'spectra' ),
+			'no_auth'              => __( 'Authentication failed. Invalid or missing bearer token.', 'ultimate-addons-for-gutenberg' ),
 			'insufficient_credits' => array(
-				'title'          => __( 'You\'ve run out of credits.', 'spectra' ),
+				'title'          => __( 'You\'ve run out of credits.', 'ultimate-addons-for-gutenberg' ),
 				'type'           => 'assemble-error',
-				'content'        => __( 'To continue using the assistant and access its full features, please purchase more credits.', 'spectra' ),
+				'content'        => __( 'To continue using the assistant and access its full features, please purchase more credits.', 'ultimate-addons-for-gutenberg' ),
 				'button_content' => array(
-					'text' => __( 'Buy more credits', 'spectra' ),
+					'text' => __( 'Buy more credits', 'ultimate-addons-for-gutenberg' ),
 					'url'  => 'https://app.zipwp.com/credits-pricing?source=spectra',
 				),
 			),
@@ -301,7 +301,7 @@ class Sidebar_Configurations {
 	/**
 	 * Ajax handeler to verify the Zip AI authorization.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function verify_authenticity() {
@@ -339,12 +339,12 @@ class Sidebar_Configurations {
 	 * Enqueue the AI Asssitant Sidebar assets.
 	 *
 	 * @return void
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function load_sidebar_assets() {
 
-		if ( class_exists( '\Spectra_Admin_Helper' ) && method_exists( '\Spectra_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
-			if ( \Spectra_Admin_Helper::should_exclude_assets_for_cpt() ) {
+		if ( class_exists( '\Spectra_Blocks_Admin_Helper' ) && method_exists( '\Spectra_Blocks_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
+			if ( \Spectra_Blocks_Admin_Helper::should_exclude_assets_for_cpt() ) {
 				return; // Early return to prevent loading assets.
 			}
 		}
@@ -519,12 +519,12 @@ class Sidebar_Configurations {
 	 * Add the Zip AI Assistant Sidebar to the admin bar.
 	 *
 	 * @param object $admin_bar The admin bar object.
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 * @return void
 	 */
 	public function add_admin_trigger( $admin_bar ) {
-		if ( class_exists( '\Spectra_Admin_Helper' ) && method_exists( '\Spectra_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
-			if ( \Spectra_Admin_Helper::should_exclude_assets_for_cpt() ) {
+		if ( class_exists( '\Spectra_Blocks_Admin_Helper' ) && method_exists( '\Spectra_Blocks_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
+			if ( \Spectra_Blocks_Admin_Helper::should_exclude_assets_for_cpt() ) {
 				return; // Early return to prevent loading assets.
 			}
 		}
@@ -543,13 +543,13 @@ class Sidebar_Configurations {
 	/**
 	 * Render the AI Assistant Sidebar markup.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.0
 	 * @return void
 	 */
 	public static function render_sidebar_markup() {
 
-		if ( class_exists( '\Spectra_Admin_Helper' ) && method_exists( '\Spectra_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
-			if ( \Spectra_Admin_Helper::should_exclude_assets_for_cpt() ) {
+		if ( class_exists( '\Spectra_Blocks_Admin_Helper' ) && method_exists( '\Spectra_Blocks_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
+			if ( \Spectra_Blocks_Admin_Helper::should_exclude_assets_for_cpt() ) {
 				return; // Early return to prevent loading assets.
 			}
 		}
@@ -570,7 +570,7 @@ class Sidebar_Configurations {
 	 * Assign the purpose of the AI Assistant given the current page.
 	 *
 	 * @param array<mixed> $params An array of all the parameters.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return array<array<string,string>> An array all the required system messages.
 	 */
 	public static function assign_ai_assistant_purpose( $params ) {
@@ -707,7 +707,7 @@ class Sidebar_Configurations {
 	 * Get the required page details for AI from the given post ID.
 	 *
 	 * @param int $current_post_id The current post ID.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return array<string,mixed> An array of all the required Post details.
 	 */
 	public static function get_page_details( $current_post_id ) {
@@ -754,7 +754,7 @@ class Sidebar_Configurations {
 	 *
 	 * @param string $content The content to be put as the message.
 	 * @param string $role    The role of the message, as per OpenAI standards.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return array<string,mixed> An array containing the role and content of the message.
 	 */
 	private static function get_formatted_system_role( $content, $role = 'system' ) {
@@ -767,7 +767,7 @@ class Sidebar_Configurations {
 	/**
 	 * Ajax handeler to get the latest Zip AI credit details.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public function get_latest_credit_details() {
@@ -789,7 +789,7 @@ class Sidebar_Configurations {
 	/**
 	 * Ajax handeler to get fresh Zip AI credit details.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 * @return void
 	 */
 	public function get_fresh_credit_details() {

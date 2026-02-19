@@ -122,7 +122,7 @@ const GeneralSettings = memo( ( props ) => {
 			 * Resets all general settings to their defaults when "Reset All" is clicked
 			 */ }
 			<ToolsPanel
-				label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'General', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						timerType: 'date',
@@ -150,18 +150,19 @@ const GeneralSettings = memo( ( props ) => {
 					 */
 					<ToolsPanelItem
 						hasValue={ () => !! endDateTime }
-						label={ __( 'Timer End Date & Time', 'ultimate-addons-for-gutenberg' ) }
-						onDeselect={ () => setAttributes( { endDateTime: undefined } ) }
+						label={ __( 'Timer End Date & Time', 'spectra-blocks' ) }
+						onDeselect={ () => setAttributes( { endDateTime: undefined, displayEndDateTime: undefined } ) }
+						resetAllFilter={ () => ( { endDateTime: undefined, displayEndDateTime: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<BaseControl
 							__nextHasNoMarginBottom
 							id="wp-block-spectra-countdown-end-date-time"
-							label={ __( 'End Date & Time', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'End Date & Time', 'spectra-blocks' ) }
 							help={ __(
 								'Select a future date and time for the countdown.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						>
 							<DateTimePicker
@@ -181,13 +182,14 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showDays }
-					label={ __( 'Show Days', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Days', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showDays: true } ) ) }
+					resetAllFilter={ () => ( { showDays: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Days', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Days', 'spectra-blocks' ) }
 						checked={ showDays }
 						onChange={ ( value ) => setAttributes( validateUnits( { showDays: value } ) ) }
 					/>
@@ -199,13 +201,14 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showHours }
-					label={ __( 'Show Hours', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Hours', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showHours: true } ) ) }
+					resetAllFilter={ () => ( { showHours: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Hours', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Hours', 'spectra-blocks' ) }
 						checked={ showHours }
 						onChange={ ( value ) => setAttributes( validateUnits( { showHours: value } ) ) }
 					/>
@@ -218,13 +221,14 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showMinutes }
-					label={ __( 'Show Minutes', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Minutes', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showMinutes: true } ) ) }
+					resetAllFilter={ () => ( { showMinutes: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Minutes', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Minutes', 'spectra-blocks' ) }
 						checked={ showMinutes }
 						onChange={ ( value ) => setAttributes( validateUnits( { showMinutes: value } ) ) }
 					/>
@@ -237,13 +241,14 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showSeconds }
-					label={ __( 'Show Seconds', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Seconds', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showSeconds: true } ) ) }
+					resetAllFilter={ () => ( { showSeconds: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Seconds', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Seconds', 'spectra-blocks' ) }
 						checked={ showSeconds }
 						onChange={ ( value ) => setAttributes( validateUnits( { showSeconds: value } ) ) }
 					/>
@@ -256,8 +261,9 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ariaLiveType !== 'off' }
-					label={ __( 'ARIA Live Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'ARIA Live Type', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { ariaLiveType: 'off' } ) }
+					resetAllFilter={ () => ( { ariaLiveType: 'off' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -265,21 +271,21 @@ const GeneralSettings = memo( ( props ) => {
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						isBlock
-						label={ __( 'ARIA Live Type', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'ARIA Live Type', 'spectra-blocks' ) }
 						help={ __(
 							'Choose how screen readers announce countdown updates: Off (no announcement), Polite (announces calmly), or Assertive (announces immediately).',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						value={ ariaLiveType || 'off' }
 						onChange={ ( value ) => setAttributes( { ariaLiveType: value } ) }
 					>
-						<ToggleGroupControlOption label={ __( 'Off', 'ultimate-addons-for-gutenberg' ) } value="off" />
+						<ToggleGroupControlOption label={ __( 'Off', 'spectra-blocks' ) } value="off" />
 						<ToggleGroupControlOption
-							label={ __( 'Polite', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Polite', 'spectra-blocks' ) }
 							value="polite"
 						/>
 						<ToggleGroupControlOption
-							label={ __( 'Assertive', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Assertive', 'spectra-blocks' ) }
 							value="assertive"
 						/>
 					</ToggleGroupControl>
@@ -292,18 +298,19 @@ const GeneralSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => overflow !== 'visible' }
-					label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Overflow', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { overflow: 'visible' } ) }
+					resetAllFilter={ () => ( { overflow: 'visible' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Overflow', 'spectra-blocks' ) }
 						help={ __(
 							'Decide how extra content is shown: Visible (shows all), Hidden (cuts off), or Auto (adds scrollbars when needed).',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						value={ overflow || 'visible' }
 						onChange={ ( value ) => setAttributes( { overflow: value } ) }
@@ -355,18 +362,18 @@ const LabelSettings = memo( ( props ) => {
 			 * Resets all label settings to defaults when "Reset All" is clicked
 			 */ }
 			<ToolsPanel
-				label={ __( 'Labels', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Labels', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						showLabels: true,
-						daysLabel: __( 'Days', 'ultimate-addons-for-gutenberg' ),
-						dayLabel: __( 'Day', 'ultimate-addons-for-gutenberg' ),
-						hoursLabel: __( 'Hours', 'ultimate-addons-for-gutenberg' ),
-						hourLabel: __( 'Hour', 'ultimate-addons-for-gutenberg' ),
-						minutesLabel: __( 'Minutes', 'ultimate-addons-for-gutenberg' ),
-						minuteLabel: __( 'Minute', 'ultimate-addons-for-gutenberg' ),
-						secondsLabel: __( 'Seconds', 'ultimate-addons-for-gutenberg' ),
-						secondLabel: __( 'Second', 'ultimate-addons-for-gutenberg' ),
+						daysLabel: __( 'Days', 'spectra-blocks' ),
+						dayLabel: __( 'Day', 'spectra-blocks' ),
+						hoursLabel: __( 'Hours', 'spectra-blocks' ),
+						hourLabel: __( 'Hour', 'spectra-blocks' ),
+						minutesLabel: __( 'Minutes', 'spectra-blocks' ),
+						minuteLabel: __( 'Minute', 'spectra-blocks' ),
+						secondsLabel: __( 'Seconds', 'spectra-blocks' ),
+						secondLabel: __( 'Second', 'spectra-blocks' ),
 					} );
 				} }
 				panelId={ clientId }
@@ -378,13 +385,14 @@ const LabelSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showLabels }
-					label={ __( 'Show Labels', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Labels', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { showLabels: true } ) }
+					resetAllFilter={ () => ( { showLabels: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Labels', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Labels', 'spectra-blocks' ) }
 						checked={ showLabels }
 						onChange={ ( value ) => setAttributes( { showLabels: value } ) }
 					/>
@@ -394,129 +402,137 @@ const LabelSettings = memo( ( props ) => {
 					<>
 						{ /* Days Label (Plural) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => daysLabel !== __( 'Days', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Days Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => daysLabel !== __( 'Days', 'spectra-blocks' ) }
+							label={ __( 'Days Label (Plural)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { daysLabel: __( 'Days', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { daysLabel: __( 'Days', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { daysLabel: __( 'Days', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Days Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
-								value={ daysLabel || __( 'Days', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Days Label (Plural)', 'spectra-blocks' ) }
+								value={ daysLabel || __( 'Days', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { daysLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Day Label (Singular) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => dayLabel !== __( 'Day', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Day Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => dayLabel !== __( 'Day', 'spectra-blocks' ) }
+							label={ __( 'Day Label (Singular)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { dayLabel: __( 'Day', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { dayLabel: __( 'Day', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { dayLabel: __( 'Day', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Day Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
-								value={ dayLabel || __( 'Day', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Day Label (Singular)', 'spectra-blocks' ) }
+								value={ dayLabel || __( 'Day', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { dayLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Hours Label (Plural) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => hoursLabel !== __( 'Hours', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Hours Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => hoursLabel !== __( 'Hours', 'spectra-blocks' ) }
+							label={ __( 'Hours Label (Plural)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { hoursLabel: __( 'Hours', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { hoursLabel: __( 'Hours', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { hoursLabel: __( 'Hours', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Hours Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
-								value={ hoursLabel || __( 'Hours', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Hours Label (Plural)', 'spectra-blocks' ) }
+								value={ hoursLabel || __( 'Hours', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { hoursLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Hour Label (Singular) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => hourLabel !== __( 'Hour', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Hour Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => hourLabel !== __( 'Hour', 'spectra-blocks' ) }
+							label={ __( 'Hour Label (Singular)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { hourLabel: __( 'Hour', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { hourLabel: __( 'Hour', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { hourLabel: __( 'Hour', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Hour Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
-								value={ hourLabel || __( 'Hour', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Hour Label (Singular)', 'spectra-blocks' ) }
+								value={ hourLabel || __( 'Hour', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { hourLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Minutes Label (Plural) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => minutesLabel !== __( 'Minutes', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Minutes Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => minutesLabel !== __( 'Minutes', 'spectra-blocks' ) }
+							label={ __( 'Minutes Label (Plural)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { minutesLabel: __( 'Minutes', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { minutesLabel: __( 'Minutes', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { minutesLabel: __( 'Minutes', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Minutes Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
-								value={ minutesLabel || __( 'Minutes', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Minutes Label (Plural)', 'spectra-blocks' ) }
+								value={ minutesLabel || __( 'Minutes', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { minutesLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Minute Label (Singular) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => minuteLabel !== __( 'Minute', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Minute Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => minuteLabel !== __( 'Minute', 'spectra-blocks' ) }
+							label={ __( 'Minute Label (Singular)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { minuteLabel: __( 'Minute', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { minuteLabel: __( 'Minute', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { minuteLabel: __( 'Minute', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Minute Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
-								value={ minuteLabel || __( 'Minute', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Minute Label (Singular)', 'spectra-blocks' ) }
+								value={ minuteLabel || __( 'Minute', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { minuteLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Seconds Label (Plural) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => secondsLabel !== __( 'Seconds', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Seconds Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => secondsLabel !== __( 'Seconds', 'spectra-blocks' ) }
+							label={ __( 'Seconds Label (Plural)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { secondsLabel: __( 'Seconds', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { secondsLabel: __( 'Seconds', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { secondsLabel: __( 'Seconds', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Seconds Label (Plural)', 'ultimate-addons-for-gutenberg' ) }
-								value={ secondsLabel || __( 'Seconds', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Seconds Label (Plural)', 'spectra-blocks' ) }
+								value={ secondsLabel || __( 'Seconds', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { secondsLabel: value } ) }
 							/>
 						</ToolsPanelItem>
 						{ /* Second Label (Singular) Control */ }
 						<ToolsPanelItem
-							hasValue={ () => secondLabel !== __( 'Second', 'ultimate-addons-for-gutenberg' ) }
-							label={ __( 'Second Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
+							hasValue={ () => secondLabel !== __( 'Second', 'spectra-blocks' ) }
+							label={ __( 'Second Label (Singular)', 'spectra-blocks' ) }
 							onDeselect={ () =>
-								setAttributes( { secondLabel: __( 'Second', 'ultimate-addons-for-gutenberg' ) } )
+								setAttributes( { secondLabel: __( 'Second', 'spectra-blocks' ) } )
 							}
+							resetAllFilter={ () => ( { secondLabel: __( 'Second', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
 							<TextControl
-								label={ __( 'Second Label (Singular)', 'ultimate-addons-for-gutenberg' ) }
-								value={ secondLabel || __( 'Second', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Second Label (Singular)', 'spectra-blocks' ) }
+								value={ secondLabel || __( 'Second', 'spectra-blocks' ) }
 								onChange={ ( value ) => setAttributes( { secondLabel: value } ) }
 							/>
 						</ToolsPanelItem>
@@ -553,7 +569,7 @@ const SeparatorSettings = memo( ( props ) => {
 			 * Resets all separator settings to defaults when "Reset All" is clicked
 			 */ }
 			<ToolsPanel
-				label={ __( 'Separator', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Separator', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						showSeparator: true,
@@ -569,13 +585,14 @@ const SeparatorSettings = memo( ( props ) => {
 				 */ }
 				<ToolsPanelItem
 					hasValue={ () => ! showSeparator }
-					label={ __( 'Show Separator', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Show Separator', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { showSeparator: true } ) }
+					resetAllFilter={ () => ( { showSeparator: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleControl
-						label={ __( 'Show Separator', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Show Separator', 'spectra-blocks' ) }
 						checked={ showSeparator }
 						onChange={ ( value ) => setAttributes( { showSeparator: value } ) }
 					/>
@@ -591,8 +608,9 @@ const SeparatorSettings = memo( ( props ) => {
 					 */
 					<ToolsPanelItem
 						hasValue={ () => separatorType !== ':' }
-						label={ __( 'Separator Type', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Separator Type', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorType: ':' } ) }
+						resetAllFilter={ () => ( { separatorType: ':' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -600,20 +618,20 @@ const SeparatorSettings = memo( ( props ) => {
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
 							isBlock
-							label={ __( 'Separator Type', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Separator Type', 'spectra-blocks' ) }
 							value={ separatorType || ':' }
 							onChange={ ( value ) => setAttributes( { separatorType: value } ) }
 						>
 							<ToggleGroupControlOption
-								label={ __( 'Colon (:)', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Colon (:)', 'spectra-blocks' ) }
 								value=":"
 							/>
 							<ToggleGroupControlOption
-								label={ __( 'Line (|)', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Line (|)', 'spectra-blocks' ) }
 								value="|"
 							/>
 							<ToggleGroupControlOption
-								label={ __( 'Slash (/)', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Slash (/)', 'spectra-blocks' ) }
 								value="/"
 							/>
 						</ToggleGroupControl>
@@ -662,7 +680,7 @@ const DimensionSettings = memo( ( props ) => {
 							!! maxWidth ||
 							!! maxHeight
 						}
-						label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Sizes', 'spectra-blocks' ) }
 						as={ Grid }
 						panelId={ clientId }
 						isShownByDefault
@@ -738,7 +756,7 @@ const DimensionSettings = memo( ( props ) => {
 					*/ }
 					<ToolsPanelItem
 						hasValue={ () => ( !! height && height !== 'auto' ) || !! minHeight || !! maxHeight }
-						label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Sizes', 'spectra-blocks' ) }
 						panelId={ clientId }
 						isShownByDefault
 						onDeselect={ () =>
@@ -804,14 +822,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () =>

@@ -2,35 +2,35 @@ import { __ } from '@wordpress/i18n';
 
 export const sections = [
 	{
-		title: __( 'Loop Builder', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Loop Builder', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
-				content: __( 'Full Ajax Filtering/Sorting', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Full Ajax Filtering/Sorting', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Ready-Made Layouts', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Ready-Made Layouts', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Professional Templates - 5 pre-built designs', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Professional Templates - 5 pre-built designs', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 4,
-				content: __( 'Dynamic Content - Supports ACF, custom fields & taxonomies', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Dynamic Content - Supports ACF, custom fields & taxonomies', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 5,
-				content: __( 'Performance Optimized & Caching Compatible', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Performance Optimized & Caching Compatible', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
@@ -38,7 +38,7 @@ export const sections = [
 				id: 6,
 				content: __(
 					'WordPress Interactivity API Integration for real-time updates',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -46,29 +46,29 @@ export const sections = [
 		],
 	},
 	{
-		title: __( 'Registration Form', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Registration Form', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
-				content: __( 'Ajax-based registration form', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Ajax-based registration form', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Multiple child blocks for advanced structuring', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Multiple child blocks for advanced structuring', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Auto-login (automatically log in after registration)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Auto-login (automatically log in after registration)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 4,
-				content: __( 'Google reCaptcha support (v2, v3)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Google reCaptcha support (v2, v3)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
@@ -76,20 +76,20 @@ export const sections = [
 				id: 5,
 				content: __(
 					'After registration actions (redirect, send email, auto login)',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 6,
-				content: __( 'Advanced styling options', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Advanced styling options', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 7,
-				content: __( 'Email template customization', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Email template customization', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
@@ -97,7 +97,7 @@ export const sections = [
 				id: 8,
 				content: __(
 					'Advanced form validation (customizable validation messages)',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -105,36 +105,36 @@ export const sections = [
 		],
 	},
 	{
-		title: __( 'Login Form', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Login Form', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
-				content: __( 'Ajax-based login form', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Ajax-based login form', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Google reCaptcha support (v2, v3)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Google reCaptcha support (v2, v3)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Advanced styling options', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Advanced styling options', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Global Styles', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Global Styles', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
 				content: __(
 					'Site-wide Uniform Styling',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -143,7 +143,7 @@ export const sections = [
 				id: 1,
 				content: __(
 					'Create and manage multiple styles for different block contexts',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -152,118 +152,118 @@ export const sections = [
 				id: 1,
 				content: __(
 					'Add block default styling for consistent design',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 1,
-				content: __( 'Manage colors, spacing & font-sizes in the Spectra admin dashboard', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Manage colors, spacing & font-sizes in the Spectra admin dashboard', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 1,
-				content: __( 'Sync color shades with your selected theme', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Sync color shades with your selected theme', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 1,
-				content: __( 'Use predefined Global Style classes to fine - tune blocks', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Use predefined Global Style classes to fine - tune blocks', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Dynamic Content', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
-				content: __( 'Rich text dynamic content support', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Rich text dynamic content support', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Link field dynamic content support', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Link field dynamic content support', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 
 				id: 3,
-				content: __( 'Add multiple dynamic content to a single block', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Add multiple dynamic content to a single block', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 4,
-				content: __( 'Custom Post Fields', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Custom Post Fields', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 5,
-				content: __( 'Dynamic Images & Backgrounds', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Dynamic Images & Backgrounds', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 6,
-				content: __( 'Third-party plugin fields (ACF, Pods, Meta Box)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Third-party plugin fields (ACF, Pods, Meta Box)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 
 				id: 7,
-				content: __( 'Advanced Text Formatting (Character Limits & Prefix/Suffix)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Advanced Text Formatting (Character Limits & Prefix/Suffix)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 
 				id: 8,
-				content: __( 'Content Fallback Strategy (A Safety Net for any Missing Data)', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Content Fallback Strategy (A Safety Net for any Missing Data)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Advanced Animations', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Advanced Animations', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
-				content: __( 'Animation Timing Controls', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Animation Timing Controls', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Custom Animation Easing', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Custom Animation Easing', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Scroll-based Repeat Animations', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Scroll-based Repeat Animations', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Popup Builder Pro', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Popup Builder Pro', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
 				content: __(
 					'Create attention-grabbing popups anywhere on your website',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
@@ -272,7 +272,7 @@ export const sections = [
 				id: 2,
 				content: __(
 					'Visually stunning Info Bars and Popups tailored to your brand',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
@@ -281,7 +281,7 @@ export const sections = [
 				id: 3,
 				content: __(
 					'Push Content for flash sales, quick promotions, and exclusive deals',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
@@ -290,7 +290,7 @@ export const sections = [
 				id: 4,
 				content: __(
 					'Advanced Triggers (Exit Intent, Page Load, and Custom Class)',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -299,98 +299,98 @@ export const sections = [
 				id: 5,
 				content: __(
 					'Conditionally target specific pages or display site-wide',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 6,
-				content: __( 'Cookies to manage automatic triggering', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Cookies to manage automatic triggering', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Slider Pro', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Slider Pro', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
 				content: __(
 					'Create slides with autoplay, transition, and pause effects, etc.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Add any blocks inside the slides', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Add any blocks inside the slides', 'spectra-blocks' ),
 				iconFree: true,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Slide-per-view option', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Slide-per-view option', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 4,
-				content: __( 'Customize slide navigation styles', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Customize slide navigation styles', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 5,
-				content: __( 'Add unique navigation slugs to individual slides', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Add unique navigation slugs to individual slides', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Countdown Timer Pro', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Countdown Timer Pro', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
 				content: __(
 					'Add a countdown timer with flexible options for days, hours, minutes, and seconds',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Set an evergreen countdown timer', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Set an evergreen countdown timer', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 3,
-				content: __( 'Advanced Expiry Actions', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Advanced Expiry Actions', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 		],
 	},
 	{
-		title: __( 'Modal Pro', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Modal Pro', 'spectra-blocks' ),
 		items: [
 			{
 				id: 1,
 				content: __(
 					'Customizable Modal Design',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: true,
 				iconPro: true,
 			},
 			{
 				id: 2,
-				content: __( 'Add basic triggers to open the modal', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Add basic triggers to open the modal', 'spectra-blocks' ),
 				iconFree: true,
 				iconPro: true,
 			},
@@ -398,7 +398,7 @@ export const sections = [
 				id: 3,
 				content: __(
 					'Add advanced triggers to choose when and how to display the modal',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
@@ -407,20 +407,20 @@ export const sections = [
 				id: 4,
 				content: __(
 					'Add off-canvas display options for flexible positioning',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 5,
-				content: __( 'Modal positioning and entrance effects', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Modal positioning and entrance effects', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
 				id: 6,
-				content: __( 'Implement cookies to manage automatic triggering', 'ultimate-addons-for-gutenberg' ),
+				content: __( 'Implement cookies to manage automatic triggering', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},

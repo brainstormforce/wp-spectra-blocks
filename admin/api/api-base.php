@@ -2,7 +2,7 @@
 /**
  * Api Base.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Api;
@@ -22,7 +22,7 @@ abstract class Api_Base extends \WP_REST_Controller {
 	 *
 	 * @var string
 	 */
-	protected $namespace = 'uag/v1';
+	protected $namespace = 'spectra-blocks/v1';
 
 	/**
 	 * Register API routes.

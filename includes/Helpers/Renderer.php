@@ -15,13 +15,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class Renderer.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Renderer {
 	/**
 	 * We have icon list in chunks in this variable we will merge all insides array into one single array.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array
 	 */
 	public static $icon_array_merged = array();
@@ -29,7 +29,7 @@ class Renderer {
 	/**
 	 * Generate SVG.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param string  $icon             Icon name or raw SVG content.
 	 * @param boolean $flip_for_rtl     Indicated if the current SVG needs to be flipped in RTL mode.
 	 * @param array   $additional_props Any additional props.
@@ -146,7 +146,7 @@ class Renderer {
 	/**
 	 * Render the background video component if required.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param array $background The background attribute.
 	 * @return void
 	 */
@@ -194,7 +194,7 @@ class Renderer {
 	/**
 	 * Get icon name for accessibility and other string contexts.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $icon_value The icon value (string for icon library, array for custom SVG).
 	 * @return string The icon name or description.
 	 */
@@ -225,7 +225,7 @@ class Renderer {
 	/**
 	 * Get uploaded SVG content
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param int $attachment_id The WordPress media attachment ID.
 	 * @return string SVG content or empty string if file not found.
 	 */
@@ -257,7 +257,7 @@ class Renderer {
 	/**
 	 * Add attributes to SVG without complex processing
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param string  $svg_content SVG content.
 	 * @param array   $additional_props Additional props.
 	 * @param boolean $flip_for_rtl Whether to apply RTL transformation.

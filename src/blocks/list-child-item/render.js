@@ -3,7 +3,7 @@
  */
 import { useBlockProps, InnerBlocks, useInnerBlocksProps, store as blockEditorStore } from '@wordpress/block-editor';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { memo, useEffect } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import { useSpectraStyles } from '@spectra-hooks';
  * @since x.x.x
  * @return {Element} Element to render.
  */
-const Render = ( props ) => {
+const Render = memo( ( props ) => {
         const {
                 clientId,
                 attributes,
@@ -157,6 +157,6 @@ const Render = ( props ) => {
                         <div { ...innerBlocksProps } />
                 </li>
         );
-};
+} );
 
 export default Render;

@@ -29,7 +29,7 @@ const withSpectraPluginControls = createHigherOrderComponent( ( BlockEdit ) => {
 							<p className="spectra-help-title">
 								{ __(
 									'Need Help!',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 							</p>
 							<div className="spectra-video-link">
@@ -49,7 +49,7 @@ const withSpectraPluginControls = createHigherOrderComponent( ( BlockEdit ) => {
 								<Button onClick={ openGuide }>
 									{ __(
 										'Watch Video Guide',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 								</Button>
 							</div>
@@ -57,7 +57,7 @@ const withSpectraPluginControls = createHigherOrderComponent( ( BlockEdit ) => {
 						{ isOpen && (
 							<Guide
 								className="spectra-video-popup-guide"
-								contentLabel={ __( 'Guide', 'ultimate-addons-for-gutenberg' ) }
+								contentLabel={ __( 'Guide', 'spectra-blocks' ) }
 								onFinish={ closeGuide }
 								pages={ [
 									{

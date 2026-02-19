@@ -28,7 +28,7 @@ class Helper {
 	 * @param string  $key              The option key.
 	 * @param mixed   $default          The option default value if option is not available.
 	 * @param boolean $network_override Whether to allow the network admin setting to be overridden on subsites.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return mixed  The option value.
 	 */
 	public static function get_admin_settings_option( $key, $default = false, $network_override = false ) {
@@ -42,7 +42,7 @@ class Helper {
 	 * @param string $key              The option key.
 	 * @param mixed  $value            The value to update.
 	 * @param bool   $network_override Whether to allow the network_override admin setting to be overridden on subsites.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return bool True if the option was updated, false otherwise.
 	 */
 	public static function update_admin_settings_option( $key, $value, $network_override = false ) {
@@ -55,7 +55,7 @@ class Helper {
 	 *
 	 * @param string  $key              The option key.
 	 * @param boolean $network_override Whether to allow the network admin setting to be overridden on subsites.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public static function delete_admin_settings_option( $key, $network_override = false ) {
@@ -70,7 +70,7 @@ class Helper {
 	/**
 	 * Check if Zip AI is authorized.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return boolean True if Zip AI is authorized, false otherwise.
 	 */
 	public static function is_authorized() {
@@ -98,7 +98,7 @@ class Helper {
 	 *
 	 * @param string $key The setting key.
 	 * @param mixed  $default The default value to return if the setting is not found.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return mixed|array The setting value, or the default.
 	 */
 	public static function get_setting( $key = '', $default = array() ) {
@@ -125,14 +125,14 @@ class Helper {
 	 * @param string $endpoint The endpoint to get the response from.
 	 * @param array  $body The data to be passed as the request body, if any.
 	 * @param array  $extra_args Extra arguments to be passed to the request, if any.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return array The Zip AI Response.
 	 */
 	public static function get_credit_server_response( $endpoint, $body = [], $extra_args = [] ) {
 		// If the endpoint is not a string, then abandon ship.
 		if ( ! is_string( $endpoint ) ) {
 			return array(
-				'error' => __( 'The Zip AI Endpoint was not declared', 'spectra' ),
+				'error' => __( 'The Zip AI Endpoint was not declared', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -142,7 +142,7 @@ class Helper {
 		// If the Zip Auth Token is not set, then abandon ship.
 		if ( empty( $auth_token ) || ! is_string( $auth_token ) ) {
 			return array(
-				'error' => __( 'The Zip AI Auth Token is not set.', 'spectra' ),
+				'error' => __( 'The Zip AI Auth Token is not set.', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -176,8 +176,8 @@ class Helper {
 
 		// If the response was an error.
 		if ( is_wp_error( $response ) || empty( $response ) ) {
-			$error_message = __( 'Empty response from API.', 'spectra' );
-			$error_code    = __( 'empty_response', 'spectra' );
+			$error_message = __( 'Empty response from API.', 'ultimate-addons-for-gutenberg' );
+			$error_code    = __( 'empty_response', 'ultimate-addons-for-gutenberg' );
 
 			if ( is_wp_error( $response ) ) {
 				$error_message = $response->get_error_message();
@@ -197,7 +197,7 @@ class Helper {
 
 		// Check if the status code is 403 or 401 error.
 		if ( 401 === $status_code || 403 === $status_code ) {
-			$error_message = isset( $response_body['error'] ) ? $response_body['error'] : __( 'You do not have permission to perform this action.', 'spectra' );
+			$error_message = isset( $response_body['error'] ) ? $response_body['error'] : __( 'You do not have permission to perform this action.', 'ultimate-addons-for-gutenberg' );
 			$error_code    = isset( $response_body['code'] ) ? $response_body['code'] : 'forbidden';
 
 			return array(
@@ -208,7 +208,7 @@ class Helper {
 
 		// If the response body is not a JSON, then abandon ship.
 		if ( 200 !== $status_code || empty( $response_body ) ) {
-			$error_message = __( 'Encountered an error while processing your request. Please try again.', 'spectra' );
+			$error_message = __( 'Encountered an error while processing your request. Please try again.', 'ultimate-addons-for-gutenberg' );
 			$error_code    = 'unknown_error';
 
 			return array(
@@ -225,14 +225,14 @@ class Helper {
 	 * Get a response from the ZipWP API server.
 	 *
 	 * @param string $endpoint The endpoint to get the response from.
-	 * @since 0.0.1
+	 * @since 1.1.2
 	 * @return array The ZipWP API Response.
 	 */
 	public static function get_zipwp_api_response( $endpoint ) {
 		// If the endpoint is not a string, then abandon ship.
 		if ( ! is_string( $endpoint ) ) {
 			return array(
-				'error' => __( 'The ZipWP Endpoint was not declared', 'spectra' ),
+				'error' => __( 'The ZipWP Endpoint was not declared', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -242,7 +242,7 @@ class Helper {
 		// If the ZipWP Token is not set, then abandon ship.
 		if ( empty( $zipwp_token ) || ! is_string( $zipwp_token ) ) {
 			return array(
-				'error' => __( 'The ZipWP Token is not set.', 'spectra' ),
+				'error' => __( 'The ZipWP Token is not set.', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -266,7 +266,7 @@ class Helper {
 		// If the response was an error, or not a 200 status code, then abandon ship.
 		if ( is_wp_error( $response ) || empty( $response['response'] ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return array(
-				'error' => __( 'The ZipWP API server is not responding.', 'spectra' ),
+				'error' => __( 'The ZipWP API server is not responding.', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -276,7 +276,7 @@ class Helper {
 		// If the response body is not a JSON, then abandon ship.
 		if ( empty( $response_body ) || ! json_decode( $response_body ) ) {
 			return array(
-				'error' => __( 'The ZipWP API server encountered an error.', 'spectra' ),
+				'error' => __( 'The ZipWP API server encountered an error.', 'ultimate-addons-for-gutenberg' ),
 			);
 		}
 
@@ -288,7 +288,7 @@ class Helper {
 	 * Get the decrypted token from the Zip AI Settings.
 	 *
 	 * @param string $token_name The name of the token.
-	 * @since 0.0.1
+	 * @since 1.1.2
 	 * @return string The decrypted token.
 	 */
 	private static function get_decrypted_token( $token_name ) {
@@ -307,7 +307,7 @@ class Helper {
 	/**
 	 * Get the decrypted auth token.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The decrypted auth token.
 	 */
 	public static function get_decrypted_auth_token() {
@@ -317,7 +317,7 @@ class Helper {
 	/**
 	 * Get the decrypted ZipWP token.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.2
 	 * @return string The decrypted ZipWP token.
 	 */
 	public static function get_decrypted_zipwp_token() {
@@ -327,7 +327,7 @@ class Helper {
 	/**
 	 * Get cached credit details.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 *
 	 * @return array|false
 	 */
@@ -339,7 +339,7 @@ class Helper {
 	/**
 	 * Cache credit details.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 *
 	 * @param array $details   The credit details to cache.
 	 * @param int   $duration  The cache duration in seconds.
@@ -353,7 +353,7 @@ class Helper {
 	/**
 	 * This helper function returns credit details.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 * @return array
 	 */
 	public static function get_credit_details() {
@@ -397,7 +397,7 @@ class Helper {
 	/**
 	 * Get fresh credit details without cache.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 * @return array
 	 */
 	public static function get_fresh_credit_details() {
@@ -437,7 +437,7 @@ class Helper {
 	/**
 	 * This helper function returns the current plan details.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.2
 	 * @return array
 	 */
 	public static function get_current_plan_details() {
@@ -503,7 +503,7 @@ class Helper {
 	 * Get the authorization middleware url.
 	 *
 	 * @param array $params An array of parameters to add to the middleware URL.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The authorization middleware url.
 	 */
 	public static function get_auth_middleware_url( $params = [] ) {
@@ -565,7 +565,7 @@ class Helper {
 	/**
 	 * Clear the credit details cache.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 * @return void
 	 */
 	public static function clear_credit_details_cache() {
@@ -575,7 +575,7 @@ class Helper {
 	/**
 	 * Clear the current plan cache.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.5
 	 * @return void
 	 */
 	public static function clear_current_plan_cache() {
@@ -585,7 +585,7 @@ class Helper {
 	/**
 	 * Get the revoke url for the auth token and clear all caches.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The authorization revoke url.
 	 */
 	public static function get_auth_revoke_url() {

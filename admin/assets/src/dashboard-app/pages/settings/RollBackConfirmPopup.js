@@ -11,7 +11,7 @@ const RollBackConfirmPopup = ( props ) => {
 	};
 
 	const onContinueClick = () => {
-		const rollbackUrl = uag_react.rollback_url.replace( 'VERSION', previousVersionSelect );
+		const rollbackUrl = spectra_blocks_react.rollback_url.replace( 'VERSION', previousVersionSelect );
 		setopenPopup( false );
 		setconfirmPopup( true );
 		window.location.href = rollbackUrl;
@@ -76,7 +76,7 @@ const ConfirmationPopup = ( props ) => {
 				<div className="p-2">
 					<div className="flex justify-end items-center w-full gap-3">
 						<Button
-							className="uagb-outline-button"
+							className="spectra-blocks-outline-button"
 							size="md"
 							tag="button"
 							type="button"
@@ -88,7 +88,7 @@ const ConfirmationPopup = ( props ) => {
 						</Button>
 
 						<Button
-							className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover"
+							className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover"
 							size="md"
 							tag="button"
 							type="button"

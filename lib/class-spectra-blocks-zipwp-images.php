@@ -1,51 +1,44 @@
 <?php
 /**
- * Init
+ * ZipWP Images library loader for Spectra Blocks.
  *
- * @since 0.0.1
- * @package ZipWP Images
+ * @package SpectraBlocks
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Spectra_Zipwp_Images' ) ) :
+if ( ! class_exists( 'Spectra_Blocks_Zipwp_Images' ) ) :
 
 	/**
-	 * Admin
-	 * 
-	 * @since 0.0.1
+	 * Loads the latest ZipWP Images library available in the environment.
+	 *
+	 * @since 1.0.0
 	 */
-	class Spectra_Zipwp_Images {
+	class Spectra_Blocks_Zipwp_Images {
 
 		/**
-		 * Instance
+		 * Singleton instance.
 		 *
-		 * @since 0.0.1
-		 * @var (Object) Spectra_Zipwp_Images
+		 * @var Spectra_Blocks_Zipwp_Images|null
 		 */
 		private static $instance = null;
 
 		/**
-		 * Get Instance
+		 * Get singleton instance.
 		 *
-		 * @since 0.0.1
-		 *
-		 * @return object
+		 * @return Spectra_Blocks_Zipwp_Images
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
 				self::$instance = new self();
 			}
-
 			return self::$instance;
 		}
 
 		/**
 		 * Constructor.
-		 *
-		 * @since 0.0.1
 		 */
 		private function __construct() {
 			$this->version_check();
@@ -53,56 +46,48 @@ if ( ! class_exists( 'Spectra_Zipwp_Images' ) ) :
 		}
 
 		/**
-		 * Version Check
+		 * Check for the latest version of the ZipWP Images library.
 		 *
-		 * @since 0.0.1
-		 * 
 		 * @return void
 		 */
 		public function version_check() {
+			$file = realpath( __DIR__ . '/zipwp-images/version.json' );
 
-            $file = realpath( dirname( __DIR__ ) . '/lib/zipwp-images/version.json' );
+			if ( ! is_file( $file ) ) {
+				return;
+			}
 
-			// Is file exist?
-			if ( is_file( $file ) ) {
-				// @codingStandardsIgnoreStart
-				$file_data = json_decode( file_get_contents( $file ), true );
-				// @codingStandardsIgnoreEnd
-				global $zipwp_images_version, $zipwp_images_init;
-				$path    = realpath( dirname( __DIR__ ) . '/lib/zipwp-images/zipwp-images.php' );
-				$version = isset( $file_data['zipwp-images'] ) ? $file_data['zipwp-images'] : 0;
-                
-				if ( false == $zipwp_images_version ) {
-                    $zipwp_images_version = '1.0.0';
-                }
-                
-				// Compare versions.
-				if ( version_compare( $version, $zipwp_images_version, '>=' ) ) {
-					$zipwp_images_version = $version;
-					$zipwp_images_init    = $path;
-				}
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$file_data = json_decode( file_get_contents( $file ), true );
+
+			global $zipwp_images_version, $zipwp_images_init;
+
+			$path    = realpath( __DIR__ . '/zipwp-images/zipwp-images.php' );
+			$version = isset( $file_data['zipwp-images'] ) ? $file_data['zipwp-images'] : 0;
+
+			if ( null === $zipwp_images_version ) {
+				$zipwp_images_version = '1.0.0';
+			}
+
+			if ( version_compare( $version, $zipwp_images_version, '>=' ) ) {
+				$zipwp_images_version = $version;
+				$zipwp_images_init    = $path;
 			}
 		}
 
 		/**
-		 * Load latest plugin
+		 * Load the latest ZipWP Images library.
 		 *
-		 * @since 0.0.1
-		 * 
 		 * @return void
 		 */
 		public function load() {
-			global $zipwp_images_version, $zipwp_images_init;
-			if ( is_file( realpath( $zipwp_images_init ) ) ) {
+			global $zipwp_images_init;
+			if ( ! empty( $zipwp_images_init ) && is_file( realpath( $zipwp_images_init ) ) ) {
 				include_once realpath( $zipwp_images_init );
 			}
 		}
-
 	}
 
-	/**
-	 * Kicking this off by calling 'get_instance()' method
-	 */
-	Spectra_Zipwp_Images::get_instance();
+	Spectra_Blocks_Zipwp_Images::get_instance();
 
 endif;

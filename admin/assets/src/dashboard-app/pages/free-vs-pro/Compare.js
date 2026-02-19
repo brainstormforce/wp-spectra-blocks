@@ -14,7 +14,7 @@ const Compare = () => {
 
 	useEffect( () => {
 		const currentButtonText = sprintf(
-			/* translators: abbreviation for units */ __( ' %s', 'ultimate-addons-for-gutenberg' ),
+			/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
 			getSpectraProTitle()
 		);
 
@@ -24,31 +24,31 @@ const Compare = () => {
 	// Function to open the pricing page in a new tab when the "Upgrade Now" button is clicked.
 	const onUpgradeNowClick = () => {
 		window.open(
-			uag_admin_react.spectra_website?.freeVsPro,
+			spectra_blocks_admin_react.spectra_website?.freeVsPro,
 			'_blank'
 		);
 	};
 
 	const getSpectraProTitle = () => {
-		return 'Installed' === uag_react.pro_plugin_status
-			? __( 'Activate Now', 'ultimate-addons-for-gutenberg' )
-			: __( 'Get Spectra Pro Now', 'ultimate-addons-for-gutenberg' );
+		return 'Installed' === spectra_blocks_react.pro_plugin_status
+			? __( 'Activate Now', 'spectra-blocks' )
+			: __( 'Get Spectra Pro Now', 'spectra-blocks' );
 	};
 
 	const activatePro = () => {
-		const isThisNull = uag_react.pro_plugin_status;
+		const isThisNull = spectra_blocks_react.pro_plugin_status;
 
 		if ( 'Install' !== isThisNull ) {
 			// Create an object with the required data to activate the 'spectra' Pro feature
 			const data = {
-				security: uag_react.pro_activate_nonce,
+				security: spectra_blocks_react.pro_activate_nonce,
 				value: 'spectra',
 			};
-			setButtonText( uag_react.plugin_activating_text );
+			setButtonText( spectra_blocks_react.plugin_activating_text );
 			// Call the getApiData function with the specified parameters
 			const getApiFetchData = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_pro_activate',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_pro_activate',
 				data,
 			} );
 
@@ -67,15 +67,15 @@ const Compare = () => {
 	const renderIcon = ( isAvailable ) => ( isAvailable ? <Check color="#16A34A" size={20} /> : <X color="#DC2626" size={20} /> );
 
 	const getLabel = ( item, type ) => {
-		if ( item.id === 10 && item.content === __( 'Navigation Menu', 'ultimate-addons-for-gutenberg' ) ) {
+		if ( item.id === 10 && item.content === __( 'Navigation Menu', 'spectra-blocks' ) ) {
 			if ( type === 'pro' ) {
 				return item.iconPro
-					? __( 'Advanced', 'ultimate-addons-for-gutenberg' )
-					: __( 'Basic', 'ultimate-addons-for-gutenberg' );
+					? __( 'Advanced', 'spectra-blocks' )
+					: __( 'Basic', 'spectra-blocks' );
 			}
 			return item.iconPro
-				? __( 'Basic', 'ultimate-addons-for-gutenberg' )
-				: __( 'Advanced', 'ultimate-addons-for-gutenberg' );
+				? __( 'Basic', 'spectra-blocks' )
+				: __( 'Advanced', 'spectra-blocks' );
 		}
 		return type === 'pro' ? renderIcon( item.iconFree ) : renderIcon( item.iconPro );
 	};
@@ -110,20 +110,20 @@ const Compare = () => {
 				<div className="flex flex-col sm:flex-row custom:flex-col sm:items-center items-start custom:items-start justify-between sm:gap-0 gap-5 pb-6">
 						<div className="flex flex-col gap-1">
 							<div className="m-0 text-xl font-semibold custom:pt-0 pt-0 text-text-primary">
-						{ __( 'Spectra Free VS Pro', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Spectra Free VS Pro', 'spectra-blocks' ) }
 					</div>
 							<p className="m-0 text-sm font-normal text-text-secondary">
 						{ __(
 							'Compare the features to find the best option for your website.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					</p>
 				</div>
 				<div className="flex items-center sm:p-1 p-0">
-					{ uag_react.pro_plugin_status !== 'Activated' && (
+					{ spectra_blocks_react.pro_plugin_status !== 'Activated' && (
 						<Button
 							iconPosition="right"
-							variant="primary" className="uagb-remove-ring"
+							variant="primary" className="spectra-blocks-remove-ring"
 							onClick={ () => activatePro() }
 						>
 							{ buttonText }
@@ -136,8 +136,8 @@ const Compare = () => {
 					<Fragment key={ section.title }>
 						<div className="w-full flex fle-row gap-4 p-3 items-center justify-between bg-[#F9FAFB] text-sm text-text-primary font-medium">
 							<p className="m-0 grow">{ section.title }</p>
-							<p className="m-0 min-w-[18%] w-min text-center">{ __( 'Free', 'ultimate-addons-for-gutenberg' ) }</p>
-							<p className="m-0 min-w-[18%] w-min text-center">{ __( 'Pro', 'ultimate-addons-for-gutenberg' ) }</p>
+							<p className="m-0 min-w-[18%] w-min text-center">{ __( 'Free', 'spectra-blocks' ) }</p>
+							<p className="m-0 min-w-[18%] w-min text-center">{ __( 'Pro', 'spectra-blocks' ) }</p>
 						</div>
 
 						{ renderItems( section.items ) }
@@ -145,7 +145,7 @@ const Compare = () => {
 				) ) }
 				<div className="pt-6 m-auto">
 					<Button
-						className="m-0 inline-flex items-center justify-center gap-1 text-base font-semibold text-link-primary no-underline hover:underline uagb-remove-ring"
+						className="m-0 inline-flex items-center justify-center gap-1 text-base font-semibold text-link-primary no-underline hover:underline spectra-blocks-remove-ring"
 						variant="link"
 						onClick={() => activatePro()}
 					>

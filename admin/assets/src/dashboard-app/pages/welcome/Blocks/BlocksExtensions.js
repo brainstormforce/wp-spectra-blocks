@@ -13,7 +13,7 @@ const BlocksExtensions = () => {
 
 	const blocks = [
 		{
-			title: __( 'Animations', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Animations', 'spectra-blocks' ),
 			slug: 'animations-extension',
 			icon: 'animation',
 			is_pro: false,
@@ -22,7 +22,7 @@ const BlocksExtensions = () => {
 			link: 'animations-2'
 		},
 		{
-			title: __( 'Image Masking', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Image Masking', 'spectra-blocks' ),
 			slug: 'image-masking',
 			icon: 'image-masking',
 			is_pro: false,
@@ -63,7 +63,7 @@ const BlocksExtensions = () => {
 				} }
 			>
 				<p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Extensions', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Extensions', 'spectra-blocks' ) }
 				</p>
 			</div>
 			<div className="flex flex-col rounded-lg p-4">

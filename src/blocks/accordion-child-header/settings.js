@@ -17,7 +17,7 @@ import {
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
+import { AccordionItemBlockControls } from '@spectra/accordion/helper';
 
 /**
  * Get description for HTML element types.
@@ -29,11 +29,11 @@ import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
 const getElementDescription = ( element ) => {
 	switch ( element ) {
 		case 'button':
-			return __( 'provides semantic button functionality with built-in keyboard and screen reader support for accordion interactions.', 'ultimate-addons-for-gutenberg' );
+			return __( 'provides semantic button functionality with built-in keyboard and screen reader support for accordion interactions.', 'spectra-blocks' );
 		case 'div':
-			return __( 'creates a generic container element with custom ARIA attributes for accordion functionality.', 'ultimate-addons-for-gutenberg' );
+			return __( 'creates a generic container element with custom ARIA attributes for accordion functionality.', 'spectra-blocks' );
 		default:
-			return __( 'provides the structural foundation for the accordion header.', 'ultimate-addons-for-gutenberg' );
+			return __( 'provides the structural foundation for the accordion header.', 'spectra-blocks' );
 	}
 };
 
@@ -61,7 +61,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group='settings'>
 			<ToolsPanel
-				label={ __( 'Header', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Header', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						headerElement: 'button',
@@ -71,21 +71,22 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => headerElement && headerElement !== 'button' }
-					label={ __( 'HTML Element', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'HTML Element', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { headerElement: 'button' } ) }
+					resetAllFilter={ () => ( { headerElement: 'button' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'HTML Element', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'HTML Element', 'spectra-blocks' ) }
 						value={ headerElement || 'button' }
 						onChange={ ( value ) => setAttributes( { headerElement: value } ) }
 						isBlock
 					>
-						<ToggleGroupControlOption value="button" label={ __( 'Button', 'ultimate-addons-for-gutenberg' ) } />
-						<ToggleGroupControlOption value="div" label={ __( 'Div', 'ultimate-addons-for-gutenberg' ) } />
+						<ToggleGroupControlOption value="button" label={ __( 'Button', 'spectra-blocks' ) } />
+						<ToggleGroupControlOption value="div" label={ __( 'Div', 'spectra-blocks' ) } />
 					</ToggleGroupControl>
 
 					{/* Notice showing element description */}
@@ -100,7 +101,7 @@ const BlockSettings = memo( ( props ) => {
 								/* translators: 1: HTML element type (Button or Div), 2: element description */
 									__(
 										'The %1$s HTML element %2$s',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 									headerElement === 'button' ? 'Button' : 'Div',
 									getElementDescription( headerElement || 'button' )
@@ -139,14 +140,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {

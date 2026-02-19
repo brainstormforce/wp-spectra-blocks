@@ -7,13 +7,16 @@
 
 namespace Spectra\Extensions;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
  * Sticky Container class.
  *
- * @since 0.0.1-beta.2
+ * @since 3.0.0-beta.2
  */
 class StickyContainer {
 
@@ -22,7 +25,7 @@ class StickyContainer {
 	/**
 	 * Flag indicating if sticky container assets are needed.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @var bool
 	 */
@@ -34,7 +37,7 @@ class StickyContainer {
 	 * Hooks into render_block to add sticky positioning styles to blocks
 	 * and enqueue frontend styles and scripts when needed.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @return void
 	 */
@@ -50,7 +53,7 @@ class StickyContainer {
 	 * Ensures the block has the 'stickyContainer' attribute defined and injects
 	 * the sticky positioning styles and classes into the block's wrapper tag using WP_HTML_Tag_Processor.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block instance.
@@ -81,7 +84,7 @@ class StickyContainer {
 	/**
 	 * Determine whether the block should be processed for sticky container.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @param array $block Block data.
 	 * @return bool
@@ -95,7 +98,7 @@ class StickyContainer {
 	/**
 	 * Retrieve sticky container settings from block attributes.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @param array $attrs Block attributes.
 	 * @return array|null Sticky settings if enabled, null otherwise.
@@ -137,7 +140,7 @@ class StickyContainer {
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject sticky classes and CSS custom properties.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @param string $content Block content.
 	 * @param array  $sticky_settings Sticky positioning settings.
@@ -194,7 +197,7 @@ class StickyContainer {
 	 *
 	 * Only container blocks are allowed.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @param string $block_name Block name.
 	 * @return bool
@@ -211,20 +214,20 @@ class StickyContainer {
 	 * allowing conditional loading only when sticky container is actually used.
 	 * All styling is handled via JavaScript inline styles for better performance.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @return void
 	 */
 	public function register_frontend_assets() {
 		// Register JS.
-		$js_file       = SPECTRA_DIR . 'build/extensions/sticky-container/view.js';
-		$js_url        = SPECTRA_URL . 'build/extensions/sticky-container/view.js';
-		$js_asset_file = SPECTRA_DIR . 'build/extensions/sticky-container/view.asset.php';
+		$js_file       = SPECTRA_BLOCKS_DIR . 'build/extensions/sticky-container/view.js';
+		$js_url        = SPECTRA_BLOCKS_URL . 'build/extensions/sticky-container/view.js';
+		$js_asset_file = SPECTRA_BLOCKS_DIR . 'build/extensions/sticky-container/view.asset.php';
 
 		if ( file_exists( $js_file ) ) {
 			$js_asset = file_exists( $js_asset_file ) ? require $js_asset_file : array(
 				'dependencies' => array(),
-				'version'      => SPECTRA_VER,
+				'version'      => SPECTRA_BLOCKS_VER,
 			);
 
 			wp_register_script(
@@ -243,7 +246,7 @@ class StickyContainer {
 	 * This runs on wp_footer hook, which executes after all blocks have been rendered
 	 * and processed, ensuring the script is only loaded when actually needed.
 	 *
-	 * @since 0.0.1-beta.2
+	 * @since 3.0.0-beta.2
 	 *
 	 * @return void
 	 */

@@ -7,41 +7,41 @@ import { applyFilters } from '@wordpress/hooks';
 const Navigation = () => {
 	const menus = [
 		{
-			name: __( 'Welcome', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'Welcome', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: '',
 		},
 		{
-			name: __( 'Settings', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'Settings', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: 'settings',
 		},
 		{
-			name: __( 'Popup Builder', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'Popup Builder', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: 'spectra-popup',
 		},
 		{
-			name: __( 'Learn', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'Learn', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: 'learn',
 		},
 	];
 
 	// Conditionally add the Free vs Pro menu item
-	if ( uag_react.pro_plugin_status === 'Install' ) {
+	if ( spectra_blocks_react.pro_plugin_status === 'Install' ) {
 		menus.push( {
-			name: __( 'Free vs Pro', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'Free vs Pro', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: 'free-vs-pro',
 		} );
 	}
 
 	// Only add the AI Features tab before settings if Zip AI data was successfully localized.
-	if ( uag_react?.zip_ai_admin_nonce ) {
+	if ( spectra_blocks_react?.zip_ai_admin_nonce ) {
 		menus.splice( 2, 0, {
-			name: __( 'AI Features', 'ultimate-addons-for-gutenberg' ),
-			slug: uag_react.home_slug,
+			name: __( 'AI Features', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
 			path: 'ai-features',
 		} );
 	}
@@ -55,7 +55,7 @@ const Navigation = () => {
 	}
 
 	const query = new URLSearchParams( useLocation()?.search );
-	const activePage = query.get( 'page' ) ? query.get( 'page' ) : uag_react.home_slug;
+	const activePage = query.get( 'page' ) ? query.get( 'page' ) : spectra_blocks_react.home_slug;
 	const activePath = query.get( 'path' ) ? query.get( 'path' ) : '';
 
 	return (
@@ -66,7 +66,7 @@ const Navigation = () => {
 						menu.path === 'spectra-popup' ? (
 						<a
 							index={key}
-							href={`${uag_react.admin_base_url}edit.php?post_type=spectra-popup`}
+							href={`${spectra_blocks_react.admin_base_url}edit.php?post_type=spectra-popup`}
 							target="_self"
 							className={'content-center no-underline relative h-full py-0 px-1 m-0 bg-transparent outline-none shadow-none border-0 focus:outline-none text-[#4B5563] text-sm font-medium cursor-pointer'}
 						>
@@ -95,10 +95,10 @@ const Navigation = () => {
 						)}
 				</Fragment>
 			) ) }
-			{ uag_react.pro_plugin_status === 'Install' && (
+			{ spectra_blocks_react.pro_plugin_status === 'Install' && (
 				<a
 					className="content-center no-underline h-full inline-flex items-center py-0 px-1 m-0 bg-transparent outline-none shadow-none border-0 focus:outline-none cursor-pointer text-sm font-semibold text-brand-primary-600"
-					href={uag_admin_react.spectra_website?.topBar}
+					href={spectra_blocks_admin_react.spectra_website?.topBar}
 					target="_blank"
 					rel="noreferrer"
 				>

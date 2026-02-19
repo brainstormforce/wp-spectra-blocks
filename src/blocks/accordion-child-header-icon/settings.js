@@ -49,11 +49,11 @@ export const BlockSettings = ( props ) => {
 	const tabs = [
 		{
 			name: 'collapsed',
-			title: __( 'Collapsed', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Collapsed', 'spectra-blocks' ),
 		},
 		{
 			name: 'expanded',
-			title: __( 'Expanded', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Expanded', 'spectra-blocks' ),
 		},
 	];
 
@@ -76,7 +76,7 @@ export const BlockSettings = ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Icon', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						icon: undefined,
@@ -97,7 +97,7 @@ export const BlockSettings = ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => ( !! icon || !! iconSecondary || ! flipForRTL || ! flipForRTLSecondary ) }
-					label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( {
 						icon: undefined,
 						iconSecondary: undefined,
@@ -124,9 +124,9 @@ export const BlockSettings = ( props ) => {
 									<ToggleControl
 										__nextHasNoMarginBottom
 										checked={ tabAttributes[ tab.name ].flipForRTLValue }
-										label={ __( 'Flip Icon for Right-To-Left', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 										onChange={ () => setAttributes( { [ tabAttributes[ tab.name ].flipForRTLLabel ]: ! tabAttributes[ tab.name ].flipForRTLValue } ) }
-										help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'ultimate-addons-for-gutenberg' ) }
+										help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
 									/>
 								</VStack>
 							) }
@@ -138,7 +138,7 @@ export const BlockSettings = ( props ) => {
 				 */}
 				<ToolsPanelItem
 					hasValue={ () => !! rotation }
-					label={ __( 'Rotation', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Rotation', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { rotation: undefined } ) }
 					resetAllFilter={ () => ( {
 						rotation: undefined,
@@ -146,7 +146,7 @@ export const BlockSettings = ( props ) => {
 					panelId={ clientId }
 				>
 					<AnglePickerControl
-						label={ __( 'Rotation', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Rotation', 'spectra-blocks' ) }
 						onChange={ ( value ) => {
 							setAttributes( { rotation: value } );
 						} }
@@ -186,7 +186,7 @@ const DimensionSettings = memo( ( props ) => {
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
 				hasValue={ () => !! size }
-				label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Size', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { size: undefined } ) }
 				resetAllFilter={ () => ( {
 					size: undefined,
@@ -196,7 +196,7 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<UnitControl
 					__next40pxDefaultSize
-					label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Size', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ size }
 					min={ 0 }
@@ -233,14 +233,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Icon Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Icon Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( { backgroundColorHover: undefined } ),

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/slider-child",
+  "version": "3.0.0",
+  "title": "Slide",
+  "category": "spectra-blocks-inner",
+  "parent": [
+    "spectra/slider"
+  ],
+  "description": "Individual slides for the Slider block.",
+  "textdomain": "spectra-blocks",
+  "usesContext": [
+    "spectra/slider/textColor"
+  ],
+  "supports": {
+    "html": false,
+    "spacing": {
+      "padding": true,
+      "blockGap": true
+    },
+    "shadow": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "shadow": true,
+      "style": true
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "orientation": "vertical",
+        "justifyContent": "center",
+        "verticalAlignment": "center",
+        "wrap": true,
+        "gap": "20px"
+      },
+      "allowEditing": true,
+      "allowInheriting": true,
+      "allowSizingOnChildren": true,
+      "allowVerticalAlignment": true,
+      "allowJustification": true
+    },
+    "color": {
+      "gradients": false,
+      "background": false,
+      "link": false,
+      "text": false
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "backgroundType": {
+      "type": "string"
+    },
+    "background": {
+      "type": "object"
+    },
+    "dimRatio": {
+      "type": "number"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "backgroundGradient": {
+      "type": "string"
+    },
+    "enableAdvGradients": {
+      "type": "boolean",
+      "default": false
+    },
+    "advBgGradient": {
+      "type": "string"
+    },
+    "style": {
+      "type": "object"
+    },
+    "overflow": {
+      "type": "string"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-components-block-appender"
+  ],
+  "render": "file:./view.php"
+}

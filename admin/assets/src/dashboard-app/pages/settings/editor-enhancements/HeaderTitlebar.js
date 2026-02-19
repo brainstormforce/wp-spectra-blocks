@@ -17,13 +17,13 @@ const HeaderTitlebar = () => {
 	const debouncedApiCall = useCallback(
 		debounce( ( status ) => {
 			const data = {
-				security: uag_react.enable_header_titlebar_nonce,
+				security: spectra_blocks_react.enable_header_titlebar_nonce,
 				value: status,
 			};
 
 			const getApiDataFetch = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_enable_header_titlebar',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_enable_header_titlebar',
 				data,
 			} );
 
@@ -42,17 +42,17 @@ const HeaderTitlebar = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Move Title to Top', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Move Title to Top', 'spectra-blocks' ) }
 				settingText={ __(
 					'Move the page title to the top, allowing you to have a much more cleaner editor.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ headerTitlebarStatus }
 					onChange={ updateHeaderTitlebarStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

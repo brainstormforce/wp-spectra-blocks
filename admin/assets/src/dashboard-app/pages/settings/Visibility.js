@@ -30,20 +30,20 @@ const Visibility = () => {
 		dispatch( { type: 'UPDATE_VISIBILITY_MODE', payload: assetStatus } );
 
 		const data = {
-			security: uag_react.visibility_mode_nonce,
+			security: spectra_blocks_react.visibility_mode_nonce,
 			value: assetStatus,
 		};
 
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_visibility_mode',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_visibility_mode',
 			data,
 		} );
 
 		getApiFetchData.then( () => {
 			dispatch( {
 				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-				payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+				payload: __( 'Successfully saved!', 'spectra-blocks' ),
 			} );
 		} );
 	};
@@ -52,20 +52,20 @@ const Visibility = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.visibility_page_nonce,
+			security: spectra_blocks_react.visibility_page_nonce,
 			value: page.value,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_visibility_page',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_visibility_page',
 			data,
 		} );
 
 		getApiFetchData.then( () => {
 			dispatch( {
 				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-				payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+				payload: __( 'Successfully saved!', 'spectra-blocks' ),
 			} );
 		} );
 	};
@@ -73,14 +73,14 @@ const Visibility = () => {
 	const fetchPageHandler = ( keyword = '' ) => {
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.fetch_pages_nonce,
+			security: spectra_blocks_react.fetch_pages_nonce,
 			keyword,
 		};
 		setFetchPages( true );
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_fetch_pages',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_fetch_pages',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -100,7 +100,7 @@ const Visibility = () => {
 	const renderSelectComponent = () => (
 		<Select
 			isMulti={ false }
-			placeholder={ __( 'Select the page you want', 'ultimate-addons-for-gutenberg' ) }
+			placeholder={ __( 'Select the page you want', 'spectra-blocks' ) }
 			defaultValue={ visibilityPage }
 			onChange={ ( value ) => updateSelectedPage( value ) }
 			onInputChange={ onChangeHandler }
@@ -149,17 +149,17 @@ const Visibility = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Enable Coming Soon Mode', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Enable Coming Soon Mode', 'spectra-blocks' ) }
 				settingText={ __(
 					"Is your website still in the making and not yet ready for other people to see? When the site is ready to be indexed, the 'Coming Soon' page returns an HTTP 200 status code.",
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 	)}
 			>
 				<Switch
 					value={ visibilityMode === 'comingsoon' }
 					onChange={ () => updateVisibilityMode( 'comingsoon' ) }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 
@@ -168,17 +168,17 @@ const Visibility = () => {
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />
 
 			<SettingsItem
-				title={ __( 'Enable Maintenance Mode', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Enable Maintenance Mode', 'spectra-blocks' ) }
 				settingText={ __(
 					"Maintenance Mode returns an HTTP 503 status code, signaling to search engines to revisit the website shortly. However, it's advisable not to utilize this mode for extended periods, ideally limiting its use to a few days.",
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ visibilityMode === 'maintenance' }
 					onChange={ () => updateVisibilityMode( 'maintenance' ) }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 

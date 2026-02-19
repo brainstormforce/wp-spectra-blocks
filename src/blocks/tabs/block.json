@@ -26,8 +26,7 @@
 		"toggle tabs",
 		"switchable content",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"allowedBlocks": [ "spectra/tabs-child-tab-wrapper", "spectra/tabs-child-tabpanel" ],
 	"supports": {
@@ -95,7 +94,7 @@
 		"file:./style-index.css",
 		"spectra-components-variation-picker"
 	],
-	"viewScript": "file:./view.js",
+	"viewScriptModule": "file:./view.js",
 	"providesContext": {
 		"spectra/tabs/currentTab": "currentTab",
 		"spectra/tabs/icon": "icon",

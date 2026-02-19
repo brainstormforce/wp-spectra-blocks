@@ -52,7 +52,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
             <ToolsPanel
-				label={ __( 'Content', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Content', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						containerWidth: undefined,
@@ -64,14 +64,17 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! containerWidth }
-					label={ __( 'width', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Width', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { containerWidth: undefined } ) }
+					resetAllFilter={ () => ( {
+						containerWidth: undefined,
+					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<UnitControl
 						__next40pxDefaultSize
-						label={ __( 'Width', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Width', 'spectra-blocks' ) }
 						labelPosition="top"
 						value={ containerWidth }
 						min={ 0 }
@@ -81,15 +84,18 @@ const BlockSettings = memo( ( props ) => {
 				</ToolsPanelItem>
 				<ToolsPanelItem
 					hasValue={ () => !! contentHeight }
-					label={ __( 'Content Height', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Content Height', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { contentHeight: undefined } ) }
+					resetAllFilter={ () => ( {
+						contentHeight: undefined,
+					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'Content Height', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Content Height', 'spectra-blocks' ) }
 						value={ contentHeight }
 						onChange={ ( value ) => setAttributes( { contentHeight: value } ) }
 						isBlock
@@ -101,14 +107,17 @@ const BlockSettings = memo( ( props ) => {
 				{ 'auto' !== contentHeight && (
 				<ToolsPanelItem
 					hasValue={ () => !! containerHeight }
-					label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Height', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { containerHeight: undefined } ) }
+					resetAllFilter={ () => ( {
+						containerHeight: undefined,
+					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<UnitControl
 						__next40pxDefaultSize
-						label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Height', 'spectra-blocks' ) }
 						labelPosition="top"
 						value={ containerHeight }
 						min={ 0 }
@@ -200,14 +209,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColor,
 					gradientValue: backgroundGradient,
-					label: __( 'Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColor: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradient: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -218,7 +227,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -252,7 +261,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+				label={__( 'Overlay Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -262,7 +271,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+					label={__( 'Overlay Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}

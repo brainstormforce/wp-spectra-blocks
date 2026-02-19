@@ -6,7 +6,7 @@ import { memo } from '@wordpress/element';
 /**
  * Internal dependencies.
  */
-import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
+import { TabBlockControls } from '@spectra/tabs/helpers';
 
 /**
  * The Editor settings.

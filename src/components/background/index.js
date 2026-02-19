@@ -60,18 +60,18 @@ const Background = ( props ) => {
 
 	// Add the background size options.
 	const backgroundSizeOptions = [
-		{ label: __( 'Cover', 'ultimate-addons-for-gutenberg' ), value: 'cover' },
-		{ label: __( 'Contain', 'ultimate-addons-for-gutenberg' ), value: 'contain' },
-		{ label: __( 'Auto', 'ultimate-addons-for-gutenberg' ), value: 'auto' },
-		{ label: __( 'Custom', 'ultimate-addons-for-gutenberg' ), value: 'custom' },
+		{ label: __( 'Cover', 'spectra-blocks' ), value: 'cover' },
+		{ label: __( 'Contain', 'spectra-blocks' ), value: 'contain' },
+		{ label: __( 'Auto', 'spectra-blocks' ), value: 'auto' },
+		{ label: __( 'Custom', 'spectra-blocks' ), value: 'custom' },
 	];
 
 	// Add the background repeat options.
 	const backgroundRepeatOptions = [
-		{ label: __( 'No Repeat', 'ultimate-addons-for-gutenberg' ), value: 'no-repeat' },
-		{ label: __( 'Repeat', 'ultimate-addons-for-gutenberg' ), value: 'repeat' },
-		{ label: __( 'Repeat X', 'ultimate-addons-for-gutenberg' ), value: 'repeat-x' },
-		{ label: __( 'Repeat Y', 'ultimate-addons-for-gutenberg' ), value: 'repeat-y' },
+		{ label: __( 'No Repeat', 'spectra-blocks' ), value: 'no-repeat' },
+		{ label: __( 'Repeat', 'spectra-blocks' ), value: 'repeat' },
+		{ label: __( 'Repeat X', 'spectra-blocks' ), value: 'repeat-x' },
+		{ label: __( 'Repeat Y', 'spectra-blocks' ), value: 'repeat-y' },
 	];
 
 	const validBackgroundTypes = [ 'image', 'video' ];
@@ -112,8 +112,8 @@ const Background = ( props ) => {
 
 	// Get the button text based on the media type
 	const getButtonText = () => ( type === 'image'
-		? __( 'Add background image', 'ultimate-addons-for-gutenberg' )
-		: __( 'Add background video', 'ultimate-addons-for-gutenberg' )
+		? __( 'Add background image', 'spectra-blocks' )
+		: __( 'Add background video', 'spectra-blocks' )
 	);
 
 	// Allow extensions to add custom UI below the media selector.
@@ -129,7 +129,7 @@ const Background = ( props ) => {
 	return (
 		<>
 			<ToolsPanel
-				label={ __( 'Background', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Background', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( { [ attributeLabel ]: undefined } );
 				} }
@@ -142,7 +142,7 @@ const Background = ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => ( !! type || !! media ) }
-					label={ __( 'Background Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Background Type', 'spectra-blocks' ) }
 					onDeselect={ () => {
 						setAttributes( {
 							[ attributeLabel ]: {
@@ -165,7 +165,7 @@ const Background = ( props ) => {
 					<VStack spacing={ 4 }>
 						{/* Rendering the Toggle Group to select between Image, Video, or none. */}
 						<ToggleGroupControl
-							label={ __( 'Background Type', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Background Type', 'spectra-blocks' ) }
 							value={ type || 'none' }
 							onChange={ ( newType ) => {
 								// Only reset media if it doesn't match the new type.
@@ -182,15 +182,15 @@ const Background = ( props ) => {
 						>
 							<ToggleGroupControlOption
 								value="none"
-								label={ __( 'None', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'None', 'spectra-blocks' ) }
 							/>
 							<ToggleGroupControlOption
 								value="image"
-								label={ __( 'Image', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Image', 'spectra-blocks' ) }
 							/>
 							<ToggleGroupControlOption
 								value="video"
-								label={ __( 'Video', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Video', 'spectra-blocks' ) }
 							/>
 						</ToggleGroupControl>
 						{ /* If a type is selected, show the media uploader. */ }
@@ -259,7 +259,7 @@ const Background = ( props ) => {
 																		variant="secondary"
 																		onClick={ open }
 																	>
-																		{ __( 'Replace', 'ultimate-addons-for-gutenberg' ) }
+																		{ __( 'Replace', 'spectra-blocks' ) }
 																	</Button>
 																	<Button
 																		variant="link"
@@ -273,7 +273,7 @@ const Background = ( props ) => {
 																		} }
 																		isDestructive
 																	>
-																		{ __( 'Remove', 'ultimate-addons-for-gutenberg' ) }
+																		{ __( 'Remove', 'spectra-blocks' ) }
 																	</Button>
 																</HStack>
 															</>
@@ -299,7 +299,7 @@ const Background = ( props ) => {
 								*/}
 								<ToolsPanelItem
 									hasValue={ () => !! backgroundSize }
-									label={ __( 'Background Size', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Background Size', 'spectra-blocks' ) }
 									onDeselect={ () => {
 										setAttributes( {
 											[ attributeLabel ]: {
@@ -318,7 +318,7 @@ const Background = ( props ) => {
 									panelId={ clientId }
 								>
 									<SelectControl
-										label={ __( 'Background Size', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Background Size', 'spectra-blocks' ) }
 										value={ backgroundSize || 'cover' }
 										options={ backgroundSizeOptions }
 										onChange={ ( newSize ) => {
@@ -337,7 +337,7 @@ const Background = ( props ) => {
 								{ backgroundSize === 'custom' && (
 									<ToolsPanelItem
 										hasValue={ () => !! backgroundWidth }
-										label={ __( 'Background Width', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Background Width', 'spectra-blocks' ) }
 										onDeselect={ () => {
 											setAttributes( {
 												[ attributeLabel ]: {
@@ -356,7 +356,7 @@ const Background = ( props ) => {
 									>
 										<UnitControl
 											__next40pxDefaultSize
-											label={ __( 'Background Width', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Background Width', 'spectra-blocks' ) }
 											labelPosition="top"
 											value={ backgroundWidth || '100%' }
 											onChange={ ( newWidth ) => {
@@ -386,7 +386,7 @@ const Background = ( props ) => {
 								*/}
 								<ToolsPanelItem
 									hasValue={ () => !! backgroundRepeat }
-									label={ __( 'Background Repeat', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Background Repeat', 'spectra-blocks' ) }
 									onDeselect={ () => {
 										setAttributes( {
 											[ attributeLabel ]: {
@@ -405,7 +405,7 @@ const Background = ( props ) => {
 									panelId={ clientId }
 								>
 									<SelectControl
-										label={ __( 'Background Repeat', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Background Repeat', 'spectra-blocks' ) }
 										value={ backgroundRepeat || 'no-repeat' }
 										options={ backgroundRepeatOptions }
 										onChange={ ( newRepeat ) => {
@@ -424,7 +424,7 @@ const Background = ( props ) => {
 								*/}
 								<ToolsPanelItem
 									hasValue={ () => !! backgroundAttachment }
-									label={ __( 'Background Attachment', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Background Attachment', 'spectra-blocks' ) }
 									onDeselect={ () => {
 										setAttributes( {
 											[ attributeLabel ]: {
@@ -443,12 +443,12 @@ const Background = ( props ) => {
 									panelId={ clientId }
 								>
 									<SelectControl
-										label={ __( 'Background Attachment', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Background Attachment', 'spectra-blocks' ) }
 										value={ backgroundAttachment || 'scroll' }
 										options={ [
-											{ label: __( 'Scroll', 'ultimate-addons-for-gutenberg' ), value: 'scroll' },
-											{ label: __( 'Fixed', 'ultimate-addons-for-gutenberg' ), value: 'fixed' },
-											{ label: __( 'Inherit', 'ultimate-addons-for-gutenberg' ), value: 'inherit' },
+											{ label: __( 'Scroll', 'spectra-blocks' ), value: 'scroll' },
+											{ label: __( 'Fixed', 'spectra-blocks' ), value: 'fixed' },
+											{ label: __( 'Inherit', 'spectra-blocks' ), value: 'inherit' },
 										] }
 										onChange={ ( value ) => {
 											setAttributes( {
@@ -466,7 +466,7 @@ const Background = ( props ) => {
 								*/}
 								<ToolsPanelItem
 									hasValue={ () => !! backgroundPosition || !! positionMode || !! positionX || !! positionY }
-									label={ __( 'Background Position', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Background Position', 'spectra-blocks' ) }
 									onDeselect={ () => {
 										setAttributes( {
 											[ attributeLabel ]: {
@@ -495,7 +495,7 @@ const Background = ( props ) => {
 									<VStack spacing={ 4 }>
 										{/* Position Mode Toggle */}
 										<ToggleGroupControl
-											label={ __( 'Image Position', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Image Position', 'spectra-blocks' ) }
 											value={ positionMode || 'default' }
 											onChange={ ( newMode ) => {
 												setAttributes( {
@@ -514,18 +514,18 @@ const Background = ( props ) => {
 										>
 											<ToggleGroupControlOption
 												value="default"
-												label={ __( 'Default', 'ultimate-addons-for-gutenberg' ) }
+												label={ __( 'Default', 'spectra-blocks' ) }
 											/>
 											<ToggleGroupControlOption
 												value="custom"
-												label={ __( 'Custom', 'ultimate-addons-for-gutenberg' ) }
+												label={ __( 'Custom', 'spectra-blocks' ) }
 											/>
 										</ToggleGroupControl>
 
 										{/* Default Focal Point Picker */}
 										{ ( positionMode === 'default' || ! positionMode ) && (
 											<FocalPointPicker
-												label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+												label={ __( 'Position', 'spectra-blocks' ) }
 												url={ media.url }
 												value={ backgroundPosition }
 												onChange={ ( newPoint ) => {
@@ -543,7 +543,7 @@ const Background = ( props ) => {
 										{ positionMode === 'custom' && (
 											<>
 												<ToggleControl
-													label={ __( 'Centralized Position', 'ultimate-addons-for-gutenberg' ) }
+													label={ __( 'Centralized Position', 'spectra-blocks' ) }
 													checked={ positionCentered || false }
 													onChange={ ( newCentered ) => {
 														setAttributes( {
@@ -559,7 +559,7 @@ const Background = ( props ) => {
 												/>
 												<UnitControl
 													__next40pxDefaultSize
-													label={ __( 'X Position', 'ultimate-addons-for-gutenberg' ) }
+													label={ __( 'X Position', 'spectra-blocks' ) }
 													labelPosition="top"
 													value={ positionCentered ? '50%' : ( positionX || '0%' ) }
 													onChange={ ( newX ) => {
@@ -585,7 +585,7 @@ const Background = ( props ) => {
 												/>
 												<UnitControl
 													__next40pxDefaultSize
-													label={ __( 'Y Position', 'ultimate-addons-for-gutenberg' ) }
+													label={ __( 'Y Position', 'spectra-blocks' ) }
 													labelPosition="top"
 													value={ positionCentered ? '50%' : ( positionY || '0%' ) }
 													onChange={ ( newY ) => {

@@ -38,7 +38,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * @param array  $args entity data for analytics.
 		 * @param string $analytics_path directory path to analytics library.
 		 * @param float  $analytics_version analytics library version.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function __construct( $args, $analytics_path, $analytics_version ) {
 
@@ -68,7 +68,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Function to load the deactivation survey form actions.
 		 *
-		 * @since 0.0.1
+		 * @since 1.1.6
 		 * @return void
 		 */
 		public function load_deactivation_survey_actions() {
@@ -85,7 +85,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Setup actions for admin notice style and analytics cron event.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.4
 		 */
 		public function set_actions() {
 
@@ -101,7 +101,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param string $analytics_path directory path to analytics library.
 		 * @return String URL of bsf-analytics directory.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function get_analytics_url( $analytics_path ) {
 
@@ -115,7 +115,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Enqueue Scripts.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public function enqueue_assets() {
@@ -137,7 +137,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Send analytics API call.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function send() {
 
@@ -157,7 +157,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * Check if usage tracking is enabled.
 		 *
 		 * @return bool
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function is_tracking_enabled() {
 
@@ -179,7 +179,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param string $source source of analytics.
 		 * @return bool
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function is_white_label_enabled( $source ) {
 
@@ -201,7 +201,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Display admin notice for usage tracking.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function option_notice() {
 
@@ -236,12 +236,12 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 				/* translators: %s product name */
 				$notice_string = sprintf(
 					__(
-						'Help us improve %1$s and our other products!<br><br>With your permission, we\'d like to collect <strong>non-sensitive information</strong> from your website — like your PHP version and which features you use — so we can fix bugs faster, make smarter decisions, and build features that actually matter to you. <em>No personal info. Ever.</em>', 'spectra' ),
+						'Help us improve %1$s and our other products!<br><br>With your permission, we\'d like to collect <strong>non-sensitive information</strong> from your website — like your PHP version and which features you use — so we can fix bugs faster, make smarter decisions, and build features that actually matter to you. <em>No personal info. Ever.</em>', 'ultimate-addons-for-gutenberg' ),
 					'<strong>' . esc_html( $data['product_name'] ) . '</strong>'
 				);
 				
 				if ( is_multisite() ) {
-					$notice_string .= __( 'This will be applicable for all sites from the network.', 'spectra' );
+					$notice_string .= __( 'This will be applicable for all sites from the network.', 'ultimate-addons-for-gutenberg' );
 				}
 
 				$language_dir = is_rtl() ? 'rtl' : 'ltr';
@@ -265,7 +265,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 									</div>
 								</div>',
 							/* translators: %s usage doc link */
-							sprintf( $notice_string . '<span dir="%1s"><a href="%2s" target="_blank" rel="noreferrer noopener">%3s</a><span><br><br>', $language_dir, esc_url( $usage_doc_link ), __( ' Know More.', 'spectra' ) ),
+							sprintf( $notice_string . '<span dir="%1s"><a href="%2s" target="_blank" rel="noreferrer noopener">%3s</a><span><br><br>', $language_dir, esc_url( $usage_doc_link ), __( ' Know More.', 'ultimate-addons-for-gutenberg' ) ),
 							esc_url(
 								add_query_arg(
 									array(
@@ -275,7 +275,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 									)
 								)
 							),
-							__( 'Yes! Allow it', 'spectra' ),
+							__( 'Yes! Allow it', 'ultimate-addons-for-gutenberg' ),
 							esc_url(
 								add_query_arg(
 									array(
@@ -286,7 +286,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 								)
 							),
 							MONTH_IN_SECONDS,
-							__( 'No Thanks', 'spectra' )
+							__( 'No Thanks', 'ultimate-addons-for-gutenberg' )
 						),
 						'show_if'                    => true,
 						'repeat-notice-after'        => false,
@@ -302,7 +302,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Process usage tracking opt out.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function handle_optin_optout() {
 
@@ -345,7 +345,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * Opt in to usage tracking.
 		 *
 		 * @param string $source source of analytics.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private function optin( $source ) {
 			update_site_option( $source . '_analytics_optin', 'yes' );
@@ -355,7 +355,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * Opt out to usage tracking.
 		 *
 		 * @param string $source source of analytics.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private function optout( $source ) {
 			update_site_option( $source . '_analytics_optin', 'no' );
@@ -365,7 +365,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Load analytics stat class.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private function includes() {
 			require_once __DIR__ . '/classes/class-bsf-analytics-helper.php';
@@ -379,7 +379,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Register usage tracking option in General settings page.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function register_usage_tracking_setting() {
 
@@ -394,7 +394,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 				 * If they are providing providing in-plugin option to manage this option.
 				 * from General > Settings page.
 				 * 
-				 * @since 0.0.1
+				 * @since 1.1.14
 				 */
 				if( ! empty( $data['hide_optin_checkbox'] ) && true === $data['hide_optin_checkbox'] ) {
 					continue;
@@ -411,7 +411,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 
 				add_settings_field(
 					$key . '-analytics-optin',       // Field ID.
-					__( 'Usage Tracking', 'spectra' ),       // Field title.
+					__( 'Usage Tracking', 'ultimate-addons-for-gutenberg' ),       // Field title.
 					array( $this, 'render_settings_field_html' ), // Field callback function.
 					'general',
 					'default',                   // Settings page slug.
@@ -431,7 +431,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * Sanitize Callback Function
 		 *
 		 * @param bool $input Option value.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function sanitize_option( $input ) {
 
@@ -446,7 +446,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * Print settings field HTML.
 		 *
 		 * @param array $args arguments to field.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function render_settings_field_html( $args ) {
 			?>
@@ -455,15 +455,15 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 				<input id="<?php echo esc_attr( $args['id'] ); ?>" type="checkbox" value="1" name="<?php echo esc_attr( $args['name'] ); ?>" <?php checked( get_site_option( $args['name'], 'no' ), 'yes' ); ?>>
 				<?php
 				/* translators: %s Product title */
-				echo esc_html( sprintf( __( 'Allow %s products to track non-sensitive usage tracking data.', 'spectra' ), $args['title'] ) );// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+				echo esc_html( sprintf( __( 'Allow %s products to track non-sensitive usage tracking data.', 'ultimate-addons-for-gutenberg' ), $args['title'] ) );// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
 
 				if ( is_multisite() ) {
-					esc_html_e( ' This will be applicable for all sites from the network.', 'spectra' );
+					esc_html_e( ' This will be applicable for all sites from the network.', 'ultimate-addons-for-gutenberg' );
 				}
 				?>
 			</label>
 			<?php
-			echo wp_kses_post( sprintf( '<a href="%1s" target="_blank" rel="noreferrer noopener">%2s</a>', esc_url( $args['usage_doc_link'] ), __( 'Learn More.', 'spectra' ) ) );
+			echo wp_kses_post( sprintf( '<a href="%1s" target="_blank" rel="noreferrer noopener">%2s</a>', esc_url( $args['usage_doc_link'] ), __( 'Learn More.', 'ultimate-addons-for-gutenberg' ) ) );
 			?>
 			</fieldset>
 			<?php
@@ -474,7 +474,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param string $source source of analytics.
 		 * @return string $time analytics installed time.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private function get_analytics_install_time( $source ) {
 
@@ -494,7 +494,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * @param string $old_value old value of option.
 		 * @param string $value value of option.
 		 * @param string $option Option name.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function update_analytics_option_callback( $old_value, $value, $option ) {
 			if ( is_multisite() ) {
@@ -507,7 +507,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param string $option Option name.
 		 * @param string $value value of option.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function add_analytics_option_callback( $option, $value ) {
 			if ( is_multisite() ) {
@@ -518,7 +518,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		/**
 		 * Send analytics track event if tracking is enabled.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function maybe_track_analytics() {
 
@@ -540,7 +540,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param string $option name of option.
 		 * @param string $value value of option.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function add_option_to_network( $option, $value ) {
 
@@ -561,7 +561,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 * This function checks if the Deactivation_Survey_Feedback class exists and if so, it loads the deactivation survey form.
 		 * The form is configured with specific settings for plugin. Example: For CartFlows, including the source, logo, plugin slug, title, support URL, description, and the screen on which to show the form.
 		 *
-		 * @since 0.0.1
+		 * @since 1.1.6
 		 * @return void
 		 */
 		public function load_deactivation_survey_form() {
@@ -585,7 +585,7 @@ if ( ! class_exists( 'BSF_Analytics' ) ) {
 		 *
 		 * @param array $vars UDS vars array.
 		 * @return array Modified UDS vars array with plugin slugs.
-		 * @since 0.0.1
+		 * @since 1.1.6
 		 */
 		public function add_slugs_to_uds_vars( $vars ) {
 			foreach ( $this->entities as $key => $data ) {

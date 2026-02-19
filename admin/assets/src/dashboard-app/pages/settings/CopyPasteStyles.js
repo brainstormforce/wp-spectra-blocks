@@ -23,13 +23,13 @@ const CopyPasteStyles = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.copy_paste_nonce,
+			security: spectra_blocks_react.copy_paste_nonce,
 			value: assetStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_copy_paste',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_copy_paste',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -41,17 +41,17 @@ const CopyPasteStyles = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Copy Paste Styles', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Copy Paste Styles', 'spectra-blocks' ) }
 				settingText={ __(
 					'Enable the "Copy Paste Styles" option to have the ability to copy & paste Spectra & Core Gutenberg Blocks Styles.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ enableCopyPasteStylesStatus }
 					onChange={ updateEnableCopyPasteStylesStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

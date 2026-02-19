@@ -7,13 +7,16 @@
 
 namespace Spectra\Extensions;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
  * Animations class.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Animations {
 
@@ -22,7 +25,7 @@ class Animations {
 	/**
 	 * Flag indicating if animation assets are needed.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var bool
 	 */
@@ -33,7 +36,7 @@ class Animations {
 	 *
 	 * Hooks into render_block, asset registration, and conditional asset enqueue.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -49,7 +52,7 @@ class Animations {
 	 * Ensures the block has the 'spectraAnimationType' attribute defined and injects
 	 * the animation attributes into the block's wrapper tag using WP_HTML_Tag_Processor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block instance.
@@ -84,28 +87,28 @@ class Animations {
 	/**
 	 * Enqueue AOS CSS and JS assets.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
 	public function enqueue_block_assets() {
 		
-		if ( ! wp_script_is( 'uagb-aos-js', 'registered' ) ) {
-			wp_register_script( 'uagb-aos-js', SPECTRA_URL . 'assets/js/aos.min.js', array(), SPECTRA_VER, true );
+		if ( ! wp_script_is( 'spectra-blocks-aos-js', 'registered' ) ) {
+			wp_register_script( 'spectra-blocks-aos-js', SPECTRA_BLOCKS_URL . 'assets/js/aos.min.js', array(), SPECTRA_BLOCKS_VER, true );
 		}
 
-		if ( ! wp_style_is( 'uagb-aos-css', 'registered' ) ) {
-			wp_register_style( 'uagb-aos-css', SPECTRA_URL . 'assets/css/aos.min.css', array(), SPECTRA_VER );
+		if ( ! wp_style_is( 'spectra-blocks-aos-css', 'registered' ) ) {
+			wp_register_style( 'spectra-blocks-aos-css', SPECTRA_BLOCKS_URL . 'assets/css/aos.min.css', array(), SPECTRA_BLOCKS_VER );
 		}
 
-		wp_enqueue_style( 'uagb-aos-css' );
-		wp_enqueue_script( 'uagb-aos-js' );
+		wp_enqueue_style( 'spectra-blocks-aos-css' );
+		wp_enqueue_script( 'spectra-blocks-aos-js' );
 	}
 
 	/**
 	 * Handle frontend asset registration and enqueueing
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -118,16 +121,16 @@ class Animations {
 
 		// Enqueue AOS assets. if needed.
 		if ( $this->needs_assets ) {
-			wp_enqueue_style( 'uagb-aos-css' );
-			wp_enqueue_script( 'uagb-aos-js' );
-			wp_enqueue_script( 'spectra-aos-init' );
+			wp_enqueue_style( 'spectra-blocks-aos-css' );
+			wp_enqueue_script( 'spectra-blocks-aos-js' );
+			wp_enqueue_script( 'spectra-blocks-aos-init' );
 		}
 	}
 
 	/**
 	 * Determine whether the block should be processed for animations.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
 	 * @return bool
@@ -141,7 +144,7 @@ class Animations {
 	/**
 	 * Retrieve sanitized animation attributes.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attrs Block attributes.
 	 * @return array Sanitized attributes.
@@ -161,7 +164,7 @@ class Animations {
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject data attributes into the first tag.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $content    Block content.
 	 * @param array  $attributes Animation attributes.
@@ -191,36 +194,29 @@ class Animations {
 	 *
 	 * Uses allowed prefixes to determine if a block should receive AOS attributes.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.
 	 * @return bool
 	 */
 	private function is_allowed_block( $block_name ) {
-		// SVG Animator has its own animation system (Web Animations API).
-		$excluded = array( 'spectra/svg-animator' );
-
-		if ( in_array( $block_name, $excluded, true ) ) {
-			return false;
-		}
-
-		return preg_match( '/^(spectra\/|spectra-pro\/|core\/)/', $block_name );
+		return preg_match( '/^(spectra-blocks\/|spectra-pro\/|core\/)/', $block_name );
 	}
 
 	/**
 	 * Register animation assets.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
 	private function register_animation_assets() {
 		// Register AOS init JS.
 		wp_register_script(
-			'spectra-aos-init',
-			SPECTRA_URL . 'assets/js/spectra-animations.js',
-			array( 'uagb-aos-js' ),
-			SPECTRA_VER,
+			'spectra-blocks-aos-init',
+			SPECTRA_BLOCKS_URL . 'assets/js/spectra-animations.js',
+			array( 'spectra-blocks-aos-js' ),
+			SPECTRA_BLOCKS_VER,
 			true
 		);
 	}

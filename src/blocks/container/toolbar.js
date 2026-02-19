@@ -22,47 +22,47 @@ import { helperIcons } from '@spectra-helpers/block-icons';
 // Static tag configuration for container HTML tags.
 const TAG_CONFIG = {
 	div: {
-		label: __( 'Div', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Div', 'spectra-blocks' ),
 		icon: helperIcons.content.div(),
 	},
 	header: {
-		label: __( 'Header', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Header', 'spectra-blocks' ),
 		icon: helperIcons.container.header(),
 	},
 	footer: {
-		label: __( 'Footer', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Footer', 'spectra-blocks' ),
 		icon: helperIcons.container.footer(),
 	},
 	main: {
-		label: __( 'Main', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Main', 'spectra-blocks' ),
 		icon: helperIcons.container.main(),
 	},
 	article: {
-		label: __( 'Article', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Article', 'spectra-blocks' ),
 		icon: helperIcons.container.article(),
 	},
 	section: {
-		label: __( 'Section', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Section', 'spectra-blocks' ),
 		icon: helperIcons.container.section(),
 	},
 	aside: {
-		label: __( 'Aside', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Aside', 'spectra-blocks' ),
 		icon: helperIcons.container.aside(),
 	},
 	figure: {
-		label: __( 'Figure', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Figure', 'spectra-blocks' ),
 		icon: helperIcons.container.figure(),
 	},
 	figcaption: {
-		label: __( 'Figcaption', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Figcaption', 'spectra-blocks' ),
 		icon: helperIcons.container.figcaption(),
 	},
 	nav: {
-		label: __( 'Nav', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Nav', 'spectra-blocks' ),
 		icon: helperIcons.container.nav(),
 	},
 	a: {
-		label: __( 'Link', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Link', 'spectra-blocks' ),
 		icon: helperIcons.container.link(),
 	},
 };
@@ -99,7 +99,7 @@ export const useHtmlTagToolbar = ( currentTag, handleTagChange ) => {
 			<ToolbarGroup>
 				<ToolbarDropdownMenu
 					icon={ currentTagIcon }
-					label={ __( 'Change HTML tag', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Change HTML tag', 'spectra-blocks' ) }
 					controls={ tagOptions }
 				/>
 			</ToolbarGroup>
@@ -166,7 +166,7 @@ const ContainerToolbar = memo( ( props ) => {
 					{/* Choose Layout / Variation Picker Button */}
 					<ToolbarButton
 						icon={ helperIcons.variationSwitch() }
-						label={ __( 'Change Layout', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Change Layout', 'spectra-blocks' ) }
 						onClick={ onShowVariationPicker }
 						showTooltip
 					/>
@@ -174,7 +174,7 @@ const ContainerToolbar = memo( ( props ) => {
 					{/* Layout Help Button */}
 					<ToolbarButton
 						icon={ helperIcons.help() }
-						label={ __( 'Layout Help', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Layout Help', 'spectra-blocks' ) }
 						onClick={ () => setShowGuide( true ) }
 						showTooltip
 					/>

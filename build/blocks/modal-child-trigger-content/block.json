@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/modal-child-content",
+  "version": "3.0.0",
+  "title": "Text",
+  "category": "spectra-blocks-inner",
+  "description": "Add a block with text content.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/modal-child-trigger"
+  ],
+  "supports": {
+    "html": false,
+    "splitting": true,
+    "shadow": true,
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "__experimentalDefaultControls": {
+        "margin": false,
+        "padding": false
+      }
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "usesContext": [
+    "spectra/modal/modalTrigger"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "tagName": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string",
+      "default": "Click here"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradient": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "dropCap": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

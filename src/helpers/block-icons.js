@@ -1299,86 +1299,6 @@ const blockIcons = {
 				fill: 'white',
 			} ),
 		),
-	svgAnimator: ( coloredIcon = true ) => el(
-		'svg',
-		{ viewBox: '0 0 24 24', ...commonSvgProperties( coloredIcon ) },
-		// Animated SVG path (curved line with dashed stroke representing draw animation).
-		el( 'path', {
-			d: 'M3 17C5.5 17 6 12 8.5 12C11 12 11 19 13.5 19C16 19 16 8 18.5 8C19.75 8 20.5 10 21 11',
-			...commonPathStrokeProperties,
-			strokeDasharray: '3 2',
-		} ),
-		// Pen tip drawing the path.
-		el( 'path', {
-			d: 'M4.5 4L3 8.5L5.5 7L7 8.5L4.5 4Z',
-			fill: 'currentColor',
-			stroke: 'currentColor',
-			strokeWidth: strokeWidths.thinnest,
-			strokeLinejoin: 'round',
-		} ),
-		// Motion lines indicating animation.
-		el( 'path', {
-			d: 'M9 5L11 5',
-			...commonPathStrokeProperties,
-			strokeWidth: strokeWidths.thinner,
-		} ),
-		el( 'path', {
-			d: 'M8 7.5L10.5 7.5',
-			...commonPathStrokeProperties,
-			strokeWidth: strokeWidths.thinner,
-			strokeOpacity: translucentPath,
-		} ),
-		// Spectra badge.
-		el( 'path', {
-			d: 'M18.5361 10.2283C21.1595 10.2283 23.2861 8.10162 23.2861 5.47827C23.2861 2.85492 21.1595 0.728271 18.5361 0.728271C15.9128 0.728271 13.7861 2.85492 13.7861 5.47827C13.7861 8.10162 15.9128 10.2283 18.5361 10.2283Z',
-			fill: 'currentColor',
-		} ),
-		el( 'path', {
-			d: 'M17.0982 3.9174C16.3518 4.35169 16.5282 5.5324 17.3832 5.74955L18.7946 6.12954C18.9168 6.15669 18.9303 6.31955 18.8218 6.3874L17.4646 7.18812L17.3153 8.59955L19.9618 7.03883C20.7082 6.60455 20.5318 5.42383 19.6768 5.20669L18.2653 4.82669C18.1432 4.79955 18.1296 4.63669 18.2382 4.56883L19.5953 3.76812L19.7446 2.35669L17.0982 3.9174Z',
-			fill: 'white',
-		} ),
-	),
-	beforeAfterSlider: ( coloredIcon = true ) => el(
-		'svg',
-		{ viewBox: '0 0 24 24', ...commonSvgProperties( coloredIcon ) },
-		// Left image rectangle.
-		el( 'rect', {
-			x: 2,
-			y: 3,
-			width: 20,
-			height: 18,
-			rx: 2,
-			...commonPathStrokeProperties,
-		} ),
-		// Vertical divider line.
-		el( 'line', {
-			x1: 12,
-			y1: 3,
-			x2: 12,
-			y2: 21,
-			...commonPathStrokeProperties,
-			strokeWidth: strokeWidths.thin,
-		} ),
-		// Left arrow.
-		el( 'path', {
-			d: 'M9 12L7 12M7 12L8.5 10.5M7 12L8.5 13.5',
-			...commonPathStrokeProperties,
-		} ),
-		// Right arrow.
-		el( 'path', {
-			d: 'M15 12L17 12M17 12L15.5 10.5M17 12L15.5 13.5',
-			...commonPathStrokeProperties,
-		} ),
-		// Spectra badge.
-		el( 'path', {
-			d: 'M18.5361 10.2283C21.1595 10.2283 23.2861 8.10162 23.2861 5.47827C23.2861 2.85492 21.1595 0.728271 18.5361 0.728271C15.9128 0.728271 13.7861 2.85492 13.7861 5.47827C13.7861 8.10162 15.9128 10.2283 18.5361 10.2283Z',
-			fill: 'currentColor',
-		} ),
-		el( 'path', {
-			d: 'M17.0982 3.9174C16.3518 4.35169 16.5282 5.5324 17.3832 5.74955L18.7946 6.12954C18.9168 6.15669 18.9303 6.31955 18.8218 6.3874L17.4646 7.18812L17.3153 8.59955L19.9618 7.03883C20.7082 6.60455 20.5318 5.42383 19.6768 5.20669L18.2653 4.82669C18.1432 4.79955 18.1296 4.63669 18.2382 4.56883L19.5953 3.76812L19.7446 2.35669L17.0982 3.9174Z',
-			fill: 'white',
-		} ),
-	),
 
 }
 // These are icons used by blocks in various places.
@@ -2160,6 +2080,26 @@ export const helperIcons = {
 			} ),
 		),
 	},
+	counter: ( coloredIcon = true ) => el(
+		'svg',
+		{ viewBox: '0 0 24 24', ...commonSvgProperties( coloredIcon ) },
+		el( 'path', {
+			d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z',
+			...commonPathStrokeProperties,
+		} ),
+		el( 'path', {
+			d: 'M12 6v6l4 2',
+			...commonPathStrokeProperties,
+		} ),
+		el( 'path', {
+			d: 'M18.5361 10.2283C21.1595 10.2283 23.2861 8.10162 23.2861 5.47827C23.2861 2.85492 21.1595 0.728271 18.5361 0.728271C15.9128 0.728271 13.7861 2.85492 13.7861 5.47827C13.7861 8.10162 15.9128 10.2283 18.5361 10.2283Z',
+			fill: 'currentColor',
+		} ),
+		el( 'path', {
+			d: 'M17.0982 3.9174C16.3518 4.35169 16.5282 5.5324 17.3832 5.74955L18.7946 6.12954C18.9168 6.15669 18.9303 6.31955 18.8218 6.3874L17.4646 7.18812L17.3153 8.59955L19.9618 7.03883C20.7082 6.60455 20.5318 5.42383 19.6768 5.20669L18.2653 4.82669C18.1432 4.79955 18.1296 4.63669 18.2382 4.56883L19.5953 3.76812L19.7446 2.35669L17.0982 3.9174Z',
+			fill: 'white',
+		} ),
+	),
 }
 // Export the Block Icons by default.
 export default blockIcons;

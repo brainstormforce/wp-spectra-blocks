@@ -1,18 +1,18 @@
-.uag-skeleton-base {
+.spectra-blocks-skeleton-base {
 	display: block;
 }
 
-.uag-skeleton {
+.spectra-blocks-skeleton {
 	height: 1.2em;
 	display: block;
 	background-color: rgba(0, 0, 0, 0.11);
 }
 
-.uag-skeleton-pulse {
-	animation: uag-skeleton-keyframes-pulse 1.5s ease-in-out 0.5s infinite;
+.spectra-blocks-skeleton-pulse {
+	animation: spectra-blocks-skeleton-keyframes-pulse 1.5s ease-in-out 0.5s infinite;
 }
 
-@keyframes uag-skeleton-keyframes-pulse {
+@keyframes spectra-blocks-skeleton-keyframes-pulse {
 
 	0% {
 		opacity: 1;
@@ -27,24 +27,24 @@
 	}
 }
 
-.uag-skeleton--wave {
+.spectra-blocks-skeleton--wave {
 	overflow: hidden;
 	position: relative;
 }
 
-.uag-skeleton--wave::after {
+.spectra-blocks-skeleton--wave::after {
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	content: "";
 	position: absolute;
-	animation: uag-skeleton-keyframes-wave 1.6s linear 0.5s infinite;
+	animation: spectra-blocks-skeleton-keyframes-wave 1.6s linear 0.5s infinite;
 	transform: translateX(-100%);
 	background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
 }
 
-@keyframes uag-skeleton-keyframes-wave {
+@keyframes spectra-blocks-skeleton-keyframes-wave {
 
 	0% {
 		transform: translateX(-100%);
@@ -60,13 +60,13 @@
 }
 
 /* Need to verify
-.uag-skeleton-withChildren > * {
+.spectra-blocks-skeleton-withChildren > * {
 	visibility: hidden;
 }
-.uag-skeleton-fitContent {
+.spectra-blocks-skeleton-fitContent {
 	max-width: -moz-fit-content;
 }
-.uag-skeleton-heightAuto {
+.spectra-blocks-skeleton-heightAuto {
 	height: auto;
 }
 */

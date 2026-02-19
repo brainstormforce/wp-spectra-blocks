@@ -10,31 +10,31 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 	const dispatch = useDispatch();
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 
-	if ( uag_react.spectra_pro_ver ) {
+	if ( spectra_blocks_react.spectra_pro_ver ) {
 		return '';
 	}
 
 	const onUpgradeLinkTrigger = () => {
 		window.open(
-			uag_admin_react.spectra_website?.setting,
+			spectra_blocks_admin_react.spectra_website?.setting,
 			'_blank'
 		);
 	};
 
 	const activatePro = ( e ) => {
-		const isThisNull = uag_react.pro_plugin_status;
+		const isThisNull = spectra_blocks_react.pro_plugin_status;
 
 		if ( 'Install' !== isThisNull ) {
 			// Create an object with the required data to activate the 'spectra' Pro feature
 			const data = {
-				security: uag_react.pro_activate_nonce,
+				security: spectra_blocks_react.pro_activate_nonce,
 				value: 'spectra',
 			};
-			e.target.innerText = uag_react.plugin_activating_text + '…';
+			e.target.innerText = spectra_blocks_react.plugin_activating_text + '…';
 			// Call the getApiData function with the specified parameters
 			const getApiFetchData = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_pro_activate',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_pro_activate',
 				data,
 			} );
 
@@ -51,20 +51,20 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 	};
 
 	const getSpectraProTitle = () => {
-		return 'Installed' === uag_react.pro_plugin_status
-			? __( 'Activate Now', 'ultimate-addons-for-gutenberg' )
-			: __( 'Upgrade Now', 'ultimate-addons-for-gutenberg' );
+		return 'Installed' === spectra_blocks_react.pro_plugin_status
+			? __( 'Activate Now', 'spectra-blocks' )
+			: __( 'Upgrade Now', 'spectra-blocks' );
 	};
 
 	const translatedSpectraProTitle = sprintf(
 		/* translators: abbreviation for units */
-		__( ' %s', 'ultimate-addons-for-gutenberg' ),
+		__( ' %s', 'spectra-blocks' ),
 		getSpectraProTitle()
 	);
 
 	const translatedDesc = sprintf(
 		/* translators: abbreviation for units */
-		__( 'You are using %1$s version, %2$s', 'ultimate-addons-for-gutenberg' ),
+		__( 'You are using %1$s version, %2$s', 'spectra-blocks' ),
 		'<span class="text-text-primary font-medium">Spectra Free</span>',
 		description
 	);
@@ -72,20 +72,20 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 	const allPlansData = {
 		'Spectra Pro': modalData,
 		'Essential Toolkit': { ...modalData, features: [
-			__( 'Spectra Pro', 'ultimate-addons-for-gutenberg' ),
-			__( 'Astra Pro', 'ultimate-addons-for-gutenberg' ),
-			__( 'Premium Starter Templates', 'ultimate-addons-for-gutenberg' ),
-			__( 'Ultimate Addons for Elementor', 'ultimate-addons-for-gutenberg' ),
-			__( 'Elementor Premium Templates', 'ultimate-addons-for-gutenberg' ),
-			__( 'Seamless Page Building', 'ultimate-addons-for-gutenberg' ),
+			__( 'Spectra Pro', 'spectra-blocks' ),
+			__( 'Astra Pro', 'spectra-blocks' ),
+			__( 'Premium Starter Templates', 'spectra-blocks' ),
+			__( 'Ultimate Addons for Elementor', 'spectra-blocks' ),
+			__( 'Elementor Premium Templates', 'spectra-blocks' ),
+			__( 'Seamless Page Building', 'spectra-blocks' ),
 		] },
 		'Business Toolkit': { ...modalData, features: [
-			__( 'Essential Toolkit', 'ultimate-addons-for-gutenberg' ),
-			__( 'SureFeedback', 'ultimate-addons-for-gutenberg' ),
-			__( 'SureWriter Pro', 'ultimate-addons-for-gutenberg' ),
-			__( 'SureTriggers Pro', 'ultimate-addons-for-gutenberg' ),
-			__( 'CartFlows Starter', 'ultimate-addons-for-gutenberg' ),
-			__( 'ZipWP Pro', 'ultimate-addons-for-gutenberg' ),
+			__( 'Essential Toolkit', 'spectra-blocks' ),
+			__( 'SureFeedback', 'spectra-blocks' ),
+			__( 'SureWriter Pro', 'spectra-blocks' ),
+			__( 'SureTriggers Pro', 'spectra-blocks' ),
+			__( 'CartFlows Starter', 'spectra-blocks' ),
+			__( 'ZipWP Pro', 'spectra-blocks' ),
 		] },
 	}
 
@@ -119,10 +119,10 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 							className="text-text-tertiary p-2"
 							style={ { border: 'none', borderRight: '1px solid #e5e7eb' } }
 						>
-							{ __( 'Popup', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Popup', 'spectra-blocks' ) }
 						</div>
 						<div className="text-text-tertiary p-2" style={ { border: 'none' } }>
-							{ __( 'Sidebar', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Sidebar', 'spectra-blocks' ) }
 						</div>
 					</div>
 				) }
@@ -134,7 +134,7 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 				</span>
 
 				<Button 
-					className="uagb-remove-ring"
+					className="spectra-blocks-remove-ring"
 					icon={ React.cloneElement( <ArrowUpRight />, { className: 'w-3.5 h-3.5' } ) }
 					iconPosition="right"
 					size="xs"
@@ -142,7 +142,7 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 					type="button"
 					variant="link"
 					onClick={ ( e ) => {
-						if ( 'Installed' === uag_react.pro_plugin_status ) {
+						if ( 'Installed' === spectra_blocks_react.pro_plugin_status ) {
 							activatePro( e );
 						} else {
 							setIsModalOpen( true );

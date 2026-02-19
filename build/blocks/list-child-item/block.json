@@ -1,0 +1,100 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/list-child-item",
+  "version": "3.0.0",
+  "title": "List Item",
+  "category": "spectra-blocks-inner",
+  "description": "Add a list item with icon and content.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/list"
+  ],
+  "providesContext": {
+    "spectra/list-child-item/index": "index",
+    "spectra/list-child-item/level": "level",
+    "spectra/list-child-item/textColor": "textColor",
+    "spectra/list-child-item/textColorHover": "textColorHover"
+  },
+  "usesContext": [
+    "spectra/list/listType",
+    "spectra/list/listStyle",
+    "spectra/list/textAlignment",
+    "spectra/list/textColor",
+    "spectra/list/textColorHover",
+    "spectra/list/iconSize",
+    "spectra/list/iconSpacing",
+    "spectra/list/iconName",
+    "spectra/list/flipForRTL",
+    "spectra/list/rotation"
+  ],
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "reusable": false,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "__experimentalAllowMultipleBlocks": true,
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center"
+      }
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "index": {
+      "type": "number"
+    },
+    "level": {
+      "type": "number",
+      "default": 0
+    },
+    "variationSelected": {
+      "type": "boolean",
+      "default": true
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/countdown-child-number",
+  "version": "3.0.0",
+  "title": "Number",
+  "category": "spectra-blocks-inner",
+  "description": "Add a block with text content.",
+  "ancestor": [
+    "spectra/countdown"
+  ],
+  "parent": [
+    "spectra/countdown-child-day",
+    "spectra/countdown-child-hour",
+    "spectra/countdown-child-minute",
+    "spectra/countdown-child-second",
+    "spectra/container"
+  ],
+  "textdomain": "spectra-blocks",
+  "usesContext": [
+    "number",
+    "ariaLiveType",
+    "role",
+    "spectra/countdown/ariaLiveType"
+  ],
+  "supports": {
+    "html": false,
+    "shadow": true,
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "style": true,
+        "shadow": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "number": {
+      "type": "number"
+    },
+    "numberColor": {
+      "type": "string"
+    },
+    "numberColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

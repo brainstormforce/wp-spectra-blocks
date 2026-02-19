@@ -20,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class to manage Spectra Extensions.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ExtensionManager {
 
@@ -29,7 +29,7 @@ class ExtensionManager {
 	/**
 	 * Initializes the extension manager by registering all extensions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @return void
 	 */
 	public function init() {
@@ -44,7 +44,7 @@ class ExtensionManager {
 	 * This method is used to trigger the initialization of all extensions.
 	 * when the extension manager is initialized.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -64,12 +64,12 @@ class ExtensionManager {
 	 * an 'index.asset.php' file, and calls the enqueue_editor_extension_assets() method
 	 * for each of them.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
 	public function register_extensions() {
-		$extensions_dir = SPECTRA_DIR . 'build/extensions/';
+		$extensions_dir = SPECTRA_BLOCKS_DIR . 'build/extensions/';
 
 		if ( ! is_dir( $extensions_dir ) || ! is_readable( $extensions_dir ) ) {
 			return;
@@ -90,7 +90,7 @@ class ExtensionManager {
 	/**
 	 * Enqueues editor assets for a given extension.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $extension_file Path to the extension's asset file.
 	 * @return void
@@ -103,8 +103,8 @@ class ExtensionManager {
 		$extension_dir = dirname( $extension_file );
 		$folder_name   = basename( $extension_dir ); // Get extension folder name.
 		$handle        = "spectra-3-extension-{$folder_name}-editor";
-		$script_url    = SPECTRA_URL . "build/extensions/{$folder_name}/index.js";
-		$script_path   = SPECTRA_DIR . "build/extensions/{$folder_name}/index.js";
+		$script_url    = SPECTRA_BLOCKS_URL . "build/extensions/{$folder_name}/index.js";
+		$script_path   = SPECTRA_BLOCKS_DIR . "build/extensions/{$folder_name}/index.js";
 
 		if ( ! file_exists( $script_path ) ) {
 			return;
@@ -133,15 +133,15 @@ class ExtensionManager {
 			isset( $asset_file['version'] ) ? $asset_file['version'] : '1.0.0',
 			true
 		);
-		wp_set_script_translations( $handle, 'spectra', SPECTRA_DIR . 'languages' );
+		wp_set_script_translations( $handle, 'spectra-blocks', SPECTRA_BLOCKS_DIR . 'languages' );
 		// Localize script data for the image mask extension.
 		if ( 'image-mask' === $folder_name ) {
 			wp_localize_script(
 				$handle,
 				'spectraExtensions',
 				array(
-					'pluginUrl' => trailingslashit( SPECTRA_URL ),
-					'assetsUrl' => trailingslashit( SPECTRA_URL ) . 'assets/',
+					'pluginUrl' => trailingslashit( SPECTRA_BLOCKS_URL ),
+					'assetsUrl' => trailingslashit( SPECTRA_BLOCKS_URL ) . 'assets/',
 				)
 			);
 		}
@@ -151,7 +151,7 @@ class ExtensionManager {
 		 *
 		 * The dynamic portion of the filter name is the extension folder name.
 		 *
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 */
 		do_action( 'spectra_3_extensions_editor_assets', $folder_name, $asset_file );
 	}

@@ -417,7 +417,7 @@ export const TabBlockControls = ( props ) => {
 					icon={helperIcons.tabs.addTab()}
 					label={__(
 						'Add a new tab and tabpanel',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					)}
 					onClick={() => {
 						insertNewTab( clientId );
@@ -430,11 +430,11 @@ export const TabBlockControls = ( props ) => {
 							['tab', 'tabpanel'].includes( currentBlockType )
 								? __(
 									'Remove this tab and tabpanel',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								)
 								: __(
 									'Remove the last tab and tabpanel',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								)
 						}
 						onClick={() => {

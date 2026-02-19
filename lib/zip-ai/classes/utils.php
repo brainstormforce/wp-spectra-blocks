@@ -23,7 +23,7 @@ class Utils {
 	 * Encrypt data using base64.
 	 *
 	 * @param string $input The input string which needs to be encrypted.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The encrypted string.
 	 */
 	public static function encrypt( $input ) {
@@ -42,7 +42,7 @@ class Utils {
 	 * Decrypt data using base64.
 	 *
 	 * @param string $input The input string which needs to be decrypted.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The decrypted string.
 	 */
 	public static function decrypt( $input ) {

@@ -11,6 +11,8 @@ const commonConfig = {
 			...defaultConfig.resolve.alias,
 			'@Admin': path.resolve( __dirname, 'assets/src/' ),
 			'@Utils': path.resolve( __dirname, 'assets/src/utils/' ),
+			'@Controls': path.resolve( __dirname, 'assets/src/controls/' ),
+			'@Helpers': path.resolve( __dirname, 'assets/src/utils/' ),
 			'@Fields': path.resolve(
 				__dirname,
 				'assets/src/fields/'
@@ -27,17 +29,9 @@ const commonConfig = {
 				__dirname,
 				'assets/src/dashboard-app/'
 			),
-			'@Controls': path.resolve(
-				newPath,
-				'blocks-config/spectra-blocks-controls/'
-			),
 			'@Common': path.resolve(
 				__dirname,
 				'assets/src/common/'
-			),
-			'@Helpers': path.resolve(
-				newPath,
-				'blocks-config/utils/'
 			),
 			'@spectra-helpers': path.resolve( newPath, 'src/helpers/' ),
 		},

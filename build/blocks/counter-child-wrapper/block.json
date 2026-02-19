@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/counter-child-wrapper",
+  "version": "3.0.0",
+  "title": "Wrapper",
+  "category": "spectra-blocks-inner",
+  "description": "Wrapper for counter child blocks.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/counter"
+  ],
+  "usesContext": [
+    "spectra/counter/counterStyle"
+  ],
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "center",
+        "verticalAlignment": "center"
+      },
+      "allowSizingOnChildren": true
+    },
+    "spacing": {
+      "margin": false,
+      "padding": true,
+      "blockGap": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "center",
+        "verticalAlignment": "center"
+      }
+    }
+  }
+}

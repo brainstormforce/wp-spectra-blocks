@@ -17,26 +17,26 @@ const BlocksEditorSpacing = () => {
 
 		// Create an object with the security and value properties
         const data = {
-            security: uag_react.blocks_editor_spacing_nonce,
+            security: spectra_blocks_react.blocks_editor_spacing_nonce,
             value,
         };
         // Call the getApiData function with the specified parameters
         const getApiFetchData = getApiData( {
-            url: uag_react.ajax_url,
-            action: 'uag_blocks_editor_spacing',
+            url: spectra_blocks_react.ajax_url,
+            action: 'spectra_blocks_blocks_editor_spacing',
             data,
         } );
         // Wait for the API call to complete, then update the state to show a notification that the settings have been saved
         getApiFetchData.then( () => {
-            dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ) } );
+            dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'spectra-blocks' ) } );
         } );
 	};
 
     return (
         <>
 			<SettingsItem
-				title={ __( 'Blocks Editor Spacing', 'ultimate-addons-for-gutenberg' ) }
-				settingText={ __( 'This setting will apply spacing in between all blocks inside block editor.', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Blocks Editor Spacing', 'spectra-blocks' ) }
+				settingText={ __( 'This setting will apply spacing in between all blocks inside block editor.', 'spectra-blocks' ) }
 			>
 				<Input
 					defaultValue={ 1140 }

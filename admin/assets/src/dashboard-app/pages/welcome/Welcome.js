@@ -25,7 +25,7 @@ const Welcome = () => {
 					<BetaDetails />
 					{/* <BetaUpdateNotice /> */}
 
-					{ 'Activated' === uag_react.pro_plugin_status && <ProFeatures /> }
+					{ 'Activated' === spectra_blocks_react.pro_plugin_status && <ProFeatures /> }
 
 					<Blocks />
 
@@ -37,13 +37,13 @@ const Welcome = () => {
 				</Container.Item>
 
 				<Container.Item className="flex flex-col gap-8 lg:sticky lg:top-8 lg:self-start" colSpan={{ lg: 4, md: 12, sm: 12 }}>
-					{'Activated' !== uag_react.pro_plugin_status && <UpgradeToPro /> }
+					{'Activated' !== spectra_blocks_react.pro_plugin_status && <UpgradeToPro /> }
 
 					<QuickAccess />
 
 					<BuildWebsite />
 
-					{ 'Activated' === uag_react.pro_plugin_status && (
+					{ 'Activated' === spectra_blocks_react.pro_plugin_status && (
 						<>
 							<section className="flex gap-2 flex-col p-4 bg-white shadow-sm rounded-lg border border-solid border-border-subtle p-3 [&>div>.spectra-licensing-wrap]:max-w-full">
 								<LicenseKey />

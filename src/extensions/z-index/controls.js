@@ -20,7 +20,7 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
  * Provides UI controls for managing block z-index, allowing users to set
  * the stacking order of elements.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Object} props - Component props.
  * @return {Element} Z-index options panel component.
@@ -39,14 +39,14 @@ const ZIndexOptions = ( props ) => {
 				- The "spectraZIndex" attribute is set to a non-default value.
 			*/ }
 			<ToolsPanelItem
-				label={ __( 'Z-Index', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Z-Index', 'spectra-blocks' ) }
 				isShownByDefault
 				hasValue={ () => spectraZIndex !== DEFAULT_Z_INDEX }
 				onDeselect={ () => setAttributes( { spectraZIndex: DEFAULT_Z_INDEX } ) }
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={ __( 'Z-Index', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Z-Index', 'spectra-blocks' ) }
 					onChange={ ( value ) => {
 						setAttributes( { spectraZIndex: value === '' ? null : value } );
 					} }
@@ -57,7 +57,7 @@ const ZIndexOptions = ( props ) => {
 					withInputField={ true }
 					help={ __(
 						'Above setting will only take effect once you are on the live page, and not while you\'re editing.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					debounceDelay={150}
 				/>
@@ -69,7 +69,7 @@ const ZIndexOptions = ( props ) => {
 /**
  * Higher-order component to add z-index controls to block settings.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Function} BlockEdit - Original block edit component.
  * @return {Function} Enhanced block edit component with z-index controls.
@@ -97,7 +97,7 @@ const addZIndexControls = ( BlockEdit ) => ( props ) => {
 					- Default value: null
 					- Includes a "Reset All" option to restore default z-index value.
 				*/ }
-				<ToolsPanel label={ __( 'Z-Index', 'ultimate-addons-for-gutenberg' ) } resetAll={ resetAll }>
+				<ToolsPanel label={ __( 'Z-Index', 'spectra-blocks' ) } resetAll={ resetAll }>
 					<ZIndexOptions { ...props } />
 					</ToolsPanel>
 				</InspectorControls>

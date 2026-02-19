@@ -1,0 +1,72 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/accordion-child-details",
+  "version": "3.0.0",
+  "title": "Details",
+  "category": "spectra-blocks-inner",
+  "description": "Add details to this accordion.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/accordion-child-item"
+  ],
+  "supports": {
+    "shadow": true,
+    "__experimentalBorder": {
+      "style": true,
+      "width": true,
+      "color": true,
+      "radius": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center",
+        "orientation": "vertical"
+      }
+    },
+    "spacing": {
+      "margin": false,
+      "padding": true,
+      "blockGap": true
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": [
+    "spectra-components-block-appender"
+  ],
+  "render": "file:./view.php",
+  "usesContext": [
+    "spectra/accordion/item/isActiveInEditor"
+  ],
+  "attributes": {
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center",
+        "orientation": "vertical"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

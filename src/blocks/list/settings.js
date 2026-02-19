@@ -47,7 +47,7 @@ const BlockSettings = memo( ( props ) => {
 		<>
 			<InspectorControls group="settings">
 				<ToolsPanel
-					label={ __( 'List', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'List', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
 							alignment: 'vertical',
@@ -61,7 +61,7 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<ToolsPanelItem
 						hasValue={ () => !!listType }
-						label={ __( 'List Type', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'List Type', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( {
 							listType: 'unordered',
 						} ) }
@@ -72,11 +72,11 @@ const BlockSettings = memo( ( props ) => {
 						panelId={ clientId }
 					>
 						<SelectControl
-							label={ __( 'List Type', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'List Type', 'spectra-blocks' ) }
 							value={ listType }
 							options={ [
-								{ label: __( 'Unordered', 'ultimate-addons-for-gutenberg' ), value: 'unordered' },
-								{ label: __( 'Ordered', 'ultimate-addons-for-gutenberg' ), value: 'ordered' },
+								{ label: __( 'Unordered', 'spectra-blocks' ), value: 'unordered' },
+								{ label: __( 'Ordered', 'spectra-blocks' ), value: 'ordered' },
 							] }
 							onChange={ ( value ) => setAttributes( { listType: value } ) }
 						/>
@@ -85,7 +85,7 @@ const BlockSettings = memo( ( props ) => {
 						<>
 							<ToolsPanelItem
 								hasValue={ () => !!reversed }
-								label={ __( 'Reverse order', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Reverse order', 'spectra-blocks' ) }
 								onDeselect={ () => setAttributes( {
 									reversed: undefined,
 								} ) }
@@ -97,7 +97,7 @@ const BlockSettings = memo( ( props ) => {
 							>
 								<ToggleControl
 									__nextHasNoMarginBottom
-									label={ __( 'Reverse order', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Reverse order', 'spectra-blocks' ) }
 									checked={ reversed || false }
 									onChange={ ( value ) => setAttributes( { 
 										// Unset the attribute if not reversed
@@ -107,7 +107,7 @@ const BlockSettings = memo( ( props ) => {
 							</ToolsPanelItem>
 							<ToolsPanelItem
 								hasValue={ () => !!start }
-								label={ __( 'Start value', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Start value', 'spectra-blocks' ) }
 								onDeselect={ () => setAttributes( {
 									start: undefined,
 								} ) }
@@ -120,7 +120,7 @@ const BlockSettings = memo( ( props ) => {
 								<TextControl
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
-									label={ __( 'Start value', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Start value', 'spectra-blocks' ) }
 									type="number"
 									value={ Number.isInteger( start ) ? start.toString( 10 ) : '' }
 									onChange={( value ) => {
@@ -136,7 +136,7 @@ const BlockSettings = memo( ( props ) => {
 							
 							<ToolsPanelItem
 								hasValue={ () => !!listStyle }
-								label={ __( 'List Style', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'List Style', 'spectra-blocks' ) }
 								onDeselect={ () => setAttributes( {
 									listStyle: undefined,
 								} ) }
@@ -149,15 +149,15 @@ const BlockSettings = memo( ( props ) => {
 								<SelectControl
 									__next40pxDefaultSize
 									__nextHasNoMarginBottom
-									label={ __( 'List Style', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'List Style', 'spectra-blocks' ) }
 									value={ listStyle || 'decimal' }
 									options={ [
-										{ label: __( 'Numbers', 'ultimate-addons-for-gutenberg' ), value: 'decimal' },
-										{ label: __( 'Uppercase letters', 'ultimate-addons-for-gutenberg' ), value: 'upper-alpha' },
-										{ label: __( 'Lowercase letters', 'ultimate-addons-for-gutenberg' ), value: 'lower-alpha' },
-										{ label: __( 'Uppercase Roman numerals', 'ultimate-addons-for-gutenberg' ), value: 'upper-roman' },
-										{ label: __( 'Lowercase Roman numerals', 'ultimate-addons-for-gutenberg' ), value: 'lower-roman' },
-										{ label: __( 'Decimal with leading zero', 'ultimate-addons-for-gutenberg' ), value: 'decimal-leading-zero' },
+										{ label: __( 'Numbers', 'spectra-blocks' ), value: 'decimal' },
+										{ label: __( 'Uppercase letters', 'spectra-blocks' ), value: 'upper-alpha' },
+										{ label: __( 'Lowercase letters', 'spectra-blocks' ), value: 'lower-alpha' },
+										{ label: __( 'Uppercase Roman numerals', 'spectra-blocks' ), value: 'upper-roman' },
+										{ label: __( 'Lowercase Roman numerals', 'spectra-blocks' ), value: 'lower-roman' },
+										{ label: __( 'Decimal with leading zero', 'spectra-blocks' ), value: 'decimal-leading-zero' },
 									] }
 									onChange={ ( value ) => setAttributes( { listStyle: value } ) }
 								/>
@@ -167,7 +167,7 @@ const BlockSettings = memo( ( props ) => {
 				</ToolsPanel>				
 				{ listType === 'unordered' && (
 					<ToolsPanel
-						label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Icon', 'spectra-blocks' ) }
 						resetAll={ () => {
 							setAttributes( {
 								icon: undefined,
@@ -180,7 +180,7 @@ const BlockSettings = memo( ( props ) => {
 					>
 						<ToolsPanelItem
 							hasValue={ () => ( !!icon || !!flipForRTL ) }
-							label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Icon', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( {
 								icon: undefined,
 								flipForRTL: false,
@@ -200,16 +200,16 @@ const BlockSettings = memo( ( props ) => {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ flipForRTL }
-									label={ __( 'Flip Icon for Right-To-Left', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 									onChange={ () => setAttributes( { flipForRTL: !flipForRTL } ) }
-									help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'ultimate-addons-for-gutenberg' ) }
+									help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
 								/>
 							</VStack>
 						</ToolsPanelItem>
 						
 						<ToolsPanelItem
 							hasValue={ () => !!rotation }
-							label={ __( 'Rotation', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Rotation', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( { rotation: undefined } ) }
 							resetAllFilter={ () => ( {
 								rotation: undefined,
@@ -217,7 +217,7 @@ const BlockSettings = memo( ( props ) => {
 							panelId={ clientId }
 						>
 							<AnglePickerControl
-								label={ __( 'Rotation', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Rotation', 'spectra-blocks' ) }
 								onChange={ ( value ) => {
 									setAttributes( { rotation: value } );
 								} }
@@ -259,7 +259,7 @@ const DimensionSettings = memo( ( props ) => {
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
 				hasValue={ () => !! iconSize }
-				label={ __( 'Icon Size', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Icon Size', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { iconSize: undefined } ) }
 				resetAllFilter={ () => ( {
 					iconSize: undefined,
@@ -269,7 +269,7 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<UnitControl
 					__next40pxDefaultSize
-					label={ __( 'Icon Size', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon Size', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ iconSize }
 					min={ 0 }
@@ -305,14 +305,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {

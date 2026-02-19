@@ -17,10 +17,10 @@ import { RenderBlockVariation } from '@spectra-components/variation-picker';
 const variations = [
 	{
 		name: 'horizontal',
-		title: __( 'Horizontal Tabs', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Horizontal Tabs', 'spectra-blocks' ),
 		description: __(
 			'Align tabs horizontally above the tabpanels',
-			'ultimate-addons-for-gutenberg'
+			'spectra-blocks'
 		),
 		isDefault: true,
 		attributes: {
@@ -68,10 +68,10 @@ const variations = [
 	},
 	{
 		name: 'vertical',
-		title: __( 'Vertical Tabs', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Vertical Tabs', 'spectra-blocks' ),
 		description: __(
 			'Align tabs vertically before the tabpanels',
-			'ultimate-addons-for-gutenberg'
+			'spectra-blocks'
 		),
 		attributes: {
 			variationSelected: true,

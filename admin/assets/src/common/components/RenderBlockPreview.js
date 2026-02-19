@@ -18,7 +18,7 @@ const RenderBlockPreview = ( props ) => {
 	// If the url for the current block's assets isn't available, abandon ship.
 	if (
 		!['spectra', 'spectra-pro'].includes( pluginName )
-		|| ( 'spectra' === pluginName && !uag_react?.plugin_dir )
+		|| ( 'spectra' === pluginName && !spectra_blocks_react?.plugin_dir )
 	) {
 		
 		return null;
@@ -32,7 +32,7 @@ const RenderBlockPreview = ( props ) => {
 	let imagePath = '';
 	switch ( pluginName ) {
 		case 'spectra':
-			imagePath = `${uag_react?.plugin_dir}/admin`;
+			imagePath = `${spectra_blocks_react?.plugin_dir}/admin`;
 			break;
 	}
 	// Create the path to the block preview image.

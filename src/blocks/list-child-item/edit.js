@@ -23,7 +23,7 @@ import './editor.scss';
  * @return {JSX.Element} Block edit component.
  */
 const Edit = ( props ) => {
-  const { clientId } = props;
+  const { clientId, isSelected } = props;
   
   const { replaceBlocks } = useDispatch( blockEditorStore );
   
@@ -133,21 +133,21 @@ const Edit = ( props ) => {
     }
   }, [ clientId, canOutdent ] );
 
-  const isRTL = '1' === uagb_blocks_info.is_rtl ? true : false;
-  
+  const isRTL = '1' === spectra_blocks_info.is_rtl ? true : false;
+
   return (
     <>
-      <Settings { ...props } />
+      { isSelected && <Settings { ...props } /> }
       <BlockControls>
         <ToolbarButton
           icon={ isRTL ? helperIcons.list.indentRTL( canIndent ) : helperIcons.list.indent( canIndent ) }
-          title={ __( 'Indent', 'ultimate-addons-for-gutenberg' ) }
+          title={ __( 'Indent', 'spectra-blocks' ) }
           onClick={ handleIndent }
           isDisabled={ !canIndent }
         />
         <ToolbarButton
           icon={ isRTL ? helperIcons.list.outdentRTL( canOutdent ) : helperIcons.list.outdent( canOutdent ) }
-          title={ __( 'Outdent', 'ultimate-addons-for-gutenberg' ) }
+          title={ __( 'Outdent', 'spectra-blocks' ) }
           onClick={ handleOutdent }
           isDisabled={ !canOutdent }
         />

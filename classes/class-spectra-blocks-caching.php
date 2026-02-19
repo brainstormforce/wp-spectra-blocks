@@ -1,108 +1,105 @@
 <?php
 /**
- * Spectra Caching.
+ * Cache management for Spectra Blocks.
+ * Hooks into popular caching plugins to purge stale CSS on post save.
  *
- * @package Spectra
+ * @package SpectraBlocks
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
-
-use SiteGround_Optimizer\Options\Options;
-use SiteGround_Optimizer\File_Cacher\File_Cacher;
+defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Spectra_Caching.
- *
- * @since 0.0.1
+ * Purges cache from popular caching plugins when Spectra Blocks CSS is regenerated.
  */
-class Spectra_Caching {
+class Spectra_Blocks_Caching {
 
 	/**
-	 * Member Variable
+	 * Initialize cache hooks.
 	 *
-	 * @since 0.0.1
-	 * @var Spectra_Caching|null
-	 */
-	private static $instance;
-
-	/**
-	 *  Initiator
-	 *
-	 * @since 0.0.1
-	 * @return Spectra_Caching
-	 */
-	public static function get_instance() {
-
-		if ( ! isset( self::$instance ) || null === self::$instance ) {
-			self::$instance = new self();
-
-		}
-		return self::$instance;
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @since 0.0.1
-	 */
-	public function __construct() {
-		add_action( 'spectra_delete_uag_asset_dir', array( $this, 'clear_cache' ) );
-		add_action( 'spectra_delete_page_assets', array( $this, 'clear_cache' ) );
-	}
-
-	/**
-	 * Clears the cache.
-	 *
-	 * @since 0.0.1
 	 * @return void
 	 */
-	public function clear_cache() {
-		self::clear_siteground_cache();
-		self::clear_cloudways_cache();
+	public static function init() {
+		add_action( 'save_post', array( __CLASS__, 'purge_post_cache' ), 10, 1 );
+		add_action( 'spectra_blocks_css_regenerated', array( __CLASS__, 'purge_all_cache' ) );
 	}
 
 	/**
-	 * Clears the SiteGround cache.
+	 * Purge cache for a specific post.
 	 *
-	 * @since 0.0.1
+	 * @param int $post_id Post ID.
 	 * @return void
 	 */
-	public static function clear_siteground_cache() {
-		if ( ! class_exists( 'SiteGround_Optimizer\Options\Options' ) || ! class_exists( 'SiteGround_Optimizer\File_Cacher\File_Cacher' ) ) {
+	public static function purge_post_cache( $post_id ) {
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
 			return;
 		}
-
-		if ( Options::is_enabled( 'siteground_optimizer_file_caching' ) ) {
-			File_Cacher::get_instance()->purge_everything();
-		}
+		self::purge_all_cache();
 	}
 
 	/**
-	 * This function helps to purge all cache in clodways envirnoment.
-	 * In presence of Breeze plugin (https://wordpress.org/plugins/breeze/)
+	 * Purge cache across all supported caching plugins.
 	 *
-	 * @since 0.0.1
 	 * @return void
 	 */
-	public static function clear_cloudways_cache() {
-		if ( ! class_exists( 'Breeze_Configuration' ) || ! class_exists( 'Breeze_CloudFlare_Helper' ) || ! class_exists( 'Breeze_Admin' ) ) {
-			return;
+	public static function purge_all_cache() {
+		// WP Super Cache.
+		if ( function_exists( 'wp_cache_clear_cache' ) ) {
+			wp_cache_clear_cache();
 		}
 
-		// clear varnish cache.
-		$admin = new Breeze_Admin();
-		$admin->breeze_clear_varnish();
+		// W3 Total Cache.
+		if ( function_exists( 'w3tc_flush_all' ) ) {
+			w3tc_flush_all();
+		}
 
-		// clear static cache.
-		Breeze_Configuration::breeze_clean_cache();
-		Breeze_CloudFlare_Helper::reset_all_cache();
+		// WP Rocket.
+		if ( function_exists( 'rocket_clean_domain' ) ) {
+			rocket_clean_domain();
+		}
+
+		// LiteSpeed Cache.
+		if ( class_exists( 'LiteSpeed_Cache_API' ) ) {
+			LiteSpeed_Cache_API::purge_all();
+		}
+
+		// Autoptimize.
+		if ( class_exists( 'autoptimizeCache' ) ) {
+			autoptimizeCache::clearall();
+		}
+
+		// Swift Performance.
+		if ( class_exists( 'Swift_Performance_Cache' ) ) {
+			Swift_Performance_Cache::clear_all_cache();
+		}
+
+		// Kinsta / Nginx Helper — fires third-party hook defined by Nginx Helper plugin.
+		if ( class_exists( 'Nginx_Helper' ) ) {
+			do_action( 'rt_nginx_helper_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		}
+
+		// WP Engine.
+		if ( class_exists( 'WpeCommon' ) && method_exists( 'WpeCommon', 'purge_memcached' ) ) {
+			WpeCommon::purge_memcached();
+			WpeCommon::clear_maxcdn_cache();
+			WpeCommon::purge_varnish_cache();
+		}
+
+		// Cloudflare.
+		if ( class_exists( 'CF\WordPress\Hooks' ) ) {
+			$cloudflare = new CF\WordPress\Hooks();
+			$cloudflare->purgeCacheEverything();
+		}
+
+		// Comet Cache.
+		if ( defined( 'COMET_CACHE_PLUGIN_FILE' ) ) {
+			clearstatcache();
+		}
+
+		// Hummingbird.
+		if ( function_exists( 'wphb_clear_page_cache' ) ) {
+			wphb_clear_page_cache();
+		}
+
+		do_action( 'spectra_blocks_after_cache_purge' );
 	}
 }
-
-/**
- *  Prepare if class 'Spectra_Caching' exist.
- *  Kicking this off by calling 'get_instance()' method
- */
-Spectra_Caching::get_instance();

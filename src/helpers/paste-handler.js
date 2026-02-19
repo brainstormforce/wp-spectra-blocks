@@ -125,7 +125,7 @@ export function usePasteHandler( props ) {
                 } catch ( error ) {
                     // Show user-friendly error notice.
                     createErrorNotice(
-                        __( 'Failed to paste content. Please try again.', 'ultimate-addons-for-gutenberg' ),
+                        __( 'Failed to paste content. Please try again.', 'spectra-blocks' ),
                         {
                             type: 'snackbar',
                             isDismissible: true,

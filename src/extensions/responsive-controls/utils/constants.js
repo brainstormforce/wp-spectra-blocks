@@ -247,7 +247,6 @@ export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
 		'bottomHeight'
 	],
 	'spectra/google-map': [ 'height' ],
-	'spectra/svg-animator': [ 'svgWidth', 'svgHeight' ],
 	'spectra/content': [
 		'enableTextShadow',
 		'textShadowColor',

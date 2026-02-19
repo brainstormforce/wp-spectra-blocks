@@ -23,8 +23,7 @@
 		"alert popup",
 		"popup widget",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"attributes": {
 		"setCookiesOn": {

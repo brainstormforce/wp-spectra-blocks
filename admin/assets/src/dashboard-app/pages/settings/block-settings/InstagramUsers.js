@@ -1,14 +1,14 @@
 import { useState, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useSelector, useDispatch } from 'react-redux';
-import UAGB_Block_Icons from '@Common/block-icons';
+import Spectra_Block_Icons from '@Common/block-icons';
 import { AttachTooltip } from '@Common/components/Tooltip';
 import { escapeHTML } from '@wordpress/escape-html';
 import { isURL } from '@wordpress/url';
 import { ExclamationIcon } from '@heroicons/react/outline';
 import InstagramUnlinkPopup from './InstagramUnlinkPopup';
 import getApiData from '@Controls/getApiData';
-import { uagbClassNames } from '@Helpers/Helpers';
+import { spectraBlocksClassNames } from '@Helpers/Helpers';
 import ReactHtmlParser from 'react-html-parser';
 import { Container, Label } from '@bsf/force-ui';
 
@@ -16,12 +16,12 @@ const InstagramUsers = () => {
 	// Refresh all Linked Accounts.
 	useEffect( () => {
 		const data = {
-			security: uag_react.insta_refresh_all_tokens_nonce,
+			security: spectra_blocks_react.insta_refresh_all_tokens_nonce,
 			value: true,
 		};
 		const getApiDataFetch = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_insta_refresh_all_tokens',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_insta_refresh_all_tokens',
 			data,
 		} );
 		getApiDataFetch.then( () => {} );
@@ -31,7 +31,7 @@ const InstagramUsers = () => {
 	const dispatch = useDispatch();
 	const [ tempToken, setTempToken ] = useState( '' );
 	const [ instaLinkUserLabel, setInstaLinkUserLabel ] = useState(
-		__( 'Link Account', 'ultimate-addons-for-gutenberg' )
+		__( 'Link Account', 'spectra-blocks' )
 	);
 	const [ linkingUser, setLinkingUser ] = useState( false );
 	const [ openPopup, setOpenPopup ] = useState( false );
@@ -68,22 +68,22 @@ const InstagramUsers = () => {
 	const handleInstaLinkUserLable = ( type = null ) => {
 		switch ( type ) {
 			case 'saving':
-				setInstaLinkUserLabel( __( 'Linking', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Linking', 'spectra-blocks' ) );
 				break;
 			case 'invalid':
-				setInstaLinkUserLabel( __( 'Inavalid Token', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Inavalid Token', 'spectra-blocks' ) );
 				break;
 			case 'exists':
-				setInstaLinkUserLabel( __( 'Account Exists!', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Account Exists!', 'spectra-blocks' ) );
 				break;
 			case 'success':
-				setInstaLinkUserLabel( __( 'Account Linked!', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Account Linked!', 'spectra-blocks' ) );
 				break;
 			case 'failed':
-				setInstaLinkUserLabel( __( 'Failed to Add Account', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Failed to Add Account', 'spectra-blocks' ) );
 				break;
 			default:
-				setInstaLinkUserLabel( __( 'Link Account', 'ultimate-addons-for-gutenberg' ) );
+				setInstaLinkUserLabel( __( 'Link Account', 'spectra-blocks' ) );
 		}
 	};
 
@@ -128,7 +128,7 @@ const InstagramUsers = () => {
 			.catch( () => {
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-					payload: { message: __( 'Invalid Token', 'ultimate-addons-for-gutenberg' ), messageType: 'error' },
+					payload: { message: __( 'Invalid Token', 'spectra-blocks' ), messageType: 'error' },
 				} );
 				setLinkingUser( false );
 				handleInstaLinkUserLable( 'invalid' );
@@ -162,7 +162,7 @@ const InstagramUsers = () => {
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 					payload: {
-						message: __( 'Account Exists!', 'ultimate-addons-for-gutenberg' ),
+						message: __( 'Account Exists!', 'spectra-blocks' ),
 						messageType: 'warning',
 					},
 				} );
@@ -193,13 +193,13 @@ const InstagramUsers = () => {
 				} );
 				dispatch( { type: 'UPDATE_INSTA_LINKED_ACCOUNTS', payload: tempUserMatrix } );
 				const formData = {
-					security: uag_react.insta_linked_accounts_nonce,
+					security: spectra_blocks_react.insta_linked_accounts_nonce,
 					value: JSON.stringify( tempUserMatrix ),
 				};
 
 				const getApiDataFetch = getApiData( {
-					url: uag_react.ajax_url,
-					action: 'uag_insta_linked_accounts',
+					url: spectra_blocks_react.ajax_url,
+					action: 'spectra_blocks_insta_linked_accounts',
 					data: formData,
 				} );
 				getApiDataFetch.then( ( responseData ) => {
@@ -208,7 +208,7 @@ const InstagramUsers = () => {
 						handleInstaLinkUserLable( 'success' );
 						dispatch( {
 							type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-							payload: __( 'Account Linked!', 'ultimate-addons-for-gutenberg' ),
+							payload: __( 'Account Linked!', 'spectra-blocks' ),
 						} );
 						highlightLinkedUser( userID );
 						handleInstaLinkUserLable();
@@ -220,7 +220,7 @@ const InstagramUsers = () => {
 						dispatch( {
 							type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 							payload: {
-								message: __( 'Failed to Add Account', 'ultimate-addons-for-gutenberg' ),
+								message: __( 'Failed to Add Account', 'spectra-blocks' ),
 								messageType: 'error',
 							},
 						} );
@@ -236,7 +236,7 @@ const InstagramUsers = () => {
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 					payload: {
-						message: __( 'Failed to Add Account', 'ultimate-addons-for-gutenberg' ),
+						message: __( 'Failed to Add Account', 'spectra-blocks' ),
 						messageType: 'error',
 					},
 				} );
@@ -248,7 +248,7 @@ const InstagramUsers = () => {
 		const profileUserName =
 			user?.userName && 'string' === typeof user.userName
 				? user.userName[ 0 ].toUpperCase()
-				: UAGB_Block_Icons[ 'instagram-feed' ];
+				: Spectra_Block_Icons[ 'instagram-feed' ];
 		switch ( user.userType.toLowerCase() ) {
 			case 'personal':
 				// Will be the profile picture.
@@ -280,11 +280,11 @@ const InstagramUsers = () => {
 	const getAccountType = ( userType ) => {
 		switch ( userType ) {
 			case 'personal':
-				return __( 'Personal Account', 'ultimate-addons-for-gutenberg' );
+				return __( 'Personal Account', 'spectra-blocks' );
 			case 'business':
-				return __( 'Business Account', 'ultimate-addons-for-gutenberg' );
+				return __( 'Business Account', 'spectra-blocks' );
 			default:
-				return __( 'Instagram Account', 'ultimate-addons-for-gutenberg' ); // All the different Creator account types will show as Instagram account.
+				return __( 'Instagram Account', 'spectra-blocks' ); // All the different Creator account types will show as Instagram account.
 		}
 	};
 
@@ -294,12 +294,12 @@ const InstagramUsers = () => {
 			return (
 				<>
 					<p className="text-sm text-slate-400">
-						{ __( 'No linked accounts.', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'No linked accounts.', 'spectra-blocks' ) }
 					</p>
 					<p className="text-sm text-slate-400">
 						{ __(
 							'Please link an Instagram Account to start using it with Spectra!',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					</p>
 				</>
@@ -313,7 +313,7 @@ const InstagramUsers = () => {
 			// Render the Instagram user's box with details.
 			const RenderUserDetails = () => (
 				<div
-					className={ uagbClassNames( [
+					className={ spectraBlocksClassNames( [
 						'relative h-16 p-2 pr-4 m-2.5 rounded-md flex border transition-colors custom-border',
 						user.isCurrentlyActive && ! isPersonalAccount
 							? 'border-border-subtle hover:border-border-strong'
@@ -327,13 +327,13 @@ const InstagramUsers = () => {
 					onMouseLeave={ () => setCurrentHoveredUser( '' ) }
 				>
 					<button
-						className={ uagbClassNames( [
+						className={ spectraBlocksClassNames( [
 							'absolute top-0 right-0 w-4 h-4 -mt-2 -mr-2 box-content flex items-center justify-center rounded-full cursor-pointer custom-border border-white transition-colors',
 							user.isCurrentlyActive && ! isPersonalAccount
 								? 'bg-slate-500 hover:bg-red-600'
 								: 'bg-red-600',
 						] ) }
-						aria-label={ __( 'Unlink', 'ultimate-addons-for-gutenberg' ) }
+						aria-label={ __( 'Unlink', 'spectra-blocks' ) }
 						onClick={ () => unlinkUser( user.userName ) }
 						style={ { padding: '0', border: 'none' } }
 					>
@@ -351,7 +351,7 @@ const InstagramUsers = () => {
 					<div className="ml-4 flex-1 flex flex-col justify-center">
 						<div className="text-base text-slate-800">{ `@${ user.userName }` }</div>
 						<div
-							className={ uagbClassNames( [
+							className={ spectraBlocksClassNames( [
 								'text-xs',
 								user.isCurrentlyActive && ! isPersonalAccount ? 'text-slate-400' : 'text-red-600',
 							] ) }
@@ -365,7 +365,7 @@ const InstagramUsers = () => {
 							) }
 							{ user.isCurrentlyActive
 								? getAccountType( user.userType )
-								: __( 'Disabled', 'ultimate-addons-for-gutenberg' ) }
+								: __( 'Disabled', 'spectra-blocks' ) }
 						</div>
 					</div>
 				</div>
@@ -378,7 +378,7 @@ const InstagramUsers = () => {
 					showTooltip={ currentHoveredUser === user.userName }
 					tooltipContent={ __(
 						'Meta no longer supports personal accounts. Please unlink, convert to a business account, and relink to restore your feed.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					tooltipAdditionalClasses="w-96"
 				>
@@ -392,7 +392,7 @@ const InstagramUsers = () => {
 		const renderedUsers = (
 			<>
 				<h4 className="text-sm text-slate-800 font-medium mb-1">
-					{ __( 'Linked Users', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Linked Users', 'spectra-blocks' ) }
 				</h4>
 				<div className="-m-2.5 mt-2.5 w-full flex flex-wrap">{ userMatrix }</div>
 			</>
@@ -417,24 +417,24 @@ const InstagramUsers = () => {
 				<p className="text-sm text-red-600">
 					{ __(
 						'It looks like one or more accounts have been disabled due to security reasons. Here are some of them:',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				</p>
 				<p className="text-sm text-red-600 pl-2">
-					{ __( '1. The Instagram Account password was changed.', 'ultimate-addons-for-gutenberg' ) }
+					{ __( '1. The Instagram Account password was changed.', 'spectra-blocks' ) }
 				</p>
 				<p className="text-sm text-red-600 pl-2">
-					{ __( '2. The Instagram Account was made private.', 'ultimate-addons-for-gutenberg' ) }
+					{ __( '2. The Instagram Account was made private.', 'spectra-blocks' ) }
 				</p>
 				<p className="text-sm text-red-600 pl-2">
 					{ __(
 						'3. The Instagram Account was unused on Spectra for 60 days.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				</p>
 				<br />
 				<p className="text-sm text-red-600">
-					{ __( 'Please unlink and relink the account(s) marked in red.', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Please unlink and relink the account(s) marked in red.', 'spectra-blocks' ) }
 				</p>
 			</>
 		) : null;
@@ -448,13 +448,13 @@ const InstagramUsers = () => {
 					className="mr-5 h-10 text-sm placeholder-slate-400 transition spectra-admin__input-field"
 					type="text"
 					aria-label="Token"
-					placeholder={ __( 'Enter your Instagram access token', 'ultimate-addons-for-gutenberg' ) }
+					placeholder={ __( 'Enter your Instagram access token', 'spectra-blocks' ) }
 					value={ tempToken }
 					onChange={ ( event ) => setTempToken( event.target.value ) }
 				/>
 				<button
 					type="button"
-					className={ uagbClassNames( [
+					className={ spectraBlocksClassNames( [
 						! tempToken
 							? 'cursor-not-allowed bg-slate-200 text-slate-400'
 							: 'bg-spectra text-white hover:bg-spectra-hover focus:bg-spectra-hover cursor-pointer custom-border',
@@ -475,7 +475,7 @@ const InstagramUsers = () => {
 			<Container align="center" className="mb-0.5 w-full flex justify-between">
 				<Container.Item className="space-y-1 max-w-[480px]">
 					<Label className="font-semibold" htmlFor="default-width" size="md">
-						{ __( 'Connect Instagram', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Connect Instagram', 'spectra-blocks' ) }
 					</Label>
 					<Label className="m-0" size="sm" tag="p" variant="help">
 						<div className="mb-1">
@@ -484,7 +484,7 @@ const InstagramUsers = () => {
 									/* translators: %1$s: The opening anchor tag with instructions to generate a token. %2$s: The closing anchor tag. */
 									__(
 										'To get started please add your Instagram Access Token. Follow the %1$ssteps%2$s to generate a token, then paste it below and save.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 									'<a class="text-spectra focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover" href="https://wpspectra.com/docs/meta-app-for-instagram/" target="_blank" rel="noreferrer">',
 									'</a>'

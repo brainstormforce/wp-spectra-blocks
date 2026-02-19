@@ -23,46 +23,46 @@ const BSFAnalyticsOption = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.enable_bsf_analytics_option_nonce,
+			security: spectra_blocks_react.enable_bsf_analytics_option_nonce,
 			value: assetStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_enable_bsf_analytics_option',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_enable_bsf_analytics_option',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
 		getApiFetchData.then( () => {
-			dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ) } );
+			dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'spectra-blocks' ) } );
 		} );
 	};
 
 	const renderText = () => (
 		<span className='m-0'>
-			{__( 'Collect non-sensitive information from your website, such as the PHP version and features used, to help us fix bugs faster, make smarter decisions, and build features that actually matter to you. Please read ', 'ultimate-addons-for-gutenberg' )}
+			{__( 'Collect non-sensitive information from your website, such as the PHP version and features used, to help us fix bugs faster, make smarter decisions, and build features that actually matter to you. Please read ', 'spectra-blocks' )}
 
 			<a
-				href={'https://store.brainstormforce.com/usage-tracking/?utm_source=uag_dashboard&utm_medium=general_settings&utm_campaign=usage_tracking'}
+				href={'https://store.brainstormforce.com/usage-tracking/?utm_source=spectra_blocks_dashboard&utm_medium=general_settings&utm_campaign=usage_tracking'}
 				target="_blank"
 				rel="noreferrer"
 				className="text-spectra focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover"
 			>
-				{__( 'more about what we track.', 'ultimate-addons-for-gutenberg' )}
+				{__( 'more about what we track.', 'spectra-blocks' )}
 			</a>
 		</span>
 	);
 
 	return (
 		<SettingsItem
-			title={__( 'Contribute to Spectra', 'ultimate-addons-for-gutenberg' )}
+			title={__( 'Contribute to Spectra', 'spectra-blocks' )}
 			settingText={renderText}
 		>
 			<Switch
 				value={enableBSFAnalyticsOptionStatus}
 				onChange={updateEnableBSFAnalyticsOptionStatus}
 				size="md"
-				className="uagb-remove-ring border-none"
+				className="spectra-blocks-remove-ring border-none"
 			/>
 		</SettingsItem>
 	);

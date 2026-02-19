@@ -2,7 +2,7 @@
 /**
  * Ajax Base.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Ajax;
@@ -24,7 +24,7 @@ abstract class Ajax_Base {
 	 *
 	 * @var string
 	 */
-	private $prefix = 'uag';
+	private $prefix = 'spectra_blocks';
 
 	/**
 	 * Erros class instance.
@@ -36,7 +36,7 @@ abstract class Ajax_Base {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -71,7 +71,7 @@ abstract class Ajax_Base {
 		if ( current_user_can( 'manage_options' ) ) {
 
 			add_filter(
-				'uag_react_admin_localize',
+				'spectra_blocks_admin_localize',
 				function( $localize ) use ( $action ) {
 
 					$localize[ $action . '_nonce' ] = wp_create_nonce( $this->prefix . '_' . $action );

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="Spectra Patterns PHPCS Rules">
+    <description>Custom PHPCS rules for Spectra Pattern files</description>
+
+    <!-- Include WordPress VIP Minimum standards -->
+    <rule ref="WordPress-VIP-Go"/>
+
+    <!-- Disable Mustache output notation warnings for pattern files -->
+    <rule ref="WordPressVIPMinimum.Security.Mustache.OutputNotation">
+        <exclude-pattern>patterns/**/**.php</exclude-pattern>
+    </rule>
+
+    <!-- Add a comment explaining why we're disabling this rule -->
+    <annotations>
+        <annotation name="rationale" value="Pattern files contain WordPress Gutenberg block markup with JSON-like attributes in curly braces, which can falsely trigger Mustache templating warnings. These files don't use actual Mustache templating." />
+    </annotations>
+</ruleset>

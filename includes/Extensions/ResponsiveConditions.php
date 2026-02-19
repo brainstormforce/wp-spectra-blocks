@@ -7,13 +7,16 @@
 
 namespace Spectra\Extensions;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
  * Responsive Conditions class.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ResponsiveConditions {
 
@@ -22,7 +25,7 @@ class ResponsiveConditions {
 	/**
 	 * Flag indicating if responsive conditions assets are needed.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var bool
 	 */
@@ -34,7 +37,7 @@ class ResponsiveConditions {
 	 * Hooks into render_block to add responsive visibility classes to blocks
 	 * and enqueue frontend styles when needed.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -51,7 +54,7 @@ class ResponsiveConditions {
 	 * Ensures the block has the 'responsiveConditions' attribute defined and injects
 	 * the responsive visibility classes into the block's wrapper tag using WP_HTML_Tag_Processor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block instance.
@@ -82,7 +85,7 @@ class ResponsiveConditions {
 	/**
 	 * Determine whether the block should be processed for responsive conditions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
 	 * @return bool
@@ -96,7 +99,7 @@ class ResponsiveConditions {
 	/**
 	 * Retrieve active responsive conditions from block attributes.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attrs Block attributes.
 	 * @return array Active responsive conditions.
@@ -130,7 +133,7 @@ class ResponsiveConditions {
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject responsive classes into the first tag.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $content Block content.
 	 * @param array  $responsive_classes Array of responsive classes to add.
@@ -166,7 +169,7 @@ class ResponsiveConditions {
 	 *
 	 * Uses the same filtering logic as the JavaScript side to ensure consistency.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.
 	 * @return bool
@@ -176,7 +179,7 @@ class ResponsiveConditions {
 		 * Filter to allow or exclude specific blocks from responsive conditions.
 		 * This filter allows developers to customize which blocks support responsive conditions.
 		 *
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 *
 		 * @param array  $excluded_blocks Array of block names to exclude.
 		 * @param string $block_name      The current block name being checked.
@@ -193,7 +196,7 @@ class ResponsiveConditions {
 		 * Filter to specify which blocks explicitly support responsive conditions.
 		 * This filter allows developers to add support for additional blocks.
 		 *
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 *
 		 * @param array  $supported_blocks Array of block names that support responsive conditions.
 		 * @param string $block_name       The current block name being checked.
@@ -210,7 +213,7 @@ class ResponsiveConditions {
 		 * Filter to modify the allowed block prefixes for responsive conditions.
 		 * This filter allows developers to add or remove prefixes.
 		 *
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 *
 		 * @param array  $allowed_prefixes Array of block name prefixes to allow.
 		 * @param string $block_name       The current block name being checked.
@@ -234,14 +237,14 @@ class ResponsiveConditions {
 	 * This registers the frontend stylesheet but doesn't enqueue it yet,
 	 * allowing conditional loading only when responsive conditions are actually used.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
 	public function register_frontend_css() {
 		// Check if CSS file exists.
-		$css_file = SPECTRA_DIR . 'build/extensions/responsive-conditions/style-index.css';
-		$css_url  = SPECTRA_URL . 'build/extensions/responsive-conditions/style-index.css';
+		$css_file = SPECTRA_BLOCKS_DIR . 'build/extensions/responsive-conditions/style-index.css';
+		$css_url  = SPECTRA_BLOCKS_URL . 'build/extensions/responsive-conditions/style-index.css';
 
 		if ( file_exists( $css_file ) ) {
 			wp_register_style(
@@ -260,7 +263,7 @@ class ResponsiveConditions {
 	 * This runs on wp_footer hook, which executes after all blocks have been rendered
 	 * and processed, ensuring the CSS is only loaded when actually needed.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -276,7 +279,7 @@ class ResponsiveConditions {
 	/**
 	 * Enqueue editor assets for responsive conditions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */

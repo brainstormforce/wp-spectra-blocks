@@ -2,7 +2,7 @@
 /**
  * Single page settings page
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 // Exit if accessed directly.
@@ -12,5 +12,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div id="uag-dashboard-app" class="uag-dashboard-app">
+<div id="spectra-blocks-dashboard-app" class="spectra-blocks-dashboard-app">
 </div>

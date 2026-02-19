@@ -199,9 +199,10 @@ document.addEventListener( 'DOMContentLoaded', function() {
 	 */
 	function initCounterProgressBars() {
 		const progressBars = document.querySelectorAll( '.wp-block-spectra-counter-child-progress-bar.spectra-counter-progress-bar--bar' );
-		
+
 		progressBars.forEach( ( element ) => {
-			new SpectraCounterProgressBar( element );
+			if ( element.spectraCounterProgressBar ) return;
+			element.spectraCounterProgressBar = new SpectraCounterProgressBar( element );
 		} );
 	}
 	

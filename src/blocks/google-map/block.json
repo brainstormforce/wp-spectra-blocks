@@ -27,8 +27,7 @@
 		"contact map",
 		"store locator",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"align": [ "wide", "full" ],

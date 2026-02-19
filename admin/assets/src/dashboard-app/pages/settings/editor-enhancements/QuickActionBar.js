@@ -17,13 +17,13 @@ const QuickActionBar = () => {
 	const debouncedApiCall = useCallback(
 		debounce( ( status ) => {
 			const data = {
-				security: uag_react.enable_quick_action_sidebar_nonce,
+				security: spectra_blocks_react.enable_quick_action_sidebar_nonce,
 				value: status,
 			};
 
 			const getApiFetchData = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_enable_quick_action_sidebar',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_enable_quick_action_sidebar',
 				data,
 			} );
 
@@ -48,17 +48,17 @@ const QuickActionBar = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Enable Quick Action Bar', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Enable Quick Action Bar', 'spectra-blocks' ) }
 				settingText={ __(
 					'The Spectra Quick Action Bar lets you have all your frequently used Spectra blocks right at your fingertips!',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ QuickActionSidebarStatus }
 					onChange={ updateQuickActionSidebarStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

@@ -1,0 +1,183 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/tabs-child-tab-button",
+  "version": "3.0.0",
+  "title": "Tab",
+  "category": "spectra-blocks-inner",
+  "description": "Add a customizable tab.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/tabs-child-tab-wrapper"
+  ],
+  "supports": {
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-blocks-common"
+  ],
+  "usesContext": [
+    "spectra/tabs/currentTab",
+    "spectra/tabs/icon",
+    "spectra/tabs/iconPosition",
+    "spectra/tabs/size",
+    "spectra/tabs/textColor",
+    "spectra/tabs/styleColorText",
+    "spectra/tabs/textColorHover",
+    "spectra/tabs/textColorActive",
+    "spectra/tabs/textColorActiveHover",
+    "spectra/tabs/iconColor",
+    "spectra/tabs/iconColorHover",
+    "spectra/tabs/iconColorActive",
+    "spectra/tabs/iconColorActiveHover",
+    "spectra/tabs/backgroundColor",
+    "spectra/tabs/backgroundColorHover",
+    "spectra/tabs/backgroundColorActive",
+    "spectra/tabs/backgroundColorActiveHover",
+    "spectra/tabs/backgroundGradient",
+    "spectra/tabs/backgroundGradientHover",
+    "spectra/tabs/backgroundGradientActive",
+    "spectra/tabs/backgroundGradientActiveHover",
+    "spectra/tabs/borderColorHover",
+    "spectra/tabs/borderColorActive",
+    "spectra/tabs/borderColorActiveHover"
+  ],
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "currentTab": {
+      "type": "number"
+    },
+    "showText": {
+      "type": "boolean",
+      "default": true
+    },
+    "placeholder": {
+      "type": "string",
+      "default": "Tab 1"
+    },
+    "text": {
+      "type": "string"
+    },
+    "icon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "iconPosition": {
+      "type": "string"
+    },
+    "size": {
+      "type": "string"
+    },
+    "rotation": {
+      "type": "number"
+    },
+    "gap": {
+      "type": "string"
+    },
+    "flipForRTL": {
+      "type": "boolean",
+      "default": false
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "textColorActive": {
+      "type": "string"
+    },
+    "textColorActiveHover": {
+      "type": "string"
+    },
+    "iconColor": {
+      "type": "string"
+    },
+    "iconColorHover": {
+      "type": "string"
+    },
+    "iconColorActive": {
+      "type": "string"
+    },
+    "iconColorActiveHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundColorActive": {
+      "type": "string"
+    },
+    "backgroundColorActiveHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "backgroundGradientActive": {
+      "type": "string"
+    },
+    "backgroundGradientActiveHover": {
+      "type": "string"
+    },
+    "borderColorHover": {
+      "type": "string"
+    },
+    "borderColorActive": {
+      "type": "string"
+    },
+    "borderColorActiveHover": {
+      "type": "string"
+    }
+  }
+}

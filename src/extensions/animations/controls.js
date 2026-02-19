@@ -125,7 +125,7 @@ const AnimationOptions = ( props ) => {
 				- The "spectraAnimationType" attribute is set. Default: ''.
 			*/ }
 			<ToolsPanelItem
-				label={ __( 'Animation Type', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Animation Type', 'spectra-blocks' ) }
 				isShownByDefault
 				hasValue={ () => !! spectraAnimationType }
 				onDeselect={ () => setAttributes( { spectraAnimationType: '' } ) }
@@ -133,7 +133,7 @@ const AnimationOptions = ( props ) => {
 				<SelectControl
 					__next40pxDefaultSize
 					__nextHasNoMarginBottom
-					label={ __( 'Animation Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Animation Type', 'spectra-blocks' ) }
 					onChange={ ( value ) => {
 						setAttributes( {
 							spectraAnimationType: value,
@@ -170,10 +170,10 @@ const AnimationOptions = ( props ) => {
 							variant="secondary"
 							type="button"
 							onClick={ () => playAnimation() }
-							label={ __( 'Preview animation', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Preview animation', 'spectra-blocks' ) }
 							__next40pxDefaultSize
 						>
-							{ __( 'Preview', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Preview', 'spectra-blocks' ) }
 						</Button>
 					</HStack>
 				</>
@@ -222,7 +222,7 @@ const addAnimationControls = ( BlockEdit ) => ( props ) => {
 						- Animation Easing: 'ease'
 						- Includes a "Reset All" option to restore default animation values.
 					*/ }
-					<ToolsPanel label={ __( 'Animation', 'ultimate-addons-for-gutenberg' ) } resetAll={ resetAll }>
+					<ToolsPanel label={ __( 'Animation', 'spectra-blocks' ) } resetAll={ resetAll }>
 						<AnimationOptions { ...props } />
 					</ToolsPanel>
 				</InspectorControls>

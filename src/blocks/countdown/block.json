@@ -26,8 +26,7 @@
 		"discount",
 		"deal",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"providesContext": {
 		"spectra/countdown/showDays": "showDays",
@@ -103,7 +102,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScript": "file:./view.js",
+	"viewScriptModule": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

@@ -75,7 +75,7 @@ const useBsfLearn = ( {
 					);
 
 					// Show error toast
-					toast.error( __( 'Failed to save progress. Please try again.', 'ultimate-addons-for-gutenberg' ) );
+					toast.error( __( 'Failed to save progress. Please try again.', 'spectra-blocks' ) );
 
 					// eslint-disable-next-line no-console
 					console.error( 'Failed to save progress:', error );

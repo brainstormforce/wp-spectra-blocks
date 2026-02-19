@@ -251,12 +251,12 @@ export const AccordionItemBlockControls = ( props ) => {
 			<ToolbarGroup>
 				<ToolbarButton
 					icon={ helperIcons.accordion.addAccordion }
-					label={ __( 'Replicate this accordion item', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Replicate this accordion item', 'spectra-blocks' ) }
 					onClick={ () => { insertNewAccordionItem( clientId, currentAccordionItemId ) } }
 				/>
 				<ToolbarButton
 					icon={ helperIcons.accordion.removeAccordion( !isDisabled ) }
-					label={ __( 'Remove this accordion item', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Remove this accordion item', 'spectra-blocks' ) }
 					onClick={ () => { removeCurrentAccordionItem( clientId ) } }
 					disabled={ isDisabled }
 				/>
@@ -308,12 +308,12 @@ export const AccordionRootToolbar = ( { clientId } ) => {
 			<ToolbarGroup>
 				<ToolbarButton
 					icon={helperIcons.accordion.addAccordion}
-					label={__( 'Add Accordion Item', 'ultimate-addons-for-gutenberg' )}
+					label={__( 'Add Accordion Item', 'spectra-blocks' )}
 					onClick={addAccordionItem}
 				/>
 				<ToolbarButton
 					icon={helperIcons.accordion.removeAccordion( !isDisabled )}
-					label={__( 'Remove Last Accordion Item', 'ultimate-addons-for-gutenberg' )}
+					label={__( 'Remove Last Accordion Item', 'spectra-blocks' )}
 					onClick={removeAccordionItem}
 					disabled={isDisabled}
 				/>

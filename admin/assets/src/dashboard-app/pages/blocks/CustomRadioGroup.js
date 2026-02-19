@@ -19,9 +19,9 @@ const CustomRadioGroup = ( { options, name, selectedValue, onChange } ) => {
 								value={ option.value }
 								checked={ selectedValue === option.value }
 								onChange={ ( e ) => onChange( e.target.value ) }
-								className="hidden peer uagb-radio-input"
+								className="hidden peer spectra-blocks-radio-input"
 							/>
-							<div className="uagb-radio-button"></div>
+							<div className="spectra-blocks-radio-button"></div>
 							<div>
 								<span className="text-text-primary font-medium m-0 text-sm leading-5">
 									{ option.label }

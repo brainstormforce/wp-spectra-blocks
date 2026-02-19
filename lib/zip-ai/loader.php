@@ -3,7 +3,7 @@
  * Plugin Loader.
  *
  * @package zip-ai
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 namespace ZipAI;
@@ -22,7 +22,7 @@ if ( ! class_exists( '\ZipAI\Loader' ) ) {
 	/**
 	 * Plugin_Loader
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	class Loader {
 
@@ -31,14 +31,14 @@ if ( ! class_exists( '\ZipAI\Loader' ) ) {
 		 *
 		 * @access private
 		 * @var object Class Instance.
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		private static $instance;
 
 		/**
 		 * Initiator
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @return object initialized object of class.
 		 */
 		public static function get_instance() {
@@ -79,7 +79,7 @@ if ( ! class_exists( '\ZipAI\Loader' ) ) {
 		/**
 		 * Constructor
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 */
 		public function __construct() {
 
@@ -92,7 +92,7 @@ if ( ! class_exists( '\ZipAI\Loader' ) ) {
 		/**
 		 * Define the required constants.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public function define_constants() {
@@ -112,7 +112,7 @@ if ( ! class_exists( '\ZipAI\Loader' ) ) {
 		/**
 		 * Setup the required classes.
 		 *
-		 * @since 0.0.1
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public function setup_classes() {

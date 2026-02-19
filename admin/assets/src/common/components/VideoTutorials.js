@@ -54,7 +54,7 @@ const VideoTutorials = () => {
 		<div className="rounded-lg bg-white w-full border border-solid border-border-subtle">
 			<div className="flex items-center justify-between p-4 pb-2">
 				<p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Video Tutorials', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Video Tutorials', 'spectra-blocks' ) }
 				</p>
 				<div className="flex items-center gap-2">
 					<ChevronLeft
@@ -116,7 +116,7 @@ const VideoTutorials = () => {
 								<div className="w-full h-full p-1 sm:p-3 absolute top-0 left-0">
 									<div className="w-full h-full bg-black bg-opacity-50 hover:bg-opacity-30 transition-all duration-100 text-text-on-color rounded-md">
 										<p className="text-sm font-semibold absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-											{ __( 'See More', 'ultimate-addons-for-gutenberg' ) } &hellip;
+											{ __( 'See More', 'spectra-blocks' ) } &hellip;
 										</p>
 									</div>
 								</div>

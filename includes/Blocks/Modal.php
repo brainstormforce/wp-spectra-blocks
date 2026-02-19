@@ -7,13 +7,16 @@
 
 namespace Spectra\Blocks;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
  * Modal class.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Modal {
 
@@ -22,7 +25,7 @@ class Modal {
 	/**
 	 * Flag indicating if modal assets are needed.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var bool
 	 */
@@ -33,7 +36,7 @@ class Modal {
 	 *
 	 * Hooks into render_block, asset registration, and conditional asset enqueue.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -45,7 +48,7 @@ class Modal {
 	/**
 	 * Enqueue modal JS assets for editor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -61,7 +64,7 @@ class Modal {
 	/**
 	 * Handle frontend asset registration and enqueueing
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -77,16 +80,16 @@ class Modal {
 	/**
 	 * Register modal assets.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
 	private function register_modal_assets() {
 		wp_register_script(
 			'spectra-modal-settings',
-			SPECTRA_URL . 'assets/js/modal-script.js',
+			SPECTRA_BLOCKS_URL . 'assets/js/modal-script.js',
 			array( 'wp-hooks' ),
-			SPECTRA_VER,
+			SPECTRA_BLOCKS_VER,
 			true
 		);
 	}
@@ -94,7 +97,7 @@ class Modal {
 	/**
 	 * Determine whether the block should be processed for modal.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
 	 * @return bool
@@ -109,7 +112,7 @@ class Modal {
 	 *
 	 * The modal attributes into the block's wrapper tag using WP_HTML_Tag_Processor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block instance.

@@ -8,13 +8,12 @@
 	"description": "This block allows you to add modal popup..",
 	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/modal" ],
-	"allowedBlocks": [ "spectra/spectra/modal-child-button", "spectra/spectra/modal-child-icon", "spectra/modal-child-text" ],
+	"allowedBlocks": [ "spectra/modal-child-button", "spectra/modal-child-icon", "spectra/modal-child-content" ],
 	"keywords": [
 		"modal",
 		"popup",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"interactivity": true,

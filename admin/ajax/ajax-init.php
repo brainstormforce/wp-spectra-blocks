@@ -2,7 +2,7 @@
 /**
  * Ajax Initialize.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Ajax;
@@ -22,7 +22,7 @@ class Ajax_Init {
 	 *
 	 * @access private
 	 * @var object Class object.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	private static $instance;
 
@@ -30,14 +30,14 @@ class Ajax_Init {
 	 * Dynamic properties container
 	 *
 	 * @var array
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 */
 	private $dynamic_properties = array();
 
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -50,7 +50,7 @@ class Ajax_Init {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -60,7 +60,7 @@ class Ajax_Init {
 	/**
 	 * Init Hooks.
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return void
 	 */
 	public function initialize_hooks() {
@@ -73,7 +73,7 @@ class Ajax_Init {
 	 * @param string $name  Property name.
 	 * @param mixed  $value Property value.
 	 *
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 * @return void
 	 */
 	public function __set( $name, $value ) {
@@ -85,7 +85,7 @@ class Ajax_Init {
 	 *
 	 * @param string $name Property name.
 	 *
-	 * @since 0.0.1
+	 * @since 2.7.10
 	 * @return mixed Property value if set, null otherwise.
 	 */
 	public function __get( $name ) {

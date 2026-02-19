@@ -29,14 +29,14 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 	// Guide pages explaining each layout type.
 	const guidePages = [
 		{
-			image: <img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Container-Layouts.gif" width="520" height="400" alt={ __( 'Container Layout Guide Introduction', 'ultimate-addons-for-gutenberg' ) } />,
+			image: <img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Container-Layouts.gif" width="520" height="400" alt={ __( 'Container Layout Guide Introduction', 'spectra-blocks' ) } />,
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Understanding Container Layouts', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Understanding Container Layouts', 'spectra-blocks' ) }</h2>
 					<p>
 						{ __( 
 							'Container layouts control how content is placed and aligned inside a container. Choosing the right layout helps you build pages faster and keeps things looking neat across devices.', 
-							'ultimate-addons-for-gutenberg' 
+							'spectra-blocks' 
 						) }
 					</p>
 				</div>
@@ -44,16 +44,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flow-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flow Layout', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flow-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flow Layout', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Flow Layout', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Flow Layout', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 								'Arrange blocks in a natural <b>top-to-bottom</b> order, with minimal layout controls. Best for simple, readable content and quick layouts with simple content stacking.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
@@ -65,16 +65,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flex-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flex Layout', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flex-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flex Layout', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Flex Layout', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Flex Layout', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 								'Arrange blocks <b>horizontally or vertically</b>, adjust their alignment, and allow them to wrap onto multiple lines. Justification controls how blocks are spaced and aligned.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
@@ -86,16 +86,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Grid-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Grid Layout', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Grid-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Grid Layout', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Grid Layout', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Grid Layout', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 								'Grid layout arranges blocks into <b>rows and columns</b>, giving you precise control over where each item appears. You can set a minimum column width and adjust individual item positions.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
@@ -107,16 +107,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Constrained-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Constrained Layout', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Constrained-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Constrained Layout', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Constrained Layout', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Constrained Layout', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 							'Constrained layout <b>keeps your content centered</b> and limits how wide it can grow. Even on large screens, content stays comfortable to read and visually balanced.', 
-							'ultimate-addons-for-gutenberg' 
+							'spectra-blocks' 
 						),
 							{
 								b: <strong />,
@@ -128,16 +128,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Layout-Changes-1.gif" width="520" height="400" alt={ __( 'Container Layout Guide Understanding Layout Changes', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Layout-Changes-1.gif" width="520" height="400" alt={ __( 'Container Layout Guide Understanding Layout Changes', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Understanding Layout Changes', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Understanding Layout Changes', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 								'You can always change layout type from the <b>Sidebar → Layout Settings</b>. Each layout type offers different controls and behaviour.',
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
@@ -148,20 +148,20 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 						{ createInterpolateElement(
 							__( 
 								'You can also use the <b>Change Layout</b> <img /> option from the toolbar to change layout variation/style.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
-								img: <img src={ `${ window?.uagb_blocks_info?.uagb_url || '' }/spectra-v3/assets/images/guide/layoutstyle.svg` } alt={ __( 'Change Layout', 'ultimate-addons-for-gutenberg' ) } style={ { height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' } } />,
+								img: <img src={ `${ window?.spectra_blocks_info?.plugin_url || '' }/assets/images/guide/layoutstyle.svg` } alt={ __( 'Change Layout', 'spectra-blocks' ) } style={ { height: '1.2em', verticalAlign: 'middle', margin: '0 0.25em' } } />,
 							}
 						) }
 					</p>
 					<div className="spectra-layout-guide__tip">
-						<strong>{ __( 'Note:', 'ultimate-addons-for-gutenberg' ) }</strong>
+						<strong>{ __( 'Note:', 'spectra-blocks' ) }</strong>
 						<p>
 							{ __( 
 								'When you choose a column layout styles like Two Columns or Three Columns, the editor switches to Grid automatically. Grid keeps columns aligned and evenly spaced, so you don\'t have to adjust anything manually.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							) }
 						</p>
 					</div>
@@ -170,16 +170,16 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Content-Alignment.gif" width="520" height="400" alt={ __( 'Content Alignment', 'ultimate-addons-for-gutenberg' ) } />
+				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Content-Alignment.gif" width="520" height="400" alt={ __( 'Content Alignment', 'spectra-blocks' ) } />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
-					<h2>{ __( 'Content Alignment', 'ultimate-addons-for-gutenberg' ) }</h2>
+					<h2>{ __( 'Content Alignment', 'spectra-blocks' ) }</h2>
 					<p>
 						{ createInterpolateElement(
 							__( 
 								'Use <b>Align items</b> and <b>Justify items</b> in the block toolbar to position and space content inside the container.', 
-								'ultimate-addons-for-gutenberg' 
+								'spectra-blocks' 
 							),
 							{
 								b: <strong />,
@@ -199,8 +199,8 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 	return (
 		<Guide
 			className="spectra-layout-guide"
-			contentLabel={ __( 'Container Layout Guide', 'ultimate-addons-for-gutenberg' ) }
-			finishButtonText={ __( 'Get Started', 'ultimate-addons-for-gutenberg' ) }
+			contentLabel={ __( 'Container Layout Guide', 'spectra-blocks' ) }
+			finishButtonText={ __( 'Get Started', 'spectra-blocks' ) }
 			onFinish={ onClose }
 			pages={ guidePages }
 		/>

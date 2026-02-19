@@ -9,6 +9,7 @@
 	"textdomain": "spectra-blocks",
 	"parent": ["spectra/icons"],
 	"supports": {
+		"html": false,
 		"anchor": true,
 		"__experimentalBorder": {
 			"width": true,

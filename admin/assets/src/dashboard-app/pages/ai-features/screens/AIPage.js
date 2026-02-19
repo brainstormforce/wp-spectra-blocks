@@ -36,9 +36,9 @@ import {
 const AIPage = () => {
 	// Set the default message based on whether the user is new or has linked before.
 	const buttonText =
-		'disconnected' === uag_react?.zip_ai_status
-			? __( 'Reconnect and Continue Using AI Features', 'ultimate-addons-for-gutenberg' )
-			: __( 'Get Started with 1000 Free Monthly Credits', 'ultimate-addons-for-gutenberg' );
+		'disconnected' === spectra_blocks_react?.zip_ai_status
+			? __( 'Reconnect and Continue Using AI Features', 'spectra-blocks' )
+			: __( 'Get Started with 1000 Free Monthly Credits', 'spectra-blocks' );
 	// Set the required states.
 	const [ showPopup, setShowPopup ] = useState( false );
 	const [ buttonLabel, setButtonLabel ] = useState( buttonText );
@@ -56,7 +56,7 @@ const AIPage = () => {
 	// Function: Authorize Zip AI.
 	const authorizeZipAI = ( event ) => {
 		event.preventDefault();
-		// window.location.assign( uag_react.zip_ai_auth_middleware );
+		// window.location.assign( spectra_blocks_react.zip_ai_auth_middleware );
 
 		// Get all the auth buttons and disable them.
 		const authButtons = document.querySelectorAll( '.spectra-ai-features-authorization' );
@@ -72,14 +72,14 @@ const AIPage = () => {
 
 		// Redirect to the Zip AI Authorization URL.
 		const authWindow = window.open(
-			uag_react.zip_ai_auth_middleware,
+			spectra_blocks_react.zip_ai_auth_middleware,
 			'SpectraAiFeaturesAuthorization',
 			`width=480,height=720,top=${ positioning.top },left=${ positioning.left },scrollbars=0`
 		);
 
 		// Create an object with the security property.
 		const data = {
-			security: uag_react.zip_ai_verify_authenticity_nonce,
+			security: spectra_blocks_react.zip_ai_verify_authenticity_nonce,
 		};
 
 		// Set a counter for timeout.
@@ -87,9 +87,9 @@ const AIPage = () => {
 
 		// Update the texts.
 		setButtonLabel(
-			'disconnected' === uag_react?.zip_ai_status
-				? __( 'Reconnecting to Use AI Features', 'ultimate-addons-for-gutenberg' )
-				: __( 'Getting Started with 1000 Free Monthly Credits', 'ultimate-addons-for-gutenberg' )
+			'disconnected' === spectra_blocks_react?.zip_ai_status
+				? __( 'Reconnecting to Use AI Features', 'spectra-blocks' )
+				: __( 'Getting Started with 1000 Free Monthly Credits', 'spectra-blocks' )
 		);
 
 		// Set an interval to check if the option was updated.
@@ -110,8 +110,8 @@ const AIPage = () => {
 
 			// Call the getApiData function with the required parameters.
 			const getApiFetchData = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_zip_ai_verify_authenticity',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_zip_ai_verify_authenticity',
 				data,
 			} );
 
@@ -187,15 +187,15 @@ const AIPage = () => {
 
 		// Create an object with the security and value properties. Send the value as a string for easier sanitization.
 		const data = {
-			security: uag_react.zip_ai_module_status_nonce,
+			security: spectra_blocks_react.zip_ai_module_status_nonce,
 			module: moduleName,
 			value: updatedValue,
 		};
 
 		// Send the data to the server.
 		const getApiDataFetch = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_zip_ai_module_status',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_zip_ai_module_status',
 			data,
 		} );
 
@@ -205,7 +205,7 @@ const AIPage = () => {
 				// Update the success notification.
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-					payload: response.data.messsage || __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+					payload: response.data.messsage || __( 'Successfully saved!', 'spectra-blocks' ),
 				} );
 			} else {
 				// Update the failed notification.
@@ -213,7 +213,7 @@ const AIPage = () => {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 					payload: {
 						message:
-							response.data.messsage || __( 'Failed to save setting', 'ultimate-addons-for-gutenberg' ),
+							response.data.messsage || __( 'Failed to save setting', 'spectra-blocks' ),
 						messageType: 'error',
 					},
 				} );
@@ -249,52 +249,52 @@ const AIPage = () => {
 		<section className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
 			{ renderInfoCard( {
 				icon: <WandIcon />,
-				title: __( 'Craft Compelling Content', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Craft Compelling Content', 'spectra-blocks' ),
 				description: __(
 					'With our AI, you can effortlessly create persuasive and engaging copy that resonates with your audience.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 			} ) }
 			{ renderInfoCard( {
 				icon: <BlocksIcon />,
-				title: __( 'AI-Powered Block Patterns', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'AI-Powered Block Patterns', 'spectra-blocks' ),
 				description: __(
 					"Personalize the block patterns and section templates to tailor them to your website's unique needs.",
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 			} ) }
 			{ renderInfoCard( {
 				icon: <WordPressLogo />,
-				title: __( 'WordPress Wizardry', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'WordPress Wizardry', 'spectra-blocks' ),
 				description: __(
 					"Got questions? Our AI has the answers. Whether it's troubleshooting or customizing your site.",
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 			} ) }
 			{ renderInfoCard( {
 				icon: <LayoutIcon />,
-				title: __( 'Personalized Templates', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Personalized Templates', 'spectra-blocks' ),
 				description: __(
 					'Say goodbye to generic designs and say hello to our AI-personalized page templates, tailored just for you.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 			} ) }
 			{ renderInfoCard( {
 				icon: <CodeBlockIcon />,
-				title: __( 'Generate Custom Code', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Generate Custom Code', 'spectra-blocks' ),
 				description: __(
 					'No more struggling with complex coding issues. Generate custom code, functions, and CSS with AI.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 			} ) }
 			{ renderInfoCard( {
 				icon: <PageIcon />,
-				title: __( 'Custom Pages With AI', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Custom Pages With AI', 'spectra-blocks' ),
 				description: sprintf(
 					/* translators: %s: Percentage Ascii Code */
 					__(
 						'You can create beautiful, 100%s custom web pages without the need for any design or coding skills.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					),
 					'%'
 				),
@@ -303,15 +303,15 @@ const AIPage = () => {
 	);
 
 	// Set the credit details and the team name.
-	const teamName = uag_react?.zip_ai_current_plan?.team_name;
+	const teamName = spectra_blocks_react?.zip_ai_current_plan?.team_name;
 
 	const connectionBadge = () => {
-		if ( uag_react?.zip_ai_is_authorized )
+		if ( spectra_blocks_react?.zip_ai_is_authorized )
 			return (
 				<div className="flex items-center gap-3">
 					<Badge
 						icon={ <CheckCheck size={ 12 } /> }
-						label={ __( 'Connected', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Connected', 'spectra-blocks' ) }
 						size="sm"
 						type="pill"
 						variant="green"
@@ -320,12 +320,12 @@ const AIPage = () => {
 					{ aiSettings() }
 				</div>
 			);
-		else if ( 'disconnected' === uag_react?.zip_ai_status )
+		else if ( 'disconnected' === spectra_blocks_react?.zip_ai_status )
 			return (
 				<div className="flex items-center gap-3">
 					<Badge
 						icon={ <Unlink size={ 12 } /> }
-						label={ __( 'Disconnected', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Disconnected', 'spectra-blocks' ) }
 						size="sm"
 						type="pill"
 						variant="red"
@@ -336,7 +336,7 @@ const AIPage = () => {
 			);
 		return (
 			<Badge
-				label={ __( 'Inactive', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Inactive', 'spectra-blocks' ) }
 				size="sm"
 				type="pill"
 				variant="primary"
@@ -368,13 +368,13 @@ const AIPage = () => {
 			<DropdownMenu.ContentWrapper>
 			<DropdownMenu.Content className="w-60">
 				<DropdownMenu.List className="font-[Figtree]">
-					{ uag_react?.zip_ai_is_authorized && (
+					{ spectra_blocks_react?.zip_ai_is_authorized && (
 						<>
 							<DropdownMenu.Item>
 								<div className="w-full h-full flex justify-between font-[Figtree]">
 									<div>
 										<div className="text-text-secondary text-base font-medium">
-											{ uagb_user_data.firstName + ' ' + uagb_user_data.lastName }
+											{ spectra_blocks_user_data.firstName + ' ' + spectra_blocks_user_data.lastName }
 										</div>
 										<div className="text-text-tertiary text-sm">{ teamName }</div>
 									</div>
@@ -382,16 +382,16 @@ const AIPage = () => {
 									<div className="h-full p-[2px]">
 										<Badge
 											label={
-												uag_react.spectra_pro_installed && uag_react.spectra_pro_ver
-													? __( 'Pro', 'ultimate-addons-for-gutenberg' )
-													: __( 'Free', 'ultimate-addons-for-gutenberg' )
+												spectra_blocks_react.spectra_pro_installed && spectra_blocks_react.spectra_pro_ver
+													? __( 'Pro', 'spectra-blocks' )
+													: __( 'Free', 'spectra-blocks' )
 											}
 											size="xs"
 											variant="neutral"
 											closable={ false }
 											className={ `m-1 ${
-												uag_react.spectra_pro_installed &&
-												uag_react.spectra_pro_ver &&
+												spectra_blocks_react.spectra_pro_installed &&
+												spectra_blocks_react.spectra_pro_ver &&
 												'bg-gradient-to-b from-[#A78BFA] to-[#6005FF] text-white'
 											}` }
 										/>
@@ -411,9 +411,9 @@ const AIPage = () => {
 								href="https://app.zipwp.com/org/billing"
 								target="_blank"
 								rel="noreferrer"
-								className="text-sm no-underline text-text-primary font-normal uagb-remove-ring"
+								className="text-sm no-underline text-text-primary font-normal spectra-blocks-remove-ring"
 							>
-								{ __( 'Manage Plan', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Manage Plan', 'spectra-blocks' ) }
 							</a>
 						</div>
 					</DropdownMenu.Item>
@@ -426,14 +426,14 @@ const AIPage = () => {
 								href="https://app.zipwp.com/pricing"
 								target="_blank"
 								rel="noreferrer"
-								className="text-sm no-underline text-text-primary font-normal uagb-remove-ring"
+								className="text-sm no-underline text-text-primary font-normal spectra-blocks-remove-ring"
 							>
-								{ __( 'Plan Usage & Limit', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Plan Usage & Limit', 'spectra-blocks' ) }
 							</a>
 						</div>
 					</DropdownMenu.Item>
 
-					{ uag_react.zip_ai_is_authorized && (
+					{ spectra_blocks_react.zip_ai_is_authorized && (
 						<DropdownMenu.Item onClick={ disconnectAI }>
 							<div
 								onClick={ disconnectAI }
@@ -442,13 +442,13 @@ const AIPage = () => {
 								<Unlink size={ 16 } />
 
 								<div className="text-sm">
-									{ __( 'Disconnect AI', 'ultimate-addons-for-gutenberg' ) }
+									{ __( 'Disconnect AI', 'spectra-blocks' ) }
 								</div>
 							</div>
 						</DropdownMenu.Item>
 					) }
 
-					{ ! uag_react.zip_ai_is_authorized && (
+					{ ! spectra_blocks_react.zip_ai_is_authorized && (
 						<DropdownMenu.Item onClick={ reconnectAI }>
 							<div
 								onClick={ reconnectAI }
@@ -456,7 +456,7 @@ const AIPage = () => {
 							>
 								<Unlink size={ 16 } />
 
-								<div className="text-sm">{ __( 'Reconnect AI', 'ultimate-addons-for-gutenberg' ) }</div>
+								<div className="text-sm">{ __( 'Reconnect AI', 'spectra-blocks' ) }</div>
 							</div>
 						</DropdownMenu.Item>
 					) }
@@ -468,7 +468,7 @@ const AIPage = () => {
 
 	const RenderCredits = () => {
 		const [ isMobile, setIsMobile ] = useState( window.innerWidth < 768 );
-		const [ creditDetails, setCreditDetails ] = useState( uag_react.zip_ai_credit_details );
+		const [ creditDetails, setCreditDetails ] = useState( spectra_blocks_react.zip_ai_credit_details );
 		const [ isRefreshing, setIsRefreshing ] = useState( false );
 
 		useEffect( () => {
@@ -483,7 +483,7 @@ const AIPage = () => {
 			};
 		}, [] );
 
-		return uag_react?.zip_ai_is_authorized ? (
+		return spectra_blocks_react?.zip_ai_is_authorized ? (
 			<div className="flex items-start gap-2 text-link-primary">
 				<Zap className="size-4" />
 
@@ -497,7 +497,7 @@ const AIPage = () => {
 						</div>
 						<Tooltip
 							arrow
-							content={ __( 'Refresh credit details', 'ultimate-addons-for-gutenberg' ) }
+							content={ __( 'Refresh credit details', 'spectra-blocks' ) }
 							placement="bottom"
 							triggers={ [ 'hover', 'focus' ] }
 							variant="dark"
@@ -534,7 +534,7 @@ const AIPage = () => {
 								className={ `flex items-center justify-center w-7 h-7 min-w-0 min-h-0 pb-1 rounded-full ${
 									isRefreshing ? 'opacity-70 cursor-not-allowed' : ''
 								}` }
-								aria-label={ __( 'Refresh Credits', 'ultimate-addons-for-gutenberg' ) }
+								aria-label={ __( 'Refresh Credits', 'spectra-blocks' ) }
 								disabled={ isRefreshing }
 								style={{ marginLeft: '4px', border: 'none', background: '#f0f0f0' }}
 							>
@@ -563,13 +563,13 @@ const AIPage = () => {
 						rel="noreferrer"
 						className="no-underline text-link-primary text-sm font-semibold"
 					>
-						{ __( 'Get More Credits', 'ultimate-addons-for-gutenberg' ) } <ArrowUpRight size={ 12 } />
+						{ __( 'Get More Credits', 'spectra-blocks' ) } <ArrowUpRight size={ 12 } />
 					</a>
 				</div>
 			</div>
 		) : (
 			<Button
-				className={ `uagb-remove-ring ${ isMobile && 'rounded-lg' }` }
+				className={ `spectra-blocks-remove-ring ${ isMobile && 'rounded-lg' }` }
 				icon={
 					! buttonLabel.toLowerCase().startsWith( 'reconnect' ) ? (
 						<Rocket aria-label="icon" role="img" />
@@ -583,8 +583,8 @@ const AIPage = () => {
 				onClick={ authorizeZipAI }
 			>
 				{ ! buttonLabel.toLowerCase().startsWith( 'reconnect' )
-					? __( 'Get Started', 'ultimate-addons-for-gutenberg' )
-					: __( 'Reconnect', 'ultimate-addons-for-gutenberg' ) }
+					? __( 'Get Started', 'spectra-blocks' )
+					: __( 'Reconnect', 'spectra-blocks' ) }
 			</Button>
 		);
 	};
@@ -598,7 +598,7 @@ const AIPage = () => {
 							<div>
 								<div className="flex items-start sm:items-center justify-between sm:justify-start gap-3 mb-3 sm:mb-1">
 									<div className="text-xl font-semibold">
-										{ __( 'AI Features', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'AI Features', 'spectra-blocks' ) }
 									</div>
 
 									{ connectionBadge() }
@@ -607,7 +607,7 @@ const AIPage = () => {
 								<div className="text-text-secondary text-sm">
 									{ __(
 										'This setting allows you to enabled or disable the AI features on your website.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 								</div>
 							</div>
@@ -639,7 +639,7 @@ const AIPage = () => {
 
 											<Switch
 												size="md"
-												className="uagb-remove-ring border-none"
+												className="spectra-blocks-remove-ring border-none"
 												value={ zipAiAssistantStatus }
 												onChange={ () =>
 													updateZipAiStatus( 'ai_assistant', zipAiAssistantStatus )
@@ -649,12 +649,12 @@ const AIPage = () => {
 
 										<div>
 											<div className="m-0 mb-[2px] font-semibold text-base">
-												{ __( 'AI Assistant', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'AI Assistant', 'spectra-blocks' ) }
 											</div>
 											<div className="text-sm">
 												{ __(
 													"It's like ChatGPT but for WordPress, designed to revolutionize your WordPress experience.",
-													'ultimate-addons-for-gutenberg'
+													'spectra-blocks'
 												) }
 											</div>
 										</div>
@@ -679,7 +679,7 @@ const AIPage = () => {
 
 											<Switch
 												size="md"
-												className="uagb-remove-ring border-none"
+												className="spectra-blocks-remove-ring border-none"
 												value={ zipAiDesignCopilotStatus }
 												onChange={ () =>
 													updateZipAiStatus( 'ai_design_copilot', zipAiDesignCopilotStatus )
@@ -689,12 +689,12 @@ const AIPage = () => {
 
 										<div>
 											<div className="m-0 mb-[2px] font-semibold text-base">
-												{ __( 'AI Design Copilot', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'AI Design Copilot', 'spectra-blocks' ) }
 											</div>
 											<div className="text-sm">
 												{ __(
 													'Generate personalized content inside Design Library based on your input prompts.',
-													'ultimate-addons-for-gutenberg'
+													'spectra-blocks'
 												) }
 											</div>
 										</div>
@@ -756,7 +756,7 @@ const AIPage = () => {
 							</div>
 
 							<div className="text-text-primary text-2xl font-semibold">
-								{ __( 'Build 10x Faster with Spectra AI', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Build 10x Faster with Spectra AI', 'spectra-blocks' ) }
 							</div>
 						</div>
 
@@ -773,21 +773,21 @@ const AIPage = () => {
 				{ ...{
 					showPopup: showDisconnectionPopup,
 					popupContent: {
-						title: __( 'Disconnect AI', 'ultimate-addons-for-gutenberg' ),
+						title: __( 'Disconnect AI', 'spectra-blocks' ),
 						description: `${ __(
 							'Disconnecting will turn off the AI features. You will need to reconnect to use the features again. Are you sure you want to continue?',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }`,
 					},
 					popupAccept: {
-						label: __( 'Disconnect', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Disconnect', 'spectra-blocks' ),
 						callback: () => {
 							localStorage.removeItem( 'zipAiAuthorizationStatus' );
-							window.location.assign( uag_react.zip_ai_auth_revoke_url );
+							window.location.assign( spectra_blocks_react.zip_ai_auth_revoke_url );
 						},
 					},
 					popupCancel: {
-						label: __( 'Cancel', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Cancel', 'spectra-blocks' ),
 						callback: () => {
 							setShowDisconnectionPopup( false );
 						},
@@ -799,20 +799,20 @@ const AIPage = () => {
 				{ ...{
 					showPopup: showReconnectionPopup,
 					popupContent: {
-						title: __( 'Reconnect AI', 'ultimate-addons-for-gutenberg' ),
+						title: __( 'Reconnect AI', 'spectra-blocks' ),
 						description: `${ __(
 							'Reconnecting will turn the AI features back on. Are you sure you want to continue?',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }`,
 					},
 					popupAccept: {
-						label: __( 'Reconnect', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Reconnect', 'spectra-blocks' ),
 						callback: ( e ) => {
 							authorizeZipAI( e );
 						},
 					},
 					popupCancel: {
-						label: __( 'Cancel', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Cancel', 'spectra-blocks' ),
 						callback: () => {
 							setShowReconnectionPopup( false );
 						},
@@ -854,7 +854,7 @@ const ConfirmationPopup = ( props ) => {
 				<div className="p-2">
 					<div className="flex justify-end items-center w-full gap-3">
 						<Button
-							className="uagb-outline-button"
+							className="spectra-blocks-outline-button"
 							size="md"
 							tag="button"
 							type="button"
@@ -870,7 +870,7 @@ const ConfirmationPopup = ( props ) => {
 								popupAccept.label === 'Reconnect'
 									? 'bg-button-primary hover:bg-button-primary-hover'
 									: 'bg-button-danger hover:bg-button-danger-hover'
-							} text-text-on-color uagb-remove-ring ` }
+							} text-text-on-color spectra-blocks-remove-ring ` }
 							size="md"
 							tag="button"
 							type="button"

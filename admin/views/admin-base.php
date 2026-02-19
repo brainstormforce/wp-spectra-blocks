@@ -2,7 +2,7 @@
 /**
  * Admin Base HTML.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 // Exit if accessed directly.
@@ -10,12 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="uag-menu-page-wrapper">
-	<div id="uag-menu-page">
-		<div class="uag-menu-page-content uag-clear">
+<div class="spectra-blocks-menu-page-wrapper">
+	<div id="spectra-blocks-menu-page">
+		<div class="spectra-blocks-menu-page-content spectra-blocks-clear">
 		<?php
 
-			do_action( 'uag_render_admin_page_content', $menu_page_slug, $page_action );
+			do_action( 'spectra_blocks_render_admin_content', $menu_page_slug, $page_action );
 		?>
 		</div>
 	</div>

@@ -14,7 +14,7 @@ import {
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
+import { AccordionItemBlockControls } from '@spectra/accordion/helper';
 
 /**
  * Element Sub-settings: General settings.
@@ -37,7 +37,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Settings', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Settings', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( { openByDefault: false } );
 				} }
@@ -45,7 +45,7 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! openByDefault }
-					label={ __( 'Open by Default', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Open by Default', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { openByDefault: false } ) }
 					resetAllFilter={ () => ( { openByDefault: false } ) }
 					isShownByDefault
@@ -54,9 +54,9 @@ const BlockSettings = memo( ( props ) => {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						checked={ openByDefault }
-						label={ __( 'Open by Default', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Open by Default', 'spectra-blocks' ) }
 						onChange={ ( value ) => setAttributes( { openByDefault: value } ) }
-						help={ __( 'If enabled, this accordion item will be expanded on page load.', 'ultimate-addons-for-gutenberg' ) }
+						help={ __( 'If enabled, this accordion item will be expanded on page load.', 'spectra-blocks' ) }
 					/>
 				</ToolsPanelItem>
 			</ToolsPanel>
@@ -95,14 +95,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -112,20 +112,20 @@ const ColorSettings = memo( ( props ) => {
 				},
 				{
 					colorValue: textColorSecondary,
-					label: __( 'Header', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Header', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorSecondary: value } ),
 					resetAllFilter: () => setAttributes( { textColorSecondary: undefined } ),
 				},
 				{
 					colorValue: textColorHoverSecondary,
-					label: __( 'Header Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Header Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHoverSecondary: value } ),
 					resetAllFilter: () => setAttributes( { textColorHoverSecondary: undefined } ),
 				},
 				{
 					colorValue: backgroundColorSecondary,
 					gradientValue: backgroundGradientSecondary,
-					label: __( 'Header Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Header Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorSecondary: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientSecondary: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -136,7 +136,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorHoverSecondary,
 					gradientValue: backgroundGradientHoverSecondary,
-					label: __( 'Header BG Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Header BG Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHoverSecondary: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHoverSecondary: value } ),
 					resetAllFilter: () => setAttributes( {

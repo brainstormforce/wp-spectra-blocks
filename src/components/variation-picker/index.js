@@ -98,7 +98,7 @@ export const RenderBlockVariation = ( props ) => {
 	// If the url for the current block's assets isn't available, abandon ship.
 	if (
 		! [ 'spectra', 'spectra-pro' ].includes( pluginName )
-		|| ( 'spectra' === pluginName && ! window?.uagb_blocks_info?.uagb_url )
+		|| ( 'spectra' === pluginName && ! window?.spectra_blocks_info?.plugin_url )
 		|| ( 'spectra-pro' === pluginName && ! window?.spectra_pro_blocks_info?.spectra_pro_url )
 	) {
 		return null;
@@ -113,7 +113,7 @@ export const RenderBlockVariation = ( props ) => {
 	let imagePath = '';
 	switch ( pluginName ) {
 		case 'spectra':
-			imagePath = `${ window.uagb_blocks_info.uagb_url }/spectra-v3`;
+			imagePath = `${ window.spectra_blocks_info.plugin_url }`;
 			break;
 		case 'spectra-pro':
 			imagePath = `${ window.spectra_pro_blocks_info.spectra_pro_url }/spectra-pro-v2`;

@@ -56,7 +56,7 @@ const ShadowControl = memo( ( {
 		value: attributeValue = '',
 	},
 	shadowHover = null,
-	label = __( 'Box Shadow', 'ultimate-addons-for-gutenberg' ),
+	label = __( 'Box Shadow', 'spectra-blocks' ),
 	group = 'styles',
 	showHoverState = false,
 } ) => {
@@ -71,21 +71,21 @@ const ShadowControl = memo( ( {
 
 		if ( themeColors.length > 0 ) {
 			groups.push( {
-				name: __( 'Theme', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Theme', 'spectra-blocks' ),
 				colors: themeColors,
 			} );
 		}
 
 		if ( customColors.length > 0 ) {
 			groups.push( {
-				name: __( 'Custom', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Custom', 'spectra-blocks' ),
 				colors: customColors,
 			} );
 		}
 
 		if ( defaultColors.length > 0 ) {
 			groups.push( {
-				name: __( 'Default', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Default', 'spectra-blocks' ),
 				colors: defaultColors,
 			} );
 		}
@@ -263,14 +263,14 @@ const ShadowControl = memo( ( {
 				{ showHoverState && shadowHover && (
 					<ToolsPanelItem
 						hasValue={ () => currentState === 'hover' }
-						label={ __( 'Shadow State', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Shadow State', 'spectra-blocks' ) }
 						onDeselect={ () => setCurrentState( 'normal' ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<VStack spacing={ 2 }>
 							<Text>
-								{ __( 'Shadow State', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Shadow State', 'spectra-blocks' ) }
 							</Text>
 							<ToggleGroupControl
 								__nextHasNoMarginBottom
@@ -280,11 +280,11 @@ const ShadowControl = memo( ( {
 							>
 								<ToggleGroupControlOption
 									value="normal"
-									label={ __( 'Normal', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Normal', 'spectra-blocks' ) }
 								/>
 								<ToggleGroupControlOption
 									value="hover"
-									label={ __( 'Hover', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Hover', 'spectra-blocks' ) }
 								/>
 							</ToggleGroupControl>
 						</VStack>
@@ -295,14 +295,14 @@ const ShadowControl = memo( ( {
 				{/* Shadow Color ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'color' ) }
-					label={ __( 'Shadow Color', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Shadow Color', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'color', '' ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack spacing={ 2 }>
 						<Text weight={ 600 }>
-							{ __( 'Color', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Color', 'spectra-blocks' ) }
 						</Text>
 						<ColorPalette
 							colors={ colorPalette }
@@ -319,14 +319,14 @@ const ShadowControl = memo( ( {
 				{/* X Position ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'x' ) }
-					label={ __( 'X Position', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'X Position', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'x', 0 ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack alignment="stretch">
 						<Text>
-							{ __( 'X POSITION', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'X POSITION', 'spectra-blocks' ) }
 						</Text>
 						<DebouncedRangeControl
 							__nextHasNoMarginBottom
@@ -344,14 +344,14 @@ const ShadowControl = memo( ( {
 				{/* Y Position ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'y' ) }
-					label={ __( 'Y Position', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Y Position', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'y', 0 ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack alignment="stretch">
 						<Text>
-							{ __( 'Y POSITION', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Y POSITION', 'spectra-blocks' ) }
 						</Text>
 						<DebouncedRangeControl
 							__nextHasNoMarginBottom
@@ -369,14 +369,14 @@ const ShadowControl = memo( ( {
 				{/* Blur ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'blur' ) }
-					label={ __( 'Blur', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Blur', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'blur', 0 ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack spacing={ 2 }>
 						<Text>
-							{ __( 'BLUR', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'BLUR', 'spectra-blocks' ) }
 						</Text>
 						<DebouncedRangeControl
 							__nextHasNoMarginBottom
@@ -393,14 +393,14 @@ const ShadowControl = memo( ( {
 				{/* Spread ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'spread' ) }
-					label={ __( 'Spread', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Spread', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'spread', 0 ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack spacing={ 2 }>
 						<Text>
-							{ __( 'SPREAD', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'SPREAD', 'spectra-blocks' ) }
 						</Text>
 						<DebouncedRangeControl
 							__nextHasNoMarginBottom
@@ -417,14 +417,14 @@ const ShadowControl = memo( ( {
 				{/* Shadow Type ToolsPanelItem */}
 				<ToolsPanelItem
 					hasValue={ () => hasPropertyValue( 'inset' ) }
-					label={ __( 'Shadow Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Shadow Type', 'spectra-blocks' ) }
 					onDeselect={ () => resetShadowProperty( 'inset', false ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<VStack spacing={ 2 }>
 						<Text>
-							{ __( 'SHADOW TYPE', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'SHADOW TYPE', 'spectra-blocks' ) }
 						</Text>
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
@@ -434,11 +434,11 @@ const ShadowControl = memo( ( {
 						>
 							<ToggleGroupControlOption
 								value="outset"
-								label={ __( 'Outset', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Outset', 'spectra-blocks' ) }
 							/>
 							<ToggleGroupControlOption
 								value="inset"
-								label={ __( 'Inset', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Inset', 'spectra-blocks' ) }
 							/>
 						</ToggleGroupControl>
 					</VStack>

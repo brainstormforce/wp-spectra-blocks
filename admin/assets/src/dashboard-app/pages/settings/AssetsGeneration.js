@@ -19,8 +19,8 @@ const AssetsGeneration = () => {
 
 		dispatch( { type: 'UPDATE_FILE_GENERATION', payload: assetStatus } );
 
-		const action = 'uag_enable_file_generation',
-			nonce = uag_react.enable_file_generation_nonce;
+		const action = 'spectra_blocks_enable_file_generation',
+			nonce = spectra_blocks_react.enable_file_generation_nonce;
 		// Create an object with the security and value properties
 		const data = {
 			security: nonce,
@@ -28,7 +28,7 @@ const AssetsGeneration = () => {
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
+			url: spectra_blocks_react.ajax_url,
 			action,
 			data,
 		} );
@@ -38,11 +38,11 @@ const AssetsGeneration = () => {
 		} );
 	};
 	// Add the desired path after /docs/
-	const url = uag_admin_react.spectra_website?.docsUrl?.replace( /\/docs\/?/, '/docs/file-generation/' )?.toString();
+	const url = spectra_blocks_admin_react.spectra_website?.docsUrl?.replace( /\/docs\/?/, '/docs/file-generation/' )?.toString();
 
 	const renderText = () => (
 		<span className='m-0'>
-			{ __( 'Please read ', 'ultimate-addons-for-gutenberg' ) }
+			{ __( 'Please read ', 'spectra-blocks' ) }
 
 			<a
 				href={url}
@@ -55,7 +55,7 @@ const AssetsGeneration = () => {
 
 			{ __(
 				' to learn the difference between generating CSS and JS inline and in a separate file.',
-				'ultimate-addons-for-gutenberg'
+				'spectra-blocks'
 			) }
 		</span>
 	);
@@ -63,10 +63,10 @@ const AssetsGeneration = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'File Generation', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'File Generation', 'spectra-blocks' ) }
 				settingText={ __(
 					'Spectra loads the CSS and JS inline on the page by default. If you want to generate separate CSS and JS files for Spectra blocks, enable this option. ',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				currentSetting={ renderText }
 			>
@@ -74,7 +74,7 @@ const AssetsGeneration = () => {
 					value={ fileGenerationStatus }
 					onChange={ updateFileGenerationStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

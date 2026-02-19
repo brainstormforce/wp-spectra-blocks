@@ -1,0 +1,235 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/slider",
+  "version": "3.0.0",
+  "title": "Slider",
+  "category": "spectra-blocks",
+  "description": "Create a beautiful slider block",
+  "textdomain": "spectra-blocks",
+  "keywords": [
+    "slider",
+    "slideshow",
+    "carousel",
+    "gallery",
+    "image slider",
+    "content slider",
+    "banner slider",
+    "slides",
+    "swiper",
+    "rotating content",
+    "image carousel",
+    "media slider",
+    "post carousel",
+    "post-carousel",
+    "posts carousel",
+    "blog carousel",
+    "content carousel",
+    "add slider",
+    "create slideshow",
+    "insert carousel",
+    "advanced slider",
+    "responsive slider",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "allowedBlocks": [
+    "spectra/slider-child"
+  ],
+  "supports": {
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "shadow": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "shadow": true,
+      "style": true,
+      "__experimentalDefaultControls": {
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "color": {
+      "gradients": false,
+      "background": false,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "attributes": {
+    "isPreview": {
+      "type": "boolean"
+    },
+    "sliderId": {
+      "type": "string"
+    },
+    "slidesPerView": {
+      "type": "string"
+    },
+    "spaceBetween": {
+      "type": "number"
+    },
+    "loop": {
+      "type": "boolean"
+    },
+    "navigation": {
+      "type": "boolean",
+      "default": true
+    },
+    "pagination": {
+      "type": "boolean",
+      "default": true
+    },
+    "autoplay": {
+      "type": "boolean"
+    },
+    "speed": {
+      "type": "number"
+    },
+    "navigationColor": {
+      "type": "string"
+    },
+    "navigationBackgroundColor": {
+      "type": "string"
+    },
+    "paginationColor": {
+      "type": "string"
+    },
+    "paginationColorActive": {
+      "type": "string"
+    },
+    "paginationColorHover": {
+      "type": "string"
+    },
+    "backgroundType": {
+      "type": "string"
+    },
+    "slideCount": {
+      "type": "number"
+    },
+    "displayArrows": {
+      "type": "boolean"
+    },
+    "displayDots": {
+      "type": "boolean"
+    },
+    "autoplaySpeed": {
+      "type": "number"
+    },
+    "sliderHeight": {
+      "type": "string"
+    },
+    "background": {
+      "type": "object"
+    },
+    "breakpoints": {
+      "type": "string"
+    },
+    "navigationPrevIcon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "navigationNextIcon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "arrowDistance": {
+      "type": "string"
+    },
+    "navigationSize": {
+      "type": "string"
+    },
+    "navigationIconSize": {
+      "type": "string"
+    },
+    "arrowColor": {
+      "type": "string"
+    },
+    "arrowColorHover": {
+      "type": "string"
+    },
+    "arrowBackgroundColor": {
+      "type": "string"
+    },
+    "arrowBackgroundColorHover": {
+      "type": "string"
+    },
+    "paginationTopMargin": {
+      "type": "string"
+    },
+    "autoplayHoverPause": {
+      "type": "boolean"
+    },
+    "autoplayPauseOnHover": {
+      "type": "boolean"
+    },
+    "autoplayPauseOnInteraction": {
+      "type": "boolean"
+    },
+    "allowTouchMove": {
+      "type": "boolean"
+    },
+    "overflow": {
+      "type": "string"
+    },
+    "style": {
+      "type": "object"
+    },
+    "dimRatio": {
+      "type": "number"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "backgroundGradient": {
+      "type": "string"
+    },
+    "enableAdvGradients": {
+      "type": "boolean",
+      "default": false
+    },
+    "advBgGradient": {
+      "type": "string"
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-blocks-common",
+    "spectra-components-icon-picker"
+  ],
+  "render": "file:./view.php",
+  "viewScript": [
+    "swiper-script",
+    "file:./view.js"
+  ],
+  "viewStyle": [
+    "swiper-style",
+    "spectra-blocks-common"
+  ],
+  "providesContext": {
+    "spectra/slider/textColor": "textColor"
+  }
+}

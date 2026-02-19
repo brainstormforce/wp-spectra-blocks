@@ -64,7 +64,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group='settings'>
 			<ToolsPanel
-				label={ __( 'Button', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Button', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						icon: undefined,
@@ -84,7 +84,7 @@ const BlockSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => ( !! icon || ! showText || !! flipForRTL || !! ariaLabel ) }
-					label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( {
 						icon: undefined,
 						showText: true,
@@ -102,13 +102,13 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<VStack spacing={ 4 }>
 						<IconPicker
-							label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Icon', 'spectra-blocks' ) }
 							value={ icon }
 							onChange={ ( value ) => setAttributes( { icon: value } ) }
 						/>
 						<ToggleControl
 							checked={ showText }
-							label={ __( 'Show Text', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Show Text', 'spectra-blocks' ) }
 							disabled={ ! icon }
 							onChange={ ( value ) => {
 								// If the toggle is turned off, strip all tags from the text before proceeding.
@@ -126,19 +126,19 @@ const BlockSettings = memo( ( props ) => {
 						{ ! showText && (
 							<InputControl
 								__next40pxDefaultSize
-								label={ __( 'Aria Label', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Aria Label', 'spectra-blocks' ) }
 								value={ ariaLabel }
 								onChange={ ( value ) => setAttributes( { ariaLabel: value } ) }
-								help={ __( 'Required for accessibility when button has only an icon.', 'ultimate-addons-for-gutenberg' ) }
+								help={ __( 'Required for accessibility when button has only an icon.', 'spectra-blocks' ) }
 							/>
 						) }
 						{ icon && (
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ flipForRTL }
-								label={ __( 'Flip Icon for Right-To-Left', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 								onChange={ () => setAttributes( { flipForRTL: ! flipForRTL } ) }
-								help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'ultimate-addons-for-gutenberg' ) }
+								help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
 							/>
 						) }
 					</VStack>
@@ -149,7 +149,7 @@ const BlockSettings = memo( ( props ) => {
 				{ ( icon && showText ) && (
 					<ToolsPanelItem
 						hasValue={ () => !! iconPosition }
-						label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Position', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { iconPosition: undefined  } ) }
 						resetAllFilter={ () => ( {
 							iconPosition: undefined,
@@ -160,7 +160,7 @@ const BlockSettings = memo( ( props ) => {
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Position', 'spectra-blocks' ) }
 							value={ iconPosition }
 							onChange={ ( value ) => setAttributes( { iconPosition: value } ) }
 							isBlock
@@ -204,7 +204,7 @@ const ColorSettings = memo( ( props ) => {
 				settings={ [
 					{
 						colorValue: textColorHover,
-						label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Text Hover', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 						resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 					},
@@ -216,7 +216,7 @@ const ColorSettings = memo( ( props ) => {
 					{
 						colorValue: backgroundColorHover,
 						gradientValue: backgroundGradientHover,
-						label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Background Hover', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 						onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 						resetAllFilter: () => setAttributes( {
@@ -233,13 +233,13 @@ const ColorSettings = memo( ( props ) => {
 					settings={ [
 						{
 							colorValue: iconColor,
-							label: __( 'Icon', 'ultimate-addons-for-gutenberg' ),
+							label: __( 'Icon', 'spectra-blocks' ),
 							onColorChange: ( value ) => setAttributes( { iconColor: value } ),
 							resetAllFilter: () => setAttributes( { iconColor: undefined } ),
 						},
 						{
 							colorValue: iconColorHover,
-							label: __( 'Icon Hover', 'ultimate-addons-for-gutenberg' ),
+							label: __( 'Icon Hover', 'spectra-blocks' ),
 							onColorChange: ( value ) => setAttributes( { iconColorHover: value } ),
 							resetAllFilter: () => setAttributes( { iconColorHover: undefined } ),
 						},
@@ -279,7 +279,7 @@ const IconStyleSettings = memo( ( props ) => {
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
 				hasValue={ () => !! size }
-				label={ __( 'Icon size', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Icon size', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { size: undefined } ) }
 				resetAllFilter={ () => ( {
 					size: undefined,
@@ -289,7 +289,7 @@ const IconStyleSettings = memo( ( props ) => {
 			>
 				<UnitControl
 				    __next40pxDefaultSize
-					label={ __( 'Icon size', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon size', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ size }
 					min={ 0 }
@@ -299,7 +299,7 @@ const IconStyleSettings = memo( ( props ) => {
 			</ToolsPanelItem>
 			<ToolsPanelItem
 				hasValue={ () => !! gap }
-				label={ __( 'Text-Icon Gap', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Text-Icon Gap', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { gap: undefined } ) }
 				resetAllFilter={ () => ( {
 					gap: undefined,
@@ -309,7 +309,7 @@ const IconStyleSettings = memo( ( props ) => {
 			>
 				<UnitControl
 				    __next40pxDefaultSize
-					label={ __( 'Text-Icon Gap', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Text-Icon Gap', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ gap }
 					min={ 0 }

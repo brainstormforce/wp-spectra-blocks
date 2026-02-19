@@ -76,7 +76,7 @@ const ColorSettings = memo( ( props ) => {
 		{
 			colorValue: backgroundColor,
 			gradientValue: backgroundGradient,
-			label: __( 'Background', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Background', 'spectra-blocks' ),
 			onColorChange: ( value ) => setAttributes( { backgroundColor: value } ),
 			onGradientChange: ( value ) => setAttributes( { backgroundGradient: value } ),
 			resetAllFilter: () => setAttributes( {
@@ -101,7 +101,7 @@ const AdvancedGradientSettings = memo( ( props ) => {
 
 	const gradientConfigs = [
 		{
-			label: __( 'Advanced BG', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Advanced BG', 'spectra-blocks' ),
 			valueAttr: 'advBgGradient',
 			showTopBorder: true,
 		},
@@ -114,8 +114,8 @@ const AdvancedGradientSettings = memo( ( props ) => {
 			attributes={ attributes }
 			gradients={ gradientConfigs }
 			enableAttr="enableAdvGradients"
-			enableLabel={ __( 'Enable Advanced Gradient', 'ultimate-addons-for-gutenberg' ) }
-			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'ultimate-addons-for-gutenberg' ) }
+			enableLabel={ __( 'Enable Advanced Gradient', 'spectra-blocks' ) }
+			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'spectra-blocks' ) }
 			hideIndividualToggles={ true }
 		/>
 	);
@@ -141,7 +141,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+				label={__( 'Overlay Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -151,7 +151,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+					label={__( 'Overlay Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}
@@ -180,4 +180,4 @@ const Settings = memo( ( props ) => (
 	</>
 ) );
 
-export default memo( Settings );
+export default Settings;

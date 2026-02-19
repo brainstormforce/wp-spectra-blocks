@@ -85,10 +85,10 @@ const Edit = ( props ) => {
 			{ ...{
 				...props,
 				icon: blockIcons.tabs(),
-				label: __( 'Tabs', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Tabs', 'spectra-blocks' ),
 				instructions: __(
 					'Select a tab layout to get started',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				variations,
 				defaultVariation,

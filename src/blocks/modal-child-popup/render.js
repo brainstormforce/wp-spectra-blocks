@@ -32,7 +32,7 @@ const Render = ( props ) => {
 		},
 	} = props;
 
-	const isPro = uagb_blocks_info.spectra_pro_status;
+	const isPro = spectra_blocks_info.spectra_pro_status;
 
 	// Configuration for the useSpectraStyles hook.
 	const config = [

@@ -6,7 +6,7 @@ import { ToolbarButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useCallback } from '@wordpress/element';
+import { memo, useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -65,7 +65,7 @@ function useOutdentList( clientId ) {
  * @return {JSX.Element} Component to render.
  */
 function OutdentUI( { clientId } ) {
-	const isRTL = '1' === uagb_blocks_info.is_rtl ? true : false;
+	const isRTL = '1' === spectra_blocks_info.is_rtl ? true : false;
 	const outdentList = useOutdentList( clientId );
 	const canOutdent = useSelect(
 		( select ) => {
@@ -81,8 +81,8 @@ function OutdentUI( { clientId } ) {
 	return (
 		<ToolbarButton
 			icon={ isRTL ? helperIcons.list.outdentRTL( canOutdent ) : helperIcons.list.outdent( canOutdent ) }
-			title={ __( 'Outdent', 'ultimate-addons-for-gutenberg' ) }
-			description={ __( 'Outdent list', 'ultimate-addons-for-gutenberg' ) }
+			title={ __( 'Outdent', 'spectra-blocks' ) }
+			description={ __( 'Outdent list', 'spectra-blocks' ) }
 			disabled={ !canOutdent }
 			onClick={ outdentList }
 		/>
@@ -97,7 +97,7 @@ function OutdentUI( { clientId } ) {
  * @since x.x.x
  * @return {Element} Element to render.
  */
-const Render = ( props ) => {
+const Render = memo( ( props ) => {
 	const {
 		attributes,
 		setAttributes,
@@ -161,15 +161,15 @@ const Render = ( props ) => {
 		<BlockControls group="block">
 			<ToolbarButton
 				icon={ listType === 'unordered' ? helperIcons.list.unordered( false ) : helperIcons.list.unordered }
-				title={ __( 'Unordered', 'ultimate-addons-for-gutenberg' ) }
-				description={ __( 'Convert to unordered list', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Unordered', 'spectra-blocks' ) }
+				description={ __( 'Convert to unordered list', 'spectra-blocks' ) }
 				isActive={ listType === 'unordered' }
 				onClick={ () => { setAttributes( { listType: 'unordered' } ) } }
 			/>
 			<ToolbarButton
 				icon={ listType === 'ordered' ? helperIcons.list.ordered( false ) : helperIcons.list.ordered }
-				title={ __( 'Ordered', 'ultimate-addons-for-gutenberg' ) }
-				description={ __( 'Convert to ordered list', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Ordered', 'spectra-blocks' ) }
+				description={ __( 'Convert to ordered list', 'spectra-blocks' ) }
 				isActive={ listType === 'ordered' }
 				onClick={ () => { setAttributes( { listType: 'ordered' } ) } }
 			/>
@@ -188,6 +188,6 @@ const Render = ( props ) => {
 			{ controls }
 		</>
 	);
-};
+} );
 
 export default Render;

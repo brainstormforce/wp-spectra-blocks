@@ -47,7 +47,7 @@ const PickerButton = memo( ( { onClick, onKeyDown, className, ariaLabel, childre
  */
 const RemoveButton = memo( ( { onRemove, type = 'icon' } ) => {
 	// Simple string comparison - no memoization needed
-	const ariaLabel = type === 'SVG' ? __( 'Remove SVG', 'ultimate-addons-for-gutenberg' ) : __( 'Remove icon', 'ultimate-addons-for-gutenberg' );
+	const ariaLabel = type === 'SVG' ? __( 'Remove SVG', 'spectra-blocks' ) : __( 'Remove icon', 'spectra-blocks' );
 	
 	return (
 		<button
@@ -67,9 +67,9 @@ const SelectButton = memo( ( { onClick, isAvailable, type = 'icon' } ) => {
 	// Simple conditional logic - no memoization needed for string operations
 	const getText = () => {
 		if ( type === 'SVG' ) {
-			return isAvailable ? __( 'Change SVG', 'ultimate-addons-for-gutenberg' ) : __( 'Choose SVG', 'ultimate-addons-for-gutenberg' );
+			return isAvailable ? __( 'Change SVG', 'spectra-blocks' ) : __( 'Choose SVG', 'spectra-blocks' );
 		}
-		return isAvailable ? __( 'Change Icon', 'ultimate-addons-for-gutenberg' ) : __( 'Choose Icon', 'ultimate-addons-for-gutenberg' );
+		return isAvailable ? __( 'Change Icon', 'spectra-blocks' ) : __( 'Choose Icon', 'spectra-blocks' );
 	};
 	
 	const buttonText = getText();
@@ -118,7 +118,7 @@ const IconPickerSetting = memo( ( props ) => {
 			{ /* Source type toggle when image is enabled */ }
 			{ enableImage && (
 				<ToggleGroupControl
-					label={ __( 'Source Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Source Type', 'spectra-blocks' ) }
 					value={ currentSourceType }
 					onChange={ handleSourceTypeChange }
 					isBlock
@@ -126,11 +126,11 @@ const IconPickerSetting = memo( ( props ) => {
 				>
 					<ToggleGroupControlOption
 						value="icon"
-						label={ __( 'Icon Library', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Icon Library', 'spectra-blocks' ) }
 					/>
 					<ToggleGroupControlOption
 						value="image"
-						label={ __( 'Upload SVG', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Upload SVG', 'spectra-blocks' ) }
 					/>
 				</ToggleGroupControl>
 			) }
@@ -143,7 +143,7 @@ const IconPickerSetting = memo( ( props ) => {
 						<PickerButton
 							className="spectra-icon-picker__control"
 							onClick={ openModal }
-							ariaLabel={ isIconAvailable ? __( 'Change icon', 'ultimate-addons-for-gutenberg' ) : __( 'Choose icon', 'ultimate-addons-for-gutenberg' ) }
+							ariaLabel={ isIconAvailable ? __( 'Change icon', 'spectra-blocks' ) : __( 'Choose icon', 'spectra-blocks' ) }
 						>
 							{ isIconAvailable ? (
 								<div className="spectra-icon-picker__control--value">
@@ -172,7 +172,7 @@ const IconPickerSetting = memo( ( props ) => {
 										<PickerButton
 											className="spectra-icon-picker__control"
 											onClick={ open }
-											ariaLabel={ isSvgAvailable ? __( 'Change SVG', 'ultimate-addons-for-gutenberg' ) : __( 'Choose SVG', 'ultimate-addons-for-gutenberg' ) }
+											ariaLabel={ isSvgAvailable ? __( 'Change SVG', 'spectra-blocks' ) : __( 'Choose SVG', 'spectra-blocks' ) }
 										>
 											{ isSvgAvailable ? (
 												<div className="spectra-icon-picker__control--value spectra-icon-picker__control--image">
@@ -253,8 +253,8 @@ const IconPickerInternal = ( props ) => {
 	} );
 
 	// Get the stored icons and category lists (memoized to prevent recreation)
-	const defaultIcons = useMemo( () => [ ...wp.UAGBSvgIcons ], [] );
-	const iconCategoryList = useMemo( () => [ ...wp.uagb_icon_category_list ], [] );
+	const defaultIcons = useMemo( () => [ ...window.spectraBlocksSvgIcons ], [] );
+	const iconCategoryList = useMemo( () => [ ...window.spectraBlocksIconCategoryList ], [] );
 
 	// State and functions for the modal.
 	const openModal = useCallback( () => {
@@ -359,7 +359,7 @@ const IconPickerInternal = ( props ) => {
  */
 const IconPicker = ( props ) => {
 	// If the required localization asset isn't available, abandon ship.
-	if ( ! wp.UAGBSvgIcons || ! wp.uagb_icon_category_list || ! window?.uagb_blocks_info?.uagb_svg_icons ) {
+	if ( ! window.spectraBlocksSvgIcons || ! window.spectraBlocksIconCategoryList || ! window?.spectra_blocks_info?.spectra_blocks_svg_icons ) {
 		return null;
 	}
 

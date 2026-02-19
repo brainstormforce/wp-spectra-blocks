@@ -4,7 +4,7 @@
 
 import { Fragment } from '@wordpress/element';
 import { Transition } from '@headlessui/react';
-import { uagbClassNames } from '@Helpers/Helpers';
+import { spectraBlocksClassNames } from '@Helpers/Helpers';
 
 // The tooltip componenet.
 const Tooltip = ( props ) => {
@@ -76,7 +76,7 @@ const Tooltip = ( props ) => {
 				leaveTo="opacity-0"
 			>
 				<div
-					className={ uagbClassNames( [
+					className={ spectraBlocksClassNames( [
 						'absolute box-border flex text-center items-center justify-center p-2 text-xs rounded-md transition-all bg-slate-800 text-white z-50',
 						positionClasses.hClass,
 						positionClasses.vClass,

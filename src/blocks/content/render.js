@@ -21,39 +21,39 @@ import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
 // Static tag configuration - single source of truth for better performance.
 const TAG_CONFIG = {
 	p: {
-		label: __( 'Paragraph', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Paragraph', 'spectra-blocks' ),
 		icon: helperIcons.content.p(),
 	},
 	h1: {
-		label: __( 'Heading 1', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 1', 'spectra-blocks' ),
 		icon: helperIcons.content.h1(),
 	},
 	h2: {
-		label: __( 'Heading 2', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 2', 'spectra-blocks' ),
 		icon: helperIcons.content.h2(),
 	},
 	h3: {
-		label: __( 'Heading 3', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 3', 'spectra-blocks' ),
 		icon: helperIcons.content.h3(),
 	},
 	h4: {
-		label: __( 'Heading 4', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 4', 'spectra-blocks' ),
 		icon: helperIcons.content.h4(),
 	},
 	h5: {
-		label: __( 'Heading 5', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 5', 'spectra-blocks' ),
 		icon: helperIcons.content.h5(),
 	},
 	h6: {
-		label: __( 'Heading 6', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Heading 6', 'spectra-blocks' ),
 		icon: helperIcons.content.h6(),
 	},
 	div: {
-		label: __( 'Div', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Div', 'spectra-blocks' ),
 		icon: helperIcons.content.div(),
 	},
 	span: {
-		label: __( 'Span', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Span', 'spectra-blocks' ),
 		icon: helperIcons.content.span(),
 	},
 };
@@ -191,7 +191,7 @@ const Render = ( props ) => {
 	const richTextConfig = useMemo( () => ( {
 		identifier: 'text',
 		tagName: currentTag,
-		placeholder: __( 'Write something – paragraph, heading, or more…', 'ultimate-addons-for-gutenberg' ),
+		placeholder: __( 'Write something – paragraph, heading, or more…', 'spectra-blocks' ),
 		value: text,
 		onChange: ( value ) => setAttributes( { text: value } ),
 		onMerge: mergeBlocks,
@@ -205,7 +205,7 @@ const Render = ( props ) => {
 			<ToolbarGroup>
 				<ToolbarDropdownMenu
 					icon={ currentTagIcon }
-					label={ __( 'Change HTML tag', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Change HTML tag', 'spectra-blocks' ) }
 					controls={ tagOptions }
 				/>
 			</ToolbarGroup>

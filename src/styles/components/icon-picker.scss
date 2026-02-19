@@ -143,12 +143,12 @@ $popup-color-border: #e6e7e9;
 
 
 // Styles for the modal popup overlay
-.components-modal__screen-overlay.uagb-ip-modal-wrapper-overlay {
+.components-modal__screen-overlay.spectra-blocks-ip-modal-wrapper-overlay {
 	background-color: rgba(0, 0, 0, 0.7);
 }
 
 // Styles for the modal popup frame.
-.components-modal__frame.uagb-ip-modal-wrapper {
+.components-modal__frame.spectra-blocks-ip-modal-wrapper {
 	width: 1080px;
 	height: 796px;
 	max-height: 80%;
@@ -195,7 +195,7 @@ $popup-color-border: #e6e7e9;
 			}
 		}
 
-		.uagb-ip-header {
+		.spectra-blocks-ip-header {
 			display: flex;
 			align-items: baseline;
 			height: 64px;
@@ -209,7 +209,7 @@ $popup-color-border: #e6e7e9;
 			}
 		}
 
-		.uagb-ip-footer {
+		.spectra-blocks-ip-footer {
 			height: 68px;
 			text-align: right;
 			display: flex;
@@ -234,25 +234,25 @@ $popup-color-border: #e6e7e9;
 		}
 	}
 
-	.uagb-ip-lr-container {
+	.spectra-blocks-ip-lr-container {
 		display: flex;
 		// Height 100% - height of footer and header
 		height: calc(100% - 134px);
 		grid-gap: 24px;
 
-		.uagb-ip-left {
+		.spectra-blocks-ip-left {
 			width: 156px;
 			overflow: auto;
 		}
 
-		.uagb-ip-right {
+		.spectra-blocks-ip-right {
 			flex: 1;
 			padding: 14px;
 			padding-right: 0;
 			border: 1px solid #e6e7e9;
 			border-radius: 2px;
 
-			.uagb-ip-modal-container {
+			.spectra-blocks-ip-modal-container {
 				height: 100%;
 
 				.ReactVirtualized__Grid__innerScrollContainer {
@@ -267,7 +267,7 @@ $popup-color-border: #e6e7e9;
 		}
 	}
 
-	.uagb-ip-categories-list {
+	.spectra-blocks-ip-categories-list {
 
 		> div {
 			padding: 9px 10px;
@@ -286,11 +286,11 @@ $popup-color-border: #e6e7e9;
 	}
 
 	// Search bar.
-	.uagb-ip-search-container {
+	.spectra-blocks-ip-search-container {
 		flex: 1;
 		padding-left: 24px;
 
-		.uagb-ip-search-bar {
+		.spectra-blocks-ip-search-bar {
 			position: relative;
 
 			> svg,
@@ -330,7 +330,7 @@ $popup-color-border: #e6e7e9;
 		}
 	}
 	// Icons container
-	.uagb-ip-icons {
+	.spectra-blocks-ip-icons {
 
 		.ReactVirtualized__Grid__innerScrollContainer {
 			overflow-x: hidden !important;
@@ -343,7 +343,7 @@ $popup-color-border: #e6e7e9;
 			justify-content: center;
 		}
 
-		.uagb-icon-item {
+		.spectra-blocks-icon-item {
 			width: 80px;
 			height: 80px;
 			background-color: #fff;

@@ -8,7 +8,7 @@ import { memo } from '@wordpress/element';
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
+import { TabBlockControls } from '@spectra/tabs/helpers';
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
@@ -34,7 +34,7 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) =>
 						setAttributes( { textColorHover: value } ),
 					resetAllFilter: () =>
@@ -45,7 +45,7 @@ const ColorSettings = memo( ( props ) => {
 					gradientValue: backgroundGradientHover,
 					label: __(
 						'Background Hover',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					),
 					onColorChange: ( value ) =>
 						setAttributes( { backgroundColorHover: value } ),

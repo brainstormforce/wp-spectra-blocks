@@ -17,7 +17,7 @@ import { processSpectraSVG } from '@spectra-helpers';
  */
 const RenderSVG = ( props ) => {
     // If the required localization asset isn't available, abandon ship.
-    if ( ! window?.uagb_blocks_info?.uagb_svg_icons ) { 
+    if ( ! window?.spectra_blocks_info?.spectra_blocks_svg_icons ) { 
         return null;
     }
 
@@ -270,7 +270,7 @@ const RenderRawSVG = ( { svgContent, needsRTL, extraProps = {}, className = '' }
     // Handle RTL transformation and merge with extraProps style
     const extraStyle = extraProps.style || {};
     const finalStyle = { ...extraStyle };
-    if ( window?.uagb_blocks_info?.is_rtl && needsRTL ) {
+    if ( window?.spectra_blocks_info?.is_rtl && needsRTL ) {
         const rtlTransform = 'scaleX(-1)';
         finalStyle.transform = finalStyle.transform ? `${rtlTransform} ${finalStyle.transform}` : rtlTransform;
     }
@@ -327,10 +327,10 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
     // For icon names (not uploaded SVGs), proceed with original logic
     let fontAwesomeElement;
     // Load Polyfiller Array if needed.
-    if ( 0 !== window.uagb_blocks_info?.font_awesome_5_polyfill?.length ) {
-        fontAwesomeElement = window.uagb_blocks_info.uagb_svg_icons[ svg ];
+    if ( 0 !== window.spectra_blocks_info?.font_awesome_5_polyfill?.length ) {
+        fontAwesomeElement = window.spectra_blocks_info.spectra_blocks_svg_icons[ svg ];
         if ( ! fontAwesomeElement ) {
-            fontAwesomeElement = window.uagb_blocks_info.uagb_svg_icons[ window.uagb_blocks_info.font_awesome_5_polyfill?.[ svg ] ];
+            fontAwesomeElement = window.spectra_blocks_info.spectra_blocks_svg_icons[ window.spectra_blocks_info.font_awesome_5_polyfill?.[ svg ] ];
         }
     }
 
@@ -346,7 +346,7 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
     const processedExtraProps = { ...extraProps };
     
     // If RTL inversion is required, mirror the SVG.
-    if ( window?.uagb_blocks_info?.is_rtl && needsRTL ) {
+    if ( window?.spectra_blocks_info?.is_rtl && needsRTL ) {
         const rtlTransform = 'scaleX(-1)';
 
         // Ensure style object exists

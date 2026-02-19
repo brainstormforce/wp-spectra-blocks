@@ -3,7 +3,7 @@
  * Plugin Loader.
  *
  * @package {{package}}
- * @since 0.0.1
+ * @since 1.0.0
  */
 
 namespace ZipWP_Images;
@@ -11,7 +11,7 @@ namespace ZipWP_Images;
 /**
  * Zipwp_Images_Loader
  *
- * @since 0.0.1
+ * @since 1.0.0
  */
 class Zipwp_Images_Loader {
 	/**
@@ -19,14 +19,14 @@ class Zipwp_Images_Loader {
 	 *
 	 * @access private
 	 * @var object Class Instance.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance = null;
 
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 
@@ -39,7 +39,7 @@ class Zipwp_Images_Loader {
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -81,7 +81,7 @@ class Zipwp_Images_Loader {
 	/**
 	 * Load Files
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
@@ -96,7 +96,7 @@ class Zipwp_Images_Loader {
 	 *      1. Global Languages /wp-content/languages/zipwp-images/ folder
 	 *      2. Local dorectory /wp-content/plugins/zipwp-images/languages/ folder
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function load_textdomain(): void {

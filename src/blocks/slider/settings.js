@@ -43,12 +43,12 @@ const NavigationIconSettings = memo( ( { attributes, setAttributes } ) => {
 	const tabConfig = useMemo( () => [
 		{
 			name: 'prev',
-			title: __( 'Previous', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Previous', 'spectra-blocks' ),
 			className: 'spectra-tab-prev',
 		},
 		{
 			name: 'next',
-			title: __( 'Next', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Next', 'spectra-blocks' ),
 			className: 'spectra-tab-next',
 		},
 	], [] );
@@ -78,11 +78,11 @@ const NavigationIconSettings = memo( ( { attributes, setAttributes } ) => {
 								isNext
 									? __(
 											'Next Icon',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 									  )
 									: __(
 											'Previous Icon',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 									  )
 							}
 						/>
@@ -165,7 +165,7 @@ const BlockSettings = memo( ( props ) => {
 		<RangeControl
 			label={ __(
 				'Slides Per View',
-				'ultimate-addons-for-gutenberg'
+				'spectra-blocks'
 			) }
 			value={ 1 }
 			onChange={ () => {
@@ -197,7 +197,7 @@ const BlockSettings = memo( ( props ) => {
 			{ /* General Settings Panel */ }
 			<InspectorControls group="settings">
 				<ToolsPanel
-					label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'General', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
 							slidesPerView: undefined,
@@ -216,13 +216,16 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => !! slidesPerView }
 						label={ __(
 							'Slides Per View',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () =>
 							setAttributes( {
 								slidesPerView: undefined,
 							} )
 						}
+						resetAllFilter={ () => ( {
+							slidesPerView: undefined,
+						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -234,20 +237,23 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => !! spaceBetween }
 						label={ __(
 							'Space Between Slides',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () =>
 							setAttributes( {
 								spaceBetween: undefined,
 							} )
 						}
+						resetAllFilter={ () => ( {
+							spaceBetween: undefined,
+						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<DebouncedRangeControl
 							label={ __(
 								'Space Between Slides',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							value={ getSpaceBetween() }
 							onChange={ ( value ) => setAttributes( { spaceBetween: value } ) }
@@ -273,7 +279,7 @@ const BlockSettings = memo( ( props ) => {
 						}
 						label={ __(
 							'Autoplay & Loop',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () =>
 							setAttributes( {
@@ -292,24 +298,24 @@ const BlockSettings = memo( ( props ) => {
 					>
 						<VStack spacing={ 4 }>
 							<ToggleControl
-								label={ __( 'Enable Loop', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Enable Loop', 'spectra-blocks' ) }
 								checked={ !! loop }
 								onChange={ ( value ) => setAttributes( { loop: value } ) }
-								help={ __( 'Loop functionality will be visible on the frontend only.', 'ultimate-addons-for-gutenberg' ) }
+								help={ __( 'Loop functionality will be visible on the frontend only.', 'spectra-blocks' ) }
 							/>
 
 							<ToggleControl
-								label={ __( 'Enable Autoplay', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Enable Autoplay', 'spectra-blocks' ) }
 								checked={ !! autoplay }
 								onChange={ ( value ) => setAttributes( { autoplay: value } ) }
-								help={ __( 'Autoplay functionality will be visible on the frontend only.', 'ultimate-addons-for-gutenberg' ) }
+								help={ __( 'Autoplay functionality will be visible on the frontend only.', 'spectra-blocks' ) }
 							/>
 
 							{ autoplay && (
 								<DebouncedRangeControl
 									label={ __(
 										'Autoplay Speed (ms)',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 									value={ autoplaySpeed || 3000 }
 									onChange={ ( value ) => setAttributes( { autoplaySpeed: value } ) }
@@ -330,7 +336,7 @@ const BlockSettings = memo( ( props ) => {
 							!! autoplayPauseOnInteraction || 
 							allowTouchMove === false 
 						}
-						label={ __( 'Touch & Interaction', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Touch & Interaction', 'spectra-blocks' ) }
 						onDeselect={ () =>
 							setAttributes( {
 								autoplayPauseOnHover: undefined,
@@ -351,7 +357,7 @@ const BlockSettings = memo( ( props ) => {
 								<ToggleGroupControl
 									label={ __(
 										'Autoplay Pause On',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 									value={ pauseOnCondition }
 									onChange={ ( value ) => {
@@ -362,25 +368,25 @@ const BlockSettings = memo( ( props ) => {
 									}}
 									help={ __(
 										'Choose when autoplay should pause based on user interaction.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 									isBlock
 									__nextHasNoMarginBottom
 								>
 									<ToggleGroupControlOption
 										value="hover"
-										label={ __( 'Hover', 'ultimate-addons-for-gutenberg' ) }
-										aria-label={ __( 'Pause on hover', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Hover', 'spectra-blocks' ) }
+										aria-label={ __( 'Pause on hover', 'spectra-blocks' ) }
 									/>
 									<ToggleGroupControlOption
 										value="interaction"
-										label={ __( 'Interaction', 'ultimate-addons-for-gutenberg' ) }
-										aria-label={ __( 'Pause on interaction', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Interaction', 'spectra-blocks' ) }
+										aria-label={ __( 'Pause on interaction', 'spectra-blocks' ) }
 									/>
 									<ToggleGroupControlOption
 										value="none"
-										label={ __( 'None', 'ultimate-addons-for-gutenberg' ) }
-										aria-label={ __( 'No pause', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'None', 'spectra-blocks' ) }
+										aria-label={ __( 'No pause', 'spectra-blocks' ) }
 									/>
 								</ToggleGroupControl>
 							) }
@@ -388,9 +394,9 @@ const BlockSettings = memo( ( props ) => {
 							<ToggleControl
 								help={ __(
 									'This functionality will be visible on the frontend only.',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
-								label={ __( 'Allow Touch/Mouse Drag', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Allow Touch/Mouse Drag', 'spectra-blocks' ) }
 								checked={ allowTouchMove !== false }
 								onChange={ ( value ) => setAttributes( { allowTouchMove: value } ) }
 							/>
@@ -404,12 +410,12 @@ const BlockSettings = memo( ( props ) => {
 					*/}
 					<ToolsPanelItem
 						hasValue={ () => !! overflow }
-						label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Overflow', 'spectra-blocks' ) }
 						panelId={ clientId }
 						onDeselect={ () => setAttributes( {
 							overflow: undefined,
 						} ) }
-						resetAll={ () => ( {
+						resetAllFilter={ () => ( {
 							overflow: undefined,
 						} ) }
 						isShownByDefault
@@ -417,10 +423,10 @@ const BlockSettings = memo( ( props ) => {
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Overflow', 'spectra-blocks' ) }
 							value={ overflow || '' }
 							onChange={ ( value ) => setAttributes( { overflow: '' === value ? undefined : value } ) }
-							help={ 'hidden' === overflow && __( 'NOTE: Make sure that your arrows and dots are inside the slider', 'ultimate-addons-for-gutenberg' ) }
+							help={ 'hidden' === overflow && __( 'NOTE: Make sure that your arrows and dots are inside the slider', 'spectra-blocks' ) }
 							isBlock
 						>
 							<ToggleGroupControlOption value="" label="Default" />
@@ -431,7 +437,7 @@ const BlockSettings = memo( ( props ) => {
 
 			{ /* Navigation Settings Panel */ }
 				<ToolsPanel
-					label={ __( 'Slider Navigation', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Slider Navigation', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
 							navigation: true,
@@ -452,7 +458,7 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => navigation === false || pagination === false }
 						label={ __(
 							'Navigation Controls',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () =>
 							setAttributes( {
@@ -460,6 +466,10 @@ const BlockSettings = memo( ( props ) => {
 								pagination: true,
 							} )
 						}
+						resetAllFilter={ () => ( {
+							navigation: true,
+							pagination: true,
+						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -467,7 +477,7 @@ const BlockSettings = memo( ( props ) => {
 							<ToggleControl
 								label={ __(
 									'Show Navigation Arrows',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								checked={ navigation !== false }
 								onChange={ ( value ) => setAttributes( { navigation: value } ) }
@@ -475,7 +485,7 @@ const BlockSettings = memo( ( props ) => {
 							<ToggleControl
 								label={ __(
 									'Show Pagination Dots',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								checked={ pagination !== false }
 								onChange={ ( value ) => setAttributes( { pagination: value } ) }
@@ -503,7 +513,7 @@ const BlockSettings = memo( ( props ) => {
 							} }
 							label={ __(
 								'Navigation Icons',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							onDeselect={ () =>
 								setAttributes( {
@@ -511,6 +521,10 @@ const BlockSettings = memo( ( props ) => {
 									navigationNextIcon: 'arrow-right',
 								} )
 							}
+							resetAllFilter={ () => ( {
+								navigationPrevIcon: 'arrow-left',
+								navigationNextIcon: 'arrow-right',
+							} ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -566,7 +580,7 @@ const DimensionSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => !! sliderHeight }
-				label={ __( 'Slider Height', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Slider Height', 'spectra-blocks' ) }
 				onDeselect={ () =>
 					setAttributes( { sliderHeight: undefined } )
 				}
@@ -578,7 +592,7 @@ const DimensionSettings = memo( ( props ) => {
 					__next40pxDefaultSize
 					label={ __(
 						'Slider Height',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					labelPosition="top"
 					value={ sliderHeight }
@@ -589,7 +603,7 @@ const DimensionSettings = memo( ( props ) => {
 					units={ units }
 					help={ __(
 						'Adjust the height of the slider in pixels.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				/>
 			</ToolsPanelItem>
@@ -602,7 +616,7 @@ const DimensionSettings = memo( ( props ) => {
 				hasValue={ () => !! navigationSize }
 				label={ __(
 					'Navigation Size',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				onDeselect={ () =>
 					setAttributes( { navigationSize: undefined } )
@@ -615,7 +629,7 @@ const DimensionSettings = memo( ( props ) => {
 					__next40pxDefaultSize
 					label={ __(
 						'Arrow Size',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					labelPosition="top"
 					value={ navigationSize }
@@ -625,7 +639,7 @@ const DimensionSettings = memo( ( props ) => {
 					units={ navigationUnits }
 					help={ __(
 						'Adjust the size of navigation arrows container.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				/>
 			</ToolsPanelItem>
@@ -637,7 +651,7 @@ const DimensionSettings = memo( ( props ) => {
 				hasValue={ () => !! navigationIconSize }
 				label={ __(
 					'Arrow Icon Size',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				onDeselect={ () =>
 					setAttributes( { navigationIconSize: undefined } )
@@ -650,7 +664,7 @@ const DimensionSettings = memo( ( props ) => {
 					__next40pxDefaultSize
 					label={ __(
 						'Arrow Icon Size',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					labelPosition="top"
 					value={ navigationIconSize }
@@ -660,7 +674,7 @@ const DimensionSettings = memo( ( props ) => {
 					units={ navigationUnits }
 					help={ __(
 						'Adjust the size of navigation arrow icons.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				/>
 			</ToolsPanelItem>
@@ -673,7 +687,7 @@ const DimensionSettings = memo( ( props ) => {
 				hasValue={ () => !! arrowDistance }
 				label={ __(
 					'Arrow Distance',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				onDeselect={ () => {
 					setAttributes( {
@@ -690,7 +704,7 @@ const DimensionSettings = memo( ( props ) => {
 					fullWidth={ true }
 					label={ __(
 						'Distance from Edges',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					value={ arrowDistance ? parseInt( arrowDistance ) : undefined }
 					onChange={ ( value ) => {
@@ -701,7 +715,7 @@ const DimensionSettings = memo( ( props ) => {
 					step={ 1 }
 					help={ __(
 						'Adjust the distance of navigation arrows from the edges. Negative values move arrows outside.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					suffix="px"
 					renderTooltipContent={ ( value ) => `${ value }px` }
@@ -715,7 +729,7 @@ const DimensionSettings = memo( ( props ) => {
 			*/}
 			<ToolsPanelItem
 				hasValue={ () => !! paginationTopMargin }
-				label={ __( 'Dots Position', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Dots Position', 'spectra-blocks' ) }
 				onDeselect={ () =>
 					setAttributes( { paginationTopMargin: undefined } )
 				}
@@ -726,7 +740,7 @@ const DimensionSettings = memo( ( props ) => {
 				<DebouncedRangeControl
 					label={ __(
 						'Dots Position',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					value={ paginationTopMargin ? parseInt( paginationTopMargin ) : undefined }
 					onChange={ ( value ) => {
@@ -737,7 +751,7 @@ const DimensionSettings = memo( ( props ) => {
 					step={ 1 }
 					help={ __(
 						'Negative values move dots down, positive values move up',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					renderTooltipContent={ ( value ) => `${ value }%` }
 					debounceDelay={ 150 }
@@ -781,7 +795,7 @@ const ColorSettings = memo( ( props ) => {
 		colorSettings.push(
 			{
 				colorValue: arrowColor,
-				label: __( 'Arrow Color', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Arrow Color', 'spectra-blocks' ),
 				onColorChange: ( value ) =>
 					setAttributes( { arrowColor: value } ),
 				resetAllFilter: () =>
@@ -791,7 +805,7 @@ const ColorSettings = memo( ( props ) => {
 				colorValue: arrowColorHover,
 				label: __(
 					'Arrow Hover Color',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				onColorChange: ( value ) =>
 					setAttributes( { arrowColorHover: value } ),
@@ -802,7 +816,7 @@ const ColorSettings = memo( ( props ) => {
 				colorValue: arrowBackgroundColor,
 				label: __(
 					'Arrow Background Color',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				onColorChange: ( value ) =>
 					setAttributes( { arrowBackgroundColor: value } ),
@@ -813,7 +827,7 @@ const ColorSettings = memo( ( props ) => {
 				colorValue: arrowBackgroundColorHover,
 				label: __(
 					'Arrow Background Hover Color',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				onColorChange: ( value ) =>
 					setAttributes( { arrowBackgroundColorHover: value } ),
@@ -828,7 +842,7 @@ const ColorSettings = memo( ( props ) => {
 		colorSettings.push(
 			{
 				colorValue: paginationColor,
-				label: __( 'Dot Color', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Dot Color', 'spectra-blocks' ),
 				onColorChange: ( value ) =>
 					setAttributes( { paginationColor: value } ),
 				resetAllFilter: () =>
@@ -838,7 +852,7 @@ const ColorSettings = memo( ( props ) => {
 				colorValue: paginationColorActive,
 				label: __(
 					'Dot Active Color',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				),
 				onColorChange: ( value ) =>
 					setAttributes( { paginationColorActive: value } ),
@@ -847,7 +861,7 @@ const ColorSettings = memo( ( props ) => {
 			},
 			{
 				colorValue: paginationColorHover,
-				label: __( 'Dot Hover Color', 'ultimate-addons-for-gutenberg' ),
+				label: __( 'Dot Hover Color', 'spectra-blocks' ),
 				onColorChange: ( value ) =>
 					setAttributes( { paginationColorHover: value } ),
 				resetAllFilter: () =>
@@ -860,7 +874,7 @@ const ColorSettings = memo( ( props ) => {
 		{
 			colorValue: backgroundColor,
 			gradientValue: backgroundGradient,
-			label: __( 'Background', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Background', 'spectra-blocks' ),
 			onColorChange: ( value ) => setAttributes( { backgroundColor: value } ),
 			onGradientChange: ( value ) => setAttributes( { backgroundGradient: value } ),
 			resetAllFilter: () => setAttributes( {
@@ -885,7 +899,7 @@ const AdvancedGradientSettings = memo( ( props ) => {
 
 	const gradientConfigs = [
 		{
-			label: __( 'Advanced BG', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Advanced BG', 'spectra-blocks' ),
 			valueAttr: 'advBgGradient',
 			showTopBorder: true,
 		},
@@ -898,8 +912,8 @@ const AdvancedGradientSettings = memo( ( props ) => {
 			attributes={ attributes }
 			gradients={ gradientConfigs }
 			enableAttr="enableAdvGradients"
-			enableLabel={ __( 'Enable Advanced Gradient', 'ultimate-addons-for-gutenberg' ) }
-			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'ultimate-addons-for-gutenberg' ) }
+			enableLabel={ __( 'Enable Advanced Gradient', 'spectra-blocks' ) }
+			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'spectra-blocks' ) }
 			hideIndividualToggles={ true }
 		/>
 	);
@@ -925,7 +939,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+				label={__( 'Overlay Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -935,7 +949,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' )}
+					label={__( 'Overlay Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}
@@ -966,4 +980,4 @@ const Settings = memo( ( props ) => (
 	</>
 ) );
 
-export default memo( Settings );
+export default Settings;

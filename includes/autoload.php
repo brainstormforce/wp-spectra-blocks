@@ -1,8 +1,9 @@
 <?php
+defined( 'ABSPATH' ) || exit;
 /**
  * Custom Autoloader for Spectra Namespace.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @package Spectra
  */

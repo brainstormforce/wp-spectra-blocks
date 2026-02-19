@@ -27,8 +27,7 @@
 		"table of contents",
 		"toc",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"allowedBlocks": ["spectra/list-child-item", "spectra/list"],
 	"providesContext": {

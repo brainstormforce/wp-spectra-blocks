@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class to manage Spectra Blocks.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class BlockManager {
 
@@ -29,7 +29,7 @@ class BlockManager {
 	 * Initialize the block manager by registering all block types and
 	 * adding a block category.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function init() {
 		$this->init_block();
@@ -38,9 +38,10 @@ class BlockManager {
 		add_filter( 'block_type_metadata_settings', array( $this, 'configure_block_controller_settings' ), 11, 2 );
 
 		( Countdown::instance() )->init();
+		( PopupBuilder::instance() )->init();
 		add_action( 'wp_enqueue_scripts', array( PopupBuilder::instance(), 'enqueue_popup_scripts_for_post' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( PopupBuilder::instance(), 'popup_toggle_scripts' ) );
-		add_action( 'wp_ajax_uag_update_popup_status', array( PopupBuilder::instance(), 'update_popup_status' ) );
+		add_action( 'wp_ajax_spectra_blocks_update_popup_status', array( PopupBuilder::instance(), 'update_popup_status' ) );
 	}
 
 	/**
@@ -49,7 +50,7 @@ class BlockManager {
 	 * This method is used to trigger the initialization of all extensions.
 	 * when the extension manager is initialized.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -63,12 +64,12 @@ class BlockManager {
 	 * Utilizes the WordPress function `register_block_type_from_metadata` to register each block
 	 * by its metadata specified in the block.json file.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @throws RuntimeException If the blocks directory is invalid or inaccessible.
 	 */
 	public function register_blocks() {
-		$blocks_dir = SPECTRA_DIR . 'build/blocks/';
+		$blocks_dir = SPECTRA_BLOCKS_DIR . 'build/blocks/';
 
 		if ( ! is_dir( $blocks_dir ) || ! is_readable( $blocks_dir ) ) {
 			// Skip block registration if build directory doesn't exist (development mode).
@@ -92,7 +93,7 @@ class BlockManager {
 	/**
 	 * Adds a custom block category named "Spectra 3" and appends it to the list of existing categories.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $categories The list of registered block categories.
 	 * @return array The updated list of block categories.
@@ -114,7 +115,7 @@ class BlockManager {
 	/**
 	 * Configures block settings to use a controller-based rendering pattern if available.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $settings The block settings from metadata.
 	 * @param array $metadata The block metadata from block.json.
@@ -168,14 +169,14 @@ class BlockManager {
 	/**
 	 * Retrieves the block category for Spectra 3 blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array The block category configuration.
 	 */
 	private function get_spectra_block_category() {
 		return array(
 			'slug'  => 'spectra-blocks',
-			'title' => __( 'Spectra Blocks', 'spectra' ),
+			'title' => __( 'Spectra Blocks', 'spectra-blocks' ),
 			'icon'  => '',
 		);
 	}
@@ -190,7 +191,7 @@ class BlockManager {
 	private function get_spectra_inner_block_category() {
 		return array(
 			'slug'  => 'spectra-blocks-inner',
-			'title' => __( 'Spectra Blocks Inner', 'spectra' ),
+			'title' => __( 'Spectra Inner Blocks', 'spectra-blocks' ),
 			'icon'  => '',
 		);
 	}
@@ -198,7 +199,7 @@ class BlockManager {
 	/**
 	 * Resolves the path to the block's controller file.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $metadata_file The path to the block.json file.
 	 * @return string|null The resolved controller path or null if invalid.
@@ -213,7 +214,7 @@ class BlockManager {
 	/**
 	 * Resolves the template path from the view directive.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $metadata_file The path to the block.json file.
 	 * @param string $view The view directive from the controller.
@@ -229,7 +230,7 @@ class BlockManager {
 	/**
 	 * Removes the 'file:./' prefix from asset paths.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @param string $path The asset path.
 	 * @return string The cleaned path.

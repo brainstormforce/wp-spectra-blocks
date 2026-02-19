@@ -26,7 +26,7 @@ import { __ } from '@wordpress/i18n';
  */
 import IconPicker from '@spectra-components/icon-picker';
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
+import { TabBlockControls } from '@spectra/tabs/helpers';
 
 /**
  * Element Sub-settings: General settings.
@@ -77,7 +77,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Tab Icon', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Tab Icon', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						icon: undefined,
@@ -92,8 +92,8 @@ const BlockSettings = memo( ( props ) => {
 				- The flipForRTL attribute is not false. Default: false.
 				 */ }
 				<ToolsPanelItem
-					hasValue={ () => !! icon || ! flipForRTL }
-					label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+					hasValue={ () => !! icon || !! flipForRTL }
+					label={ __( 'Icon', 'spectra-blocks' ) }
 					onDeselect={ () =>
 						setAttributes( {
 							icon: undefined,
@@ -119,14 +119,14 @@ const BlockSettings = memo( ( props ) => {
 							checked={ flipForRTL }
 							label={ __(
 								'Flip Icon for Right-to-Left',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							onChange={ () =>
 								setAttributes( { flipForRTL: ! flipForRTL } )
 							}
 							help={ __(
 								"Enable this for your RTL visitors if you are using a direction-specific icon. Like 'Arrow Right', 'Chart Line', etc. ",
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</VStack>
@@ -138,7 +138,7 @@ const BlockSettings = memo( ( props ) => {
 						}
 						label={ __(
 							'Position',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () =>
 							setAttributes( { iconPosition: undefined } )
@@ -154,7 +154,7 @@ const BlockSettings = memo( ( props ) => {
 							__next40pxDefaultSize
 							label={ __(
 								'Position',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							value={ iconPosition || 'after' }
 							onChange={ ( value ) =>
@@ -204,7 +204,7 @@ const DimensionSettings = memo( ( props ) => {
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
 				hasValue={ () => !! size }
-				label={ __( 'Icon Size', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Icon Size', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { size: undefined } ) }
 				resetAllFilter={ () => ( { size: undefined } ) }
 				isShownByDefault
@@ -212,7 +212,7 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<UnitControl
 					__next40pxDefaultSize
-					label={ __( 'Tab Icon Size', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Tab Icon Size', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ size }
 					min={ 0 }
@@ -227,7 +227,7 @@ const DimensionSettings = memo( ( props ) => {
 				>
 					{ __(
 						'Note: Tab icon size will not work for "div" based tabs. This size setting only applies to button based tabs.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				</Notice>
 			</div>
@@ -285,70 +285,70 @@ const ColorSettings = memo( ( props ) => {
 				// Tab Colors.
 				{
 					colorValue: textColorHover,
-					label: __( 'Tab Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: textColorActive,
-					label: __( 'Active Tab Text', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Text', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorActive: value } ),
 					resetAllFilter: () => setAttributes( { textColorActive: undefined } ),
 				},
 				{
 					colorValue: textColorActiveHover,
-					label: __( 'Active Tab Text Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Text Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorActiveHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorActiveHover: undefined } ),
 				},
 				// Tab Icon Colors.
 				{
 					colorValue: iconColor,
-					label: __( 'Tab Icon', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Icon', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { iconColor: value } ),
 					resetAllFilter: () => setAttributes( { iconColor: undefined } ),
 				},
 				{
 					colorValue: iconColorHover,
-					label: __( 'Tab Icon Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Icon Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { iconColorHover: value } ),
 					resetAllFilter: () => setAttributes( { iconColorHover: undefined } ),
 				},
 				{
 					colorValue: iconColorActive,
-					label: __( 'Active Tab Icon', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Icon', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { iconColorActive: value } ),
 					resetAllFilter: () => setAttributes( { iconColorActive: undefined } ),
 				},
 				{
 					colorValue: iconColorActiveHover,
-					label: __( 'Active Tab Icon Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Icon Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { iconColorActiveHover: value } ),
 					resetAllFilter: () => setAttributes( { iconColorActiveHover: undefined } ),
 				},
 				// Tab Border Colors.
 				{
 					colorValue: borderColorHover,
-					label: __( 'Tab Border Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Border Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { borderColorHover: value } ),
 					resetAllFilter: () => setAttributes( { borderColorHover: undefined } ),
 				},
 				{
 					colorValue: borderColorActive,
-					label: __( 'Active Tab Border', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Border', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { borderColorActive: value } ),
 					resetAllFilter: () => setAttributes( { borderColorActive: undefined } ),
 				},
 				{
 					colorValue: borderColorActiveHover,
-					label: __( 'Active Tab Border Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Border Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { borderColorActiveHover: value } ),
 					resetAllFilter: () => setAttributes( { borderColorActiveHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColor,
 					gradientValue: backgroundGradient,
-					label: __( 'Tab Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColor: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradient: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -359,7 +359,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Tab Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Tab Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -370,7 +370,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorActive,
 					gradientValue: backgroundGradientActive,
-					label: __( 'Active Tab Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorActive: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientActive: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -381,7 +381,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorActiveHover,
 					gradientValue: backgroundGradientActiveHover,
-					label: __( 'Active Tab BG Hover/Focus', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Active Tab BG Hover/Focus', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorActiveHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientActiveHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -392,20 +392,20 @@ const ColorSettings = memo( ( props ) => {
 				// Tab Panel Colors.
 				{
 					colorValue: textColorSecondary,
-					label: __( 'Panel Text', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Panel Text', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorSecondary: value } ),
 					resetAllFilter: () => setAttributes( { textColorSecondary: undefined } ),
 				},
 				{
 					colorValue: textColorHoverSecondary,
-					label: __( 'Panel Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Panel Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHoverSecondary: value } ),
 					resetAllFilter: () => setAttributes( { textColorHoverSecondary: undefined } ),
 				},
 				{
 					colorValue: backgroundColorSecondary,
 					gradientValue: backgroundGradientSecondary,
-					label: __( 'Panel Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Panel Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorSecondary: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientSecondary: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -416,7 +416,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorHoverSecondary,
 					gradientValue: backgroundGradientHoverSecondary,
-					label: __( 'Panel Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Panel Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHoverSecondary: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHoverSecondary: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -428,7 +428,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorTertiary,
 					gradientValue: backgroundGradientTertiary,
-					label: __( 'Overall Background', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Overall Background', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorTertiary: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientTertiary: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -447,7 +447,7 @@ const ColorSettings = memo( ( props ) => {
 				>
 					{ __(
 						'Note: Tab icon colors will not work for "div" based tabs. These color settings only apply to button based tabs.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 				</Notice>
 			</div>

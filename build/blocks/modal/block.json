@@ -1,0 +1,123 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/modal",
+  "version": "3.0.0",
+  "title": "Modal",
+  "category": "spectra-blocks",
+  "description": "This block allows you to add modal popup..",
+  "textdomain": "spectra-blocks",
+  "allowedBlocks": [
+    "spectra/modal-child-trigger",
+    "spectra/modal-popup"
+  ],
+  "keywords": [
+    "modal",
+    "popup",
+    "dialog",
+    "lightbox",
+    "overlay",
+    "modal window",
+    "dialog box",
+    "popup window",
+    "modal popup",
+    "interactive modal",
+    "content modal",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "supports": {
+    "interactivity": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "align": [
+      "wide",
+      "full"
+    ],
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "providesContext": {
+    "spectra/modal/modalId": "modalId",
+    "spectra/modal/isVisible": "isVisible",
+    "spectra/modal/modalTrigger": "modalTrigger",
+    "spectra/modal/openModalAs": "openModalAs",
+    "spectra/modal/appearEffect": "appearEffect",
+    "spectra/modal/modalPosition": "modalPosition",
+    "spectra/modal/hPos": "hPos",
+    "spectra/modal/vPos": "vPos",
+    "spectra/modal/closeIconPosition": "closeIconPosition"
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScriptModule": "file:./view.js",
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "modalId": {
+      "type": "string"
+    },
+    "defaultTemplate": {
+      "type": "boolean",
+      "default": false
+    },
+    "isVisible": {
+      "type": "boolean",
+      "default": false
+    },
+    "modalTrigger": {
+      "type": "string",
+      "default": "button"
+    },
+    "closeIconPosition": {
+      "type": "string",
+      "default": "popup-top-right"
+    },
+    "escPress": {
+      "type": "boolean",
+      "default": true
+    },
+    "overlayClick": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

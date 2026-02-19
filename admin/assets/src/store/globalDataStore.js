@@ -45,7 +45,6 @@ const initialState = {
 	containerGlobalElementsGap: 20,
 	enableFontAwesome5: 'disabled',
 	enableAutoBlockRecovery: 'disabled',
-	enableLegacyBlocks: 'no',
 	enableLegacyDesignLibrary: 'enabled',
 	instaLinkedAccounts: '',
 	coreBlocks: [
@@ -65,7 +64,6 @@ const initialState = {
 	enableGBSExtension: '',
 	zipAiModules: [],
 	enableBSFAnalyticsOption: 'no',
-	enableRegisterV2Blocks: 'no',
 };
 
 const globalDataStore = createStore(

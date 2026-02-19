@@ -1,102 +1,93 @@
 <?php
 /**
- * Init
+ * UTM Analytics library loader for Spectra Blocks.
  *
- * Loads latest UTM Analytics library in environment.
- *
- * @since 0.0.1
- * @package UTM Analytics
+ * @package SpectraBlocks
  */
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Spectra_Utm_Analytics' ) ) :
+if ( ! class_exists( 'Spectra_Blocks_Utm_Analytics' ) ) :
 
 	/**
-	 * Admin
+	 * Loads the latest UTM Analytics library available in the environment.
+	 *
+	 * @since 1.0.0
 	 */
-	class Spectra_Utm_Analytics {
+	class Spectra_Blocks_Utm_Analytics {
 
 		/**
-		 * Instance
+		 * Singleton instance.
 		 *
-		 * @since 0.0.1
-		 * @var (Object) Spectra_Utm_Analytics
+		 * @var Spectra_Blocks_Utm_Analytics|null
 		 */
 		private static $instance = null;
 
 		/**
-		 * Get Instance
+		 * Get singleton instance.
 		 *
-		 * @since 0.0.1
-		 *
-		 * @return object Class object.
+		 * @return Spectra_Blocks_Utm_Analytics
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
 				self::$instance = new self();
 			}
-
 			return self::$instance;
 		}
 
 		/**
 		 * Constructor.
-		 *
-		 * @since 0.0.1
 		 */
 		private function __construct() {
 			$this->version_check();
-			add_action( 'init', [ $this, 'load' ], 999 );
+			add_action( 'init', array( $this, 'load' ), 999 );
 		}
 
 		/**
-		 * Version Check
+		 * Check for the latest version of the UTM Analytics library.
 		 *
 		 * @return void
 		 */
 		public function version_check() {
+			$file = realpath( __DIR__ . '/utm-analytics/version.json' );
 
-			$file = realpath( dirname( __FILE__ ) . '/utm-analytics/version.json' );
+			if ( ! is_file( $file ) ) {
+				return;
+			}
 
-			// Is file exist?
-			if ( is_file( $file ) ) {
-				// @codingStandardsIgnoreStart
-				$file_data = json_decode( file_get_contents( $file ), true );
-				// @codingStandardsIgnoreEnd
-				global $utm_analytics_version, $utm_analytics_init;
-				$path = realpath( dirname( __FILE__ ) . '/utm-analytics/bsf-utm-analytics.php' );
-				$version = isset( $file_data['bsf-utm-analytics'] ) ? $file_data['bsf-utm-analytics'] : 0;
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$file_data = json_decode( file_get_contents( $file ), true );
 
-				if ( null === $utm_analytics_version ) {
-					$utm_analytics_version = '0.0.1';
-				}
+			global $utm_analytics_version, $utm_analytics_init;
 
-				// Compare versions.
-				if ( version_compare( $version, $utm_analytics_version, '>=' ) ) {
-					$utm_analytics_version = $version;
-					$utm_analytics_init = $path;
-				}
+			$path    = realpath( __DIR__ . '/utm-analytics/bsf-utm-analytics.php' );
+			$version = isset( $file_data['bsf-utm-analytics'] ) ? $file_data['bsf-utm-analytics'] : 0;
+
+			if ( null === $utm_analytics_version ) {
+				$utm_analytics_version = '0.0.1';
+			}
+
+			if ( version_compare( $version, $utm_analytics_version, '>=' ) ) {
+				$utm_analytics_version = $version;
+				$utm_analytics_init    = $path;
 			}
 		}
 
 		/**
-		 * Load latest plugin
+		 * Load the latest UTM Analytics library.
 		 *
 		 * @return void
 		 */
 		public function load() {
-
-			global $utm_analytics_version, $utm_analytics_init;
-			if ( is_file( realpath( $utm_analytics_init ) ) ) {
+			global $utm_analytics_init;
+			if ( ! empty( $utm_analytics_init ) && is_file( realpath( $utm_analytics_init ) ) ) {
 				include_once realpath( $utm_analytics_init );
 			}
 		}
 	}
 
-	Spectra_Utm_Analytics::get_instance();
+	Spectra_Blocks_Utm_Analytics::get_instance();
 
 endif;

@@ -173,11 +173,11 @@ const Edit = ( props ) => {
 					icon: blockIcons.modal(),
 					label: __(
 						'Spectra Popup Builder',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					),
 					instructions: __(
 						'Select a Popup type to start with.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					),
 					variations,
 					onSelect: handleVariationSelection,
@@ -195,7 +195,7 @@ const Edit = ( props ) => {
 						icon={ helperIcons.variationSwitch() }
 						label={ __(
 							'Choose Type',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onClick={ () => setShowVariationPicker( true ) }
 					/>

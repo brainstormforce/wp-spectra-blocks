@@ -4,7 +4,7 @@
 
 import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelector } from 'react-redux';
-import UAGB_Block_Icons from '@Common/block-icons';
+import Spectra_Block_Icons from '@Common/block-icons';
 import { useCallback } from '@wordpress/element';
 import { debounce } from '@Helpers/Helpers';
 import getApiData from '@Controls/getApiData';
@@ -23,13 +23,13 @@ const AnimationsExtension = ( { trigger, searchTerm, status } ) => {
 	const debouncedApiCall = useCallback(
 		debounce( ( currentStatus ) => {
 			const data = {
-				security: uag_react.enable_animations_extension_nonce,
+				security: spectra_blocks_react.enable_animations_extension_nonce,
 				value: currentStatus,
 			};
 
 			const getApiDataFetch = getApiData( {
-				url: uag_react.ajax_url,
-				action: 'uag_enable_animations_extension',
+				url: spectra_blocks_react.ajax_url,
+				action: 'spectra_blocks_enable_animations_extension',
 				data,
 			} );
 
@@ -38,12 +38,12 @@ const AnimationsExtension = ( { trigger, searchTerm, status } ) => {
 		[ enableAnimationsExtension ]
 	);
 
-	const IconElement = UAGB_Block_Icons[ 'animations-extension' ];
+	const IconElement = Spectra_Block_Icons[ 'animations-extension' ];
 	const icon = React.cloneElement( IconElement, { className: 'w-5 h-5' } );
 
 	const block = {
 		icon,
-		title: __( 'Animations', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Animations', 'spectra-blocks' ),
 		is_pro: false,
 		slug: 'animations',
 	};

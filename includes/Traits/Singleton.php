@@ -7,6 +7,9 @@
 
 namespace Spectra\Traits;
 
+defined( 'ABSPATH' ) || exit;
+
+
 /**
  * Singleton trait.
  */
@@ -14,7 +17,7 @@ trait Singleton {
 	/**
 	 * The single instance of the class.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var object
 	 */
@@ -23,7 +26,7 @@ trait Singleton {
 	/**
 	 * Constructor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
@@ -32,7 +35,7 @@ trait Singleton {
 	/**
 	 * Get class instance.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return object Instance.
 	 */
@@ -46,7 +49,7 @@ trait Singleton {
 	/**
 	 * Prevent cloning.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @throws \Error Throws error when attempting to clone singleton instance.
 	 */
 	public function __clone() {
@@ -56,7 +59,7 @@ trait Singleton {
 	/**
 	 * Prevent unserializing.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @throws \Error Throws error when attempting to unserialize singleton instance.
 	 */
 	public function __wakeup() {

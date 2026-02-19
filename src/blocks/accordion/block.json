@@ -30,8 +30,7 @@
 		"q&a",
 		"frequently asked",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"interactivity": true,
@@ -99,7 +98,7 @@
 		"spectra-components-icon-picker"
 	],
 	"render": "file:./view.php",
-	"viewScript": "file:./view.js",
+	"viewScriptModule": "file:./view.js",
 	"providesContext": {
 		"spectra/accordion/activeAccordion": "activeAccordion",
 		"spectra/accordion/icon": "icon",

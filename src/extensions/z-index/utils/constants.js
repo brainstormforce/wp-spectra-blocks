@@ -4,7 +4,7 @@
  * This module defines all constants used by the z-index extension system.
  * It includes excluded blocks, supported blocks, and default values.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 
 /**
@@ -17,16 +17,10 @@ import { applyFilters } from '@wordpress/hooks';
  *
  * This can be extended by third-party developers using the WordPress filter system.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {Array}
  */
 export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedZIndexBlocks', [
-	// Legacy Blocks
-	'uagb/cf7-styler',
-	'uagb/wp-search', 
-	'uagb/gf-styler',
-	'uagb/columns',
-	'uagb/section',
 	// Child blocks that inherit from parent
 	'spectra/accordion-child-details',
 	'spectra/accordion-child-header',
@@ -62,7 +56,7 @@ export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedZIndexBlocks', [
  * This can be extended by third-party developers using the WordPress filter system.
  * Note: Blocks with Spectra prefixes are automatically supported regardless of this list.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {Array}
  */
 export const SUPPORTED_BLOCKS = applyFilters( 'spectra.supportedZIndexBlocks', [] );
@@ -72,7 +66,7 @@ export const SUPPORTED_BLOCKS = applyFilters( 'spectra.supportedZIndexBlocks', [
  *
  * Any block with these prefixes will automatically receive z-index capabilities.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {Array}
  */
 export const ALLOWED_PREFIXES = [ 'spectra/', 'spectra-pro/', 'core/' ];
@@ -80,7 +74,7 @@ export const ALLOWED_PREFIXES = [ 'spectra/', 'spectra-pro/', 'core/' ];
 /**
  * Default z-index value.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {number}
  */
 export const DEFAULT_Z_INDEX = null;
@@ -88,7 +82,7 @@ export const DEFAULT_Z_INDEX = null;
 /**
  * Minimum z-index value.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {number}
  */
 export const MIN_Z_INDEX = -100;
@@ -96,7 +90,7 @@ export const MIN_Z_INDEX = -100;
 /**
  * Maximum z-index value.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @type {number}
  */
 export const MAX_Z_INDEX = 1000;

@@ -82,7 +82,7 @@ const Render = memo( ( props ) => {
 						color: '#666',
 					} }
 				>
-					<p>{ __( 'Please enter an address to display the map.', 'ultimate-addons-for-gutenberg' ) }</p>
+					<p>{ __( 'Please enter an address to display the map.', 'spectra-blocks' ) }</p>
 				</div>
 			</div>
 		);
@@ -92,7 +92,7 @@ const Render = memo( ( props ) => {
 		<div { ...blockProps }>
 			<embed
 				className="spectra-google-map__iframe"
-				title={ __( 'Google Map for ', 'ultimate-addons-for-gutenberg' ) + address }
+				title={ __( 'Google Map for ', 'spectra-blocks' ) + address }
 				src={ mapUrl }
 				width="100%"
 				height="100%"

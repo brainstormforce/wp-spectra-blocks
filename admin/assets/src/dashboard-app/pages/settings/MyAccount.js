@@ -10,23 +10,23 @@ export default function MyAccount() {
 	const [ regenerateAssetsState, setRegenerateAssetsState ] = useState( false );
 	const [ licenseKey, setlicenseKey ] = useState( '' );
 
-	const licenseStatus = uag_react.license_status;
+	const licenseStatus = spectra_blocks_react.license_status;
 	const licenseTitle = licenseStatus
-		? __( 'Deactivate', 'ultimate-addons-for-gutenberg' )
-		: __( 'Activate', 'ultimate-addons-for-gutenberg' );
+		? __( 'Deactivate', 'spectra-blocks' )
+		: __( 'Activate', 'spectra-blocks' );
 	const licensePlaceholder = licenseStatus
-		? __( 'Your license is active.', 'ultimate-addons-for-gutenberg' )
-		: __( 'Paste your license key here', 'ultimate-addons-for-gutenberg' );
+		? __( 'Your license is active.', 'spectra-blocks' )
+		: __( 'Paste your license key here', 'spectra-blocks' );
 	const licenseMessage = licenseStatus
-		? __( 'License successfully validated!', 'ultimate-addons-for-gutenberg' )
-		: __( 'Please enter your valid license key below to activate Spectra Pro!', 'ultimate-addons-for-gutenberg' );
+		? __( 'License successfully validated!', 'spectra-blocks' )
+		: __( 'Please enter your valid license key below to activate Spectra Pro!', 'spectra-blocks' );
 
 	const activateHandler = () => {
 		if ( ! licenseKey ) {
 			dispatch( {
 				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 				payload: {
-					message: __( 'Please enter a valid license key!', 'ultimate-addons-for-gutenberg' ),
+					message: __( 'Please enter a valid license key!', 'spectra-blocks' ),
 					messageType: 'error',
 				},
 			} );
@@ -35,14 +35,14 @@ export default function MyAccount() {
 		setRegenerateAssetsState( 'loading' );
 
 		const data = {
-			action: 'uag_license_activation',
-			security: uag_react.license_activation_nonce,
+			action: 'spectra_blocks_license_activation',
+			security: spectra_blocks_react.license_activation_nonce,
 			key: licenseKey,
 		};
 
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_license_activation',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_license_activation',
 			data,
 		} );
 
@@ -50,7 +50,7 @@ export default function MyAccount() {
 			if ( responseData.success ) {
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-					payload: __( 'License successfully validated!', 'ultimate-addons-for-gutenberg' ),
+					payload: __( 'License successfully validated!', 'spectra-blocks' ),
 				} );
 				location.reload();
 			} else {
@@ -70,12 +70,12 @@ export default function MyAccount() {
 	const deactivateHandler = () => {
 		setRegenerateAssetsState( 'loading' );
 		const data = {
-			security: uag_react.license_deactivation_nonce,
+			security: spectra_blocks_react.license_deactivation_nonce,
 		};
 
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_license_deactivation',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_license_deactivation',
 			data,
 		} );
 
@@ -83,7 +83,7 @@ export default function MyAccount() {
 			if ( responseData.success ) {
 				dispatch( {
 					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-					payload: __( 'License successfully deactivated!', 'ultimate-addons-for-gutenberg' ),
+					payload: __( 'License successfully deactivated!', 'spectra-blocks' ),
 				} );
 				location.reload();
 			} else {
@@ -101,7 +101,7 @@ export default function MyAccount() {
 
 	return (
 		<>
-			<SettingsItem title={ __( 'License Key', 'ultimate-addons-for-gutenberg' ) }>
+			<SettingsItem title={ __( 'License Key', 'spectra-blocks' ) }>
 				<div className="w-full">
 					{ ! licenseStatus && (
 						<p
@@ -115,7 +115,7 @@ export default function MyAccount() {
 									// translators: %1$s: first anchor tag start, %2$s: first anchor tag end, %3$s second anchor tag start, %4$s second anchor tag end.
 									__(
 										"Activate %1$sSpectra Pro%2$s to get professional support and automatic updates from your WordPress dashboard. If you don't have a license, you can %3$sget it here »%4$s",
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 									'<a href="https://wpspectra.com/pricing" class="text-spectra focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover" target="_blank" rel="noreferrer">',
 									'</a>',

@@ -52,7 +52,7 @@ const Render = memo( ( props ) => {
 	} = attributes;
 
 	// Pro status detection for frontend fallback.
-	const isProActivated = 'active' === uagb_blocks_info.spectra_pro_status? true : false;
+	const isProActivated = 'active' === spectra_blocks_info.spectra_pro_status? true : false;
 	
 	// Calculate effective slides per view for frontend.
 	const getEffectiveSlidesPerView = () => {

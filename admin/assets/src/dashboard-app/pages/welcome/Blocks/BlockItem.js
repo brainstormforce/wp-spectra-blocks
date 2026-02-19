@@ -28,15 +28,15 @@ const BlockItem = ( { block } ) => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.blocks_activation_and_deactivation_nonce,
+			security: spectra_blocks_react.blocks_activation_and_deactivation_nonce,
 			value: JSON.stringify( optionsClone ),
 			status: '',
 		};
 
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_blocks_activation_and_deactivation',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_blocks_activation_and_deactivation',
 			data,
 		} );
 
@@ -52,14 +52,14 @@ const BlockItem = ( { block } ) => {
 				<div style={ { fontSize: '22px' } }>{ icon }</div>
 
 				<div className="flex items-center gap-x-2">
-					{ is_pro && uag_react.pro_plugin_status !== 'Activated' ? (
+					{ is_pro && spectra_blocks_react.pro_plugin_status !== 'Activated' ? (
 						<Badge label="PRO" size="xs" type="pill" variant="inverse" />
 					) : (
 						<Switch
 							size="sm"
 							value={ blockActivationStatus }
 							onChange={ updateBlockStatus }
-							className="uagb-remove-ring"
+							className="spectra-blocks-remove-ring"
 						/>
 					) }
 				</div>
@@ -68,7 +68,7 @@ const BlockItem = ( { block } ) => {
 			<div className="flex flex-col w-full p-1">
 				<p className="text-sm font-medium text-text-primary m-0">{ title }</p>
 				<div className="flex items-center justify-between w-full">
-					<div className="mt-1 text-text-tertiary">{ __( 'Demo', 'ultimate-addons-for-gutenberg' ) }</div>
+					<div className="mt-1 text-text-tertiary">{ __( 'Demo', 'spectra-blocks' ) }</div>
 				</div>
 			</div>
 		</Container>

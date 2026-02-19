@@ -1,0 +1,105 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/modal-child-trigger",
+  "version": "3.0.0",
+  "title": "Trigger",
+  "category": "spectra-blocks-inner",
+  "description": "This block allows you to add modal popup..",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/modal"
+  ],
+  "allowedBlocks": [
+    "spectra/modal-child-button",
+    "spectra/modal-child-icon",
+    "spectra/modal-child-content"
+  ],
+  "keywords": [
+    "modal",
+    "popup",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "supports": {
+    "interactivity": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "justifyContent": "left"
+      },
+      "allowEditing": true,
+      "allowJustification": true,
+      "allowOrientation": false
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "providesContext": {
+    "spectra/modal-child-trigger/cssClass": "cssClass"
+  },
+  "usesContext": [
+    "spectra/modal/modalTrigger",
+    "spectra/modal/cssClass",
+    "spectra/modal/cssId",
+    "spectra/modal/exitIntent",
+    "spectra/modal/showAfterSeconds",
+    "spectra/modal/enableCookies",
+    "spectra/modal/noOfSecondsToShow",
+    "spectra/modal/setCookiesOn",
+    "spectra/modal/hideForDays"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "justifyItems": {
+      "type": "string",
+      "default": "left"
+    }
+  }
+}

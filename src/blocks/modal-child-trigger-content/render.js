@@ -98,7 +98,7 @@ const Render = ( props ) => {
 			identifier="text"
 			{ ...blockProps }
 			tagName={ tagName || 'p' }
-			placeholder={ __( 'Get started by writing something!', 'ultimate-addons-for-gutenberg' ) }
+			placeholder={ __( 'Get started by writing something!', 'spectra-blocks' ) }
 			value={ text }
 			onChange={ ( value ) => setAttributes( { text: value } ) }
 			onMerge={ mergeBlocks }

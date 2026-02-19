@@ -16,8 +16,6 @@ export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedAnimationBlocks', 
 	'spectra/modal-child-trigger',
 	'spectra/modal-child-popup-close-icon',
 	'spectra/popup-builder',
-	// SVG Animator has its own animation system (Web Animations API).
-	'spectra/svg-animator',
 ] );
 
 /**
@@ -34,63 +32,63 @@ export const SUPPORTED_BLOCKS = applyFilters( 'spectra.supportedAnimationBlocks'
  */
 export const ANIMATION_LIST = [
 	// None.
-	{ value: '', label: __( 'None', 'ultimate-addons-for-gutenberg' ) },
+	{ value: '', label: __( 'None', 'spectra-blocks' ) },
 
 	// Fade.
 	{
-		label: __( 'Fade', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Fade', 'spectra-blocks' ),
 		options: [
-			{ value: 'fade', label: __( 'Fade', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'fade-down', label: __( 'Fade Down', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'fade-up', label: __( 'Fade Up', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'fade-left', label: __( 'Fade Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'fade-right', label: __( 'Fade Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'fade', label: __( 'Fade', 'spectra-blocks' ) },
+			{ value: 'fade-down', label: __( 'Fade Down', 'spectra-blocks' ) },
+			{ value: 'fade-up', label: __( 'Fade Up', 'spectra-blocks' ) },
+			{ value: 'fade-left', label: __( 'Fade Left', 'spectra-blocks' ) },
+			{ value: 'fade-right', label: __( 'Fade Right', 'spectra-blocks' ) },
 		],
 	},
 
 	// Flip.
 	{
-		label: __( 'Flip', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Flip', 'spectra-blocks' ),
 		options: [
-			{ value: 'flip-down', label: __( 'Flip Down', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'flip-up', label: __( 'Flip Up', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'flip-left', label: __( 'Flip Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'flip-right', label: __( 'Flip Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'flip-down', label: __( 'Flip Down', 'spectra-blocks' ) },
+			{ value: 'flip-up', label: __( 'Flip Up', 'spectra-blocks' ) },
+			{ value: 'flip-left', label: __( 'Flip Left', 'spectra-blocks' ) },
+			{ value: 'flip-right', label: __( 'Flip Right', 'spectra-blocks' ) },
 		],
 	},
 
 	// Slide.
 	{
-		label: __( 'Slide', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Slide', 'spectra-blocks' ),
 		options: [
-			{ value: 'slide-down', label: __( 'Slide Down', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'slide-up', label: __( 'Slide Up', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'slide-left', label: __( 'Slide Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'slide-right', label: __( 'Slide Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'slide-down', label: __( 'Slide Down', 'spectra-blocks' ) },
+			{ value: 'slide-up', label: __( 'Slide Up', 'spectra-blocks' ) },
+			{ value: 'slide-left', label: __( 'Slide Left', 'spectra-blocks' ) },
+			{ value: 'slide-right', label: __( 'Slide Right', 'spectra-blocks' ) },
 		],
 	},
 
 	// Zoom-In.
 	{
-		label: __( 'Zoom-In', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Zoom-In', 'spectra-blocks' ),
 		options: [
-			{ value: 'zoom-in', label: __( 'Zoom-In', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-in-down', label: __( 'Zoom-In Down', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-in-up', label: __( 'Zoom-In Up', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-in-left', label: __( 'Zoom-In Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-in-right', label: __( 'Zoom-In Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'zoom-in', label: __( 'Zoom-In', 'spectra-blocks' ) },
+			{ value: 'zoom-in-down', label: __( 'Zoom-In Down', 'spectra-blocks' ) },
+			{ value: 'zoom-in-up', label: __( 'Zoom-In Up', 'spectra-blocks' ) },
+			{ value: 'zoom-in-left', label: __( 'Zoom-In Left', 'spectra-blocks' ) },
+			{ value: 'zoom-in-right', label: __( 'Zoom-In Right', 'spectra-blocks' ) },
 		],
 	},
 
 	// Zoom-Out.
 	{
-		label: __( 'Zoom-Out', 'ultimate-addons-for-gutenberg' ),
+		label: __( 'Zoom-Out', 'spectra-blocks' ),
 		options: [
-			{ value: 'zoom-out', label: __( 'Zoom-Out', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-out-down', label: __( 'Zoom-Out Down', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-out-up', label: __( 'Zoom-Out Up', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-out-left', label: __( 'Zoom-Out Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'zoom-out-right', label: __( 'Zoom-Out Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'zoom-out', label: __( 'Zoom-Out', 'spectra-blocks' ) },
+			{ value: 'zoom-out-down', label: __( 'Zoom-Out Down', 'spectra-blocks' ) },
+			{ value: 'zoom-out-up', label: __( 'Zoom-Out Up', 'spectra-blocks' ) },
+			{ value: 'zoom-out-left', label: __( 'Zoom-Out Left', 'spectra-blocks' ) },
+			{ value: 'zoom-out-right', label: __( 'Zoom-Out Right', 'spectra-blocks' ) },
 		],
 	},
 ];

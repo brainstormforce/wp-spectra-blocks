@@ -21,14 +21,14 @@ class Nps_Survey {
 	 *
 	 * @access private
 	 * @var object Class Instance.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_action( 'rest_api_init', array( $this, 'register_route' ) );
@@ -37,7 +37,7 @@ class Nps_Survey {
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -52,7 +52,7 @@ class Nps_Survey {
 	 *
 	 * @param string       $id ID of the root element, should start with nps-survey- .
 	 * @param array<mixed> $vars Variables to be passed to the NPS.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public static function show_nps_notice( string $id, array $vars = [] ): void {
@@ -88,7 +88,7 @@ class Nps_Survey {
 	/**
 	 * Generate and return the Google fonts url.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.2
 	 * @return string
 	 */
 	public static function google_fonts_url() {
@@ -109,7 +109,7 @@ class Nps_Survey {
 	 * Load script.
 	 *
 	 * @param array<string> $show_on_screens An array of screen IDs where the scripts should be loaded.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public static function editor_load_scripts( $show_on_screens ): void {
@@ -220,7 +220,7 @@ class Nps_Survey {
 	/**
 	 * Get api namespace
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public static function get_api_namespace() {
@@ -230,7 +230,7 @@ class Nps_Survey {
 	/**
 	 * Get API headers
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return array<string, string>
 	 */
 	public static function get_api_headers() {
@@ -251,7 +251,7 @@ class Nps_Survey {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return new \WP_Error(
 				'gt_rest_cannot_access',
-				__( 'Sorry, you are not allowed to do that.', 'spectra' ),
+				__( 'Sorry, you are not allowed to do that.', 'ultimate-addons-for-gutenberg' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -273,7 +273,7 @@ class Nps_Survey {
 		if ( ! wp_verify_nonce( sanitize_text_field( (string) $nonce ), 'wp_rest' ) ) {
 			wp_send_json_error(
 				array(
-					'data'   => __( 'Nonce verification failed.', 'spectra' ),
+					'data'   => __( 'Nonce verification failed.', 'ultimate-addons-for-gutenberg' ),
 					'status' => false,
 
 				)
@@ -379,7 +379,7 @@ class Nps_Survey {
 		if ( ! wp_verify_nonce( sanitize_text_field( (string) $nonce ), 'wp_rest' ) ) {
 			wp_send_json_error(
 				array(
-					'data'   => __( 'Nonce verification failed.', 'spectra' ),
+					'data'   => __( 'Nonce verification failed.', 'ultimate-addons-for-gutenberg' ),
 					'status' => false,
 
 				)

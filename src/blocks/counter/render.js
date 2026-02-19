@@ -2,7 +2,7 @@
  * External dependencies.
  */
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
-import { useEffect, useRef } from '@wordpress/element';
+import { useEffect, useRef, memo } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 
@@ -426,4 +426,4 @@ const Render = ( props ) => {
 	);
 };
 
-export default Render;
+export default memo( Render );

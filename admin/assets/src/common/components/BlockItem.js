@@ -26,7 +26,7 @@ const BlockItem = ( { block, is_extension } ) => {
 			};
 
 			const getApiDataFetch = getApiData( {
-				url: uag_react.ajax_url,
+				url: spectra_blocks_react.ajax_url,
 				action: block.action,
 				data,
 			} );
@@ -48,13 +48,13 @@ const BlockItem = ( { block, is_extension } ) => {
 		dispatch( { type: block.actionType, payload: assetStatus } );
 		dispatch( {
 			type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-			payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+			payload: __( 'Successfully saved!', 'spectra-blocks' ),
 		} );
 		debouncedApiCall( assetStatus ); // Call the debounced function.
 	};
 
 	useEffect( () => {
-		if ( block.is_extension && ! ( block.is_pro && uag_react.pro_plugin_status !== 'Activated' ) ) {
+		if ( block.is_extension && ! ( block.is_pro && spectra_blocks_react.pro_plugin_status !== 'Activated' ) ) {
 			block.onChange( ( prev ) => ( {
 				...prev,
 				[ block.slug ]: ExtensionStatus,
@@ -95,8 +95,8 @@ const BlockItem = ( { block, is_extension } ) => {
 					</div>
 
 					<div className="flex items-center gap-x-2">
-						{ ( block.is_pro && uag_react.pro_plugin_status !== 'Activated' ) && (
-							<Badge label={__( 'Pro', 'ultimate-addons-for-gutenberg' )} size="xs" type="pill" variant="inverse" />
+						{ ( block.is_pro && spectra_blocks_react.pro_plugin_status !== 'Activated' ) && (
+							<Badge label={__( 'Pro', 'spectra-blocks' )} size="xs" type="pill" variant="inverse" />
 						) }
 					</div>
 				</div>
@@ -110,7 +110,7 @@ const BlockItem = ( { block, is_extension } ) => {
 							rel="noreferrer"
 							className="mt-1 text-text-tertiary no-underline"
 						>
-							{__( 'Documentation', 'ultimate-addons-for-gutenberg' ) }
+							{__( 'Documentation', 'spectra-blocks' ) }
 						</a>
 					</div>
 				</div>
@@ -135,7 +135,7 @@ const BlockItem = ( { block, is_extension } ) => {
 
 				<div className="flex items-center gap-x-2">
 					{ (
-						<Badge label={__( 'Extension', 'ultimate-addons-for-gutenberg' )} size="xs" type="pill" variant="blue" />
+						<Badge label={__( 'Extension', 'spectra-blocks' )} size="xs" type="pill" variant="blue" />
 					) }
 				</div>
 			</div>
@@ -149,7 +149,7 @@ const BlockItem = ( { block, is_extension } ) => {
 						rel="noreferrer"
 						className="mt-1 text-text-tertiary no-underline"
 					>
-						{ __( 'Documentation', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Documentation', 'spectra-blocks' ) }
 					</a>
 				</div>
 			</div>

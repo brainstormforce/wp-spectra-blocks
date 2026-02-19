@@ -6,7 +6,7 @@ import { createElement as el } from '@wordpress/element';
 
 const iconColor = '#5733FF';
 
-const UAGB_Block_Icons = {
+const Spectra_Block_Icons = {
 
 	// -----------------------------.
 	// Spectra Blocks and Extensions.
@@ -777,4 +777,4 @@ const UAGB_Block_Icons = {
 };
 
 
-export default UAGB_Block_Icons;
+export default Spectra_Block_Icons;

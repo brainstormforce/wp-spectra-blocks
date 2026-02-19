@@ -17,7 +17,7 @@ const SelectedFontFamilies = () => {
 
 	const fonts = [];
 
-	const customFonts = uag_admin_react.spectra_custom_fonts;
+	const customFonts = spectra_blocks_admin_react.spectra_custom_fonts;
 
 	Object.keys( googleFonts ).map( ( name ) => {
 		// eslint-disable-line array-callback-return
@@ -50,13 +50,13 @@ const SelectedFontFamilies = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.load_select_font_globally_nonce,
+			security: spectra_blocks_react.load_select_font_globally_nonce,
 			value: assetStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_load_select_font_globally',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_load_select_font_globally',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -69,8 +69,8 @@ const SelectedFontFamilies = () => {
 		if ( enableSelectedFontFamilies === 'enabled' ) {
 			dispatch( { type: 'UPDATE_SELECTED_FONT_FAMILIES', payload: font } );
 
-			const action = 'uag_select_font_globally',
-				nonce = uag_react.select_font_globally_nonce;
+			const action = 'spectra_blocks_select_font_globally',
+				nonce = spectra_blocks_react.select_font_globally_nonce;
 
 			// Create an object with the security and value properties
 			const data = {
@@ -79,7 +79,7 @@ const SelectedFontFamilies = () => {
 			};
 			// Call the getApiData function with the specified parameters
 			const getApiFetchData = getApiData( {
-				url: uag_react.ajax_url,
+				url: spectra_blocks_react.ajax_url,
 				action,
 				data,
 			} );
@@ -127,23 +127,23 @@ const SelectedFontFamilies = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Allow Only Selected Fonts', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Allow Only Selected Fonts', 'spectra-blocks' ) }
 				settingText={ __(
 					'Spectra offers 1500+ Google font options. If this is overwhelming for your clients, you can use this option to show only limited number of fonts in the block settings.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ enableSelectedFontFamiliesStatus }
 					onChange={ updateEnableSelectedFontFamilies }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 
 			<Select
                 isMulti
-                placeholder={ __( 'Select the font families you want', 'ultimate-addons-for-gutenberg' ) }
+                placeholder={ __( 'Select the font families you want', 'spectra-blocks' ) }
                 defaultValue = { selectedFontFamilies }
                 onChange={ ( value ) => updateSelectedFontFamilies( value ) }
                 options={ fonts }

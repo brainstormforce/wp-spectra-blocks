@@ -25,7 +25,7 @@ import { memo } from '@wordpress/element';
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
+import { TabBlockControls } from '@spectra/tabs/helpers';
 import { helperIcons } from '@spectra-helpers/block-icons';
 
 /**
@@ -58,7 +58,7 @@ const DimensionSettings = memo( ( props ) => {
 					!! maxWidth ||
 					!! maxHeight
 				}
-				label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Sizes', 'spectra-blocks' ) }
 				as={ Grid }
 				panelId={ clientId }
 				isShownByDefault
@@ -150,7 +150,7 @@ const GeneralSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Tab Trigger', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Tab Trigger', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						overflow: 'visible',
@@ -160,14 +160,14 @@ const GeneralSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => overflow !== 'visible' }
-					label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Overflow', 'spectra-blocks' ) }
 					panelId={ clientId }
 					onDeselect={ () =>
 						setAttributes( {
 							overflow: 'visible',
 						} )
 					}
-					resetAll={ () => ( {
+					resetAllFilter={ () => ( {
 						overflow: 'visible',
 					} ) }
 					isShownByDefault
@@ -175,7 +175,7 @@ const GeneralSettings = memo( ( props ) => {
 					<SelectControl
 						label={ __(
 							'Overflow',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						value={ overflow }
 						options={ [
@@ -183,28 +183,28 @@ const GeneralSettings = memo( ( props ) => {
 								value: 'visible',
 								label: __(
 									'Visible',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 							{
 								value: 'hidden',
 								label: __(
 									'Hidden',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 							{
 								value: 'scroll',
 								label: __(
 									'Scroll',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 							{
 								value: 'auto',
 								label: __(
 									'Auto',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 						] }
@@ -249,26 +249,26 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: textColorActive,
-					label: __( 'Text Active', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Active', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorActive: value } ),
 					resetAllFilter: () => setAttributes( { textColorActive: undefined } ),
 				},
 				{
 					colorValue: textColorActiveHover,
-					label: __( 'Text Active Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Active Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorActiveHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorActiveHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -279,7 +279,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorActive,
 					gradientValue: backgroundGradientActive,
-					label: __( 'Background Active', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Active', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorActive: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientActive: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -290,7 +290,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorActiveHover,
 					gradientValue: backgroundGradientActiveHover,
-					label: __( 'Background Active Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Active Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorActiveHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientActiveHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -395,7 +395,7 @@ const Settings = ( props ) => {
 		if ( extractedText ) {
 			newAttributes.text = extractedText;
 		} else {
-			newAttributes.placeholder = __( 'Tab', 'ultimate-addons-for-gutenberg' );
+			newAttributes.placeholder = __( 'Tab', 'spectra-blocks' );
 		}
 
 		// Add icon if present
@@ -419,7 +419,7 @@ const Settings = ( props ) => {
 						icon={ helperIcons.tabDivToButtonSwitch() }
 						label={ __(
 							'Transform to Tab Button',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onClick={ transformToTabButton }
 					/>
@@ -432,4 +432,4 @@ const Settings = ( props ) => {
 	);
 };
 
-export default Settings;
+export default memo( Settings );

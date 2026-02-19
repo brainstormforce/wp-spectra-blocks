@@ -1,0 +1,255 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/tabs",
+  "version": "3.0.0",
+  "title": "Tabs",
+  "category": "spectra-blocks",
+  "description": "A tabbed content",
+  "textdomain": "spectra-blocks",
+  "keywords": [
+    "tabs",
+    "tabbed content",
+    "tab panel",
+    "navigation tabs",
+    "horizontal tabs",
+    "vertical tabs",
+    "tabbed interface",
+    "content tabs",
+    "tab container",
+    "tabbed sections",
+    "add tabs",
+    "create tabs",
+    "insert tabs",
+    "advanced tabs",
+    "responsive tabs",
+    "toggle tabs",
+    "switchable content",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "allowedBlocks": [
+    "spectra/tabs-child-tab-wrapper",
+    "spectra/tabs-child-tabpanel"
+  ],
+  "supports": {
+    "interactivity": true,
+    "anchor": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "stretch"
+      },
+      "allowSizingOnChildren": true
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": false,
+      "background": false,
+      "__experimentalDefaultControls": {
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-components-variation-picker"
+  ],
+  "viewScriptModule": "file:./view.js",
+  "providesContext": {
+    "spectra/tabs/currentTab": "currentTab",
+    "spectra/tabs/icon": "icon",
+    "spectra/tabs/iconPosition": "iconPosition",
+    "spectra/tabs/size": "size",
+    "spectra/tabs/textColor": "textColor",
+    "spectra/tabs/styleColorText": "style",
+    "spectra/tabs/textColorHover": "textColorHover",
+    "spectra/tabs/textColorActive": "textColorActive",
+    "spectra/tabs/textColorActiveHover": "textColorActiveHover",
+    "spectra/tabs/iconColor": "iconColor",
+    "spectra/tabs/iconColorHover": "iconColorHover",
+    "spectra/tabs/iconColorActive": "iconColorActive",
+    "spectra/tabs/iconColorActiveHover": "iconColorActiveHover",
+    "spectra/tabs/textColorSecondary": "textColorSecondary",
+    "spectra/tabs/textColorHoverSecondary": "textColorHoverSecondary",
+    "spectra/tabs/backgroundColor": "backgroundColor",
+    "spectra/tabs/backgroundColorHover": "backgroundColorHover",
+    "spectra/tabs/backgroundColorActive": "backgroundColorActive",
+    "spectra/tabs/backgroundColorActiveHover": "backgroundColorActiveHover",
+    "spectra/tabs/backgroundGradient": "backgroundGradient",
+    "spectra/tabs/backgroundGradientHover": "backgroundGradientHover",
+    "spectra/tabs/backgroundGradientActive": "backgroundGradientActive",
+    "spectra/tabs/backgroundGradientActiveHover": "backgroundGradientActiveHover",
+    "spectra/tabs/backgroundColorSecondary": "backgroundColorSecondary",
+    "spectra/tabs/backgroundColorHoverSecondary": "backgroundColorHoverSecondary",
+    "spectra/tabs/backgroundGradientSecondary": "backgroundGradientSecondary",
+    "spectra/tabs/backgroundGradientHoverSecondary": "backgroundGradientHoverSecondary",
+    "spectra/tabs/borderColorHover": "borderColorHover",
+    "spectra/tabs/borderColorActive": "borderColorActive",
+    "spectra/tabs/borderColorActiveHover": "borderColorActiveHover"
+  },
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "stretch"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "variationSelected": {
+      "type": "boolean",
+      "default": false
+    },
+    "variationType": {
+      "type": "string"
+    },
+    "currentTab": {
+      "type": "number"
+    },
+    "icon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "iconPosition": {
+      "type": "string"
+    },
+    "flipForRTL": {
+      "type": "boolean",
+      "default": false
+    },
+    "size": {
+      "type": "string"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "textColorActive": {
+      "type": "string"
+    },
+    "textColorActiveHover": {
+      "type": "string"
+    },
+    "iconColor": {
+      "type": "string"
+    },
+    "iconColorHover": {
+      "type": "string"
+    },
+    "iconColorActive": {
+      "type": "string"
+    },
+    "iconColorActiveHover": {
+      "type": "string"
+    },
+    "textColorSecondary": {
+      "type": "string"
+    },
+    "textColorHoverSecondary": {
+      "type": "string"
+    },
+    "backgroundColor": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundColorActive": {
+      "type": "string"
+    },
+    "backgroundColorActiveHover": {
+      "type": "string"
+    },
+    "backgroundGradient": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "backgroundGradientActive": {
+      "type": "string"
+    },
+    "backgroundGradientActiveHover": {
+      "type": "string"
+    },
+    "backgroundColorSecondary": {
+      "type": "string"
+    },
+    "backgroundColorHoverSecondary": {
+      "type": "string"
+    },
+    "backgroundGradientSecondary": {
+      "type": "string"
+    },
+    "backgroundGradientHoverSecondary": {
+      "type": "string"
+    },
+    "backgroundColorTertiary": {
+      "type": "string"
+    },
+    "backgroundGradientTertiary": {
+      "type": "string"
+    },
+    "borderColorHover": {
+      "type": "string"
+    },
+    "borderColorActive": {
+      "type": "string"
+    },
+    "borderColorActiveHover": {
+      "type": "string"
+    }
+  }
+}

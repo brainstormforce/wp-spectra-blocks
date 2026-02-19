@@ -44,7 +44,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'General', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						tagName: defaultTagName,
@@ -59,78 +59,81 @@ const BlockSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => !! tagName && defaultTagName !== tagName }
-					label={ __( 'Tag', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Tag', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { tagName: defaultTagName } ) }
+					resetAllFilter={ () => ( {
+						tagName: defaultTagName,
+					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'HTML Tag', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'HTML Tag', 'spectra-blocks' ) }
 						value={ tagName || defaultTagName }
 						onChange={ ( value ) => setAttributes( { tagName: value } ) }
 						isBlock
 					>
 						<ToggleGroupControlOption
 							value="h1"
-							label={ __( 'H1', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H1', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h1( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h2"
-							label={ __( 'H2', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H2', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h2( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h3"
-							label={ __( 'H3', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H3', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h3( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h4"
-							label={ __( 'H4', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H4', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h4( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h5"
-							label={ __( 'H5', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H5', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h5( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h6"
-							label={ __( 'H6', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H6', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h6( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="p"
-							label={ __( 'P', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'P', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.p( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="div"
-							label={ __( 'D', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'D', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.div( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="span"
-							label={ __( 'S', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'S', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.span( false ) }
@@ -166,14 +169,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -219,16 +222,16 @@ const TypographySettings = memo( ( props ) => {
 	let dropCapHelpText;
 	switch ( tagName ) {
 		case 'span':
-			dropCapHelpText = __( 'Not available for span tag.', 'ultimate-addons-for-gutenberg' );
+			dropCapHelpText = __( 'Not available for span tag.', 'spectra-blocks' );
 			break;
 		case hasDropCapDisabled:
-			dropCapHelpText = __( 'Not available for aligned text.', 'ultimate-addons-for-gutenberg' );
+			dropCapHelpText = __( 'Not available for aligned text.', 'spectra-blocks' );
 			break;
 		case dropCap:
-			dropCapHelpText = __( 'Showing large initial letter.', 'ultimate-addons-for-gutenberg' );
+			dropCapHelpText = __( 'Showing large initial letter.', 'spectra-blocks' );
 			break;
 		default:
-			dropCapHelpText = __( 'Show a large initial letter.', 'ultimate-addons-for-gutenberg' );
+			dropCapHelpText = __( 'Show a large initial letter.', 'spectra-blocks' );
 	}
 
 	return (
@@ -237,20 +240,23 @@ const TypographySettings = memo( ( props ) => {
 				<InspectorControls group="typography">
 					<ToolsPanelItem
 						hasValue={ () => !! dropCap }
-						label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
-						aria-label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Drop cap', 'spectra-blocks' ) }
+						aria-label={ __( 'Drop cap', 'spectra-blocks' ) }
 						isShownByDefault={ isDropCapControlEnabledByDefault }
 						onDeselect={ () => setAttributes( { dropCap: undefined } ) }
+						resetAllFilter={ () => ( {
+							dropCap: undefined,
+						} ) }
 						panelId={ clientId }
 					>
 						<ToggleControl
 							__nextHasNoMarginBottom
-							label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Drop cap', 'spectra-blocks' ) }
 							checked={ !! dropCap }
 							onChange={ () => setAttributes( { dropCap: ! dropCap } ) }
 							help={ dropCapHelpText }
 							disabled={ hasDropCapDisabled }
-							aria-label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+							aria-label={ __( 'Drop cap', 'spectra-blocks' ) }
 						/>
 					</ToolsPanelItem>
 				</InspectorControls>
@@ -298,7 +304,7 @@ const TextShadowSettings = memo( ( props ) => {
 			 */}
 			<ToolsPanelItem
 				hasValue={ () => hasTextShadow }
-				label={ __( 'Text Shadow', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Text Shadow', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { 
 					enableTextShadow: undefined,
 					textShadowColor: undefined,
@@ -322,8 +328,8 @@ const TextShadowSettings = memo( ( props ) => {
 					{/* Toggle to enable/disable text shadow */}
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Enable Text Shadow', 'ultimate-addons-for-gutenberg' ) }
-						help={ __( 'Enable text shadow to customize the shadow properties.', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Enable Text Shadow', 'spectra-blocks' ) }
+						help={ __( 'Enable text shadow to customize the shadow properties.', 'spectra-blocks' ) }
 						checked={ !! enableTextShadow }
 						onChange={ ( value ) => {
 							setAttributes( { enableTextShadow: value } );
@@ -356,7 +362,7 @@ const TextShadowSettings = memo( ( props ) => {
 							<DebouncedRangeControl
 								__next40pxDefaultSize
 								__nextHasNoMarginBottom
-								label={ __( 'Text Shadow X Offset', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Text Shadow X Offset', 'spectra-blocks' ) }
 								value={ textShadowOffsetX }
 								onChange={ ( value ) => setAttributes( { textShadowOffsetX: value } ) }
 								marks={[
@@ -391,7 +397,7 @@ const TextShadowSettings = memo( ( props ) => {
 						<DebouncedRangeControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Text Shadow Y Offset', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Text Shadow Y Offset', 'spectra-blocks' ) }
 							value={ textShadowOffsetY }
 							onChange={ ( value ) => setAttributes( { textShadowOffsetY: value } ) }
 							marks={[
@@ -426,7 +432,7 @@ const TextShadowSettings = memo( ( props ) => {
 						<DebouncedRangeControl
 							__next40pxDefaultSize
 							__nextHasNoMarginBottom
-							label={ __( 'Text Shadow Blur Radius', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Text Shadow Blur Radius', 'spectra-blocks' ) }
 							value={ textShadowBlur }
 							onChange={ ( value ) => setAttributes( { textShadowBlur: value } ) }
 							min={ 0 }

@@ -55,77 +55,77 @@ const Edit = ( props ) => {
 
 	const maskShapeOptions = [
 		{ 
-			label: __( 'None', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'None', 'spectra-blocks' ),
 			value: 'none',
 		},
 		{
-			label: __( 'Circle', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Circle', 'spectra-blocks' ),
 			value: 'circle',
 		},
 		{
-			label: __( 'Diamond', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Diamond', 'spectra-blocks' ),
 			value: 'diamond',
 		},
 		{
-			label: __( 'Hexagon', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Hexagon', 'spectra-blocks' ),
 			value: 'hexagon',
 		},
 		{
-			label: __( 'Rounded', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Rounded', 'spectra-blocks' ),
 			value: 'rounded',
 		},
 		{
-			label: __( 'Blob 1', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Blob 1', 'spectra-blocks' ),
 			value: 'blob1',
 		},
 		{
-			label: __( 'Blob 2', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Blob 2', 'spectra-blocks' ),
 			value: 'blob2',
 		},
 		{
-			label: __( 'Blob 3', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Blob 3', 'spectra-blocks' ),
 			value: 'blob3',
 		},
 		{
-			label: __( 'Blob 4', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Blob 4', 'spectra-blocks' ),
 			value: 'blob4',
 		},
 		{
-			label: __( 'Custom', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Custom', 'spectra-blocks' ),
 			value: 'custom',
 		},
 	];
 
 	const maskSizeOptions = [
 		{
-			label: __( 'Auto', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Auto', 'spectra-blocks' ),
 			value: 'auto',
 		},
 		{
-			label: __( 'Cover', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Cover', 'spectra-blocks' ),
 			value: 'cover',
 		},
 		{
-			label: __( 'Contain', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Contain', 'spectra-blocks' ),
 			value: 'contain',
 		},
 	];
 
 	const maskRepeatOptions = [
 		{
-			label: __( 'No Repeat', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'No Repeat', 'spectra-blocks' ),
 			value: 'no-repeat',
 		},
 		{
-			label: __( 'Repeat', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Repeat', 'spectra-blocks' ),
 			value: 'repeat',
 		},
 		{
-			label: __( 'Repeat X', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Repeat X', 'spectra-blocks' ),
 			value: 'repeat-x',
 		},
 		{
-			label: __( 'Repeat Y', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Repeat Y', 'spectra-blocks' ),
 			value: 'repeat-y',
 		},
 	];
@@ -205,7 +205,7 @@ const Edit = ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Image Mask from Spectra', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Image Mask from Spectra', 'spectra-blocks' ) }
 				resetAll={ resetAll }
 				panelId={ clientId }
 			>
@@ -216,7 +216,7 @@ const Edit = ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => !! spectraMask.shape && spectraMask.shape !== 'none' }
-					label={ __( 'Shape', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Shape', 'spectra-blocks' ) }
 					onDeselect={ () => handleShapeChange( 'none' ) }
 					resetAllFilter={ () => ( {
 						spectraMask: { ...spectraMask, shape: 'none' }
@@ -228,7 +228,7 @@ const Edit = ( props ) => {
 						__next40pxDefaultSize
 						label={ __(
 							'Shape',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						value={ spectraMask.shape }
 						options={ maskShapeOptions }
@@ -247,7 +247,7 @@ const Edit = ( props ) => {
 						} }
 						help={ __(
 							'Choose a predefined shape, or upload a transparent PNG or SVG as a mask.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					/>
 					{ spectraMask.shape === 'custom' && (
@@ -274,7 +274,7 @@ const Edit = ( props ) => {
 										>
 											{ __(
 												'Select Mask Image',
-												'ultimate-addons-for-gutenberg'
+												'spectra-blocks'
 											) }
 										</Button>
 									) : (
@@ -290,7 +290,7 @@ const Edit = ( props ) => {
 												>
 													{ __(
 														'Replace',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													) }
 												</Button>
 												<Button
@@ -307,7 +307,7 @@ const Edit = ( props ) => {
 												>
 													{ __(
 														'Remove',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													) }
 												</Button>
 											</HStack>
@@ -328,7 +328,7 @@ const Edit = ( props ) => {
 						*/}
 						<ToolsPanelItem
 							hasValue={ () => !! spectraMask.size && 'auto' !== spectraMask.size }
-							label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Size', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( { spectraMask: { ...spectraMask, size: 'auto' } } ) }
 							resetAllFilter={ () => ( { spectraMask: { ...spectraMask, size: 'auto' } } ) }
 							isShownByDefault
@@ -338,7 +338,7 @@ const Edit = ( props ) => {
 								__next40pxDefaultSize
 								label={ __(
 									'Size',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								value={ spectraMask.size }
 								options={ maskSizeOptions }
@@ -347,7 +347,7 @@ const Edit = ( props ) => {
 								}
 								help={ __(
 									'Control how the mask fills the container.',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 							/>
 						</ToolsPanelItem>
@@ -362,7 +362,7 @@ const Edit = ( props ) => {
 								!! spectraMask.position &&
 								( spectraMask.position.x !== 0.5 || spectraMask.position.y !== 0.5 )
 							}
-							label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Position', 'spectra-blocks' ) }
 							onDeselect={ () =>
 								setAttributes( {
 									spectraMask: { ...spectraMask, position: { x: 0.5, y: 0.5 } }
@@ -378,7 +378,7 @@ const Edit = ( props ) => {
 							) ) && (
 								<FocalPointPicker
 									__nextHasNoMarginBottom
-									help={ __( 'Set the position of the mask within the container.', 'ultimate-addons-for-gutenberg' ) }
+									help={ __( 'Set the position of the mask within the container.', 'spectra-blocks' ) }
 									url={ getPreviewUrl() }
 									value={ spectraMask.position || { x: 0.5, y: 0.5 } }
 									onDragStart={ handleFocalPointChange }
@@ -395,7 +395,7 @@ const Edit = ( props ) => {
 						*/}
 						<ToolsPanelItem
 							hasValue={ () => !! spectraMask.repeat && 'no-repeat' !== spectraMask.repeat }
-							label={ __( 'Repeat', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Repeat', 'spectra-blocks' ) }
 							onDeselect={ () =>
 								setAttributes( {
 									spectraMask: { ...spectraMask, repeat: 'no-repeat' }
@@ -409,7 +409,7 @@ const Edit = ( props ) => {
 								__next40pxDefaultSize
 								label={ __(
 									'Repeat',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								value={ spectraMask.repeat }
 								options={ maskRepeatOptions }
@@ -420,7 +420,7 @@ const Edit = ( props ) => {
 								}
 								help={ __(
 									'Choose how the mask should repeat.',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								__nextHasNoMarginBottom
 							/>

@@ -1,8 +1,8 @@
 <?php
 /**
- * Uag Admin.
+ * Spectra Blocks Admin.
  *
- * @package Uag
+ * @package Spectra_Blocks
  */
 
 namespace SpectraBlocksAdmin;
@@ -25,14 +25,14 @@ class Admin_Loader {
 	 *
 	 * @access private
 	 * @var object Class object.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	private static $instance;
 
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -64,7 +64,7 @@ class Admin_Loader {
 				)
 			);
 
-			$file = SPECTRA_ADMIN_DIR . $filename . '.php';
+			$file = SPECTRA_BLOCKS_ADMIN_DIR . $filename . '.php';
 
 			// if the file redable, include it.
 			if ( is_readable( $file ) ) {
@@ -76,7 +76,7 @@ class Admin_Loader {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -90,8 +90,8 @@ class Admin_Loader {
 	 * Include required classes.
 	 */
 	public function define_constants() {
-		define( 'SPECTRA_ADMIN_DIR', SPECTRA_DIR . 'admin/' );
-		define( 'SPECTRA_ADMIN_URL', SPECTRA_URL . 'admin/' );
+		define( 'SPECTRA_BLOCKS_ADMIN_DIR', SPECTRA_BLOCKS_DIR . 'admin/' );
+		define( 'SPECTRA_BLOCKS_ADMIN_URL', SPECTRA_BLOCKS_URL . 'admin/' );
 	}
 
 	/**

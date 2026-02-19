@@ -12,13 +12,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class Core.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Core {
 	/**
 	 * Store Json variable
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @var array
 	 */
@@ -27,18 +27,18 @@ class Core {
 	/**
 	 * As our svg icon is too long array so we will divide that into number of icon chunks.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @var int
 	 */
-	public static $number_of_icon_chunks = 4;
+	public static $number_of_icon_chunks = 5;
 
 	/**
 	 * Get Json Data.
 	 * 
 	 * Customize and add icons via 'spectra_icon_chunks' filter.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return array
 	 */
@@ -52,7 +52,7 @@ class Core {
 		// Create an array, and iterate through the number of chunks.
 		$icons_chunks = array();
 		for ( $i = 0; $i < self::$number_of_icon_chunks; $i++ ) {
-			$json_file = SPECTRA_DIR . 'blocks-config/spectra-blocks-controls/spectra-blocks-icons-v6-' . $i . '.php';
+			$json_file = SPECTRA_BLOCKS_DIR . 'blocks-config/spectra-blocks-controls/spectra-icons-v6-' . $i . '.php';
 			if ( file_exists( $json_file ) ) {
 				$icons_chunks[] = include $json_file;
 			}
@@ -80,7 +80,7 @@ class Core {
 	 * -> If the type is 'style', the returned string will concatenate the keys with the values as style properties.
 	 * ---> So [ 'width' => '24px', 'color' => '#00bcd4' ] will become 'width: 24px; color: #00bcd4;'
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param array  $value_array Array containing the values to concatenate.
 	 * @param string $type        Determines the type of concatenation.
 	 * @return string Formatted string with concatenated key-value pairs.
@@ -124,7 +124,7 @@ class Core {
 	 * 
 	 * For example, calling this function on the blockname 'spectra/accordion-child-item' will result in 'accordion-item'.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param string $blockname The block name as fetched from WordPress.
 	 * @return string Either an empty string, the blockname without changes, or the blockname as expected if the correct parameter was passed.
 	 */
@@ -157,7 +157,7 @@ class Core {
 	/**
 	 * Get the background image styles based on the current background.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param array  $background                The background attribute.
 	 * @param string $background_gradient       The background gradient attribute.
 	 * @param string $background_gradient_hover The background gradient hover attribute.
@@ -226,7 +226,7 @@ class Core {
 	/**
 	 * Get the final gradient value based on advanced mode.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param bool   $enable_adv_bg Whether advanced gradient is enabled.
 	 * @param string $adv_value The advanced gradient value.
 	 * @param string $basic_value The basic gradient value.
@@ -245,7 +245,7 @@ class Core {
 	/**
 	 * Check MIME Type
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public static function get_mime_type() {
 		$allowed_types = get_allowed_mime_types();
@@ -258,7 +258,7 @@ class Core {
 	 *
 	 * Get HEX color and return RGBA. Default return RGB color.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $color      Gets the color value.
 	 * @param string $opacity    Gets the opacity value.
@@ -332,7 +332,7 @@ class Core {
 	/**
 	 * Get User Browser name
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $user_agent Browser names.
 	 * @return string Browser name.

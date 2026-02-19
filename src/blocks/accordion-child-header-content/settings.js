@@ -50,7 +50,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group='settings'>
 			<ToolsPanel
-				label={ __( 'Title', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Title', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						tagName: defaultTagName,
@@ -60,78 +60,79 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! tagName && defaultTagName !== tagName }
-					label={ __( 'HTML Tag', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'HTML Tag', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { tagName: defaultTagName } ) }
+					resetAllFilter={ () => ( { tagName: defaultTagName } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
-						label={ __( 'HTML Tag', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'HTML Tag', 'spectra-blocks' ) }
 						value={ tagName || defaultTagName }
 						onChange={ ( value ) => setAttributes( { tagName: value } ) }
 						isBlock
 					>
 						<ToggleGroupControlOption
 							value="h1"
-							label={ __( 'H1', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H1', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h1( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h2"
-							label={ __( 'H2', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H2', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h2( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h3"
-							label={ __( 'H3', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H3', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h3( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h4"
-							label={ __( 'H4', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H4', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h4( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h5"
-							label={ __( 'H5', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H5', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h5( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="h6"
-							label={ __( 'H6', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'H6', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.h6( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="p"
-							label={ __( 'P', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'P', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.p( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="div"
-							label={ __( 'D', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'D', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.div( false ) }
 						</ToggleGroupControlOption>
 						<ToggleGroupControlOption
 							value="span"
-							label={ __( 'S', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'S', 'spectra-blocks' ) }
 							showTooltip
 						>
 							{ helperIcons.content.span( false ) }

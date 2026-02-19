@@ -2,7 +2,7 @@
 /**
  * Zipwp Images Script
  *
- * @since 0.0.1
+ * @since 1.0.0
  * @package Zipwp Images Script
  */
 
@@ -17,14 +17,14 @@ class Zipwp_Images_Script {
 	 *
 	 * @access private
 	 * @var object Class Instance.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance = null;
 
 	/**
 	 * Constructor.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'editor_load_scripts' ) );
@@ -35,7 +35,7 @@ class Zipwp_Images_Script {
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -48,7 +48,7 @@ class Zipwp_Images_Script {
 	/**
 	 * Load script for block editor and elementor editor.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function editor_load_scripts(): void {
@@ -63,7 +63,7 @@ class Zipwp_Images_Script {
 	/**
 	 * Load script for block BB editor.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function bb_editor_load_scripts(): void {
@@ -76,7 +76,7 @@ class Zipwp_Images_Script {
 	/**
 	 * Load all the required files in the importer.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function load_script(): void {
@@ -112,10 +112,10 @@ class Zipwp_Images_Script {
 				'is_bb_editor'         => class_exists( '\FLBuilderModel' ) ? \FLBuilderModel::is_builder_active() : false,
 				'is_brizy_editor'      => class_exists( 'Brizy_Editor_Post' ) ? ( isset( $_GET['brizy-edit'] ) || isset( $_GET['brizy-edit-iframe'] ) ) : false, // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Fetching GET parameter, no nonce associated with this action.
 				'saved_images'         => get_option( 'zipwp-images-saved-images', array() ),
-				'title'                => apply_filters( 'zipwp_images_tab_title', __( 'Search Images', 'spectra' ) ),
-				'search_placeholder'   => __( 'Search - Ex: flowers', 'spectra' ),
-				'downloading'          => __( 'Downloading...', 'spectra' ),
-				'validating'           => __( 'Validating...', 'spectra' ),
+				'title'                => apply_filters( 'zipwp_images_tab_title', __( 'Search Images', 'ultimate-addons-for-gutenberg' ) ),
+				'search_placeholder'   => __( 'Search - Ex: flowers', 'ultimate-addons-for-gutenberg' ),
+				'downloading'          => __( 'Downloading...', 'ultimate-addons-for-gutenberg' ),
+				'validating'           => __( 'Validating...', 'ultimate-addons-for-gutenberg' ),
 				'_ajax_nonce'          => wp_create_nonce( 'zipwp-images' ),
 				'rest_api_nonce'       => current_user_can( 'edit_posts' ) ? wp_create_nonce( 'wp_rest' ) : '',
 			)
@@ -136,7 +136,7 @@ class Zipwp_Images_Script {
 	/**
 	 * Generate and return the Google fonts url.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function google_fonts_url() {

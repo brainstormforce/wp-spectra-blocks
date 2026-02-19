@@ -12,14 +12,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class Shadow.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Shadow {
 
 	/**
 	 * Get shadow styles for CSS application.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array  $attributes Block attributes.
 	 * @param string $shadow_attribute Name of the shadow attribute (default: 'boxShadow').
@@ -41,7 +41,7 @@ class Shadow {
 	 * Get multiple shadow styles configuration for different states (normal, hover, etc.).
 	 * This function returns configuration for BlockAttributes::get_wrapper_attributes
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attributes Block attributes.
 	 * @param array $config Shadow configuration array.
@@ -85,7 +85,7 @@ class Shadow {
 	/**
 	 * Check if shadow value has content.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $shadow_value Shadow CSS string.
 	 * @return boolean Whether shadow has content.
@@ -97,7 +97,7 @@ class Shadow {
 	/**
 	 * Parse shadow CSS string into shadow components.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $shadow_string CSS shadow string.
 	 * @return array Parsed shadow components.
@@ -150,7 +150,7 @@ class Shadow {
 	/**
 	 * Generate CSS shadow string from shadow components.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $shadow_obj Shadow components array.
 	 * @return string CSS shadow string.
@@ -175,38 +175,38 @@ class Shadow {
 	/**
 	 * Default shadow presets.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Default shadow presets.
 	 */
 	public static function get_default_presets() {
 		return array(
 			array(
-				'name'  => __( 'None', 'spectra' ),
+				'name'  => __( 'None', 'spectra-blocks' ),
 				'value' => '',
 			),
 			array(
-				'name'  => __( 'Small', 'spectra' ),
+				'name'  => __( 'Small', 'spectra-blocks' ),
 				'value' => '0px 1px 3px rgba(0, 0, 0, 0.12)',
 			),
 			array(
-				'name'  => __( 'Medium', 'spectra' ),
+				'name'  => __( 'Medium', 'spectra-blocks' ),
 				'value' => '0px 4px 8px rgba(0, 0, 0, 0.15)',
 			),
 			array(
-				'name'  => __( 'Large', 'spectra' ),
+				'name'  => __( 'Large', 'spectra-blocks' ),
 				'value' => '0px 8px 16px rgba(0, 0, 0, 0.15)',
 			),
 			array(
-				'name'  => __( 'Extra Large', 'spectra' ),
+				'name'  => __( 'Extra Large', 'spectra-blocks' ),
 				'value' => '0px 16px 32px rgba(0, 0, 0, 0.15)',
 			),
 			array(
-				'name'  => __( 'Inner Small', 'spectra' ),
+				'name'  => __( 'Inner Small', 'spectra-blocks' ),
 				'value' => 'inset 0px 1px 3px rgba(0, 0, 0, 0.12)',
 			),
 			array(
-				'name'  => __( 'Inner Medium', 'spectra' ),
+				'name'  => __( 'Inner Medium', 'spectra-blocks' ),
 				'value' => 'inset 0px 2px 6px rgba(0, 0, 0, 0.15)',
 			),
 		);

@@ -16,13 +16,13 @@ const ContentWidth = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.content_width_nonce,
+			security: spectra_blocks_react.content_width_nonce,
 			value,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_content_width',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_content_width',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -34,15 +34,15 @@ const ContentWidth = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Default Content Width', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Default Content Width', 'spectra-blocks' ) }
 				settingText={ __(
 					"This setting will apply to Container Block's default Content Width.",
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				currentSetting={ sprintf(
 					/* translators: abbreviation for units */
-					__( 'The current Content width is applied from %s.', 'ultimate-addons-for-gutenberg' ),
-					uag_react.uag_content_width_set_by
+					__( 'The current Content width is applied from %s.', 'spectra-blocks' ),
+					spectra_blocks_react.spectra_blocks_content_width_set_by
 				) }
 			>
 				<Input

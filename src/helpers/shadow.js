@@ -4,7 +4,7 @@
  * Utility functions for handling box shadow styles in Spectra blocks.
  * Provides parsing, generation, and style application for shadow attributes.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 
 /**

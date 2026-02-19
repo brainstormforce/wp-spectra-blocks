@@ -6,9 +6,11 @@
  * (Strategy, Builder, Factory) for cohesive pattern-based CSS generation.
  *
  * @package Spectra
- * @since 0.0.1
+ * @since 3.0.0
  *
  * phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
+ * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
+ * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedInterfaceFound
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -16,13 +18,13 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Interface for CSS generators following Strategy Pattern.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 interface PatternCSSGeneratorInterface {
 	/**
 	 * Check if this generator can handle the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name The block name to check.
 	 * @return bool Whether this generator can handle the block.
@@ -32,7 +34,7 @@ interface PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block   The block data.
 	 * @param array $context Additional context for CSS generation.
@@ -44,13 +46,13 @@ interface PatternCSSGeneratorInterface {
 /**
  * CSS Builder class following Builder Pattern.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class PatternCSSBuilder {
 	/**
 	 * Array of CSS rules.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array
 	 */
 	private $css_rules = array();
@@ -58,7 +60,7 @@ class PatternCSSBuilder {
 	/**
 	 * Track base CSS that has been added.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array
 	 */
 	private $base_css_added = array();
@@ -66,7 +68,7 @@ class PatternCSSBuilder {
 	/**
 	 * Add a CSS rule.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $selector   CSS selector.
 	 * @param array  $properties CSS properties.
@@ -92,7 +94,7 @@ class PatternCSSBuilder {
 	/**
 	 * Add base CSS once (prevents duplication).
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $key Unique key for this base CSS.
 	 * @param string $css CSS content to add.
@@ -109,7 +111,7 @@ class PatternCSSBuilder {
 	/**
 	 * Build and return the final CSS string.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return string Complete CSS output.
 	 */
@@ -120,7 +122,7 @@ class PatternCSSBuilder {
 	/**
 	 * Check if a CSS value is valid.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed $value Value to check.
 	 * @return bool Whether the value is valid.
@@ -133,13 +135,13 @@ class PatternCSSBuilder {
 /**
  * WordPress Core Block CSS Generator.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Supported WordPress core blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array
 	 */
 	private $supported_blocks = array(
@@ -153,7 +155,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Check if this generator can handle the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name The block name to check.
 	 * @return bool Whether this generator can handle the block.
@@ -165,7 +167,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block   The block data.
 	 * @param array $context Additional context for CSS generation.
@@ -206,7 +208,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add base WordPress layout CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @return void
@@ -224,7 +226,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for core/group block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @param array             $attrs   Block attributes.
@@ -246,7 +248,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add flex layout CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder     CSS builder instance.
 	 * @param array             $layout      Layout configuration.
@@ -269,7 +271,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Get alignment properties for flex layout.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $justification Justification value.
 	 * @return array CSS properties.
@@ -288,7 +290,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add gap CSS for layout.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder          CSS builder instance.
 	 * @param array             $style            Style configuration.
@@ -313,7 +315,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for core/columns block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @param array             $attrs   Block attributes.
@@ -341,7 +343,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for core/column block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @param array             $attrs   Block attributes.
@@ -362,7 +364,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for core/image block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @param array             $attrs   Block attributes.
@@ -390,7 +392,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Get alignment properties for image block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $align Alignment value.
 	 * @return array CSS properties.
@@ -408,7 +410,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for core/gallery block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @param array             $attrs   Block attributes.
@@ -429,7 +431,7 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate generic layout CSS for core blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder    CSS builder instance.
 	 * @param string            $block_name Block name.
@@ -457,13 +459,13 @@ class WordPressCoreBlockCSSGenerator implements PatternCSSGeneratorInterface {
 /**
  * Spectra Block CSS Generator.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Check if this generator can handle the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name The block name to check.
 	 * @return bool Whether this generator can handle the block.
@@ -475,7 +477,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate CSS for the given block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block   The block data.
 	 * @param array $context Additional context for CSS generation.
@@ -498,7 +500,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add base Spectra layout CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder CSS builder instance.
 	 * @return void
@@ -517,7 +519,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate layout-specific CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder    CSS builder instance.
 	 * @param string            $block_name Block name.
@@ -546,7 +548,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate flex layout CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder     CSS builder instance.
 	 * @param string            $block_class Block CSS class.
@@ -583,7 +585,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add flex alignment CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder     CSS builder instance.
 	 * @param string            $block_class Block CSS class.
@@ -607,7 +609,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Get justify-content CSS properties.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $justify Justification value.
 	 * @return array CSS properties.
@@ -627,7 +629,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Get vertical alignment CSS properties.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $align Alignment value.
 	 * @return array CSS properties.
@@ -645,7 +647,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Generate grid layout CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder     CSS builder instance.
 	 * @param string            $block_class Block CSS class.
@@ -677,7 +679,7 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 	/**
 	 * Add spacing CSS.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param PatternCSSBuilder $builder     CSS builder instance.
 	 * @param string            $block_class Block CSS class.
@@ -698,13 +700,13 @@ class SpectraBlockCSSGenerator implements PatternCSSGeneratorInterface {
 /**
  * Pattern CSS Factory following Factory Pattern.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class PatternCSSGeneratorFactory {
 	/**
 	 * Cached generators instances.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array|null
 	 */
 	private static $generators = null;
@@ -712,7 +714,7 @@ class PatternCSSGeneratorFactory {
 	/**
 	 * Get all registered CSS generators.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Array of generator instances.
 	 */
@@ -730,7 +732,7 @@ class PatternCSSGeneratorFactory {
 	/**
 	 * Get the appropriate generator for a block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name to get generator for.
 	 * @return PatternCSSGeneratorInterface|null Generator instance or null if none found.
@@ -749,13 +751,13 @@ class PatternCSSGeneratorFactory {
 /**
  * Main Pattern CSS Service following Single Responsibility Principle.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class PatternCSSService {
 	/**
 	 * Generate CSS for a post.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int $post_id Post ID to generate CSS for.
 	 * @return string Generated CSS.
@@ -777,7 +779,7 @@ class PatternCSSService {
 	/**
 	 * Process an array of blocks recursively.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks Array of blocks to process.
 	 * @return string Generated CSS.
@@ -800,7 +802,7 @@ class PatternCSSService {
 	/**
 	 * Process a single block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block Block data to process.
 	 * @return string Generated CSS.
@@ -824,7 +826,7 @@ class PatternCSSService {
 	/**
 	 * Get context for CSS generation.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Context data.
 	 */
@@ -841,7 +843,7 @@ class PatternCSSService {
 	/**
 	 * Check if we're in pattern preview context.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return bool Whether we're in pattern preview context.
 	 */

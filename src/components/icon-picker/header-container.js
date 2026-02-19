@@ -20,14 +20,14 @@ const HeaderContainer = ( props ) => {
 
 	// Search input container.
 	return (
-		<section className="uagb-ip-header">
-			<h2>{ __( 'Icon Library', 'ultimate-addons-for-gutenberg' ) }</h2>
-			<div className="uagb-ip-search-container">
-				<div className="uagb-ip-search-bar">
+		<section className="spectra-blocks-ip-header">
+			<h2>{ __( 'Icon Library', 'spectra-blocks' ) }</h2>
+			<div className="spectra-blocks-ip-search-container">
+				<div className="spectra-blocks-ip-search-bar">
 					{ removeTextIcon() }
 					<input
 						type="text"
-						placeholder={ __( 'Search', 'ultimate-addons-for-gutenberg' ) }
+						placeholder={ __( 'Search', 'spectra-blocks' ) }
 						value={ searchIconInputValue }
 						onChange={ searchIcon }
 						ref={ inputElement }

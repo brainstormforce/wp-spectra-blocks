@@ -20,7 +20,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 	/**
 	 * UTM Analytics class
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.10
 	 */
 	class BSF_UTM_Analytics {
 	
@@ -28,7 +28,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 		 * List of slugs of all the bsf products that will be referer, referring another product.
 		 *
 		 * @var array<string>
-		 * @since 0.0.1
+		 * @since 1.1.10
 		 */
 		private static $bsf_product_slugs = [
 			'all-in-one-schemaorg-rich-snippets',
@@ -49,7 +49,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 			'surerank',
 			'suretriggers',
 			'ultimate-addons-for-beaver-builder-lite',
-			'spectra',
+			'ultimate-addons-for-gutenberg',
 			'ultimate-elementor',
 			'Ultimate_VC_Addons',
 			'variation-swatches-woo',
@@ -64,7 +64,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 		 * This way we will maintain consistency through out all our products.
 		 *
 		 * @param string $slug unique slug of the product which can be used for referer, product.
-		 * @since 0.0.1
+		 * @since 1.1.10
 		 * @return boolean
 		 */
 		public static function is_valid_bsf_product_slug( $slug ) {
@@ -81,7 +81,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 		 *
 		 * @param string $referer slug of the product which is refering another product.
 		 * @param string $product slug of the product which is refered.
-		 * @since 0.0.1
+		 * @since 1.1.10
 		 * @return void
 		 */
 		public static function update_referer( $referer, $product ) {
@@ -122,7 +122,7 @@ if ( ! class_exists( 'BSF_UTM_Analytics' ) ) {
 		 * @param string $link Ideally this should be product site link where utm_params can be tracked.
 		 * @param string $product Product slug whose utm_link need to be created.
 		 * @param mixed  $utm_args additional args to be passed ex: [ 'utm_medium' => 'dashboard'].
-		 * @since 0.0.1
+		 * @since 1.1.10
 		 * @return string
 		 */
 		public static function get_utm_ready_link( $link, $product, $utm_args = [] ) {

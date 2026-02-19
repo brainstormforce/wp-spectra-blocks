@@ -1,0 +1,116 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/buttons",
+  "version": "3.0.0",
+  "title": "Buttons",
+  "category": "spectra-blocks",
+  "description": "Add a group of customizable buttons.",
+  "textdomain": "spectra-blocks",
+  "keywords": [
+    "button",
+    "buttons",
+    "button group",
+    "multiple buttons",
+    "marketing buttons",
+    "marketing button",
+    "cta",
+    "cta buttons",
+    "call to action",
+    "call-to-action",
+    "action buttons",
+    "link button",
+    "submit button",
+    "click button",
+    "interactive button",
+    "primary button",
+    "secondary button",
+    "dual buttons",
+    "button set",
+    "button collection",
+    "marketing cta",
+    "promotional buttons",
+    "inline notice",
+    "inline-notice",
+    "add button",
+    "add buttons",
+    "create button",
+    "create buttons",
+    "insert button",
+    "advanced button",
+    "responsive button",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "allowedBlocks": [
+    "spectra/button"
+  ],
+  "supports": {
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "allowSwitching": false,
+      "allowInheriting": false,
+      "allowVerticalAlignment": true,
+      "allowSizingOnChildren": true,
+      "default": {
+        "type": "flex"
+      }
+    },
+    "color": {
+      "gradients": true,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

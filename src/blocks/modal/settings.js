@@ -17,7 +17,7 @@ import {
 /**
  * Internal dependencies.
  */
-import { TabBlockControls } from '@spectra-blocks/modal/helpers';
+import { TabBlockControls } from '@spectra/modal/helpers';
 
 /**
  * Element Sub-settings: General settings.
@@ -44,16 +44,16 @@ const BlockSettings = memo( ( props ) => {
 		clientId
 	} = props;
 
-	const isProActivated = 'active' === uagb_blocks_info.spectra_pro_status? true : false;
+	const isProActivated = 'active' === spectra_blocks_info.spectra_pro_status? true : false;
 
 	// Options from Free and Pro 
 	const freeAndProOptions = [
-		{ label: __( 'Button', 'ultimate-addons-for-gutenberg' ), value: 'button', disabled: false },
-		{ label: __( 'Icon', 'ultimate-addons-for-gutenberg' ), value: 'icon', disabled: false },
-		{ label: __( 'Text', 'ultimate-addons-for-gutenberg' ), value: 'text', disabled: false },
-		{ label: __( 'Custom Class (Pro)', 'ultimate-addons-for-gutenberg' ), value: 'custom-class', disabled: ! isProActivated },
-		{ label: __( 'Custom ID (Pro)', 'ultimate-addons-for-gutenberg' ), value: 'custom-id', disabled: ! isProActivated },
-		{ label: __( 'Automatic (Pro)', 'ultimate-addons-for-gutenberg' ), value: 'automatic', disabled: ! isProActivated }
+		{ label: __( 'Button', 'spectra-blocks' ), value: 'button', disabled: false },
+		{ label: __( 'Icon', 'spectra-blocks' ), value: 'icon', disabled: false },
+		{ label: __( 'Text', 'spectra-blocks' ), value: 'text', disabled: false },
+		{ label: __( 'Custom Class (Pro)', 'spectra-blocks' ), value: 'custom-class', disabled: ! isProActivated },
+		{ label: __( 'Custom ID (Pro)', 'spectra-blocks' ), value: 'custom-id', disabled: ! isProActivated },
+		{ label: __( 'Automatic (Pro)', 'spectra-blocks' ), value: 'automatic', disabled: ! isProActivated }
 	];
 
 	let proModalControls = [];
@@ -73,8 +73,8 @@ const BlockSettings = memo( ( props ) => {
 	const proModalSettings = [];
 
 	const [proValidIconPositionOptions, setProValidIconPositionOptions] = useState( [
-		{ value: 'popup-top-left', disabled: false, label: __( 'Top Left', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'popup-top-right', disabled: false, label: __( 'Top Right', 'ultimate-addons-for-gutenberg' ) },
+		{ value: 'popup-top-left', disabled: false, label: __( 'Top Left', 'spectra-blocks' ) },
+		{ value: 'popup-top-right', disabled: false, label: __( 'Top Right', 'spectra-blocks' ) },
 	] );
 	
 	useEffect( () => {
@@ -84,13 +84,13 @@ const BlockSettings = memo( ( props ) => {
 	
 		// Fetch icon position options
 		const iconPositionOptions = applyFilters(
-			'spectra-v3.modal-popup.styles.icon-position.children',
+			'spectra-blocks.modal-popup.styles.icon-position.children',
 			updatedProps
 		);
 	
 		let updatedOptions = [
-			{ value: 'popup-top-left', disabled: false, label: __( 'Top Left', 'ultimate-addons-for-gutenberg' ) },
-			{ value: 'popup-top-right', disabled: false, label: __( 'Top Right', 'ultimate-addons-for-gutenberg' ) },
+			{ value: 'popup-top-left', disabled: false, label: __( 'Top Left', 'spectra-blocks' ) },
+			{ value: 'popup-top-right', disabled: false, label: __( 'Top Right', 'spectra-blocks' ) },
 		];
 	
 		if ( isValidElement( iconPositionOptions ) ) {
@@ -121,7 +121,7 @@ const BlockSettings = memo( ( props ) => {
 		<InspectorControls group="settings">
 			{ proModalControls }
 			<ToolsPanel
-				label={ __( 'Modal Type', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Modal Type', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						modalTrigger: 'button',
@@ -141,7 +141,7 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! modalTrigger }
-					label={ __( 'Trigger Type', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Trigger Type', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { modalTrigger: undefined } ) }
 					resetAllFilter={ () => ( {
 						modalTrigger: 'button',
@@ -150,7 +150,7 @@ const BlockSettings = memo( ( props ) => {
 					panelId={clientId}
 				>
 					<SelectControl
-						label={ __( 'Trigger Type', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Trigger Type', 'spectra-blocks' ) }
 						value={ modalTrigger }
 						options={ freeAndProOptions }
 						onChange={ ( value ) => setAttributes( { modalTrigger: value } ) }
@@ -159,7 +159,7 @@ const BlockSettings = memo( ( props ) => {
 				{ proModalTriggerSettings }
 				<ToolsPanelItem
 					hasValue={ () => !! escPress }
-					label={ __( 'Close on ESC Keypress','ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Close on ESC Keypress','spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { escPress: undefined } ) }
 					resetAllFilter={ () => ( {
 						escPress: true,
@@ -169,13 +169,13 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<ToggleControl
 						checked={ escPress }
-						label={ __( 'Close on ESC Keypress', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Close on ESC Keypress', 'spectra-blocks' ) }
 						onChange={ () => setAttributes( { escPress: ! escPress } ) }
 					/>
 				</ToolsPanelItem>
 				<ToolsPanelItem
 					hasValue={ () => !! overlayClick }
-					label={ __( 'Close on Overlay Click','ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Close on Overlay Click','spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { overlayClick: undefined } ) }
 					resetAllFilter={ () => ( {
 						overlayClick: false,
@@ -186,20 +186,20 @@ const BlockSettings = memo( ( props ) => {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						checked={ overlayClick }
-						label={ __( 'Close on Overlay Click', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Close on Overlay Click', 'spectra-blocks' ) }
 						onChange={ () => setAttributes( { overlayClick: ! overlayClick } ) }
 					/>
 				</ToolsPanelItem>
 			</ToolsPanel>
 			{ proModalSettings }
 			<ToolsPanel
-				label={ __( 'Close Button', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Close Button', 'spectra-blocks' ) }
 				resetAll={ () => setAttributes( { closeIconPosition: 'popup-top-right' } ) }
 				panelId={ clientId }
             >
 				<ToolsPanelItem
 					hasValue={ () => !! closeIconPosition }
-					label={ __( 'Icon Position', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon Position', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { closeIconPosition: 'popup-top-right' } ) }
 					resetAllFilter={ () => ( {
 						closeIconPosition: 'popup-top-right',
@@ -208,7 +208,7 @@ const BlockSettings = memo( ( props ) => {
 					panelId={ clientId }
 				>
 					<SelectControl
-						label={ __( 'Icon Position', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Icon Position', 'spectra-blocks' ) }
 						value={ closeIconPosition }
 						options={proValidIconPositionOptions}
 						onChange={ ( value ) => setAttributes( { closeIconPosition: value } ) }

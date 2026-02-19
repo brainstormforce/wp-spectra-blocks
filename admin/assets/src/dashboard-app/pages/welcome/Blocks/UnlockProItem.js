@@ -11,21 +11,21 @@ const UnlockProItem = ( { blockInfo } ) => {
 	const getDescription = ( itemTitle ) => {
 		switch ( itemTitle ) {
 			case 'Dynamic Content':
-				return __( 'Tailored content for individual users based on their preferences and behavior anywhere on your website.', 'ultimate-addons-for-gutenberg' );
+				return __( 'Tailored content for individual users based on their preferences and behavior anywhere on your website.', 'spectra-blocks' );
 			case 'Loop Builder':
-				return __( 'Loop Builder allows displaying post types based on different query parameters and visual configurations.', 'ultimate-addons-for-gutenberg' );
+				return __( 'Loop Builder allows displaying post types based on different query parameters and visual configurations.', 'spectra-blocks' );
 			case 'Login':
-				return __( 'This block lets you add Login functionality.', 'ultimate-addons-for-gutenberg' );
+				return __( 'This block lets you add Login functionality.', 'spectra-blocks' );
 			case 'Register':
-				return __( 'This block lets you add Registration functionality.', 'ultimate-addons-for-gutenberg' );
+				return __( 'This block lets you add Registration functionality.', 'spectra-blocks' );
 			
 			default:
-				return __( 'This option only available in Spectra Pro.', 'ultimate-addons-for-gutenberg' );
+				return __( 'This option only available in Spectra Pro.', 'spectra-blocks' );
 		}
 	};
 
 	return (
-		'Activated' !== uag_react.pro_plugin_status ? (
+		'Activated' !== spectra_blocks_react.pro_plugin_status ? (
 			<>
 				<Tooltip
 					className="rounded-md p-4"
@@ -34,7 +34,7 @@ const UnlockProItem = ( { blockInfo } ) => {
 							{title}
 							<Badge
 								className="font-normal px-0.5 text-text-secondary bg-background-primary uppercase"
-								label={__( 'Pro', 'ultimate-addons-for-gutenberg' )}
+								label={__( 'Pro', 'spectra-blocks' )}
 								size="xs"
 								type="rounded"
 								variant="inverse"
@@ -51,9 +51,9 @@ const UnlockProItem = ( { blockInfo } ) => {
 									type="button"
 									variant="link"
 									className="outline-1 border-none cursor-pointer transition-colors duration-300 ease-in-out font-semibold focus:ring-toggle-on disabled:text-text-disabled rounded-md [&>svg]:size-5 outline-none bg-transparent p-0 border-0 inline-flex items-center gap-0 focus:ring-0 focus:ring-offset-0 focus:outline-none hover:no-underline [&>svg]:w-4 [&>svg]:h-4 text-xs text-[#EFD7F9] hover:text-[#EFD7F9]-hover focus:shadow-none upgrade-now-unlock-pro-item"
-									onClick={() => window.open( uag_admin_react.spectra_website?.upsellModalAdmin, '_blank' )}
+									onClick={() => window.open( spectra_blocks_admin_react.spectra_website?.upsellModalAdmin, '_blank' )}
 								>
-									{__( 'Upgrade Now', 'ultimate-addons-for-gutenberg' )}
+									{__( 'Upgrade Now', 'spectra-blocks' )}
 								</Button>
 							</span>
 						</div>
@@ -82,17 +82,17 @@ const Content = ( { icon, title, link } ) => {
 					<RenderBlockPreview blockName={icon} />
 				</div>
 				<div className="flex items-center gap-x-2">
-					{'Activated' !== uag_react.pro_plugin_status ? (
+					{'Activated' !== spectra_blocks_react.pro_plugin_status ? (
 						<>
 							<span className="font-medium flex items-center justify-center border border-solid box-border max-w-full transition-colors duration-150 ease-in-out py-0.5 px-1 text-xs h-5 rounded-full gap-0.5 bg-badge-background-yellow text-badge-color-yellow border-badge-border-yellow hover:bg-badge-hover-yellow">
 								<Lock size={12} className="m-1 no-underline text-badge-color-yellow" />
 								<Text as="span" size={12} color="yellow" className="truncate">
-									{__( 'Pro', 'ultimate-addons-for-gutenberg' )}
+									{__( 'Pro', 'spectra-blocks' )}
 								</Text>
 							</span>
 						</>
 					) : (
-						<Badge label={ __( 'Active', 'ultimate-addons-for-gutenberg' ) } size="xs" type="pill" variant="green" />
+						<Badge label={ __( 'Active', 'spectra-blocks' ) } size="xs" type="pill" variant="green" />
 					)}
 				</div>
 			</div>
@@ -109,7 +109,7 @@ const Content = ( { icon, title, link } ) => {
 						className="mt-1 text-text-tertiary no-underline"
 					>
 						<Text as="span" size={12} color="tertiary" className="truncate">
-							{__( 'Documentation', 'ultimate-addons-for-gutenberg' )}
+							{__( 'Documentation', 'spectra-blocks' )}
 						</Text>
 					</a>
 				</div>

@@ -1,0 +1,175 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/tabs-child-tab-trigger",
+  "version": "3.0.0",
+  "title": "Tab (Div)",
+  "category": "spectra-blocks-inner",
+  "description": "Add a customizable tab trigger with inner blocks.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/tabs-child-tab-wrapper"
+  ],
+  "supports": {
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "anchor": true,
+    "shadow": true,
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "orientation": "horizontal",
+        "flexWrap": "nowrap",
+        "justifyContent": "center",
+        "verticalAlignment": "center"
+      },
+      "allowSwitching": true,
+      "allowSizingOnChildren": true
+    },
+    "color": {
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-blocks-common"
+  ],
+  "usesContext": [
+    "spectra/tabs/currentTab",
+    "spectra/tabs/icon",
+    "spectra/tabs/iconPosition",
+    "spectra/tabs/size",
+    "spectra/tabs/textColor",
+    "spectra/tabs/textColorHover",
+    "spectra/tabs/textColorActive",
+    "spectra/tabs/textColorActiveHover",
+    "spectra/tabs/backgroundColor",
+    "spectra/tabs/backgroundColorHover",
+    "spectra/tabs/backgroundColorActive",
+    "spectra/tabs/backgroundColorActiveHover",
+    "spectra/tabs/backgroundGradient",
+    "spectra/tabs/backgroundGradientHover",
+    "spectra/tabs/backgroundGradientActive",
+    "spectra/tabs/backgroundGradientActiveHover",
+    "spectra/tabs/borderColorHover",
+    "spectra/tabs/borderColorActive",
+    "spectra/tabs/borderColorActiveHover"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "horizontal",
+        "justifyContent": "center",
+        "verticalAlignment": "center"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "currentTab": {
+      "type": "number"
+    },
+    "overflow": {
+      "type": "string",
+      "default": "visible"
+    },
+    "minWidth": {
+      "type": "string"
+    },
+    "minHeight": {
+      "type": "string"
+    },
+    "maxWidth": {
+      "type": "string"
+    },
+    "maxHeight": {
+      "type": "string"
+    },
+    "width": {
+      "type": "string"
+    },
+    "height": {
+      "type": "string",
+      "default": "auto"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "textColorActive": {
+      "type": "string"
+    },
+    "textColorActiveHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundColorActive": {
+      "type": "string"
+    },
+    "backgroundColorActiveHover": {
+      "type": "string"
+    },
+    "backgroundGradient": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "backgroundGradientActive": {
+      "type": "string"
+    },
+    "backgroundGradientActiveHover": {
+      "type": "string"
+    }
+  }
+}

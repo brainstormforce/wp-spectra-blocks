@@ -17,13 +17,13 @@ const ClearV3Cache = () => {
 		setClearCacheState( 'loading' );
 		// Create an object with the security and value properties.
 		const data = {
-			security: uag_react.clear_v3_cache_nonce,
+			security: spectra_blocks_react.clear_v3_cache_nonce,
 			value: true,
 		};
 		// Call the getApiData function with the specified parameters.
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_clear_v3_cache',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_clear_v3_cache',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the cache has been cleared.
@@ -116,7 +116,7 @@ const ClearV3Cache = () => {
 								<div className="p-2">
 									<div className="flex justify-end items-center w-full gap-3">
 										<Button
-											className="uagb-outline-button"
+											className="spectra-blocks-outline-button"
 											size="md"
 											tag="button"
 											type="button"
@@ -128,7 +128,7 @@ const ClearV3Cache = () => {
 										</Button>
 
 										<Button
-											className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover regenerate-btn "
+											className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover regenerate-btn "
 											size="md"
 											tag="button"
 											type="button"
@@ -177,14 +177,14 @@ const ClearV3Cache = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Clear Cached Styles', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Clear Cached Styles', 'spectra-blocks' ) }
 				settingText={ __(
 					'Clear all cached responsive CSS for new Spectra blocks. This can help resolve styling issues and ensure the latest styles are loaded on your website.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
-				<Button onClick={ openModal } className="uagb-remove-ring" style={ { fontWeight: '500' } }>
-					{ __( 'Clear Cache', 'ultimate-addons-for-gutenberg' ) }
+				<Button onClick={ openModal } className="spectra-blocks-remove-ring" style={ { fontWeight: '500' } }>
+					{ __( 'Clear Cache', 'spectra-blocks' ) }
 				</Button>
 			</SettingsItem>
 
@@ -195,17 +195,17 @@ const ClearV3Cache = () => {
 					openPopup: isModalOpen,
 					setopenPopup: setIsModalOpen,
 					popupContent: {
-						title: __( 'Are you sure you wish to clear the cached styles?', 'ultimate-addons-for-gutenberg' ),
+						title: __( 'Are you sure you wish to clear the cached styles?', 'spectra-blocks' ),
 						description: __(
 							'This will clear all the cached responsive CSS - which will be regenerated on the next page visit on the front-end.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						),
 					},
 					popupAccept: {
-						label: __( 'Clear', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Clear', 'spectra-blocks' ),
 					},
 					popupCancel: {
-						label: __( 'Cancel', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Cancel', 'spectra-blocks' ),
 					},
 				} }
 			/>

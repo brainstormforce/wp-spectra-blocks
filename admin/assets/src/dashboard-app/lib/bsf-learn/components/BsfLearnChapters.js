@@ -86,7 +86,7 @@ const BsfLearnChapter = ( { chapters, defaultValue, onStepCompletionChange, onLe
 										} }
 									>
 										<span className="hidden sm:inline">
-											{ __( 'Learn how', 'ultimate-addons-for-gutenberg' ) }
+											{ __( 'Learn how', 'spectra-blocks' ) }
 										</span>
 										<ExternalLink size={ 16 } strokeWidth={ 1.25 } />
 									</span>
@@ -99,7 +99,7 @@ const BsfLearnChapter = ( { chapters, defaultValue, onStepCompletionChange, onLe
 											<span className="sr-only">
 												{ sprintf(
 													// translators: %1$d is the number of completed steps, %2$d is the total number of steps.
-													__( '%1$d of %2$d steps completed', 'ultimate-addons-for-gutenberg' ),
+													__( '%1$d of %2$d steps completed', 'spectra-blocks' ),
 													completedStepsCount,
 													totalStepsCount
 												) }

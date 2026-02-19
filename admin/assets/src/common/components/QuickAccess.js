@@ -12,14 +12,14 @@ const QuickAccess = () => {
 		>
 			<Container.Item className="md:w-full lg:w-full p-1">
 				<Label className="font-semibold text-text-primary">
-					{ __( 'Quick Access', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Quick Access', 'spectra-blocks' ) }
 				</Label>
 			</Container.Item>
 			<Container.Item className="flex flex-col md:w-full lg:w-full bg-field-primary-background gap-1 p-1 rounded-lg">
 				<div className="p-2 gap-1 items-center flex bg-background-primary rounded-md shadow-soft-shadow-inner">
 					<a
 						className="no-underline hover:underline hover:text-field-label"
-						href={uag_admin_react.spectra_website?.vipPrioritySupportUrl}
+						href={spectra_blocks_admin_react.spectra_website?.vipPrioritySupportUrl}
 						target="_blank"
 						rel="noreferrer"
 					>
@@ -28,9 +28,9 @@ const QuickAccess = () => {
 								<Headset size={ 24 } className="m-1 no-underline text-text-primary" />
 							</Container.Item>
 							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'VIP Support', 'ultimate-addons-for-gutenberg' ) }</Label>
+								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'VIP Support', 'spectra-blocks' ) }</Label>
 							</Container.Item>
-							{ uag_react.pro_plugin_status !== 'Activated' && (
+							{ spectra_blocks_react.pro_plugin_status !== 'Activated' && (
 								<Container.Item>
 									<Badge icon={ null } label="PRO" size="xxs" variant="inverse" />
 								</Container.Item>
@@ -41,7 +41,7 @@ const QuickAccess = () => {
 				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
 					<a
 						className="no-underline hover:underline hover:text-field-label"
-						href={uag_admin_react.spectra_website?.docsUrl}
+						href={spectra_blocks_admin_react.spectra_website?.docsUrl}
 						target="_blank"
 						rel="noreferrer"
 					>
@@ -50,7 +50,7 @@ const QuickAccess = () => {
 								<CircleHelp size={ 24 } className="m-1 no-underline text-text-primary" />
 							</Container.Item>
 							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Help Center', 'ultimate-addons-for-gutenberg' ) }</Label>
+								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Help Center', 'spectra-blocks' ) }</Label>
 							</Container.Item>
 						</Container>
 					</a>
@@ -67,7 +67,7 @@ const QuickAccess = () => {
 								<MessageSquare size={ 24 } className="m-1 no-underline text-text-primary" />
 							</Container.Item>
 							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Join The Community', 'ultimate-addons-for-gutenberg' ) }</Label>
+								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Join The Community', 'spectra-blocks' ) }</Label>
 							</Container.Item>
 						</Container>
 					</a>
@@ -75,7 +75,7 @@ const QuickAccess = () => {
 				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
 					<a
 						className="no-underline hover:underline hover:text-field-label"
-						href="https://wordpress.org/support/plugin/ultimate-addons-for-gutenberg/reviews/?rate=5#new-post"
+						href="https://wordpress.org/support/plugin/spectra-blocks/reviews/?rate=5#new-post"
 						target="_blank"
 						rel="noreferrer"
 					>
@@ -84,7 +84,7 @@ const QuickAccess = () => {
 								<Star size={ 24 } className="m-1 no-underline text-text-primary" />
 							</Container.Item>
 							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Rate Us', 'ultimate-addons-for-gutenberg' ) }</Label>
+								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Rate Us', 'spectra-blocks' ) }</Label>
 							</Container.Item>
 						</Container>
 					</a>

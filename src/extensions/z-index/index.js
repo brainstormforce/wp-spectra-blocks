@@ -12,7 +12,7 @@ import { extendBlockAttributes } from './utils/helpers';
 /**
  * Extends block attributes with z-index related properties.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Object} settings - The block settings object.
  * @param {string} name     - The block name.
@@ -23,7 +23,7 @@ addFilter( 'blocks.registerBlockType', 'spectra/add-z-index-attributes', extendB
 /**
  * Enhances BlockEdit component with z-index controls in the editor.
  *
- * @since 0.0.1
+ * @since 3.0.0
  *
  * @param {Function} BlockEdit - The original BlockEdit component.
  * @return {Function} Enhanced BlockEdit component with z-index controls.

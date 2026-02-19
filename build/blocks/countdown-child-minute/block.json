@@ -1,0 +1,119 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/countdown-child-minute",
+  "version": "3.0.0",
+  "title": "Minutes",
+  "category": "spectra-blocks-inner",
+  "description": "Add minutes to the countdown.",
+  "parent": [
+    "spectra/countdown"
+  ],
+  "allowedBlocks": [
+    "spectra/countdown-child-label",
+    "spectra/countdown-child-number",
+    "spectra/container"
+  ],
+  "textdomain": "spectra-blocks",
+  "usesContext": [
+    "countdown",
+    "spectra/countdown/showDays",
+    "spectra/countdown/showHours",
+    "spectra/countdown/showMinutes",
+    "spectra/countdown/showSeconds",
+    "spectra/countdown/showLabels",
+    "spectra/countdown/ariaLiveType"
+  ],
+  "providesContext": {
+    "spectra/countdown/showLabels": "spectra/countdown/showLabels"
+  },
+  "supports": {
+    "lock": false,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "style": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "center"
+      }
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "center"
+      }
+    },
+    "show": {
+      "type": "boolean",
+      "default": true
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

@@ -79,17 +79,17 @@ const StickyContainerOptions = ( props ) => {
 	return (
 		<>
 			<ToolsPanelItem
-				label={ __( 'Sticky Container', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Sticky Container', 'spectra-blocks' ) }
 				hasValue={ () => stickyContainer.stickyEnabled }
 				onDeselect={ () => updateStickySettings( 'stickyEnabled', false ) }
 				isShownByDefault={ true }
 			>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label={ __( 'Sticky Container', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Sticky Container', 'spectra-blocks' ) }
 					help={ __(
 						'Keeps this container fixed while scrolling. Note: Sticky behavior works on the frontend only.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					checked={ stickyContainer.stickyEnabled }
 					onChange={ ( value ) => updateStickySettings( 'stickyEnabled', value ) }
@@ -99,17 +99,17 @@ const StickyContainerOptions = ( props ) => {
 			{ stickyContainer.stickyEnabled && (
 				<>
 					<ToolsPanelItem
-						label={ __( 'Stick at', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Stick at', 'spectra-blocks' ) }
 						hasValue={ () => stickyContainer.stickAt !== DEFAULT_STICKY_SETTINGS.stickAt }
 						onDeselect={ () => updateStickySettings( 'stickAt', DEFAULT_STICKY_SETTINGS.stickAt ) }
 						isShownByDefault={ true }
 					>
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
-							label={ __( 'Stick at', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Stick at', 'spectra-blocks' ) }
 							help={ __(
 								'Choose whether the container sticks to the top or bottom of the screen.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							value={ stickyContainer.stickAt }
 							onChange={ ( value ) => updateStickySettings( 'stickAt', value ) }
@@ -118,27 +118,27 @@ const StickyContainerOptions = ( props ) => {
 						>
 							<ToggleGroupControlOption
 								value={ STICKY_POSITION.TOP }
-								label={ __( 'Top', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Top', 'spectra-blocks' ) }
 							/>
 							<ToggleGroupControlOption
 								value={ STICKY_POSITION.BOTTOM }
-								label={ __( 'Bottom', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Bottom', 'spectra-blocks' ) }
 							/>
 						</ToggleGroupControl>
 					</ToolsPanelItem>
 
 					<ToolsPanelItem
-						label={ __( 'Offset', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Offset', 'spectra-blocks' ) }
 						hasValue={ () => stickyContainer.offset !== DEFAULT_OFFSET }
 						onDeselect={ () => updateStickySettings( 'offset', DEFAULT_OFFSET ) }
 						isShownByDefault={ true }
 					>
 						<UnitControl
 							__next40pxDefaultSize
-							label={ __( 'Offset', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Offset', 'spectra-blocks' ) }
 							help={ __(
 								'Set how far from the edge the container stays when sticky. Positive values add space; negative values allow overlap.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							onChange={ ( value ) => {
 								updateStickySettings( 'offset', value || '0px' );
@@ -156,7 +156,7 @@ const StickyContainerOptions = ( props ) => {
 
 					{ stickyContainer.stickAt === STICKY_POSITION.TOP && (
 						<ToolsPanelItem
-							label={ __( 'Keep Inside Parent', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Keep Inside Parent', 'spectra-blocks' ) }
 							hasValue={ () =>
 								stickyContainer.keepInsideParent !== DEFAULT_STICKY_SETTINGS.keepInsideParent
 							}
@@ -167,10 +167,10 @@ const StickyContainerOptions = ( props ) => {
 						>
 							<ToggleControl
 								__nextHasNoMarginBottom
-								label={ __( 'Keep Inside Parent', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Keep Inside Parent', 'spectra-blocks' ) }
 								help={ __(
 									'Restricts the sticky container to stay within its parent container boundaries.',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								checked={ stickyContainer.keepInsideParent }
 								onChange={ ( value ) => updateStickySettings( 'keepInsideParent', value ) }
@@ -210,7 +210,7 @@ const addStickyContainerControls = createHigherOrderComponent( ( BlockEdit ) => 
 				<BlockEdit { ...props } />
 				{ isSelected && (
 					<InspectorControls>
-						<ToolsPanel label={ __( 'Sticky', 'ultimate-addons-for-gutenberg' ) } resetAll={ resetAll }>
+						<ToolsPanel label={ __( 'Sticky', 'spectra-blocks' ) } resetAll={ resetAll }>
 							<StickyContainerOptions { ...props } />
 						</ToolsPanel>
 					</InspectorControls>

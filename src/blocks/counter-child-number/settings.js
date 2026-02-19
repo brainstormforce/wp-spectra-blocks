@@ -32,13 +32,13 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: prefixColor,
-					label: __( 'Prefix Color', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Prefix Color', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { prefixColor: value } ),
 					resetAllFilter: () => setAttributes( { prefixColor: undefined } ),
 				},
 				{
 					colorValue: suffixColor,
-					label: __( 'Suffix Color', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Suffix Color', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { suffixColor: value } ),
 					resetAllFilter: () => setAttributes( { suffixColor: undefined } ),
 				},

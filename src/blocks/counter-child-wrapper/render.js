@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor';
+import { memo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -29,5 +30,5 @@ const Render = () => {
 	return <div { ...innerBlocksProps } />;
 };
 
-export default Render;
+export default memo( Render );
 

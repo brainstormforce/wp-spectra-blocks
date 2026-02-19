@@ -83,8 +83,8 @@ const BsfLearnStep = ( { step, chapterId, isLast = false, onCompletionChange, on
 	};
 
 	const statusText = isCompleted
-		? __( 'Mark as incomplete', 'ultimate-addons-for-gutenberg' )
-		: __( 'Mark as complete', 'ultimate-addons-for-gutenberg' );
+		? __( 'Mark as incomplete', 'spectra-blocks' )
+		: __( 'Mark as complete', 'spectra-blocks' );
 
 	return (
 		<div className={`py-4 sm:py-5 flex items-center gap-2 sm:gap-3 border-solid border-0 border-border-subtle ${ isLast ? '' : 'border-b-0.5' }`}>
@@ -133,7 +133,7 @@ const BsfLearnStep = ( { step, chapterId, isLast = false, onCompletionChange, on
 
 			{ isPro && (
 				<Badge
-					label={ __( 'Pro', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Pro', 'spectra-blocks' ) }
 					size="xs"
 					type="pill"
 					variant="inverse"
@@ -142,7 +142,7 @@ const BsfLearnStep = ( { step, chapterId, isLast = false, onCompletionChange, on
 			) }
 
 			{ learn && (
-				<Tooltip arrow content={ learn?.label || __( 'Learn how', 'ultimate-addons-for-gutenberg' ) } placement="top" variant="dark">
+				<Tooltip arrow content={ learn?.label || __( 'Learn how', 'spectra-blocks' ) } placement="top" variant="dark">
 					<Button
 						size="xs"
 						variant="ghost"
@@ -161,7 +161,7 @@ const BsfLearnStep = ( { step, chapterId, isLast = false, onCompletionChange, on
 				iconPosition="right"
 				onClick={ handleActionClick }
 			>
-				{ action?.label || __( 'Set Up', 'ultimate-addons-for-gutenberg' ) }
+				{ action?.label || __( 'Set Up', 'spectra-blocks' ) }
 			</Button>
 		</div>
 	);

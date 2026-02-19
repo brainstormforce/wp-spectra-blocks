@@ -49,18 +49,18 @@ import ShadowControl from '@spectra-components/shadow-control';
  */
 const getTagDescription = ( tag ) => {
 	const descriptions = {
-		div: __( 'a generic container with no semantic meaning. Best for styling and layout purposes.', 'ultimate-addons-for-gutenberg' ),
-		header: __( 'represents introductory content, typically containing navigation aids and headings.', 'ultimate-addons-for-gutenberg' ),
-		footer: __( 'represents a footer for its nearest sectioning content, containing information about the author, copyright, or links.', 'ultimate-addons-for-gutenberg' ),
-		main: __( 'represents the dominant content of the page. There should be only one main element per page.', 'ultimate-addons-for-gutenberg' ),
-		article: __( 'represents a standalone piece of content that could be distributed independently, like a blog post or news article.', 'ultimate-addons-for-gutenberg' ),
-		section: __( 'represents a thematic grouping of content, typically with a heading. Use when no other semantic element is appropriate.', 'ultimate-addons-for-gutenberg' ),
-		aside: __( 'represents content that is tangentially related to the main content, like a sidebar or callout box.', 'ultimate-addons-for-gutenberg' ),
-		figure: __( 'represents self-contained content, like images, diagrams, or code snippets, often with a caption.', 'ultimate-addons-for-gutenberg' ),
-		figcaption: __( 'represents a caption or legend describing the content of its parent figure element.', 'ultimate-addons-for-gutenberg' ),
-		summary: __( 'represents a summary, caption, or legend for a details element\'s disclosure box.', 'ultimate-addons-for-gutenberg' ),
-		nav: __( 'represents a section of navigation links to other pages or parts within the current page.', 'ultimate-addons-for-gutenberg' ),
-		a: __( 'creates a hyperlink to other pages, files, email addresses, or locations within the same page.', 'ultimate-addons-for-gutenberg' ),
+		div: __( 'a generic container with no semantic meaning. Best for styling and layout purposes.', 'spectra-blocks' ),
+		header: __( 'represents introductory content, typically containing navigation aids and headings.', 'spectra-blocks' ),
+		footer: __( 'represents a footer for its nearest sectioning content, containing information about the author, copyright, or links.', 'spectra-blocks' ),
+		main: __( 'represents the dominant content of the page. There should be only one main element per page.', 'spectra-blocks' ),
+		article: __( 'represents a standalone piece of content that could be distributed independently, like a blog post or news article.', 'spectra-blocks' ),
+		section: __( 'represents a thematic grouping of content, typically with a heading. Use when no other semantic element is appropriate.', 'spectra-blocks' ),
+		aside: __( 'represents content that is tangentially related to the main content, like a sidebar or callout box.', 'spectra-blocks' ),
+		figure: __( 'represents self-contained content, like images, diagrams, or code snippets, often with a caption.', 'spectra-blocks' ),
+		figcaption: __( 'represents a caption or legend describing the content of its parent figure element.', 'spectra-blocks' ),
+		summary: __( 'represents a summary, caption, or legend for a details element\'s disclosure box.', 'spectra-blocks' ),
+		nav: __( 'represents a section of navigation links to other pages or parts within the current page.', 'spectra-blocks' ),
+		a: __( 'creates a hyperlink to other pages, files, email addresses, or locations within the same page.', 'spectra-blocks' ),
 	};
 	
 	return descriptions[ tag ] || descriptions.div;
@@ -111,10 +111,10 @@ const BlocksSettings = memo( ( props ) => {
 				} }
 			/>
 			)   }
-			<InspectorControls>
+			<InspectorControls group="settings">
 			{ layout?.type === 'flex' && (
 					<ToolsPanel
-						label={ __( 'Flex Direction', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Flex Direction', 'spectra-blocks' ) }
 						resetAll={ () => {
 							setAttributes( {
 								orientationReverse: undefined,
@@ -124,7 +124,7 @@ const BlocksSettings = memo( ( props ) => {
 					>
 						<ToolsPanelItem
 							hasValue={ () => !! orientationReverse }
-							label={ __( 'Orientation Reverse', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Orientation Reverse', 'spectra-blocks' ) }
 							panelId={ clientId }
 							onDeselect={ () => setAttributes( {
 								orientationReverse: undefined,
@@ -136,16 +136,16 @@ const BlocksSettings = memo( ( props ) => {
 						>
 							<ToggleControl
 								__nextHasNoMarginBottom
-								label={ __( 'Orientation Reverse', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Orientation Reverse', 'spectra-blocks' ) }
 								checked={ !! orientationReverse }
 								onChange={ ( value ) => setAttributes( { orientationReverse: value } ) }
-								help={ __( 'When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block.', 'ultimate-addons-for-gutenberg' ) }
+								help={ __( 'When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block.', 'spectra-blocks' ) }
 							/>
 						</ToolsPanelItem>
 					</ToolsPanel>
 				) }
 				<ToolsPanel
-					label={ __( 'Container', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Container', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
 							htmlTag: 'div',
@@ -161,36 +161,36 @@ const BlocksSettings = memo( ( props ) => {
 					*/}
 					<ToolsPanelItem
 						hasValue={ () => !! htmlTag }
-						label={ __( 'Tag', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Tag', 'spectra-blocks' ) }
 						panelId={ clientId }
 						onDeselect={ () => setAttributes( {
 							htmlTag: 'div',
 						} ) }
-						resetAll={ () => ( {
+						resetAllFilter={ () => ( {
 							htmlTag: 'div',
 						} ) }
 						isShownByDefault
 					>
 						<SelectControl
-							label={ __( 'HTML Tag', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'HTML Tag', 'spectra-blocks' ) }
 							value={ htmlTag }
 							variant="default"
 							options={ [
-								{ value: 'div', label: __( 'Div', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'header', label: __( 'Header', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'footer', label: __( 'Footer', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'main', label: __( 'Main', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'article', label: __( 'Article', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'section', label: __( 'Section', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'aside', label: __( 'Aside', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'figure', label: __( 'Figure', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'figcaption', label: __( 'Figcaption', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'summary', label: __( 'Summary', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'nav', label: __( 'Nav', 'ultimate-addons-for-gutenberg' ) },
-								{ value: 'a', label: __( 'Link', 'ultimate-addons-for-gutenberg' ) },
+								{ value: 'div', label: __( 'Div', 'spectra-blocks' ) },
+								{ value: 'header', label: __( 'Header', 'spectra-blocks' ) },
+								{ value: 'footer', label: __( 'Footer', 'spectra-blocks' ) },
+								{ value: 'main', label: __( 'Main', 'spectra-blocks' ) },
+								{ value: 'article', label: __( 'Article', 'spectra-blocks' ) },
+								{ value: 'section', label: __( 'Section', 'spectra-blocks' ) },
+								{ value: 'aside', label: __( 'Aside', 'spectra-blocks' ) },
+								{ value: 'figure', label: __( 'Figure', 'spectra-blocks' ) },
+								{ value: 'figcaption', label: __( 'Figcaption', 'spectra-blocks' ) },
+								{ value: 'summary', label: __( 'Summary', 'spectra-blocks' ) },
+								{ value: 'nav', label: __( 'Nav', 'spectra-blocks' ) },
+								{ value: 'a', label: __( 'Link', 'spectra-blocks' ) },
 							] }
 							onChange={ ( newHtmlTag ) => setAttributes( { htmlTag: newHtmlTag } ) }
-							help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'ultimate-addons-for-gutenberg' ) }
+							help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'spectra-blocks' ) }
 						/>
 						
 						{/* Notice showing tag description */}
@@ -205,7 +205,7 @@ const BlocksSettings = memo( ( props ) => {
 										/* translators: 1: HTML tag name, 2: tag description */
 										__(
 											'The %1$s HTML tag %2$s',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 										),
 										htmlTag === 'a' ? 'Link' : htmlTag,
 										getTagDescription( htmlTag ).toLowerCase()
@@ -222,12 +222,12 @@ const BlocksSettings = memo( ( props ) => {
 					*/}
 					<ToolsPanelItem
 						hasValue={ () => !! overflow }
-						label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Overflow', 'spectra-blocks' ) }
 						panelId={ clientId }
 						onDeselect={ () => setAttributes( {
 							overflow: 'visible',
 						} ) }
-						resetAll={ () => ( {
+						resetAllFilter={ () => ( {
 							overflow: 'visible',
 						} ) }
 						isShownByDefault
@@ -235,7 +235,7 @@ const BlocksSettings = memo( ( props ) => {
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Overflow', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Overflow', 'spectra-blocks' ) }
 							value={ overflow }
 							onChange={ ( value ) => setAttributes( { overflow: value } ) }
 							isBlock
@@ -339,7 +339,7 @@ const DimensionSettings = memo( ( props ) => {
                     */}
 					<ToolsPanelItem
 						hasValue={ () => ( !! width || ( !! height && height !== 'auto' ) || !! minWidth || !! minHeight || !! maxWidth || !! maxHeight ) }
-						label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Sizes', 'spectra-blocks' ) }
 						as={ Grid }
 						panelId={ clientId }
 						isShownByDefault
@@ -377,7 +377,7 @@ const DimensionSettings = memo( ( props ) => {
 					*/}
 					<ToolsPanelItem
 						hasValue={ () => ( ( !! height && height !== 'auto' ) || !! minHeight || !! maxHeight ) }
-						label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Sizes', 'spectra-blocks' ) }
 						panelId={ clientId }
 						isShownByDefault
 						onDeselect={ () => setAttributes( { 
@@ -431,7 +431,7 @@ const ColorSettings = memo( ( props ) => {
 				settings={ [
 					{
 						colorValue: textColorHover,
-						label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Text Hover', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 						resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 					},
@@ -444,7 +444,7 @@ const ColorSettings = memo( ( props ) => {
 					{
 						colorValue: backgroundColor,
 						gradientValue: backgroundGradient,
-						label: __( 'Background', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Background', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { backgroundColor: value } ),
 						onGradientChange: ( value ) => setAttributes( { backgroundGradient: value } ),
 						resetAllFilter: () => setAttributes( {
@@ -461,7 +461,7 @@ const ColorSettings = memo( ( props ) => {
 					{
 						colorValue: backgroundColorHover,
 						gradientValue: backgroundGradientHover,
-						label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Background Hover', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 						onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 						resetAllFilter: () => setAttributes( {
@@ -477,7 +477,7 @@ const ColorSettings = memo( ( props ) => {
 				settings={ [
 					{
 						colorValue: topColor,
-						label: __( 'Top Divider', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Top Divider', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { topColor: value } ),
 						resetAllFilter: () => setAttributes( { topColor: undefined } ),
 					},
@@ -489,7 +489,7 @@ const ColorSettings = memo( ( props ) => {
 				settings={ [
 					{
 						colorValue: bottomColor,
-						label: __( 'Bottom Divider', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Bottom Divider', 'spectra-blocks' ),
 						onColorChange: ( value ) => setAttributes( { bottomColor: value } ),
 						resetAllFilter: () => setAttributes( { bottomColor: undefined } ),
 					},
@@ -512,13 +512,13 @@ const GradientSettings = memo( ( props ) => {
 
 	const gradientConfigs = [
 		{
-			label: __( 'Advanced BG', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Advanced BG', 'spectra-blocks' ),
 			valueAttr: 'advBgGradient',
 			useAdvancedAttr: 'enableAdvBgGradient',
 			showTopBorder: true,
 		},
 		{
-			label: __( 'Advanced BG Hover', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Advanced BG Hover', 'spectra-blocks' ),
 			valueAttr: 'advBgGradientHover',
 			useAdvancedAttr: 'enableAdvBgGradientHover',
 		},
@@ -531,7 +531,7 @@ const GradientSettings = memo( ( props ) => {
 			attributes={ attributes }
 			gradients={ gradientConfigs }
 			enableAttr="enableAdvGradients"
-			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'ultimate-addons-for-gutenberg' ) }
+			helpText={ __( 'Advanced gradients will override the basic background colors/gradients when set.', 'spectra-blocks' ) }
 		/>
 	);
 } );
@@ -556,7 +556,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !! dimRatio }
-				label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' ) }
+				label={__( 'Overlay Opacity', 'spectra-blocks' ) }
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -566,7 +566,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'ultimate-addons-for-gutenberg' ) }
+					label={__( 'Overlay Opacity', 'spectra-blocks' ) }
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}
@@ -608,7 +608,7 @@ const ShadowSettings = memo( ( props ) => {
 				label: 'boxShadowHover',
 				value: boxShadowHover,
 			} }
-			label={ __( 'Box Shadow', 'ultimate-addons-for-gutenberg' ) }
+			label={ __( 'Box Shadow', 'spectra-blocks' ) }
 			group="styles"
 			showHoverState={ true }
 		/>
@@ -645,21 +645,21 @@ const BorderHoverSettings = memo( ( props ) => {
 
 		if ( themeColors?.length > 0 ) {
 			groups.push( {
-				name: __( 'Theme', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Theme', 'spectra-blocks' ),
 				colors: themeColors,
 			} );
 		}
 
 		if ( customColors?.length > 0 ) {
 			groups.push( {
-				name: __( 'Custom', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Custom', 'spectra-blocks' ),
 				colors: customColors,
 			} );
 		}
 
 		if ( defaultColors?.length > 0 ) {
 			groups.push( {
-				name: __( 'Default', 'ultimate-addons-for-gutenberg' ),
+				name: __( 'Default', 'spectra-blocks' ),
 				colors: defaultColors,
 			} );
 		}
@@ -671,7 +671,7 @@ const BorderHoverSettings = memo( ( props ) => {
 		<InspectorControls group="border">
 			<ToolsPanelItem
 				hasValue={ () => !! borderHover }
-				label={ __( 'Border Hover', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Border Hover', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { borderHover: undefined } ) }
 				resetAllFilter={ () => ( {
 					borderHover: undefined,
@@ -682,7 +682,7 @@ const BorderHoverSettings = memo( ( props ) => {
 				<VStack spacing={ 4 }>
 					<ToggleControl
 						checked={ !! borderHover }
-						label={ __( 'Enable Border Hover', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Enable Border Hover', 'spectra-blocks' ) }
 						onChange={ ( value ) => {
 							if ( value ) {
 								setAttributes( { borderHover: { color: undefined } } );
@@ -690,13 +690,13 @@ const BorderHoverSettings = memo( ( props ) => {
 								setAttributes( { borderHover: undefined } );
 							}
 						} }
-						help={ __( 'Enable border hover to customize the border color on hover.', 'ultimate-addons-for-gutenberg' ) }
+						help={ __( 'Enable border hover to customize the border color on hover.', 'spectra-blocks' ) }
 					/>
 					{ borderHover && (
 						<VStack spacing={ 4 }>
 							<BaseControl
-								label={ __( 'Border Hover Color', 'ultimate-addons-for-gutenberg' ) }
-								help={ __( 'Set the border color that appears when hovering over the container. The border width and style will match the normal border.', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Border Hover Color', 'spectra-blocks' ) }
+								help={ __( 'Set the border color that appears when hovering over the container. The border width and style will match the normal border.', 'spectra-blocks' ) }
 								id="spectra-container-border-hover-color"
 							>
 								<ColorPalette
@@ -759,7 +759,7 @@ const OverlaySettings = memo( ( props ) => {
 	return (
 		<>
 			<ToolsPanel
-				label={ __( 'Overlay Settings', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Overlay Settings', 'spectra-blocks' ) }
 				resetAll={ () => {
 					// Clear all overlay-related attributes when switching to 'none'
 					setAttributes( {
@@ -782,7 +782,7 @@ const OverlaySettings = memo( ( props ) => {
 		>
 			<ToolsPanelItem
 				hasValue={ () => !! overlayType && overlayType !== 'none' }
-				label={ __( 'Overlay Type', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Overlay Type', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { overlayType: 'none' } ) }
 				resetAllFilter={ () => ( { overlayType: 'none' } ) }
 				isShownByDefault
@@ -790,7 +790,7 @@ const OverlaySettings = memo( ( props ) => {
 			>
 				<VStack spacing={ 4 }>
 					<ToggleGroupControl
-						label={ __( 'Overlay Type', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Overlay Type', 'spectra-blocks' ) }
 						value={ overlayType || 'none' }
 						onChange={ ( value ) => {
 							if ( value === 'none' ) {
@@ -817,11 +817,11 @@ const OverlaySettings = memo( ( props ) => {
 					>
 						<ToggleGroupControlOption
 							value="none"
-							label={ __( 'None', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'None', 'spectra-blocks' ) }
 						/>
 						<ToggleGroupControlOption
 							value="image"
-							label={ __( 'Image', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Image', 'spectra-blocks' ) }
 						/>
 					</ToggleGroupControl>
 
@@ -847,7 +847,7 @@ const OverlaySettings = memo( ( props ) => {
 												onClick={ open }
 												variant="secondary"
 											>
-												{ __( 'Add Overlay Image', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'Add Overlay Image', 'spectra-blocks' ) }
 											</Button>
 										) : (
 											<>
@@ -861,18 +861,18 @@ const OverlaySettings = memo( ( props ) => {
 													} }
 												/>
 												<div style={{ display: 'none', padding: '10px', background: '#f0f0f0', textAlign: 'center' }}>
-													{ __( 'Image failed to load', 'ultimate-addons-for-gutenberg' ) }
+													{ __( 'Image failed to load', 'spectra-blocks' ) }
 												</div>
 												<HStack spacing={ 4 }>
 													<Button variant="secondary" onClick={ open }>
-														{ __( 'Replace', 'ultimate-addons-for-gutenberg' ) }
+														{ __( 'Replace', 'spectra-blocks' ) }
 													</Button>
 													<Button
 														variant="link"
 														onClick={ () => setAttributes( { overlayImage: null } ) }
 														isDestructive
 													>
-														{ __( 'Remove', 'ultimate-addons-for-gutenberg' ) }
+														{ __( 'Remove', 'spectra-blocks' ) }
 													</Button>
 												</HStack>
 											</>
@@ -890,7 +890,7 @@ const OverlaySettings = memo( ( props ) => {
 				<>
 					<ToolsPanelItem
 						hasValue={ () => !! overlayPosition || !! overlayPositionMode || !! overlayPositionX || !! overlayPositionY }
-						label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Position', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( {
 							overlayPosition: undefined,
 							overlayPositionMode: undefined,
@@ -911,7 +911,7 @@ const OverlaySettings = memo( ( props ) => {
 						<VStack spacing={ 4 }>
 							{/* Position Mode Toggle */}
 							<ToggleGroupControl
-								label={ __( 'Overlay Position', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Overlay Position', 'spectra-blocks' ) }
 								value={ overlayPositionMode || 'default' }
 								onChange={ ( newMode ) => {
 									setAttributes( {
@@ -927,18 +927,18 @@ const OverlaySettings = memo( ( props ) => {
 							>
 								<ToggleGroupControlOption
 									value="default"
-									label={ __( 'Default', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Default', 'spectra-blocks' ) }
 								/>
 								<ToggleGroupControlOption
 									value="custom"
-									label={ __( 'Custom', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Custom', 'spectra-blocks' ) }
 								/>
 							</ToggleGroupControl>
 
 							{/* Default Focal Point Picker */}
 							{ ( overlayPositionMode === 'default' || ! overlayPositionMode ) && (
 								<FocalPointPicker
-									label={ __( 'Position', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Position', 'spectra-blocks' ) }
 									url={ overlayImage.url }
 									value={ overlayPosition || { x: 0.5, y: 0.5 } }
 									onChange={ ( newPoint ) => setAttributes( { overlayPosition: newPoint } ) }
@@ -949,7 +949,7 @@ const OverlaySettings = memo( ( props ) => {
 							{ overlayPositionMode === 'custom' && (
 								<>
 									<ToggleControl
-										label={ __( 'Centralized Position', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Centralized Position', 'spectra-blocks' ) }
 										checked={ overlayPositionCentered || false }
 										onChange={ ( newCentered ) => {
 											setAttributes( {
@@ -962,7 +962,7 @@ const OverlaySettings = memo( ( props ) => {
 									/>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'X Position', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'X Position', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ overlayPositionCentered ? '50%' : ( overlayPositionX || '0%' ) }
 										onChange={ ( newX ) => {
@@ -985,7 +985,7 @@ const OverlaySettings = memo( ( props ) => {
 									/>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'Y Position', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Y Position', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ overlayPositionCentered ? '50%' : ( overlayPositionY || '0%' ) }
 										onChange={ ( newY ) => {
@@ -1012,19 +1012,19 @@ const OverlaySettings = memo( ( props ) => {
 					</ToolsPanelItem>
 					<ToolsPanelItem
 						hasValue={ () => !! overlayAttachment }
-						label={ __( 'Attachment', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Attachment', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlayAttachment: 'scroll' } ) }
 						resetAllFilter={ () => ( { overlayAttachment: 'scroll' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<SelectControl
-							label={ __( 'Attachment', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Attachment', 'spectra-blocks' ) }
 							value={ overlayAttachment || 'scroll' }
 							options={ [
-								{ label: __( 'Scroll', 'ultimate-addons-for-gutenberg' ), value: 'scroll' },
-								{ label: __( 'Fixed', 'ultimate-addons-for-gutenberg' ), value: 'fixed' },
-								{ label: __( 'Inherit', 'ultimate-addons-for-gutenberg' ), value: 'inherit' },
+								{ label: __( 'Scroll', 'spectra-blocks' ), value: 'scroll' },
+								{ label: __( 'Fixed', 'spectra-blocks' ), value: 'fixed' },
+								{ label: __( 'Inherit', 'spectra-blocks' ), value: 'inherit' },
 							] }
 							onChange={ ( value ) => setAttributes( { overlayAttachment: value } ) }
 						/>
@@ -1032,20 +1032,20 @@ const OverlaySettings = memo( ( props ) => {
 
 					<ToolsPanelItem
 						hasValue={ () => !! overlayRepeat }
-						label={ __( 'Repeat', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Repeat', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlayRepeat: 'no-repeat' } ) }
 						resetAllFilter={ () => ( { overlayRepeat: 'no-repeat' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<SelectControl
-							label={ __( 'Repeat', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Repeat', 'spectra-blocks' ) }
 							value={ overlayRepeat || 'no-repeat' }
 							options={ [
-								{ label: __( 'No Repeat', 'ultimate-addons-for-gutenberg' ), value: 'no-repeat' },
-								{ label: __( 'Repeat', 'ultimate-addons-for-gutenberg' ), value: 'repeat' },
-								{ label: __( 'Repeat X', 'ultimate-addons-for-gutenberg' ), value: 'repeat-x' },
-								{ label: __( 'Repeat Y', 'ultimate-addons-for-gutenberg' ), value: 'repeat-y' },
+								{ label: __( 'No Repeat', 'spectra-blocks' ), value: 'no-repeat' },
+								{ label: __( 'Repeat', 'spectra-blocks' ), value: 'repeat' },
+								{ label: __( 'Repeat X', 'spectra-blocks' ), value: 'repeat-x' },
+								{ label: __( 'Repeat Y', 'spectra-blocks' ), value: 'repeat-y' },
 							] }
 							onChange={ ( value ) => setAttributes( { overlayRepeat: value } ) }
 						/>
@@ -1053,20 +1053,20 @@ const OverlaySettings = memo( ( props ) => {
 
 					<ToolsPanelItem
 						hasValue={ () => !! overlaySize }
-						label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Size', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlaySize: 'cover' } ) }
 						resetAllFilter={ () => ( { overlaySize: 'cover' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<SelectControl
-							label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Size', 'spectra-blocks' ) }
 							value={ overlaySize || 'cover' }
 							options={ [
-								{ label: __( 'Cover', 'ultimate-addons-for-gutenberg' ), value: 'cover' },
-								{ label: __( 'Contain', 'ultimate-addons-for-gutenberg' ), value: 'contain' },
-								{ label: __( 'Auto', 'ultimate-addons-for-gutenberg' ), value: 'auto' },
-								{ label: __( 'Custom', 'ultimate-addons-for-gutenberg' ), value: 'custom' },
+								{ label: __( 'Cover', 'spectra-blocks' ), value: 'cover' },
+								{ label: __( 'Contain', 'spectra-blocks' ), value: 'contain' },
+								{ label: __( 'Auto', 'spectra-blocks' ), value: 'auto' },
+								{ label: __( 'Custom', 'spectra-blocks' ), value: 'custom' },
 							] }
 							onChange={ ( value ) => {
 								setAttributes( {
@@ -1082,7 +1082,7 @@ const OverlaySettings = memo( ( props ) => {
 				{ overlaySize === 'custom' && (
 					<ToolsPanelItem
 						hasValue={ () => !! overlayCustomWidth }
-						label={ __( 'Overlay Width', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Overlay Width', 'spectra-blocks' ) }
 						onDeselect={ () => {
 							setAttributes( {
 								overlayCustomWidth: undefined,
@@ -1095,7 +1095,7 @@ const OverlaySettings = memo( ( props ) => {
 					>
 						<UnitControl
 							__next40pxDefaultSize
-							label={ __( 'Overlay Width', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Overlay Width', 'spectra-blocks' ) }
 							labelPosition="top"
 							value={ overlayCustomWidth || '100%' }
 							onChange={ ( newWidth ) => {
@@ -1119,25 +1119,25 @@ const OverlaySettings = memo( ( props ) => {
 
 					<ToolsPanelItem
 						hasValue={ () => !! overlayBlendMode }
-						label={ __( 'Blend Mode', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Blend Mode', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlayBlendMode: 'normal' } ) }
 						resetAllFilter={ () => ( { overlayBlendMode: 'normal' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<SelectControl
-							label={ __( 'Blend Mode', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Blend Mode', 'spectra-blocks' ) }
 							value={ overlayBlendMode || 'normal' }
 							options={ [
-								{ label: __( 'Normal', 'ultimate-addons-for-gutenberg' ), value: 'normal' },
-								{ label: __( 'Multiply', 'ultimate-addons-for-gutenberg' ), value: 'multiply' },
-								{ label: __( 'Screen', 'ultimate-addons-for-gutenberg' ), value: 'screen' },
-								{ label: __( 'Overlay', 'ultimate-addons-for-gutenberg' ), value: 'overlay' },
-								{ label: __( 'Darken', 'ultimate-addons-for-gutenberg' ), value: 'darken' },
-								{ label: __( 'Lighten', 'ultimate-addons-for-gutenberg' ), value: 'lighten' },
-								{ label: __( 'Color Dodge', 'ultimate-addons-for-gutenberg' ), value: 'color-dodge' },
-								{ label: __( 'Saturation', 'ultimate-addons-for-gutenberg' ), value: 'saturation' },
-								{ label: __( 'Color', 'ultimate-addons-for-gutenberg' ), value: 'color' },
+								{ label: __( 'Normal', 'spectra-blocks' ), value: 'normal' },
+								{ label: __( 'Multiply', 'spectra-blocks' ), value: 'multiply' },
+								{ label: __( 'Screen', 'spectra-blocks' ), value: 'screen' },
+								{ label: __( 'Overlay', 'spectra-blocks' ), value: 'overlay' },
+								{ label: __( 'Darken', 'spectra-blocks' ), value: 'darken' },
+								{ label: __( 'Lighten', 'spectra-blocks' ), value: 'lighten' },
+								{ label: __( 'Color Dodge', 'spectra-blocks' ), value: 'color-dodge' },
+								{ label: __( 'Saturation', 'spectra-blocks' ), value: 'saturation' },
+								{ label: __( 'Color', 'spectra-blocks' ), value: 'color' },
 							] }
 							onChange={ ( value ) => setAttributes( { overlayBlendMode: value } ) }
 						/>
@@ -1145,14 +1145,14 @@ const OverlaySettings = memo( ( props ) => {
 
 					<ToolsPanelItem
 						hasValue={ () => !! overlayOpacity }
-						label={ __( 'Opacity', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Opacity', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlayOpacity: undefined } ) }
 						resetAllFilter={ () => ( { overlayOpacity: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<RangeControl
-							label={ __( 'Opacity', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Opacity', 'spectra-blocks' ) }
 							value={ overlayOpacity !== undefined ? overlayOpacity : 50 }
 							onChange={ ( value ) => setAttributes( { overlayOpacity: value } ) }
 							min={ 0 }
@@ -1199,27 +1199,27 @@ const ShapeDividerSettings = memo( ( props ) => {
 
 	// Shape divider type options.
 	const shapeOptions = [
-		{ value: 'none', label: __( 'None', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'tilt', label: __( 'Tilt', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'mountains', label: __( 'Mountains', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'wave_brush', label: __( 'Wave Brush', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'waves', label: __( 'Waves', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'wave_pattern', label: __( 'Waves Pattern', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'triangle', label: __( 'Triangle', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'drops', label: __( 'Drops', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'clouds', label: __( 'Clouds', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'zigzag', label: __( 'ZigZag', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'pyramids', label: __( 'Pyramids', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'triangle_asymmetrical', label: __( 'Triangle Asymmetrical', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'tilt_opacity', label: __( 'Tilt Opacity', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'fan_opacity', label: __( 'Fan Opacity', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'curve', label: __( 'Curve', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'curve_asymmetrical', label: __( 'Curve Asymmetrical', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'curve_reverse', label: __( 'Curve Reverse', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'curve_asym_reverse', label: __( 'Curve Asymmetrical Reverse', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'arrow', label: __( 'Arrow', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'arrow_split', label: __( 'Arrow Split', 'ultimate-addons-for-gutenberg' ) },
-		{ value: 'book', label: __( 'Book', 'ultimate-addons-for-gutenberg' ) },
+		{ value: 'none', label: __( 'None', 'spectra-blocks' ) },
+		{ value: 'tilt', label: __( 'Tilt', 'spectra-blocks' ) },
+		{ value: 'mountains', label: __( 'Mountains', 'spectra-blocks' ) },
+		{ value: 'wave_brush', label: __( 'Wave Brush', 'spectra-blocks' ) },
+		{ value: 'waves', label: __( 'Waves', 'spectra-blocks' ) },
+		{ value: 'wave_pattern', label: __( 'Waves Pattern', 'spectra-blocks' ) },
+		{ value: 'triangle', label: __( 'Triangle', 'spectra-blocks' ) },
+		{ value: 'drops', label: __( 'Drops', 'spectra-blocks' ) },
+		{ value: 'clouds', label: __( 'Clouds', 'spectra-blocks' ) },
+		{ value: 'zigzag', label: __( 'ZigZag', 'spectra-blocks' ) },
+		{ value: 'pyramids', label: __( 'Pyramids', 'spectra-blocks' ) },
+		{ value: 'triangle_asymmetrical', label: __( 'Triangle Asymmetrical', 'spectra-blocks' ) },
+		{ value: 'tilt_opacity', label: __( 'Tilt Opacity', 'spectra-blocks' ) },
+		{ value: 'fan_opacity', label: __( 'Fan Opacity', 'spectra-blocks' ) },
+		{ value: 'curve', label: __( 'Curve', 'spectra-blocks' ) },
+		{ value: 'curve_asymmetrical', label: __( 'Curve Asymmetrical', 'spectra-blocks' ) },
+		{ value: 'curve_reverse', label: __( 'Curve Reverse', 'spectra-blocks' ) },
+		{ value: 'curve_asym_reverse', label: __( 'Curve Asymmetrical Reverse', 'spectra-blocks' ) },
+		{ value: 'arrow', label: __( 'Arrow', 'spectra-blocks' ) },
+		{ value: 'arrow_split', label: __( 'Arrow Split', 'spectra-blocks' ) },
+		{ value: 'book', label: __( 'Book', 'spectra-blocks' ) },
 	];
 
 	// Get the core provided units, else add the fallback.
@@ -1235,7 +1235,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="styles">
 			<ToolsPanel
-				label={ __( 'Shape Dividers', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Shape Dividers', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						topType: 'none',
@@ -1254,27 +1254,29 @@ const ShapeDividerSettings = memo( ( props ) => {
 				} }
 				panelId={ clientId }
 			>
-				{/* Divider Position Selector */}
+				{/* Divider Position Selector - UI-only toggle, no attribute to reset */}
 				<ToolsPanelItem
 					hasValue={ () => false }
-					label={ __( 'Divider Position', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Divider Position', 'spectra-blocks' ) }
+					onDeselect={ () => {} }
+					resetAllFilter={ () => ( {} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
-						label={ __( 'Shape Divider Type ', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Shape Divider Type ', 'spectra-blocks' ) }
 						value={ visibleDivider }
 						onChange={ setVisibleDivider }
 						isBlock
 					>
 						<ToggleGroupControlOption
 							value="top"
-							label={ __( 'Top', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Top', 'spectra-blocks' ) }
 						/>
 						<ToggleGroupControlOption
 							value="bottom"
-							label={ __( 'Bottom', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Bottom', 'spectra-blocks' ) }
 						/>
 					</ToggleGroupControl>
 				</ToolsPanelItem>
@@ -1284,7 +1286,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 					<>
 						<ToolsPanelItem
 							hasValue={ () => hasTopDivider }
-							label={ __( 'Top Shape Divider', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Top Shape Divider', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( {
 								topType: 'none',
 								topWidth: undefined,
@@ -1307,7 +1309,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 							<VStack spacing={ 4 }>
 								<SelectControl
 									__nextHasNoMarginBottom
-									label={ __( 'Top Type', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Top Type', 'spectra-blocks' ) }
 									value={ topType || 'none' }
 									options={ shapeOptions }
 									onChange={ ( value ) => setAttributes( { topType: value } ) }
@@ -1317,21 +1319,21 @@ const ShapeDividerSettings = memo( ( props ) => {
 									<>
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Flip', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Flip', 'spectra-blocks' ) }
 											checked={ !! topFlip }
 											onChange={ ( value ) => setAttributes( { topFlip: value } ) }
 										/>
 
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Invert', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Invert', 'spectra-blocks' ) }
 											checked={ !! topInvert }
 											onChange={ ( value ) => setAttributes( { topInvert: value } ) }
 										/>
 
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Bring To Front', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Bring To Front', 'spectra-blocks' ) }
 											checked={ !! topContentAboveShape }
 											onChange={ ( value ) => setAttributes( { topContentAboveShape: value } ) }
 										/>
@@ -1343,7 +1345,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 							<>
 								<ToolsPanelItem
 									hasValue={ () => !! topWidth }
-									label={ __( 'Top Shape Width', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Top Shape Width', 'spectra-blocks' ) }
 									onDeselect={ () => setAttributes( { topWidth: undefined } ) }
 									resetAllFilter={ () => ( {
 										topWidth: undefined,
@@ -1353,7 +1355,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'Width', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Width', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ topWidth }
 										min={ 0 }
@@ -1363,7 +1365,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								</ToolsPanelItem>
 								<ToolsPanelItem
 									hasValue={ () => !! topHeight }
-									label={ __( 'Top Shape Height', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Top Shape Height', 'spectra-blocks' ) }
 									onDeselect={ () => setAttributes( { topHeight: undefined } ) }
 									resetAllFilter={ () => ( {
 										topHeight: undefined,
@@ -1373,7 +1375,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Height', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ topHeight }
 										min={ 0 }
@@ -1391,7 +1393,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 					<>
 						<ToolsPanelItem
 							hasValue={ () => hasBottomDivider }
-							label={ __( 'Bottom Shape Divider', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Bottom Shape Divider', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( {
 								bottomType: 'none',
 								bottomWidth: undefined,
@@ -1414,7 +1416,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 							<VStack spacing={ 4 }>
 								<SelectControl
 									__nextHasNoMarginBottom
-									label={ __( 'Bottom Type', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Bottom Type', 'spectra-blocks' ) }
 									value={ bottomType || 'none' }
 									options={ shapeOptions }
 									onChange={ ( value ) => setAttributes( { bottomType: value } ) }
@@ -1424,21 +1426,21 @@ const ShapeDividerSettings = memo( ( props ) => {
 									<>
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Flip', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Flip', 'spectra-blocks' ) }
 											checked={ !! bottomFlip }
 											onChange={ ( value ) => setAttributes( { bottomFlip: value } ) }
 										/>
 
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Invert', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Invert', 'spectra-blocks' ) }
 											checked={ !! bottomInvert }
 											onChange={ ( value ) => setAttributes( { bottomInvert: value } ) }
 										/>
 
 										<ToggleControl
 											__nextHasNoMarginBottom
-											label={ __( 'Bring To Front', 'ultimate-addons-for-gutenberg' ) }
+											label={ __( 'Bring To Front', 'spectra-blocks' ) }
 											checked={ !! bottomContentAboveShape }
 											onChange={ ( value ) => setAttributes( { bottomContentAboveShape: value } ) }
 										/>
@@ -1450,7 +1452,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 							<>
 								<ToolsPanelItem
 									hasValue={ () => !! bottomWidth }
-									label={ __( 'Bottom Shape Width', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Bottom Shape Width', 'spectra-blocks' ) }
 									onDeselect={ () => setAttributes( { bottomWidth: undefined } ) }
 									resetAllFilter={ () => ( {
 										bottomWidth: undefined,
@@ -1460,7 +1462,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'Width', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Width', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ bottomWidth }
 										min={ 0 }
@@ -1470,7 +1472,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								</ToolsPanelItem>
 								<ToolsPanelItem
 									hasValue={ () => !! bottomHeight }
-									label={ __( 'Bottom Shape Height', 'ultimate-addons-for-gutenberg' ) }
+									label={ __( 'Bottom Shape Height', 'spectra-blocks' ) }
 									onDeselect={ () => setAttributes( { bottomHeight: undefined } ) }
 									resetAllFilter={ () => ( {
 										bottomHeight: undefined,
@@ -1480,7 +1482,7 @@ const ShapeDividerSettings = memo( ( props ) => {
 								>
 									<UnitControl
 										__next40pxDefaultSize
-										label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+										label={ __( 'Height', 'spectra-blocks' ) }
 										labelPosition="top"
 										value={ bottomHeight }
 										min={ 0 }

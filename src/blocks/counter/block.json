@@ -27,8 +27,7 @@
 		"total",
 		"sum",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"allowedBlocks": [
 		"spectra/icons",
@@ -93,7 +92,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"viewScript": "file:./view.js",
+	"viewScriptModule": "file:./view.js",
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {

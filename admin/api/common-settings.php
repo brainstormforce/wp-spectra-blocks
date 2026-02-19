@@ -2,7 +2,7 @@
 /**
  * Common Settings Data Query.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Api;
@@ -37,14 +37,14 @@ class Common_Settings extends Api_Base {
 	 *
 	 * @access private
 	 * @var object Class object.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance;
 
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -57,7 +57,7 @@ class Common_Settings extends Api_Base {
 	/**
 	 * Init Hooks.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function register_routes() {
@@ -113,8 +113,9 @@ class Common_Settings extends Api_Base {
 							'sanitize_callback' => 'sanitize_text_field',
 						),
 						'completed' => array(
-							'required' => true,
-							'type'     => 'boolean',
+							'required'          => true,
+							'type'              => 'boolean',
+							'sanitize_callback' => 'rest_sanitize_boolean',
 						),
 					),
 				),
@@ -128,7 +129,7 @@ class Common_Settings extends Api_Base {
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return array Learn chapters data.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function get_learn_chapters( $request ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
 		// Use Admin_Learn helper to get chapters with progress.
@@ -138,37 +139,18 @@ class Common_Settings extends Api_Base {
 	/**
 	 * Save learn progress.
 	 *
-	 * SECURITY: Enhanced with rate limiting to prevent abuse.
-	 *
 	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 *
-	 * @since 0.0.1
-	 * @since 0.0.1 Added rate limiting.
+	 * @since 3.0.0
 	 */
 	public function save_learn_progress( $request ) {
-		$user_id = get_current_user_id();
-
-		// SECURITY: Apply rate limiting (10 requests per minute per user).
-		if ( ! \Spectra_Security_Helper::check_rate_limit( 'save_learn_progress', 10, 60 ) ) {
-			\Spectra_Security_Helper::log_security_event(
-				'learn_progress_rate_limit',
-				array(
-					'user_id' => $user_id,
-				)
-			);
-			return new \WP_Error(
-				'too_many_requests',
-				__( 'Too many requests. Please slow down and try again.', 'spectra' ),
-				array( 'status' => 429 )
-			);
-		}
-
 		$chapter_id = $request->get_param( 'chapterId' );
 		$step_id    = $request->get_param( 'stepId' );
 		$completed  = $request->get_param( 'completed' );
 
 		// Get current progress.
+		$user_id        = get_current_user_id();
 		$saved_progress = get_user_meta( $user_id, 'spectra_learn_progress', true );
 		if ( ! is_array( $saved_progress ) ) {
 			$saved_progress = array();
@@ -188,7 +170,7 @@ class Common_Settings extends Api_Base {
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => __( 'Progress saved successfully.', 'spectra' ),
+				'message' => __( 'Progress saved successfully.', 'spectra-blocks' ),
 			),
 			200
 		);
@@ -215,7 +197,7 @@ class Common_Settings extends Api_Base {
 	public function get_items_permissions_check( $request ) {
 
 		if ( ! current_user_can( 'manage_options' ) ) {
-			return new \WP_Error( 'uag_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'spectra' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'spectra_blocks_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'spectra-blocks' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;

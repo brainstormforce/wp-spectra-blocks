@@ -1,5 +1,5 @@
 /* Convert to Text */
-.uag-skeleton--text {
+.spectra-blocks-skeleton--text {
 	height: auto;
 	transform: scale(1, 0.6);
 	margin-top: 0;
@@ -10,6 +10,6 @@
 	line-height: 1.5em;
 }
 
-.uag-skeleton--text:empty::before {
+.spectra-blocks-skeleton--text:empty::before {
 	content: "\00a0";
 }

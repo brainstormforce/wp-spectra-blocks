@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/counter-child-number",
+  "version": "3.0.0",
+  "title": "Number",
+  "category": "spectra-blocks-inner",
+  "description": "Number display for the counter block.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/counter",
+    "spectra/counter-child-wrapper",
+    "spectra/container"
+  ],
+  "usesContext": [
+    "spectra/counter/startNumber",
+    "spectra/counter/endNumber",
+    "spectra/counter/animationDuration",
+    "spectra/counter/prefix",
+    "spectra/counter/suffix",
+    "spectra/counter/thousandSeparator",
+    "spectra/counter/decimalPlaces",
+    "spectra/counter/prefixColor",
+    "spectra/counter/suffixColor"
+  ],
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "align": [
+      "wide",
+      "full"
+    ],
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "textAlign": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": false,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "text": true
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "prefixColor": {
+      "type": "string"
+    },
+    "suffixColor": {
+      "type": "string"
+    }
+  }
+}

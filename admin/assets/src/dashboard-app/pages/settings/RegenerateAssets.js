@@ -16,13 +16,13 @@ const RegenerateAssets = () => {
 		setRegenerateAssetsState( 'loading' );
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.regenerate_assets_nonce,
+			security: spectra_blocks_react.regenerate_assets_nonce,
 			value: true,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_regenerate_assets',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_regenerate_assets',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -106,7 +106,7 @@ const RegenerateAssets = () => {
 								<div className="p-2">
 									<div className="flex justify-end items-center w-full gap-3">
 										<Button
-											className="uagb-outline-button"
+											className="spectra-blocks-outline-button"
 											size="md"
 											tag="button"
 											type="button"
@@ -118,7 +118,7 @@ const RegenerateAssets = () => {
 										</Button>
 
 										<Button
-											className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover regenerate-btn "
+											className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover regenerate-btn "
 											size="md"
 											tag="button"
 											type="button"
@@ -162,14 +162,14 @@ const RegenerateAssets = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Asset Regeneration', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Asset Regeneration', 'spectra-blocks' ) }
 				settingText={ __(
 					'Facing issues with style, layout, color or another page element? Use this option to regenerate CSS and Javascript assets. It can help with all kinds of asset issues.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
-				<Button onClick={ openModal } className="uagb-remove-ring" style={ { fontWeight: '500' } }>
-					{ __( 'Regenerate Assets', 'ultimate-addons-for-gutenberg' ) }
+				<Button onClick={ openModal } className="spectra-blocks-remove-ring" style={ { fontWeight: '500' } }>
+					{ __( 'Regenerate Assets', 'spectra-blocks' ) }
 				</Button>
 			</SettingsItem>
 
@@ -178,17 +178,17 @@ const RegenerateAssets = () => {
 					openPopup: isModalOpen,
 					setopenPopup: setIsModalOpen,
 					popupContent: {
-						title: __( 'Regenerate Assets', 'ultimate-addons-for-gutenberg' ),
+						title: __( 'Regenerate Assets', 'spectra-blocks' ),
 						description: __(
 							'Please note that after regeneration, it is recommended to purge all your cache to ensure that old assets are not served, preventing potential frontend breaking issues.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						),
 					},
 					popupAccept: {
-						label: __( 'Regenerate', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Regenerate', 'spectra-blocks' ),
 					},
 					popupCancel: {
-						label: __( 'Cancel', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Cancel', 'spectra-blocks' ),
 					},
 				} }
 			/>

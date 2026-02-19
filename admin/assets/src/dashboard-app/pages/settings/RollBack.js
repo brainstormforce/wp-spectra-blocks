@@ -5,7 +5,7 @@ import { Container, Label } from '@bsf/force-ui';
 // import ConfirmationPopup from '@Common/components/ConfirmationPopup';
 
 const RollBack = () => {
-	const previousVersions = uag_react.global_data.uag_previous_versions;
+	const previousVersions = spectra_blocks_react.global_data.spectra_blocks_previous_versions;
 
 	const [ previousVersionSelect, setPreviousVersion ] = useState( previousVersions[ 0 ].value );
 	const [ openPopup, setopenPopup ] = useState( false );
@@ -18,14 +18,14 @@ const RollBack = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Rollback to Previous Version', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Rollback to Previous Version', 'spectra-blocks' ) }
 				settingText={ sprintf(
 					/* translators: abbreviation for units */
 					__(
 						'Experiencing an issue with Spectra version %s? Roll back to a previous version to help troubleshoot the issue.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					),
-					uag_react.plugin_ver
+					spectra_blocks_react.plugin_ver
 				) }
 			>
 				<div className="flex items-center">
@@ -72,7 +72,7 @@ const RollBack = () => {
 								></path>
 							</svg>
 						) }
-						{ __( 'Rollback', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Rollback', 'spectra-blocks' ) }
 					</button>
 				</div>
 			</SettingsItem>
@@ -86,21 +86,21 @@ const RollBack = () => {
 					previousVersionSelect,
 					setconfirmPopup,
 					popupContent: {
-						title: __( 'Rollback to Previous Version', 'ultimate-addons-for-gutenberg' ),
+						title: __( 'Rollback to Previous Version', 'spectra-blocks' ),
 						description: sprintf(
 							// translators: %1$s: selected version of Spectra.
 							__(
 								'Are you sure you want to rollback to Spectra v%1$s?',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							),
 							previousVersionSelect
 						),
 					},
 					popupAccept: {
-						label: __( 'Rollback', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Rollback', 'spectra-blocks' ),
 					},
 					popupCancel: {
-						label: __( 'Cancel', 'ultimate-addons-for-gutenberg' ),
+						label: __( 'Cancel', 'spectra-blocks' ),
 					},
 				} }
 			/>

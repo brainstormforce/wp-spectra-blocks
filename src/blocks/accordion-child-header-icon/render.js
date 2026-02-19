@@ -2,7 +2,7 @@
  * External dependencies.
  */
 import { useBlockProps } from '@wordpress/block-editor';
-import { memo, useState, useEffect } from '@wordpress/element';
+import { memo, useState, useEffect, useMemo } from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -61,15 +61,15 @@ const Render = ( props ) => {
 		flipForRTLSecondary,
 	] );
 
-	// Configuration for the useSpectraStyles hook.
-	const config = [
+	// Configuration for the useSpectraStyles hook - memoized to prevent recalculation.
+	const config = useMemo( () => [
 		{ key: 'textColor' },
 		{ key: 'textColorHover' },
 		{ key: 'backgroundColor' },
 		{ key: 'backgroundColorHover' },
 		{ key: 'backgroundGradient' },
 		{ key: 'backgroundGradientHover' },
-	];
+	], [] );
 
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config );

@@ -35,7 +35,7 @@ const ColorSettings = memo( ( props ) => {
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () =>
@@ -46,13 +46,13 @@ const ColorSettings = memo( ( props ) => {
 				},
 				{
 					colorValue: numberColor,
-					label: __( 'Number', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Number', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { numberColor: value } ),
 					resetAllFilter: () => setAttributes( { numberColor: undefined } ),
 				},
 				{
 					colorValue: numberColorHover,
-					label: __( 'Number Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Number Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { numberColorHover: value } ),
 					resetAllFilter: () => setAttributes( { numberColorHover: undefined } ),
 				},

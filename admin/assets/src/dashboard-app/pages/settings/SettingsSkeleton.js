@@ -3,7 +3,7 @@ import { Skeleton } from '@bsf/force-ui';
 const SettingsSkeleton = () => {
 	return (
 		<div className="h-full flex">
-			<div className="lg:w-64 uagb-settings-sidebar p-4">
+			<div className="lg:w-64 spectra-blocks-settings-sidebar p-4">
 				<div className="space-y-4">
 					<div className="flex items-center space-x-3">
 						<Skeleton variant="circular" className="lg:w-[150px] w-[24px] h-[24px]" />

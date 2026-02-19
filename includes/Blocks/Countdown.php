@@ -7,12 +7,15 @@
 
 namespace Spectra\Blocks;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 
 /**
  * Countdown class.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class Countdown {
 
@@ -24,7 +27,7 @@ class Countdown {
 	 * This function adds a filter to modify the separator countdown block data
 	 * to ensure separators are hidden when adjacent time units are not displayed.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function init() {
 		add_filter( 'render_block_data', array( $this, 'modify_the_separator_countdown_block_data' ) );
@@ -39,7 +42,7 @@ class Countdown {
 	 *
 	 * Hooked into the `render_block_data` filter.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $parsed_block The parsed block data for the countdown block.
 	 * @return array The modified parsed block data with updated separator visibility.

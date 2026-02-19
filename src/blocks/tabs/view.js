@@ -43,7 +43,9 @@ store( 'spectra/tabs', {
 			const nextTabElement = ref.parentNode.querySelector(
 				`#${ blockId }-tab-${ nextTab }`
 			);
-			nextTabElement.focus();
+			if ( nextTabElement ) {
+				nextTabElement.focus();
+			}
 			context.activeTab = nextTab;
 		},
 	},
@@ -61,7 +63,9 @@ store( 'spectra/tabs', {
 			const { activeTab, currentTab } = context;
 			const wasActive = context.isActive;
 			context.isActive = activeTab === currentTab;
-			window.AOS.refresh(); // Refresh AOS to detect newly visible elements.
+			if ( typeof window.AOS !== 'undefined' ) {
+				window.AOS.refresh(); // Refresh AOS to detect newly visible elements.
+			}
 
 			// Handle animations when tab becomes active.
 			if ( context.isActive && ! wasActive ) {

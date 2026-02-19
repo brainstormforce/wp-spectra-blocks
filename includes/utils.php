@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
  * Get complete CSS content for post preview from both Spectra v3 and Pro v2 blocks.
  * Optimized architecture with plugin registry system for extensibility.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @param int $post_id Post ID to generate CSS for.
  * @return string Complete CSS content for pattern block preview.
  */
@@ -30,7 +30,7 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
 		return '';
 	}
 	
-	$css_generator = new Spectra_CSS_Generator();
+	$css_generator = new Spectra_Blocks_CSS_Generator();
 	
 	return $css_generator->generate_preview_css( $post_id, $blocks );
 }
@@ -39,9 +39,9 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
  * CSS Generator class for handling both Spectra v3 and Pro v2 blocks.
  * Provides extensible architecture for adding future plugin support.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
-class Spectra_CSS_Generator {
+class Spectra_Blocks_CSS_Generator {
 	
 	/**
 	 * Registered plugin handlers for CSS generation.
@@ -107,7 +107,7 @@ class Spectra_CSS_Generator {
 			'spectra-v3',
 			array(
 				'namespace'        => 'spectra/',
-				'blocks_dir'       => SPECTRA_DIR . 'build/blocks/',
+				'blocks_dir'       => SPECTRA_BLOCKS_DIR . 'build/blocks/',
 				'responsive_class' => '\Spectra\Extensions\ResponsiveControls',
 				'enabled'          => true,
 			) 
@@ -127,7 +127,7 @@ class Spectra_CSS_Generator {
 		}
 		
 		// Allow other plugins to register their handlers.
-		do_action( 'spectra_css_generator_register_handlers', $this );
+		do_action( 'spectra_blocks_css_generator_register_handlers', $this );
 	}
 	
 	/**
@@ -210,17 +210,12 @@ class Spectra_CSS_Generator {
 	 * @return string|false File content or false on failure.
 	 */
 	private function read_css_file( $file_path ) {
-		if ( function_exists( 'spectra_blocks_filesystem' ) ) {
-			$filesystem = spectra_blocks_filesystem();
-			return $filesystem->get_contents( $file_path );
-		}
-		
 		global $wp_filesystem;
 		if ( empty( $wp_filesystem ) ) {
 			require_once ABSPATH . 'wp-admin/includes/file.php';
 			WP_Filesystem();
 		}
-		
+
 		return $wp_filesystem ? $wp_filesystem->get_contents( $file_path ) : false;
 	}
 	
@@ -308,7 +303,7 @@ class Spectra_CSS_Generator {
 	 * Generate extension CSS based on blocks that actually use extensions.
 	 * Only loads extension CSS when needed (e.g., image-mask for core/image blocks with mask attributes).
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks Parsed blocks to check for extension usage.
 	 * @return string Generated extension CSS.
@@ -321,7 +316,7 @@ class Spectra_CSS_Generator {
 
 		// Only load z-index CSS if it's actually used.
 		if ( $has_z_index ) {
-			$z_index_css_file = SPECTRA_DIR . 'build/styles/extensions/z-index.css';
+			$z_index_css_file = SPECTRA_BLOCKS_DIR . 'build/styles/extensions/z-index.css';
 			if ( file_exists( $z_index_css_file ) ) {
 				$css = $this->read_css_file( $z_index_css_file );
 				if ( $css ) {
@@ -335,7 +330,7 @@ class Spectra_CSS_Generator {
 
 		// Only load image-mask CSS if it's actually used.
 		if ( $has_image_mask ) {
-			$image_mask_css_file = SPECTRA_DIR . 'build/styles/extensions/image-mask.css';
+			$image_mask_css_file = SPECTRA_BLOCKS_DIR . 'build/styles/extensions/image-mask.css';
 			if ( file_exists( $image_mask_css_file ) ) {
 				$css = $this->read_css_file( $image_mask_css_file );
 				if ( $css ) {
@@ -347,13 +342,13 @@ class Spectra_CSS_Generator {
 		/**
 		 * Filter the generated extension CSS.
 		 * 
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 * 
 		 * @param string $css_content The generated extension CSS content.
 		 * @param array  $blocks The parsed blocks being processed.
 		 * @return string Filtered CSS content.
 		 */
-		$css_content = apply_filters( 'spectra_extensions_css', $css_content, $blocks );
+		$css_content = apply_filters( 'spectra_blocks_extensions_css', $css_content, $blocks );
 
 		return $css_content;
 	}
@@ -362,7 +357,7 @@ class Spectra_CSS_Generator {
 	 * Check if any blocks use a specific extension.
 	 * Recursively checks all blocks and inner blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array  $blocks Parsed blocks to check.
 	 * @param string $extension Extension name to check for (e.g., 'image-mask').
@@ -744,7 +739,7 @@ class Spectra_CSS_Generator {
  * Regenerate CSS for all patterns to fix compatibility with updated CSS generation.
  * Call this function once to fix patterns created with older development versions.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @return array Results of the regeneration process.
  */
 function spectra_blocks_regenerate_pattern_css() {
@@ -808,7 +803,7 @@ function spectra_blocks_regenerate_pattern_css() {
  * Process blocks recursively to generate comprehensive responsive CSS.
  * Handles ALL block attributes including style, responsive controls, and block-level attributes.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @param array  $blocks The blocks to process.
  * @param object $responsive_controls The Spectra v3 ResponsiveControls instance.
  * @param object $pro_responsive_controls The Spectra Pro v2 ResponsiveControls instance (optional).
@@ -826,7 +821,7 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
 		$attrs      = $block['attrs'] ?? array();
 		$block_name = $block['blockName'];
 		
-		// Generate CSS for Spectra blocks (v3 and Pro v2).
+		// Generate CSS for Spectra blocks and Pro v2.
 		if ( strpos( $block_name, 'spectra/' ) === 0 || strpos( $block_name, 'spectra-pro/' ) === 0 ) {
 			$spectra_id = $attrs['spectraId'] ?? '';
 			
@@ -840,7 +835,7 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
 			$responsive_controls_data = $attrs['responsiveControls'] ?? array();
 			
 			// Convert all block attributes to comprehensive responsive controls.
-			$comprehensive_responsive_data = spectra_convert_all_attrs_to_responsive_controls( $attrs, $block_name );
+			$comprehensive_responsive_data = spectra_blocks_convert_all_attrs_to_responsive_controls( $attrs, $block_name );
 			
 			// Merge existing with comprehensive data (comprehensive takes precedence for missing properties).
 			$final_responsive_data = spectra_blocks_merge_responsive_controls_comprehensive( $responsive_controls_data, $comprehensive_responsive_data );
@@ -892,7 +887,7 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
  * Merge responsive controls with comprehensive fallback support.
  * Prioritizes existing responsive controls but fills in missing properties from comprehensive data.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $existing_responsive Existing responsive controls.
  * @param array $comprehensive_responsive Comprehensive responsive controls from all attributes.
  * @return array Merged responsive controls.
@@ -940,7 +935,7 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
 /**
  * Process blocks recursively to generate block-specific attribute CSS.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $blocks The blocks to process.
  * @return string Generated attribute CSS for all blocks.
  */
@@ -1003,7 +998,7 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 /**
  * Get device-specific attributes for pattern preview (assumes lg device).
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @param string $block_name The block name.
  * @param array  $attrs Block attributes.
  * @return array Device-specific attributes.
@@ -1046,7 +1041,7 @@ function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
  * Generate CSS for WordPress core group blocks based on actual WordPress class names.
  * Uses the same class-based approach as WordPress core for better compatibility.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $attrs Block attributes.
  * @param bool  &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS for the group block.
@@ -1174,7 +1169,7 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
  * Generate CSS for all WordPress core blocks comprehensively.
  * Handles wp:group, wp:columns, wp:image, and other core blocks.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param string $block_name Block name (e.g., 'core/group').
  * @param array  $attrs Block attributes.
  * @param bool   &$base_css_added Reference to track if base CSS was added.
@@ -1218,7 +1213,7 @@ function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base
 /**
  * Generate CSS for WordPress core columns block.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $attrs Block attributes.
  * @param bool  &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS.
@@ -1248,7 +1243,7 @@ function spectra_blocks_generate_core_columns_css( $attrs, &$base_css_added ) {
 /**
  * Generate CSS for WordPress core column block.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
@@ -1270,7 +1265,7 @@ function spectra_blocks_generate_core_column_css( $attrs ) {
 /**
  * Generate CSS for WordPress core image block.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
@@ -1313,7 +1308,7 @@ function spectra_blocks_generate_core_image_css( $attrs ) {
 /**
  * Generate CSS for WordPress core gallery block.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
@@ -1334,7 +1329,7 @@ function spectra_blocks_generate_core_gallery_css( $attrs ) {
 /**
  * Generate generic layout CSS for any core block with layout support.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param string $block_name Block name.
  * @param array  $attrs Block attributes.
  * @param bool   &$base_css_added Reference to track if base CSS was added.
@@ -1365,7 +1360,7 @@ function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &
  * Generate layout CSS for Spectra blocks that use WordPress core layout support.
  * Handles flex, grid, and other layout types used by Spectra blocks.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @param array  $attrs Block attributes.
  * @param string $block_name Block name.
  * @return string Generated layout CSS for Spectra blocks.

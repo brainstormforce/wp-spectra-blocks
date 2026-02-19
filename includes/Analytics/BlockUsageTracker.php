@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * This class tracks usage of Spectra 3 blocks and integrates with the existing
  * BSF Analytics system from the parent Spectra 2.x.x implementation.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class BlockUsageTracker {
 
@@ -26,13 +26,13 @@ class BlockUsageTracker {
 	/**
 	 * Block analytics data storage key.
 	 */
-	const ANALYTICS_KEY = 'spectra_block_analytics';
+	const ANALYTICS_KEY = 'spectra_blocks_block_analytics';
 
 
 	/**
 	 * Initialize the analytics tracker.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function init() {
 		// Hook into WordPress save_post to track block usage.
@@ -49,7 +49,7 @@ class BlockUsageTracker {
 		add_filter( 'bsf_core_stats', array( $this, 'add_spectra_3_stats' ), 20 );
 
 		// Hook into settings changes to handle cleanup.
-		add_action( 'update_option_spectra_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
+		add_action( 'update_option_spectra_blocks_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
 
 		// Initialize usage data if not exists.
 		$this->init_usage_data();
@@ -58,7 +58,7 @@ class BlockUsageTracker {
 	/**
 	 * Initialize usage data storage.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	private function init_usage_data() {
 		if ( false === get_option( self::ANALYTICS_KEY, false ) ) {
@@ -79,7 +79,7 @@ class BlockUsageTracker {
 	/**
 	 * Track block usage when a post is saved.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int     $post_id Post ID being saved.
 	 * @param WP_Post $post    Post object being saved.
@@ -296,7 +296,7 @@ class BlockUsageTracker {
 	 * Only tracks blocks that users can see and insert from the block inserter,
 	 * not child blocks or inner blocks that are auto-generated.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks Parsed blocks array.
 	 * @return array Array of root-level Spectra block names found.
@@ -313,9 +313,9 @@ class BlockUsageTracker {
 			$block_prefix = '';
 			$block_name   = '';
 
-			// Check if this is a Spectra 3 block.
+			// Check if this is a Spectra Blocks block.
 			if ( strpos( $block['blockName'], 'spectra/' ) === 0 ) {
-				$block_prefix = 'spectra';
+				$block_prefix = 'spectra-blocks';
 				$block_name   = str_replace( 'spectra/', '', $block['blockName'] );
 			} elseif ( strpos( $block['blockName'], 'spectra-pro/' ) === 0 ) {
 				// Check if this is a Spectra Pro block.
@@ -362,7 +362,7 @@ class BlockUsageTracker {
 	/**
 	 * Update block usage data for a specific post.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int   $post_id Post ID.
 	 * @param array $blocks  Array of block names used in the post.
@@ -387,7 +387,7 @@ class BlockUsageTracker {
 	/**
 	 * Update overall usage statistics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks Array of block names used.
 	 */
@@ -436,7 +436,7 @@ class BlockUsageTracker {
 	 *
 	 * Excludes trashed and deleted posts from the count.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return int Total post count.
 	 */
@@ -467,7 +467,7 @@ class BlockUsageTracker {
 	/**
 	 * Get block usage statistics for analytics (root-level blocks only).
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Block usage statistics for root-level blocks only.
 	 */
@@ -501,7 +501,7 @@ class BlockUsageTracker {
 	/**
 	 * Get top N most used root-level blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int $limit Number of top blocks to return.
 	 * @return array Top used root-level blocks with usage counts.
@@ -521,7 +521,7 @@ class BlockUsageTracker {
 	 * - Active Site: Spectra blocks manually added/edited on at least 1 page in last 180 days
 	 * - Super Site: Spectra blocks manually added/edited on at least 15 pages in last 180 days
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Site activity data with classification.
 	 */
@@ -574,7 +574,7 @@ class BlockUsageTracker {
 	/**
 	 * Add Spectra 3 statistics to BSF Analytics data.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $stats Existing BSF Analytics stats.
 	 * @return array Enhanced stats with Spectra 3 data.
@@ -600,7 +600,6 @@ class BlockUsageTracker {
 		$available_blocks = $this->get_available_blocks();
 
 		// Format individual block usage stats with 'block_usage_' prefix.
-		// This follows the same pattern as Spectra v2 analytics in class-uagb-block-analytics.php.
 		$formatted_block_usage_stats = array();
 
 		// First, initialize ALL available blocks with 0 count.
@@ -647,7 +646,6 @@ class BlockUsageTracker {
 		);
 
 		// Merge numeric_values by adding numbers if they already exist.
-		// This follows the same pattern as Spectra v2 analytics in class-uagb-block-analytics.php:234-253.
 		if ( isset( $spectra_3_stats['numeric_values'], $stats['plugin_data']['spectra']['numeric_values'] )
 			&& is_array( $spectra_3_stats['numeric_values'] )
 			&& is_array( $stats['plugin_data']['spectra']['numeric_values'] ) ) {
@@ -678,7 +676,7 @@ class BlockUsageTracker {
 	/**
 	 * Reset all analytics data (for testing/debugging).
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function reset_analytics_data() {
 		delete_option( self::ANALYTICS_KEY );
@@ -688,7 +686,7 @@ class BlockUsageTracker {
 	/**
 	 * Handle analytics toggle - clean up data when disabled.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $old_value Previous option value.
 	 * @param string $new_value New option value.
@@ -706,7 +704,7 @@ class BlockUsageTracker {
 	 *
 	 * Dynamically discovers all registered Spectra blocks including future blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param bool $include_pro Whether to include Spectra Pro blocks.
 	 * @return array Array of Spectra block names in internal format.
@@ -727,7 +725,7 @@ class BlockUsageTracker {
 			$registered = $registry->get_all_registered();
 
 			foreach ( $registered as $block_name => $block_type ) {
-				// Check for Spectra 3 blocks.
+				// Check for Spectra Blocks blocks.
 				if ( strpos( $block_name, 'spectra/' ) === 0 ) {
 					$short_name   = str_replace( 'spectra/', '', $block_name );
 					$all_blocks[] = $short_name;
@@ -748,7 +746,7 @@ class BlockUsageTracker {
 	/**
 	 * Get cached analytics data to avoid expensive recalculations.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Comprehensive analytics data.
 	 */
@@ -788,7 +786,7 @@ class BlockUsageTracker {
 	/**
 	 * Determine user engagement level based on block usage.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $analytics_data Analytics data array.
 	 * @return string User engagement level.
@@ -815,18 +813,12 @@ class BlockUsageTracker {
 	/**
 	 * Check if analytics tracking is enabled by user opt-in.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return bool True if analytics is enabled, false otherwise.
 	 */
 	private function is_analytics_enabled() {
-		// Check if Spectra_Admin_Helper class exists (parent plugin).
-		if ( ! class_exists( '\Spectra_Admin_Helper' ) ) {
-			return false;
-		}
-
-		// Get the analytics opt-in setting from parent Spectra 2.x.x.
-		$optin_status = \Spectra_Admin_Helper::get_admin_settings_option( 'spectra_analytics_optin', 'no' );
+		$optin_status = get_option( 'spectra_blocks_analytics_optin', 'no' );
 
 		return 'yes' === $optin_status;
 	}
@@ -839,13 +831,13 @@ class BlockUsageTracker {
 	 * 2. Are not child blocks (don't contain -child- in the name)
 	 * 3. Can be inserted directly by users from the block inserter
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name   Block name without the prefix.
 	 * @param string $block_prefix Block prefix ('spectra' or 'spectra-pro').
 	 * @return bool True if this is a root-level block, false otherwise.
 	 */
-	private function is_root_level_block( $block_name, $block_prefix = 'spectra' ) {
+	private function is_root_level_block( $block_name, $block_prefix = 'spectra-blocks' ) {
 		// Quick check: if the block name contains 'child', it's likely a child block.
 		if ( strpos( $block_name, 'child' ) !== false ) {
 			return false;
@@ -871,12 +863,12 @@ class BlockUsageTracker {
 	/**
 	 * Build a list of root-level blocks by analyzing block.json files.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_prefix Block prefix ('spectra' or 'spectra-pro').
 	 * @return array Array of root-level block names.
 	 */
-	private function build_root_blocks_list( $block_prefix = 'spectra' ) {
+	private function build_root_blocks_list( $block_prefix = 'spectra-blocks' ) {
 		$root_blocks = array();
 
 		// Determine the blocks directory based on prefix.
@@ -905,7 +897,7 @@ class BlockUsageTracker {
 			
 			$expected_prefix = 'spectra-pro/';
 		} else {
-			$blocks_dir      = SPECTRA_DIR . 'build/blocks/';
+			$blocks_dir      = SPECTRA_BLOCKS_DIR . 'build/blocks/';
 			$expected_prefix = 'spectra/';
 		}
 
@@ -992,7 +984,7 @@ class BlockUsageTracker {
 	/**
 	 * Filter stats data to only include root-level blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $stats Original stats data.
 	 * @return array Filtered stats data with only root-level blocks.
@@ -1021,7 +1013,7 @@ class BlockUsageTracker {
 	 *
 	 * Excludes trashed posts from the filtered data.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $usage_data Original usage data.
 	 * @return array Filtered usage data with only root-level blocks.
@@ -1073,7 +1065,7 @@ class BlockUsageTracker {
 	/**
 	 * Check if Spectra Pro plugin is available and active.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return bool True if Spectra Pro is available, false otherwise.
 	 */
@@ -1091,7 +1083,7 @@ class BlockUsageTracker {
 	/**
 	 * Clear analytics cache when data is updated.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	private function clear_analytics_cache() {
 		wp_cache_delete( 'spectra_3_comprehensive_analytics', 'spectra' );
@@ -1105,7 +1097,7 @@ class BlockUsageTracker {
 	 * - 'container' -> 'spectra/container'
 	 * - 'pro-loop-builder' -> 'spectra-pro/loop-builder'
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name (may be prefixed with 'pro-').
 	 * @return string Full block name with namespace.
@@ -1117,7 +1109,7 @@ class BlockUsageTracker {
 			return 'spectra-pro/' . substr( $block_name, 4 );
 		}
 
-		// Default to Spectra 3 namespace.
+		// Default to Spectra Blocks namespace.
 		return 'spectra/' . $block_name;
 	}
 }

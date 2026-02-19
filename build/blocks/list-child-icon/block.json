@@ -1,0 +1,115 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/list-child-icon",
+  "version": "3.0.0",
+  "title": "List Child Icon",
+  "category": "spectra-blocks-inner",
+  "description": "Icon or number for list items.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/list-child-item"
+  ],
+  "supports": {
+    "html": false,
+    "reusable": false,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "align": true,
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    }
+  },
+  "usesContext": [
+    "spectra/list/listType",
+    "spectra/list/listStyle",
+    "spectra/list/start",
+    "spectra/list/reversed",
+    "spectra/list/totalItems",
+    "spectra/list/textColor",
+    "spectra/list/textColorHover",
+    "spectra/list/iconSize",
+    "spectra/list/iconSpacing",
+    "spectra/list/iconName",
+    "spectra/list/flipForRTL",
+    "spectra/list/rotation",
+    "spectra/list-child-item/index",
+    "spectra/list-child-item/textColor",
+    "spectra/list-child-item/textColorHover"
+  ],
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "itemIndex": {
+      "type": "number"
+    },
+    "isNested": {
+      "type": "boolean",
+      "default": false
+    },
+    "icon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "flipForRTL": {
+      "type": "boolean"
+    },
+    "rotation": {
+      "type": "number"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "iconSize": {
+      "type": "string"
+    }
+  }
+}

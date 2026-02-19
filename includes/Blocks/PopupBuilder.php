@@ -3,7 +3,7 @@
  * Spectra V3 Popup Builder Block Handler
  * Initializes and coordinates all V3 popup builder functionality
  * 
- * @since 0.0.1
+ * @since 3.0.0
  * @package Spectra\Blocks
  */
 
@@ -18,7 +18,7 @@ defined( 'ABSPATH' ) || exit; // DEV: Security check - prevents direct file acce
  * Class PopupBuilder
  * 
  * Main coordinator for V3 popup builder functionality
- * Replaces V2 Spectra_Post_Assets dependency with pure V3 implementation
+ * Handles popup builder functionality for Spectra Blocks
  */
 class PopupBuilder {
 	// DEV: Main class - add new popup functionality methods here.
@@ -30,7 +30,7 @@ class PopupBuilder {
 	 *
 	 * @var int $post_id
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	protected $post_id; // DEV: Current post ID being processed - modify for custom post tracking.
 
@@ -39,7 +39,7 @@ class PopupBuilder {
 	 *
 	 * @var array $popup_ids
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	protected $popup_ids; // DEV: Array of active popup IDs - extend for popup filtering/caching.
 
@@ -48,7 +48,7 @@ class PopupBuilder {
 	 * 
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function __construct() {
 		// DEV: Initialize class instance - add new default values here.
@@ -76,7 +76,7 @@ class PopupBuilder {
 	 *
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function enqueue_popup_scripts_for_post() {
 		// DEV: Main entry point for popup script loading.
@@ -99,7 +99,7 @@ class PopupBuilder {
 	 *
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function enqueue_popup_scripts() {
 		// DEV: Core popup loading logic - modify query parameters for custom filtering.
@@ -147,7 +147,7 @@ class PopupBuilder {
 	 *
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function generate_popup_shortcode() {
 		if ( is_array( $this->popup_ids ) && ! empty( $this->popup_ids ) ) {
@@ -164,7 +164,7 @@ class PopupBuilder {
 	 * @param array  $popup_ids The array of popup IDs.
 	 * @return void
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function append_my_shortcode( $this_post, $popup_ids ) {
 		if ( is_array( $this->popup_ids ) && ! empty( $this->popup_ids ) ) { // DEV: Validate popup IDs exist - add additional validation as needed.
@@ -180,11 +180,11 @@ class PopupBuilder {
 	 *
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function update_popup_status() {
 		// DEV: AJAX handler for popup status toggle - hook with wp_ajax_.
-		check_ajax_referer( 'spectra_popup_builder_admin_nonce', 'nonce' ); // DEV: Verify AJAX nonce - update nonce name if changed.
+		check_ajax_referer( 'spectra_blocks_popup_builder_admin_nonce', 'nonce' ); // DEV: Verify AJAX nonce - update nonce name if changed.
 
 		if ( ! current_user_can( 'manage_options' ) ) { // DEV: Permission check - modify capability for different user roles.
 			wp_send_json_error(); // DEV: Send error response - add error message for debugging.
@@ -194,8 +194,8 @@ class PopupBuilder {
 			wp_send_json_error(); // DEV: Send error for missing parameters - add specific error messages.
 		}
 
-		$enabled  = rest_sanitize_boolean( sanitize_text_field( $_POST['enabled'] ) ); // DEV: Sanitize boolean value - validate true/false values.
-		$popup_id = absint( $_POST['post_id'] ); // DEV: Sanitize popup ID as integer - add range validation if needed.
+		$enabled  = rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['enabled'] ) ) ); // DEV: Sanitize boolean value - validate true/false values.
+		$popup_id = absint( wp_unslash( $_POST['post_id'] ) ); // DEV: Sanitize popup ID as integer - add range validation if needed.
 
 		update_post_meta( $popup_id, 'spectra-popup-enabled', $enabled ); // DEV: Update popup status meta - add error handling for failed updates.
 
@@ -207,8 +207,129 @@ class PopupBuilder {
 	 *
 	 * @return void
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
+	/**
+	 * Initialize the Popup Builder: register the CPT and its post meta.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function init() {
+		add_action( 'init', array( $this, 'register_popup_cpt' ) );
+	}
+
+	/**
+	 * Register the spectra-popup custom post type and its post meta.
+	 *
+	 * Mirrors the registration done by UAG for backward compatibility with
+	 * existing popup content and meta keys.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function register_popup_cpt() {
+		$supports = array(
+			'title',
+			'editor',
+			'custom-fields',
+			'author',
+		);
+
+		$labels = array(
+			'name'               => _x( 'Popup Builder', 'plural', 'spectra-blocks' ),
+			'singular_name'      => _x( 'Spectra Popup', 'singular', 'spectra-blocks' ),
+			'view_item'          => __( 'View Popup', 'spectra-blocks' ),
+			'add_new'            => __( 'Create Popup', 'spectra-blocks' ),
+			'add_new_item'       => __( 'Create New Popup', 'spectra-blocks' ),
+			'edit_item'          => __( 'Edit Popup', 'spectra-blocks' ),
+			'new_item'           => __( 'New Popup', 'spectra-blocks' ),
+			'search_items'       => __( 'Search Popups', 'spectra-blocks' ),
+			'not_found'          => __( 'No Popups Found', 'spectra-blocks' ),
+			'not_found_in_trash' => __( 'No Popups in Trash', 'spectra-blocks' ),
+			'all_items'          => __( 'All Popups', 'spectra-blocks' ),
+			'item_published'     => __( 'Popup Published', 'spectra-blocks' ),
+			'item_updated'       => __( 'Popup Updated', 'spectra-blocks' ),
+		);
+
+		$type_args = array(
+			'supports'          => $supports,
+			'labels'            => $labels,
+			'public'            => false,
+			'show_in_menu'      => false,
+			'show_in_admin_bar' => true,
+			'show_ui'           => true,
+			'show_in_rest'      => true,
+			'template_lock'     => 'all',
+			'template'          => array(
+				array( 'spectra/popup-builder', array() ),
+			),
+			'rewrite'           => array(
+				'slug'       => 'spectra-popup',
+				'with-front' => false,
+				'pages'      => false,
+			),
+			'capabilities'      => array(
+				'edit_post'          => 'manage_options',
+				'read_post'          => 'manage_options',
+				'delete_post'        => 'manage_options',
+				'edit_posts'         => 'manage_options',
+				'edit_others_posts'  => 'manage_options',
+				'publish_posts'      => 'manage_options',
+				'read_private_posts' => 'manage_options',
+				'delete_posts'       => 'manage_options',
+				'create_posts'       => 'manage_options',
+			),
+		);
+
+		register_post_type( 'spectra-popup', $type_args );
+
+		register_post_meta(
+			'spectra-popup',
+			'spectra-popup-type',
+			array(
+				'single'        => true,
+				'type'          => 'string',
+				'default'       => 'unset',
+				'auth_callback' => '__return_true',
+				'show_in_rest'  => true,
+			)
+		);
+
+		register_post_meta(
+			'spectra-popup',
+			'spectra-popup-enabled',
+			array(
+				'single'        => true,
+				'type'          => 'boolean',
+				'default'       => false,
+				'auth_callback' => '__return_true',
+				'show_in_rest'  => true,
+			)
+		);
+
+		register_post_meta(
+			'spectra-popup',
+			'spectra-popup-repetition',
+			array(
+				'single'        => true,
+				'type'          => 'number',
+				'default'       => 1,
+				'auth_callback' => '__return_true',
+				'show_in_rest'  => true,
+			)
+		);
+
+		/**
+		 * Fires after the spectra-popup CPT and its post meta are registered.
+		 *
+		 * @since x.x.x
+		 */
+		do_action( 'register_spectra_blocks_popup_meta' );
+	}
+
 	public function popup_toggle_scripts() {
 		// DEV: Admin script enqueuing method - hook with admin_enqueue_scripts.
 
@@ -219,29 +340,29 @@ class PopupBuilder {
 		if ( 'spectra-popup' === $screen->post_type && 'edit.php' === $pagenow ) { // DEV: Only load on popup post type list page - modify conditions for other admin pages.
 			$extension = SCRIPT_DEBUG ? '' : '.min'; // DEV: Use minified files in production - check SCRIPT_DEBUG constant.
 			wp_register_script( // DEV: Register admin JavaScript file - update path/version as needed.
-				'uagb-popup-builder-admin-js', // DEV: Script handle - update if handle name changes.
-				SPECTRA_URL . 'assets/js/spectra-popup-builder-admin' . $extension . '.js', // DEV: Script file path - update if file location changes.
+				'spectra-blocks-popup-builder-admin-js', // DEV: Script handle - update if handle name changes.
+				SPECTRA_BLOCKS_URL . 'assets/js/spectra-popup-builder-admin' . $extension . '.js', // DEV: Script file path - update if file location changes.
 				array(), // DEV: Script dependencies - add jQuery, wp-util, etc. if needed.
-				SPECTRA_VER, // DEV: Script version for cache busting - update with plugin version.
+				SPECTRA_BLOCKS_VER, // DEV: Script version for cache busting - update with plugin version.
 				false // DEV: Load in header (false) or footer (true) - change to true for footer loading.
 			);
 			wp_register_style( // DEV: Register admin CSS file - update path/version as needed.
-				'uagb-popup-builder-admin-css', // DEV: Style handle - update if handle name changes.
-				SPECTRA_URL . 'assets/css/spectra-popup-builder-admin' . $extension . '.css', // DEV: CSS file path - update if file location changes.
+				'spectra-blocks-popup-builder-admin-css', // DEV: Style handle - update if handle name changes.
+				SPECTRA_BLOCKS_URL . 'assets/css/spectra-popup-builder-admin' . $extension . '.css', // DEV: CSS file path - update if file location changes.
 				array(), // DEV: Style dependencies - add other stylesheets if needed.
-				SPECTRA_VER // DEV: Style version for cache busting - update with plugin version.
+				SPECTRA_BLOCKS_VER // DEV: Style version for cache busting - update with plugin version.
 			);
 
 			wp_localize_script( // DEV: Pass PHP data to JavaScript - add new variables as needed.
-				'uagb-popup-builder-admin-js', // DEV: Script handle to attach data to.
-				'spectra_popup_builder_admin', // DEV: JavaScript object name - update if JS variable name changes.
+				'spectra-blocks-popup-builder-admin-js', // DEV: Script handle to attach data to.
+				'spectra_blocks_popup_builder_admin', // DEV: JavaScript object name - update if JS variable name changes.
 				array( // DEV: Data array passed to JavaScript - add new properties as needed.
-					'ajax_url'                       => admin_url( 'admin-ajax.php' ), // DEV: WordPress AJAX URL - standard WordPress AJAX endpoint.
-					'spectra_popup_builder_admin_nonce' => wp_create_nonce( 'spectra_popup_builder_admin_nonce' ), // DEV: Security nonce - update nonce name if changed.
+					'ajax_url'                                => admin_url( 'admin-ajax.php' ), // DEV: WordPress AJAX URL - standard WordPress AJAX endpoint.
+					'spectra_blocks_popup_builder_admin_nonce' => wp_create_nonce( 'spectra_blocks_popup_builder_admin_nonce' ), // DEV: Security nonce - update nonce name if changed.
 				)
 			);
-			wp_enqueue_script( 'uagb-popup-builder-admin-js' ); // DEV: Enqueue registered JavaScript - execute to load script.
-			wp_enqueue_style( 'uagb-popup-builder-admin-css' ); // DEV: Enqueue registered CSS - execute to load stylesheet.
+			wp_enqueue_script( 'spectra-blocks-popup-builder-admin-js' ); // DEV: Enqueue registered JavaScript - execute to load script.
+			wp_enqueue_style( 'spectra-blocks-popup-builder-admin-css' ); // DEV: Enqueue registered CSS - execute to load stylesheet.
 		}
 	} // DEV: End of popup_toggle_scripts method.
 } // DEV: End of PopupBuilder class - add new methods above this closing brace.

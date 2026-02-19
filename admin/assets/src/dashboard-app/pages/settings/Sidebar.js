@@ -30,11 +30,11 @@ const UagbSidebar = ( { navigation } ) => {
 		const activePath = query.get( 'path' );
 		const activeHash = query.get( 'settings' );
 		let activeSettingsTabFromHash = activeHash && 'settings' === activePath ? activeHash : 'global-settings';
-		if ( uag_react.spectra_pro_status && uag_react.spectra_pro_licensing && ! uag_react.license_status ) {
+		if ( spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && ! spectra_blocks_react.license_status ) {
 			activeSettingsTabFromHash = activeHash && 'settings' === activePath ? activeHash : 'license';
 			history.push( {
 				pathname: 'admin.php',
-				search: `?page=spectra&path=settings&settings=${ activeSettingsTabFromHash }`,
+				search: `?page=spectra-blocks&path=settings&settings=${ activeSettingsTabFromHash }`,
 			} );
 		}
 		dispatch( { type: 'UPDATE_SETTINGS_ACTIVE_NAVIGATION_TAB', payload: activeSettingsTabFromHash } );
@@ -42,7 +42,7 @@ const UagbSidebar = ( { navigation } ) => {
 
 	return (
 		<div className="h-full">
-			<Sidebar borderOn className="lg:w-64 uagb-settings-sidebar">
+			<Sidebar borderOn className="lg:w-64 spectra-blocks-settings-sidebar">
 				<Sidebar.Body>
 					<Sidebar.Item>
 						<Menu className="w-full p-0 gap-4" size="md">
@@ -52,7 +52,7 @@ const UagbSidebar = ( { navigation } ) => {
 										<Link
 											to={ {
 												pathname: 'admin.php',
-												search: `?page=spectra&path=settings&settings=${ item.slug }`,
+												search: `?page=spectra-blocks&path=settings&settings=${ item.slug }`,
 											} }
 											key={ item.name }
 											onClick={ () => {

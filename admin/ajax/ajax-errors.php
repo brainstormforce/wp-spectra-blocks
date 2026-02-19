@@ -2,7 +2,7 @@
 /**
  * Ajax Errors.
  *
- * @package uag
+ * @package spectra-blocks
  */
 
 namespace SpectraBlocksAdmin\Ajax;
@@ -22,7 +22,7 @@ class Ajax_Errors {
 	 *
 	 * @access private
 	 * @var object Class object.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	private static $instance;
 
@@ -31,14 +31,14 @@ class Ajax_Errors {
 	 *
 	 * @access private
 	 * @var array Errors strings.
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	private static $errors = array();
 
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -51,7 +51,7 @@ class Ajax_Errors {
 	/**
 	 * Constructor
 	 *
-	 * @since 0.0.1
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 
@@ -60,7 +60,7 @@ class Ajax_Errors {
 		 *
 		 * @uses add_action()
 		 * @uses self::initialize_errors()
-		 * @since 0.0.1
+		 * @since 2.17.0
 		 */
 		add_action(
 			'init',
@@ -73,15 +73,15 @@ class Ajax_Errors {
 	/**
 	 * Initializes error messages.
 	 *
-	 * @since 0.0.1
+	 * @since 2.17.0
 	 * @access public
 	 * @return void
 	 */
 	public function initialize_errors() {
 		self::$errors = array(
-			'permission' => __( 'Sorry, you are not allowed to do this operation.', 'spectra' ),
-			'nonce'      => __( 'Nonce validation failed', 'spectra' ),
-			'default'    => __( 'Sorry, something went wrong.', 'spectra' ),
+			'permission' => __( 'Sorry, you are not allowed to do this operation.', 'spectra-blocks' ),
+			'nonce'      => __( 'Nonce validation failed', 'spectra-blocks' ),
+			'default'    => __( 'Sorry, something went wrong.', 'spectra-blocks' ),
 		);
 	}
 

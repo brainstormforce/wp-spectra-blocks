@@ -1,0 +1,112 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/icons",
+  "version": "3.0.0",
+  "title": "Icons",
+  "category": "spectra-blocks",
+  "description": "Add multiple icons in a single block",
+  "textdomain": "spectra-blocks",
+  "keywords": [
+    "icon",
+    "icons",
+    "icon group",
+    "multiple icons",
+    "icon collection",
+    "social icons",
+    "feature icons",
+    "service icons",
+    "icon list",
+    "icon row",
+    "icon set",
+    "symbol",
+    "graphic icon",
+    "vector icon",
+    "vector icons",
+    "pictogram",
+    "pictograms",
+    "iconography",
+    "font icon",
+    "svg icon",
+    "social icon",
+    "add icon",
+    "create icon",
+    "insert icon",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "allowedBlocks": [
+    "spectra/icon"
+  ],
+  "supports": {
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "shadow": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "wrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center"
+      },
+      "allowSizingOnChildren": true
+    },
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "color": {
+      "gradients": true,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "wrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

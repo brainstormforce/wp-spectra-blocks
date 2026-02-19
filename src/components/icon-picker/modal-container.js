@@ -15,7 +15,7 @@ import HeaderContainer from './header-container';
 
 const ModalContainer = ( props ) => {
 	const { value, onChange, closeModal, defaultIcons, iconCategoryList } = props;
-	const defaultIconsWithKeys = { ...uagb_blocks_info.uagb_svg_icons };
+	const defaultIconsWithKeys = { ...spectra_blocks_info.spectra_blocks_svg_icons };
 	const columns = 8;
 
 	const setIconListWithChunks = ( icons ) => (
@@ -103,9 +103,9 @@ const ModalContainer = ( props ) => {
 	const renderIconList = () => {
 		if ( ! iconList.length ) {
 			return (
-				<div className="uagb-ip-icons icon-not-found">
-					<div className="uagb-icon-not-available">
-						<span>{ __( 'No Icons Found', 'ultimate-addons-for-gutenberg' ) }</span>
+				<div className="spectra-blocks-ip-icons icon-not-found">
+					<div className="spectra-blocks-icon-not-available">
+						<span>{ __( 'No Icons Found', 'spectra-blocks' ) }</span>
 					</div>
 				</div>
 			);
@@ -126,7 +126,7 @@ const ModalContainer = ( props ) => {
 			}
 
 			const iconClass = spectraClassNames( [
-				'uagb-icon-item',
+				'spectra-blocks-icon-item',
 				value === currentIcon && 'default',
 				currentIcon === insertIcon && 'selected',
 			] );
@@ -156,7 +156,7 @@ const ModalContainer = ( props ) => {
 		}
 		const heightAndWidth = iconContainerWidth / columns;
 		return (
-			<div className="uagb-ip-icons">
+			<div className="spectra-blocks-ip-icons">
 				<Grid
 					cellRenderer={ cellRenderer }
 					columnCount={ iconList[ 0 ].length }
@@ -175,13 +175,13 @@ const ModalContainer = ( props ) => {
 
 	// List of categories.
 	const listOfCategory = () => (
-		<div className="uagb-ip-categories-list">
+		<div className="spectra-blocks-ip-categories-list">
 			<div
 				key="all"
 				className={ 'all' === categoryListName ? 'selected' : null }
 				onClick={ () => clickToCategoryList( 'all' ) }
 			>
-				{ __( 'All Icons', 'ultimate-addons-for-gutenberg' ) }
+				{ __( 'All Icons', 'spectra-blocks' ) }
 			</div>
 			{ iconCategoryList.map( ( cateValue, key ) => (
 				<div
@@ -197,7 +197,7 @@ const ModalContainer = ( props ) => {
 				className={ 'no-category' === categoryListName ? 'selected' : null }
 				onClick={ () => clickToCategoryList( 'no-category' ) }
 			>
-				{ __( 'Other', 'ultimate-addons-for-gutenberg' ) }
+				{ __( 'Other', 'spectra-blocks' ) }
 			</div>
 		</div>
 	);
@@ -205,11 +205,11 @@ const ModalContainer = ( props ) => {
 	// Modal component.
 	return (
 		<Modal
-			className="uagb-ip-modal-wrapper"
+			className="spectra-blocks-ip-modal-wrapper"
 			onRequestClose={ closeModal }
-			overlayClassName="uagb-ip-modal-wrapper-overlay"
+			overlayClassName="spectra-blocks-ip-modal-wrapper-overlay"
 			shouldCloseOnClickOutside={ false }
-			closeButtonLabel={ __( 'Close', 'ultimate-addons-for-gutenberg' ) }
+			closeButtonLabel={ __( 'Close', 'spectra-blocks' ) }
 		>
 			{ /* Header  */ }
 			<HeaderContainer
@@ -222,16 +222,16 @@ const ModalContainer = ( props ) => {
 				inputElement={ inputElement }
 			/>
 			{ /* middle  */ }
-			<section className="uagb-ip-lr-container">
-				<div className="uagb-ip-left">{ listOfCategory() }</div>
-				<div className="uagb-ip-right">
-					<div className="uagb-ip-modal-container" ref={ iconContainerRef }>
+			<section className="spectra-blocks-ip-lr-container">
+				<div className="spectra-blocks-ip-left">{ listOfCategory() }</div>
+				<div className="spectra-blocks-ip-right">
+					<div className="spectra-blocks-ip-modal-container" ref={ iconContainerRef }>
 						{ renderIconList() }
 					</div>
 				</div>
 			</section>
 			{ /* Footer */ }
-			<section className="uagb-ip-footer">
+			<section className="spectra-blocks-ip-footer">
 				<button
 					className={ '' === insertIcon ? 'disable' : null }
 					onClick={
@@ -243,7 +243,7 @@ const ModalContainer = ( props ) => {
 							: null
 					}
 				>
-					{ __( 'Insert Icon', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Insert Icon', 'spectra-blocks' ) }
 				</button>
 			</section>
 		</Modal>

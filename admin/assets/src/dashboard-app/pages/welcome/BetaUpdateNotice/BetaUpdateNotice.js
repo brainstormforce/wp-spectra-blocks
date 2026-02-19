@@ -27,19 +27,19 @@ const BetaUpdateNotice = () => {
 	}, [] );
 
 	const checkForBetaUpdate = () => {
-		if ( ! uag_react?.check_beta_update_available_nonce || ! uag_react?.ajax_url ) {
+		if ( ! spectra_blocks_react?.check_beta_update_available_nonce || ! spectra_blocks_react?.ajax_url ) {
 			setIsLoading( false );
 			return;
 		}
 
 		const data = {
-			security: uag_react.check_beta_update_available_nonce,
+			security: spectra_blocks_react.check_beta_update_available_nonce,
 			value: 'yes',
 		};
 
 		getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_check_beta_update_available',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_check_beta_update_available',
 			data,
 		} )
 			.then( ( response ) => {
@@ -71,7 +71,7 @@ const BetaUpdateNotice = () => {
 			return;
 		}
 
-		if ( ! uag_react?.enable_beta_updates_nonce || ! uag_react?.update_beta_plugin_nonce || ! uag_react?.ajax_url ) {
+		if ( ! spectra_blocks_react?.enable_beta_updates_nonce || ! spectra_blocks_react?.update_beta_plugin_nonce || ! spectra_blocks_react?.ajax_url ) {
 			return;
 		}
 
@@ -79,13 +79,13 @@ const BetaUpdateNotice = () => {
 
 		// Step 1: Enable beta updates
 		const enableBetaData = {
-			security: uag_react.enable_beta_updates_nonce,
+			security: spectra_blocks_react.enable_beta_updates_nonce,
 			value: 'yes',
 		};
 
 		getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_enable_beta_updates',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_enable_beta_updates',
 			data: enableBetaData,
 		} )
 			.then( ( enableResponse ) => {
@@ -99,13 +99,13 @@ const BetaUpdateNotice = () => {
 
 					// Step 2: Update the plugin
 					const updateData = {
-						security: uag_react.update_beta_plugin_nonce,
+						security: spectra_blocks_react.update_beta_plugin_nonce,
 						value: 'yes',
 					};
 
 					getApiData( {
-						url: uag_react.ajax_url,
-						action: 'uag_update_beta_plugin',
+						url: spectra_blocks_react.ajax_url,
+						action: 'spectra_blocks_update_beta_plugin',
 						data: updateData,
 					} )
 						.then( ( updateResponse ) => {
@@ -117,7 +117,7 @@ const BetaUpdateNotice = () => {
 								// Show success message
 								dispatch( {
 									type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-									payload: updateResponse.data.messsage || __( 'Plugin updated successfully!', 'ultimate-addons-for-gutenberg' ),
+									payload: updateResponse.data.messsage || __( 'Plugin updated successfully!', 'spectra-blocks' ),
 								} );
 
 							// Close modal and reset state
@@ -128,7 +128,7 @@ const BetaUpdateNotice = () => {
 									window.location.reload();
 								}, 1000 );
 							} else {
-								const errorMessage = updateResponse?.data?.messsage || __( 'Unable to update. Please try again.', 'ultimate-addons-for-gutenberg' );
+								const errorMessage = updateResponse?.data?.messsage || __( 'Unable to update. Please try again.', 'spectra-blocks' );
 								dispatch( {
 									type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 									payload: errorMessage,
@@ -141,7 +141,7 @@ const BetaUpdateNotice = () => {
 							if ( isMountedRef.current ) {
 								dispatch( {
 									type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-									payload: __( 'Unable to update. Please try again.', 'ultimate-addons-for-gutenberg' ),
+									payload: __( 'Unable to update. Please try again.', 'spectra-blocks' ),
 								} );
 								setIsUpdating( false );
 								setShowConfirmModal( false );
@@ -150,7 +150,7 @@ const BetaUpdateNotice = () => {
 				} else {
 					dispatch( {
 						type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-						payload: __( 'Unable to enable beta updates. Please try again.', 'ultimate-addons-for-gutenberg' ),
+						payload: __( 'Unable to enable beta updates. Please try again.', 'spectra-blocks' ),
 					} );
 							setShowConfirmModal( false );
 					setIsUpdating( false );
@@ -160,7 +160,7 @@ const BetaUpdateNotice = () => {
 				if ( isMountedRef.current ) {
 					dispatch( {
 						type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-						payload: __( 'Unable to enable beta updates. Please try again.', 'ultimate-addons-for-gutenberg' ),
+						payload: __( 'Unable to enable beta updates. Please try again.', 'spectra-blocks' ),
 					} );
 					setIsUpdating( false );
 					setShowConfirmModal( false );
@@ -189,9 +189,9 @@ const BetaUpdateNotice = () => {
 	const majorVersion = getMajorVersion();
 	const versionTitle = majorVersion
 		? `Spectra v${ majorVersion } Beta is Here!`
-		: __( 'Spectra Beta is Here!', 'ultimate-addons-for-gutenberg' );
+		: __( 'Spectra Beta is Here!', 'spectra-blocks' );
 
-	const currentVersion = betaUpdateInfo.current_version || uag_react?.plugin_ver || '';
+	const currentVersion = betaUpdateInfo.current_version || spectra_blocks_react?.plugin_ver || '';
 
 	return (
 		<Container className="bg-white p-6 shadow-sm rounded-lg border border-solid border-border-subtle relative">
@@ -200,11 +200,11 @@ const BetaUpdateNotice = () => {
 					<div className="text-brand-primary-600 flex space-x-1">
 						<TestTubeDiagonal size={ 14 } />
 						<div className="font-semibold text-xs">
-							{ __( 'New Beta Version', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'New Beta Version', 'spectra-blocks' ) }
 						</div>
 					</div>
 					<div className="text-sm text-text-tertiary whitespace-nowrap">
-						{ __( 'Current Version: ', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Current Version: ', 'spectra-blocks' ) }
 						<span className="font-semibold text-text-primary">{ currentVersion }</span>
 					</div>
 				</div>
@@ -212,7 +212,7 @@ const BetaUpdateNotice = () => {
 				<div>
 					<Title className="text-text-primary mb-1" tag="h3" title={ versionTitle } />
 					<p className="text-sm text-text-secondary m-0">
-						{ __( 'Be among the first to explore what\'s next and share your thoughts to help us make it even better!', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Be among the first to explore what\'s next and share your thoughts to help us make it even better!', 'spectra-blocks' ) }
 					</p>
 				</div>
 
@@ -222,21 +222,21 @@ const BetaUpdateNotice = () => {
 						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
 					</svg>
 					<p className="text-sm text-text-primary m-0">
-						<span className="font-semibold">{ __( 'Important:', 'ultimate-addons-for-gutenberg' ) }</span>{ ' ' }
-						{ __( 'Spectra v3 is still in Beta and should not be used on live sites yet.', 'ultimate-addons-for-gutenberg' ) }
+						<span className="font-semibold">{ __( 'Important:', 'spectra-blocks' ) }</span>{ ' ' }
+						{ __( 'Spectra v3 is still in Beta and should not be used on live sites yet.', 'spectra-blocks' ) }
 					</p>
 				</div>
 
 				<div className="flex gap-3 mt-2">
 					<Button
 						variant="primary"
-						className="uagb-remove-ring"
+						className="spectra-blocks-remove-ring"
 						onClick={ handleTryNowClick }
 						disabled={ isUpdating }
 					>
 						{ isUpdating
-							? __( 'Updating…', 'ultimate-addons-for-gutenberg' )
-							: __( 'Try It Now', 'ultimate-addons-for-gutenberg' ) }
+							? __( 'Updating…', 'spectra-blocks' )
+							: __( 'Try It Now', 'spectra-blocks' ) }
 					</Button>
 				</div>
 			</Container.Item>
@@ -279,31 +279,31 @@ const BetaUpdateNotice = () => {
 								<div className="mb-2 p-2">
 									<div className="flex w-full justify-between items-center mb-2">
 										<div className="text-base font-semibold text-text-primary">
-											{ __( 'Update to Beta Version', 'ultimate-addons-for-gutenberg' ) }
+											{ __( 'Update to Beta Version', 'spectra-blocks' ) }
 										</div>
 										<X size={ 16 } onClick={ handleCancelUpdate } className="cursor-pointer" />
 									</div>
 
 									<div className="text-sm text-text-secondary font-normal w-full text-left">
-										{ __( 'This is a beta version and not recommended for live sites. It is recommended to test on a staging or test environment only.', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'This is a beta version and not recommended for live sites. It is recommended to test on a staging or test environment only.', 'spectra-blocks' ) }
 									</div>
 								</div>
 
 								<div className="p-2">
 									<div className="flex justify-end items-center w-full gap-3">
 										<Button
-											className="uagb-outline-button"
+											className="spectra-blocks-outline-button"
 											size="md"
 											tag="button"
 											type="button"
 											variant="outline"
 											onClick={ handleCancelUpdate }
 										>
-											{ __( 'Cancel', 'ultimate-addons-for-gutenberg' ) }
+											{ __( 'Cancel', 'spectra-blocks' ) }
 										</Button>
 
 										<Button
-											className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover"
+											className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover"
 											size="md"
 											tag="button"
 											type="button"
@@ -333,7 +333,7 @@ const BetaUpdateNotice = () => {
 													></path>
 												</svg>
 											) }
-											{ isUpdating ? __( 'Updating…', 'ultimate-addons-for-gutenberg' ) : __( 'Update', 'ultimate-addons-for-gutenberg' ) }
+											{ isUpdating ? __( 'Updating…', 'spectra-blocks' ) : __( 'Update', 'spectra-blocks' ) }
 										</Button>
 									</div>
 								</div>

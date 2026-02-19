@@ -34,7 +34,7 @@ class Utils {
 		'surecart',
 		'sureforms',
 		'suretriggers',
-		'spectra',
+		'ultimate-addons-for-gutenberg',
 		'woo-cart-abandonment-recovery',
 		'variation-swatches-woo',
 		'zipwp',

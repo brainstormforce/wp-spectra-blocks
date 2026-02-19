@@ -1,168 +1,28 @@
-const rawDefaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const path = require( 'path' );
 const glob = require( 'glob' );
-const fs = require( 'fs' );
 
-// Handle both array and single object formats from @wordpress/scripts.
-const defaultConfigs = Array.isArray( rawDefaultConfig )
-	? rawDefaultConfig
-	: [ rawDefaultConfig ];
-
-// Resolve swiper paths for webpack 4 (which doesn't support package.json "exports" field).
-const swiperPath = path.resolve( __dirname, 'node_modules/swiper' );
-
-// Define common aliases used in Spectra 3.
+// Define common aliases used in Spectra Blocks.
 const commonAliases = {
-	'@spectra-blocks': path.resolve( __dirname, 'src/blocks/' ),
+	'@spectra': path.resolve( __dirname, 'src/blocks/' ),
 	'@spectra-components': path.resolve( __dirname, 'src/components/' ),
 	'@spectra-helpers': path.resolve( __dirname, 'src/helpers/' ),
 	'@spectra-hooks': path.resolve( __dirname, 'src/hooks/' ),
 	'@spectra-assets': path.resolve( __dirname, 'assets/' ),
-
-	// Swiper v8 aliases — webpack 4 can't resolve "exports" in package.json.
-	'swiper/css$': path.resolve( swiperPath, 'swiper.min.css' ),
-	'swiper/css/navigation$': path.resolve(
-		swiperPath,
-		'modules/navigation/navigation.min.css'
-	),
-	'swiper/css/pagination$': path.resolve(
-		swiperPath,
-		'modules/pagination/pagination.min.css'
-	),
-	'swiper/modules$': path.resolve( swiperPath, 'swiper.esm.js' ),
+	'@spectra-config': path.resolve( __dirname, 'src/helpers/plugin-config.js' ),
 };
 
-/**
- * Custom webpack plugin to copy block.json, PHP files, and frontend styles
- * from src/blocks to build/blocks.
- *
- * Webpack 4 with @wordpress/scripts splits block CSS into two locations:
- *   - build/blocks/<name>/index.css      (editor styles)
- *   - build/style-blocks/<name>/index.css (frontend styles)
- *
- * WordPress block.json expects frontend styles at build/blocks/<name>/style-index.css,
- * so this plugin copies them into the expected location after each build.
- */
-class CopyBlockFilesPlugin {
-	apply( compiler ) {
-		compiler.hooks.afterEmit.tapAsync(
-			'CopyBlockFilesPlugin',
-			( compilation, callback ) => {
-				const srcBlocksDir = path.resolve( __dirname, 'src/blocks' );
-				const buildBlocksDir = path.resolve(
-					__dirname,
-					'build/blocks'
-				);
-				const styleBlocksDir = path.resolve(
-					__dirname,
-					'build/style-blocks'
-				);
-
-				const blockDirs = glob.sync( './src/blocks/*/', {
-					absolute: false,
-				} );
-
-				blockDirs.forEach( ( blockDirRel ) => {
-					const blockName = path.basename( blockDirRel );
-					const srcDir = path.resolve( srcBlocksDir, blockName );
-					const destDir = path.resolve( buildBlocksDir, blockName );
-
-					// Ensure destination directory exists.
-					if ( ! fs.existsSync( destDir ) ) {
-						fs.mkdirSync( destDir, { recursive: true } );
-					}
-
-					// Copy block.json and PHP files.
-					const filesToCopy = glob.sync(
-						path.join( srcDir, '*.{json,php}' )
-					);
-					filesToCopy.forEach( ( srcFile ) => {
-						const fileName = path.basename( srcFile );
-						const destFile = path.resolve( destDir, fileName );
-						fs.copyFileSync( srcFile, destFile );
-					} );
-
-					// Copy frontend style: style-blocks/<name>/index.css → blocks/<name>/style-index.css
-					// This bridges the webpack 4 output naming with the block.json "style" field convention.
-					const styleSource = path.resolve(
-						styleBlocksDir,
-						blockName,
-						'index.css'
-					);
-					if ( fs.existsSync( styleSource ) ) {
-						const styleDest = path.resolve(
-							destDir,
-							'style-index.css'
-						);
-						fs.copyFileSync( styleSource, styleDest );
-					}
-				} );
-
-				callback();
-			}
-		);
-	}
-}
-
-const configs = [
+module.exports = [
 	{
-		...defaultConfigs[ 0 ],
+		...defaultConfig[ 0 ],
 		resolve: {
-			...( defaultConfigs[ 0 ].resolve || {} ),
 			alias: {
-				...( defaultConfigs[ 0 ].resolve?.alias || {} ),
+				...defaultConfig[ 0 ].resolve.alias,
 				...commonAliases,
 			},
 		},
-		plugins: [
-			...( defaultConfigs[ 0 ].plugins || [] ),
-			new CopyBlockFilesPlugin(),
-		],
 		entry: () => {
-			const entries = {};
-
-			// Auto-discover block entries from block.json files.
-			const blockJsonFiles = glob.sync(
-				'./src/blocks/*/block.json'
-			);
-
-			blockJsonFiles.forEach( ( blockJsonPath ) => {
-				const blockDir = path.dirname( blockJsonPath );
-				const blockName = path.basename( blockDir );
-				const blockJson = JSON.parse(
-					fs.readFileSync( blockJsonPath, 'utf8' )
-				);
-
-				// Add editor script entry (index.js).
-				if (
-					blockJson.editorScript &&
-					blockJson.editorScript.startsWith( 'file:' )
-				) {
-					const scriptFile = blockJson.editorScript.replace(
-						'file:',
-						''
-					);
-					const scriptPath = path.resolve(
-						__dirname,
-						blockDir,
-						scriptFile
-					);
-					if ( fs.existsSync( scriptPath ) ) {
-						entries[ `blocks/${ blockName }/index` ] =
-							scriptPath;
-					}
-				}
-
-				// Add view script entry (view.js) if it exists.
-				const viewPath = path.resolve(
-					__dirname,
-					blockDir,
-					'view.js'
-				);
-				if ( fs.existsSync( viewPath ) ) {
-					entries[ `blocks/${ blockName }/view` ] = viewPath;
-				}
-			} );
+			const entries = defaultConfig[ 0 ].entry();
 
 			// Get all style files.
 			const styleFiles = glob.sync( './src/styles/**/*.scss' );
@@ -174,16 +34,11 @@ const configs = [
 
 			// For each file, just get the directory and file name, and add it to the entries.
 			styleFiles.forEach( ( file ) => {
-				const name = file
-					.replace( './src/styles/', '' )
-					.replace( '.scss', '' );
-				entries[ `styles/${ name }` ] = path.resolve(
-					__dirname,
-					file
-				);
+				const name = file.replace( './src/styles/', '' ).replace( '.scss', '' );
+				entries[ `styles/${ name }` ] = path.resolve( __dirname, file );
 			} );
 
-			// Add extension files.
+			// Add extension files
 			extensionFiles.forEach( ( file ) => {
 				const name = file
 					.replace( './src/extensions/', '' )
@@ -198,20 +53,13 @@ const configs = [
 			return entries;
 		},
 	},
-];
-
-// Add second config if available (multi-compiler setup).
-if ( defaultConfigs[ 1 ] ) {
-	configs.push( {
-		...defaultConfigs[ 1 ],
+	{
+		...defaultConfig[ 1 ],
 		resolve: {
-			...( defaultConfigs[ 1 ].resolve || {} ),
 			alias: {
-				...( defaultConfigs[ 1 ].resolve?.alias || {} ),
+				...defaultConfig[ 1 ].resolve.alias,
 				...commonAliases,
 			},
 		},
-	} );
-}
-
-module.exports = configs;
+	},
+];

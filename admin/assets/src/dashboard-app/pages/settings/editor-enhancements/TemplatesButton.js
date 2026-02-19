@@ -21,8 +21,8 @@ const TemplatesButton = () => {
 
 		dispatch( { type: 'UPDATE_TEMPLATES_BUTTON', payload: assetStatus } );
 
-		const action = 'uag_enable_templates_button',
-			nonce = uag_react.enable_templates_button_nonce;
+		const action = 'spectra_blocks_enable_templates_button',
+			nonce = spectra_blocks_react.enable_templates_button_nonce;
 
 		// Create an object with the security and value properties
 		const data = {
@@ -31,7 +31,7 @@ const TemplatesButton = () => {
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
+			url: spectra_blocks_react.ajax_url,
 			action,
 			data,
 		} );
@@ -44,17 +44,17 @@ const TemplatesButton = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Enable Templates Button', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Enable Templates Button', 'spectra-blocks' ) }
 				settingText={ __(
 					'Spectra comes with a stunning library of page templates and block patterns. This library is accessible with the Templates button while editing the page or post. Manage the visibility of that button with this option.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ enableTemplatesStatus }
 					onChange={ updateEnableTemplatesStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 		</>

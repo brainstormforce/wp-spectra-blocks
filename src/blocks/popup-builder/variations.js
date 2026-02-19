@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 export const variations = [
 	{
 		name: 'banner',
-		title: __( 'Info Bar', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Info Bar', 'spectra-blocks' ),
 		icon: (
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 				<path
@@ -447,7 +447,7 @@ export const variations = [
 												{
 													text: __(
 														'Days',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													),
 													lock: {
 														move: true,
@@ -556,7 +556,7 @@ export const variations = [
 												{
 													text: __(
 														'Hours',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													),
 													lock: {
 														move: true,
@@ -665,7 +665,7 @@ export const variations = [
 												{
 													text: __(
 														'Minutes',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													),
 													lock: {
 														move: true,
@@ -774,7 +774,7 @@ export const variations = [
 												{
 													text: __(
 														'Seconds',
-														'ultimate-addons-for-gutenberg'
+														'spectra-blocks'
 													),
 													lock: {
 														move: true,
@@ -899,7 +899,7 @@ export const variations = [
 									tagName: 'h3',
 									text: __(
 										'Engage your visitors!',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 									isRootBlock: false,
 									responsiveControls: {
@@ -1010,7 +1010,7 @@ export const variations = [
 										{
 											text: __(
 												'Call To Action',
-												'ultimate-addons-for-gutenberg'
+												'spectra-blocks'
 											),
 											style: {
 												border: {
@@ -1082,7 +1082,7 @@ export const variations = [
 	},
 	{
 		name: 'popup',
-		title: __( 'Popup', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Popup', 'spectra-blocks' ),
 		icon: (
 			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 				<path d="M21 9.5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H15.25" stroke="currentcolor" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -1203,7 +1203,7 @@ export const variations = [
 							tagName: 'h2',
 							text: __(
 								'Engage Your Visitors!',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							),
 							isRootBlock: false,
 							style: {
@@ -1225,7 +1225,7 @@ export const variations = [
 							tagName: 'p',
 							text: __(
 								'Create engaging popups and info bars to capture your visitors\' attention and drive conversions.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							),
 							isRootBlock: false,
 							style: {
@@ -1246,7 +1246,7 @@ export const variations = [
 						{
 							text: __(
 								'Call To Action',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							),
 							style: {
 								border: {

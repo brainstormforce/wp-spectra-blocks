@@ -1,42 +1,44 @@
 <?php
+/**
+ * NPS Survey library loader for Spectra Blocks.
+ *
+ * @package SpectraBlocks
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Spectra_Nps_Survey' ) ) :
+if ( ! class_exists( 'Spectra_Blocks_Nps_Survey' ) ) :
 
 	/**
-	 * Admin
+	 * Loads the latest NPS Survey library available in the environment.
+	 *
+	 * @since 1.0.0
 	 */
-	class Spectra_Nps_Survey {
+	class Spectra_Blocks_Nps_Survey {
+
 		/**
-		 * Instance
+		 * Singleton instance.
 		 *
-		 * @since 0.0.1
-		 * @var (Object) Spectra_Nps_Survey
+		 * @var Spectra_Blocks_Nps_Survey|null
 		 */
 		private static $instance = null;
 
 		/**
-		 * Get Instance
+		 * Get singleton instance.
 		 *
-		 * @since 0.0.1
-		 *
-		 * @return object Class object.
+		 * @return Spectra_Blocks_Nps_Survey
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
 				self::$instance = new self();
 			}
-
 			return self::$instance;
 		}
 
 		/**
 		 * Constructor.
-		 *
-		 * @since 0.0.1
 		 */
 		private function __construct() {
 			$this->version_check();
@@ -44,53 +46,48 @@ if ( ! class_exists( 'Spectra_Nps_Survey' ) ) :
 		}
 
 		/**
-		 * Version Check
+		 * Check for the latest version of the NPS Survey library.
 		 *
 		 * @return void
 		 */
 		public function version_check() {
+			$file = realpath( __DIR__ . '/nps-survey/version.json' );
 
-			$file = realpath( dirname( __DIR__ ) . '/lib/nps-survey/version.json' );
+			if ( ! is_file( $file ) ) {
+				return;
+			}
 
-			// Is file exist?
-			if ( is_file( $file ) ) {
-				
-                $file_data = json_decode( file_get_contents( $file ), true );
-				
-				global $nps_survey_version, $nps_survey_init;
-				
-                $path = realpath( dirname( __DIR__ ) . '/lib/nps-survey/nps-survey.php' );
-				
-                $version = isset( $file_data['nps-survey'] ) ? $file_data['nps-survey'] : 0;
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$file_data = json_decode( file_get_contents( $file ), true );
 
-				if ( null === $nps_survey_version ) {
-					$nps_survey_version = '1.0.0';
-				}
+			global $nps_survey_version, $nps_survey_init;
 
-				// Compare versions.
-				if ( version_compare( $version, $nps_survey_version, '>=' ) ) {
-					$nps_survey_version = $version;
-					$nps_survey_init = $path;
-				}
+			$path    = realpath( __DIR__ . '/nps-survey/nps-survey.php' );
+			$version = isset( $file_data['nps-survey'] ) ? $file_data['nps-survey'] : 0;
+
+			if ( null === $nps_survey_version ) {
+				$nps_survey_version = '1.0.0';
+			}
+
+			if ( version_compare( $version, $nps_survey_version, '>=' ) ) {
+				$nps_survey_version = $version;
+				$nps_survey_init    = $path;
 			}
 		}
 
 		/**
-		 * Load latest plugin
+		 * Load the latest NPS Survey library.
 		 *
 		 * @return void
 		 */
 		public function load() {
-			global $nps_survey_version, $nps_survey_init;
-			if ( is_file( realpath( $nps_survey_init ) ) ) {
+			global $nps_survey_init;
+			if ( ! empty( $nps_survey_init ) && is_file( realpath( $nps_survey_init ) ) ) {
 				include_once realpath( $nps_survey_init );
 			}
 		}
 	}
 
-	/**
-	 * Kicking this off by calling 'get_instance()' method
-	 */
-	Spectra_Nps_Survey::get_instance();
+	Spectra_Blocks_Nps_Survey::get_instance();
 
 endif;

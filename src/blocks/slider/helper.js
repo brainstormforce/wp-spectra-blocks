@@ -207,12 +207,12 @@ export const SliderChildBlockControls = memo( ( props ) => {
 			<ToolbarGroup>
 				<ToolbarButton
 					icon={ helperIcons.slider.add }
-					label={ __( 'Add a new slide', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Add a new slide', 'spectra-blocks' ) }
 					onClick={ handleInsertSlide }
 				/>
 				<ToolbarButton
 					icon={ helperIcons.slider.remove( !isDisabled ) }
-					label={ __( 'Remove this slide', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Remove this slide', 'spectra-blocks' ) }
 					onClick={ handleRemoveSlide }
 					disabled={ isDisabled }
 				/>
@@ -267,7 +267,7 @@ export const SliderRootToolbar = memo( ( props ) => {
 					icon={ helperIcons.slider.add }
 					label={ __(
 						'Add Slide',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					onClick={ addSlide }
 				/>
@@ -275,7 +275,7 @@ export const SliderRootToolbar = memo( ( props ) => {
 					icon={ helperIcons.slider.remove( !isDisabled ) }
 					label={ __(
 						'Remove Slide',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					onClick={ removeSlide }
 					disabled={ isDisabled }

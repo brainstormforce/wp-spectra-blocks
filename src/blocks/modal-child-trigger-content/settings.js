@@ -40,7 +40,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'General', 'spectra-blocks' ) }
 				resetAll={ () => {} }
 				panelId={ clientId }
 			>
@@ -51,7 +51,7 @@ const BlockSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => !! tagName && defaultTagName !== tagName }
-					label={ __( 'Tag', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Tag', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { tagName: defaultTagName } ) }
 					resetAllFilter={ () => ( {
 						tagName: defaultTagName,
@@ -62,12 +62,12 @@ const BlockSettings = memo( ( props ) => {
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
 						__next40pxDefaultSize
-						label={ __( 'Tag', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Tag', 'spectra-blocks' ) }
 						value={ tagName || defaultTagName }
 						onChange={ ( value ) => setAttributes( { tagName: value } ) }
 						isBlock
 						isAdaptiveWidth
-						aria-label={ __( 'Select HTML tag', 'ultimate-addons-for-gutenberg' ) }
+						aria-label={ __( 'Select HTML tag', 'spectra-blocks' ) }
 					>
 						<ToggleGroupControlOption value="h1" label="H1" />
 						<ToggleGroupControlOption value="h2" label="H2" />
@@ -109,14 +109,14 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: textColorHover,
-					label: __( 'Text Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Text Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { textColorHover: value } ),
 					resetAllFilter: () => setAttributes( { textColorHover: undefined } ),
 				},
 				{
 					colorValue: backgroundColorHover,
 					gradientValue: backgroundGradientHover,
-					label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Background Hover', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { backgroundColorHover: value } ),
 					onGradientChange: ( value ) => setAttributes( { backgroundGradientHover: value } ),
 					resetAllFilter: () => setAttributes( {
@@ -162,16 +162,16 @@ const hasDropCapDisabled = align === ( isRTL() ? 'left' : 'right' ) || align ===
 let dropCapHelpText;
 switch ( tagName ) {
 	case 'span':
-		dropCapHelpText = __( 'Not available for span tag.', 'ultimate-addons-for-gutenberg' );
+		dropCapHelpText = __( 'Not available for span tag.', 'spectra-blocks' );
 		break;
 	case hasDropCapDisabled:
-		dropCapHelpText = __( 'Not available for aligned text.', 'ultimate-addons-for-gutenberg' );
+		dropCapHelpText = __( 'Not available for aligned text.', 'spectra-blocks' );
 		break;
 	case dropCap:
-		dropCapHelpText = __( 'Showing large initial letter.', 'ultimate-addons-for-gutenberg' );
+		dropCapHelpText = __( 'Showing large initial letter.', 'spectra-blocks' );
 		break;
 	default:
-		dropCapHelpText = __( 'Show a large initial letter.', 'ultimate-addons-for-gutenberg' );
+		dropCapHelpText = __( 'Show a large initial letter.', 'spectra-blocks' );
 }
 
 return (
@@ -180,8 +180,8 @@ return (
 			<InspectorControls group="typography">
 				<ToolsPanelItem
 					hasValue={ () => !! dropCap }
-					label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
-					aria-label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Drop cap', 'spectra-blocks' ) }
+					aria-label={ __( 'Drop cap', 'spectra-blocks' ) }
 					isShownByDefault={ isDropCapControlEnabledByDefault }
 					onDeselect={ () => setAttributes( { dropCap: undefined } ) }
 					resetAllFilter={ () => ( { dropCap: undefined } ) }
@@ -189,12 +189,12 @@ return (
 				>
 					<ToggleControl
 						__nextHasNoMarginBottom
-						label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Drop cap', 'spectra-blocks' ) }
 						checked={ !! dropCap }
 						onChange={ () => setAttributes( { dropCap: ! dropCap } ) }
 						help={ dropCapHelpText }
 						disabled={ hasDropCapDisabled }
-						aria-label={ __( 'Drop cap', 'ultimate-addons-for-gutenberg' ) }
+						aria-label={ __( 'Drop cap', 'spectra-blocks' ) }
 					/>
 				</ToolsPanelItem>
 			</InspectorControls>

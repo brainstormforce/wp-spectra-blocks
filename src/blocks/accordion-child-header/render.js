@@ -104,7 +104,7 @@ const Render = ( props ) => {
 			'spectra/accordion-child-header-content',
 			{
 				tagName: 'span',
-				placeholder: __( 'Accordion Title', 'ultimate-addons-for-gutenberg' ),
+				placeholder: __( 'Accordion Title', 'spectra-blocks' ),
 			},
 		],
 	], [ templateFlipForRTL, templateFlipForRTLSecondary ] );

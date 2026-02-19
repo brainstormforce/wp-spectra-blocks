@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/modal-child-icon",
+  "version": "3.0.0",
+  "title": "Icon",
+  "category": "spectra-blocks-inner",
+  "description": "Add an icon.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/modal-child-trigger"
+  ],
+  "supports": {
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "align": true,
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": [
+    "file:./style-index.css",
+    "spectra-components-icon-picker"
+  ],
+  "usesContext": [
+    "spectra/modal/modalTrigger"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "icon": {
+      "type": [
+        "string",
+        "object"
+      ]
+    },
+    "flipForRTL": {
+      "type": "boolean",
+      "default": false
+    },
+    "size": {
+      "type": "string"
+    },
+    "rotation": {
+      "type": "number"
+    },
+    "accessibilityMode": {
+      "type": "string"
+    },
+    "accessibilityLabel": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

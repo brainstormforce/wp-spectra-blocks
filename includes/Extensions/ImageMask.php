@@ -7,12 +7,15 @@
 
 namespace Spectra\Extensions;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 
 /**
  * ImageMask class.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ImageMask {
 
@@ -21,7 +24,7 @@ class ImageMask {
 	/**
 	 * Allowed mask shapes.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array
 	 */
 	private $allowed_shapes = array(
@@ -39,7 +42,7 @@ class ImageMask {
 	/**
 	 * Initialize the class
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @return void
 	 */
 	public function init() {
@@ -49,7 +52,7 @@ class ImageMask {
 	/**
 	 * Add mask styles to image block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_content  Block content for the image block.
 	 * @param array  $block          Block for the image block.
@@ -109,7 +112,7 @@ class ImageMask {
 	/**
 	 * Get mask URL based on shape.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $shape        Mask shape from the image-block attributes.
 	 * @param array  $custom_mask  Custom mask from the image-block attributes.
@@ -127,13 +130,13 @@ class ImageMask {
 		}
 
 		// Generate path for predefined mask.
-		$mask_path = SPECTRA_DIR . 'assets/masks/' . $shape . '.svg';
+		$mask_path = SPECTRA_BLOCKS_DIR . 'assets/masks/' . $shape . '.svg';
 
 		// Check if mask file exists.
 		if ( file_exists( $mask_path ) ) {
 			// Use wp_make_link_relative for proper relative URL generation.
 			// This handles subdirectory installs and is the WordPress standard way.
-			$mask_url = SPECTRA_URL . 'assets/masks/' . $shape . '.svg';
+			$mask_url = SPECTRA_BLOCKS_URL . 'assets/masks/' . $shape . '.svg';
 			return wp_make_link_relative( $mask_url );
 		}
 		return '';
@@ -142,7 +145,7 @@ class ImageMask {
 	/**
 	 * Get position value from coordinates.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array|null $position Position object from attributes.
 	 * @return string CSS position value.

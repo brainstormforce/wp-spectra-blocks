@@ -34,13 +34,13 @@ const FSEDeleteFontConfirmPopup = ( props ) => {
 		};
 
 		const data = {
-			security: uag_react.fse_font_globally_delete_nonce,
+			security: spectra_blocks_react.fse_font_globally_delete_nonce,
 			value: JSON.stringify( fontToDelete ),
 		};
 
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_fse_font_globally_delete',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_fse_font_globally_delete',
 			data,
 		} );
 
@@ -90,7 +90,7 @@ const FSEDeleteFontConfirmPopup = ( props ) => {
 							<div className="mb-2 p-2">
 								<div className="flex w-full justify-between items-center mb-2">
 									<div className="text-base font-semibold text-text-primary">
-										{ __( 'Remove Font Family', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Remove Font Family', 'spectra-blocks' ) }
 									</div>
 
 									<X size={ 16 } onClick={ onCancelClick } className="cursor-pointer" />
@@ -102,7 +102,7 @@ const FSEDeleteFontConfirmPopup = ( props ) => {
 											// translators: %1$s: Strong Tag,  %2$s: selected font family of Spectra, %3$s Strong Closing Tag.
 											__(
 												'Are you sure you want to remove %1$s%2$s%3$s font family?',
-												'ultimate-addons-for-gutenberg'
+												'spectra-blocks'
 											),
 											'<strong>',
 											fontFamily,
@@ -115,7 +115,7 @@ const FSEDeleteFontConfirmPopup = ( props ) => {
 							<div className="p-2">
 								<div className="flex justify-end items-center w-full gap-3">
 									<Button
-										className="uagb-outline-button"
+										className="spectra-blocks-outline-button"
 										size="md"
 										tag="button"
 										type="button"
@@ -123,18 +123,18 @@ const FSEDeleteFontConfirmPopup = ( props ) => {
 										onClick={ onCancelClick }
 										ref={ cancelButtonRef }
 									>
-										{ __( 'Cancel', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Cancel', 'spectra-blocks' ) }
 									</Button>
 
 									<Button
-										className="bg-button-primary text-text-on-color uagb-remove-ring hover:bg-button-primary-hover"
+										className="bg-button-primary text-text-on-color spectra-blocks-remove-ring hover:bg-button-primary-hover"
 										size="md"
 										tag="button"
 										type="button"
 										variant="primary"
 										onClick={ onRemoveClick }
 									>
-										{ __( 'Remove', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Remove', 'spectra-blocks' ) }
 									</Button>
 								</div>
 							</div>

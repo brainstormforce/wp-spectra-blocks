@@ -7,7 +7,7 @@ function TextSkeleton( props ) {
 
 	return (
 		<div
-			className="uag-skeleton uag-skeleton--text uag-skeleton--wave"
+			className="spectra-blocks-skeleton spectra-blocks-skeleton--text spectra-blocks-skeleton--wave"
 			style={ {
 				fontSize,
 				width,

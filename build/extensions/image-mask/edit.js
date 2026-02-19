@@ -1,0 +1,1 @@
+(()=>{"use strict";var o={790(o){o.exports=window.ReactJSXRuntime}},r={};window.wp.i18n,window.wp.blockEditor,window.wp.components,function t(n){var w=r[n];if(void 0!==w)return w.exports;var i=r[n]={exports:{}};return o[n](i,i.exports,t),i.exports}(790),window})();

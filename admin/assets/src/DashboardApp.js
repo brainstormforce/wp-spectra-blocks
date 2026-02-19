@@ -14,7 +14,7 @@ if ( ! currentState.initialStateSetFlag ) {
 	setInitialState( globalDataStore );
 }
 
-const container = document.getElementById( 'uag-dashboard-app' );
+const container = document.getElementById( 'spectra-blocks-dashboard-app' );
 const root = createRoot( container );
 root.render(
 	<Provider store={globalDataStore}>

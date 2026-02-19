@@ -1,8 +1,8 @@
 <?php
 /**
- * Uag Admin Helper.
+ * Spectra Blocks Admin Helper.
  *
- * @package Uag
+ * @package Spectra_Blocks
  */
 
 namespace SpectraBlocksAdmin\Inc;
@@ -40,7 +40,7 @@ class Admin_Helper {
 	 */
 	public static function get_common_settings() {
 
-		$uag_versions = self::get_rollback_versions_options();
+		$spectra_versions = self::get_rollback_versions_options();
 
 		$theme_data          = \WP_Theme_JSON_Resolver::get_theme_data();
 		$theme_settings      = $theme_data->get_settings();
@@ -54,33 +54,33 @@ class Admin_Helper {
 			$zip_ai_modules = Zip_Ai_Module::get_all_modules();
 		}
 
-		$inherit_from_theme = false !== get_option( 'uag_btn_inherit_from_theme_fallback' ) ? 'disabled' : \Spectra_Admin_Helper::get_admin_settings_option( 'uag_btn_inherit_from_theme', 'disabled' );
+		$inherit_from_theme = false !== get_option( 'spectra_blocks_btn_inherit_from_theme_fallback' ) ? 'disabled' : \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' );
 
 		$options = array(
-			'rollback_to_previous_version'       => isset( $uag_versions[0]['value'] ) ? $uag_versions[0]['value'] : '',
-			'enable_beta_updates'                => \Spectra_Admin_Helper::get_admin_settings_option( 'spectra_beta', 'no' ),
-			'enable_file_generation'             => \Spectra_Admin_Helper::get_admin_settings_option( '_uagb_allow_file_generation', 'enabled' ),
+			'rollback_to_previous_version'       => isset( $spectra_versions[0]['value'] ) ? $spectra_versions[0]['value'] : '',
+			'enable_beta_updates'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
+			'enable_file_generation'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
 			'blocks_activation_and_deactivation' => self::get_blocks(),
-			'enable_templates_button'            => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_templates_button', 'yes' ),
-			'enable_on_page_css_button'          => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_on_page_css_button', 'yes' ),
-			'enable_block_condition'             => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_condition', 'disabled' ),
-			'enable_masonry_gallery'             => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_masonry_gallery', 'enabled' ),
-			'enable_quick_action_sidebar'        => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_quick_action_sidebar', 'enabled' ),
-			'enable_block_responsive'            => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_block_responsive', 'enabled' ),
-			'enable_dynamic_content'             => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_dynamic_content', 'enabled' ),
-			'enable_animations_extension'        => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_animations_extension', 'enabled' ),
-			'enable_gbs_extension'               => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_enable_gbs_extension', 'enabled' ),
-			'select_font_globally'               => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_select_font_globally', array() ),
-			'load_select_font_globally'          => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_select_font_globally', 'disabled' ),
-			'load_fse_font_globally'             => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_fse_font_globally', 'disabled' ),
-			'load_gfonts_locally'                => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_load_gfonts_locally', 'disabled' ),
-			'collapse_panels'                    => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_collapse_panels', 'enabled' ),
-			'copy_paste'                         => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_copy_paste', 'enabled' ),
-			'preload_local_fonts'                => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_preload_local_fonts', 'disabled' ),
-			'btn_inherit_from_theme'             => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_btn_inherit_from_theme', 'disabled' ),
+			'enable_templates_button'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
+			'enable_on_page_css_button'          => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
+			'enable_block_condition'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
+			'enable_masonry_gallery'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_masonry_gallery', 'enabled' ),
+			'enable_quick_action_sidebar'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_quick_action_sidebar', 'enabled' ),
+			'enable_block_responsive'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
+			'enable_dynamic_content'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_dynamic_content', 'enabled' ),
+			'enable_animations_extension'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
+			'enable_gbs_extension'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
+			'select_font_globally'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
+			'load_select_font_globally'          => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
+			'load_fse_font_globally'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_fse_font_globally', 'disabled' ),
+			'load_gfonts_locally'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
+			'collapse_panels'                    => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_collapse_panels', 'enabled' ),
+			'copy_paste'                         => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
+			'preload_local_fonts'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
+			'btn_inherit_from_theme'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
 			'btn_inherit_from_theme_fallback'    => $inherit_from_theme,
-			'social'                             => \Spectra_Admin_Helper::get_admin_settings_option(
-				'uag_social',
+			'social'                             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option(
+				'spectra_blocks_social',
 				array(
 					'socialRegister'    => false,
 					'googleClientId'    => '',
@@ -88,23 +88,23 @@ class Admin_Helper {
 					'facebookAppSecret' => '',
 				)
 			),
-			'dynamic_content_mode'               => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_dynamic_content_mode', 'popup' ),
-			'preload_local_fonts'                => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_preload_local_fonts', 'disabled' ),
-			'visibility_mode'                    => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_visibility_mode', 'disabled' ),
+			'dynamic_content_mode'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_dynamic_content_mode', 'popup' ),
+			'preload_local_fonts'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
+			'visibility_mode'                    => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
 			'visibility_page'                    => self::get_visibility_page(),
-			'uag_previous_versions'              => $uag_versions,
-			'spectra_old_user_less_than_2'          => get_option( 'uagb-old-user-less-than-2' ),
-			'spectra_old_user_less_than_3'          => \Spectra_Helper::is_old_user_less_than_v3(),
-			'recaptcha_site_key_v2'              => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_site_key_v2', '' ),
-			'recaptcha_secret_key_v2'            => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_secret_key_v2', '' ),
-			'recaptcha_site_key_v3'              => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_site_key_v3', '' ),
-			'recaptcha_secret_key_v3'            => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_recaptcha_secret_key_v3', '' ),
-			'insta_linked_accounts'              => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_insta_linked_accounts', array() ),
-			'spectra_global_fse_fonts'           => \Spectra_Admin_Helper::get_admin_settings_option( 'spectra_global_fse_fonts', array() ),
+			'spectra_blocks_previous_versions'              => $spectra_versions,
+			'spectra_blocks_old_user_less_than_2'          => get_option( 'spectra-blocks-old-user-less-than-2' ),
+			'spectra_blocks_old_user_less_than_3'          => \Spectra_Blocks_Helper::is_old_user_less_than_v3(),
+			'recaptcha_site_key_v2'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v2', '' ),
+			'recaptcha_secret_key_v2'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v2', '' ),
+			'recaptcha_site_key_v3'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v3', '' ),
+			'recaptcha_secret_key_v3'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v3', '' ),
+			'insta_linked_accounts'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_insta_linked_accounts', array() ),
+			'spectra_global_fse_fonts'           => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_global_fse_fonts', array() ),
 			'theme_fonts'                        => $theme_font_families,
 			'zip_ai_modules'                     => $zip_ai_modules,
-			'enable_bsf_analytics_option'        => \Spectra_Admin_Helper::get_admin_settings_option( 'spectra_analytics_optin', 'no' ),
-			'uag_disable_css_cache'              => \Spectra_Admin_Helper::get_admin_settings_option( 'uag_disable_css_cache', 'disabled' ),
+			'enable_bsf_analytics_option'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_analytics_optin', 'no' ),
+			'spectra_blocks_disable_css_cache'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_disable_css_cache', 'disabled' ),
 		);
 
 		return $options;
@@ -113,11 +113,11 @@ class Admin_Helper {
 	/**
 	 * Get Visibility Page
 	 *
-	 * @since 0.0.1
+	 * @since 2.8.0
 	 * @return boolean|array
 	 */
 	public static function get_visibility_page() {
-		$page_id = \Spectra_Admin_Helper::get_admin_settings_option( 'uag_visibility_page', '' );
+		$page_id = \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_visibility_page', '' );
 
 		if ( $page_id ) {
 			return array(
@@ -133,18 +133,18 @@ class Admin_Helper {
 	 */
 	public static function get_blocks() {
 		// Get all blocks.
-		$list_blocks    = \Spectra_Helper::$block_list;
+		$list_blocks    = \Spectra_Blocks_Helper::$block_list;
 		$default_blocks = array();
 
 		// Set all extension to enabled.
 		foreach ( $list_blocks as $slug => $value ) {
-			$_slug                    = str_replace( 'uagb/', '', $slug );
+			$_slug                    = str_replace( 'spectra/', '', $slug );
 			$default_blocks[ $_slug ] = $_slug;
 		}
 
 		// Escape attrs.
 		$default_blocks = array_map( 'esc_attr', $default_blocks );
-		$saved_blocks   = \Spectra_Admin_Helper::get_admin_settings_option( '_uagb_blocks', array() );
+		$saved_blocks   = \Spectra_Blocks_Admin_Helper::get_admin_settings_option( '_spectra_blocks_blocks', array() );
 
 		return wp_parse_args( $saved_blocks, $default_blocks );
 	}
@@ -155,9 +155,9 @@ class Admin_Helper {
 	public static function get_options() {
 
 		$general_settings          = self::get_common_settings();
-		$shareable_common_settings = \Spectra_Admin_Helper::get_admin_settings_shareable_data();
+		$shareable_common_settings = \Spectra_Blocks_Admin_Helper::get_admin_settings_shareable_data();
 		$options                   = array_merge( $general_settings, $shareable_common_settings );
-		$options                   = apply_filters( 'uag_global_data_options', $options );
+		$options                   = apply_filters( 'spectra_blocks_global_data_options', $options );
 
 		return $options;
 	}
@@ -165,13 +165,13 @@ class Admin_Helper {
 	/**
 	 * Get Rollback versions.
 	 *
-	 * @since 0.0.1
+	 * @since 1.23.0
 	 * @return array
 	 * @access public
 	 */
 	public static function get_rollback_versions_options() {
 
-		$rollback_versions = \Spectra_Admin_Helper::get_instance()->get_rollback_versions();
+		$rollback_versions = \Spectra_Blocks_Admin_Helper::get_instance()->get_rollback_versions();
 
 		$rollback_versions_options = array();
 
@@ -194,7 +194,7 @@ class Admin_Helper {
 	 * @param string $prev Previous Version.
 	 * @param string $next Next Version.
 	 *
-	 * @since 0.0.1
+	 * @since 1.23.0
 	 * @return array
 	 * @access public
 	 */

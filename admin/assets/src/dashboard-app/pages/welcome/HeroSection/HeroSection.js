@@ -28,7 +28,7 @@ const HeroSection = () => {
 	}, [] );
 
 	const onCreateNewPageClick = () => {
-		window.open( uag_react.wp_pages_url, '_blank' );
+		window.open( spectra_blocks_react.wp_pages_url, '_blank' );
 	};
 
 	const onReadFullGuideClick = () => {
@@ -49,36 +49,36 @@ const HeroSection = () => {
 			gap="2xl"
 		>
 			<Container.Item className="xl:col-span-6 flex flex-col gap-4 p-2" colSpan={{ lg: 12, md: 12, sm: 12 }}>
-				<Text className="sr-only">{__( 'Welcome Banner', 'ultimate-addons-for-gutenberg' )}</Text>
+				<Text className="sr-only">{__( 'Welcome Banner', 'spectra-blocks' )}</Text>
 				<div className="flex flex-col gap-1">
 					<Text size={18} color="secondary">
 						{sprintf(
-						/* translators: %s: user's display name */ __( 'Hello %s', 'ultimate-addons-for-gutenberg' ), uagb_user_data.displayName )}
+						/* translators: %s: user's display name */ __( 'Hello %s', 'spectra-blocks' ), spectra_blocks_user_data.displayName )}
 					</Text>
 					<div className="flex gap-3">
 						<Title
 							className="text-text-primary"
 							size="lg"
 							tag="h2"
-							title={__( 'Welcome To Spectra', 'ultimate-addons-for-gutenberg' )}
+							title={__( 'Welcome To Spectra', 'spectra-blocks' )}
 						/>
 						<Badge
 							className="uppercase -translate-y-1/2 py-0 px-1 text-text-secondary bg-background-secondary"
-							label={'Activated' === uag_react.pro_plugin_status ? __( 'Pro Version', 'ultimate-addons-for-gutenberg' ) : __( 'Free Version', 'ultimate-addons-for-gutenberg' )}
+							label={'Activated' === spectra_blocks_react.pro_plugin_status ? __( 'Pro Version', 'spectra-blocks' ) : __( 'Free Version', 'spectra-blocks' )}
 							size="xs"
 							variant="neutral"
 							type="rounded"
 						/>
 					</div>
 					<Text className="py-3" size={14} color="secondary">
-						{ 'Activated' === uag_react.pro_plugin_status
+						{ 'Activated' === spectra_blocks_react.pro_plugin_status
 							? __(
 									"Thanks for choosing Spectra Pro! You're now part of an exclusive community of website builders. Enjoy exploring the new features and creating something amazing. Let's take your site to the next level together.",
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 							  )
 							: __(
 									'We designed Spectra to be intuitive but we do recommend learning how it works by checking our comprehensive documentation and watching the video below. Enjoy your time with Spectra!',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 							  ) }
 					</Text>
 				</div>
@@ -89,18 +89,18 @@ const HeroSection = () => {
 						iconPosition="left"
 						variant="primary"
 						onClick={ onCreateNewPageClick }
-						className="uagb-remove-ring"
+						className="spectra-blocks-remove-ring"
 					>
-						{ __( 'Create New Page', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Create New Page', 'spectra-blocks' ) }
 					</Button>
 					<Button
 						icon={ <ExternalLink /> }
 						iconPosition="right"
 						variant="ghost"
 						onClick={ onReadFullGuideClick }
-						className="uagb-remove-ring"
+						className="spectra-blocks-remove-ring"
 					>
-						{ __( 'Read Full Guide', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Read Full Guide', 'spectra-blocks' ) }
 					</Button>
 				</div>
 			</Container.Item>
@@ -109,12 +109,12 @@ const HeroSection = () => {
 				colSpan={{ lg: 12, md: 12, sm: 12 }}
 				className="xl:col-span-6 relative xl:ml-4 p-2"
 				// onClick={ () =>
-				// 	setPopupVideo( 'Activated' === uag_react.pro_plugin_status ? proVideoUrl : freeVideoUrl )
+				// 	setPopupVideo( 'Activated' === spectra_blocks_react.pro_plugin_status ? proVideoUrl : freeVideoUrl )
 				// } // Disable direct popup on thumbnail click untill we have proper v3 video.
 				onClick={ onWatchVideoClick }
 			>
 				<img
-					src={ 'Activated' === uag_react.pro_plugin_status ? proVideoThumbnailUrl : freeVideoThumbnailUrl }
+					src={ 'Activated' === spectra_blocks_react.pro_plugin_status ? proVideoThumbnailUrl : freeVideoThumbnailUrl }
 					className="w-full h-full object-cover rounded-lg aspect-video cursor-pointer"
 					alt="Video Thumbnail"
 				/>

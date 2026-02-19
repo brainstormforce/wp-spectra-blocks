@@ -18,18 +18,18 @@ const ContainerGlobalElementsGap = () => {
 
 		// Create an object with the security and value properties
         const data = {
-            security: uag_react.container_global_elements_gap_nonce,
+            security: spectra_blocks_react.container_global_elements_gap_nonce,
             value,
         };
 		// Call the getApiData function with the specified parameters
         const getApiFetchData = getApiData( {
-            url: uag_react.ajax_url,
-            action: 'uag_container_global_elements_gap',
+            url: spectra_blocks_react.ajax_url,
+            action: 'spectra_blocks_container_global_elements_gap',
             data,
         } );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
         getApiFetchData.then( () => {
-            dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ) } );
+            dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: __( 'Successfully saved!', 'spectra-blocks' ) } );
         } );
 	};
 
@@ -40,8 +40,8 @@ const ContainerGlobalElementsGap = () => {
     return (
         <>
 			<SettingsItem
-				title={ __( 'Container Elements Gap', 'ultimate-addons-for-gutenberg' ) }
-				settingText={ __( 'This setting will apply default Row & Column Gaps in the Container Block.', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Container Elements Gap', 'spectra-blocks' ) }
+				settingText={ __( 'This setting will apply default Row & Column Gaps in the Container Block.', 'spectra-blocks' ) }
 			>
 				<Input
 					defaultValue={ 1140 }

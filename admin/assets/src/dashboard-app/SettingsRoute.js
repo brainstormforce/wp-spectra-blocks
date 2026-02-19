@@ -15,12 +15,12 @@ function SettingsRoute() {
 	const path = query.get( 'path' );
 	const currentEvent = query.get( 'event' );
 
-	let routePage = <p>{ __( 'Default route fallback', 'ultimate-addons-for-gutenberg' ) }</p>;
+	let routePage = <p>{ __( 'Default route fallback', 'spectra-blocks' ) }</p>;
 
-	if ( uag_react.home_slug === page ) {
+	if ( spectra_blocks_react.home_slug === page ) {
 
 		// Get the Admin Sidebar Element from Wordpress.
-		const adminMenu = document.getElementById( 'toplevel_page_spectra-blocks' )?.querySelector( '.wp-submenu' );
+		const adminMenu = document.getElementById( 'toplevel_page_spectra' )?.querySelector( '.wp-submenu' );
 
 		// Remove the 'current' class from the old active elements.
 		const oldCurrent = adminMenu?.querySelectorAll( '.current' );
@@ -45,7 +45,7 @@ function SettingsRoute() {
 					break;
 				case 'ai-features':
 					// Only render the AI Features page if Zip AI data was successfully localized.
-					routePage = uag_react?.zip_ai_admin_nonce ? <AiFeatures /> : <Welcome/>;
+					routePage = spectra_blocks_react?.zip_ai_admin_nonce ? <AiFeatures /> : <Welcome/>;
 					break;
 				case 'free-vs-pro':
 					routePage = <FreeVPro />;

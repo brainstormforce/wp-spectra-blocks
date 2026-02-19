@@ -21,8 +21,8 @@ const OnPageCSS = () => {
 
 		dispatch( { type: 'UPDATE_ON_PAGE_CSS_BUTTON', payload: assetStatus } );
 
-		const action = 'uag_enable_on_page_css_button',
-			nonce = uag_react.enable_on_page_css_button_nonce;
+		const action = 'spectra_blocks_enable_on_page_css_button',
+			nonce = spectra_blocks_react.enable_on_page_css_button_nonce;
 
 		// Create an object with the security and value properties
 		const data = {
@@ -31,7 +31,7 @@ const OnPageCSS = () => {
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
+			url: spectra_blocks_react.ajax_url,
 			action,
 			data,
 		} );
@@ -44,17 +44,17 @@ const OnPageCSS = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Custom CSS', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Custom CSS', 'spectra-blocks' ) }
 				settingText={ __(
 					'Enable the "Custom CSS" option if you want to add your own CSS code on post/page to customize the page as per your expectations.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ enableOnPageCSSStatus }
 					onChange={ updateEnableOnPageCSSStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

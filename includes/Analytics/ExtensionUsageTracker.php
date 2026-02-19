@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * This class tracks usage of Spectra 3 extensions and integrates with the existing
  * BSF Analytics system from the parent Spectra 2.x.x implementation.
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ExtensionUsageTracker {
 
@@ -26,7 +26,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Extension analytics data storage key.
 	 */
-	const ANALYTICS_KEY = 'spectra_extension_analytics';
+	const ANALYTICS_KEY = 'spectra_blocks_extension_analytics';
 
 	/**
 	 * Cache key for available extensions.
@@ -36,7 +36,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Initialize the extension analytics tracker.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function init() {
 		// Hook into WordPress save_post to track extension usage.
@@ -46,7 +46,7 @@ class ExtensionUsageTracker {
 		add_filter( 'bsf_core_stats', array( $this, 'add_extension_stats' ), 25 );
 		
 		// Hook into settings changes to handle cleanup.
-		add_action( 'update_option_spectra_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
+		add_action( 'update_option_spectra_blocks_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
 		
 		// Initialize usage data if not exists.
 		$this->init_extension_data();
@@ -55,7 +55,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Initialize extension usage data storage.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	private function init_extension_data() {
 		if ( false === get_option( self::ANALYTICS_KEY, false ) ) {
@@ -76,7 +76,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Track extension usage when a post is saved.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int     $post_id Post ID being saved.
 	 * @param WP_Post $post    Post object being saved.
@@ -110,7 +110,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Extract extension usage from parsed blocks array.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $blocks Parsed blocks array.
 	 * @return array Array of extensions used.
@@ -119,7 +119,7 @@ class ExtensionUsageTracker {
 		$extensions_used = array();
 
 		foreach ( $blocks as $block ) {
-			// Only check Spectra blocks.
+			// Only check Spectra Blocks blocks.
 			if ( strpos( $block['blockName'], 'spectra/' ) !== 0 ) {
 				if ( ! empty( $block['innerBlocks'] ) ) {
 					$inner_extensions = $this->extract_extension_usage( $block['innerBlocks'] );
@@ -147,7 +147,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Detect extension usage based on block attributes.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attributes Block attributes.
 	 * @return array Array of extensions detected.
@@ -188,7 +188,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Update extension usage data for a specific post.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int   $post_id Post ID.
 	 * @param array $extensions Array of extension names used in the post.
@@ -213,7 +213,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Update overall extension usage statistics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $extensions Array of extension names used.
 	 */
@@ -262,7 +262,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get total number of posts containing Spectra 3 extensions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return int Total post count.
 	 */
@@ -274,7 +274,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get extension usage statistics for analytics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Extension usage statistics.
 	 */
@@ -311,7 +311,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get top N most used extensions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param int $limit Number of top extensions to return.
 	 * @return array Top used extensions with usage counts.
@@ -327,7 +327,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get all available Spectra 3 extensions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Array of available extension names.
 	 */
@@ -339,7 +339,7 @@ class ExtensionUsageTracker {
 		}
 
 		// Dynamically discover extensions from src/extensions directory.
-		$extensions_dir       = SPECTRA_DIR . 'src/extensions/';
+		$extensions_dir       = SPECTRA_BLOCKS_DIR . 'src/extensions/';
 		$available_extensions = array();
 
 		if ( is_dir( $extensions_dir ) && is_readable( $extensions_dir ) ) {
@@ -373,7 +373,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get cached extension analytics data to avoid expensive recalculations.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Comprehensive extension analytics data.
 	 */
@@ -410,7 +410,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Determine extension engagement level based on usage.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $extension_stats Extension statistics data.
 	 * @return string Extension engagement level.
@@ -437,7 +437,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Add extension statistics to BSF Analytics data.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $stats Existing BSF Analytics stats.
 	 * @return array Enhanced stats with extension data.
@@ -484,7 +484,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get extension-specific analytics data for all extensions.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Extension-specific analytics data.
 	 */
@@ -519,7 +519,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get usage data for a specific extension.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $extension_name Extension name.
 	 * @return array Usage data for the specific extension.
@@ -542,7 +542,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get animations extension-specific analytics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Animations-specific analytics data.
 	 */
@@ -585,7 +585,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Get image-mask extension-specific analytics.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return array Image-mask-specific analytics data.
 	 */
@@ -628,7 +628,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Reset all extension analytics data (for testing/debugging).
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	public function reset_extension_analytics_data() {
 		delete_option( self::ANALYTICS_KEY );
@@ -638,7 +638,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Handle analytics toggle - clean up data when disabled.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $old_value Previous option value.
 	 * @param string $new_value New option value.
@@ -654,7 +654,7 @@ class ExtensionUsageTracker {
 	/**
 	 * Clear extension analytics cache when data is updated.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 */
 	private function clear_extension_cache() {
 		wp_cache_delete( 'spectra_3_extension_analytics', 'spectra' );
@@ -664,18 +664,12 @@ class ExtensionUsageTracker {
 	/**
 	 * Check if analytics tracking is enabled by user opt-in.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @return bool True if analytics is enabled, false otherwise.
 	 */
 	private function is_analytics_enabled() {
-		// Check if Spectra_Admin_Helper class exists (parent plugin).
-		if ( ! class_exists( '\Spectra_Admin_Helper' ) ) {
-			return false;
-		}
-
-		// Get the analytics opt-in setting from parent Spectra 2.x.x.
-		$optin_status = \Spectra_Admin_Helper::get_admin_settings_option( 'spectra_analytics_optin', 'no' );
+		$optin_status = get_option( 'spectra_blocks_analytics_optin', 'no' );
 
 		return 'yes' === $optin_status;
 	}

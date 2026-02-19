@@ -11,7 +11,7 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 	const [ selectedTitle, setSelectedTitle ] = useState( 'Spectra Pro' );
 
 	const { title, Image, header, description, features } = modalData[ selectedTitle ];
-	const contryCode = 'US'; // uag_admin_react.contry_code; // For now we're keeping US pricing for all user. TODO Uncomment the code to keep dynamic pricing.
+	const contryCode = 'US'; // spectra_blocks_admin_react.contry_code; // For now we're keeping US pricing for all user. TODO Uncomment the code to keep dynamic pricing.
 	
 	// Static product data
 	const staticProductData = {
@@ -43,7 +43,7 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 
 	useEffect( () => {
 		const checkDropdown = () => {
-			const modalContainers = document.querySelectorAll( '.uagb-upsell-modal, [data-floating-ui-focusable]' );
+			const modalContainers = document.querySelectorAll( '.spectra-blocks-upsell-modal, [data-floating-ui-focusable]' );
 
 			if ( modalContainers.length === 0 ) {
 				return;
@@ -128,7 +128,7 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 	return (
 		<div
 			onClick={ () => setIsModalOpen( false ) }
-			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-999999 uagb-upsell-modal"
+			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-999999 spectra-blocks-upsell-modal"
 		>
 			<div
 				className={ 'bg-white rounded-lg p-5 sm:w-[500px] w-[400px]' }
@@ -220,12 +220,12 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 								</div>
 
 								<div className="flex items-center justify-between sm:gap-0 gap-[88px]">
-									<Button variant="ghost" size="md" className="uagb-remove-ring">
+									<Button variant="ghost" size="md" className="spectra-blocks-remove-ring">
 											{'$' + productsList[selectedProduct]?.price?.[contryCode]?.discounted }
 										{ productsList[ selectedProduct ]?.variant?.includes( 'Annual Subscription' ) ||
 										productsList[ selectedProduct ]?.product?.includes( 'Annual Subscription' ) ? (
 											<span className="text-text-tertiary">
-												{ __( '/year', 'ultimate-addons-for-gutenberg' ) }
+												{ __( '/year', 'spectra-blocks' ) }
 											</span>
 										) : null }
 									</Button>
@@ -238,7 +238,7 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 										variant="primary"
 										onClick={ handleBuyNowClick }
 									>
-										{ __( 'Buy Now', 'ultimate-addons-for-gutenberg' ) }
+										{ __( 'Buy Now', 'spectra-blocks' ) }
 									</Button>
 								</div>
 							</div>
@@ -246,12 +246,12 @@ const ProModal = ( { modalData, setIsModalOpen } ) => {
 
 						<div className="w-full flex justify-end md:pr-[10px] pr-2">
 							<a
-								href={uag_admin_react.spectra_website?.upsellModalAdmin}
+								href={spectra_blocks_admin_react.spectra_website?.upsellModalAdmin}
 								target="_blank"
 								rel="noreferrer"
 								className="text-xxs text-brand-primary-600"
 							>
-								{ __( 'View plans', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'View plans', 'spectra-blocks' ) }
 							</a>
 						</div>
 					</>

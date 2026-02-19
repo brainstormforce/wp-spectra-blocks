@@ -1,53 +1,44 @@
 <?php
 /**
- * Zip AI initialization
+ * Zip AI library loader for Spectra Blocks.
  *
- * @since 0.0.1
- * @package zip-ai
+ * @package SpectraBlocks
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'Spectra_Zip_AI' ) ) :
+if ( ! class_exists( 'Spectra_Blocks_Zip_AI' ) ) :
 
 	/**
-	 * This class connect zip ai library with spectra
+	 * Loads the latest Zip AI library available in the environment.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
-	class Spectra_Zip_AI {
+	class Spectra_Blocks_Zip_AI {
 
 		/**
-		 * Instance
+		 * Singleton instance.
 		 *
-		 * @since 0.0.1
-		 * @var (Object) Spectra_Zip_AI
+		 * @var Spectra_Blocks_Zip_AI|null
 		 */
 		private static $instance = null;
 
 		/**
-		 * Get Instance
+		 * Get singleton instance.
 		 *
-		 * @since 0.0.1
-		 *
-		 * @return object Class object.
+		 * @return Spectra_Blocks_Zip_AI
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
 				self::$instance = new self();
 			}
-
 			return self::$instance;
 		}
 
 		/**
 		 * Constructor.
-		 *
-		 * @since 0.0.1
-		 *
-		 * @return void
 		 */
 		private function __construct() {
 			$this->version_check();
@@ -55,41 +46,37 @@ if ( ! class_exists( 'Spectra_Zip_AI' ) ) :
 		}
 
 		/**
-		 * Checks for latest version of zip-ai library available in environment.
-		 *
-		 * @since 0.0.1
+		 * Check for the latest version of the Zip AI library.
 		 *
 		 * @return void
 		 */
 		public function version_check() {
+			$file = realpath( __DIR__ . '/zip-ai/version.json' );
 
-			$file = realpath( dirname( __FILE__ ) . '/zip-ai/version.json' );
+			if ( ! is_file( $file ) ) {
+				return;
+			}
 
-			// Is file exist?
-			if ( is_file( $file ) ) {
-				// @codingStandardsIgnoreStart
-				$file_data = json_decode( file_get_contents( $file ), true );
-				// @codingStandardsIgnoreEnd
-				global $zip_ai_version, $zip_ai_path;
-				$path    = realpath( dirname( __FILE__ ) . '/zip-ai/zip-ai.php' );
-				$version = isset( $file_data['zip-ai'] ) ? $file_data['zip-ai'] : 0;
+			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+			$file_data = json_decode( file_get_contents( $file ), true );
 
-				if ( null === $zip_ai_version ) {
-					$zip_ai_version = '1.0.0';
-				}
+			global $zip_ai_version, $zip_ai_path;
 
-				// Compare versions.
-				if ( version_compare( $version, $zip_ai_version, '>' ) ) {
-					$zip_ai_version = $version;
-					$zip_ai_path    = $path;
-				}
+			$path    = realpath( __DIR__ . '/zip-ai/zip-ai.php' );
+			$version = isset( $file_data['zip-ai'] ) ? $file_data['zip-ai'] : 0;
+
+			if ( null === $zip_ai_version ) {
+				$zip_ai_version = '1.0.0';
+			}
+
+			if ( version_compare( $version, $zip_ai_version, '>' ) ) {
+				$zip_ai_version = $version;
+				$zip_ai_path    = $path;
 			}
 		}
 
 		/**
-		 * Load latest zip-ai library
-		 *
-		 * @since 0.0.1
+		 * Load the latest Zip AI library.
 		 *
 		 * @return void
 		 */
@@ -99,12 +86,8 @@ if ( ! class_exists( 'Spectra_Zip_AI' ) ) :
 				include_once realpath( $zip_ai_path );
 			}
 		}
-
 	}
 
-	/**
-	 * Kicking this off by calling 'get_instance()' method
-	 */
-	Spectra_Zip_AI::get_instance();
+	Spectra_Blocks_Zip_AI::get_instance();
 
 endif;

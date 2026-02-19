@@ -1,0 +1,154 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/list",
+  "version": "3.0.0",
+  "title": "List",
+  "category": "spectra-blocks",
+  "description": "Create ordered and unordered lists with custom styling.",
+  "textdomain": "spectra-blocks",
+  "keywords": [
+    "list",
+    "bullet list",
+    "numbered list",
+    "checklist",
+    "unordered list",
+    "ordered list",
+    "item list",
+    "feature list",
+    "list items",
+    "bulleted content",
+    "enumerated list",
+    "add list",
+    "create list",
+    "insert list",
+    "advanced list",
+    "icon list",
+    "table of contents",
+    "toc",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "allowedBlocks": [
+    "spectra/list-child-item",
+    "spectra/list"
+  ],
+  "providesContext": {
+    "spectra/list/listType": "listType",
+    "spectra/list/listStyle": "listStyle",
+    "spectra/list/textAlignment": "textAlignment",
+    "spectra/list/textColor": "textColor",
+    "spectra/list/textColorHover": "textColorHover",
+    "spectra/list/iconSize": "iconSize",
+    "spectra/list/iconName": "icon",
+    "spectra/list/flipForRTL": "flipForRTL",
+    "spectra/list/rotation": "rotation",
+    "spectra/list/start": "start",
+    "spectra/list/reversed": "reversed",
+    "spectra/list/alignment": "alignment",
+    "spectra/list/totalItems": "totalItems"
+  },
+  "supports": {
+    "anchor": true,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "html": false,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "stretch"
+      },
+      "allowSizingOnChildren": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "attributes": {
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "listType": {
+      "type": "string",
+      "default": "unordered"
+    },
+    "alignment": {
+      "type": "string",
+      "default": "vertical"
+    },
+    "reversed": {
+      "type": "boolean"
+    },
+    "listStyle": {
+      "type": "string",
+      "default": "decimal"
+    },
+    "start": {
+      "type": "number"
+    },
+    "iconSize": {
+      "type": "string"
+    },
+    "icon": {
+      "type": [
+        "string",
+        "object"
+      ],
+      "default": "circle"
+    },
+    "flipForRTL": {
+      "type": "boolean",
+      "default": false
+    },
+    "rotation": {
+      "type": "number"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

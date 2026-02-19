@@ -7,13 +7,16 @@
 
 namespace Spectra\Extensions;
 
+defined( 'ABSPATH' ) || exit;
+
+
 use Spectra\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
  * Z-Index class.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ZIndex {
 
@@ -24,7 +27,7 @@ class ZIndex {
 	 *
 	 * Hooks into render_block to add z-index styles to blocks.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * 
 	 * @return void
 	 */
@@ -38,7 +41,7 @@ class ZIndex {
 	 * Ensures the block has the 'spectraZIndex' attribute defined and injects
 	 * the z-index styles into the block's wrapper tag using WP_HTML_Tag_Processor.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_content The block content.
 	 * @param array  $block         The block instance.
@@ -66,7 +69,7 @@ class ZIndex {
 	/**
 	 * Determine whether the block should be processed for z-index.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
 	 * @return bool
@@ -80,7 +83,7 @@ class ZIndex {
 	/**
 	 * Retrieve sanitized z-index value.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attrs Block attributes.
 	 * @return int|null Z-index value or null if not valid.
@@ -103,7 +106,7 @@ class ZIndex {
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject z-index styles into the first tag.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $content Block content.
 	 * @param int    $z_index Z-index value.
@@ -143,7 +146,7 @@ class ZIndex {
 	 *
 	 * Uses allowed prefixes to determine if a block should receive z-index styles.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.
 	 * @return bool
@@ -151,12 +154,6 @@ class ZIndex {
 	private function is_allowed_block( $block_name ) {
 		// Excluded blocks that shouldn't have z-index.
 		$excluded_blocks = array(
-			// Legacy Blocks.
-			'uagb/cf7-styler',
-			'uagb/wp-search', 
-			'uagb/gf-styler',
-			'uagb/columns',
-			'uagb/section',
 			'spectra/popup-builder',
 			// Child blocks that inherit from parent.
 			'spectra/accordion-child-details',
@@ -192,6 +189,6 @@ class ZIndex {
 		}
 
 		// Allow blocks with specific prefixes.
-		return preg_match( '/^(spectra\/|spectra-pro\/|core\/)/', $block_name );   
+		return preg_match( '/^(spectra-blocks\/|spectra-pro\/|core\/)/', $block_name );
 	}
 }

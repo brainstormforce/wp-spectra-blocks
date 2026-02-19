@@ -13,7 +13,7 @@ const ProBlocks = () => {
 
 	const blocks = [
 		{
-			title: __( 'Loop Builder', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Loop Builder', 'spectra-blocks' ),
 			slug: 'loop-builder',
 			icon: 'loop',
 			is_pro: true,
@@ -21,7 +21,7 @@ const ProBlocks = () => {
 			link: 'loop-builder-v3'
 		},
 		{
-			title: __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Dynamic Content', 'spectra-blocks' ),
 			slug: 'dynamic-content',
 			icon: 'dynamic-content',
 			is_pro: true,
@@ -29,7 +29,7 @@ const ProBlocks = () => {
 			link: 'dynamic-content-extension-v3'
 		},
 		{
-			title: __( 'Login', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Login', 'spectra-blocks' ),
 			slug: 'login',
 			icon: 'login',
 			is_pro: true,
@@ -37,7 +37,7 @@ const ProBlocks = () => {
 			link: 'login-v3'
 		},
 		{
-			title: __( 'Register', 'ultimate-addons-for-gutenberg' ),
+			title: __( 'Register', 'spectra-blocks' ),
 			slug: 'register',
 			icon: 'register',
 			is_pro: true,
@@ -76,11 +76,11 @@ const ProBlocks = () => {
 					paddingBottom: '0',
 				} }
 			>
-				{ 'Activated' !== uag_react.pro_plugin_status ? ( <p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Do more with Spectra Pro', 'ultimate-addons-for-gutenberg' ) }
+				{ 'Activated' !== spectra_blocks_react.pro_plugin_status ? ( <p className="m-0 text-sm font-semibold text-text-primary">
+					{ __( 'Do more with Spectra Pro', 'spectra-blocks' ) }
 				</p>
 				) : ( <p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Pro blocks', 'ultimate-addons-for-gutenberg' ) }
+					{ __( 'Pro blocks', 'spectra-blocks' ) }
 				</p> ) }
 			</div>
 			<div className="flex flex-col rounded-lg p-4">

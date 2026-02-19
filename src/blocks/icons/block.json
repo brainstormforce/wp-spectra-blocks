@@ -33,11 +33,11 @@
 		"create icon",
 		"insert icon",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"allowedBlocks": [ "spectra/icon" ],
 	"supports": {
+		"html": false,
 		"align": [ "wide", "full" ],
 		"shadow": true,
 		"__experimentalBorder": {

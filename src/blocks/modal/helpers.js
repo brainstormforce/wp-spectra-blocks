@@ -58,7 +58,7 @@ export const TabBlockControls = ( props ) => {
 			<ToolbarGroup>
 				<ToolbarButton
 					icon={ <RenderSVG svg={ isVisible ? 'eye-slash' : 'eye' } /> }
-					label={ isVisible ? __( 'Preview/Close', 'ultimate-addons-for-gutenberg' ) : __( 'Show Tab Panel', 'ultimate-addons-for-gutenberg' ) }
+					label={ isVisible ? __( 'Preview/Close', 'spectra-blocks' ) : __( 'Show Tab Panel', 'spectra-blocks' ) }
 					onClick={ () => toggleVisibilityByClientId( clientId ) }
 				/>
 			</ToolbarGroup>

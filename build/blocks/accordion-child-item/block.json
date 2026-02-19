@@ -1,0 +1,140 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/accordion-child-item",
+  "version": "3.0.0",
+  "title": "Item",
+  "category": "spectra-blocks-inner",
+  "description": "An accordion item in this set of accordions.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/accordion"
+  ],
+  "allowedBlocks": [
+    "spectra/accordion-child-header",
+    "spectra/accordion-child-details"
+  ],
+  "supports": {
+    "anchor": true,
+    "__experimentalBorder": {
+      "width": true,
+      "color": true,
+      "radius": true,
+      "style": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "stretch"
+      },
+      "allowEditing": false
+    },
+    "shadow": true,
+    "spacing": {
+      "margin": true,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true
+    },
+    "color": {
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "providesContext": {
+    "spectra/accordion/item/isActiveInEditor": "isActiveInEditor",
+    "spectra/accordion/item/textColorSecondary": "textColorSecondary",
+    "spectra/accordion/item/textColorHoverSecondary": "textColorHoverSecondary",
+    "spectra/accordion/item/backgroundColorSecondary": "backgroundColorSecondary",
+    "spectra/accordion/item/backgroundColorHoverSecondary": "backgroundColorHoverSecondary",
+    "spectra/accordion/item/backgroundGradientSecondary": "backgroundGradientSecondary",
+    "spectra/accordion/item/backgroundGradientHoverSecondary": "backgroundGradientHoverSecondary"
+  },
+  "usesContext": [
+    "spectra/accordion/activeAccordion",
+    "spectra/accordion/textColor",
+    "spectra/accordion/textColorHover",
+    "spectra/accordion/backgroundColor",
+    "spectra/accordion/backgroundColorHover",
+    "spectra/accordion/backgroundGradient",
+    "spectra/accordion/backgroundGradientHover"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "orientation": "vertical",
+        "justifyContent": "stretch"
+      }
+    },
+    "openByDefault": {
+      "type": "boolean",
+      "default": false
+    },
+    "isActiveInEditor": {
+      "type": "boolean",
+      "default": false,
+      "source": "attribute",
+      "selector": ".wp-block"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "textColorSecondary": {
+      "type": "string"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "textColorHoverSecondary": {
+      "type": "string"
+    },
+    "backgroundColorSecondary": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHoverSecondary": {
+      "type": "string"
+    },
+    "backgroundGradientSecondary": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    },
+    "backgroundGradientHoverSecondary": {
+      "type": "string"
+    }
+  }
+}

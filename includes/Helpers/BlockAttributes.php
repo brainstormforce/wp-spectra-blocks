@@ -12,14 +12,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Class BlockAttributes.
  * 
- * @since 0.0.1
+ * @since 3.0.0
  */
 class BlockAttributes {
 
 	/**
 	 * Convert a string from camelCase or PascalCase to kebab-case.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $string Input string (e.g., 'textSecondaryColor').
 	 * @return string Kebab-case string (e.g., 'text-secondary-color').
@@ -43,7 +43,7 @@ class BlockAttributes {
 	 * Convert WordPress preset format to proper CSS var() syntax.
 	 * Handles: 'var:preset|type|slug' → 'var(--wp--preset--type--slug)'
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param string $value The value to convert.
 	 * @return string The converted CSS value, or original if no conversion needed.
@@ -64,7 +64,7 @@ class BlockAttributes {
 	/**
 	 * Generate styles and classes for a block based on configuration.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attributes Full block attributes.
 	 * @param array $configs Array of configurations. Each can be:
@@ -146,7 +146,7 @@ class BlockAttributes {
 	/**
 	 * Get wrapper attributes by merging styles, classes, and custom attributes.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param array $attributes Full block attributes.
 	 * @param array $configs Array of style/class configurations.

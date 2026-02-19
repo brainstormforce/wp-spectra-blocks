@@ -64,14 +64,14 @@ const Render = ( props ) => {
 	} = attributes;
 
 	// Apply default values for labels if not set.
-	const finalDaysLabel = daysLabel || __( 'Days', 'ultimate-addons-for-gutenberg' );
-	const finalDayLabel = dayLabel || __( 'Day', 'ultimate-addons-for-gutenberg' );
-	const finalHoursLabel = hoursLabel || __( 'Hours', 'ultimate-addons-for-gutenberg' );
-	const finalHourLabel = hourLabel || __( 'Hour', 'ultimate-addons-for-gutenberg' );
-	const finalMinutesLabel = minutesLabel || __( 'Minutes', 'ultimate-addons-for-gutenberg' );
-	const finalMinuteLabel = minuteLabel || __( 'Minute', 'ultimate-addons-for-gutenberg' );
-	const finalSecondsLabel = secondsLabel || __( 'Seconds', 'ultimate-addons-for-gutenberg' );
-	const finalSecondLabel = secondLabel || __( 'Second', 'ultimate-addons-for-gutenberg' );
+	const finalDaysLabel = daysLabel || __( 'Days', 'spectra-blocks' );
+	const finalDayLabel = dayLabel || __( 'Day', 'spectra-blocks' );
+	const finalHoursLabel = hoursLabel || __( 'Hours', 'spectra-blocks' );
+	const finalHourLabel = hourLabel || __( 'Hour', 'spectra-blocks' );
+	const finalMinutesLabel = minutesLabel || __( 'Minutes', 'spectra-blocks' );
+	const finalMinuteLabel = minuteLabel || __( 'Minute', 'spectra-blocks' );
+	const finalSecondsLabel = secondsLabel || __( 'Seconds', 'spectra-blocks' );
+	const finalSecondLabel = secondLabel || __( 'Second', 'spectra-blocks' );
 
 	// Get layout settings for conditional styling.
 	const layoutType = layout?.type ?? 'flex';
@@ -265,6 +265,7 @@ const Render = ( props ) => {
 
 	// Configuration for the useSpectraStyles hook.
 	const config = [
+		{ key: 'overflow', cssVar: 'overflow', className: null },
 		{ key: 'textColor' },
 		{ key: 'textColorHover' },
 		{ key: 'backgroundColor' },
@@ -300,7 +301,7 @@ const Render = ( props ) => {
 			overflow,
 			...style,
 		},
-		'aria-label': ariaLiveType !== 'off' ? __( 'Countdown timer', 'ultimate-addons-for-gutenberg' ) : undefined,
+		'aria-label': ariaLiveType !== 'off' ? __( 'Countdown timer', 'spectra-blocks' ) : undefined,
 	} );
 	// Manage addition/removal of Expiry Wrapper based on timerEndAction.
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
@@ -344,7 +345,7 @@ const Render = ( props ) => {
 			<div { ...blockProps }>
 				{ __(
 					'Please enable at least one time unit (Days, Hours, Minutes, or Seconds).',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			</div>
 		);

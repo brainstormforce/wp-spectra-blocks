@@ -7,9 +7,9 @@ const ExtendYourWebsite = ( { cols = {} } ) => {
 	const [ plugins, setPlugins ] = useState( [] );
 
 	useEffect( () => {
-		const pluginsData = convertToPluginsArray( uagb_plugins_data );
+		const pluginsData = convertToPluginsArray( spectra_blocks_plugins_data );
 		setPlugins( pluginsData );
-	}, [ uagb_plugins_data ] );
+	}, [ spectra_blocks_plugins_data ] );
 
 	const iconMapping = {
 		'astra': () => (
@@ -157,10 +157,10 @@ const ExtendYourWebsite = ( { cols = {} } ) => {
 	return (
 		<section className='p-4 bg-background-primary border border-solid border-border-subtle rounded-xl flex flex-col gap-3'>
 			<h2 className="sr-only" id="section-2-title">
-				{ __( 'Extend Your Website', 'ultimate-addons-for-gutenberg' ) }
+				{ __( 'Extend Your Website', 'spectra-blocks' ) }
 			</h2>
 			<div className='px-1 flex items-center justify-between'> 
-				<Text weight={ 600 }>{ __( 'Extend Your Website', 'ultimate-addons-for-gutenberg' ) }</Text>
+				<Text weight={ 600 }>{ __( 'Extend Your Website', 'spectra-blocks' ) }</Text>
 			</div>
 
 			<div className='w-full'>

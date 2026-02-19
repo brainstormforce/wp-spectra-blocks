@@ -1,80 +1,162 @@
-# Claude.md
+# CLAUDE.md
 
-## Plugin Overview
+This file provides guidance to Claude Code when working with spectra-blocks.
 
-**Spectra Blocks** is the new WordPress plugin that replaces the legacy `ultimate-addons-for-gutenberg` plugin. This is an active development project where the Spectra Blocks code should always load first and take priority.
+## Project Overview
 
-## Critical Plugin Conflict Issue
+**Spectra Blocks** is a fresh, standalone WordPress Gutenberg block plugin built on the V3 architecture using the WordPress Interactivity API.
 
-### Problem
-There are TWO versions of essentially the same plugin installed:
-1. **spectra-blocks/** (NEW - active development)
-2. **ultimate-addons-for-gutenberg/** (LEGACY - old name)
+- **Plugin slug:** `spectra-blocks`
+- **Text domain:** `spectra-blocks`
+- **PHP namespace:** `Spectra\` (V3 classes in includes/)
+- **Block prefix:** `spectra/` (e.g., `spectra/container`)
+- **Block categories:** `spectra-blocks`, `spectra-blocks-inner`
+- **Option prefix:** `spectra_blocks_` (e.g., `spectra_blocks_file_generation`)
+- **PHP class prefix:** `Spectra_Blocks_` (infrastructure classes in classes/)
+- **Function prefix:** `spectra_blocks_` (global functions)
+- **Author:** Brainstorm Force
+- **Requires:** PHP 8.1+, WordPress 6.6+
 
-Both plugins share common function names, causing fatal PHP errors when both are active:
-- `get_spectra_font_awesome_polyfiller()`
-- `spectra_get_post_assets()`
+## Tech Stack
 
-### Solution Strategy
+| Layer | Technology |
+|-------|------------|
+| PHP Backend | WordPress plugin, PSR-4 autoloading (Composer), PHP >= 8.1 |
+| JS Frontend | React, WordPress Interactivity API, @wordpress/scripts (webpack) |
+| PHP Testing | PHPUnit |
+| E2E Testing | Playwright |
 
-**Complete Separation with Unique Function Names**
+## Directory Structure
 
-To ensure both plugins can work independently and simultaneously, all `spectra-blocks` functions use unique `spectra_blocks_*` naming with NO function_exists() checks or backward compatibility aliases:
+```
+spectra-blocks.php          # Main entry point
+spectra-blocks-init.php     # V3 bootstrap (loads Spectra\ classes)
+classes/                    # Infrastructure PHP classes (Spectra_Blocks_*)
+includes/                   # V3 PHP classes (Spectra\ namespace, PSR-4)
+  AssetLoader.php
+  BlockManager.php
+  ExtensionManager.php
+  FontManager.php
+  AnalyticsManager.php
+  Blocks/                   # Block-specific PHP
+  Extensions/               # Extension PHP
+  Helpers/                  # Helper utilities
+  Analytics/                # Analytics tracking
+src/                        # JS/SCSS source (blocks, extensions, components)
+  blocks/                   # 45+ block implementations
+  extensions/               # Editor extensions
+  helpers/                  # JS helpers including plugin-config.js
+assets/                     # Static assets (images, fonts, icons, masks)
+admin/                      # Admin dashboard (React SPA + PHP backend)
+lib/                        # Third-party libraries
+build/                      # Compiled assets (git-ignored, run npm run build)
+vendor/                     # Composer dependencies (git-ignored, run composer install)
+languages/                  # Translation files
+```
 
+## Development Commands
+
+```bash
+# Install dependencies
+npm install
+composer install           # Requires SSH access to github.com/brainstormforce private repos
+
+# Build
+npm run build              # Production build
+npm run build:fresh        # Clean build
+npm run start              # Dev watch mode
+
+# Code quality
+npm run lint:js
+npm run lint:css
+composer lint              # PHPCS
+
+# Build admin dashboard (from admin/ directory)
+cd admin && npm install && npm run build
+```
+
+### Library Management
+
+BSF shared libraries (`lib/`) are managed via Composer with private VCS repositories:
+- `brainstormforce/bsf-analytics` — Analytics opt-in UI
+- `brainstormforce/zip-ai` — Zip AI assistant integration
+- `brainstormforce/astra-notices` — Admin notices
+- `brainstormforce/nps-survey` — NPS survey
+- `brainstormforce/utm-analytics` — UTM tracking
+- `brainstormforce/zipwp-images` — ZipWP image library
+
+`composer install` requires SSH access to BSF private GitHub repos (same as UAG/Spectra).
+These repos are NOT on Packagist — they use `"type": "vcs"` with `git@github.com:brainstormforce/` URLs.
+Composer's `installer-paths` places them into `lib/{package-name}/` (not `vendor/`).
+
+## Key Conventions
+
+### Block Registration
+- All blocks registered via `register_block_type_from_metadata()` from `build/blocks/**/block.json`
+- Block names: `spectra/{block-name}` (e.g., `spectra/container`)
+- Categories: `spectra-blocks` (main), `spectra-blocks-inner` (child blocks)
+
+### Settings
+Use `Spectra_Blocks_Settings::get/update/delete()` -- wraps `get_option()` with `spectra_blocks_` prefix.
+
+### Backward Content Compatibility
+The following block attribute names are intentionally kept with UAG prefix for backward compatibility with saved post content. Do NOT rename these:
+- UAGDisplayConditions, UAGUserRole, UAGBrowser, UAGSystem, UAGDay
+- UAGHideDesktop, UAGHideMob, UAGHideTab, UAGLoggedIn, UAGLoggedOut
+- UAGAnimationType, UAGAnimationTime, UAGAnimationDelay, UAGAnimationEasing
+- UAGAnimationRepeat, UAGAnimationDelayInterval, UAGAnimationDoNotApplyToContainer
+- UAGPosition, UAGResponsiveConditions
+
+### JS Globals
+- `window.spectra_blocks_info` - Plugin configuration (url, rtl, etc.)
+- `window.spectraBlocksSvgIcons` - SVG icon library
+- `window.spectraBlocksIconCategoryList` - Icon categories
+- Import from `@spectra-config` for typed accessors
+
+### Admin Dashboard
+- URL: `wp-admin/admin.php?page=spectra-blocks`
+- REST namespace: `spectra-blocks/v1`
+- AJAX prefix: `spectra_blocks_`
+- Mount ID: `spectra-blocks-dashboard-app`
+
+### Architecture Patterns
+
+**Infrastructure classes** (`classes/`) use static `::init()` pattern:
 ```php
-// Clean, unique function - no conditional checks needed
-function spectra_blocks_get_font_awesome_polyfiller() {
-    // Function implementation
+class Spectra_Blocks_Example {
+    public static function init() {
+        add_action( 'init', array( __CLASS__, 'do_something' ) );
+    }
 }
 ```
 
-This ensures:
-1. **Complete independence**: Each plugin uses its own uniquely-named functions
-2. **No conflicts**: Different function names mean zero collision risk
-3. **Works in any load order**: Both plugins can be active simultaneously
-4. **Clean separation**: No shared code or dependencies between plugins
-5. **Independent functionality**: Users can use features from both plugins at the same time
+**Core classes** (`includes/`) use the `Singleton` trait and PSR-4 autoloading:
+```php
+namespace Spectra\SomeNamespace;
+use Spectra\Traits\Singleton;
+class MyClass {
+    use Singleton;
+    public function init() { /* hooks */ }
+}
+```
 
-### Files Requiring Protection
+### PHPDoc / JSDoc
+- For the `@since` tag, always use `x.x.x` for new or modified code
 
-When adding or modifying global functions, always check:
-- `classes/utils.php` - Utility functions
-- Any file with standalone functions (not class methods)
-- Functions that exist in both plugins
+### Dynamic CSS
+- Use CSS variables instead of enqueueing additional CSS files
+- Variables are scoped globally but can be overridden per block
+- CSS Variables: `--spectra-{attribute-name}`
+- CSS Classes: `spectra-{attribute-name}`
 
-### Development Guidelines
+### Naming Reference
 
-1. **Use unique function names**: ALL global functions MUST use `spectra_blocks_*` prefix
-2. **NO function_exists() checks**: Functions should be declared directly without conditionals
-3. **NO backward compatibility aliases**: No duplicate function names that could conflict
-4. **Complete separation**: spectra-blocks and ultimate-addons-for-gutenberg are independent
-5. **Update all calls**: When renaming functions, update ALL references in the codebase
-
-### Function Naming Convention
-
-- **All functions**: `spectra_blocks_*` (e.g., `spectra_blocks_get_post_assets()`)
-- **Class names**: `Spectra_Blocks_*` (e.g., `Spectra_Blocks_Helper`)
-- **File names**: `class-spectra-blocks-*.php` or descriptive names
-- **NO shared names**: Never use function/class names that exist in ultimate-addons-for-gutenberg
-
-### Testing Checklist
-
-Before committing function changes:
-- [ ] Uses unique `spectra_blocks_*` naming (no shared names with legacy plugin)
-- [ ] NO function_exists() checks (clean declaration)
-- [ ] NO backward compatibility aliases
-- [ ] All function calls updated throughout codebase
-- [ ] Tested with both plugins active simultaneously
-- [ ] Tested with only spectra-blocks active
-- [ ] No fatal errors on plugin activation
-- [ ] Both plugins work independently with full functionality
-
-## Related Files
-
-- `/docs/V3-CLAUDE.md` - Comprehensive development guide for Spectra v3
-- `classes/utils.php` - Main utility functions file
-- `spectra-blocks.php` - Main plugin file
-
-## Commands
-
-See `/docs/V3-CLAUDE.md` for full list of development commands and architecture details.
+| Type | Convention | Example |
+|------|-----------|---------|
+| Block name | `spectra/{name}` | `spectra/container` |
+| Option key | `spectra_blocks_{name}` | `spectra_blocks_file_generation` |
+| Script handle | `spectra-blocks-{name}` | `spectra-blocks-aos-js` |
+| AJAX action | `spectra_blocks_{name}` | `spectra_blocks_update_popup_status` |
+| Nonce name | `spectra_blocks_{name}` | `spectra_blocks_popup_builder_admin_nonce` |
+| Filter/action | `spectra_blocks_{name}` | `spectra_blocks_after_cache_purge` |
+| Constants | `SPECTRA_BLOCKS_{NAME}` | `SPECTRA_BLOCKS_VER` |

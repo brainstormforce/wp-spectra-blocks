@@ -31,8 +31,7 @@
 		"advanced slider",
 		"responsive slider",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"allowedBlocks": [ "spectra/slider-child" ],
 	"supports": {

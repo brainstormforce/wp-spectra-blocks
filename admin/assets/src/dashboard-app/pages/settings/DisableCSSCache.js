@@ -23,13 +23,13 @@ const DisableCSSCache = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.disable_css_cache_nonce,
+			security: spectra_blocks_react.disable_css_cache_nonce,
 			value: cacheStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_disable_css_cache',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_disable_css_cache',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -41,17 +41,17 @@ const DisableCSSCache = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Disable Cached Styles', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Disable Cached Styles', 'spectra-blocks' ) }
 				settingText={ __(
 					'Not recommended for production sites as it may affect performance. Enable only during development or if you\'re experiencing issues with styles not loading or caching conflicts. When active, styles regenerate on every page load instead of using cached versions.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ disableCSSCacheStatus }
 					onChange={ updateDisableCSSCacheStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

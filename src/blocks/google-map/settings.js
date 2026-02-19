@@ -27,287 +27,287 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 	const languageOptions = [
 		{
 			value: 'af',
-			label: __( 'Afrikaans', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Afrikaans', 'spectra-blocks' ),
 		},
 		{
 			value: 'sq',
-			label: __( 'Albanian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Albanian', 'spectra-blocks' ),
 		},
 		{
 			value: 'am',
-			label: __( 'Amharic', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Amharic', 'spectra-blocks' ),
 		},
 		{
 			value: 'ar',
-			label: __( 'Arabic', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Arabic', 'spectra-blocks' ),
 		},
 		{
 			value: 'hy',
-			label: __( 'Armenian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Armenian', 'spectra-blocks' ),
 		},
 		{
 			value: 'az',
-			label: __( 'Azerbaijani', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Azerbaijani', 'spectra-blocks' ),
 		},
 		{
 			value: 'eu',
-			label: __( 'Basque', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Basque', 'spectra-blocks' ),
 		},
 		{
 			value: 'be',
-			label: __( 'Belarusian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Belarusian', 'spectra-blocks' ),
 		},
 		{
 			value: 'bn',
-			label: __( 'Bengali', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Bengali', 'spectra-blocks' ),
 		},
 		{
 			value: 'bs',
-			label: __( 'Bosnian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Bosnian', 'spectra-blocks' ),
 		},
 		{
 			value: 'bg',
-			label: __( 'Bulgarian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Bulgarian', 'spectra-blocks' ),
 		},
 		{
 			value: 'my',
-			label: __( 'Burmese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Burmese', 'spectra-blocks' ),
 		},
 		{
 			value: 'ca',
-			label: __( 'Catalan', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Catalan', 'spectra-blocks' ),
 		},
 		{
 			value: 'zh',
-			label: __( 'Chinese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Chinese', 'spectra-blocks' ),
 		},
 		{
 			value: 'hr',
-			label: __( 'Croatian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Croatian', 'spectra-blocks' ),
 		},
 		{
 			value: 'cs',
-			label: __( 'Czech', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Czech', 'spectra-blocks' ),
 		},
 		{
 			value: 'da',
-			label: __( 'Danish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Danish', 'spectra-blocks' ),
 		},
 		{
 			value: 'nl',
-			label: __( 'Dutch', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Dutch', 'spectra-blocks' ),
 		},
 		{
 			value: 'en',
-			label: __( 'English', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'English', 'spectra-blocks' ),
 		},
 		{
 			value: 'et',
-			label: __( 'Estonian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Estonian', 'spectra-blocks' ),
 		},
 		{
 			value: 'fa',
-			label: __( 'Farsi', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Farsi', 'spectra-blocks' ),
 		},
 		{
 			value: 'fi',
-			label: __( 'Finnish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Finnish', 'spectra-blocks' ),
 		},
 		{
 			value: 'fr',
-			label: __( 'French', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'French', 'spectra-blocks' ),
 		},
 		{
 			value: 'gl',
-			label: __( 'Galician', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Galician', 'spectra-blocks' ),
 		},
 		{
 			value: 'ka',
-			label: __( 'Georgian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Georgian', 'spectra-blocks' ),
 		},
 		{
 			value: 'de',
-			label: __( 'German', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'German', 'spectra-blocks' ),
 		},
 		{
 			value: 'el',
-			label: __( 'Greek', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Greek', 'spectra-blocks' ),
 		},
 		{
 			value: 'gu',
-			label: __( 'Gujarati', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Gujarati', 'spectra-blocks' ),
 		},
 		{
 			value: 'iw',
-			label: __( 'Hebrew', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Hebrew', 'spectra-blocks' ),
 		},
 		{
 			value: 'hi',
-			label: __( 'Hindi', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Hindi', 'spectra-blocks' ),
 		},
 		{
 			value: 'hu',
-			label: __( 'Hungarian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Hungarian', 'spectra-blocks' ),
 		},
 		{
 			value: 'is',
-			label: __( 'Icelandic', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Icelandic', 'spectra-blocks' ),
 		},
 		{
 			value: 'id',
-			label: __( 'Indonesian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Indonesian', 'spectra-blocks' ),
 		},
 		{
 			value: 'it',
-			label: __( 'Italian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Italian', 'spectra-blocks' ),
 		},
 		{
 			value: 'ja',
-			label: __( 'Japanese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Japanese', 'spectra-blocks' ),
 		},
 		{
 			value: 'kn',
-			label: __( 'Kannada', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Kannada', 'spectra-blocks' ),
 		},
 		{
 			value: 'kk',
-			label: __( 'Kazakh', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Kazakh', 'spectra-blocks' ),
 		},
 		{
 			value: 'km',
-			label: __( 'Khmer', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Khmer', 'spectra-blocks' ),
 		},
 		{
 			value: 'ko',
-			label: __( 'Korean', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Korean', 'spectra-blocks' ),
 		},
 		{
 			value: 'ky',
-			label: __( 'Kyrgyz', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Kyrgyz', 'spectra-blocks' ),
 		},
 		{
 			value: 'lo',
-			label: __( 'Lao', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Lao', 'spectra-blocks' ),
 		},
 		{
 			value: 'lv',
-			label: __( 'Latvian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Latvian', 'spectra-blocks' ),
 		},
 		{
 			value: 'lt',
-			label: __( 'Lithuanian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Lithuanian', 'spectra-blocks' ),
 		},
 		{
 			value: 'mk',
-			label: __( 'Macedonian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Macedonian', 'spectra-blocks' ),
 		},
 		{
 			value: 'ms',
-			label: __( 'Malay', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Malay', 'spectra-blocks' ),
 		},
 		{
 			value: 'ml',
-			label: __( 'Malayalam', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Malayalam', 'spectra-blocks' ),
 		},
 		{
 			value: 'mr',
-			label: __( 'Marathi', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Marathi', 'spectra-blocks' ),
 		},
 		{
 			value: 'mn',
-			label: __( 'Mongolian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Mongolian', 'spectra-blocks' ),
 		},
 		{
 			value: 'ne',
-			label: __( 'Nepali', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Nepali', 'spectra-blocks' ),
 		},
 		{
 			value: 'no',
-			label: __( 'Norwegian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Norwegian', 'spectra-blocks' ),
 		},
 		{
 			value: 'pl',
-			label: __( 'Polish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Polish', 'spectra-blocks' ),
 		},
 		{
 			value: 'pt',
-			label: __( 'Portuguese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Portuguese', 'spectra-blocks' ),
 		},
 		{
 			value: 'pa',
-			label: __( 'Punjabi', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Punjabi', 'spectra-blocks' ),
 		},
 		{
 			value: 'ro',
-			label: __( 'Romanian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Romanian', 'spectra-blocks' ),
 		},
 		{
 			value: 'ru',
-			label: __( 'Russian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Russian', 'spectra-blocks' ),
 		},
 		{
 			value: 'sr',
-			label: __( 'Serbian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Serbian', 'spectra-blocks' ),
 		},
 		{
 			value: 'si',
-			label: __( 'Sinhalese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Sinhalese', 'spectra-blocks' ),
 		},
 		{
 			value: 'sk',
-			label: __( 'Slovak', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Slovak', 'spectra-blocks' ),
 		},
 		{
 			value: 'sl',
-			label: __( 'Slovenian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Slovenian', 'spectra-blocks' ),
 		},
 		{
 			value: 'es',
-			label: __( 'Spanish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Spanish', 'spectra-blocks' ),
 		},
 		{
 			value: 'sw',
-			label: __( 'Swahili', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Swahili', 'spectra-blocks' ),
 		},
 		{
 			value: 'sv',
-			label: __( 'Swedish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Swedish', 'spectra-blocks' ),
 		},
 		{
 			value: 'ta',
-			label: __( 'Tamil', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Tamil', 'spectra-blocks' ),
 		},
 		{
 			value: 'te',
-			label: __( 'Telugu', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Telugu', 'spectra-blocks' ),
 		},
 		{
 			value: 'th',
-			label: __( 'Thai', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Thai', 'spectra-blocks' ),
 		},
 		{
 			value: 'tr',
-			label: __( 'Turkish', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Turkish', 'spectra-blocks' ),
 		},
 		{
 			value: 'uk',
-			label: __( 'Ukrainian', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Ukrainian', 'spectra-blocks' ),
 		},
 		{
 			value: 'ur',
-			label: __( 'Urdu', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Urdu', 'spectra-blocks' ),
 		},
 		{
 			value: 'uz',
-			label: __( 'Uzbek', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Uzbek', 'spectra-blocks' ),
 		},
 		{
 			value: 'vi',
-			label: __( 'Vietnamese', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Vietnamese', 'spectra-blocks' ),
 		},
 		{
 			value: 'zu',
-			label: __( 'Zulu', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Zulu', 'spectra-blocks' ),
 		},
 ];
 
@@ -333,7 +333,7 @@ const BlockSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'General', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'General', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						address: 'Brainstorm Force',
@@ -347,7 +347,7 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! address }
-					label={ __( 'Address', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Address', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { address: 'Brainstorm Force' } ) }
 					resetAllFilter={ () => ( {
 						address: 'Brainstorm Force',
@@ -357,18 +357,18 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<VStack spacing="4">
 						<InputControl
-							label={ __( 'Address', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Address', 'spectra-blocks' ) }
 							value={ address }
 							onChange={ ( value ) => setAttributes( { address: value } ) }
-							placeholder={ __( 'Enter location address', 'ultimate-addons-for-gutenberg' ) }
-							help={ __( 'Enter the address or location you want to display on the map.', 'ultimate-addons-for-gutenberg' ) }
+							placeholder={ __( 'Enter location address', 'spectra-blocks' ) }
+							help={ __( 'Enter the address or location you want to display on the map.', 'spectra-blocks' ) }
 						/>
 					</VStack>
 				</ToolsPanelItem>
 
 				<ToolsPanelItem
 					hasValue={ () => enableSatelliteView !== false }
-					label={ __( 'Satellite View', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Satellite View', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { enableSatelliteView: false } ) }
 					resetAllFilter={ () => ( {
 						enableSatelliteView: false,
@@ -378,10 +378,10 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<VStack spacing="4">
 						<ToggleControl
-							label={ __( 'Enable Satellite View', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Enable Satellite View', 'spectra-blocks' ) }
 							checked={ enableSatelliteView }
 							onChange={ ( value ) => setAttributes( { enableSatelliteView: value } ) }
-							help={ __( 'Toggle between roadmap and satellite view.', 'ultimate-addons-for-gutenberg' ) }
+							help={ __( 'Toggle between roadmap and satellite view.', 'spectra-blocks' ) }
 						/>
 					</VStack>
 				</ToolsPanelItem>
@@ -390,7 +390,7 @@ const BlockSettings = memo( ( props ) => {
 
 				<ToolsPanelItem
 					hasValue={ () => zoom !== 15 }
-					label={ __( 'Zoom Level', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Zoom Level', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { zoom: 15 } ) }
 					resetAllFilter={ () => ( {
 						zoom: 15,
@@ -400,13 +400,13 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<VStack spacing="4">
 						<DebouncedRangeControl
-							label={ __( 'Zoom Level', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Zoom Level', 'spectra-blocks' ) }
 							value={ zoom }
 							onChange={ ( value ) => setAttributes( { zoom: value } ) }
 							min={ 1 }
 							max={ 20 }
 							step={ 1 }
-							help={ __( 'Set the zoom level of the map.', 'ultimate-addons-for-gutenberg' ) }
+							help={ __( 'Set the zoom level of the map.', 'spectra-blocks' ) }
 							debounceDelay={ 150 }
 						/>
 					</VStack>
@@ -414,7 +414,7 @@ const BlockSettings = memo( ( props ) => {
 
 				<ToolsPanelItem
 					hasValue={ () => language !== 'en' }
-					label={ __( 'Language', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Language', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { language: 'en' } ) }
 					resetAllFilter={ () => ( {
 						language: 'en',
@@ -424,11 +424,11 @@ const BlockSettings = memo( ( props ) => {
 				>
 					<VStack spacing="4">
 						<SelectControl
-							label={ __( 'Language', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Language', 'spectra-blocks' ) }
 							value={ language }
 							options={ languageOptions }
 							onChange={ ( value ) => setAttributes( { language: value } ) }
-							help={ __( 'Select the language for map labels and controls.', 'ultimate-addons-for-gutenberg' ) }
+							help={ __( 'Select the language for map labels and controls.', 'spectra-blocks' ) }
 						/>
 					</VStack>
 				</ToolsPanelItem>
@@ -460,7 +460,7 @@ const DimensionSettings = memo( ( props ) => {
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
 				hasValue={ () => !! height }
-				label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Height', 'spectra-blocks' ) }
 				onDeselect={ () => setAttributes( { height: undefined } ) }
 				resetAllFilter={ () => ( {
 					height: undefined,
@@ -470,13 +470,13 @@ const DimensionSettings = memo( ( props ) => {
 			>
 				<UnitControl
 					__next40pxDefaultSize
-					label={ __( 'Map Height', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Map Height', 'spectra-blocks' ) }
 					labelPosition="top"
 					value={ height }
 					min={ 0 }
 					onChange={ ( value ) => setAttributes( { height: value } ) }
 					units={ units }
-					help={ __( 'Set the height of the Google Map. Supports responsive controls.', 'ultimate-addons-for-gutenberg' ) }
+					help={ __( 'Set the height of the Google Map. Supports responsive controls.', 'spectra-blocks' ) }
 				/>
 			</ToolsPanelItem>
 		</InspectorControls>

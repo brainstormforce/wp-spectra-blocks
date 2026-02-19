@@ -1,0 +1,75 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/modal-popup",
+  "version": "3.0.0",
+  "title": "Popup",
+  "category": "spectra-blocks-inner",
+  "description": "This block allows you to add modal popup.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/modal"
+  ],
+  "allowedBlocks": [
+    "spectra/modal-child-popup-close-icon",
+    "spectra/modal-popup-content"
+  ],
+  "keywords": [
+    "modal",
+    "popup",
+    "spectra",
+    "spectra-blocks"
+  ],
+  "supports": {
+    "interactivity": true,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "layout": {
+      "default": {
+        "type": "flex"
+      },
+      "allowEditing": false
+    },
+    "color": {
+      "gradients": true,
+      "link": false,
+      "__experimentalDefaultControls": {
+        "background": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "usesContext": [
+    "spectra/modal/modalId",
+    "spectra/modal/isVisible",
+    "spectra/modal/modalTrigger",
+    "spectra/modal/openModalAs",
+    "spectra/modal/appearEffect",
+    "spectra/modal/modalPosition",
+    "spectra/modal/hPos",
+    "spectra/modal/vPos",
+    "spectra/modal/closeIconPosition"
+  ],
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "isOpen": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

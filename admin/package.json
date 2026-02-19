@@ -1,7 +1,7 @@
 {
-	"name": "uag_admin",
-	"version": "1.0.0",
-	"description": "UAG Admin",
+	"name": "spectra-blocks-admin",
+	"version": "0.0.1",
+	"description": "Spectra Blocks Admin",
 	"main": "Gruntfile.js",
 	"scripts": {
 		"build": "wp-scripts build",

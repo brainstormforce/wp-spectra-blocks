@@ -17,7 +17,7 @@ const TEMPLATE = [
 	[
 		'spectra/countdown-child-label',
 		{
-			text: __( 'Minutes', 'ultimate-addons-for-gutenberg' ),
+			text: __( 'Minutes', 'spectra-blocks' ),
 			lock: { move: true, remove: true },
 		},
 	],

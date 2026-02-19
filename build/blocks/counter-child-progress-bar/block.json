@@ -1,0 +1,102 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/counter-child-progress-bar",
+  "version": "3.0.0",
+  "title": "Progress",
+  "category": "spectra-blocks-inner",
+  "description": "Progress bar display for the counter block.",
+  "textdomain": "spectra-blocks",
+  "parent": [
+    "spectra/counter",
+    "spectra/counter-child-wrapper"
+  ],
+  "usesContext": [
+    "spectra/counter/counterStyle",
+    "spectra/counter/startNumber",
+    "spectra/counter/endNumber",
+    "spectra/counter/totalNumber",
+    "spectra/counter/animationDuration",
+    "spectra/counter/prefix",
+    "spectra/counter/suffix",
+    "spectra/counter/thousandSeparator",
+    "spectra/counter/decimalPlaces",
+    "spectra/counter/progressColor",
+    "spectra/counter/progressBackgroundColor",
+    "spectra/counter/progressSize",
+    "spectra/counter/progressStrokeWidth",
+    "spectra/counter/barHeight",
+    "spectra/counter/barBorderRadius",
+    "spectra/counter/prefixColor",
+    "spectra/counter/suffixColor"
+  ],
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "align": [
+      "wide",
+      "full"
+    ],
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "fontFamily": true,
+      "fontWeight": true,
+      "fontStyle": true,
+      "textTransform": true,
+      "textDecoration": true,
+      "letterSpacing": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontWeight": true,
+      "__experimentalFontStyle": true,
+      "__experimentalTextTransform": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontWeight": true
+      }
+    },
+    "color": {
+      "text": true,
+      "background": false,
+      "gradients": false,
+      "__experimentalDefaultControls": {
+        "text": true
+      }
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "attributes": {
+    "anchor": {
+      "type": "string"
+    },
+    "barHeight": {
+      "type": "string",
+      "default": "32px"
+    },
+    "barBorderRadius": {
+      "type": "number",
+      "default": 4
+    },
+    "progressColor": {
+      "type": "string"
+    },
+    "progressBackgroundColor": {
+      "type": "string"
+    },
+    "prefixColor": {
+      "type": "string"
+    },
+    "suffixColor": {
+      "type": "string"
+    }
+  }
+}

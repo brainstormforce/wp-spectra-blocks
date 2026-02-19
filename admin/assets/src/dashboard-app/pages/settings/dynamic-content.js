@@ -14,48 +14,48 @@ export default function DynamicContent() {
 		dispatch( { type: 'UPDATE_DYNAMIC_CONTENT_MODE', payload: value } );
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.dynamic_content_mode_nonce,
+			security: spectra_blocks_react.dynamic_content_mode_nonce,
 			value,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_dynamic_content_mode',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_dynamic_content_mode',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
 		getApiFetchData.then( () => {
 			dispatch( {
 				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-				payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+				payload: __( 'Successfully saved!', 'spectra-blocks' ),
 			} );
 		} );
 	};
 
 	const dynamicModalData = {
-		title: __( 'Unlock Dynamic Content', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Unlock Dynamic Content', 'spectra-blocks' ),
 		Image: DynamicImage,
-		header: __( 'Dynamic Content, Tailored for Every Visitor', 'ultimate-addons-for-gutenberg' ),
+		header: __( 'Dynamic Content, Tailored for Every Visitor', 'spectra-blocks' ),
 		description: __(
 			'Tailored content for individual users based on their preferences and behavior anywhere on your website.',
-			'ultimate-addons-for-gutenberg'
+			'spectra-blocks'
 		),
 		features: [
-			__( 'Text and images anywhere from any source', 'ultimate-addons-for-gutenberg' ),
-			__( 'Update once to reflect changes everywhere', 'ultimate-addons-for-gutenberg' ),
-			__( 'Dynamic content fallback', 'ultimate-addons-for-gutenberg' ),
+			__( 'Text and images anywhere from any source', 'spectra-blocks' ),
+			__( 'Update once to reflect changes everywhere', 'spectra-blocks' ),
+			__( 'Dynamic content fallback', 'spectra-blocks' ),
 		],
 	};
 
 	return (
 		<>
-			{ uag_react.pro_plugin_status !== 'Activated' ? (
+			{ spectra_blocks_react.pro_plugin_status !== 'Activated' ? (
 				<UpgradeNotices
 					title={
 						<div className="flex gap-2 items-center">
-							{ __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ) }
+							{ __( 'Dynamic Content', 'spectra-blocks' ) }
 							<Badge
-								label={ __( 'PRO', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'PRO', 'spectra-blocks' ) }
 								size="xxs"
 								type="pill"
 								variant="inverse"
@@ -64,23 +64,23 @@ export default function DynamicContent() {
 					}
 					description={ __(
 						'Choose how you want to display dynamic content settings',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					upgradeText={ __(
 						'delivers relevant content for higher engagement.',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
-					upgradeBold={ __( 'Personalized content', 'ultimate-addons-for-gutenberg' ) }
+					upgradeBold={ __( 'Personalized content', 'spectra-blocks' ) }
 					modalData={ dynamicModalData }
 					dynamicContent={ true }
 				/>
 			) : (
 				<>
 					<SettingsItem
-						title={ __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ) }
+						title={ __( 'Dynamic Content', 'spectra-blocks' ) }
 						settingText={ __(
 							'Choose how you want to display dynamic content settings.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					>
 						<div

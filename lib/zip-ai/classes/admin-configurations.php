@@ -25,7 +25,7 @@ class Admin_Configurations {
 	/**
 	 * The menu slug.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @var string Menu slug.
 	 */
 	private $menu_slug = ZIP_AI_MENU_SLUG;
@@ -33,7 +33,7 @@ class Admin_Configurations {
 	/**
 	 * Instance of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @var object Class object.
 	 */
 	private static $instance;
@@ -41,7 +41,7 @@ class Admin_Configurations {
 	/**
 	 * Custom Capability
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.8
 	 * @access public
 	 * @var string capabilities.
 	 */
@@ -50,7 +50,7 @@ class Admin_Configurations {
 	/**
 	 * Initiator of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of this class.
 	 */
 	public static function get_instance() {
@@ -63,7 +63,7 @@ class Admin_Configurations {
 	/**
 	 * Constructor of this class.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function __construct() {
@@ -95,7 +95,7 @@ class Admin_Configurations {
 	/**
 	 * Add custom capabilities.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.8
 	 * @return void
 	 */
 	public function add_custom_capabilities() {
@@ -109,7 +109,7 @@ class Admin_Configurations {
 		 * If this filter is not used, then only the 'administrator' role will get the custom capability.
 		 * The default additional roles are 'administrator' and 'editor'.
 		 *
-		 * @since 0.0.1
+		 * @since 1.1.8
 		 *
 		 * @return array The additional roles to add the custom capability.
 		 */
@@ -134,7 +134,7 @@ class Admin_Configurations {
 	/**
 	 * Remove custom capabilities.
 	 *
-	 * @since 0.0.1
+	 * @since 1.1.8
 	 * @return void
 	 */
 	public function remove_custom_capability_from_other_roles() {
@@ -172,7 +172,7 @@ class Admin_Configurations {
 	/**
 	 * Add the Zip AI menu page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function setup_menu_page() {
@@ -198,7 +198,7 @@ class Admin_Configurations {
 	/**
 	 * Verify if the user was given authorization to use Zip AI.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function verify_authorization() {
@@ -267,7 +267,7 @@ class Admin_Configurations {
 	/**
 	 * Setup the Ajax Event to Entirely Disable the Zip AI Library from loading.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.5
 	 * @return void
 	 */
 	public function disabler_ajax() {
@@ -298,7 +298,7 @@ class Admin_Configurations {
 	/**
 	 * Setup the AI Assistant Toggle Ajax.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function toggle_assistant_status_ajax() {
@@ -336,7 +336,7 @@ class Admin_Configurations {
 	/**
 	 * Render the Zip AI Admin Settings Page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function render_dashboard() {
@@ -351,7 +351,7 @@ class Admin_Configurations {
 	/**
 	 * Load the Admin Settings and Scripts on initialization.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function settings_admin_scripts() {
@@ -375,13 +375,13 @@ class Admin_Configurations {
 	/**
 	 * Enqueues the needed CSS/JS for Zip AI's admin settings page.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function enqueue_styles_and_scripts() {
 
-		if ( class_exists( '\Spectra_Admin_Helper' ) && method_exists( '\Spectra_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
-			if ( \Spectra_Admin_Helper::should_exclude_assets_for_cpt() ) {
+		if ( class_exists( '\Spectra_Blocks_Admin_Helper' ) && method_exists( '\Spectra_Blocks_Admin_Helper', 'should_exclude_assets_for_cpt' ) ) {
+			if ( \Spectra_Blocks_Admin_Helper::should_exclude_assets_for_cpt() ) {
 				return; // Early return to prevent loading assets.
 			}
 		}
@@ -445,7 +445,7 @@ class Admin_Configurations {
 	 * Localize and Enqueue the Admin Scripts.
 	 *
 	 * @param array $localize The data to localize.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function localize_and_enqueue_admin_scripts( $localize ) {
@@ -504,13 +504,13 @@ class Admin_Configurations {
 	/**
 	 * Add the footer link.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string The footer link.
 	 */
 	public function add_footer_link() {
 		return '<span id="footer-thankyou">' . sprintf(
 			/* translators: %1$s: HTML link start tag, %2$s: HTML link end tag. */
-			__( 'Thank you for using %1$sZip AI.%2$s', 'spectra' ),
+			__( 'Thank you for using %1$sZip AI.%2$s', 'ultimate-addons-for-gutenberg' ),
 			'<a href="https://wpspectra.com/zip-ai/" class="focus:text-spec-hover active:text-spec-hover hover:text-spec-hover" target="_blank" rel="noopener noreferrer">',
 			'</a>'
 		) . '</span>';

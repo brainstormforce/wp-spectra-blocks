@@ -31,8 +31,8 @@ import LearnHowDialog from './LearnHowDialog';
  * // With API endpoints
  * <BsfLearn
  *   endpoints={{
- *     get: "/uag/v1/admin/commonsettings/get-learn-chapters",
- *     set: "/uag/v1/admin/commonsettings/update-learn-progress"
+ *     get: "/spectra-blocks/v1/admin/commonsettings/get-learn-chapters",
+ *     set: "/spectra-blocks/v1/admin/commonsettings/update-learn-progress"
  *   }}
  * />
  */

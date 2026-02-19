@@ -23,13 +23,13 @@ const CollapsePanels = () => {
 
 		// Create an object with the security and value properties
 		const data = {
-			security: uag_react.collapse_panels_nonce,
+			security: spectra_blocks_react.collapse_panels_nonce,
 			value: assetStatus,
 		};
 		// Call the getApiData function with the specified parameters
 		const getApiFetchData = getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_collapse_panels',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_collapse_panels',
 			data,
 		} );
 		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
@@ -41,17 +41,17 @@ const CollapsePanels = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Collapse Panels', 'ultimate-addons-for-gutenberg' ) }
+				title={ __( 'Collapse Panels', 'spectra-blocks' ) }
 				settingText={ __(
 					'Enable the "Collapse Panels" option if you want to Collapse all other Panels in your Blocks Settings except for the one which is clicked. This way you have only one Panel of Settings in front of you to Focus on.',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 			>
 				<Switch
 					value={ enableCollapsePanelsStatus }
 					onChange={ updateEnableCollapsePanelsStatus }
 					size="md"
-					className="uagb-remove-ring border-none"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

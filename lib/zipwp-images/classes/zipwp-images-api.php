@@ -17,7 +17,7 @@ class Zipwp_Images_Api {
 	 *
 	 * @access private
 	 * @var object Class Instance.
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 */
 	private static $instance = null;
 
@@ -34,7 +34,7 @@ class Zipwp_Images_Api {
 	/**
 	 * Initiator
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return object initialized object of class.
 	 */
 	public static function get_instance() {
@@ -47,44 +47,17 @@ class Zipwp_Images_Api {
 	/**
 	 * Get api domain
 	 *
-	 * SECURITY: Enhanced with whitelist validation to prevent SSRF attacks.
-	 *
-	 * @since 0.0.1
-	 * @since 0.0.1 Added domain whitelist validation.
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_api_domain() {
-		// SECURITY: Whitelist of allowed API domains to prevent SSRF.
-		$allowed_domains = array(
-			'https://api.zipwp.com/api/',
-			'https://staging.api.zipwp.com/api/', // Allow staging for development.
-		);
-
-		$api_domain = defined( 'ZIPWP_API' ) ? ZIPWP_API : 'https://api.zipwp.com/api/';
-
-		// Validate against whitelist.
-		if ( ! in_array( $api_domain, $allowed_domains, true ) ) {
-			// Log suspicious activity.
-			if ( class_exists( 'Spectra_Security_Helper' ) ) {
-				\Spectra_Security_Helper::log_security_event(
-					'invalid_zipwp_api_domain',
-					array(
-						'attempted_domain' => $api_domain,
-						'allowed_domains'  => $allowed_domains,
-					)
-				);
-			}
-			// Fall back to safe default.
-			return trailingslashit( 'https://api.zipwp.com/api/' );
-		}
-
-		return trailingslashit( $api_domain );
+		return trailingslashit( defined( 'ZIPWP_API' ) ? ZIPWP_API : 'https://api.zipwp.com/api/' );
 	}
 
 	/**
 	 * Get api namespace
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return string
 	 */
 	public function get_api_namespace() {
@@ -94,7 +67,7 @@ class Zipwp_Images_Api {
 	/**
 	 * Get API headers
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @return array<string, string>
 	 */
 	public function get_api_headers() {
@@ -115,7 +88,7 @@ class Zipwp_Images_Api {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			return new \WP_Error(
 				'gt_rest_cannot_access',
-				__( 'Sorry, you are not allowed to do that.', 'spectra' ),
+				__( 'Sorry, you are not allowed to do that.', 'ultimate-addons-for-gutenberg' ),
 				array( 'status' => rest_authorization_required_code() )
 			);
 		}
@@ -191,7 +164,7 @@ class Zipwp_Images_Api {
 		if ( ! wp_verify_nonce( sanitize_text_field( (string) $nonce ), 'wp_rest' ) ) {
 			wp_send_json_error(
 				array(
-					'data'   => __( 'Nonce verification failed.', 'spectra' ),
+					'data'   => __( 'Nonce verification failed.', 'ultimate-addons-for-gutenberg' ),
 					'status' => false,
 
 				)
@@ -285,7 +258,7 @@ class Zipwp_Images_Api {
 		check_ajax_referer( 'zipwp-images', '_ajax_nonce' );
 
 		if ( ! current_user_can( 'upload_files' ) ) {
-			wp_send_json_error( __( 'You are not allowed to perform this action', 'spectra' ) );
+			wp_send_json_error( __( 'You are not allowed to perform this action', 'ultimate-addons-for-gutenberg' ) );
 		}
 
 		$url      = isset( $_POST['url'] ) ? sanitize_url( $_POST['url'] ) : false; // phpcs:ignore -- We need to remove this ignore once the WPCS has released this issue fix - https://github.com/WordPress/WordPress-Coding-Standards/issues/2189.
@@ -294,11 +267,11 @@ class Zipwp_Images_Api {
 		$photo_id = isset( $_POST['id'] ) ? absint( sanitize_key( $_POST['id'] ) ) : 0;
 
 		if ( 0 === $photo_id ) {
-			wp_send_json_error( __( 'Need to send photo ID', 'spectra' ) );
+			wp_send_json_error( __( 'Need to send photo ID', 'ultimate-addons-for-gutenberg' ) );
 		}
 
 		if ( false === $url ) {
-			wp_send_json_error( __( 'Need to send URL of the image to be downloaded', 'spectra' ) );
+			wp_send_json_error( __( 'Need to send URL of the image to be downloaded', 'ultimate-addons-for-gutenberg' ) );
 		}
 
 		$image  = '';
@@ -308,7 +281,7 @@ class Zipwp_Images_Api {
 		$image = $this->create_image_from_url( $url, $name, (string) $photo_id, $desc );
 
 		if ( empty( $image ) ) {
-			wp_send_json_error( __( 'Could not download the image.', 'spectra' ) );
+			wp_send_json_error( __( 'Could not download the image.', 'ultimate-addons-for-gutenberg' ) );
 		}
 
 		$image                    = intval( $image );
@@ -428,7 +401,7 @@ class Zipwp_Images_Api {
 	/**
 	 * Image size.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @param array<string, array<string, mixed>> $image Image Array.
 	 *
 	 * @return array<int, array<string, mixed>>
@@ -489,7 +462,7 @@ class Zipwp_Images_Api {
 	/**
 	 * Get width and height of the image.
 	 *
-	 * @since 0.0.1
+	 * @since 1.0.0
 	 * @param string $url Image URL.
 	 * @return array<string, array<string, string>|string>
 	 */

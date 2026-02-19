@@ -96,7 +96,7 @@ const Settings = () => {
 		{
 			children: [
 				{
-					name: __( 'My Account', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'My Account', 'spectra-blocks' ),
 					slug: 'license',
 					icon: SettingsIcons.account,
 				},
@@ -106,12 +106,12 @@ const Settings = () => {
 			name: 'Editor',
 			children: [
 				{
-					name: __( 'Editor Options', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Editor Options', 'spectra-blocks' ),
 					slug: 'global-settings',
 					icon: SettingsIcons[ 'global-settings' ],
 				},
 				{
-					name: __( 'Editor Enhancements', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Editor Enhancements', 'spectra-blocks' ),
 					slug: 'editor-enhancements',
 					icon: SettingsIcons.templates,
 				},
@@ -121,12 +121,12 @@ const Settings = () => {
 			name: 'Utilities',
 			children: [
 				{
-					name: __( 'Version Control', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Version Control', 'spectra-blocks' ),
 					slug: 'version-control',
 					icon: SettingsIcons[ 'version-control' ],
 				},
 				{
-					name: __( 'Performance', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Performance', 'spectra-blocks' ),
 					slug: 'fonts-performance',
 					icon: SettingsIcons[ 'fonts-performance' ],
 				},
@@ -136,12 +136,12 @@ const Settings = () => {
 			name: 'Preferences',
 			children: [
 				{
-					name: __( 'Site Visibility', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Site Visibility', 'spectra-blocks' ),
 					slug: 'site-visibility',
 					icon: SettingsIcons[ 'site-visibility' ],
 				},
 				{
-					name: __( 'Integrations', 'ultimate-addons-for-gutenberg' ),
+					name: __( 'Integrations', 'spectra-blocks' ),
 					slug: 'block-settings',
 					icon: SettingsIcons[ 'block-settings' ],
 				},
@@ -150,19 +150,19 @@ const Settings = () => {
 	];
 
 	const tabTitles = {
-		'global-settings': __( 'Editor Options', 'ultimate-addons-for-gutenberg' ),
-		'editor-enhancements': __( 'Editor Enhancements', 'ultimate-addons-for-gutenberg' ),
-		'version-control': __( 'Version Control', 'ultimate-addons-for-gutenberg' ),
-		'fonts-performance': __( 'Performance', 'ultimate-addons-for-gutenberg' ),
-		'fse-support': __( 'Theme Fonts', 'ultimate-addons-for-gutenberg' ),
-		'block-settings': __( 'Integrations', 'ultimate-addons-for-gutenberg' ),
-		'site-visibility': __( 'Site Visibility', 'ultimate-addons-for-gutenberg' ),
-		'license': __( 'My Account', 'ultimate-addons-for-gutenberg' ),
+		'global-settings': __( 'Editor Options', 'spectra-blocks' ),
+		'editor-enhancements': __( 'Editor Enhancements', 'spectra-blocks' ),
+		'version-control': __( 'Version Control', 'spectra-blocks' ),
+		'fonts-performance': __( 'Performance', 'spectra-blocks' ),
+		'fse-support': __( 'Theme Fonts', 'spectra-blocks' ),
+		'block-settings': __( 'Integrations', 'spectra-blocks' ),
+		'site-visibility': __( 'Site Visibility', 'spectra-blocks' ),
+		'license': __( 'My Account', 'spectra-blocks' ),
 	};
 
-	if ( 'yes' === uag_admin_react.enable_v2_blocks ) {
+	if ( 'yes' === spectra_blocks_admin_react.enable_v2_blocks ) {
 		navigation[2].children.unshift( {
-			name: __( 'Asset Generation', 'ultimate-addons-for-gutenberg' ),
+			name: __( 'Asset Generation', 'spectra-blocks' ),
 			slug: 'asset-generation',
 			icon: SettingsIcons['asset-generation'],
 		} )
@@ -170,7 +170,7 @@ const Settings = () => {
 
 	if ( spectraIsBlockTheme ) {
 		navigation[ 3 ].children.unshift( {
-			name: __( 'Theme Fonts', 'ultimate-addons-for-gutenberg' ),
+			name: __( 'Theme Fonts', 'spectra-blocks' ),
 			slug: 'fse-support',
 			icon: SettingsIcons.font,
 		} )
@@ -181,11 +181,11 @@ const Settings = () => {
 		const activePath = query.get( 'path' );
 		const activeHash = query.get( 'settings' );
 		let activeSettingsTabFromHash = activeHash && 'settings' === activePath ? activeHash : 'global-settings';
-		if ( uag_react.spectra_pro_status && uag_react.spectra_pro_licensing && ! uag_react.license_status ) {
+		if ( spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && ! spectra_blocks_react.license_status ) {
 			activeSettingsTabFromHash = activeHash && 'settings' === activePath ? activeHash : 'license';
 			history.push( {
 				pathname: 'admin.php',
-				search: `?page=spectra&path=settings&settings=${ activeSettingsTabFromHash }`,
+				search: `?page=spectra-blocks&path=settings&settings=${ activeSettingsTabFromHash }`,
 			} );
 		}
 		dispatch( { type: 'UPDATE_SETTINGS_ACTIVE_NAVIGATION_TAB', payload: activeSettingsTabFromHash } );
@@ -201,36 +201,36 @@ const Settings = () => {
 
 
 	const accountModalData = {
-		title: __( 'Unlock Pro Features', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Unlock Pro Features', 'spectra-blocks' ),
 		Image: AccountModalImage,
-		header: __( 'Limitless Design with Spectra Pro!', 'ultimate-addons-for-gutenberg' ),
+		header: __( 'Limitless Design with Spectra Pro!', 'spectra-blocks' ),
 		description: __(
 			'Experience design freedom with Spectra Pro. Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
-			'ultimate-addons-for-gutenberg'
+			'spectra-blocks'
 		),
 		features: [
-			__( 'Instagram Feed Block', 'ultimate-addons-for-gutenberg' ),
-			__( 'Global Block Styles', 'ultimate-addons-for-gutenberg' ),
-			__( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ),
-			__( 'Loop Builder', 'ultimate-addons-for-gutenberg' ),
-			__( 'Popup Builder', 'ultimate-addons-for-gutenberg' ),
-			__( 'And more…', 'ultimate-addons-for-gutenberg' ),
+			__( 'Instagram Feed Block', 'spectra-blocks' ),
+			__( 'Global Block Styles', 'spectra-blocks' ),
+			__( 'Dynamic Content', 'spectra-blocks' ),
+			__( 'Loop Builder', 'spectra-blocks' ),
+			__( 'Popup Builder', 'spectra-blocks' ),
+			__( 'And more…', 'spectra-blocks' ),
 		],
 	};
 
 	const instagramModalData = {
-		title: __( 'Unlock Instagram Feed', 'ultimate-addons-for-gutenberg' ),
+		title: __( 'Unlock Instagram Feed', 'spectra-blocks' ),
 		Image: InstagramModalImage,
-		header: __( 'Display Your Instagram Journey on Your Website', 'ultimate-addons-for-gutenberg' ),
+		header: __( 'Display Your Instagram Journey on Your Website', 'spectra-blocks' ),
 		description: __(
 			'Grab the attention of visitors with high quality photos and videos directly from your instagram feed.',
-			'ultimate-addons-for-gutenberg'
+			'spectra-blocks'
 		),
 		features: [
-			__( 'Image gallery layouts that suit your website', 'ultimate-addons-for-gutenberg' ),
-			__( 'Supports multiple Instagram accounts', 'ultimate-addons-for-gutenberg' ),
-			__( 'Abundant customization options', 'ultimate-addons-for-gutenberg' ),
-			__( 'Drive organic traffic with instagram captions', 'ultimate-addons-for-gutenberg' ),
+			__( 'Image gallery layouts that suit your website', 'spectra-blocks' ),
+			__( 'Supports multiple Instagram accounts', 'spectra-blocks' ),
+			__( 'Abundant customization options', 'spectra-blocks' ),
+			__( 'Drive organic traffic with instagram captions', 'spectra-blocks' ),
 		],
 	};
 
@@ -244,19 +244,19 @@ const Settings = () => {
 						<Title
 							className="[&_h2]:text-text-primary text-xl"
 							size="md"
-							title={ tabTitles[ currentTab ] || __( 'Settings', 'ultimate-addons-for-gutenberg' ) }
+							title={ tabTitles[ currentTab ] || __( 'Settings', 'spectra-blocks' ) }
 						/>
 					</Container>
 
 					<Container className="w-full rounded-xl" direction="column" gap="sm">
-						{ 'yes' === uag_admin_react.enable_v2_blocks && uag_react.pro_plugin_status !== 'Activated' && (
+						{ 'yes' === spectra_blocks_admin_react.enable_v2_blocks && spectra_blocks_react.pro_plugin_status !== 'Activated' && (
 							<div className="bg-background-primary p-6 rounded-xl mb-8 shadow">
 								<UpgradeNotices
 									title={
 										<div className="flex gap-2 items-center">
-											{ __( 'Instagram Feed', 'ultimate-addons-for-gutenberg' ) }
+											{ __( 'Instagram Feed', 'spectra-blocks' ) }
 											<Badge
-												label={ __( 'PRO', 'ultimate-addons-for-gutenberg' ) }
+												label={ __( 'PRO', 'spectra-blocks' ) }
 												size="xxs"
 												type="pill"
 												variant="inverse"
@@ -265,17 +265,17 @@ const Settings = () => {
 									}
 									description={ __(
 										'please upgrade to use this feature.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 									upgradeText={ __(
 										'Integrate your Instagram feed into your site.',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									) }
 									upgradeBold={
 										<>
 											<div className="flex items-center gap-2">
 												<InstagramSvg />
-												{ __( 'Enhance engagement.', 'ultimate-addons-for-gutenberg' ) }
+												{ __( 'Enhance engagement.', 'spectra-blocks' ) }
 											</div>
 										</>
 									}
@@ -284,7 +284,7 @@ const Settings = () => {
 							</div>
 						) }
 
-						{ 'yes' === uag_admin_react.enable_v2_blocks && uag_react.spectra_pro_status && (
+						{ 'yes' === spectra_blocks_admin_react.enable_v2_blocks && spectra_blocks_react.spectra_pro_status && (
 							<div className="bg-background-primary p-6 rounded-xl mb-8 shadow">
 								<InstagramUsers />
 							</div>
@@ -301,7 +301,7 @@ const Settings = () => {
 						<Title
 							className="[&_h2]:text-text-primary text-xl"
 							size="md"
-							title={ tabTitles[ currentTab ] || __( 'Settings', 'ultimate-addons-for-gutenberg' ) }
+							title={ tabTitles[ currentTab ] || __( 'Settings', 'spectra-blocks' ) }
 						/>
 					</Container>
 
@@ -310,19 +310,13 @@ const Settings = () => {
 						direction="column"
 						gap="sm"
 					>
-						{ 'yes' === uag_admin_react.enable_v2_blocks && 'global-settings' === currentTab && (
+						{ 'global-settings' === currentTab && (
 							<>
 								<ContentWidth />
 								<InheritFromTheme />
 								<ContainerGlobalPadding />
 								<ContainerGlobalElementsGap />
-							</>
-						) }
-						{ 'global-settings' === currentTab && (
-							<DynamicContent />
-						) }
-						{ 'yes' === uag_admin_react.enable_v2_blocks && 'global-settings' === currentTab && (
-							<>
+								<DynamicContent />
 								<BlocksEditorSpacing />
 								<OnPageCSS />
 								<CopyPasteStyles />
@@ -330,24 +324,12 @@ const Settings = () => {
 								<LoadFontAwesome5 />
 							</>
 						) }
-						{ ( 'yes' === uag_admin_react.uagb_old_user_less_than_3 || 'yes' === uag_admin_react.enable_v2_blocks ) && 'global-settings' === currentTab && (
+						{ 'global-settings' === currentTab && (
 							<EnableLegacyDesignLibrary />
 						) }
 						{'global-settings' === currentTab && (
 							<BSFAnalyticsOption />
 						)}
-						{ 'yes' === uag_admin_react.enable_v2_blocks && 'asset-generation' === currentTab && (
-							<>
-								<AssetsGeneration />
-								<RegenerateAssets />
-							</>
-						) }
-						{ 'yes' === uag_admin_react.enable_v2_blocks && 'editor-enhancements' === currentTab && (
-							<>
-								<QuickActionBar />
-								<CollapsePanels />
-							</>
-						) }
 						{ 'editor-enhancements' === currentTab && (
 							<TemplatesButton />
 						) }
@@ -374,19 +356,19 @@ const Settings = () => {
 						) }
 						{ 'license' === currentTab && (
 							<>
-								{ 'Activated' !== uag_react.pro_plugin_status && (
+								{ 'Activated' !== spectra_blocks_react.pro_plugin_status && (
 									<UpgradeNotices
-										title={ __( 'License Key', 'ultimate-addons-for-gutenberg' ) }
-										description={ __( 'no license key needed.', 'ultimate-addons-for-gutenberg' ) }
+										title={ __( 'License Key', 'spectra-blocks' ) }
+										description={ __( 'no license key needed.', 'spectra-blocks' ) }
 										upgradeText={ __(
 											'Get access to advanced blocks and premium features.',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 										) }
-										upgradeBold={ __( 'Unlock Pro Features', 'ultimate-addons-for-gutenberg' ) }
+										upgradeBold={ __( 'Unlock Pro Features', 'spectra-blocks' ) }
 										modalData={ accountModalData }
 									/>
 								) }
-								{ uag_react.spectra_pro_status && uag_react.spectra_pro_licensing && <MyAccount /> }	
+								{ spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && <MyAccount /> }	
 							</>
 						) }
 						{/* Apply filters for all tabs */}
@@ -411,7 +393,7 @@ const Settings = () => {
 						
 						
 					</Container>
-						{ ( 'license' === currentTab && 'Activated' !== uag_react.pro_plugin_status ) && (
+						{ ( 'license' === currentTab && 'Activated' !== spectra_blocks_react.pro_plugin_status ) && (
 								<Container
 									className="bg-background-primary w-full rounded-xl shadow-sm sm:p-6 p-3 mr-3"
 									direction="column"
@@ -421,11 +403,11 @@ const Settings = () => {
 										<MyAccountUpgradeToPro
 											className="hidden lg:flex !flex-row"
 											items={[
-												__( 'Advanced blocks', 'ultimate-addons-for-gutenberg' ),
-												__( 'Advanced animations', 'ultimate-addons-for-gutenberg' ),
-												__( 'Premium pre-built templates', 'ultimate-addons-for-gutenberg' ),
-												__( 'Priority support and updates', 'ultimate-addons-for-gutenberg' ),
-												__( 'Consistent design with Global Styles', 'ultimate-addons-for-gutenberg' ),
+												__( 'Advanced blocks', 'spectra-blocks' ),
+												__( 'Advanced animations', 'spectra-blocks' ),
+												__( 'Premium pre-built templates', 'spectra-blocks' ),
+												__( 'Priority support and updates', 'spectra-blocks' ),
+												__( 'Consistent design with Global Styles', 'spectra-blocks' ),
 											]}
 											columnView
 										/>

@@ -37,7 +37,7 @@ import { getIconName, spectraClassNames } from '@spectra-helpers';
  * Meta Settings: Repetition controls for popup display frequency.
  * Replicates UAG popup builder repetition settings using WordPress components.
  *
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The repetition settings component.
  */
 const PopupRepetitionSettings = memo( () => {
@@ -86,7 +86,7 @@ const PopupRepetitionSettings = memo( () => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Repetition', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Repetition', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setInfiniteRepeat( false );
 					setRepetition( 1 );
@@ -98,7 +98,7 @@ const PopupRepetitionSettings = memo( () => {
 					hasValue={ () => infiniteRepeat || repetition !== 1 }
 					label={ __(
 						'Repeat Infinitely',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					onDeselect={ () => {
 						setInfiniteRepeat( false );
@@ -111,7 +111,7 @@ const PopupRepetitionSettings = memo( () => {
 					<ToggleControl
 						label={ __(
 							'Repeat Infinitely',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						checked={ infiniteRepeat }
 						onChange={ () =>
@@ -119,7 +119,7 @@ const PopupRepetitionSettings = memo( () => {
 						}
 						help={ __(
 							'When enabled, popup will show every time the page loads.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					/>
 				</ToolsPanelItem>
@@ -129,7 +129,7 @@ const PopupRepetitionSettings = memo( () => {
 						hasValue={ () => repetition !== 1 }
 						label={ __(
 							'Repetition per Browser',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onDeselect={ () => {
 							setRepetition( 1 );
@@ -143,7 +143,7 @@ const PopupRepetitionSettings = memo( () => {
 							__nextHasNoMarginBottom
 							label={ __(
 								'Repetition per Browser',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							value={ repetition }
 							onChange={ ( value ) => updateRepetition( value ) }
@@ -152,7 +152,7 @@ const PopupRepetitionSettings = memo( () => {
 							step={ 1 }
 							help={ __(
 								'Note: Repetition decreases on close, not on refresh.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</ToolsPanelItem>
@@ -166,7 +166,7 @@ const PopupRepetitionSettings = memo( () => {
  * Element Sub-settings: General popup settings.
  *
  * @param {Object} props The element props.
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The rendered block settings.
  */
 const PopupGeneralSettings = memo( ( props ) => {
@@ -190,7 +190,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Popup', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Popup', 'spectra-blocks' ) }
 				onDeselect={ () =>
 					setAttributes( {
 						popupWidth: 700,
@@ -223,7 +223,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							hasValue={ () => !! popupWidth }
 							label={ __(
 								'Popup Width',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							panelId={ clientId }
 							onDeselect={ () =>
@@ -237,7 +237,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 								__next40pxDefaultSize
 								label={ __(
 									'Width',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								value={ popupWidth }
 								onChange={ ( value ) =>
@@ -252,7 +252,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 					hasValue={ () => hasFixedHeight !== undefined }
 					label={ __(
 						'Fixed Height',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					panelId={ clientId }
 					onDeselect={ () =>
@@ -263,7 +263,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 					<ToggleControl
 						label={ __(
 							'Use Fixed Height',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						checked={ hasFixedHeight }
 						onChange={ ( value ) =>
@@ -271,7 +271,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						}
 						help={ __(
 							'Enable fixed height with scrollable content.',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 					/>
 				</ToolsPanelItem>
@@ -281,7 +281,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						hasValue={() => !!popupContentAlignmentV}
 						label={__(
 							'Position',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						)}
 						panelId={clientId}
 						onDeselect={() =>
@@ -295,7 +295,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						<SelectControl
 							label={__(
 								'Position',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							)}
 							value={popupContentAlignmentV || 'center'}
 							options={[
@@ -303,21 +303,21 @@ const PopupGeneralSettings = memo( ( props ) => {
 									value: 'flex-start',
 									label: __(
 										'Top',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 								},
 								{
 									value: 'center',
 									label: __(
 										'Center',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 								},
 								{
 									value: 'flex-end',
 									label: __(
 										'Bottom',
-										'ultimate-addons-for-gutenberg'
+										'spectra-blocks'
 									),
 								},
 							]}
@@ -333,7 +333,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						hasValue={ () => hasOverlay !== undefined }
 						label={ __(
 							'Overlay',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						panelId={ clientId }
 						onDeselect={ () =>
@@ -345,7 +345,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						<ToggleControl
 							label={ __(
 								'Show Overlay',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							checked={ hasOverlay }
 							onChange={ ( value ) =>
@@ -353,7 +353,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							}
 							help={ __(
 								'Show background overlay behind popup.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</ToolsPanelItem>
@@ -366,7 +366,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						}
 						label={ __(
 							'Block Background',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						panelId={ clientId }
 						onDeselect={ () =>
@@ -379,7 +379,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						<ToggleControl
 							label={ __(
 								'Block Background Interaction',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							checked={ haltBackgroundInteraction }
 							onChange={ ( value ) =>
@@ -389,7 +389,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							}
 							help={ __(
 								'Prevent interaction with page content behind popup.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</ToolsPanelItem>
@@ -400,7 +400,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						hasValue={ () => willPushContent !== undefined }
 						label={ __(
 							'Push Content',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						panelId={ clientId }
 						onDeselect={ () =>
@@ -411,7 +411,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 						<ToggleControl
 							label={ __(
 								'Push Page Content',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							checked={ willPushContent }
 							onChange={ ( value ) =>
@@ -419,7 +419,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							}
 							help={ __(
 								'Push page content down when banner is shown.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</ToolsPanelItem>
@@ -430,7 +430,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							hasValue={ () => !! popupPositionV }
 							label={ __(
 								'Position',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							panelId={ clientId }
 							onDeselect={ () =>
@@ -444,7 +444,7 @@ const PopupGeneralSettings = memo( ( props ) => {
 							<SelectControl
 								label={ __(
 									'Position',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								) }
 								value={ popupPositionV || 'top' }
 								options={ [
@@ -452,14 +452,14 @@ const PopupGeneralSettings = memo( ( props ) => {
 										value: 'top',
 										label: __(
 											'Top',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 										),
 									},
 									{
 										value: 'bottom',
 										label: __(
 											'Bottom',
-											'ultimate-addons-for-gutenberg'
+											'spectra-blocks'
 										),
 									},
 								] }
@@ -479,7 +479,7 @@ const PopupGeneralSettings = memo( ( props ) => {
  * Element Sub-settings: Close button settings.
  *
  * @param {Object} props The element props.
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The rendered close settings.
  */
 const PopupCloseSettings = memo( ( props ) => {
@@ -504,30 +504,17 @@ const PopupCloseSettings = memo( ( props ) => {
 	const [ isCopied, setIsCopied ] = useState( false );
 	const canUseClipboard = navigator.clipboard ? true : false;
 
-	// Update the close popup class ref when the close popup is changed.
-	const closeClassRef = useCallback( ( node ) => {
-		if ( canUseClipboard && node ) {
-			node.addEventListener( 'click', () => {
-				node.style.pointerEvents = 'none';
-				const hiddenInput = document.createElement( 'input' );
-
-				hiddenInput.style.display = 'none';
-				hiddenInput.setAttribute( 'value', `spectra-popup-close-${ uagb_blocks_info.current_post_id }` );
-				document.body.appendChild( hiddenInput );
-
-				hiddenInput.select();
-				hiddenInput.setSelectionRange( 0, 99999 );
-				navigator.clipboard.writeText( hiddenInput.value );
-
-				setIsCopied( true );
-				setTimeout( () => {
-					document.body.removeChild( hiddenInput );
-					setIsCopied( false );
-					node.style.pointerEvents = '';
-				}, 750 );
-			} );
+	// Handle copy to clipboard for the close popup class.
+	const handleCopyClass = useCallback( () => {
+		if ( ! canUseClipboard ) {
+			return;
 		}
-	}, [] );
+		navigator.clipboard.writeText( `spectra-popup-close-${ spectra_blocks_info.current_post_id }` );
+		setIsCopied( true );
+		setTimeout( () => {
+			setIsCopied( false );
+		}, 750 );
+	}, [ canUseClipboard ] );
 
 	if ( ! isDismissable ) {
 		return null;
@@ -539,14 +526,14 @@ const PopupCloseSettings = memo( ( props ) => {
 		case 'svg':
 			accessibilityPlaceholder = sprintf(
 				/* translators: %s: The name of the SVG icon. */
-				__( 'An icon named %s', 'ultimate-addons-for-gutenberg' ),
+				__( 'An icon named %s', 'spectra-blocks' ),
 				getIconName( closeIcon ),
 			);
 			break;
 		case 'image':
 			accessibilityPlaceholder = sprintf(
 				/* translators: %s: The name of the SVG image. */
-				__( 'An image named %s', 'ultimate-addons-for-gutenberg' ),
+				__( 'An image named %s', 'spectra-blocks' ),
 				getIconName( closeIcon ),
 			);
 			break;
@@ -562,7 +549,7 @@ const PopupCloseSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Close Icon', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Close Icon', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						closeIcon: undefined,
@@ -585,7 +572,7 @@ const PopupCloseSettings = memo( ( props ) => {
 				*/ }
 				<ToolsPanelItem
 					hasValue={ () => !! closeIcon || !! flipForRTL }
-					label={ __( 'Icon', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Icon', 'spectra-blocks' ) }
 					onDeselect={ () =>
 						setAttributes( {
 							closeIcon: undefined,
@@ -611,14 +598,14 @@ const PopupCloseSettings = memo( ( props ) => {
 							checked={ flipForRTL }
 							label={ __(
 								'Flip Icon for Right-To-Left',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 							onChange={ () =>
 								setAttributes( { flipForRTL: ! flipForRTL } )
 							}
 							help={ __(
 								'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc.',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							) }
 						/>
 					</VStack>
@@ -628,7 +615,7 @@ const PopupCloseSettings = memo( ( props ) => {
 				*/ }
 				<ToolsPanelItem
 					hasValue={ () => !! rotation }
-					label={ __( 'Rotation', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Rotation', 'spectra-blocks' ) }
 					onDeselect={ () =>
 						setAttributes( { rotation: undefined } )
 					}
@@ -640,7 +627,7 @@ const PopupCloseSettings = memo( ( props ) => {
 					<AnglePickerControl
 						label={ __(
 							'Rotation',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						onChange={ ( value ) => {
 							setAttributes( { rotation: value } );
@@ -654,7 +641,7 @@ const PopupCloseSettings = memo( ( props ) => {
 				*/ }
 				<ToolsPanelItem
 					hasValue={ () => !! accessibilityMode }
-					label={ __( 'Accessibility', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Accessibility', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( {
 						accessibilityMode: undefined,
 						accessibilityLabel: undefined,
@@ -669,7 +656,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						<ToggleGroupControl
 							__nextHasNoMarginBottom
 							__next40pxDefaultSize
-							label={ __( 'Accessibiltiy Mode', 'ultimate-addons-for-gutenberg' ) }
+							label={ __( 'Accessibiltiy Mode', 'spectra-blocks' ) }
 							value={ accessibilityMode }
 							onChange={ ( value ) => setAttributes( { accessibilityMode: value } ) }
 							isBlock
@@ -681,7 +668,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						{ requiresAccessibilityLabel && (
 							<InputControl
 								__next40pxDefaultSize
-								label={ __( 'Accessibiltiy Label', 'ultimate-addons-for-gutenberg' ) }
+								label={ __( 'Accessibiltiy Label', 'spectra-blocks' ) }
 								value={ accessibilityLabel }
 								onChange={ ( value ) => setAttributes( { accessibilityLabel: value } ) }
 								placeholder={ accessibilityPlaceholder }
@@ -694,7 +681,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						hasValue={() => closeEscapePress !== undefined}
 						label={__(
 							'Close with Escape',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						)}
 						panelId={clientId}
 						onDeselect={() =>
@@ -706,7 +693,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						<ToggleControl
 							label={__(
 								'Close with Escape',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							)}
 							checked={closeEscapePress}
 							onChange={() =>
@@ -720,7 +707,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						hasValue={() => closeOverlayClick !== undefined}
 						label={__(
 							'Close on Overlay Click',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						)}
 						panelId={clientId}
 						onDeselect={() =>
@@ -732,7 +719,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						<ToggleControl
 							label={__(
 								'Close on Overlay Click',
-								'ultimate-addons-for-gutenberg'
+								'spectra-blocks'
 							)}
 							checked={closeOverlayClick}
 							onChange={() =>
@@ -745,7 +732,7 @@ const PopupCloseSettings = memo( ( props ) => {
 					hasValue={ () => !! closeIconPosition }
 					label={ __(
 						'Icon Position',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					panelId={ clientId }
 					onDeselect={ () =>
@@ -759,7 +746,7 @@ const PopupCloseSettings = memo( ( props ) => {
 					<SelectControl
 						label={ __(
 							'Close Icon Position',
-							'ultimate-addons-for-gutenberg'
+							'spectra-blocks'
 						) }
 						value={ closeIconPosition || 'top-right' }
 						options={ [
@@ -767,14 +754,14 @@ const PopupCloseSettings = memo( ( props ) => {
 								value: 'top-left',
 								label: __(
 									'Top Left',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 							{
 								value: 'top-right',
 								label: __(
 									'Top Right',
-									'ultimate-addons-for-gutenberg'
+									'spectra-blocks'
 								),
 							},
 						] }
@@ -787,7 +774,7 @@ const PopupCloseSettings = memo( ( props ) => {
 					hasValue={ () => !! closeIconSize }
 					label={ __(
 						'Close Icon Size',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					panelId={ clientId }
 					onDeselect={ () =>
@@ -797,7 +784,7 @@ const PopupCloseSettings = memo( ( props ) => {
 				>
 					<RangeControl
 						__nextHasNoMarginBottom
-						label={ __( 'Size', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Size', 'spectra-blocks' ) }
 						value={ closeIconSize }
 						onChange={ ( value ) =>
 							setAttributes( { closeIconSize: value } )
@@ -812,7 +799,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						'spectra-popup__notice',
 						canUseClipboard && 'spectra-popup__notice--clickable',
 					] ) }
-					ref={ closeClassRef }
+					onClick={ handleCopyClass }
 				>
 					{ canUseClipboard && (
 						<Dashicon
@@ -822,12 +809,12 @@ const PopupCloseSettings = memo( ( props ) => {
 							} }
 						/>
 					) }
-					{ `spectra-popup-close-${ uagb_blocks_info.current_post_id }` }
+					{ `spectra-popup-close-${ spectra_blocks_info.current_post_id }` }
 				</p>
 				<p className='spectra-popup__notice spectra-popup__notice--secondary'>
 					{ __(
 						'Copy and paste the class above into the Additional Classes field of any block in this popup to close it.',
-						'ultimate-addons-for-gutenberg',
+						'spectra-blocks',
 					) }
 				</p>
 				</div>
@@ -841,7 +828,7 @@ const PopupCloseSettings = memo( ( props ) => {
  * Following container's ColorSettings pattern but using WordPress core components.
  *
  * @param {Object} props The element props.
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The rendered block color settings.
  */
 const PopupColorSettings = memo( ( props ) => {
@@ -867,7 +854,7 @@ const PopupColorSettings = memo( ( props ) => {
 	colorSettings.push(
 		{
 			colorValue: textColor,
-			label: __( 'Text', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Text', 'spectra-blocks' ),
 			onColorChange: ( value ) =>
 				setAttributes( { textColor: value } ),
 			resetAllFilter: () =>
@@ -878,7 +865,7 @@ const PopupColorSettings = memo( ( props ) => {
 		{
 			colorValue: backgroundColorHover,
 			gradientValue: backgroundGradientHover,
-			label: __( 'Background Hover', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Background Hover', 'spectra-blocks' ),
 			onColorChange: ( value ) =>
 				setAttributes( { backgroundColorHover: value } ),
 			onGradientChange: ( value ) =>
@@ -892,7 +879,7 @@ const PopupColorSettings = memo( ( props ) => {
 		{
 			colorValue: backgroundColor,
 			gradientValue: backgroundGradient,
-			label: __( 'Background', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Background', 'spectra-blocks' ),
 			onColorChange: ( value ) =>
 				setAttributes( { backgroundColor: value } ),
 			onGradientChange: ( value ) =>
@@ -905,7 +892,7 @@ const PopupColorSettings = memo( ( props ) => {
 		},
 		{
 			colorValue: closeIconColor,
-			label: __( 'Close Icon Color', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Close Icon Color', 'spectra-blocks' ),
 			onColorChange: ( value ) =>
 				setAttributes( { closeIconColor: value } ),
 			resetAllFilter: () =>
@@ -915,7 +902,7 @@ const PopupColorSettings = memo( ( props ) => {
 			colorValue: closeIconColorHover,
 			label: __(
 				'Close Icon Hover Color',
-				'ultimate-addons-for-gutenberg'
+				'spectra-blocks'
 			),
 			onColorChange: ( value ) =>
 				setAttributes( { closeIconColorHover: value } ),
@@ -927,7 +914,7 @@ const PopupColorSettings = memo( ( props ) => {
 	if ( variantType === 'popup' ) {
 		colorSettings.push( {
 			colorValue: popupOverlayColor,
-			label: __( 'Overlay Color', 'ultimate-addons-for-gutenberg' ),
+			label: __( 'Overlay Color', 'spectra-blocks' ),
 			onColorChange: ( value ) =>
 				setAttributes( { popupOverlayColor: value } ),
 			resetAllFilter: () =>
@@ -943,7 +930,7 @@ const PopupColorSettings = memo( ( props ) => {
  * Following container's OpacitySettings pattern.
  *
  * @param {Object} props The element props.
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The rendered block opacity settings.
  */
 const PopupOpacitySettings = memo( ( props ) => {
@@ -959,7 +946,7 @@ const PopupOpacitySettings = memo( ( props ) => {
 				hasValue={ () => !! dimRatio }
 				label={ __(
 					'Background Overlay Opacity',
-					'ultimate-addons-for-gutenberg'
+					'spectra-blocks'
 				) }
 				onDeselect={ () => setAttributes( { dimRatio: undefined } ) }
 				resetAllFilter={ () => ( {
@@ -972,7 +959,7 @@ const PopupOpacitySettings = memo( ( props ) => {
 					__nextHasNoMarginBottom
 					label={ __(
 						'Background Opacity',
-						'ultimate-addons-for-gutenberg'
+						'spectra-blocks'
 					) }
 					value={ dimRatio }
 					onChange={ ( value ) =>
@@ -1015,7 +1002,7 @@ const PopupDimensionSettings = memo( ( props ) => {
 						!! width ||
 						( !! height && height !== 'auto' )
 					}
-					label={ __( 'Sizes', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Sizes', 'spectra-blocks' ) }
 					as={ Grid }
 					panelId={ clientId }
 					isShownByDefault
@@ -1104,7 +1091,7 @@ const PopupBlockStyles = memo( ( props ) => {
  * Following container's Settings pattern.
  *
  * @param {Object} props The element props.
- * @since 0.0.1
+ * @since 3.0.0
  * @return {Element} The rendered settings.
  */
 const Settings = ( props ) => {

@@ -30,8 +30,7 @@
 		"insert text",
 		"advanced text",
 		"spectra",
-		"uag",
-		"uagb"
+		"spectra-blocks"
 	],
 	"supports": {
 		"anchor": true,

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "spectra/accordion-child-header",
+  "version": "3.0.0",
+  "title": "Header",
+  "category": "spectra-blocks-inner",
+  "description": "Add a header to this accordion.",
+  "textdomain": "spectra-blocks",
+  "allowedBlocks": [
+    "spectra/accordion-child-header-content",
+    "spectra/accordion-child-header-icon"
+  ],
+  "parent": [
+    "spectra/accordion-child-item"
+  ],
+  "supports": {
+    "shadow": true,
+    "__experimentalBorder": {
+      "style": true,
+      "width": true,
+      "color": true,
+      "radius": true,
+      "shadow": true,
+      "__experimentalDefaultControls": {
+        "width": true,
+        "color": true,
+        "radius": true,
+        "shadow": true
+      }
+    },
+    "layout": {
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center"
+      }
+    },
+    "spacing": {
+      "margin": false,
+      "padding": true,
+      "blockGap": true
+    },
+    "typography": {
+      "fontSize": true,
+      "lineHeight": true,
+      "__experimentalFontFamily": true,
+      "__experimentalFontStyle": true,
+      "__experimentalFontWeight": true,
+      "__experimentalTextDecoration": true,
+      "__experimentalLetterSpacing": true,
+      "__experimentalTextTransform": true,
+      "__experimentalWritingMode": true,
+      "__experimentalDefaultControls": {
+        "fontSize": true,
+        "fontFamily": true
+      }
+    },
+    "color": {
+      "gradients": true,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "text": true
+      }
+    }
+  },
+  "example": {
+    "attributes": {
+      "isPreview": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "usesContext": [
+    "spectra/accordion/item/isActiveInEditor",
+    "spectra/accordion/textColorSecondary",
+    "spectra/accordion/textColorHoverSecondary",
+    "spectra/accordion/backgroundColorSecondary",
+    "spectra/accordion/backgroundColorHoverSecondary",
+    "spectra/accordion/backgroundGradientSecondary",
+    "spectra/accordion/backgroundGradientHoverSecondary",
+    "spectra/accordion/item/textColorSecondary",
+    "spectra/accordion/item/textColorHoverSecondary",
+    "spectra/accordion/item/backgroundColorSecondary",
+    "spectra/accordion/item/backgroundColorHoverSecondary",
+    "spectra/accordion/item/backgroundGradientSecondary",
+    "spectra/accordion/item/backgroundGradientHoverSecondary"
+  ],
+  "providesContext": {
+    "spectra/accordion-child-header/headerElement": "headerElement"
+  },
+  "attributes": {
+    "layout": {
+      "type": "object",
+      "default": {
+        "type": "flex",
+        "flexWrap": "nowrap",
+        "justifyContent": "left",
+        "verticalAlignment": "center"
+      }
+    },
+    "isPreview": {
+      "type": "boolean",
+      "default": false
+    },
+    "headerElement": {
+      "type": "string",
+      "default": "button"
+    },
+    "textColorHover": {
+      "type": "string"
+    },
+    "backgroundColorHover": {
+      "type": "string"
+    },
+    "backgroundGradientHover": {
+      "type": "string"
+    }
+  }
+}

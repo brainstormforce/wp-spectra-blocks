@@ -44,7 +44,7 @@ const GeneralSettings = memo( ( props ) => {
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
-				label={ __( 'Progress Bar', 'ultimate-addons-for-gutenberg' ) }
+				label={ __( 'Progress Bar', 'spectra-blocks' ) }
 				resetAll={ () => {
 					setAttributes( {
 						barHeight: undefined,
@@ -59,7 +59,7 @@ const GeneralSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => !! barHeight }
-					label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Height', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { barHeight: undefined } ) }
 					resetAllFilter={ () => ( { barHeight: undefined } ) }
 					isShownByDefault
@@ -67,7 +67,7 @@ const GeneralSettings = memo( ( props ) => {
 				>
 					<UnitControl
 						__next40pxDefaultSize
-						label={ __( 'Height', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Height', 'spectra-blocks' ) }
 						labelPosition="top"
 						value={ barHeight }
 						min={ 0 }
@@ -82,14 +82,14 @@ const GeneralSettings = memo( ( props ) => {
 				*/}
 				<ToolsPanelItem
 					hasValue={ () => barBorderRadius !== undefined }
-					label={ __( 'Border Radius', 'ultimate-addons-for-gutenberg' ) }
+					label={ __( 'Border Radius', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { barBorderRadius: undefined } ) }
 					resetAllFilter={ () => ( { barBorderRadius: undefined } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<DebouncedRangeControl
-						label={ __( 'Border Radius', 'ultimate-addons-for-gutenberg' ) }
+						label={ __( 'Border Radius', 'spectra-blocks' ) }
 						value={ barBorderRadius }
 						onChange={ ( value ) => setAttributes( { barBorderRadius: value } ) }
 						min={ 0 }
@@ -124,13 +124,13 @@ const ColorSettings = memo( ( props ) => {
 			settings={ [
 				{
 					colorValue: prefixColor,
-					label: __( 'Prefix Color', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Prefix Color', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { prefixColor: value } ),
 					resetAllFilter: () => setAttributes( { prefixColor: undefined } ),
 				},
 				{
 					colorValue: suffixColor,
-					label: __( 'Suffix Color', 'ultimate-addons-for-gutenberg' ),
+					label: __( 'Suffix Color', 'spectra-blocks' ),
 					onColorChange: ( value ) => setAttributes( { suffixColor: value } ),
 					resetAllFilter: () => setAttributes( { suffixColor: undefined } ),
 				},

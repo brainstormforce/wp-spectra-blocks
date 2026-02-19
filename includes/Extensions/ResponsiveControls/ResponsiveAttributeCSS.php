@@ -2,11 +2,21 @@
 /**
  * Responsive Attribute CSS Generator.
  *
+ * @package spectra-blocks
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Responsive Attribute CSS Generator.
+ *
  * Handles the generation of CSS for block-specific responsive attributes.
  * Uses WordPress Style Engine for consistent, optimized CSS output.
  *
  * @package Spectra\Extensions\ResponsiveControls
- * @since 0.0.1
+ * @since 3.0.0
  */
 
 namespace Spectra\Extensions\ResponsiveControls;
@@ -20,7 +30,7 @@ namespace Spectra\Extensions\ResponsiveControls;
  * - CSS formatting and minification
  * - Integration with WordPress Style Engine
  *
- * @since 0.0.1
+ * @since 3.0.0
  */
 class ResponsiveAttributeCSS {
 	/**
@@ -32,7 +42,7 @@ class ResponsiveAttributeCSS {
 	 * - State (like :hover)
 	 * - Custom formatter callback
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @var array<string, array<string, array>>
 	 */
 	const ATTR_DEFINITIONS = array(
@@ -113,16 +123,6 @@ class ResponsiveAttributeCSS {
 				'property' => 'height',
 				'default'  => '400px',
 				'selector' => '.wp-block-spectra-google-map',
-			),
-		),
-		'spectra/svg-animator'                 => array(
-			'svgWidth'  => array(
-				'property' => '--spectra-svg-animator-width',
-				'default'  => '200px',
-			),
-			'svgHeight' => array(
-				'property' => '--spectra-svg-animator-height',
-				'default'  => 'auto',
 			),
 		),
 		'spectra/button'                       => array(
@@ -333,7 +333,7 @@ class ResponsiveAttributeCSS {
 	/**
 	 * Get responsive attributes for a specific block.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param string $block_name The name of the block.
 	 * @return array<string> List of responsive attribute names.
 	 */
@@ -347,7 +347,7 @@ class ResponsiveAttributeCSS {
 	/**
 	 * Generate CSS for a block's attributes.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param string               $block_name The block name/type.
 	 * @param array<string, mixed> $attrs The block attributes.
 	 * @param string               $selector The base CSS selector for the block.
@@ -371,8 +371,9 @@ class ResponsiveAttributeCSS {
 		}
 
 		// Make attributes globally available for formatters.
-		global $current_block_attrs;
-		$current_block_attrs = $attrs;
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		$current_block_attrs = $attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 		$css_rules = array();
 		$defs      = $attr_definitions[ $block_name ];
@@ -406,7 +407,7 @@ class ResponsiveAttributeCSS {
 			$content_height       = $attrs['contentHeight'] ?? 'auto';
 			$container_width      = $attrs['containerWidth'] ?? '600px';
 			$container_height     = $attrs['containerHeight'] ?? 'auto';
-			$max_container_height = $attrs['maxContainerHeight'] ?? '';
+			$max_container_height = $attrs['maxContainerHeight'];
 
 			$declarations = array(
 				'width'      => $container_width ? $container_width : '600px',
@@ -727,7 +728,7 @@ class ResponsiveAttributeCSS {
 	 * 
 	 * Converts numeric margin values to CSS values with px unit.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed $val The margin value (numeric).
 	 * @param array $def The attribute definition (unused).
@@ -755,7 +756,7 @@ class ResponsiveAttributeCSS {
 	 * Uses the base selector to ensure CSS is scoped to the specific slider instance,
 	 * preventing conflicts when multiple sliders are on the same page.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The distance value.
 	 * @param array  $def The attribute definition.
@@ -785,7 +786,7 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Sets CSS declarations based on the provided margin value.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed $val The margin value.
 	 * @return array CSS declarations.
@@ -813,7 +814,7 @@ class ResponsiveAttributeCSS {
 		 * Generates multiple CSS rules to handle both the slide height and content min-height.
 		 * Uses the base selector to ensure CSS is scoped to the specific slider instance.
 		 * 
-		 * @since 0.0.1
+		 * @since 3.0.0
 		 *
 		 * @param mixed  $val The height value.
 		 * @param array  $def The attribute definition.
@@ -892,7 +893,7 @@ class ResponsiveAttributeCSS {
 	 * This ensures consistent slider height rendering between editor and frontend, including 100% values.
 	 * Uses the base selector to ensure CSS is scoped to the specific slider instance.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The height value.
 	 * @param array  $def The attribute definition.
@@ -940,7 +941,7 @@ class ResponsiveAttributeCSS {
 	 * Generates actual background CSS properties for frontend, since style.scss no longer contains them.
 	 * Handles complex background attributes including gradients, images, colors, and positioning.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The background attribute value.
 	 * @param array  $def The attribute definition (contains selector info).
@@ -1757,13 +1758,13 @@ class ResponsiveAttributeCSS {
 	 * Generates CSS custom properties for overlay background position.
 	 * Supports string positions (legacy), focal point coordinates, and custom positioning mode.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay position attribute value (e.g., 'center', 'top left', or focal point object).
 	 * @param array $def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_position( $val, $def = array() ): array {
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
 			return array();
 		}
@@ -1803,7 +1804,7 @@ class ResponsiveAttributeCSS {
 	 * 
 	 * Generates CSS custom properties for overlay background attachment.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay attachment attribute value (e.g., 'scroll', 'fixed').
 	 * @param array $def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
@@ -1812,7 +1813,7 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
 			return array();
 		}
@@ -1829,7 +1830,7 @@ class ResponsiveAttributeCSS {
 	 * 
 	 * Generates CSS custom properties for overlay background repeat.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay repeat attribute value (e.g., 'no-repeat', 'repeat').
 	 * @param array $def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
@@ -1838,7 +1839,7 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
 			return array();
 		}
@@ -1855,7 +1856,7 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Generates CSS custom properties for overlay background size.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay size attribute value (e.g., 'cover', 'contain', 'auto', 'custom').
 	 * @param array $def The attribute definition.
 	 * @param array $block_attrs The block attributes.
@@ -1865,7 +1866,7 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
 			return array();
 		}
@@ -1894,13 +1895,13 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Generates CSS custom properties for overlay mix-blend-mode.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay blend mode attribute value (e.g., 'normal', 'multiply', 'overlay').
 	 * @param array $def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_blend_mode( $val, $def = array() ): array {
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
@@ -1940,13 +1941,13 @@ class ResponsiveAttributeCSS {
 	 * 
 	 * Generates CSS custom properties for overlay opacity.
 	 *
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 * @param mixed $val The overlay opacity attribute value (0-100).
 	 * @param array $def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_opacity( $val, $def = array() ): array {
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
@@ -1998,7 +1999,7 @@ class ResponsiveAttributeCSS {
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_image( $val, $def = array() ): array {
-		global $current_block_attrs;
+		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
@@ -2075,7 +2076,7 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Converts WordPress image scale values to CSS object-fit values.
 	 * 
-	 * @since 0.0.1
+	 * @since 3.0.0
 	 *
 	 * @param mixed $val The scale value.
 	 * @return string CSS object-fit value.

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Input, DropdownMenu, Button } from '@bsf/force-ui';
 
 import BlockItem from '@Common/components/BlockItem';
-import UAGB_Block_Icons from '@Common/block-icons';
+import Spectra_Block_Icons from '@Common/block-icons';
 import getApiData from '@Controls/getApiData';
 
 import CustomRadioGroup from './CustomRadioGroup';
@@ -52,7 +52,7 @@ const BlocksSection = () => {
 			if ( data.hasOwnProperty( key ) ) {
 				const block = data[ key ];
 
-				const IconElement = UAGB_Block_Icons[ block.slug ];
+				const IconElement = Spectra_Block_Icons[ block.slug ];
 				const icon = IconElement ? (
 					React.cloneElement( IconElement, { className: 'w-5 h-5' } )
 				) : (
@@ -77,9 +77,9 @@ const BlocksSection = () => {
 	}
 
 	useEffect( () => {
-		const newBlocksArray = convertToWidgetsArray( uag_react.blocks_info );
+		const newBlocksArray = convertToWidgetsArray( spectra_blocks_react.blocks_info );
 		setFormattedBlocks( newBlocksArray );
-	}, [ uag_react.blocks_info ] );
+	}, [ spectra_blocks_react.blocks_info ] );
 
 	// Remove the label element associated with the input field
 	useEffect( () => {
@@ -91,11 +91,11 @@ const BlocksSection = () => {
 
 	// Update filtered blocks when filters or search input change
 	useEffect( () => {
-		let filtered = convertToWidgetsArray( uag_react.blocks_info );
+		let filtered = convertToWidgetsArray( spectra_blocks_react.blocks_info );
 
 		let extesions = [
 			{
-				icon: React.cloneElement( UAGB_Block_Icons[ 'animations-extension' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'animations-extension' ], { className: 'w-5 h-5' } ),
 				id: '39',
 				is_active: true,
 				is_core: false,
@@ -103,17 +103,17 @@ const BlocksSection = () => {
 				is_pro: false,
 				link: 'animations-legacy',
 				slug: 'animations',
-				title: __( 'Animations', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Animations', 'spectra-blocks' ),
 				extensionKey: 'enableAnimationsExtension',
-				nonce: uag_react.enable_animations_extension_nonce,
-				action: 'uag_enable_animations_extension',
+				nonce: spectra_blocks_react.enable_animations_extension_nonce,
+				action: 'spectra_blocks_enable_animations_extension',
 				actionType: 'UPDATE_ENABLE_ANIMATIONS_EXTENSION',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses.animations,
 				setTrigger: setExtensionStatuses,
 			},
 			{
-				icon: React.cloneElement( UAGB_Block_Icons[ 'display-conditions' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'display-conditions' ], { className: 'w-5 h-5' } ),
 				id: '40',
 				is_active: true,
 				is_core: false,
@@ -121,10 +121,10 @@ const BlocksSection = () => {
 				is_pro: false,
 				link: 'display-conditions',
 				slug: 'display-conditions',
-				title: __( 'Display Conditions', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Display Conditions', 'spectra-blocks' ),
 				extensionKey: 'enableDisplayConditions',
-				nonce: uag_react.enable_block_condition_nonce,
-				action: 'uag_enable_block_condition',
+				nonce: spectra_blocks_react.enable_block_condition_nonce,
+				action: 'spectra_blocks_enable_block_condition',
 				actionType: 'UPDATE_ENABLE_DISPLAY_CONDITIONS',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses[ 'display-conditions' ],
@@ -134,7 +134,7 @@ const BlocksSection = () => {
 
 		if ( filterState.type !== 'free' || filterState.type !== null ) {
 			extesions.push( {
-				icon: React.cloneElement( UAGB_Block_Icons[ 'dynamic-content' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'dynamic-content' ], { className: 'w-5 h-5' } ),
 				id: '41',
 				is_active: true,
 				is_core: false,
@@ -142,10 +142,10 @@ const BlocksSection = () => {
 				is_pro: true,
 				link: 'dynamic-content',
 				slug: 'dynamic-content',
-				title: __( 'Dynamic Content', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Dynamic Content', 'spectra-blocks' ),
 				extensionKey: 'enableDynamicContentExtension',
-				nonce: uag_react.enable_dynamic_content_nonce,
-				action: 'uag_enable_dynamic_content',
+				nonce: spectra_blocks_react.enable_dynamic_content_nonce,
+				action: 'spectra_blocks_enable_dynamic_content',
 				actionType: 'UPDATE_ENABLE_DYNAMIC_CONTENT_EXTENSION',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses[ 'dynamic-content' ],
@@ -155,7 +155,7 @@ const BlocksSection = () => {
 
 		if ( filterState.type !== 'free' || filterState.type !== null ) {
 			extesions.push( {
-				icon: React.cloneElement( UAGB_Block_Icons[ 'global-block-styles' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'global-block-styles' ], { className: 'w-5 h-5' } ),
 				id: '42',
 				is_active: true,
 				is_core: false,
@@ -163,10 +163,10 @@ const BlocksSection = () => {
 				is_pro: true,
 				link: 'global-block-style',
 				slug: 'global-block-styles',
-				title: __( 'Global Block Styles', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Global Block Styles', 'spectra-blocks' ),
 				extensionKey: 'enableGBSExtension',
-				nonce: uag_react.enable_gbs_extension_nonce,
-				action: 'uag_enable_gbs_extension',
+				nonce: spectra_blocks_react.enable_gbs_extension_nonce,
+				action: 'spectra_blocks_enable_gbs_extension',
 				actionType: 'UPDATE_GBS_EXTENSION',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses[ 'global-block-styles' ],
@@ -177,7 +177,7 @@ const BlocksSection = () => {
 		extesions = [
 			...extesions,
 			{
-				icon: React.cloneElement( UAGB_Block_Icons[ 'masonry-gallery' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'masonry-gallery' ], { className: 'w-5 h-5' } ),
 				id: '43',
 				is_active: true,
 				is_core: false,
@@ -185,17 +185,17 @@ const BlocksSection = () => {
 				is_pro: false,
 				link: 'masonry-image-gallery',
 				slug: 'masonry-gallery',
-				title: __( 'Masonry Gallery', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Masonry Gallery', 'spectra-blocks' ),
 				extensionKey: 'enableMasonryExtension',
-				nonce: uag_react.enable_masonry_gallery_nonce,
-				action: 'uag_enable_masonry_gallery',
+				nonce: spectra_blocks_react.enable_masonry_gallery_nonce,
+				action: 'spectra_blocks_enable_masonry_gallery',
 				actionType: 'UPDATE_ENABLE_MASONRY_EXTENSION',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses[ 'masonry-gallery' ],
 				setTrigger: setExtensionStatuses,
 			},
 			{
-				icon: React.cloneElement( UAGB_Block_Icons[ 'responsive-conditions' ], { className: 'w-5 h-5' } ),
+				icon: React.cloneElement( Spectra_Block_Icons[ 'responsive-conditions' ], { className: 'w-5 h-5' } ),
 				id: '44',
 				is_active: true,
 				is_core: false,
@@ -203,10 +203,10 @@ const BlocksSection = () => {
 				is_pro: false,
 				link: 'responsive-conditions',
 				slug: 'responsive-conditions',
-				title: __( 'Responsive Conditions', 'ultimate-addons-for-gutenberg' ),
+				title: __( 'Responsive Conditions', 'spectra-blocks' ),
 				extensionKey: 'enableResponsiveConditions',
-				nonce: uag_react.enable_block_responsive_nonce,
-				action: 'uag_enable_block_responsive',
+				nonce: spectra_blocks_react.enable_block_responsive_nonce,
+				action: 'spectra_blocks_enable_block_responsive',
 				actionType: 'UPDATE_ENABLE_RESPONSIVE_CONDITIONS',
 				onChange: setActiveExtensions,
 				trigger: extensionStatuses[ 'responsive-conditions' ],
@@ -216,7 +216,7 @@ const BlocksSection = () => {
 
 		filtered = [ ...filtered, ...extesions ];
 
-		if ( uag_react.pro_plugin_status !== 'Activated' ) {
+		if ( spectra_blocks_react.pro_plugin_status !== 'Activated' ) {
 			filtered = filtered.filter( ( block ) => ! block.is_pro );
 			filtered = [ ...proBlocks, ...filtered ];
 		}
@@ -242,7 +242,7 @@ const BlocksSection = () => {
 		if ( filterState.status ) {
 			filtered = filtered.filter( ( block ) => {
 				if ( ! block.is_extension ) {
-					if ( uag_react.pro_plugin_status !== 'Activated' ) {
+					if ( spectra_blocks_react.pro_plugin_status !== 'Activated' ) {
 						return filterState.status === 'active'
 							? blocksStatuses[ block.slug ] === block.slug && ! block.is_pro
 							: blocksStatuses[ block.slug ] === 'disabled';
@@ -289,19 +289,19 @@ const BlocksSection = () => {
 		dispatch( { type: 'UPDATE_BLOCK_STATUSES', payload: updatedStatuses } );
 
 		const data = {
-			security: uag_react.blocks_activation_and_deactivation_nonce,
+			security: spectra_blocks_react.blocks_activation_and_deactivation_nonce,
 			value: JSON.stringify( updatedStatuses ),
 			status: '',
 		};
 
 		getApiData( {
-			url: uag_react.ajax_url,
-			action: 'uag_blocks_activation_and_deactivation',
+			url: spectra_blocks_react.ajax_url,
+			action: 'spectra_blocks_blocks_activation_and_deactivation',
 			data,
 		} ).then( () => {
 			dispatch( {
 				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-				payload: __( 'Successfully saved!', 'ultimate-addons-for-gutenberg' ),
+				payload: __( 'Successfully saved!', 'spectra-blocks' ),
 			} );
 		} );
 	};
@@ -330,12 +330,12 @@ const BlocksSection = () => {
 			<div className="rounded-lg bg-white w-full border border-solid border-border-subtle">
 				<div className="flex flex-col sm:flex-row sm:items-center items-start justify-between gap-4 p-4">
 					<div className="m-0 text-lg font-semibold text-text-primary">
-						{ __( 'Blocks', 'ultimate-addons-for-gutenberg' ) }
+						{ __( 'Blocks', 'spectra-blocks' ) }
 					</div>
 
 					<div className="flex items-center gap-3">
 						<Input
-							className="search-input uagb-input bg-[#F9FAFB]"
+							className="search-input spectra-blocks-input bg-[#F9FAFB]"
 							aria-label="Text Input"
 							value={ searchInput }
 							onChange={ ( value ) => setSearchInput( value ) }
@@ -359,21 +359,21 @@ const BlocksSection = () => {
 								style={ { border: 'none', borderRight: '1.5px solid #e5e7eb' } }
 								onClick={ () => toggleAllBlocks( true ) }
 							>
-								{ __( 'Activate All', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Activate All', 'spectra-blocks' ) }
 							</div>
 							<div
 								className="font-medium p-2 hover:bg-button-tertiary-hover hover:outline-border-subtle transition-all duration-300"
 								style={ { border: 'none' } }
 								onClick={ () => toggleAllBlocks( false ) }
 							>
-								{ __( 'Deactivate All', 'ultimate-addons-for-gutenberg' ) }
+								{ __( 'Deactivate All', 'spectra-blocks' ) }
 							</div>
 						</div>
 
 						<DropdownMenu placement="bottom-end" isOpen={ isDropOpen } onOpenChange={ setIsDropOpen }>
 							<DropdownMenu.Trigger>
 								<Button
-									className="flex justify-center items-center relative uagb-input-border"
+									className="flex justify-center items-center relative spectra-blocks-input-border"
 									size="sm"
 									tag="button"
 									type="button"
@@ -386,7 +386,7 @@ const BlocksSection = () => {
 									) }
 									<ListFilter size={ 16 } />
 								</Button>
-								<span className="sr-only">{ __( 'Open Menu', 'ultimate-addons-for-gutenberg' ) }</span>
+								<span className="sr-only">{ __( 'Open Menu', 'spectra-blocks' ) }</span>
 							</DropdownMenu.Trigger>
 						<DropdownMenu.ContentWrapper>
 							<DropdownMenu.Content>
@@ -455,7 +455,7 @@ const BlocksSection = () => {
 					<div className="text-sm flex items-center w-full justify-start gap-2 p-4 pt-0">
 						{ searchInput && (
 							<Button
-								className="uagb-input-border"
+								className="spectra-blocks-input-border"
 								icon={ <X aria-label="icon" role="img" size={ 14 } /> }
 								iconPosition="right"
 								size="sm"
@@ -469,7 +469,7 @@ const BlocksSection = () => {
 						) }
 						{ filterState.type && (
 							<Button
-								className="uagb-input-border"
+								className="spectra-blocks-input-border"
 								icon={ <X aria-label="icon" role="img" size={ 14 } /> }
 								iconPosition="right"
 								size="sm"
@@ -483,7 +483,7 @@ const BlocksSection = () => {
 						) }
 						{ filterState.status && (
 							<Button
-								className="uagb-input-border"
+								className="spectra-blocks-input-border"
 								icon={ <X aria-label="icon" role="img" size={ 14 } /> }
 								iconPosition="right"
 								size="sm"
@@ -497,7 +497,7 @@ const BlocksSection = () => {
 						) }
 						{ filterState.category && (
 							<Button
-								className="uagb-input-border"
+								className="spectra-blocks-input-border"
 								icon={ <X aria-label="icon" role="img" size={ 14 } /> }
 								iconPosition="right"
 								size="sm"
