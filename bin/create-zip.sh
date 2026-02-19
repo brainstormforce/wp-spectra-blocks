@@ -70,7 +70,9 @@ zip -r "$ZIP_FILE" "$PLUGIN_SLUG" \
   --exclude "**/lib/*/composer.json" \
   --exclude "**/lib/*/composer.lock" \
   --exclude "**/lib/*/package.json" \
-  --exclude "**/lib/*/package-lock.json"
+  --exclude "**/lib/*/package-lock.json" \
+  --exclude "${PLUGIN_SLUG}/bin/*" \
+  --exclude "**/*.zip"
 
 # 6. Restore dev dependencies for local development
 echo "→ Restoring dev Composer dependencies..."
