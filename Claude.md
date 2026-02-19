@@ -160,3 +160,29 @@ class MyClass {
 | Nonce name | `spectra_blocks_{name}` | `spectra_blocks_popup_builder_admin_nonce` |
 | Filter/action | `spectra_blocks_{name}` | `spectra_blocks_after_cache_purge` |
 | Constants | `SPECTRA_BLOCKS_{NAME}` | `SPECTRA_BLOCKS_VER` |
+
+## Testing
+
+```bash
+# PHP Unit Tests
+./vendor/bin/phpunit                            # Full suite
+./vendor/bin/phpunit --filter TestClassName     # Single test class
+
+# E2E Tests (Playwright)
+npx playwright test                             # Full suite
+npx playwright test --ui                        # Interactive UI mode
+npx playwright test tests/e2e/block-name        # Single test file
+npx playwright codegen http://localhost:8888    # Record new test
+```
+
+## Environment Setup
+
+> Local WP environment must be running before E2E tests. Recommended: `wp-env` or Local by Flywheel.
+> Plugin requires WordPress 6.6+ and PHP 8.1+.
+> SSH access to `github.com/brainstormforce` is required for `composer install`.
+
+## Current Focus
+
+> Update this section each sprint or feature cycle.
+>
+> - [ ] <!-- active task or feature being worked on -->

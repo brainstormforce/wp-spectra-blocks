@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\ModalChildTriggerButton
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -70,18 +68,30 @@ $icon_props = array(
 $config = array(
 	array( 'key' => 'textColor' ),
 	array( 'key' => 'textColorHover' ),
-	array( 'key' => 'iconColor', 'css_var' => '--spectra-icon-color', 'class_name' => null ),
-	array( 'key' => 'iconColorHover', 'css_var' => '--spectra-icon-color-hover', 'class_name' => null ),
+	array(
+		'key'        => 'iconColor',
+		'css_var'    => '--spectra-icon-color',
+		'class_name' => null,
+	),
+	array(
+		'key'        => 'iconColorHover',
+		'css_var'    => '--spectra-icon-color-hover',
+		'class_name' => null,
+	),
 	array( 'key' => 'backgroundColor' ),
 	array( 'key' => 'backgroundColorHover' ),
 	array( 'key' => 'backgroundGradient' ),
 	array( 'key' => 'backgroundGradientHover' ),
-	array( 'key' => 'gap', 'css_var' => '--spectra-icon-gap', 'class_name' => null ),
+	array(
+		'key'        => 'gap',
+		'css_var'    => '--spectra-icon-gap',
+		'class_name' => null,
+	),
 );
 
 // Base classes.
 $custom_classes = array(
-	'button' !== $modal_trigger ? 'is-hidden' : '', 
+	'button' !== $modal_trigger ? 'is-hidden' : '',
 	'wp-block-button',
 	'wp-block-button__link wp-element-button',
 	'modal-trigger-element',

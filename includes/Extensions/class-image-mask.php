@@ -14,7 +14,7 @@ use Spectra\Traits\Singleton;
 
 /**
  * ImageMask class.
- * 
+ *
  * @since 3.0.0
  */
 class ImageMask {
@@ -41,7 +41,7 @@ class ImageMask {
 
 	/**
 	 * Initialize the class
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @return void
 	 */

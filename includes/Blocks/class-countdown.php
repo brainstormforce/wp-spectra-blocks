@@ -14,7 +14,7 @@ use Spectra\Traits\Singleton;
 
 /**
  * Countdown class.
- * 
+ *
  * @since 3.0.0
  */
 class Countdown {
@@ -59,21 +59,21 @@ class Countdown {
 
 		// Retrieve visibility settings from the parent block's attributes.
 		$attributes = $parsed_block['attrs'] ?? array();
-		
+
 		// Handle showSeparator attribute logic.
 		$show_separator = $attributes['showSeparator'] ?? true;
-		
+
 		// If showSeparator is false, set separatorType to empty string.
 		if ( false === $show_separator ) {
 			$parsed_block['attrs']['separatorType'] = '';
 		}
-		
+
 		// Handle time unit visibility for inner blocks.
 		$show_days    = $attributes['showDays'] ?? true;
 		$show_hours   = $attributes['showHours'] ?? true;
 		$show_minutes = $attributes['showMinutes'] ?? true;
 		$show_seconds = $attributes['showSeconds'] ?? true;
-	
+
 		// First pass: Record positions of visible time unit blocks.
 		$time_unit_blocks = array(
 			'spectra/countdown-child-day'    => $show_days,
@@ -81,9 +81,9 @@ class Countdown {
 			'spectra/countdown-child-minute' => $show_minutes,
 			'spectra/countdown-child-second' => $show_seconds,
 		);
-	
+
 		$visible_units = array();
-	
+
 		// Only process inner blocks if they exist.
 		if ( ! empty( $inner_blocks ) ) {
 			// First pass: Collect all visible time units and their positions.
@@ -92,14 +92,14 @@ class Countdown {
 					$visible_units[ $index ] = $block['blockName'];
 				}
 			}
-		
+
 			// Second pass: Determine visibility for each separator block.
 			foreach ( $inner_blocks as $index => &$block ) {
 				// Skip non-separator blocks.
 				if ( 'spectra/countdown-child-separator' !== ( $block['blockName'] ?? '' ) ) {
 					continue;
 				}
-		
+
 				// Search for the previous visible time unit block.
 				$prev_visible_index = null;
 				for ( $i = $index - 1; $i >= 0; $i-- ) {
@@ -108,7 +108,7 @@ class Countdown {
 						break;
 					}
 				}
-		
+
 				// Search for the next visible time unit block.
 				$next_visible_index = null;
 				$inner_blocks_count = count( $inner_blocks );
@@ -118,32 +118,32 @@ class Countdown {
 						break;
 					}
 				}
-		
+
 				// Decide whether to show the separator.
 				$should_show = false;
-				
+
 				// Only show if it is between two visible units and is the first such separator.
 				if ( null !== $prev_visible_index && null !== $next_visible_index ) {
 					$is_first_separator = true;
-					
+
 					// Check for earlier separator blocks between the same two visible units.
 					for ( $i = $prev_visible_index + 1; $i < $next_visible_index; $i++ ) {
-						if ( isset( $inner_blocks[ $i ]['blockName'] ) && 
-							'spectra/countdown-child-separator' === $inner_blocks[ $i ]['blockName'] && 
+						if ( isset( $inner_blocks[ $i ]['blockName'] ) &&
+							'spectra/countdown-child-separator' === $inner_blocks[ $i ]['blockName'] &&
 							$i < $index ) {
 							$is_first_separator = false;
 							break;
 						}
 					}
-					
+
 					$should_show = $is_first_separator;
 				}
-		
+
 				// Update the 'show' attribute on the separator block.
 				$block['attrs']['show'] = $should_show;
 			}
 		}
-	
+
 		// Save the updated inner blocks back to the parsed block only if they originally existed.
 		if ( $has_inner_blocks ) {
 			$parsed_block['innerBlocks'] = $inner_blocks;
@@ -151,4 +151,4 @@ class Countdown {
 
 		return $parsed_block;
 	}
-} 
+}

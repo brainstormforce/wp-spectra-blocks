@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\ModalChildTriggerContent
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 $valid_tag_names = array( 'p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
@@ -35,9 +33,9 @@ $config = array(
 );
 
 // Custom classes.
-$custom_classes = array( 
+$custom_classes = array(
 	'text' !== $modal_trigger ? 'is-hidden' : '',
-	$drop_cap_class, 
+	$drop_cap_class,
 	'modal-trigger-element',
 );
 
@@ -49,4 +47,3 @@ $text = ! empty( $attributes['text'] ) ? $attributes['text'] : __( 'Get started 
 
 // return the view.
 return 'file:./view.php';
-

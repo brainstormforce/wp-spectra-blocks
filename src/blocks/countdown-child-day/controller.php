@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\CountdownChildDay
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get the 'show' attribute to determine whether this child block should be visible.

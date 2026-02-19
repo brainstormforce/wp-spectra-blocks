@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Core.
- * 
+ *
  * @since 3.0.0
  */
 class Core {
@@ -19,14 +19,14 @@ class Core {
 	 * Store Json variable
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @var array
 	 */
 	public static $icon_json = null;
 
 	/**
 	 * As our svg icon is too long array so we will divide that into number of icon chunks.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @var int
@@ -35,11 +35,11 @@ class Core {
 
 	/**
 	 * Get Json Data.
-	 * 
+	 *
 	 * Customize and add icons via 'spectra_icon_chunks' filter.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return array
 	 */
 	public static function backend_load_font_awesome_icons() {
@@ -73,7 +73,7 @@ class Core {
 
 	/**
 	 * Concatenate non-empty string values from an array into a single string.
-	 * 
+	 *
 	 * Based on the type, the returned sting will differ.
 	 * -> By default, the returned string will just concatenate all the values in the array into a single string.
 	 * ---> So [ 'noopener', 'noreferer' ] will become 'noopener noreferer'. Keys do not matter here.
@@ -106,7 +106,7 @@ class Core {
 					return empty( $value ) && ! is_numeric( $value ) ? null : "$key: $value";
 				},
 				array_keys( $required_values ),
-				$required_values 
+				$required_values
 			);
 			// Set the separator to a semicolon before the space.
 			$separator = '; ';
@@ -121,7 +121,7 @@ class Core {
 
 	/**
 	 * Get the block name without the namespace and without the 'child' word inside it.
-	 * 
+	 *
 	 * For example, calling this function on the blockname 'spectra/accordion-child-item' will result in 'accordion-item'.
 	 *
 	 * @since 3.0.0
@@ -141,7 +141,7 @@ class Core {
 		if ( empty( $blockname_parts ) ) {
 			return $blockname;
 		}
-		
+
 		// Get last part safely.
 		$blockname_without_namespace = end( $blockname_parts );
 
@@ -149,7 +149,7 @@ class Core {
 		if ( false === $blockname_without_namespace ) {
 			return $blockname;
 		}
-		
+
 		// Replace '-child-' with '-'. This will remove format the blockname without the child substring.
 		return str_replace( '-child-', '-', \sanitize_key( $blockname_without_namespace ) );
 	}
@@ -257,7 +257,7 @@ class Core {
 	 * Get - RGBA Color
 	 *
 	 * Get HEX color and return RGBA. Default return RGB color.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $color      Gets the color value.
@@ -331,7 +331,7 @@ class Core {
 
 	/**
 	 * Get User Browser name
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $user_agent Browser names.
@@ -356,13 +356,13 @@ class Core {
 		} elseif ( strpos( $user_agent, 'MSIE' ) !== false || strpos( $user_agent, 'Trident/7' ) !== false ) {
 			return 'ie';
 		}
-		
+
 		return '';
 	}
 
 	/**
 	 * Check if the given metadata represents a Spectra block.
-	 * 
+	 *
 	 * @since xx.x.
 	 *
 	 * @param array $metadata The block metadata.

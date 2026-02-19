@@ -11,32 +11,32 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class BlockAttributes.
- * 
+ *
  * @since 3.0.0
  */
 class BlockAttributes {
 
 	/**
 	 * Convert a string from camelCase or PascalCase to kebab-case.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
-	 * @param string $string Input string (e.g., 'textSecondaryColor').
+	 * @param string $str Input string (e.g., 'textSecondaryColor').
 	 * @return string Kebab-case string (e.g., 'text-secondary-color').
 	 */
-	private static function to_kebab_case( $string ) {
+	private static function to_kebab_case( $str ) {
 		// If the input is not a string or empty, return an empty string.
-		if ( ! is_string( $string ) || empty( $string ) ) {
+		if ( ! is_string( $str ) || empty( $str ) ) {
 			return '';
 		}
-		
+
 		// Step 1: Insert a hyphen before each uppercase letter (except if it's the first character).
 		// Example: "textSecondaryColor" becomes "text-Secondary-Color" (intermediate result).
-		$string = preg_replace( '/(?<!^)([A-Z0-9])/', '-$1', $string );
+		$str = preg_replace( '/(?<!^)([A-Z0-9])/', '-$1', $str );
 
 		// Step 2: Convert the intermediate result to lowercase and replace any underscores with hyphens.
 		// Final output: "text-Secondary-Color" becomes "text-secondary-color".
-		return strtolower( str_replace( '_', '-', $string ) );
+		return strtolower( str_replace( '_', '-', $str ) );
 	}
 
 	/**
@@ -133,11 +133,11 @@ class BlockAttributes {
 			if ( ! is_null( $css_var ) ) {
 				$styles[ $css_var ] = esc_attr( $final_value );
 			}
-		
+
 			// Add if class_name isn't null.
 			if ( ! is_null( $class_name ) ) {
 				$classes[] = $class_name;
-			}  
+			}
 		}
 
 		return array( $styles, $classes );
@@ -145,7 +145,7 @@ class BlockAttributes {
 
 	/**
 	 * Get wrapper attributes by merging styles, classes, and custom attributes.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $attributes Full block attributes.

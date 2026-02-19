@@ -51,13 +51,13 @@ class BlockManager {
 	 * when the extension manager is initialized.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function init_block() {
 		( Modal::instance() )->init();
 	}
-	
+
 	/**
 	 * Registers all block types defined in block.json files located within the build/blocks directory.
 	 *
@@ -82,14 +82,13 @@ class BlockManager {
 			return;
 		}
 
-
 		if ( ! empty( $block_files ) ) {
 			foreach ( $block_files as $block_file ) {
 				register_block_type_from_metadata( $block_file );
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds a custom block category named "Spectra 3" and appends it to the list of existing categories.
 	 *
@@ -132,7 +131,7 @@ class BlockManager {
 			return $settings;
 		}
 
-		$settings['render_callback'] = function ( $attributes, $content, $block ) use ( $controller_path, $metadata ) {
+		$settings['render_callback'] = function ( $attributes, $content, $block ) use ( $controller_path, $metadata ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- params are available to included controller via closure scope
 			// Include the controller and validate its output.
 			$view = include $controller_path;
 
@@ -198,7 +197,7 @@ class BlockManager {
 
 	/**
 	 * Resolves the path to the block's controller file.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $metadata_file The path to the block.json file.
@@ -213,7 +212,7 @@ class BlockManager {
 
 	/**
 	 * Resolves the template path from the view directive.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $metadata_file The path to the block.json file.
@@ -231,7 +230,7 @@ class BlockManager {
 	 * Removes the 'file:./' prefix from asset paths.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @param string $path The asset path.
 	 * @return string The cleaned path.
 	 */

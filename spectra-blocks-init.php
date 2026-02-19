@@ -17,19 +17,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Include the autoloaders safely.
  */
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-$autoload_file     = SPECTRA_BLOCKS_DIR . 'includes/autoload.php';
-$composer_autoload = SPECTRA_BLOCKS_DIR . 'vendor/autoload.php';
-// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+$spectra_blocks_autoload_file     = SPECTRA_BLOCKS_DIR . 'includes/autoload.php';
+$spectra_blocks_composer_autoload = SPECTRA_BLOCKS_DIR . 'vendor/autoload.php';
 
-if ( file_exists( $autoload_file ) ) {
-	require_once $autoload_file;
+if ( file_exists( $spectra_blocks_autoload_file ) ) {
+	require_once $spectra_blocks_autoload_file;
 } else {
 	wp_die( esc_html__( 'Required file missing. Plugin cannot be initialized.', 'spectra-blocks' ) ); // Stop execution with a message.
 }
 
-if ( file_exists( $composer_autoload ) ) {
-	require_once $composer_autoload;
+if ( file_exists( $spectra_blocks_composer_autoload ) ) {
+	require_once $spectra_blocks_composer_autoload;
 }
 
 /**
@@ -52,12 +50,11 @@ spectra_blocks_init();
  */
 add_action(
 	'init',
-	function() {
+	function () {
 		// Enable SVG uploads.
-		// phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes -- SVG uploads are intentionally enabled with proper server-side sanitization
 		add_filter(
 			'upload_mimes',
-			function( $mimes ) {
+			function ( $mimes ) {
 				$mimes['svg'] = 'image/svg+xml';
 				return $mimes;
 			}
@@ -66,7 +63,7 @@ add_action(
 		// Fix WordPress SVG detection issues.
 		add_filter(
 			'wp_check_filetype_and_ext',
-			function( $data, $file, $filename, $mimes ) {
+			function ( $data, $file, $filename, $mimes ) {
 				$filetype = wp_check_filetype( $filename, $mimes );
 
 				if ( 'svg' === $filetype['ext'] ) {
@@ -83,7 +80,7 @@ add_action(
 		// SVG upload sanitization using enshrined/svg-sanitize.
 		add_filter(
 			'wp_handle_upload_prefilter',
-			function( $file ) {
+			function ( $file ) {
 				if ( 'image/svg+xml' !== $file['type'] ) {
 					return $file;
 				}
@@ -96,8 +93,8 @@ add_action(
 
 				// Sanitize using enshrined/svg-sanitize to strip scripts and external entity refs.
 				if ( class_exists( '\enshrined\svgSanitize\Sanitizer' ) ) {
-					$sanitizer      = new \enshrined\svgSanitize\Sanitizer();
-					$clean_svg      = $sanitizer->sanitize( $svg_content );
+					$sanitizer = new \enshrined\svgSanitize\Sanitizer();
+					$clean_svg = $sanitizer->sanitize( $svg_content );
 					if ( false === $clean_svg || empty( $clean_svg ) ) {
 						$file['error'] = __( 'SVG file failed security check.', 'spectra-blocks' );
 						return $file;

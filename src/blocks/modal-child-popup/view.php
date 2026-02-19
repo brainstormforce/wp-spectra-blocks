@@ -7,9 +7,7 @@
  * @package Spectra\Blocks\ModalChildPopup
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\HtmlSanitizer;
 
 ?>

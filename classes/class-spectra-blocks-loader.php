@@ -85,13 +85,16 @@ class Spectra_Blocks_Loader {
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-zipwp-images.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-zipwp-images.php';
 		}
+		if ( file_exists( $lib_dir . 'class-spectra-blocks-ast-block-templates.php' ) ) {
+			require_once $lib_dir . 'class-spectra-blocks-ast-block-templates.php';
+		}
 	}
 
 	/**
 	 * Load admin dashboard.
 	 */
 	private static function load_admin() {
-		$admin_loader = SPECTRA_BLOCKS_DIR . 'admin/admin-loader.php';
+		$admin_loader = SPECTRA_BLOCKS_DIR . 'admin/class-admin-loader.php';
 		if ( file_exists( $admin_loader ) ) {
 			require_once $admin_loader;
 		}

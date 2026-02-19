@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\Countdown
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get the block attributes.
@@ -118,9 +116,9 @@ $countdown_context = array(
 
 /**
  * Filter the countdown context.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @param array $countdown_context The countdown context.
  * @param array $attributes       The block attributes.
  * @return array The modified countdown context.

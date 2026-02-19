@@ -43,15 +43,15 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 * Get an option value.
 		 *
 		 * @param string $key              Full option key.
-		 * @param mixed  $default          Default value.
+		 * @param mixed  $fallback          Default value.
 		 * @param bool   $network_override Use network option on multisite.
 		 * @return mixed
 		 */
-		public static function get_admin_settings_option( $key, $default = false, $network_override = false ) {
+		public static function get_admin_settings_option( $key, $fallback = false, $network_override = false ) {
 			if ( $network_override && is_multisite() ) {
-				return get_site_option( $key, $default );
+				return get_site_option( $key, $fallback );
 			}
-			return get_option( $key, $default );
+			return get_option( $key, $fallback );
 		}
 
 		/**
@@ -100,32 +100,32 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			}
 
 			return array(
-				'spectra_blocks_beta'                         => self::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
-				'_spectra_blocks_allow_file_generation'       => self::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
-				'spectra_blocks_enable_templates_button'      => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
-				'spectra_blocks_enable_on_page_css_button'    => self::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
-				'spectra_blocks_enable_block_condition'       => self::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
-				'spectra_blocks_enable_masonry_gallery'       => self::get_admin_settings_option( 'spectra_blocks_enable_masonry_gallery', 'enabled' ),
-				'spectra_blocks_enable_quick_action_sidebar'  => self::get_admin_settings_option( 'spectra_blocks_enable_quick_action_sidebar', 'enabled' ),
-				'spectra_blocks_enable_animations_extension'  => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
-				'spectra_blocks_enable_gbs_extension'         => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
-				'spectra_blocks_enable_block_responsive'      => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
-				'spectra_blocks_select_font_globally'         => self::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
-				'spectra_blocks_load_select_font_globally'    => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
-				'spectra_blocks_load_gfonts_locally'          => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
-				'spectra_blocks_collapse_panels'              => self::get_admin_settings_option( 'spectra_blocks_collapse_panels', 'enabled' ),
-				'spectra_blocks_copy_paste'                   => self::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
-				'spectra_blocks_preload_local_fonts'          => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
-				'spectra_blocks_visibility_mode'              => self::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
-				'spectra_blocks_container_global_padding'     => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
+				'spectra_blocks_beta'                      => self::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
+				'_spectra_blocks_allow_file_generation'    => self::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
+				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
+				'spectra_blocks_enable_on_page_css_button' => self::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
+				'spectra_blocks_enable_block_condition'    => self::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
+				'spectra_blocks_enable_masonry_gallery'    => self::get_admin_settings_option( 'spectra_blocks_enable_masonry_gallery', 'enabled' ),
+				'spectra_blocks_enable_quick_action_sidebar' => self::get_admin_settings_option( 'spectra_blocks_enable_quick_action_sidebar', 'enabled' ),
+				'spectra_blocks_enable_animations_extension' => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
+				'spectra_blocks_enable_gbs_extension'      => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
+				'spectra_blocks_enable_block_responsive'   => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
+				'spectra_blocks_select_font_globally'      => self::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
+				'spectra_blocks_load_select_font_globally' => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
+				'spectra_blocks_load_gfonts_locally'       => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
+				'spectra_blocks_collapse_panels'           => self::get_admin_settings_option( 'spectra_blocks_collapse_panels', 'enabled' ),
+				'spectra_blocks_copy_paste'                => self::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
+				'spectra_blocks_preload_local_fonts'       => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
+				'spectra_blocks_visibility_mode'           => self::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
+				'spectra_blocks_container_global_padding'  => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
 				'spectra_blocks_container_global_elements_gap' => self::get_admin_settings_option( 'spectra_blocks_container_global_elements_gap', 20 ),
-				'spectra_blocks_btn_inherit_from_theme'       => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
-				'spectra_blocks_blocks_editor_spacing'        => apply_filters( 'spectra_blocks_default_editor_spacing', self::get_admin_settings_option( 'spectra_blocks_blocks_editor_spacing', 0 ) ),
-				'spectra_blocks_load_font_awesome_5'          => self::get_admin_settings_option( 'spectra_blocks_load_font_awesome_5' ),
-				'spectra_blocks_auto_block_recovery'          => self::get_admin_settings_option( 'spectra_blocks_auto_block_recovery' ),
-				'spectra_blocks_analytics_optin'              => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
-				'wp_is_block_theme'                           => self::is_block_theme(),
-				'zip_ai_modules'                              => $zip_ai_modules,
+				'spectra_blocks_btn_inherit_from_theme'    => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
+				'spectra_blocks_blocks_editor_spacing'     => apply_filters( 'spectra_blocks_default_editor_spacing', self::get_admin_settings_option( 'spectra_blocks_blocks_editor_spacing', 0 ) ),
+				'spectra_blocks_load_font_awesome_5'       => self::get_admin_settings_option( 'spectra_blocks_load_font_awesome_5' ),
+				'spectra_blocks_auto_block_recovery'       => self::get_admin_settings_option( 'spectra_blocks_auto_block_recovery' ),
+				'spectra_blocks_analytics_optin'           => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
+				'wp_is_block_theme'                        => self::is_block_theme(),
+				'zip_ai_modules'                           => $zip_ai_modules,
 			);
 		}
 
@@ -176,10 +176,8 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 
 			if ( class_exists( '\BSF_UTM_Analytics\Inc\Utils' ) && is_callable( '\BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link' ) ) {
 				$url = \BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link( $url, 'spectra-blocks' );
-			} else {
-				if ( ! empty( $source ) ) {
+			} elseif ( ! empty( $source ) ) {
 					$url = add_query_arg( 'utm_source', sanitize_text_field( $source ), $url );
-				}
 			}
 
 			if ( ! empty( $medium ) ) {

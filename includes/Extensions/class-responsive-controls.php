@@ -1,12 +1,12 @@
 <?php
 /**
  * ResponsiveControls Extension.
- * 
+ *
  * Provides responsive control functionality for Spectra blocks, allowing
  * different styling for mobile, tablet, and desktop devices. This extension
  * handles the generation of responsive CSS and ensures proper fallback
  * between device sizes following WordPress core patterns.
- * 
+ *
  * @package Spectra\Extensions
  * @since 3.0.0
  */
@@ -23,7 +23,7 @@ use WP_HTML_Tag_Processor;
 
 /**
  * Class to manage responsive controls for Spectra blocks.
- * 
+ *
  * This class handles:
  * - Device-specific styling (mobile, tablet, desktop)
  * - Responsive CSS generation with proper fallback hierarchy
@@ -87,9 +87,9 @@ class ResponsiveControls {
 
 	/**
 	 * Add inline responsive CSS only once per request.
-	 * 
+	 *
 	 * Stores a list of inline CSS rules already added to avoid duplicates.
-	 * 
+	 *
 	 * @var array List of inline CSS rules already added.
 	 * @since 3.0.0
 	 */
@@ -97,10 +97,10 @@ class ResponsiveControls {
 
 	/**
 	 * Track if default CSS has been added for each block type.
-	 * 
+	 *
 	 * Prevents duplicate default CSS from being added multiple times
 	 * for blocks that appear multiple times on a page.
-	 * 
+	 *
 	 * @var array List of block types that have had default CSS added.
 	 * @since 3.0.0
 	 */
@@ -134,7 +134,7 @@ class ResponsiveControls {
 
 	/**
 	 * List of attribute keys that should be processed responsively.
-	 * 
+	 *
 	 * These keys represent block attributes that can have different values
 	 * across different device sizes (mobile, tablet, desktop). The responsive
 	 * controls system will track and manage these attributes separately for
@@ -147,7 +147,7 @@ class ResponsiveControls {
 
 	/**
 	 * List of blocks and their attributes to maintain for backward compatibility.
-	 * 
+	 *
 	 * @var array<string, array<string>> Block name => List of attributes.
 	 * @since x.x.x
 	 */
@@ -193,7 +193,7 @@ class ResponsiveControls {
 
 	/**
 	 * Default layout configurations for specific Spectra blocks.
-	 * 
+	 *
 	 * This array defines the default layout settings that should be applied
 	 * to specific blocks when no custom layout has been defined by the user.
 	 * Each block type can have its own predefined layout structure to ensure
@@ -486,11 +486,11 @@ class ResponsiveControls {
 
 	/**
 	 * Enqueue responsive videos script for frontend.
-	 * 
+	 *
 	 * Conditionally enqueues the responsive videos JavaScript file only when
 	 * container or slider blocks with responsive video backgrounds are present.
 	 * This handles dynamic video source switching based on viewport size.
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @return void
 	 */
@@ -516,7 +516,7 @@ class ResponsiveControls {
 
 	/**
 	 * Enqueues responsive control injection assets for block editor.
-	 * 
+	 *
 	 * Enqueues the CSS needed for the responsive control injection system
 	 * that adds device buttons to existing Gutenberg controls.
 	 *
@@ -530,14 +530,14 @@ class ResponsiveControls {
 
 	/**
 	 * Processes responsive attributes for a given block.
-	 * 
+	 *
 	 * This is the main entry point for responsive control processing:
 	 * 1. Checks if the block should be processed
 	 * 2. Ensures the block has a unique ID
 	 * 3. Removes conflicting core attributes
 	 * 4. Generates responsive CSS
 	 * 5. Adds the CSS to the responsive stylesheet
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $block Block data from render_block_data filter.
@@ -595,14 +595,14 @@ class ResponsiveControls {
 
 		/**
 		 * Apply filters to modify the default layout for responsive controls.
-		 * 
+		 *
 		 * @since 3.0.0
-		 * 
+		 *
 		 * @param array $this->blocks_default_layout Default layout configurations for blocks.
 		 * @return array Modified default layout configurations.
 		 */
 		$this->blocks_default_layout = apply_filters( 'spectra_blocks_responsive_default_layout', $this->blocks_default_layout );
-		
+
 		// If no layout is defined, use the default layout for the block.
 		if ( empty( $responsive_controls_lg['layout'] ) && isset( $this->blocks_default_layout[ $block['blockName'] ] ) ) {
 			$responsive_controls_lg['layout'] = $this->blocks_default_layout[ $block['blockName'] ]['layout'];
@@ -676,13 +676,13 @@ class ResponsiveControls {
 
 	/**
 	 * Processes block content and adds responsive styles.
-	 * 
+	 *
 	 * This method:
 	 * 1. Injects a data-spectra-id attribute into the block's HTML for CSS targeting
 	 * 2. Generates responsive CSS for all breakpoints
 	 * 3. Adds the generated CSS to the stylesheet
 	 * 4. Returns the modified block content
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $block_content The rendered block HTML content.
@@ -700,7 +700,7 @@ class ResponsiveControls {
 		if ( empty( $attrs ) ) {
 			return $block_content;
 		}
-		
+
 		// Ensure the block has a unique ID for CSS targeting.
 		$this->ensure_block_has_id( $attrs );
 
@@ -749,7 +749,7 @@ class ResponsiveControls {
 			if ( ! empty( $combined_css ) ) {
 				// Enqueue the stylesheet if not already done.
 				wp_enqueue_style( $this->style_handle );
-			
+
 				// Add our generated CSS as inline styles.
 				wp_add_inline_style( $this->style_handle, $combined_css );
 
@@ -764,7 +764,7 @@ class ResponsiveControls {
 
 	/**
 	 * Conditionally skips layout support injection for Spectra blocks only.
-	 * 
+	 *
 	 * Since we removed the core layout support filter globally,
 	 * we need to re-apply it for non-Spectra blocks to maintain
 	 * compatibility with other plugins and themes.
@@ -786,11 +786,11 @@ class ResponsiveControls {
 
 	/**
 	 * Ensure all Spectra blocks have unique spectraIds after post save.
-	 * 
+	 *
 	 * This method runs after a post is saved and checks for duplicate
 	 * spectraIds across all blocks. If duplicates are found, it generates
 	 * new unique IDs and updates the post content.
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @param int     $post_id The post ID.
 	 * @param WP_Post $post The post object.
@@ -801,7 +801,7 @@ class ResponsiveControls {
 		if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) || empty( $post->post_content ) ) {
 			return;
 		}
-		
+
 		// Skip during WordPress customizer saves to prevent JSON encoding conflicts.
 		// The customizer has its own save process and calling wp_update_post during
 		// it can cause wp_send_json_error with empty messages.
@@ -835,12 +835,12 @@ class ResponsiveControls {
 			// Instead of using serialize_blocks which can strip backslashes,
 			// we'll use wp_slash to ensure proper escaping for the database.
 			$serialized_content = serialize_blocks( $processed_blocks );
-			
+
 			wp_update_post(
 				array(
 					'ID'           => $post_id,
 					'post_content' => wp_slash( $serialized_content ),
-				) 
+				)
 			);
 
 			// Re-add the action.
@@ -865,28 +865,28 @@ class ResponsiveControls {
 		if ( ! isset( $block['blockName'] ) || empty( $block['blockName'] ) ) {
 			return false;
 		}
-	
+
 		$block_name = $block['blockName'];
-	
+
 		// Skip excluded blocks.
 		if ( in_array( $block_name, $this->excluded_blocks, true ) ) {
 			return false;
 		}
-	
+
 		// Check if block has allowed prefix.
 		foreach ( $this->allowed_prefixes as $prefix ) {
 			if ( strpos( $block_name, $prefix ) === 0 ) {
 				return true;
 			}
 		}
-	
+
 		// Check if block is explicitly supported.
 		return in_array( $block_name, $this->supported_blocks, true );
 	}
 
 	/**
 	 * Remove conflicting core attributes to prevent style conflicts.
-	 * 
+	 *
 	 * Core WordPress attributes and style properties can conflict with
 	 * our responsive controls. This method removes them from the block
 	 * attributes to ensure our responsive styles take precedence.
@@ -913,7 +913,7 @@ class ResponsiveControls {
 
 		// Remove conflicting individual attributes that are in the responsive_keys list.
 		foreach ( $this->core_attributes as $attribute ) {
-			if ( in_array( $attribute, $this->responsive_keys ) ) {
+			if ( in_array( $attribute, $this->responsive_keys, true ) ) {
 				unset( $attrs[ $attribute ] );
 			}
 		}
@@ -964,9 +964,9 @@ class ResponsiveControls {
 	private function get_cached_responsive_css( $spectra_id, $responsive_controls, $block_name, $attrs ) {
 		/**
 		 * Filter whether to enable caching for responsive CSS.
-		 * 
+		 *
 		 * @since 3.0.0
-		 * 
+		 *
 		 * @param bool $enable_cache Whether to enable caching. Default is true.
 		 * @return bool True to enable caching, false to disable.
 		 */
@@ -1043,14 +1043,14 @@ class ResponsiveControls {
 
 		/**
 		 * Filter to modify the responsive CSS selector for a block.
-		 * 
+		 *
 		 * This filter allows developers to customize the CSS selector used for
 		 * responsive styling of Spectra blocks. The selector is used to target
 		 * the specific block instance for CSS rules generation.
-		 * 
+		 *
 		 * The default selector has specificity 0-2-1 (2 classes + 1 attribute):
 		 * `.wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='spectra-123']`
-		 * 
+		 *
 		 * Example usage:
 		 * ```php
 		 * add_filter( 'spectra_responsive_css_selector', function( $selector, $block_name, $spectra_id ) {
@@ -1058,16 +1058,16 @@ class ResponsiveControls {
 		 *     if ( 'spectra/container' === $block_name ) {
 		 *         return ".wp-block-spectra-container[data-spectra-id='{$spectra_id}']";
 		 *     }
-		 *     
+		 *
 		 *     // Target blocks within specific contexts
 		 *     if ( is_single() && 'spectra/button' === $block_name ) {
 		 *         return ".single-post {$selector}";
 		 *     }
-		 *     
+		 *
 		 *     return $selector;
 		 * }, 10, 3 );
 		 * ```
-		 * 
+		 *
 		 * @since 3.0.0
 		 *
 		 * @param string $selector   The CSS selector for the block.
@@ -1079,12 +1079,12 @@ class ResponsiveControls {
 
 		// Detect if we're in pattern preview context by checking if we're being called from the pattern preview function.
 		$is_pattern_preview = false;
-		
+
 		// Detect pattern preview context using backtrace.
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Required to detect rendering context for proper CSS selector generation in pattern previews vs. frontend rendering.
 		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
 		foreach ( $backtrace as $trace ) {
-			if ( isset( $trace['function'] ) && 
+			if ( isset( $trace['function'] ) &&
 				( 'spectra_blocks_get_v3_blocks_css_for_preview' === $trace['function'] ||
 				'spectra_get_comprehensive_responsive_css_for_post' === $trace['function'] ||
 				'spectra_blocks_process_blocks_for_comprehensive_css' === $trace['function'] ||
@@ -1104,7 +1104,7 @@ class ResponsiveControls {
 			$layout_specificity_selector     = "{$block_class}[data-spectra-id='{$spectra_id}']";
 			$background_specificity_selector = "{$block_class}[data-spectra-id='{$spectra_id}']";
 			$child_reset_selector            = "{$block_class}[data-spectra-id='{$spectra_id}']";
-			
+
 			// Override main selector for pattern preview to be less specific.
 			$selector = "{$block_class}[data-spectra-id='{$spectra_id}']";
 
@@ -1157,7 +1157,7 @@ class ResponsiveControls {
 			// Use 0-1-1 specificity to override Astra theme's 0-1-1 via CSS cascade order.
 			// Using universal selector + :where() + attribute to work with any HTML tag (div, section, etc.).
 			$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}']";
-			
+
 			// For slider-child, also update child reset selector to target content inside .slide-content.
 			if ( 'spectra/slider-child' === $block_name ) {
 				$child_reset_selector = "{$base_selector} *:where({$block_class})[data-spectra-id='{$spectra_id}'] .slide-content";
@@ -1170,7 +1170,7 @@ class ResponsiveControls {
 				$child_reset_selector  = $counter_main_reset . ', ' . $counter_content_reset;
 			}
 		}
-		
+
 		// Generate CSS for each device breakpoint (mobile, tablet, desktop).
 		foreach ( $this->media_queries as $device => $media ) {
 			// Get compiled styles for this device with proper fallback.
@@ -1260,21 +1260,21 @@ class ResponsiveControls {
 					array( 'selector' => $selector )
 				);
 			}
-			
+
 			// Get the device-specific attributes for this breakpoint with fallback.
 			$device_attrs = $this->get_device_attributes( $block_name, $responsive_controls, $device );
-			
+
 			// Generate block-specific attribute CSS using ResponsiveAttributeCSS.
 			// Use low-specificity selector for background CSS, high-specificity for others.
 			$attr_css = ResponsiveAttributeCSS::generate_css( $block_name, $device_attrs, $selector, $background_specificity_selector, $attrs );
-			
+
 			// Add overflow handling for containers with border-radius and backgrounds.
 			$overflow_css = '';
 			if ( 'spectra/container' === $block_name || 'spectra/slider' === $block_name || 'spectra/slider-child' === $block_name ) {
 				// Check if this device has border-radius.
-				$has_border_radius = isset( $device_styles['border']['radius'] ) && 
+				$has_border_radius = isset( $device_styles['border']['radius'] ) &&
 									! empty( $device_styles['border']['radius'] );
-				
+
 				// Check if this device has video or image background.
 				$has_background = false;
 				if ( isset( $device_attrs['background'] ) && is_array( $device_attrs['background'] ) ) {
@@ -1283,7 +1283,7 @@ class ResponsiveControls {
 						$has_background = true;
 					}
 				}
-				
+
 				// Apply overflow clip when has background AND border-radius (matching style.scss).
 				// This ensures video/image backgrounds are properly clipped by border-radius.
 				if ( $has_border_radius && $has_background ) {
@@ -1303,7 +1303,6 @@ class ResponsiveControls {
 				$media
 			);
 
-
 			// Add to styles array if CSS was generated.
 			if ( $css ) {
 				$styles[] = $css;
@@ -1312,18 +1311,18 @@ class ResponsiveControls {
 
 		// Combine all device CSS into a single string.
 		$css = implode( ' ', $styles );
-		
+
 		/**
 		 * Filter to modify the complete responsive CSS for a block instance.
-		 * 
+		 *
 		 * This filter allows developers to modify the complete generated responsive CSS
 		 * for a Spectra block instance after all processing is complete. The CSS includes
 		 * all media queries, layout styles, typography, spacing, borders, and block-specific
 		 * attributes for all breakpoints (mobile, tablet, desktop).
-		 * 
+		 *
 		 * The CSS is fully processed and ready to be injected into the page. Use this filter
 		 * to add custom CSS rules, modify existing rules, or completely replace the CSS.
-		 * 
+		 *
 		 * Example usage:
 		 * ```php
 		 * add_filter( 'spectra_responsive_css', function( $css, $spectra_id, $block_name ) {
@@ -1331,34 +1330,34 @@ class ResponsiveControls {
 		 *     if ( 'spectra/modal' === $block_name ) {
 		 *         $css = str_replace( 'z-index: 999', 'z-index: 9999', $css );
 		 *     }
-		 * 
+		 *
 		 *     // Add dark mode compatibility
 		 *     if ( 'spectra/container' === $block_name ) {
 		 *         $selector = "[data-spectra-id='{$spectra_id}']";
 		 *         $css .= " @media (prefers-color-scheme: dark) { {$selector} { filter: invert(1); } }";
 		 *     }
-		 * 
+		 *
 		 *     // Override styles for specific post types
 		 *     if ( is_singular( 'product' ) && 'spectra/button' === $block_name ) {
 		 *         $css .= " body.single-product [data-spectra-id='{$spectra_id}'] { border-radius: 0 !important; }";
 		 *     }
-		 * 
+		 *
 		 *     return $css;
 		 * }, 10, 3 );
 		 * ```
-		 * 
+		 *
 		 * @since 3.0.0
-		 * 
+		 *
 		 * @param string $css        The complete generated CSS for the block instance, including media queries.
 		 * @param string $spectra_id The unique ID of the block instance (e.g., 'spectra-123abc').
 		 * @param string $block_name The name of the block (e.g., 'spectra/container').
 		 * @return string Modified CSS string that will be injected into the page.
 		 */
 		$css = apply_filters( 'spectra_responsive_css', $css, $spectra_id, $block_name );
-		
+
 		return $css;
 	}
-	
+
 	/**
 	 * Get device-specific attributes with proper fallback.
 	 *
@@ -1391,17 +1390,17 @@ class ResponsiveControls {
 			if ( 'spectra/content' === $block_name && in_array( $attr, array( 'textShadowColor', 'textShadowBlur', 'textShadowOffsetX', 'textShadowOffsetY' ), true ) ) {
 				continue;
 			}
-			
+
 			// Special handling for background attribute - we need to process it even if null.
 			// to ensure video wrapper visibility is controlled properly across breakpoints.
 			if ( 'background' === $attr ) {
 				// Always set background attribute for each device, even if null.
 				// This ensures format_background is called to generate display CSS.
 				$device_attrs[ $attr ] = null;
-				
+
 				// Build background with inner property fallback support.
 				$merged_background = array();
-				
+
 				// Define background inner properties that should have individual fallback.
 				$background_inner_properties = array(
 					'type',
@@ -1417,7 +1416,7 @@ class ResponsiveControls {
 					'positionX',
 					'positionY',
 				);
-				
+
 				// Process each inner property with its own fallback.
 				foreach ( $background_inner_properties as $prop ) {
 					foreach ( $fallback_devices as $fallback_device ) {
@@ -1427,7 +1426,7 @@ class ResponsiveControls {
 						}
 					}
 				}
-				
+
 				// If we have any background properties, use the merged result.
 				if ( ! empty( $merged_background ) ) {
 					$device_attrs[ $attr ] = $merged_background;
@@ -1438,7 +1437,7 @@ class ResponsiveControls {
 				foreach ( $fallback_devices as $fallback_device ) {
 					if ( isset( $responsive_controls[ $fallback_device ]['enableTextShadow'] ) ) {
 						$device_attrs[ $attr ] = $responsive_controls[ $fallback_device ]['enableTextShadow'];
-						
+
 						// If text shadow is enabled, collect all text shadow attributes.
 						if ( $device_attrs[ $attr ] ) {
 							$text_shadow_attrs = array( 'textShadowColor', 'textShadowBlur', 'textShadowOffsetX', 'textShadowOffsetY' );
@@ -1447,7 +1446,7 @@ class ResponsiveControls {
 								if ( isset( $device_attrs[ $shadow_attr ] ) ) {
 									continue;
 								}
-								
+
 								// Find the first available value in the fallback chain.
 								foreach ( $fallback_devices as $fb_device ) {
 									if ( isset( $responsive_controls[ $fb_device ][ $shadow_attr ] ) ) {
@@ -1476,14 +1475,14 @@ class ResponsiveControls {
 
 	/**
 	 * Build CSS for a specific device.
-	 * 
+	 *
 	 * Combines CSS from multiple sources:
 	 * - Style engine output
 	 * - Layout CSS
 	 * - Style layout CSS
 	 * - Text alignment
 	 * - Block-specific attribute CSS
-	 * 
+	 *
 	 * And wraps it in a media query if a breakpoint is provided.
 	 *
 	 * @since 3.0.0
@@ -1525,7 +1524,7 @@ class ResponsiveControls {
 		if ( ! empty( $style_layout_css ) ) {
 			$css .= ' ' . $style_layout_css;
 		}
-		
+
 		// Add block-specific attribute CSS if available.
 		if ( ! empty( $attr_css ) ) {
 			$css .= ' ' . $attr_css;
@@ -1544,7 +1543,7 @@ class ResponsiveControls {
 
 	/**
 	 * Check if a value is set (not null or empty string).
-	 * 
+	 *
 	 * Special handling for:
 	 * - Arrays (recursively checks if any value is set)
 	 * - Zero values (treats 0, '0', '0px', etc. as valid values)
@@ -1589,7 +1588,7 @@ class ResponsiveControls {
 	 *
 	 * Implements individual property fallback (not group fallback) exactly like Gutenberg core:
 	 * - Mobile (sm): tries mobile -> tablet -> desktop for EACH property
-	 * - Tablet (md): tries tablet -> desktop for EACH property  
+	 * - Tablet (md): tries tablet -> desktop for EACH property
 	 * - Desktop (lg): desktop only for EACH property
 	 *
 	 * This ensures proper inheritance: if mobile border color is not set,
@@ -1598,7 +1597,7 @@ class ResponsiveControls {
 	 * Handles all Gutenberg spacing properties including blockGap for layout containers.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @param array  $responsive_controls Complete responsive controls data from block attributes.
 	 * @param string $device              Target device key ('sm', 'md', 'lg').
 	 * @param string $block_name          The block name for flex text alignment handling.
@@ -1622,7 +1621,7 @@ class ResponsiveControls {
 
 	/**
 	 * Process border styles (width, style, radius) with fallback.
-	 * 
+	 *
 	 * Handles single borders (borderColor + style.border.width/style/color) and
 	 * mixed borders (style.border.top/right/bottom/left) with proper inheritance.
 	 * A breakpoint inherits as-is from parent regardless of type mismatch.
@@ -1637,7 +1636,7 @@ class ResponsiveControls {
 		// Get current device (first in fallback order).
 		$current_device = $fallback_devices[0];
 		$current_data   = $responsive_controls[ $current_device ] ?? array();
-		
+
 		// Check what the current breakpoint has.
 		// Border radius is excluded as it should inherit independently.
 		$current_has_single_border = isset( $current_data['borderColor'] ) ||
@@ -1646,7 +1645,7 @@ class ResponsiveControls {
 				isset( $current_data['style']['border']['style'] ) ||
 				isset( $current_data['style']['border']['color'] )
 			) );
-		
+
 		$current_has_mixed_border = isset( $current_data['style']['border'] ) && (
 			isset( $current_data['style']['border']['top'] ) ||
 			isset( $current_data['style']['border']['right'] ) ||
@@ -1660,7 +1659,7 @@ class ResponsiveControls {
 			if ( isset( $current_data['borderColor'] ) ) {
 				$compiled_styles['border']['color'] = "var(--wp--preset--color--{$current_data['borderColor']})";
 			}
-			
+
 			if ( isset( $current_data['style']['border'] ) ) {
 				$this->apply_border_data( $current_data['style']['border'], $compiled_styles );
 			}
@@ -1668,9 +1667,9 @@ class ResponsiveControls {
 			// Current has no border config - inherit from parent breakpoint.
 			foreach ( array_slice( $fallback_devices, 1 ) as $parent_device ) {
 				$parent_data = $responsive_controls[ $parent_device ] ?? array();
-				
+
 				// Check if parent has any border config (excluding radius).
-				$parent_has_border = isset( $parent_data['borderColor'] ) || 
+				$parent_has_border = isset( $parent_data['borderColor'] ) ||
 					( isset( $parent_data['style']['border'] ) &&
 						( isset( $parent_data['style']['border']['width'] ) ||
 							isset( $parent_data['style']['border']['style'] ) ||
@@ -1679,13 +1678,13 @@ class ResponsiveControls {
 							isset( $parent_data['style']['border']['right'] ) ||
 							isset( $parent_data['style']['border']['bottom'] ) ||
 							isset( $parent_data['style']['border']['left'] ) ) );
-				
+
 				if ( $parent_has_border ) {
 					// Inherit whatever the parent has.
 					if ( isset( $parent_data['borderColor'] ) ) {
 						$compiled_styles['border']['color'] = "var(--wp--preset--color--{$parent_data['borderColor']})";
 					}
-					
+
 					if ( isset( $parent_data['style']['border'] ) ) {
 						$this->apply_border_data( $parent_data['style']['border'], $compiled_styles );
 					}
@@ -1693,12 +1692,12 @@ class ResponsiveControls {
 				}
 			}
 		}
-		
+
 		// Handle border radius inheritance separately - it always inherits if not set.
 		if ( ! isset( $current_data['style']['border']['radius'] ) ) {
 			foreach ( array_slice( $fallback_devices, 1 ) as $parent_device ) {
 				$parent_data = $responsive_controls[ $parent_device ] ?? array();
-				
+
 				if ( isset( $parent_data['style']['border']['radius'] ) ) {
 					$radius_value = $parent_data['style']['border']['radius'];
 					// Convert array format to string format for WordPress Style Engine.
@@ -1747,7 +1746,7 @@ class ResponsiveControls {
 
 	/**
 	 * Apply border data to compiled styles.
-	 * 
+	 *
 	 * Helper method to process border data and add it to the compiled styles array.
 	 * Handles both single border properties (width, style, color, radius) and
 	 * mixed border properties (top, right, bottom, left).
@@ -1771,7 +1770,7 @@ class ResponsiveControls {
 			}
 
 			// Handle individual sides.
-			if ( in_array( $property, $sides ) && is_array( $value ) ) {
+			if ( in_array( $property, $sides, true ) && is_array( $value ) ) {
 				if ( ! isset( $compiled_styles['border'][ $property ] ) ) {
 					$compiled_styles['border'][ $property ] = array();
 				}
@@ -1796,7 +1795,7 @@ class ResponsiveControls {
 							$compiled_styles['border'][ $property ][ $side_prop ] = implode( ' ', $radius_parts );
 						} else {
 							// Validate that width and style properties are strings, not arrays.
-							if ( in_array( $side_prop, array( 'width', 'style' ) ) && is_array( $side_value ) ) {
+							if ( in_array( $side_prop, array( 'width', 'style' ), true ) && is_array( $side_value ) ) {
 								// Skip invalid array values for width, style, and color properties.
 								continue;
 							}
@@ -1804,32 +1803,27 @@ class ResponsiveControls {
 						}
 					}
 				}
-			} else {
-				// Handle general properties (width, style, color, radius).
-				if ( 'color' === $property && is_string( $value ) ) {
-					// Handle preset color conversion.
-					if ( strpos( $value, 'var:preset|color|' ) === 0 ) {
-						$color_slug                         = str_replace( 'var:preset|color|', '', $value );
-						$compiled_styles['border']['color'] = "var(--wp--preset--color--{$color_slug})";
-					} else {
-						$compiled_styles['border']['color'] = $value;
-					}
-				} elseif ( 'radius' === $property && is_array( $value ) && ! empty( $value ) ) {
-					// Handle border radius array format conversion.
-					$radius_parts = array();
-					$corners      = array( 'topLeft', 'topRight', 'bottomRight', 'bottomLeft' );
-					foreach ( $corners as $corner ) {
-						$radius_parts[] = isset( $value[ $corner ] ) && '' !== $value[ $corner ] ? $value[ $corner ] : '0';
-					}
-					$compiled_styles['border']['radius'] = implode( ' ', $radius_parts );
+			} elseif ( 'color' === $property && is_string( $value ) ) {
+				// Handle general color property with preset color conversion.
+				if ( strpos( $value, 'var:preset|color|' ) === 0 ) {
+					$color_slug                         = str_replace( 'var:preset|color|', '', $value );
+					$compiled_styles['border']['color'] = "var(--wp--preset--color--{$color_slug})";
 				} else {
-					// For other properties (width, style), only accept string values, not arrays.
-					if ( in_array( $property, array( 'width', 'style' ) ) && is_array( $value ) ) {
-						// Skip invalid array format for width and style.
-						continue;
-					}
-					$compiled_styles['border'][ $property ] = $value;
+					$compiled_styles['border']['color'] = $value;
 				}
+			} elseif ( 'radius' === $property && is_array( $value ) && ! empty( $value ) ) {
+				// Handle border radius array format conversion.
+				$radius_parts = array();
+				$corners      = array( 'topLeft', 'topRight', 'bottomRight', 'bottomLeft' );
+				foreach ( $corners as $corner ) {
+					$radius_parts[] = isset( $value[ $corner ] ) && '' !== $value[ $corner ] ? $value[ $corner ] : '0';
+				}
+				$compiled_styles['border']['radius'] = implode( ' ', $radius_parts );
+			} elseif ( in_array( $property, array( 'width', 'style' ), true ) && is_array( $value ) ) {
+				// Skip invalid array format for width and style properties.
+				continue;
+			} else {
+				$compiled_styles['border'][ $property ] = $value;
 			}
 		}
 	}
@@ -1959,9 +1953,9 @@ class ResponsiveControls {
 				'spectra/button',                      // Button block.
 				'spectra/modal-child-button',         // Modal  child trigger button.
 				'spectra/tabs-child-tab-button',       // Individual tab button.
-			
+
 			// Pro blocks will be added via filter in Spectra Pro plugin itself.
-			) 
+			)
 		);
 
 		return in_array( $block_name, $flex_blocks, true );
@@ -1975,7 +1969,7 @@ class ResponsiveControls {
 	 * Each typography property falls back independently.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @param array  $responsive_controls Complete responsive controls data.
 	 * @param array  $fallback_devices    Device fallback order.
 	 * @param array  $compiled_styles     Compiled styles passed by reference.
@@ -1984,10 +1978,10 @@ class ResponsiveControls {
 	 */
 	private function process_typography_styles( $responsive_controls, $fallback_devices, &$compiled_styles, $block_name = '' ) {
 		// Only process if typography is in the style_responsive_keys list.
-		if ( ! in_array( 'typography', $this->style_responsive_keys ) ) {
+		if ( ! in_array( 'typography', $this->style_responsive_keys, true ) ) {
 			return;
 		}
-		
+
 		// Process font size with fallback.
 		foreach ( $fallback_devices as $device ) {
 			$font_size = null;
@@ -2045,7 +2039,7 @@ class ResponsiveControls {
 					// Special handling for textAlign in flex blocks - store for manual CSS generation.
 					if ( 'textAlign' === $property && $this->is_flex_text_align_block( $block_name ) ) {
 						$text_align_value = $responsive_controls[ $device ]['style']['typography'][ $property ];
-						
+
 						// Map textAlign values to justifyContent values.
 						$justify_content_value = $text_align_value;
 						if ( 'left' === $text_align_value ) {
@@ -2053,7 +2047,7 @@ class ResponsiveControls {
 						} elseif ( 'right' === $text_align_value ) {
 							$justify_content_value = 'flex-end';
 						}
-						
+
 						// Store in a custom section for manual CSS generation.
 						$compiled_styles['spectra_flex']['justifyContent'] = $justify_content_value;
 					} else {
@@ -2078,7 +2072,7 @@ class ResponsiveControls {
 	 * Each spacing property (padding.top, margin.left, blockGap, etc.) falls back independently.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @param array $responsive_controls Complete responsive controls data.
 	 * @param array $fallback_devices    Device fallback order.
 	 * @param array $compiled_styles    Compiled styles passed by reference.
@@ -2086,10 +2080,10 @@ class ResponsiveControls {
 	 */
 	private function process_spacing_styles( $responsive_controls, $fallback_devices, &$compiled_styles ) {
 		// Only process if spacing is in the style_responsive_keys list.
-		if ( ! in_array( 'spacing', $this->style_responsive_keys ) ) {
+		if ( ! in_array( 'spacing', $this->style_responsive_keys, true ) ) {
 			return;
 		}
-		
+
 		// Process padding and margin properties.
 		$this->process_spacing_properties( $responsive_controls, $fallback_devices, $compiled_styles );
 
@@ -2099,10 +2093,10 @@ class ResponsiveControls {
 
 	/**
 	 * Process spacing properties (padding/margin) with fallback.
-	 * 
+	 *
 	 * Handles both shorthand values (single value for all sides)
 	 * and individual side values (top, right, bottom, left).
-	 * 
+	 *
 	 * Prioritizes shorthand values over individual sides for consistency.
 	 *
 	 * @since 3.0.0
@@ -2146,7 +2140,7 @@ class ResponsiveControls {
 
 	/**
 	 * Process block gap with proper fallback hierarchy.
-	 * 
+	 *
 	 * Block gap is used for spacing between child elements
 	 * in container blocks (columns, stack, etc).
 	 *
@@ -2169,7 +2163,7 @@ class ResponsiveControls {
 
 	/**
 	 * Process shadow styles with proper fallback hierarchy.
-	 * 
+	 *
 	 * Box shadow effects can be applied responsively and
 	 * will follow the device fallback order.
 	 *
@@ -2181,10 +2175,10 @@ class ResponsiveControls {
 	 */
 	private function process_shadow_styles( $responsive_controls, $fallback_devices, &$compiled_styles ) {
 		// Only process if shadow is in the style_responsive_keys list.
-		if ( ! in_array( 'shadow', $this->style_responsive_keys ) ) {
+		if ( ! in_array( 'shadow', $this->style_responsive_keys, true ) ) {
 			return;
 		}
-		
+
 		foreach ( $fallback_devices as $device ) {
 			$shadow = $responsive_controls[ $device ]['style']['shadow'] ?? null;
 
@@ -2197,7 +2191,7 @@ class ResponsiveControls {
 
 	/**
 	 * Generate layout CSS as a string for a specific device.
-	 * 
+	 *
 	 * Layout CSS includes:
 	 * - Display type (flex, grid, block)
 	 * - Alignment properties
@@ -2222,7 +2216,7 @@ class ResponsiveControls {
 
 			if ( $this->has_actual_value( $gap ) ) {
 				break;
-			}       
+			}
 		}
 
 		// Find the first layout definition in the fallback chain.
@@ -2259,7 +2253,7 @@ class ResponsiveControls {
 
 	/**
 	 * Generate custom layout CSS for a specific layout type.
-	 * 
+	 *
 	 * Provides specialized CSS for different layout types:
 	 * - grid: CSS Grid layout
 	 * - flex: Flexbox layout
@@ -2297,7 +2291,7 @@ class ResponsiveControls {
 			{$child_reset_selector} > :last-child { margin-block-end: 0; }
 			{$child_reset_selector} > * { margin-block-start: {$gap_value}; margin-block-end: 0; }
 		";
-		
+
 		// Generate CSS based on layout type.
 		switch ( $type ) {
 			case 'grid':
@@ -2308,7 +2302,7 @@ class ResponsiveControls {
 				$css .= ' gap: ' . ( $gap ?? 'var(--wp--style--block-gap, 1em)' ) . ';';
 
 				$css .= ' }';
-				
+
 				// Grid children should have no margin - use 0-1-1 (wins via cascade order).
 				$css .= " {$child_reset_selector} > * { margin: 0; }";
 				break;
@@ -2358,13 +2352,13 @@ class ResponsiveControls {
 
 				// Start building the flex container CSS.
 				$css .= "{$selector} { display: flex;";
-				
+
 				// Add gap with fallback.
 				$css .= ' gap: ' . ( $gap ?? 'var(--wp--style--block-gap, 1em)' ) . ';';
 
 				// Add flex properties.
 				$css .= " flex-wrap: {$flex_wrap};";
-				
+
 				if ( 'column' === $direction ) {
 					$css .= ' flex-direction: column;';
 					$css .= " align-items: {$justify};"; // In column, justify becomes align-items.
@@ -2375,7 +2369,7 @@ class ResponsiveControls {
 				}
 
 				$css .= ' }';
-				
+
 				// Flex children should have no margin - use 0-1-1 (wins via cascade order).
 				$css .= " {$child_reset_selector} > * { margin: 0; }";
 				break;
@@ -2391,12 +2385,12 @@ class ResponsiveControls {
 				$justify_content = isset( $layout['justifyContent'] ) ? $layout['justifyContent'] : 'center';
 				$margin_left     = 'left' === $justify_content ? '0' : 'auto';
 				$margin_right    = 'right' === $justify_content ? '0' : 'auto';
-				
+
 				// Constrained-specific styles for content width.
 				// Exclude shape dividers and video backgrounds from constrained layout margins.
 				$css .= "{$selector} > :where(:not(.alignleft):not(.alignright):not(.alignfull):not(.spectra-container__shape):not(.spectra-background-video__wrapper)) { max-width: {$content_size}; margin-left: {$margin_left} !important; margin-right: {$margin_right} !important; }";
 				$css .= "{$selector} > .alignwide { max-width: {$wide_size}; }";
-				
+
 				$css .= $spacing_styles;
 				break;
 
@@ -2414,7 +2408,7 @@ class ResponsiveControls {
 
 	/**
 	 * Merge core and custom CSS for a single device layout.
-	 * 
+	 *
 	 * Combines CSS from WordPress core layout functions with
 	 * our custom layout CSS, avoiding duplicates.
 	 *
@@ -2453,10 +2447,10 @@ class ResponsiveControls {
 	 */
 	private function generate_style_layout_css( $responsive_controls, $device, $selector ) {
 		// Only process if layout is in the style_responsive_keys list.
-		if ( ! in_array( 'layout', $this->style_responsive_keys ) ) {
+		if ( ! in_array( 'layout', $this->style_responsive_keys, true ) ) {
 			return '';
 		}
-		
+
 		// Get fallback device order for the target device.
 		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'lg' );
 		$layout_css       = '';
@@ -2488,7 +2482,7 @@ class ResponsiveControls {
 			// Process grid column positioning.
 			$column_start = isset( $layout['columnStart'] ) ? $layout['columnStart'] : null;
 			$column_span  = isset( $layout['columnSpan'] ) ? $layout['columnSpan'] : null;
-			
+
 			// Set grid-column property based on available values.
 			if ( $column_start && $column_span ) {
 				// Both start position and span are defined.
@@ -2504,7 +2498,7 @@ class ResponsiveControls {
 			// Process grid row positioning.
 			$row_start = isset( $layout['rowStart'] ) ? $layout['rowStart'] : null;
 			$row_span  = isset( $layout['rowSpan'] ) ? $layout['rowSpan'] : null;
-			
+
 			// Set grid-row property based on available values.
 			if ( $row_start && $row_span ) {
 				// Both start position and span are defined.
@@ -2532,7 +2526,7 @@ class ResponsiveControls {
 					)
 				);
 			}
-			
+
 			// Stop after finding the first valid layout in the fallback chain.
 			break;
 		}
@@ -2543,7 +2537,7 @@ class ResponsiveControls {
 
 	/**
 	 * Recursively process blocks to ensure unique spectraIds.
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @param array $blocks The blocks to process.
 	 * @param array $seen_ids Reference to array tracking seen IDs.
@@ -2609,11 +2603,11 @@ class ResponsiveControls {
 	 * the figure element and img elements.
 	 *
 	 * @since 3.0.0
-	 * @param string $block_content The block's HTML content.
-	 * @param array  $responsive_controls The responsive controls data (unused but kept for signature).
+	 * @param string $block_content        The block's HTML content.
+	 * @param array  $_responsive_controls The responsive controls data (reserved, intentionally unused).
 	 * @return string Modified HTML content with inline styles removed.
 	 */
-	private function remove_core_image_inline_styles( $block_content, $responsive_controls ) {
+	private function remove_core_image_inline_styles( $block_content, $_responsive_controls ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// Use WordPress HTML Tag Processor to safely modify elements.
 		$processor = new WP_HTML_Tag_Processor( $block_content );
 
@@ -2725,7 +2719,7 @@ class ResponsiveControls {
 
 	/**
 	 * Generate orientation reverse CSS for container blocks.
-	 * 
+	 *
 	 * Creates device-specific CSS rules for orientation reverse functionality
 	 * with proper media queries and orientation-aware flex-direction values.
 	 *
@@ -2739,7 +2733,7 @@ class ResponsiveControls {
 		$responsive_controls = $attrs['responsiveControls'] ?? array();
 		$layout              = $attrs['layout'] ?? array();
 		$orientation_reverse = $attrs['orientationReverse'] ?? false;
-		
+
 		// Check if any breakpoint has orientation reverse enabled.
 		$has_orientation_reverse = $orientation_reverse;
 		if ( ! $has_orientation_reverse && ! empty( $responsive_controls ) ) {
@@ -2750,31 +2744,31 @@ class ResponsiveControls {
 				}
 			}
 		}
-		
+
 		if ( ! $has_orientation_reverse ) {
 			return '';
 		}
-		
+
 		$css_rules = array();
 		$selector  = ".wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='{$spectra_id}']";
-		
+
 		// Collect orientation data for each device from responsive controls.
 		$orientation_devices = array();
 		$default_orientation = $layout['orientation'] ?? 'horizontal';
-		
+
 		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 			if ( isset( $responsive_controls[ $device ]['layout']['orientation'] ) ) {
 				$orientation_devices[ $device ] = $responsive_controls[ $device ]['layout']['orientation'];
 			}
 		}
-		
+
 		// Desktop orientation.
 		$desktop_orientation = $orientation_devices['lg'] ?? $default_orientation;
-		
+
 		// Calculate inherited orientation reverse values with proper inheritance chain.
 		// Desktop: Use base attribute or explicit desktop setting.
 		$desktop_reverse = $orientation_reverse || ( isset( $responsive_controls['lg']['orientationReverse'] ) && ! empty( $responsive_controls['lg']['orientationReverse'] ) );
-		
+
 		// Tablet: Check if explicitly set (including false), otherwise inherit from desktop.
 		if ( array_key_exists( 'orientationReverse', $responsive_controls['md'] ?? array() ) ) {
 			// Explicit tablet setting exists (could be true or false) - use it.
@@ -2783,7 +2777,7 @@ class ResponsiveControls {
 			// No explicit tablet setting - inherit from desktop.
 			$tablet_reverse = $desktop_reverse;
 		}
-		
+
 		// Mobile: Check if explicitly set (including false), otherwise inherit from tablet.
 		if ( array_key_exists( 'orientationReverse', $responsive_controls['sm'] ?? array() ) ) {
 			// Explicit mobile setting exists (could be true or false) - use it.
@@ -2792,7 +2786,7 @@ class ResponsiveControls {
 			// No explicit mobile setting - inherit from tablet (which may have inherited from desktop).
 			$mobile_reverse = $tablet_reverse;
 		}
-		
+
 		// Desktop rules (min-width: 1024px).
 		if ( $desktop_reverse ) {
 			$desktop_flex_direction = ( 'vertical' === $desktop_orientation ) ? 'column-reverse' : 'row-reverse';
@@ -2802,7 +2796,7 @@ class ResponsiveControls {
 			$css_rules[]            = '  }';
 			$css_rules[]            = '}';
 		}
-		
+
 		// Tablet rules (768px to 1023px).
 		if ( $tablet_reverse ) {
 			$tablet_orientation    = $orientation_devices['md'] ?? $desktop_orientation;
@@ -2814,7 +2808,7 @@ class ResponsiveControls {
 			$css_rules[]           = '  }';
 			$css_rules[]           = '}';
 		}
-		
+
 		// Mobile rules (max-width: 767px).
 		if ( $mobile_reverse ) {
 			$mobile_orientation    = $orientation_devices['sm'] ?? ( $orientation_devices['md'] ?? $desktop_orientation );
@@ -2827,7 +2821,7 @@ class ResponsiveControls {
 			$css_rules[]           = '  }';
 			$css_rules[]           = '}';
 		}
-		
+
 		return implode( "\n", $css_rules );
 	}
 

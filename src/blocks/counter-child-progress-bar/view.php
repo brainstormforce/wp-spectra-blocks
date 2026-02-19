@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the counter progress bar block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\CounterChildProgressBar
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 // Only render progress bar for circular and bar styles.
 if ( 'simple' === $counter_style ) {
 	return;
@@ -17,7 +15,7 @@ if ( 'simple' === $counter_style ) {
 
 ?>
 <?php
-if ( 'circular' === $counter_style ) : 
+if ( 'circular' === $counter_style ) :
 	// Parse progress size.
 	$size_value = (int) str_replace( 'px', '', $progress_size ? $progress_size : '300px' );
 	if ( $size_value <= 0 ) {
@@ -26,7 +24,7 @@ if ( 'circular' === $counter_style ) :
 	// Calculate radius: half the size minus half the stroke width.
 	$radius        = ( $size_value / 2 ) - ( ( $progress_stroke_width ? $progress_stroke_width : 8 ) / 2 );
 	$circumference = 2 * M_PI * $radius;
-	
+
 	// Calculate progress percentage.
 	$safe_total_number = max( $total_number ? $total_number : 100, abs( $start_number ), abs( $end_number ) );
 	$start_point       = max( 0, min( 100, ( $start_number / $safe_total_number ) * 100 ) );
@@ -60,11 +58,11 @@ if ( 'circular' === $counter_style ) :
 		</div>
 	</div>
 	<?php
-elseif ( 'bar' === $counter_style ) : 
+elseif ( 'bar' === $counter_style ) :
 	// Calculate progress percentage for bar.
 	$safe_total_number = max( $total_number ? $total_number : 100, abs( $start_number ), abs( $end_number ) );
 	$initial_width     = max( 0, min( 100, ( $start_number / $safe_total_number ) * 100 ) );
-	
+
 	// Format the initial number display.
 	$formatted_start = number_format( $start_number, $decimal_places, '.', $thousand_separator );
 	?>

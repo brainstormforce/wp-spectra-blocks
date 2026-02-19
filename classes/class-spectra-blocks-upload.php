@@ -19,7 +19,7 @@ class Spectra_Blocks_Upload {
 	 */
 	public static function get_dir() {
 		$upload_dir = wp_upload_dir();
-		$path = trailingslashit( $upload_dir['basedir'] ) . 'spectra-blocks/';
+		$path       = trailingslashit( $upload_dir['basedir'] ) . 'spectra-blocks/';
 		wp_mkdir_p( $path );
 		return $path;
 	}

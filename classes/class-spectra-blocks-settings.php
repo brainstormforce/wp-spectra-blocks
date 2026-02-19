@@ -16,16 +16,16 @@ class Spectra_Blocks_Settings {
 	 * Get a setting value.
 	 *
 	 * @param string $key     Option key (without prefix).
-	 * @param mixed  $default Default value.
+	 * @param mixed  $fallback Default value.
 	 * @return mixed
 	 */
-	public static function get( $key, $default = false ) {
+	public static function get( $key, $fallback = false ) {
 		$option_name = 'spectra_blocks_' . $key;
-		$value = get_option( $option_name, null );
+		$value       = get_option( $option_name, null );
 		if ( null === $value && is_multisite() ) {
-			$value = get_site_option( $option_name, $default );
+			$value = get_site_option( $option_name, $fallback );
 		} elseif ( null === $value ) {
-			$value = $default;
+			$value = $fallback;
 		}
 		return $value;
 	}

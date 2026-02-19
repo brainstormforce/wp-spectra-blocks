@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\AccordionChildHeaderIcon
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Set the icon requirements, with fallback from the root accordion, or the default.

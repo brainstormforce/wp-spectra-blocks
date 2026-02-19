@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Button
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -52,7 +50,7 @@ if ( ! empty( $attributes['shadowHover'] ) ) {
 		$shadow_hover = $shadow;
 	} elseif ( is_array( $shadow ) ) {
 		$color = $shadow['color'] ?? '';
-		
+
 		// Only set shadow if color is actually provided.
 		if ( ! empty( $color ) && trim( $color ) !== '' ) {
 			$shadow_hover = sprintf(
@@ -73,7 +71,7 @@ $border_hover_config = array();
 if ( ! empty( $attributes['borderHover']['color'] ) ) {
 	$border_hover = $attributes['borderHover'];
 	$hover_color  = $border_hover['color'];
-	
+
 	// Only set the hover color as a CSS variable.
 	// Let WordPress core border settings handle the responsive width/style.
 	$border_hover_config[] = array(
@@ -204,10 +202,10 @@ $aria     = '';
 if ( $has_link ) {
 	// Set the target, and keep a default rel string.
 	$target = $attributes['linkTarget'] ?? '_self';
-	
+
 	// Set default aria-label (normal state) - use text content.
 	$aria = $text;
-	
+
 	// Strip HTML tags from aria-label for better accessibility.
 	if ( ! empty( $aria ) ) {
 		$aria = wp_strip_all_tags( $aria );

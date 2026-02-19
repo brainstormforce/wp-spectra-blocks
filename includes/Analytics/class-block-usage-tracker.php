@@ -291,7 +291,7 @@ class BlockUsageTracker {
 
 	/**
 	 * Extract Spectra blocks from parsed blocks array.
-	 * 
+	 *
 	 * Supports both Spectra 3 (spectra/) and Spectra Pro blocks (spectra-pro/).
 	 * Only tracks blocks that users can see and insert from the block inserter,
 	 * not child blocks or inner blocks that are auto-generated.
@@ -326,12 +326,12 @@ class BlockUsageTracker {
 			// If we found a Spectra block, process it.
 			if ( ! empty( $block_prefix ) && ! empty( $block_name ) ) {
 				// Apply security filter to ensure only allowed blocks are tracked.
-				$allowed_block = apply_filters( 
-					'spectra_analytics_allow_block_tracking', 
-					true, 
-					$block_name, 
-					$block_prefix, 
-					$block['blockName'] 
+				$allowed_block = apply_filters(
+					'spectra_analytics_allow_block_tracking',
+					true,
+					$block_name,
+					$block_prefix,
+					$block['blockName']
 				);
 
 				if ( ! $allowed_block ) {
@@ -369,12 +369,12 @@ class BlockUsageTracker {
 	 */
 	private function update_usage_data( $post_id, $blocks ) {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
-		
+
 		// Ensure structure exists.
 		if ( ! isset( $analytics_data['usage_data'] ) ) {
 			$analytics_data['usage_data'] = array();
 		}
-		
+
 		$analytics_data['usage_data'][ $post_id ] = array(
 			'blocks'  => $blocks,
 			'count'   => count( $blocks ),
@@ -393,7 +393,7 @@ class BlockUsageTracker {
 	 */
 	private function update_usage_statistics( $blocks ) {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
-		
+
 		// Ensure structure exists.
 		if ( ! isset( $analytics_data['statistics'] ) ) {
 			$analytics_data['statistics'] = array(
@@ -414,7 +414,7 @@ class BlockUsageTracker {
 			if ( ! isset( $stats['most_used_blocks'][ $block_name ] ) ) {
 				$stats['most_used_blocks'][ $block_name ] = 0;
 			}
-			$stats['most_used_blocks'][ $block_name ]++;
+			++$stats['most_used_blocks'][ $block_name ];
 		}
 
 		// Update blocks per post distribution.
@@ -423,7 +423,7 @@ class BlockUsageTracker {
 		if ( ! isset( $stats['blocks_per_post'][ $count_key ] ) ) {
 			$stats['blocks_per_post'][ $count_key ] = 0;
 		}
-		$stats['blocks_per_post'][ $count_key ]++;
+		++$stats['blocks_per_post'][ $count_key ];
 
 		// Update timestamp.
 		$stats['last_updated'] = time();
@@ -491,8 +491,8 @@ class BlockUsageTracker {
 			array(
 				'total_block_instances'   => $total_block_instances,
 				'unique_blocks_used'      => count( $filtered_stats['most_used_blocks'] ?? array() ),
-				'average_blocks_per_post' => empty( $filtered_stats['total_posts_with_blocks'] ) 
-					? 0 
+				'average_blocks_per_post' => empty( $filtered_stats['total_posts_with_blocks'] )
+					? 0
 					: round( $total_block_instances / $filtered_stats['total_posts_with_blocks'], 2 ),
 			)
 		);
@@ -825,7 +825,7 @@ class BlockUsageTracker {
 
 	/**
 	 * Determine if a block is a root-level block by checking its metadata.
-	 * 
+	 *
 	 * Root-level blocks are those that:
 	 * 1. Don't have a parent specified in block.json
 	 * 2. Are not child blocks (don't contain -child- in the name)
@@ -878,7 +878,7 @@ class BlockUsageTracker {
 				WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/build/blocks/',
 				WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/src/blocks/',
 			);
-			
+
 			$blocks_dir = '';
 			foreach ( $possible_dirs as $dir ) {
 				if ( is_dir( $dir ) && is_readable( $dir ) ) {
@@ -886,7 +886,7 @@ class BlockUsageTracker {
 					break;
 				}
 			}
-			
+
 			if ( empty( $blocks_dir ) ) {
 				// Apply filter to allow custom directory specification.
 				$blocks_dir = apply_filters( 'spectra_pro_blocks_directory', $blocks_dir );
@@ -894,7 +894,7 @@ class BlockUsageTracker {
 					return $root_blocks;
 				}
 			}
-			
+
 			$expected_prefix = 'spectra-pro/';
 		} else {
 			$blocks_dir      = SPECTRA_BLOCKS_DIR . 'build/blocks/';
@@ -918,23 +918,23 @@ class BlockUsageTracker {
 			}
 
 			global $wp_filesystem;
-			
+
 			if ( empty( $wp_filesystem ) ) {
 				require_once ABSPATH . '/wp-admin/includes/file.php';
 				WP_Filesystem();
 			}
-			
-			$file_contents = $wp_filesystem && method_exists( $wp_filesystem, 'get_contents' ) ? 
-				$wp_filesystem->get_contents( $block_file ) : 
+
+			$file_contents = $wp_filesystem && method_exists( $wp_filesystem, 'get_contents' ) ?
+				$wp_filesystem->get_contents( $block_file ) :
 				false;
 			if ( false === $file_contents ) {
 				continue;
 			}
 
 			$block_data = json_decode( $file_contents, true );
-			
+
 			// Ensure valid JSON and required fields.
-			if ( ! is_array( $block_data ) || ! isset( $block_data['name'] ) || 
+			if ( ! is_array( $block_data ) || ! isset( $block_data['name'] ) ||
 				strpos( $block_data['name'], $expected_prefix ) !== 0 ) {
 				continue;
 			}
@@ -947,12 +947,12 @@ class BlockUsageTracker {
 			}
 
 			// Apply security filter to ensure only safe blocks are included.
-			$allow_block = apply_filters( 
-				'spectra_analytics_allow_root_block', 
-				true, 
-				$block_name, 
-				$block_prefix, 
-				$block_data 
+			$allow_block = apply_filters(
+				'spectra_analytics_allow_root_block',
+				true,
+				$block_name,
+				$block_prefix,
+				$block_data
 			);
 
 			if ( ! $allow_block ) {

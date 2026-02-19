@@ -35,7 +35,7 @@ if ( ! class_exists( 'Spectra_Blocks_Helper' ) ) {
 		 * Called on the `init` action.
 		 */
 		public static function init() {
-			self::$block_list     = self::get_blocks_info();
+			self::$block_list      = self::get_blocks_info();
 			self::$file_generation = self::allow_file_generation();
 		}
 
@@ -45,8 +45,8 @@ if ( ! class_exists( 'Spectra_Blocks_Helper' ) ) {
 		 * @return array Keyed by block name.
 		 */
 		public static function get_blocks_info() {
-			$blocks     = array();
-			$build_dir  = SPECTRA_BLOCKS_DIR . 'build/blocks/';
+			$blocks    = array();
+			$build_dir = SPECTRA_BLOCKS_DIR . 'build/blocks/';
 
 			if ( ! is_dir( $build_dir ) ) {
 				return $blocks;

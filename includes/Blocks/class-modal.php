@@ -15,7 +15,7 @@ use WP_HTML_Tag_Processor;
 
 /**
  * Modal class.
- * 
+ *
  * @since 3.0.0
  */
 class Modal {
@@ -24,7 +24,7 @@ class Modal {
 
 	/**
 	 * Flag indicating if modal assets are needed.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @var bool
@@ -37,7 +37,7 @@ class Modal {
 	 * Hooks into render_block, asset registration, and conditional asset enqueue.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function init() {
@@ -49,7 +49,7 @@ class Modal {
 	 * Enqueue modal JS assets for editor.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function enqueue_block_assets() {
@@ -65,11 +65,11 @@ class Modal {
 	 * Handle frontend asset registration and enqueueing
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function handle_frontend_assets() {
-		
+
 		$this->register_modal_assets();
 
 		if ( $this->needs_assets && wp_script_is( 'spectra-modal-settings', 'registered' ) ) {
@@ -81,7 +81,7 @@ class Modal {
 	 * Register modal assets.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	private function register_modal_assets() {
@@ -96,7 +96,7 @@ class Modal {
 
 	/**
 	 * Determine whether the block should be processed for modal.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.

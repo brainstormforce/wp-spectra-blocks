@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\ModalChildTrigger
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get modalTrigger from context.
@@ -24,7 +22,7 @@ $style_configs = array(
 );
 
 // Hide trigger if modalTrigger is not button, icon, or text.
-$should_hide = $modal_trigger && ! in_array( $modal_trigger, array( 'button', 'icon', 'text' ) );
+$should_hide = $modal_trigger && ! in_array( $modal_trigger, array( 'button', 'icon', 'text' ), true );
 
 // Custom classes.
 $custom_classes = array(

@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Container
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 use Spectra\Helpers\Shadow;
@@ -19,7 +17,7 @@ $anchor              = $attributes['anchor'] ?? '';
 $html_tag            = $attributes['htmlTag'] ?? 'div';
 $overflow            = $attributes['overflow'] ?? 'visible';
 $height              = $attributes['height'] ?? 'auto';
-$dimRatio            = ( isset( $attributes['dimRatio'] ) && is_numeric( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : null );
+$dim_ratio           = ( isset( $attributes['dimRatio'] ) && is_numeric( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : null );
 $orientation_reverse = $attributes['orientationReverse'] ?? false;
 $layout              = $attributes['layout'] ?? array();
 
@@ -88,7 +86,7 @@ foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 			$has_responsive_image = true;
 		}
 	}
-	
+
 	// Check for responsive overlay - when overlayType is image and has overlay image.
 	if ( isset( $responsive_controls[ $device ]['overlayType'] ) && 'image' === $responsive_controls[ $device ]['overlayType'] &&
 		isset( $responsive_controls[ $device ]['overlayImage']['url'] ) && ! empty( $responsive_controls[ $device ]['overlayImage']['url'] ) ) {
@@ -124,7 +122,7 @@ $shadow_config = Shadow::get_multi_state_shadow_styles(
 	array(
 		'normal' => 'boxShadow',
 		'hover'  => 'boxShadowHover',
-	) 
+	)
 );
 
 // Convert border hover object to CSS strings - only set the hover color.
@@ -132,7 +130,7 @@ $border_hover_config = array();
 if ( ! empty( $attributes['borderHover']['color'] ) ) {
 	$border_hover = $attributes['borderHover'];
 	$hover_color  = $border_hover['color'];
-	
+
 	// Only set the hover color as a CSS variable.
 	// Let WordPress core border settings handle the responsive width/style.
 	$border_hover_config[] = array(
@@ -182,12 +180,12 @@ $config = array(
 );
 
 // Only add dimRatio to config if it has a valid numeric value.
-if ( null !== $dimRatio ) {
+if ( null !== $dim_ratio ) {
 	$config[] = array(
 		'key'        => 'dimRatio',
 		'css_var'    => '--spectra-overlay-opacity',
 		'class_name' => 'spectra-dim-ratio',
-		'value'      => $dimRatio,
+		'value'      => $dim_ratio,
 	);
 }
 
@@ -245,7 +243,7 @@ $config = array_merge( $config, $border_hover_config );
 
 // Custom classes.
 // Only add classes that are actually used in frontend styles.
-$custom_classes = array( 
+$custom_classes = array(
 	// Video background class is required for proper positioning (from common.scss).
 	( 'video' === $background_type || $has_video_background ) ? 'spectra-background-video' : '',
 	// These classes are used for overflow handling with border-radius.
@@ -275,7 +273,7 @@ $layout_type = $layout['type'] ?? 'flex';
 if ( 'flex' === $layout_type ) {
 	// Check if orientation reverse is enabled on any device.
 	$has_orientation_reverse = $orientation_reverse; // Base attribute.
-	
+
 	// Check for responsive orientation reverse.
 	if ( ! $has_orientation_reverse && ! empty( $responsive_controls ) ) {
 		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
@@ -285,20 +283,20 @@ if ( 'flex' === $layout_type ) {
 			}
 		}
 	}
-	
+
 	// Only add orientation classes if orientation reverse is enabled somewhere.
 	$orientation_classes = array();
 	if ( $has_orientation_reverse ) {
 		// Collect orientation data for each device from responsive controls.
 		$orientation_devices = array();
 		$default_orientation = $layout['orientation'] ?? 'horizontal';
-		
+
 		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 			if ( isset( $responsive_controls[ $device ]['layout']['orientation'] ) ) {
 				$orientation_devices[ $device ] = $responsive_controls[ $device ]['layout']['orientation'];
 			}
 		}
-	
+
 		// Desktop orientation (lg) - use responsive control or fallback to default.
 		$desktop_orientation = $orientation_devices['lg'] ?? $default_orientation;
 		if ( 'vertical' === $desktop_orientation ) {
@@ -306,7 +304,7 @@ if ( 'flex' === $layout_type ) {
 		} else {
 			$orientation_classes[] = 'is-horizontal-desktop';
 		}
-	
+
 		// Tablet orientation (md) - use responsive control or fallback to desktop.
 		if ( isset( $orientation_devices['md'] ) ) {
 			if ( 'vertical' === $orientation_devices['md'] ) {
@@ -314,15 +312,13 @@ if ( 'flex' === $layout_type ) {
 			} else {
 				$orientation_classes[] = 'is-horizontal-tablet';
 			}
-		} else {
 			// Tablet uses desktop value if no tablet-specific value.
-			if ( 'vertical' === $desktop_orientation ) {
-				$orientation_classes[] = 'is-vertical-tablet-from-desktop';
-			} else {
-				$orientation_classes[] = 'is-horizontal-tablet-from-desktop';
-			}
+		} elseif ( 'vertical' === $desktop_orientation ) {
+			$orientation_classes[] = 'is-vertical-tablet-from-desktop';
+		} else {
+			$orientation_classes[] = 'is-horizontal-tablet-from-desktop';
 		}
-	
+
 		// Mobile orientation (sm) - use responsive control or fallback to tablet/desktop.
 		if ( isset( $orientation_devices['sm'] ) ) {
 			if ( 'vertical' === $orientation_devices['sm'] ) {
@@ -337,18 +333,16 @@ if ( 'flex' === $layout_type ) {
 			} else {
 				$orientation_classes[] = 'is-horizontal-mobile-from-tablet';
 			}
-		} else {
 			// Mobile uses desktop value if no mobile or tablet values.
-			if ( 'vertical' === $desktop_orientation ) {
-				$orientation_classes[] = 'is-vertical-mobile-from-desktop';
-			} else {
-				$orientation_classes[] = 'is-horizontal-mobile-from-desktop';
-			}
+		} elseif ( 'vertical' === $desktop_orientation ) {
+			$orientation_classes[] = 'is-vertical-mobile-from-desktop';
+		} else {
+			$orientation_classes[] = 'is-horizontal-mobile-from-desktop';
 		}
-	
+
 		// Add all orientation classes.
 		$custom_classes = array_merge( $custom_classes, $orientation_classes );
-		
+
 		// Only add base classes for backward compatibility if orientation reverse is not enabled.
 		// When orientation reverse is enabled, device-specific classes provide better targeting.
 		if ( ! $has_orientation_reverse ) {
@@ -365,8 +359,8 @@ if ( 'flex' === $layout_type ) {
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
 	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
-		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) && 
-		'video' === $responsive_controls[ $device ]['background']['type'] && 
+		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
+		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
 		}

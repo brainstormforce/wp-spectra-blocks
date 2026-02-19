@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Content
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get the text content from attributes with empty string fallback.
@@ -104,4 +102,3 @@ $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $con
 
 // return the view.
 return 'file:./view.php';
-

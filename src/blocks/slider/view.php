@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Slider
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\Core;
 use Spectra\Helpers\Renderer;
 use Spectra\Helpers\HtmlSanitizer;

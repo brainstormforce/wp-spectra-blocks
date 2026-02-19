@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\ModalChildPopup
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Set the attributes with fallback values.
@@ -46,7 +44,7 @@ if ( $h_position ) {
 
 if ( $v_position ) {
 	$style_configs[] = array(
-		'key'        => 'vPos', 
+		'key'        => 'vPos',
 		'value'      => $v_position,
 		'css_var'    => '--spectra-modal-v-position',
 		'class_name' => null,

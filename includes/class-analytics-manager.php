@@ -3,7 +3,7 @@
  * Analytics Manager for Spectra 3 Block Usage Tracking.
  *
  * @package Spectra
- * 
+ *
  * @since 3.0.0
  */
 
@@ -37,7 +37,7 @@ class AnalyticsManager {
 	public function init() {
 		// Initialize block usage tracker.
 		( BlockUsageTracker::instance() )->init();
-		
+
 		// Initialize extension usage tracker separately.
 		( ExtensionUsageTracker::instance() )->init();
 	}

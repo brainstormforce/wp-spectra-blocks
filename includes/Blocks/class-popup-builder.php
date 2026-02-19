@@ -2,7 +2,7 @@
 /**
  * Spectra V3 Popup Builder Block Handler
  * Initializes and coordinates all V3 popup builder functionality
- * 
+ *
  * @since 3.0.0
  * @package Spectra\Blocks
  */
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit; // DEV: Security check - prevents direct file acce
 
 /**
  * Class PopupBuilder
- * 
+ *
  * Main coordinator for V3 popup builder functionality
  * Handles popup builder functionality for Spectra Blocks
  */
@@ -45,7 +45,7 @@ class PopupBuilder {
 
 	/**
 	 * Constructor to Default the Current Instance's Post ID and add the Shortcode if needed.
-	 * 
+	 *
 	 * @return void
 	 *
 	 * @since 3.0.0
@@ -122,15 +122,15 @@ class PopupBuilder {
 		while ( $popups->have_posts() ) : // DEV: Loop through found popups - add additional processing here.
 			$popups->the_post(); // DEV: Setup post data for current iteration.
 			$render_this_popup = apply_filters( 'spectra_pro_popup_display_filters_v3', true, $this->post_id );
-			
+
 			$popup_id = get_the_ID(); // DEV: Get current popup ID - add validation/sanitization if needed.
-			
+
 			if ( $render_this_popup ) {
 				if ( is_array( $this->popup_ids ) ) { // DEV: Safety check for array - consider using array_key_exists for duplicates.
 					array_push( $this->popup_ids, $popup_id ); // DEV: Add popup ID to collection - use array_unique() to prevent duplicates.
 				}
 			}
-			
+
 		endwhile;
 		wp_reset_postdata(); // DEV: Reset global post data - critical for preventing conflicts.
 		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
@@ -160,13 +160,13 @@ class PopupBuilder {
 	/**
 	 * Append the popup shortcode to the post content.
 	 *
-	 * @param object $this_post The post object.
-	 * @param array  $popup_ids The array of popup IDs.
+	 * @param object $this_post  The post object.
+	 * @param array  $_popup_ids The array of popup IDs (reserved, intentionally unused).
 	 * @return void
-	 * 
+	 *
 	 * @since 3.0.0
 	 */
-	public function append_my_shortcode( $this_post, $popup_ids ) {
+	public function append_my_shortcode( $this_post, $_popup_ids ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		if ( is_array( $this->popup_ids ) && ! empty( $this->popup_ids ) ) { // DEV: Validate popup IDs exist - add additional validation as needed.
 			foreach ( $this->popup_ids as $popup_id ) { // DEV: Loop through each popup ID - add filtering logic here.
 				$popup_contents[]         = do_shortcode( '[spectra_popup id=' . esc_attr( $popup_id ) . ']' );
@@ -327,9 +327,16 @@ class PopupBuilder {
 		 *
 		 * @since x.x.x
 		 */
-		do_action( 'register_spectra_blocks_popup_meta' );
+		do_action( 'spectra_blocks_register_popup_meta' );
 	}
 
+	/**
+	 * Enqueues scripts for the Toggle Button in the Popup Table.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
 	public function popup_toggle_scripts() {
 		// DEV: Admin script enqueuing method - hook with admin_enqueue_scripts.
 
@@ -357,7 +364,7 @@ class PopupBuilder {
 				'spectra-blocks-popup-builder-admin-js', // DEV: Script handle to attach data to.
 				'spectra_blocks_popup_builder_admin', // DEV: JavaScript object name - update if JS variable name changes.
 				array( // DEV: Data array passed to JavaScript - add new properties as needed.
-					'ajax_url'                                => admin_url( 'admin-ajax.php' ), // DEV: WordPress AJAX URL - standard WordPress AJAX endpoint.
+					'ajax_url' => admin_url( 'admin-ajax.php' ), // DEV: WordPress AJAX URL - standard WordPress AJAX endpoint.
 					'spectra_blocks_popup_builder_admin_nonce' => wp_create_nonce( 'spectra_blocks_popup_builder_admin_nonce' ), // DEV: Security nonce - update nonce name if changed.
 				)
 			);

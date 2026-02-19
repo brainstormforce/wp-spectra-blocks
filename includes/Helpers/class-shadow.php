@@ -11,14 +11,14 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Shadow.
- * 
+ *
  * @since 3.0.0
  */
 class Shadow {
 
 	/**
 	 * Get shadow styles for CSS application.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array  $attributes Block attributes.
@@ -27,7 +27,7 @@ class Shadow {
 	 */
 	public static function get_shadow_styles( $attributes, $shadow_attribute = 'boxShadow' ) {
 		$shadow_value = $attributes[ $shadow_attribute ] ?? '';
-		
+
 		if ( empty( $shadow_value ) || 'none' === $shadow_value ) {
 			return array();
 		}
@@ -40,7 +40,7 @@ class Shadow {
 	/**
 	 * Get multiple shadow styles configuration for different states (normal, hover, etc.).
 	 * This function returns configuration for BlockAttributes::get_wrapper_attributes
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $attributes Block attributes.
@@ -52,14 +52,14 @@ class Shadow {
 			'normal' => 'boxShadow',
 			'hover'  => 'boxShadowHover',
 		);
-		
+
 		$config        = array_merge( $default_config, $config );
 		$shadow_config = array();
 
 		// Normal state shadow.
 		$normal_shadow = $attributes[ $config['normal'] ] ?? '';
 		$hover_shadow  = $attributes[ $config['hover'] ] ?? '';
-		
+
 		if ( ! empty( $normal_shadow ) && 'none' !== $normal_shadow ) {
 			$shadow_config[] = array(
 				'key'        => $config['normal'],
@@ -84,7 +84,7 @@ class Shadow {
 
 	/**
 	 * Check if shadow value has content.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $shadow_value Shadow CSS string.
@@ -96,7 +96,7 @@ class Shadow {
 
 	/**
 	 * Parse shadow CSS string into shadow components.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $shadow_string CSS shadow string.
@@ -119,17 +119,17 @@ class Shadow {
 		$clean_string = str_replace( 'inset', '', $shadow_string );
 		$clean_string = trim( $clean_string );
 		$parts        = explode( ' ', $clean_string );
-		
+
 		// Extract numeric values and color.
 		$numeric_parts = array();
 		$color         = '#000000';
-		
+
 		foreach ( $parts as $part ) {
 			$part = trim( $part );
 			if ( empty( $part ) ) {
 				continue;
 			}
-			
+
 			if ( strpos( $part, 'px' ) !== false || strpos( $part, 'rem' ) !== false || strpos( $part, 'em' ) !== false ) {
 				$numeric_parts[] = intval( $part );
 			} elseif ( strpos( $part, '#' ) !== false || strpos( $part, 'rgb' ) !== false || strpos( $part, 'hsl' ) !== false ) {
@@ -149,7 +149,7 @@ class Shadow {
 
 	/**
 	 * Generate CSS shadow string from shadow components.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $shadow_obj Shadow components array.
@@ -159,22 +159,22 @@ class Shadow {
 		if ( empty( $shadow_obj ) ) {
 			return '';
 		}
-		
+
 		$x      = $shadow_obj['x'] ?? 0;
 		$y      = $shadow_obj['y'] ?? 4;
 		$blur   = $shadow_obj['blur'] ?? 8;
 		$spread = $shadow_obj['spread'] ?? 0;
 		$color  = $shadow_obj['color'] ?? '#000000';
 		$inset  = $shadow_obj['inset'] ?? false;
-		
+
 		$inset_prefix = $inset ? 'inset ' : '';
-		
+
 		return sprintf( '%s%dpx %dpx %dpx %dpx %s', $inset_prefix, $x, $y, $blur, $spread, $color );
 	}
 
 	/**
 	 * Default shadow presets.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @return array Default shadow presets.

@@ -1,5 +1,4 @@
 <?php
-defined( 'ABSPATH' ) || exit;
 /**
  * Custom Autoloader for Spectra Namespace.
  *
@@ -8,24 +7,36 @@ defined( 'ABSPATH' ) || exit;
  * @package Spectra
  */
 
+defined( 'ABSPATH' ) || exit;
+
 spl_autoload_register(
-	function ( $class ) {
+	function ( $class_name ) {
 		// Define the base namespace.
 		$namespace = 'Spectra\\';
 
 		// Ensure the class belongs to the Spectra namespace.
-		if ( strpos( $class, $namespace ) !== 0 ) {
+		if ( strpos( $class_name, $namespace ) !== 0 ) {
 			return; // Not part of Spectra, ignore.
 		}
 
 		// Define the base directory for class files.
 		$base_dir = __DIR__ . DIRECTORY_SEPARATOR;
 
-		// Get the relative class name.
-		$relative_class = substr( $class, strlen( $namespace ) );
+		// Get the relative class name (strip the Spectra\ prefix).
+		$relative_class = substr( $class_name, strlen( $namespace ) );
 
-		// Convert namespace separators to directory separators.
-		$file = $base_dir . str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $relative_class ) . '.php';
+		// Split into path segments on namespace separators.
+		$parts = explode( '\\', $relative_class );
+
+		// Directory segments stay as-is (PascalCase directories).
+		// The last segment is the class name — convert to WordPress filename convention:
+		// Example: HtmlSanitizer becomes class-html-sanitizer.php.
+		$class_segment = array_pop( $parts );
+		$file_name     = 'class-' . strtolower( preg_replace( '/([a-z])([A-Z])/', '$1-$2', $class_segment ) ) . '.php';
+
+		// Rebuild the path: directories keep original casing, then the WP-style filename.
+		$dir_path = empty( $parts ) ? '' : implode( DIRECTORY_SEPARATOR, $parts ) . DIRECTORY_SEPARATOR;
+		$file     = $base_dir . $dir_path . $file_name;
 
 		// Normalize path to prevent directory traversal attacks.
 		$real_path = realpath( $file );

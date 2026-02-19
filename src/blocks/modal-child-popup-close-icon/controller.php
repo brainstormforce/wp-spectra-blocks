@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\ModalChildPopupCloseIcon
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -68,7 +66,7 @@ $config = array(
 );
 
 // Custom classes.
-$custom_classes = array( 
+$custom_classes = array(
 	'spectra-modal-popup-close',
 	$close_icon_position,
 );

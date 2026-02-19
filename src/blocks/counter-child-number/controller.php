@@ -1,21 +1,19 @@
 <?php
 /**
  * Controller for rendering the counter number block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\CounterChildNumber
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get context from parent counter block.
 // Support reverse counting: allow start > end for decrement animation.
-$start_number = $block->context['spectra/counter/startNumber'] ?? 0;
-$end_number   = $block->context['spectra/counter/endNumber'] ?? 100;
+$start_number         = $block->context['spectra/counter/startNumber'] ?? 0;
+$end_number           = $block->context['spectra/counter/endNumber'] ?? 100;
 $prefix               = $block->context['spectra/counter/prefix'] ?? '';
 $suffix               = $block->context['spectra/counter/suffix'] ?? '';
 $thousand_separator   = $block->context['spectra/counter/thousandSeparator'] ?? '';
@@ -61,8 +59,8 @@ if ( ! empty( $suffix_color ) ) {
 }
 
 // Get the block wrapper attributes, and extend the styles and classes.
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( 
-	$attributes, 
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes(
+	$attributes,
 	$config,
 	array(),
 	$custom_classes

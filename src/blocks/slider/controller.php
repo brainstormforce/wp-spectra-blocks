@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Slider
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -21,72 +19,72 @@ $is_pro_activated = is_plugin_active( 'spectra-pro/spectra-pro.php' );
 
 /**
  * Get effective slides per view with Pro fallback logic.
- * 
+ *
  * @since 3.0.0
  * @param mixed $slides_per_view The original slides per view value.
  * @return mixed The effective slides per view value.
  */
-$get_effective_slides_per_view = function( $slides_per_view ) use ( $is_pro_activated ) {
+$get_effective_slides_per_view = function ( $slides_per_view ) use ( $is_pro_activated ) {
 	// If Pro is activated, return as-is (supports decimal values).
 	if ( $is_pro_activated ) {
 		return $slides_per_view;
 	}
-	
+
 	// For free version, only allow '1' or numeric value of 1.
 	if ( ! is_numeric( $slides_per_view ) ) {
 		// Non-numeric values (including 'auto') fallback to 1 in free version.
 		return 1;
 	}
-	
+
 	$numeric_value = (float) $slides_per_view;
-	
+
 	// If it's any Pro value (>1, including decimals) and Pro is not active, fallback to 1.
 	if ( $numeric_value > 1 ) {
 		// All Pro values (>1) fallback to 1 in free version.
 		return 1;
 	}
-	
+
 	// Backward compatibility: existing value of 1 remains 1.
 	return $slides_per_view;
 };
 
 /**
  * Get responsive attribute value with proper fallback.
- * 
+ *
  * This helper function retrieves responsive attribute values following the fallback hierarchy:
  * 1. Check responsive controls for the requested device with fallback (sm → md → lg).
  * 2. Check the main attribute for backward compatibility.
  * 3. Return default values if nothing is found.
- * 
+ *
  * @since 3.0.0.1
  *
  * @param string $device    Device type (sm, md, lg).
  * @param string $attribute Attribute name to retrieve.
  * @return mixed The attribute value with proper type casting.
  */
-$spectra_slider_get_responsive_attr = function( $device, $attribute ) use ( &$responsive_controls, &$attributes, $get_effective_slides_per_view ) {
+$spectra_slider_get_responsive_attr = function ( $device, $attribute ) use ( &$responsive_controls, &$attributes, $get_effective_slides_per_view ) {
 	$fallback_order = array(
 		'sm' => array( 'sm', 'md', 'lg' ),
 		'md' => array( 'md', 'lg' ),
 		'lg' => array( 'lg' ),
 	);
-	
+
 	foreach ( $fallback_order[ $device ] as $fallback_device ) {
 		if ( isset( $responsive_controls[ $fallback_device ][ $attribute ] ) ) {
 			$value = $responsive_controls[ $fallback_device ][ $attribute ];
-			
+
 			// Handle special cases.
 			if ( 'slidesPerView' === $attribute ) {
 				// Convert 'auto' to 1 for backward compatibility (auto is no longer supported).
 				$effective_value = 'auto' === $value ? 1 : (float) $value;
 				return $get_effective_slides_per_view( $effective_value );
 			}
-			
+
 			// Default integer casting for numeric values.
 			return is_numeric( $value ) ? (int) $value : $value;
 		}
 	}
-	
+
 	// Final fallback to main attribute if exists.
 	if ( isset( $attributes[ $attribute ] ) ) {
 		$value = $attributes[ $attribute ];
@@ -97,13 +95,13 @@ $spectra_slider_get_responsive_attr = function( $device, $attribute ) use ( &$re
 		}
 		return is_numeric( $value ) ? (int) $value : $value;
 	}
-	
+
 	// Default values if nothing is set.
 	$defaults = array(
 		'slidesPerView' => 1,
 		'spaceBetween'  => 30,
 	);
-	
+
 	return $defaults[ $attribute ] ?? 1;
 };
 
@@ -171,7 +169,7 @@ $background_type = $background['type'] ?? '';
 $has_image_background = 'image' === $background_type;
 $has_border_radius    = ! empty( $attributes['style']['border']['radius'] );
 
-$dimRatio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 100 );
+$dim_ratio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 100 );
 
 // Get custom navigation and pagination colors.
 $navigation_size      = $attributes['navigationSize'] ?? '40px';
@@ -208,9 +206,9 @@ $config = array(
 		'key'        => 'hasSliderHeight',
 		'css_var'    => null,
 		'class_name' => 'spectra-has-slider-height',
-		'value'      => ! empty( $attributes['sliderHeight'] ) || 
-						! empty( $responsive_controls['lg']['sliderHeight'] ) || 
-						! empty( $responsive_controls['md']['sliderHeight'] ) || 
+		'value'      => ! empty( $attributes['sliderHeight'] ) ||
+						! empty( $responsive_controls['lg']['sliderHeight'] ) ||
+						! empty( $responsive_controls['md']['sliderHeight'] ) ||
 						! empty( $responsive_controls['sm']['sliderHeight'] ),
 	),
 	array(
@@ -269,7 +267,7 @@ $config = array(
 		'key'        => 'dimRatio',
 		'css_var'    => '--spectra-overlay-opacity',
 		'class_name' => null,
-		'value'      => $dimRatio,
+		'value'      => $dim_ratio,
 	),
 );
 
@@ -355,8 +353,8 @@ $swiper_modules = apply_filters( 'spectra_slider_modules', array(), $attributes 
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
 	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
-		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) && 
-		'video' === $responsive_controls[ $device ]['background']['type'] && 
+		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
+		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
 		}
@@ -377,4 +375,4 @@ if ( ! empty( $responsive_video_data ) ) {
 // Get the block wrapper attributes, and extend the styles and classes.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, $wrapper_config, $additional_classes, $background_styles );
 
-return 'file:./view.php'; 
+return 'file:./view.php';

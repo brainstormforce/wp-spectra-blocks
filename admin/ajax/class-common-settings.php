@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SpectraBlocksAdmin\Ajax\Ajax_Base;
 use SpectraBlocksAdmin\Inc\Admin_Helper;
 
-use \ZipAI\Classes\Helper as Zip_Ai_Helper;
-use \ZipAI\Classes\Module as Zip_Ai_Module;
+use ZipAI\Classes\Helper as Zip_Ai_Helper;
+use ZipAI\Classes\Module as Zip_Ai_Module;
 
 /**
  * Class Common_Settings.
@@ -122,8 +122,8 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_btn_inherit_from_theme' );
 		if ( false !== get_option( 'spectra_blocks_btn_inherit_from_theme_fallback' ) ) {
 			\Spectra_Blocks_Admin_Helper::delete_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme_fallback' );
-		};
-		
+		}
+
 		$value = $this->check_post_value();
 		$this->delete_all_assets(); // We need to regenerate assets when user changes this setting to regenerate the dynamic CSS according to it.
 		$this->save_admin_settings( 'spectra_blocks_btn_inherit_from_theme', sanitize_text_field( $value ) );
@@ -165,7 +165,6 @@ class Common_Settings extends Ajax_Base {
 	private function save_admin_settings( $option, $value ) {
 		\Spectra_Blocks_Admin_Helper::update_admin_settings_option( $option, $value );
 
-
 		$response_data = array(
 			'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ),
 		);
@@ -186,7 +185,7 @@ class Common_Settings extends Ajax_Base {
 			wp_send_json_error( array( 'messsage' => __( 'No post data found!', 'spectra-blocks' ) ) );
 		}
 		// security validation done as per data type in function save_admin_settings.
-		return $_POST[ $key ]; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Missing
+		return wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -281,7 +280,7 @@ class Common_Settings extends Ajax_Base {
 			'posts_per_page' => 5,
 		);
 		// nonce verification is done in above function check_permission_nonce.
-		$keyword = ( isset( $_POST['keyword'] ) ? sanitize_text_field( $_POST['keyword'] ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$keyword = ( isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $keyword ) ) {
 			$args['s'] = $keyword;
 		}
@@ -518,16 +517,16 @@ class Common_Settings extends Ajax_Base {
 		);
 		// nonce verification is done in above function check_permission_nonce.
 		if ( isset( $_POST['socialRegister'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['socialRegister'] = rest_sanitize_boolean( sanitize_text_field( $_POST['socialRegister'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['socialRegister'] = rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['socialRegister'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['googleClientId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['googleClientId'] = sanitize_text_field( $_POST['googleClientId'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['googleClientId'] = sanitize_text_field( wp_unslash( $_POST['googleClientId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppId'] = sanitize_text_field( $_POST['facebookAppId'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['facebookAppId'] = sanitize_text_field( wp_unslash( $_POST['facebookAppId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppSecret'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppSecret'] = sanitize_text_field( $_POST['facebookAppSecret'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['facebookAppSecret'] = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$this->save_admin_settings( 'spectra_blocks_social', $social );
@@ -731,7 +730,7 @@ class Common_Settings extends Ajax_Base {
 		$response = wp_remote_get(
 			'https://plugins.svn.wordpress.org/spectra-blocks/trunk/readme.txt',
 			array(
-				'timeout'   => 15, //phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+				'timeout'   => 15,
 				'sslverify' => true,
 			)
 		);
@@ -1008,7 +1007,6 @@ class Common_Settings extends Ajax_Base {
 				'reload'      => true,
 			)
 		);
-
 	}
 
 	/**
@@ -1061,7 +1059,7 @@ class Common_Settings extends Ajax_Base {
 	 */
 	public function regenerate_assets() {
 		$this->check_permission_nonce( 'spectra_blocks_regenerate_assets' );
-		
+
 		/* Update the asset version */
 		\Spectra_Blocks_Admin_Helper::create_specific_stylesheet();
 		\Spectra_Blocks_Admin_Helper::update_admin_settings_option( '__spectra_blocks_asset_version', time() );
@@ -1238,7 +1236,7 @@ class Common_Settings extends Ajax_Base {
 				}
 
 				foreach ( $styles_get['post_ids'] as $post_id ) {
-					if ( ! $post_id || in_array( $post_id, $post_ids ) ) {
+					if ( ! $post_id || in_array( $post_id, $post_ids, true ) ) {
 						continue;
 					}
 
@@ -1353,8 +1351,7 @@ class Common_Settings extends Ajax_Base {
 						)
 					);
 				}
-			} else {
-				if ( Zip_Ai_Module::enable( $module ) ) {
+			} elseif ( Zip_Ai_Module::enable( $module ) ) {
 					wp_send_json_success(
 						array(
 							'messsage' => sprintf(
@@ -1364,17 +1361,16 @@ class Common_Settings extends Ajax_Base {
 							),
 						)
 					);
-				} else {
-					wp_send_json_error(
-						array(
-							'messsage' => sprintf(
-							// Translators: %s is the module name.
-								__( 'Unable to enable %s', 'spectra-blocks' ),
-								$module_name
-							),
-						)
-					);
-				}
+			} else {
+				wp_send_json_error(
+					array(
+						'messsage' => sprintf(
+						// Translators: %s is the module name.
+							__( 'Unable to enable %s', 'spectra-blocks' ),
+							$module_name
+						),
+					)
+				);
 			}
 		} else {
 			wp_send_json_error( array( 'messsage' => __( 'Unable to save setting.', 'spectra-blocks' ) ) );
