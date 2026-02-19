@@ -5,6 +5,8 @@
  * @package Spectra
  */
 
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- this file intentionally contains both utility functions and a helper class
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -19,19 +21,19 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
 	if ( ! $post_id ) {
 		return '';
 	}
-	
+
 	$post = get_post( $post_id );
 	if ( ! $post || empty( $post->post_content ) ) {
 		return '';
 	}
-	
+
 	$blocks = parse_blocks( $post->post_content );
 	if ( empty( $blocks ) ) {
 		return '';
 	}
-	
+
 	$css_generator = new Spectra_Blocks_CSS_Generator();
-	
+
 	return $css_generator->generate_preview_css( $post_id, $blocks );
 }
 
@@ -42,22 +44,22 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
  * @since 3.0.0
  */
 class Spectra_Blocks_CSS_Generator {
-	
+
 	/**
 	 * Registered plugin handlers for CSS generation.
 	 *
 	 * @var array
 	 */
 	private $plugin_handlers = array();
-	
-	
+
+
 	/**
 	 * Constructor - registers default plugin handlers.
 	 */
 	public function __construct() {
 		$this->register_default_handlers();
 	}
-	
+
 	/**
 	 * Generate complete CSS for post preview.
 	 *
@@ -79,7 +81,7 @@ class Spectra_Blocks_CSS_Generator {
 
 		return implode( "\n", array_filter( $css_parts ) );
 	}
-	
+
 	/**
 	 * Register plugin handler for CSS generation.
 	 *
@@ -94,10 +96,10 @@ class Spectra_Blocks_CSS_Generator {
 				'blocks_dir'       => '',
 				'responsive_class' => null,
 				'enabled'          => true,
-			) 
+			)
 		);
 	}
-	
+
 	/**
 	 * Register default plugin handlers.
 	 */
@@ -110,9 +112,9 @@ class Spectra_Blocks_CSS_Generator {
 				'blocks_dir'       => SPECTRA_BLOCKS_DIR . 'build/blocks/',
 				'responsive_class' => '\Spectra\Extensions\ResponsiveControls',
 				'enabled'          => true,
-			) 
+			)
 		);
-		
+
 		// Spectra Pro v2 handler (if available).
 		if ( defined( 'SPECTRA_PRO_2_DIR' ) ) {
 			$this->register_plugin_handler(
@@ -122,14 +124,14 @@ class Spectra_Blocks_CSS_Generator {
 					'blocks_dir'       => SPECTRA_PRO_2_DIR . 'build/blocks/',
 					'responsive_class' => '\SpectraPro\Extensions\ResponsiveControls',
 					'enabled'          => true,
-				) 
+				)
 			);
 		}
-		
+
 		// Allow other plugins to register their handlers.
 		do_action( 'spectra_blocks_css_generator_register_handlers', $this );
 	}
-	
+
 	/**
 	 * Generate static CSS for all registered plugins.
 	 *
@@ -140,23 +142,23 @@ class Spectra_Blocks_CSS_Generator {
 		if ( empty( $used_blocks ) ) {
 			return '';
 		}
-		
+
 		$css_content = '';
-		
+
 		foreach ( $this->plugin_handlers as $plugin_key => $config ) {
 			if ( ! $config['enabled'] || empty( $config['blocks_dir'] ) ) {
 				continue;
 			}
-			
+
 			$plugin_css = $this->load_plugin_static_css( $plugin_key, $config, $used_blocks );
 			if ( $plugin_css ) {
 				$css_content .= "\n/* {$plugin_key} Static CSS */\n" . $plugin_css;
 			}
 		}
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Load static CSS for a specific plugin.
 	 *
@@ -168,18 +170,18 @@ class Spectra_Blocks_CSS_Generator {
 	private function load_plugin_static_css( $plugin_key, $config, $used_blocks ) {
 		$blocks_dir = $config['blocks_dir'];
 		$namespace  = $config['namespace'];
-		
+
 		if ( ! is_dir( $blocks_dir ) || ! is_readable( $blocks_dir ) ) {
 			return '';
 		}
-		
+
 		$css_content   = '';
 		$block_folders = scandir( $blocks_dir );
-		
+
 		if ( false === $block_folders ) {
 			return '';
 		}
-		
+
 		foreach ( $block_folders as $block_folder ) {
 			if ( '.' === $block_folder || '..' === $block_folder || ! is_dir( $blocks_dir . $block_folder ) ) {
 				continue;
@@ -197,12 +199,12 @@ class Spectra_Blocks_CSS_Generator {
 				if ( $block_css ) {
 					$css_content .= "\n/* Block: {$block_folder} */\n" . $block_css;
 				}
-			}       
+			}
 		}
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Read CSS file content safely.
 	 *
@@ -218,7 +220,7 @@ class Spectra_Blocks_CSS_Generator {
 
 		return $wp_filesystem ? $wp_filesystem->get_contents( $file_path ) : false;
 	}
-	
+
 	/**
 	 * Generate editor-specific CSS from static files.
 	 * Loads editor.css files that contain editor-specific styles.
@@ -230,23 +232,23 @@ class Spectra_Blocks_CSS_Generator {
 		if ( empty( $used_blocks ) ) {
 			return '';
 		}
-		
+
 		$css_content = '';
-		
+
 		foreach ( $this->plugin_handlers as $plugin_key => $config ) {
 			if ( ! $config['enabled'] || empty( $config['blocks_dir'] ) ) {
 				continue;
 			}
-			
+
 			$plugin_css = $this->load_plugin_editor_css( $plugin_key, $config, $used_blocks );
 			if ( $plugin_css ) {
 				$css_content .= "\n/* {$plugin_key} Editor CSS */\n" . $plugin_css;
 			}
 		}
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Load editor CSS for a specific plugin.
 	 *
@@ -258,28 +260,28 @@ class Spectra_Blocks_CSS_Generator {
 	private function load_plugin_editor_css( $plugin_key, $config, $used_blocks ) {
 		$blocks_dir = $config['blocks_dir'];
 		$namespace  = $config['namespace'];
-		
+
 		if ( ! is_dir( $blocks_dir ) || ! is_readable( $blocks_dir ) ) {
 			return '';
 		}
-		
+
 		$css_content   = '';
 		$block_folders = scandir( $blocks_dir );
-		
+
 		if ( false === $block_folders ) {
 			return '';
 		}
-		
+
 		foreach ( $block_folders as $block_folder ) {
 			if ( '.' === $block_folder || '..' === $block_folder || ! is_dir( $blocks_dir . $block_folder ) ) {
 				continue;
 			}
-			
+
 			$full_block_name = $namespace . $block_folder;
 			if ( ! in_array( $full_block_name, $used_blocks, true ) ) {
 				continue;
 			}
-			
+
 			// Try both editor.css and index.css (for editor styles).
 			$editor_files = array( 'editor.css', 'index.css' );
 			foreach ( $editor_files as $editor_file ) {
@@ -287,7 +289,7 @@ class Spectra_Blocks_CSS_Generator {
 				if ( ! file_exists( $editor_css_file ) ) {
 					continue;
 				}
-				
+
 				$block_css = $this->read_css_file( $editor_css_file );
 				if ( $block_css ) {
 					$css_content .= "\n/* Block Editor: {$block_folder} ({$editor_file}) */\n" . $block_css;
@@ -295,7 +297,7 @@ class Spectra_Blocks_CSS_Generator {
 				break; // Use first available file.
 			}
 		}
-		
+
 		return $css_content;
 	}
 
@@ -341,9 +343,9 @@ class Spectra_Blocks_CSS_Generator {
 
 		/**
 		 * Filter the generated extension CSS.
-		 * 
+		 *
 		 * @since 3.0.0
-		 * 
+		 *
 		 * @param string $css_content The generated extension CSS content.
 		 * @param array  $blocks The parsed blocks being processed.
 		 * @return string Filtered CSS content.
@@ -413,19 +415,19 @@ class Spectra_Blocks_CSS_Generator {
 	public function generate_layout_css( $blocks ) {
 		static $base_layout_css_added = false;
 		$css_content                  = '';
-		
+
 		// Add base WordPress layout CSS once.
 		if ( ! $base_layout_css_added ) {
 			$css_content          .= $this->get_base_wordpress_layout_css();
 			$base_layout_css_added = true;
 		}
-		
+
 		// Process blocks for layout-specific CSS.
 		$css_content .= $this->process_blocks_for_layout_css( $blocks );
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Get base WordPress layout CSS that should be included once.
 	 *
@@ -438,7 +440,7 @@ class Spectra_Blocks_CSS_Generator {
 			".is-layout-flex { display: flex; }\n" .
 			".is-layout-flex { flex-wrap: wrap; align-items: center; }\n";
 	}
-	
+
 	/**
 	 * Process blocks recursively for layout-specific CSS.
 	 *
@@ -448,7 +450,7 @@ class Spectra_Blocks_CSS_Generator {
 	private function process_blocks_for_layout_css( $blocks ) {
 		$css_content            = '';
 		static $container_count = 0;
-		
+
 		foreach ( $blocks as $block ) {
 			if ( empty( $block['blockName'] ) ) {
 				if ( ! empty( $block['innerBlocks'] ) ) {
@@ -456,39 +458,39 @@ class Spectra_Blocks_CSS_Generator {
 				}
 				continue;
 			}
-			
+
 			$attrs      = $block['attrs'] ?? array();
 			$block_name = $block['blockName'];
-			
+
 			// Generate dynamic container CSS for grid/flex layouts.
 			if ( strpos( $block_name, 'spectra/container' ) === 0 || strpos( $block_name, 'core/group' ) === 0 ) {
 				$layout = $attrs['layout'] ?? array();
-				
+
 				if ( isset( $layout['type'] ) && 'grid' === $layout['type'] ) {
-					$container_count++;
+					++$container_count;
 					$container_class = "wp-container-{$this->get_block_slug( $block_name )}-is-layout-{$container_count}";
-					
+
 					$css_content .= ".{$container_class} {\n";
-					
+
 					if ( isset( $layout['columnCount'] ) ) {
 						$columns      = (int) $layout['columnCount'];
 						$css_content .= "    grid-template-columns: repeat({$columns}, minmax(0, 1fr));\n";
 					} else {
 						$css_content .= "    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));\n";
 					}
-					
+
 					$css_content .= "}\n";
 				}
 			}
-			
+
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$css_content .= $this->process_blocks_for_layout_css( $block['innerBlocks'] );
 			}
 		}
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Get block slug from block name for CSS class generation.
 	 *
@@ -498,7 +500,7 @@ class Spectra_Blocks_CSS_Generator {
 	private function get_block_slug( $block_name ) {
 		return str_replace( '/', '-', $block_name );
 	}
-	
+
 	/**
 	 * Generate comprehensive responsive CSS by leveraging existing ResponsiveControls instances.
 	 * This generates CSS for all devices (mobile, tablet, desktop) with proper media queries.
@@ -508,29 +510,29 @@ class Spectra_Blocks_CSS_Generator {
 	 */
 	private function generate_responsive_css_from_blocks( $blocks ) {
 		$css_content = '';
-		
+
 		// Get ResponsiveControls instances.
 		$v3_responsive  = null;
 		$pro_responsive = null;
-		
+
 		if ( class_exists( '\Spectra\Extensions\ResponsiveControls' ) ) {
 			$v3_responsive = \Spectra\Extensions\ResponsiveControls::instance();
 		}
-		
+
 		if ( class_exists( '\SpectraPro\Extensions\ResponsiveControls' ) ) {
 			$pro_responsive = \SpectraPro\Extensions\ResponsiveControls::instance();
 		}
-		
+
 		if ( ! $v3_responsive ) {
 			return '';
 		}
-		
+
 		// Process all blocks and let ResponsiveControls generate the CSS.
 		$css_content .= $this->process_blocks_for_responsive_css( $blocks, $v3_responsive, $pro_responsive );
-		
+
 		return $css_content;
 	}
-	
+
 	/**
 	 * Process blocks recursively to generate responsive CSS.
 	 * Uses ResponsiveControls to generate CSS for all devices (mobile, tablet, desktop).
@@ -609,7 +611,7 @@ class Spectra_Blocks_CSS_Generator {
 
 		return $css_content;
 	}
-	
+
 	/**
 	 * Get all block types used recursively.
 	 *
@@ -618,24 +620,24 @@ class Spectra_Blocks_CSS_Generator {
 	 */
 	public function get_used_block_types( $blocks ) {
 		$used_blocks = array();
-		
+
 		foreach ( $blocks as $block ) {
 			if ( ! empty( $block['blockName'] ) ) {
 				$used_blocks[] = $block['blockName'];
 			}
-			
+
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$inner_blocks = $this->get_used_block_types( $block['innerBlocks'] );
 				$used_blocks  = array_merge( $used_blocks, $inner_blocks );
 			}
 		}
-		
+
 		return array_unique( $used_blocks );
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Convert block attributes to responsive controls (simplified version).
 	 *
@@ -688,7 +690,7 @@ class Spectra_Blocks_CSS_Generator {
 
 		return $responsive_controls;
 	}
-	
+
 	/**
 	 * Merge responsive controls with priority to existing.
 	 *
@@ -700,13 +702,13 @@ class Spectra_Blocks_CSS_Generator {
 		if ( empty( $existing ) ) {
 			return $comprehensive;
 		}
-		
+
 		if ( empty( $comprehensive ) ) {
 			return $existing;
 		}
-		
+
 		$merged = $existing;
-		
+
 		foreach ( $comprehensive as $breakpoint => $breakpoint_data ) {
 			if ( ! isset( $merged[ $breakpoint ] ) ) {
 				$merged[ $breakpoint ] = $breakpoint_data;
@@ -718,7 +720,7 @@ class Spectra_Blocks_CSS_Generator {
 						if ( ! isset( $merged[ $breakpoint ]['style'] ) ) {
 							$merged[ $breakpoint ]['style'] = array();
 						}
-						
+
 						foreach ( $value as $style_prop => $style_value ) {
 							if ( ! isset( $merged[ $breakpoint ]['style'][ $style_prop ] ) ) {
 								$merged[ $breakpoint ]['style'][ $style_prop ] = $style_value;
@@ -728,11 +730,9 @@ class Spectra_Blocks_CSS_Generator {
 				}
 			}
 		}
-		
+
 		return $merged;
 	}
-	
-	
 }
 
 /**
@@ -749,7 +749,7 @@ function spectra_blocks_regenerate_pattern_css() {
 		'patterns_updated'   => 0,
 		'errors'             => array(),
 	);
-	
+
 	// Get all patterns/posts that might contain Spectra blocks.
 	// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 	$posts = get_posts(
@@ -774,28 +774,28 @@ function spectra_blocks_regenerate_pattern_css() {
 	// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 
 	foreach ( $posts as $post ) {
-		$results['patterns_processed']++;
-		
+		++$results['patterns_processed'];
+
 		// Check if post content contains Spectra blocks.
 		if ( strpos( $post->post_content, 'wp:spectra/' ) !== false || strpos( $post->post_content, 'wp:spectra-pro/' ) !== false ) {
 			// Force regenerate CSS by clearing any cached CSS and regenerating.
 			delete_post_meta( $post->ID, '_spectra_css_cache' );
-			
+
 			// Trigger fresh CSS generation.
 			$new_css = spectra_blocks_get_v3_blocks_css_for_preview( $post->ID );
-			
+
 			if ( ! empty( $new_css ) ) {
 				// Store the regenerated CSS if needed.
 				update_post_meta( $post->ID, '_spectra_css_regenerated', current_time( 'mysql' ) );
-				$results['patterns_updated']++;
+				++$results['patterns_updated'];
 			} else {
 				$results['errors'][] = "No CSS generated for post ID: {$post->ID} ({$post->post_title})";
 			}
 		}
 	}
-	
+
 	$results['success'] = $results['patterns_updated'] > 0;
-	
+
 	return $results;
 }
 
@@ -812,73 +812,73 @@ function spectra_blocks_regenerate_pattern_css() {
 function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsive_controls, $pro_responsive_controls = null ) {
 	static $core_layout_css_added = false;
 	$css_content                  = '';
-	
+
 	foreach ( $blocks as $block ) {
 		if ( empty( $block['blockName'] ) ) {
 			continue;
 		}
-		
+
 		$attrs      = $block['attrs'] ?? array();
 		$block_name = $block['blockName'];
-		
+
 		// Generate CSS for Spectra blocks and Pro v2.
 		if ( strpos( $block_name, 'spectra/' ) === 0 || strpos( $block_name, 'spectra-pro/' ) === 0 ) {
 			$spectra_id = $attrs['spectraId'] ?? '';
-			
+
 			// Ensure block has a spectraId for CSS generation.
 			if ( empty( $spectra_id ) ) {
 				// Generate temporary ID for pattern preview.
 				$spectra_id = 'spectra-preview-' . wp_generate_uuid4();
 			}
-			
+
 			// Get existing responsive controls.
 			$responsive_controls_data = $attrs['responsiveControls'] ?? array();
-			
+
 			// Convert all block attributes to comprehensive responsive controls.
 			$comprehensive_responsive_data = spectra_blocks_convert_all_attrs_to_responsive_controls( $attrs, $block_name );
-			
+
 			// Merge existing with comprehensive data (comprehensive takes precedence for missing properties).
 			$final_responsive_data = spectra_blocks_merge_responsive_controls_comprehensive( $responsive_controls_data, $comprehensive_responsive_data );
-			
+
 			// Skip if no responsive data to process.
 			if ( empty( $final_responsive_data ) ) {
 				$final_responsive_data = array( 'lg' => array() );
 			}
-			
+
 			// Determine which controls instance to use.
 			$controls_instance = $responsive_controls; // Default to v3.
 			$use_pro_v2        = false;
-			
+
 			// Check for Pro v2 blocks and valid Pro v2 controls instance.
-			if ( strpos( $block_name, 'spectra-pro/' ) === 0 && 
-				$pro_responsive_controls && 
+			if ( strpos( $block_name, 'spectra-pro/' ) === 0 &&
+				$pro_responsive_controls &&
 				method_exists( $pro_responsive_controls, 'generate_responsive_css' ) ) {
 				$controls_instance = $pro_responsive_controls;
 				$use_pro_v2        = true;
 			}
-			
+
 			$block_css = $controls_instance->generate_responsive_css( $spectra_id, $final_responsive_data, $block_name, $attrs );
 			if ( $block_css && is_string( $block_css ) ) {
 				$css_content .= $block_css . ' ';
 			}
 		}
-		
+
 		// Generate CSS for WordPress core blocks.
 		if ( strpos( $block_name, 'core/' ) === 0 ) {
 			$css_content .= spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, $core_layout_css_added );
 		}
-		
+
 		// Generate layout CSS for Spectra blocks that use WordPress core layout support.
 		if ( strpos( $block_name, 'spectra/' ) === 0 || strpos( $block_name, 'spectra-pro/' ) === 0 ) {
 			$css_content .= spectra_blocks_generate_spectra_layout_css( $attrs, $block_name );
 		}
-		
+
 		// Process inner blocks recursively.
 		if ( ! empty( $block['innerBlocks'] ) ) {
 			$css_content .= spectra_blocks_process_blocks_for_comprehensive_css( $block['innerBlocks'], $responsive_controls, $pro_responsive_controls );
 		}
 	}
-	
+
 	return $css_content;
 }
 
@@ -896,14 +896,14 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
 	if ( empty( $existing_responsive ) ) {
 		return $comprehensive_responsive;
 	}
-	
+
 	if ( empty( $comprehensive_responsive ) ) {
 		return $existing_responsive;
 	}
-	
+
 	// Deep merge with existing taking priority.
 	$merged = $existing_responsive;
-	
+
 	foreach ( $comprehensive_responsive as $breakpoint => $breakpoint_data ) {
 		if ( ! isset( $merged[ $breakpoint ] ) ) {
 			$merged[ $breakpoint ] = $breakpoint_data;
@@ -917,7 +917,7 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
 					if ( ! isset( $merged[ $breakpoint ]['style'] ) ) {
 						$merged[ $breakpoint ]['style'] = array();
 					}
-					
+
 					foreach ( $value as $style_prop => $style_value ) {
 						if ( ! isset( $merged[ $breakpoint ]['style'][ $style_prop ] ) ) {
 							$merged[ $breakpoint ]['style'][ $style_prop ] = $style_value;
@@ -927,7 +927,7 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
 			}
 		}
 	}
-	
+
 	return $merged;
 }
 
@@ -941,12 +941,12 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
  */
 function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 	$css_content = '';
-	
+
 	// Check if ResponsiveAttributeCSS class exists.
 	if ( ! class_exists( '\Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
 		return '';
 	}
-	
+
 	foreach ( $blocks as $block ) {
 		if ( empty( $block['blockName'] ) || strpos( $block['blockName'], 'spectra/' ) !== 0 ) {
 			// Still process inner blocks.
@@ -955,43 +955,43 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 			}
 			continue;
 		}
-		
+
 		$attrs      = $block['attrs'] ?? array();
 		$spectra_id = $attrs['spectraId'] ?? '';
 		$block_name = $block['blockName'];
-		
+
 		if ( empty( $spectra_id ) ) {
 			// Generate temporary ID for CSS generation.
 			$spectra_id = 'spectra-preview-' . wp_generate_uuid4();
 		}
-		
+
 		// Generate CSS selectors.
 		$block_class               = '.wp-block-' . str_replace( '/', '-', $block_name );
 		$high_specificity_selector = "{$block_class}{$block_class}[data-spectra-id='{$spectra_id}']";
 		$low_specificity_selector  = "{$block_class}:where([data-spectra-id='{$spectra_id}'])";
-		
+
 		// Get device-specific attributes with fallback (simulating lg device).
 		$device_attrs = spectra_blocks_get_preview_device_attributes( $block_name, $attrs );
-		
+
 		// Generate block-specific attribute CSS.
-		$attr_css = \Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS::generate_css( 
-			$block_name, 
-			$device_attrs, 
-			$high_specificity_selector, 
+		$attr_css = \Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS::generate_css(
+			$block_name,
+			$device_attrs,
+			$high_specificity_selector,
 			$low_specificity_selector,
 			$attrs
 		);
-		
+
 		if ( ! empty( $attr_css ) ) {
 			$css_content .= "\n/* Block Attribute CSS: " . $block_name . " */\n" . $attr_css . "\n";
 		}
-		
+
 		// Process inner blocks recursively.
 		if ( ! empty( $block['innerBlocks'] ) ) {
 			$css_content .= spectra_blocks_process_blocks_for_attribute_css( $block['innerBlocks'] );
 		}
 	}
-	
+
 	return $css_content;
 }
 
@@ -1040,7 +1040,7 @@ function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
 /**
  * Generate CSS for WordPress core group blocks based on actual WordPress class names.
  * Uses the same class-based approach as WordPress core for better compatibility.
- * 
+ *
  * @since 3.0.0
  * @param array $attrs Block attributes.
  * @param bool  &$base_css_added Reference to track if base CSS was added.
@@ -1048,45 +1048,45 @@ function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
  */
 function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
 	$css_content = '';
-	
+
 	$layout = $attrs['layout'] ?? array();
 	$style  = $attrs['style'] ?? array();
-	
+
 	// Add base layout CSS only once.
 	if ( ! $base_css_added ) {
 		$css_content .= "\n/* WordPress Core Layout CSS */\n";
 		$css_content .= "body .is-layout-flex {\n";
 		$css_content .= "    display: flex;\n";
 		$css_content .= "}\n";
-		
+
 		$css_content .= ".is-layout-flex {\n";
 		$css_content .= "    flex-wrap: wrap;\n";
 		$css_content .= "    align-items: center;\n";
 		$css_content .= "}\n";
-		
+
 		// Add grid layout support.
 		$css_content .= "body .is-layout-grid {\n";
 		$css_content .= "    display: grid;\n";
 		$css_content .= "}\n";
-		
+
 		$css_content .= ".is-layout-grid {\n";
 		$css_content .= "    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));\n";
 		$css_content .= "    gap: 1.25rem;\n";
 		$css_content .= "}\n";
-		
+
 		$base_css_added = true;
 	}
-	
+
 	// Generate CSS based on WordPress class names for flex layout.
 	if ( isset( $layout['type'] ) && 'flex' === $layout['type'] ) {
-		
+
 		// CSS for vertical orientation.
 		if ( isset( $layout['orientation'] ) && 'vertical' === $layout['orientation'] ) {
 			$css_content .= ".wp-block-group.is-vertical {\n";
 			$css_content .= "    flex-direction: column;\n";
 			$css_content .= "}\n";
 		}
-		
+
 		// CSS for content justification.
 		$justify_content = $layout['justifyContent'] ?? 'left';
 		$css_content    .= ".wp-block-group.is-content-justification-{$justify_content} {\n";
@@ -1106,7 +1106,7 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
 				break;
 		}
 		$css_content .= "}\n";
-		
+
 		$css_content .= ".is-content-justification-{$justify_content} {\n";
 		switch ( $justify_content ) {
 			case 'center':
@@ -1124,11 +1124,11 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
 				break;
 		}
 		$css_content .= "}\n";
-		
+
 		// CSS for gap using WordPress container pattern.
 		if ( isset( $style['spacing']['blockGap'] ) ) {
 			$gap = $style['spacing']['blockGap'];
-			
+
 			// Generate container-specific CSS using WordPress pattern.
 			// This targets the actual container classes WordPress generates.
 			for ( $i = 1; $i <= 10; $i++ ) {
@@ -1141,19 +1141,19 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
 			$css_content .= "    gap: {$gap};\n";
 			$css_content .= "}\n";
 		}
-		
+
 		// Generic container CSS for common layouts.
 		$css_content .= ".wp-block-group-is-layout-flex {\n";
 		$css_content .= "    display: flex;\n";
 		$css_content .= "}\n";
 	}
-	
+
 	// Handle grid layout.
 	if ( isset( $layout['type'] ) && 'grid' === $layout['type'] ) {
 		$css_content .= ".wp-block-group-is-layout-grid {\n";
 		$css_content .= "    display: grid;\n";
 		$css_content .= "}\n";
-		
+
 		if ( isset( $layout['columnCount'] ) ) {
 			$column_count = $layout['columnCount'];
 			$css_content .= ".has-{$column_count}-columns {\n";
@@ -1161,14 +1161,14 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
 			$css_content .= "}\n";
 		}
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate CSS for all WordPress core blocks comprehensively.
  * Handles wp:group, wp:columns, wp:image, and other core blocks.
- * 
+ *
  * @since 3.0.0
  * @param string $block_name Block name (e.g., 'core/group').
  * @param array  $attrs Block attributes.
@@ -1177,28 +1177,28 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
  */
 function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base_css_added ) {
 	$css_content = '';
-	
+
 	switch ( $block_name ) {
 		case 'core/group':
 			$css_content .= spectra_blocks_generate_core_group_css( $attrs, $base_css_added );
 			break;
-		
+
 		case 'core/columns':
 			$css_content .= spectra_blocks_generate_core_columns_css( $attrs, $base_css_added );
 			break;
-		
+
 		case 'core/column':
 			$css_content .= spectra_blocks_generate_core_column_css( $attrs );
 			break;
-			
+
 		case 'core/image':
 			$css_content .= spectra_blocks_generate_core_image_css( $attrs );
 			break;
-			
+
 		case 'core/gallery':
 			$css_content .= spectra_blocks_generate_core_gallery_css( $attrs );
 			break;
-			
+
 		default:
 			// Handle any other core block with layout support.
 			if ( isset( $attrs['layout'] ) ) {
@@ -1206,13 +1206,13 @@ function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base
 			}
 			break;
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate CSS for WordPress core columns block.
- * 
+ *
  * @since 3.0.0
  * @param array $attrs Block attributes.
  * @param bool  &$base_css_added Reference to track if base CSS was added.
@@ -1220,7 +1220,7 @@ function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base
  */
 function spectra_blocks_generate_core_columns_css( $attrs, &$base_css_added ) {
 	$css_content = '';
-	
+
 	// Add base columns CSS only once.
 	if ( ! $base_css_added ) {
 		$css_content .= "\n/* WordPress Columns CSS */\n";
@@ -1229,27 +1229,27 @@ function spectra_blocks_generate_core_columns_css( $attrs, &$base_css_added ) {
 		$css_content .= "    flex-wrap: wrap;\n";
 		$css_content .= "}\n";
 	}
-	
+
 	// Handle specific column configurations.
 	if ( isset( $attrs['isStackedOnMobile'] ) && $attrs['isStackedOnMobile'] ) {
 		$css_content .= ".wp-block-columns.is-stacked-on-mobile {\n";
 		$css_content .= "    flex-direction: column;\n";
 		$css_content .= "}\n";
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate CSS for WordPress core column block.
- * 
+ *
  * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
 function spectra_blocks_generate_core_column_css( $attrs ) {
 	$css_content = '';
-	
+
 	// Handle column width.
 	if ( isset( $attrs['width'] ) ) {
 		$width        = $attrs['width'];
@@ -1258,20 +1258,20 @@ function spectra_blocks_generate_core_column_css( $attrs ) {
 		$css_content .= "    flex-grow: 0;\n";
 		$css_content .= "}\n";
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate CSS for WordPress core image block.
- * 
+ *
  * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
 function spectra_blocks_generate_core_image_css( $attrs ) {
 	$css_content = '';
-	
+
 	// Handle image alignment.
 	if ( isset( $attrs['align'] ) ) {
 		$align        = $attrs['align'];
@@ -1289,7 +1289,7 @@ function spectra_blocks_generate_core_image_css( $attrs ) {
 		}
 		$css_content .= "}\n";
 	}
-	
+
 	// Handle width and height.
 	if ( isset( $attrs['width'] ) || isset( $attrs['height'] ) ) {
 		$css_content .= ".wp-block-image img {\n";
@@ -1301,20 +1301,20 @@ function spectra_blocks_generate_core_image_css( $attrs ) {
 		}
 		$css_content .= "}\n";
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate CSS for WordPress core gallery block.
- * 
+ *
  * @since 3.0.0
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
 function spectra_blocks_generate_core_gallery_css( $attrs ) {
 	$css_content = '';
-	
+
 	// Handle gallery columns.
 	if ( isset( $attrs['columns'] ) ) {
 		$columns      = $attrs['columns'];
@@ -1322,29 +1322,29 @@ function spectra_blocks_generate_core_gallery_css( $attrs ) {
 		$css_content .= "    grid-template-columns: repeat({$columns}, 1fr);\n";
 		$css_content .= "}\n";
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate generic layout CSS for any core block with layout support.
- * 
+ *
  * @since 3.0.0
- * @param string $block_name Block name.
- * @param array  $attrs Block attributes.
- * @param bool   &$base_css_added Reference to track if base CSS was added.
+ * @param string $block_name       Block name.
+ * @param array  $attrs            Block attributes.
+ * @param bool   &$_base_css_added Reference to track if base CSS was added (reserved, intentionally unused).
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &$base_css_added ) {
+function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &$_base_css_added ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	$css_content = '';
 	$layout      = $attrs['layout'] ?? array();
 	$block_class = '.wp-block-' . str_replace( 'core/', '', $block_name );
-	
+
 	if ( isset( $layout['type'] ) && 'flex' === $layout['type'] ) {
 		$css_content .= "{$block_class}.is-layout-flex {\n";
 		$css_content .= "    display: flex;\n";
 		$css_content .= "}\n";
-		
+
 		// Handle orientation.
 		if ( isset( $layout['orientation'] ) && 'vertical' === $layout['orientation'] ) {
 			$css_content .= "{$block_class}.is-vertical {\n";
@@ -1352,14 +1352,14 @@ function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &
 			$css_content .= "}\n";
 		}
 	}
-	
+
 	return $css_content;
 }
 
 /**
  * Generate layout CSS for Spectra blocks that use WordPress core layout support.
  * Handles flex, grid, and other layout types used by Spectra blocks.
- * 
+ *
  * @since 3.0.0
  * @param array  $attrs Block attributes.
  * @param string $block_name Block name.
@@ -1368,14 +1368,14 @@ function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &
 function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 	static $spectra_base_css_added = false;
 	$css_content                   = '';
-	
+
 	$layout = $attrs['layout'] ?? array();
 	$style  = $attrs['style'] ?? array();
-	
+
 	// Add base Spectra layout CSS only once.
 	if ( ! $spectra_base_css_added ) {
 		$css_content .= "\n/* Spectra Layout Support CSS */\n";
-		
+
 		// Base flex layout for Spectra blocks.
 		$css_content .= "body .wp-block-spectra-container.is-layout-flex,\n";
 		$css_content .= "body .wp-block-spectra-buttons.is-layout-flex,\n";
@@ -1383,22 +1383,22 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 		$css_content .= "body .wp-block-spectra-accordion.is-layout-flex {\n";
 		$css_content .= "    display: flex;\n";
 		$css_content .= "}\n";
-		
+
 		// Base grid layout for Spectra blocks.
 		$css_content .= "body .wp-block-spectra-container.is-layout-grid {\n";
 		$css_content .= "    display: grid;\n";
 		$css_content .= "}\n";
-		
+
 		$spectra_base_css_added = true;
 	}
-	
+
 	// Generate layout-specific CSS based on block type and layout.
 	if ( ! empty( $layout ) && isset( $layout['type'] ) ) {
 		$block_class = '.wp-block-' . str_replace( '/', '-', $block_name );
-		
+
 		// Handle flex layout.
 		if ( 'flex' === $layout['type'] ) {
-			
+
 			// Vertical/horizontal orientation.
 			if ( isset( $layout['orientation'] ) ) {
 				$orientation  = $layout['orientation'];
@@ -1406,7 +1406,7 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				$css_content .= '    flex-direction: ' . ( 'vertical' === $orientation ? 'column' : 'row' ) . ";\n";
 				$css_content .= "}\n";
 			}
-			
+
 			// Flex wrap.
 			if ( isset( $layout['flexWrap'] ) ) {
 				$flex_wrap    = $layout['flexWrap'];
@@ -1414,7 +1414,7 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				$css_content .= "    flex-wrap: {$flex_wrap};\n";
 				$css_content .= "}\n";
 			}
-			
+
 			// Justify content.
 			if ( isset( $layout['justifyContent'] ) ) {
 				$justify_content = $layout['justifyContent'];
@@ -1439,7 +1439,7 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				}
 				$css_content .= "}\n";
 			}
-			
+
 			// Vertical alignment.
 			if ( isset( $layout['verticalAlignment'] ) ) {
 				$vertical_alignment = $layout['verticalAlignment'];
@@ -1459,10 +1459,10 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				$css_content .= "}\n";
 			}
 		}
-		
+
 		// Handle grid layout.
 		if ( 'grid' === $layout['type'] ) {
-			
+
 			// Grid columns.
 			if ( isset( $layout['columnCount'] ) ) {
 				$column_count = $layout['columnCount'];
@@ -1470,7 +1470,7 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				$css_content .= "    grid-template-columns: repeat({$column_count}, 1fr);\n";
 				$css_content .= "}\n";
 			}
-			
+
 			// Minimum column width.
 			if ( isset( $layout['minimumColumnWidth'] ) ) {
 				$min_width    = $layout['minimumColumnWidth'];
@@ -1479,7 +1479,7 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 				$css_content .= "}\n";
 			}
 		}
-		
+
 		// Handle spacing/gap.
 		if ( isset( $style['spacing']['blockGap'] ) ) {
 			$gap          = $style['spacing']['blockGap'];
@@ -1489,6 +1489,6 @@ function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
 			$css_content .= "}\n";
 		}
 	}
-	
+
 	return $css_content;
 }

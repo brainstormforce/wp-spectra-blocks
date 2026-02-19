@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the counter number block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\CounterChildNumber
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 ?>
 <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<span class="spectra-counter-number">

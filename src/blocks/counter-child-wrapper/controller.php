@@ -1,19 +1,17 @@
 <?php
 /**
  * Controller for rendering the counter child wrapper block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\CounterChildWrapper
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get the block wrapper attributes with layout support.
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( 
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes(
 	$attributes,
 	array(),
 	array(),
@@ -22,4 +20,3 @@ $wrapper_attributes = BlockAttributes::get_wrapper_attributes(
 
 // Render the wrapper block.
 return 'file:./view.php';
-

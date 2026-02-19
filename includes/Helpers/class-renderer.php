@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Class Renderer.
- * 
+ *
  * @since 3.0.0
  */
 class Renderer {
@@ -43,7 +43,7 @@ class Renderer {
 			if ( ! empty( $svg_content ) ) {
 				$svg_content       = self::add_svg_attributes( $svg_content, $additional_props, $flip_for_rtl );
 				$sanitized_content = HtmlSanitizer::sanitize_svg( $svg_content );
-				
+
 				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is sanitized by HtmlSanitizer::sanitize_svg().
 				echo $sanitized_content;
 			}
@@ -57,7 +57,7 @@ class Renderer {
 			echo HtmlSanitizer::sanitize_svg( $svg_content );
 			return;
 		}
-		
+
 		// Handle FontAwesome icon names (existing logic).
 		$icon = sanitize_text_field( esc_attr( $icon ) );
 		$json = Core::backend_load_font_awesome_icons();
@@ -79,12 +79,12 @@ class Renderer {
 			// Build the class attribute, checking if spectra-icon is already in additional_props.
 			$existing_classes = $additional_props['class'] ?? '';
 			$class_array      = array_filter( explode( ' ', $existing_classes ) );
-			
+
 			// Add spectra-icon if it's not already present.
 			if ( ! in_array( 'spectra-icon', $class_array, true ) ) {
 				$class_array[] = 'spectra-icon';
 			}
-			
+
 			$svg_classes = implode( ' ', $class_array );
 			?>
 			<svg class="<?php echo esc_attr( $svg_classes ); ?>" xmlns="https://www.w3.org/2000/svg" viewBox= "<?php echo esc_attr( $view ); ?>"
@@ -117,13 +117,13 @@ class Renderer {
 						}
 					}
 
-					// Add the additional props in a loop.  
+					// Add the additional props in a loop.
 					foreach ( $additional_props as $item => $details ) {
 						// Skip the class attribute as it's already handled above.
 						if ( 'class' === $item ) {
 							continue;
 						}
-						
+
 						// If this is the style attribute, then get the style string.
 						if ( 'style' === $item ) {
 							$rendered_styles = Core::concatenate_array( $details, 'style' );
@@ -164,7 +164,7 @@ class Renderer {
 		// Additional XSS prevention: Check for javascript: protocol and other dangerous schemes.
 		$dangerous_schemes    = array( 'javascript:', 'data:', 'vbscript:', 'onload=', 'onerror=' );
 		$background_url_lower = strtolower( $background_url );
-		
+
 		foreach ( $dangerous_schemes as $scheme ) {
 			if ( strpos( $background_url_lower, $scheme ) !== false ) {
 				return; // Abort if dangerous scheme is found.
@@ -193,7 +193,7 @@ class Renderer {
 
 	/**
 	 * Get icon name for accessibility and other string contexts.
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @param mixed $icon_value The icon value (string for icon library, array for custom SVG).
 	 * @return string The icon name or description.
@@ -202,7 +202,7 @@ class Renderer {
 		if ( empty( $icon_value ) ) {
 			return 'star';
 		}
-		
+
 		// Handle custom SVG uploads (array format).
 		if ( is_array( $icon_value ) && isset( $icon_value['library'] ) && 'svg' === $icon_value['library'] ) {
 			// Try to extract filename from URL.
@@ -213,25 +213,25 @@ class Renderer {
 			}
 			return 'custom SVG';
 		}
-		
+
 		// Handle icon library icons (string format).
 		if ( is_string( $icon_value ) ) {
 			return $icon_value;
 		}
-		
+
 		return 'star';
 	}
 
 	/**
 	 * Get uploaded SVG content
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @param int $attachment_id The WordPress media attachment ID.
 	 * @return string SVG content or empty string if file not found.
 	 */
 	private static function get_uploaded_svg( $attachment_id ) {
 		$attachment_id = intval( $attachment_id );
-		
+
 		if ( $attachment_id <= 0 ) {
 			return '';
 		}
@@ -242,13 +242,13 @@ class Renderer {
 			return '';
 		}
 
-		// phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown -- Reading local uploaded file, not remote URL
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local uploaded file, not remote URL
 		$svg_content = file_get_contents( $attachment_file );
-		
+
 		if ( empty( $svg_content ) ) {
 			return '';
 		}
-		
+
 		return $svg_content; // Return raw content, HtmlSanitizer will handle sanitization.
 	}
 
@@ -256,7 +256,7 @@ class Renderer {
 
 	/**
 	 * Add attributes to SVG without complex processing
-	 * 
+	 *
 	 * @since 3.0.0
 	 * @param string  $svg_content SVG content.
 	 * @param array   $additional_props Additional props.
@@ -266,17 +266,17 @@ class Renderer {
 	private static function add_svg_attributes( $svg_content, $additional_props = array(), $flip_for_rtl = false ) {
 		// Build complete class list including additional props.
 		$classes = array( 'spectra-icon', 'spectra-custom-svg' );
-		
+
 		// Add classes from additional props if provided.
 		if ( isset( $additional_props['class'] ) && ! empty( $additional_props['class'] ) ) {
 			$additional_classes = explode( ' ', $additional_props['class'] );
 			$classes            = array_merge( $classes, $additional_classes );
 		}
-		
+
 		// Remove duplicates and empty values.
 		$classes      = array_unique( array_filter( $classes ) );
 		$class_string = implode( ' ', $classes );
-		
+
 		// Apply classes to SVG.
 		if ( strpos( $svg_content, 'class=' ) !== false ) {
 			// Replace existing class attribute.
@@ -285,7 +285,7 @@ class Renderer {
 			// Add new class attribute.
 			$svg_content = str_replace( '<svg', '<svg class="' . esc_attr( $class_string ) . '"', $svg_content );
 		}
-		
+
 		// Handle RTL transformation for custom SVGs.
 		if ( is_rtl() && $flip_for_rtl ) {
 			// Add RTL transform to additional_props style array.
@@ -295,7 +295,7 @@ class Renderer {
 			if ( ! is_array( $additional_props['style'] ) ) {
 				$additional_props['style'] = array();
 			}
-			
+
 			// Check if there's already a transform, if so merge it.
 			$rtl_transform = 'scaleX(-1)';
 			if ( isset( $additional_props['style']['transform'] ) && ! empty( $additional_props['style']['transform'] ) ) {
@@ -304,7 +304,7 @@ class Renderer {
 				$additional_props['style']['transform'] = $rtl_transform;
 			}
 		}
-		
+
 		// Add additional attributes if provided.
 		if ( ! empty( $additional_props ) ) {
 			foreach ( $additional_props as $attr => $value ) {
@@ -343,11 +343,9 @@ class Renderer {
 								'$1style="' . esc_attr( $new_styles ) . '"$3',
 								$svg_content
 							);
-						} else {
+						} elseif ( ! empty( $new_styles ) ) {
 							// No existing style attribute - add new one if there are styles to add.
-							if ( ! empty( $new_styles ) ) {
-								$svg_content = str_replace( '<svg', '<svg style="' . esc_attr( $new_styles ) . '"', $svg_content );
-							}
+							$svg_content = str_replace( '<svg', '<svg style="' . esc_attr( $new_styles ) . '"', $svg_content );
 						}
 					} else {
 						// Check if attribute already exists to avoid duplicates (which cause XML parsing errors).
@@ -361,7 +359,7 @@ class Renderer {
 				}
 			}
 		}
-		
+
 		return $svg_content;
 	}
 }

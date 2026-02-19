@@ -126,12 +126,12 @@ class Common_Settings extends Api_Base {
 	/**
 	 * Get learn chapters data.
 	 *
-	 * @param WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $_request Full details about the request (unused; required by REST API callback signature).
 	 * @return array Learn chapters data.
 	 *
 	 * @since 3.0.0
 	 */
-	public function get_learn_chapters( $request ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
+	public function get_learn_chapters( $_request ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// Use Admin_Learn helper to get chapters with progress.
 		return Admin_Learn::get_learn_chapters();
 	}

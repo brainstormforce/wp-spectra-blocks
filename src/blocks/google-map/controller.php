@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for processing Google Map block attributes.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\GoogleMap
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get the attributes with default values.
@@ -25,7 +23,7 @@ if ( empty( $address ) || trim( $address ) === '' ) {
 }
 
 // Build the Google Maps embed URL.
-$encoded_address = urlencode( $address );
+$encoded_address = rawurlencode( $address );
 $lang_par        = $language ? $language : 'en';
 $map_type        = $enable_satellite ? 'k' : 'm';
 
@@ -38,11 +36,11 @@ $config                = array(
 $additional_classes    = array( 'spectra-google-map' );
 $additional_attributes = array();
 
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( 
-	$attributes, 
-	$config, 
-	$additional_attributes, 
-	$additional_classes 
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes(
+	$attributes,
+	$config,
+	$additional_attributes,
+	$additional_classes
 );
 
 // Return the view file for rendering.

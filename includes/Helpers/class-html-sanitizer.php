@@ -1,7 +1,7 @@
 <?php
 /**
  * Utility for re-using WP Kses-based sanitization rules.
- * 
+ *
  * @package Spectra\Helpers
  */
 
@@ -12,13 +12,13 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Utility for re-using WP Kses-based sanitization rules.
- * 
+ *
  * @since 3.0.0
  */
 class HtmlSanitizer {
 	/**
 	 * Comprehensive list of allowed HTML tags and attributes for all block types.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @return array
@@ -237,7 +237,7 @@ class HtmlSanitizer {
 				'x'          => true,
 				'y'          => true,
 				'width'      => true,
-				'height'     => true,    
+				'height'     => true,
 			),
 			/**
 			 * Symbol tag with comprehensive attributes.
@@ -245,15 +245,8 @@ class HtmlSanitizer {
 			'symbol'        => array(
 				'id'      => true,
 				'viewBox' => true,
-				'viewbox' => true,  
+				'viewbox' => true,
 			),
-			/**
-			 * Polyline tag with comprehensive attributes.
-			 */
-			'polyline'      => array(
-				'points' => true,
-			),
-
 			/**
 			 * Select tags with comprehensive attributes.
 			 */
@@ -830,27 +823,27 @@ class HtmlSanitizer {
 
 		return array_merge( $allowed_tags, $custom_tags );
 	}
-	
+
 	/**
 	 * Extend allowed CSS properties for style attributes.
-	 * 
+	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
-	private static function allow_svg_css_properties() : void {
+	private static function allow_svg_css_properties(): void {
 		// Add filter to extend safe CSS properties for SVG elements.
 		add_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
-		
+
 		// Add filter to allow CSS transform functions in style attributes.
 		add_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10, 2 );
 	}
 
 	/**
 	 * Extend safe CSS properties for style attributes.
-	 * 
+	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @param array $properties Existing safe CSS properties.
 	 * @return array Extended safe CSS properties.
 	 */
@@ -886,7 +879,7 @@ class HtmlSanitizer {
 	/**
 	 * Allows CSS transform properties with functions and CSS variables.
 	 *
-	 * This filter allows 'transform' properties with functions (e.g. 'transform: rotate(45deg)') 
+	 * This filter allows 'transform' properties with functions (e.g. 'transform: rotate(45deg)')
 	 * and CSS variables with modern syntax in style attributes.
 	 *
 	 * @since 3.0.0
@@ -900,12 +893,12 @@ class HtmlSanitizer {
 		if ( false !== strpos( $css_test_string, 'transform:' ) ) {
 			return true;
 		}
-		
+
 		// Allow CSS custom properties (variables).
 		if ( 0 === strpos( trim( $css_test_string ), '--' ) ) {
 			return true;
 		}
-		
+
 		// Allow HSL color functions with modern syntax.
 		if ( false !== strpos( $css_test_string, 'hsl(' ) ) {
 			return true;
@@ -917,11 +910,11 @@ class HtmlSanitizer {
 
 	/**
 	 * Sanitizes and outputs or returns HTML content.
-	 * 
+	 *
 	 * When $echo is true, outputs the sanitized HTML directly. When false, returns the sanitized string.
 	 * If `$echo_output` is true, the sanitized content is echoed directly.
 	 * Otherwise, it is returned as a string.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string     $content      HTML content to sanitize.
@@ -932,7 +925,7 @@ class HtmlSanitizer {
 	public static function render( string $content, ?array $allowed_tags = null, bool $should_echo = true ) {
 		// Use default full list if no custom tags provided.
 		$allowed_tags = $allowed_tags ?? self::get_allowed_tags();
-		
+
 		// Special handling for SureForms CSS variables.
 		if ( strpos( $content, 'srfm-form-container' ) !== false && strpos( $content, '<style>' ) !== false ) {
 			// Extract style tag content.
@@ -943,7 +936,7 @@ class HtmlSanitizer {
 				$content = str_replace( $style_matches[0], '<!--STYLE_PLACEHOLDER-->', $content );
 			}
 		}
-		
+
 		// Temporarily allow SVG CSS properties during processing.
 		self::allow_svg_css_properties();
 		$sanitized = wp_kses( $content, $allowed_tags );
@@ -951,30 +944,30 @@ class HtmlSanitizer {
 		// Clean up by removing only our own filters (not all filters on these hooks).
 		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
 		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
-		
+
 		// Restore style tag if it was extracted.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
 			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
-		
+
 		if ( $should_echo ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaping not required because it's already sanitized using wp_kses.
 			echo $sanitized;
 			return;
 		}
-				
+
 		return $sanitized;
 	}
 
 	/**
 	 * Validates SVG content structure and security.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $svg_content Raw SVG content to validate.
 	 * @return array Validation result with success status and error message.
 	 */
-	private static function validate_svg_structure( string $svg_content ) : array {
+	private static function validate_svg_structure( string $svg_content ): array {
 		// Check if content exists.
 		if ( empty( $svg_content ) || ! is_string( $svg_content ) ) {
 			return array(
@@ -1045,14 +1038,14 @@ class HtmlSanitizer {
 
 	/**
 	 * Sanitizes SVG content specifically for icon blocks.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $svg_content Raw SVG content to sanitize.
 	 * @return string Sanitized SVG content, or empty string if validation fails.
 	 * @throws \Exception If SVG content is completely removed during sanitization or corrupted.
 	 */
-	public static function sanitize_svg( string $svg_content ) : string {
+	public static function sanitize_svg( string $svg_content ): string {
 		// First validate the structure.
 		$validation = self::validate_svg_structure( $svg_content );
 		if ( ! $validation['success'] ) {
@@ -1234,7 +1227,7 @@ class HtmlSanitizer {
 		if ( preg_match( '/viewBox\s*=\s*["\']([^"\']+)["\']/i', $svg_content, $matches ) ) {
 			$viewbox_value = $matches[1];
 		}
-		
+
 		// Temporarily allow SVG CSS properties during processing.
 		self::allow_svg_css_properties();
 		$sanitized = wp_kses( $svg_content, $allowed_svg_tags );
@@ -1242,12 +1235,12 @@ class HtmlSanitizer {
 		// Clean up by removing only our own filters (not all filters on these hooks).
 		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
 		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
-		
+
 		// Re-add viewBox if it was stripped but we had one originally.
 		if ( ! empty( $viewbox_value ) && ! preg_match( '/viewBox\s*=/i', $sanitized ) ) {
 			$sanitized = preg_replace( '/(<svg[^>]*?)(\s*>)/i', '$1 viewBox="' . esc_attr( $viewbox_value ) . '"$2', $sanitized );
 		}
-		
+
 		// Additional post-processing security checks.
 		if ( empty( $sanitized ) ) {
 			throw new \Exception( 'SVG content was completely removed during sanitization' );
@@ -1269,7 +1262,7 @@ class HtmlSanitizer {
 		foreach ( $dangerous_patterns as $pattern ) {
 			$sanitized = preg_replace( $pattern, '', $sanitized );
 		}
-		
+
 		return $sanitized;
 	}
 }

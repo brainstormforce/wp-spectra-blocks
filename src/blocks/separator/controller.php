@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the Separator block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Separator
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Note: Separator style, alignment, and color logic has been moved to ResponsiveAttributeCSS.php

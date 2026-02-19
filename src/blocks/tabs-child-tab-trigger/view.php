@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\TabsChildTabTrigger
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\Renderer;
 use Spectra\Helpers\HtmlSanitizer;
 
@@ -31,7 +29,7 @@ use Spectra\Helpers\HtmlSanitizer;
 	data-wp-on--click="spectra/tabs::actions.updateActiveTab"
 	data-wp-on--keydown="spectra/tabs::actions.switchTabs"
 >
-	<?php 
+	<?php
 		// Render the inner content.
 		HtmlSanitizer::render( $content );
 	?>

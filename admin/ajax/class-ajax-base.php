@@ -72,7 +72,7 @@ abstract class Ajax_Base {
 
 			add_filter(
 				'spectra_blocks_admin_localize',
-				function( $localize ) use ( $action ) {
+				function ( $localize ) use ( $action ) {
 
 					$localize[ $action . '_nonce' ] = wp_create_nonce( $this->prefix . '_' . $action );
 					return $localize;

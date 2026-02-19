@@ -15,8 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SpectraBlocksAdmin\Ajax\Ajax_Base;
 use SpectraBlocksAdmin\Inc\Admin_Helper;
 
-use \ZipAI\Classes\Helper as Zip_Ai_Helper;
-use \ZipAI\Classes\Module as Zip_Ai_Module;
+use ZipAI\Classes\Helper as Zip_Ai_Helper;
+use ZipAI\Classes\Module as Zip_Ai_Module;
 
 /**
  * Class Common_Settings.
@@ -55,12 +55,6 @@ class Common_Settings extends Ajax_Base {
 	public function register_ajax_events() {
 
 		$ajax_events = array(
-			'enable_beta_updates',
-			'check_beta_update_available',
-			'force_check_plugin_updates',
-			'update_beta_plugin',
-			'enable_file_generation',
-			'regenerate_assets',
 			'enable_templates_button',
 			'enable_on_page_css_button',
 			'enable_block_condition',
@@ -98,7 +92,6 @@ class Common_Settings extends Ajax_Base {
 			'auto_block_recovery',
 			'pro_activate',
 			'insta_linked_accounts',
-			'insta_all_users_media',
 			'insta_refresh_all_tokens',
 			'btn_inherit_from_theme',
 			'zip_ai_module_status',
@@ -120,12 +113,7 @@ class Common_Settings extends Ajax_Base {
 	public function btn_inherit_from_theme() {
 
 		$this->check_permission_nonce( 'spectra_blocks_btn_inherit_from_theme' );
-		if ( false !== get_option( 'spectra_blocks_btn_inherit_from_theme_fallback' ) ) {
-			\Spectra_Blocks_Admin_Helper::delete_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme_fallback' );
-		};
-		
 		$value = $this->check_post_value();
-		$this->delete_all_assets(); // We need to regenerate assets when user changes this setting to regenerate the dynamic CSS according to it.
 		$this->save_admin_settings( 'spectra_blocks_btn_inherit_from_theme', sanitize_text_field( $value ) );
 	}
 
@@ -165,7 +153,6 @@ class Common_Settings extends Ajax_Base {
 	private function save_admin_settings( $option, $value ) {
 		\Spectra_Blocks_Admin_Helper::update_admin_settings_option( $option, $value );
 
-
 		$response_data = array(
 			'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ),
 		);
@@ -186,7 +173,7 @@ class Common_Settings extends Ajax_Base {
 			wp_send_json_error( array( 'messsage' => __( 'No post data found!', 'spectra-blocks' ) ) );
 		}
 		// security validation done as per data type in function save_admin_settings.
-		return $_POST[ $key ]; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Missing
+		return wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -281,7 +268,7 @@ class Common_Settings extends Ajax_Base {
 			'posts_per_page' => 5,
 		);
 		// nonce verification is done in above function check_permission_nonce.
-		$keyword = ( isset( $_POST['keyword'] ) ? sanitize_text_field( $_POST['keyword'] ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$keyword = ( isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! empty( $keyword ) ) {
 			$args['s'] = $keyword;
 		}
@@ -518,16 +505,16 @@ class Common_Settings extends Ajax_Base {
 		);
 		// nonce verification is done in above function check_permission_nonce.
 		if ( isset( $_POST['socialRegister'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['socialRegister'] = rest_sanitize_boolean( sanitize_text_field( $_POST['socialRegister'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['socialRegister'] = rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['socialRegister'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['googleClientId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['googleClientId'] = sanitize_text_field( $_POST['googleClientId'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['googleClientId'] = sanitize_text_field( wp_unslash( $_POST['googleClientId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppId'] = sanitize_text_field( $_POST['facebookAppId'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['facebookAppId'] = sanitize_text_field( wp_unslash( $_POST['facebookAppId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppSecret'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppSecret'] = sanitize_text_field( $_POST['facebookAppSecret'] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$social['facebookAppSecret'] = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 
 		$this->save_admin_settings( 'spectra_blocks_social', $social );
@@ -644,9 +631,6 @@ class Common_Settings extends Ajax_Base {
 		$value = json_decode( stripslashes( $value ), true );
 		$value = $this->sanitize_form_inputs( $value );
 
-		if ( 'disabled' === \Spectra_Blocks_Helper::$file_generation ) {
-			\Spectra_Blocks_Admin_Helper::create_specific_stylesheet(); // Get Specific Stylesheet.
-		}
 		if ( '' !== $status ) {
 			// Update all extensions.
 			$update_all_extensions = array(
@@ -680,396 +664,6 @@ class Common_Settings extends Ajax_Base {
 		} else {
 			$this->save_admin_settings( '_spectra_blocks_blocks', $this->sanitize_form_inputs( $value ) );
 		}
-	}
-
-	/**
-	 * Save setting - Enables beta updates.
-	 *
-	 * @return void
-	 */
-	public function enable_beta_updates() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_beta_updates' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_beta', sanitize_text_field( $value ) );
-
-		// If enabling beta updates, clear update transients to force a fresh check.
-		if ( 'yes' === $value ) {
-			delete_site_transient( 'update_plugins' );
-			delete_transient( 'update_plugins' );
-
-			// Delete the beta version transient.
-			$transient_key = md5( 'spectra_blocks_beta_testers_response_key' );
-			delete_site_transient( $transient_key );
-
-			// Trigger WordPress to check for updates.
-			wp_update_plugins();
-		}
-	}
-
-	/**
-	 * Check if beta update is available.
-	 *
-	 * @since 2.19.16
-	 * @return void
-	 */
-	public function check_beta_update_available() {
-		$this->check_permission_nonce( 'spectra_blocks_check_beta_update_available' );
-
-		// Validate required constants exist.
-		if ( ! defined( 'SPECTRA_BLOCKS_VER' ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Plugin version not defined.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Note: Removed beta enabled check to allow dashboard notice to show.
-		// Users can check for beta updates even if not enabled yet.
-
-		// Get the beta version from WordPress.org with timeout.
-		$response = wp_remote_get(
-			'https://plugins.svn.wordpress.org/spectra-blocks/trunk/readme.txt',
-			array(
-				'timeout'   => 15, //phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
-				'sslverify' => true,
-			)
-		);
-
-		if ( is_wp_error( $response ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Unable to check for beta updates.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Validate response status code.
-		$response_code = wp_remote_retrieve_response_code( $response );
-		if ( 200 !== $response_code ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Unable to check for beta updates.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		$beta_version = 'false';
-		$body         = wp_remote_retrieve_body( $response );
-
-		if ( ! empty( $body ) && is_string( $body ) ) {
-			preg_match( '/Beta tag:\s*([0-9.]+)/i', $body, $matches );
-			if ( isset( $matches[1] ) ) {
-				$beta_version = sanitize_text_field( trim( $matches[1] ) );
-				// Validate version format (3.0.0-beta.2 or 3.0.0-beta.2-beta.x).
-				if ( ! preg_match( '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-[a-z0-9.]+)?$/i', $beta_version ) ) {
-					$beta_version = 'false';
-				}
-			}
-		}
-
-		$current_version = sanitize_text_field( SPECTRA_BLOCKS_VER );
-
-		// Compare with current version.
-		if ( 'false' !== $beta_version && version_compare( $beta_version, $current_version, '>' ) ) {
-			wp_send_json_success(
-				array(
-					'has_update'      => true,
-					'beta_version'    => $beta_version,
-					'current_version' => $current_version,
-					'messsage'        => sprintf(
-						// Translators: %1$s is the beta version number, %2$s is the current version.
-						__( 'Beta version %1$s is available (current: %2$s).', 'spectra-blocks' ),
-						esc_html( $beta_version ),
-						esc_html( $current_version )
-					),
-				)
-			);
-		} else {
-			wp_send_json_success(
-				array(
-					'has_update'      => false,
-					'current_version' => $current_version,
-					'messsage'        => __( 'You are running the latest version.', 'spectra-blocks' ),
-				)
-			);
-		}
-	}
-
-	/**
-	 * Force check for plugin updates.
-	 *
-	 * @since 2.19.16
-	 * @return void
-	 */
-	public function force_check_plugin_updates() {
-		$this->check_permission_nonce( 'spectra_blocks_force_check_plugin_updates' );
-
-		// Validate required constants exist.
-		if ( ! defined( 'SPECTRA_BLOCKS_BASE' ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Plugin identifier not defined.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Delete the update transients to force a fresh check.
-		delete_site_transient( 'update_plugins' );
-		delete_transient( 'update_plugins' );
-
-		// Delete the beta version transient.
-		$transient_key = md5( 'spectra_blocks_beta_testers_response_key' );
-		delete_site_transient( $transient_key );
-
-		// Trigger WordPress to check for updates.
-		wp_update_plugins();
-
-		// Get the update information.
-		$update_plugins = get_site_transient( 'update_plugins' );
-		$plugin_slug    = SPECTRA_BLOCKS_BASE;
-
-		// Validate transient structure.
-		if ( ! is_object( $update_plugins ) || ! isset( $update_plugins->response ) || ! is_array( $update_plugins->response ) ) {
-			wp_send_json_success(
-				array(
-					'has_update' => false,
-					'messsage'   => __( 'No updates available.', 'spectra-blocks' ),
-				)
-			);
-			return;
-		}
-
-		if ( isset( $update_plugins->response[ $plugin_slug ] ) && is_object( $update_plugins->response[ $plugin_slug ] ) ) {
-			$update_info = $update_plugins->response[ $plugin_slug ];
-
-			// Validate update info has required properties.
-			$new_version = isset( $update_info->new_version ) ? sanitize_text_field( $update_info->new_version ) : '';
-			$package     = isset( $update_info->package ) ? esc_url_raw( $update_info->package ) : '';
-
-			if ( empty( $new_version ) ) {
-				wp_send_json_success(
-					array(
-						'has_update' => false,
-						'messsage'   => __( 'No updates available.', 'spectra-blocks' ),
-					)
-				);
-				return;
-			}
-
-			wp_send_json_success(
-				array(
-					'has_update'  => true,
-					'new_version' => $new_version,
-					'package'     => $package,
-					'update_url'  => esc_url( admin_url( 'plugins.php' ) ),
-					'messsage'    => sprintf(
-						// Translators: %s is the new version number.
-						__( 'Update available: %s', 'spectra-blocks' ),
-						esc_html( $new_version )
-					),
-				)
-			);
-		} else {
-			wp_send_json_success(
-				array(
-					'has_update' => false,
-					'messsage'   => __( 'No updates available.', 'spectra-blocks' ),
-				)
-			);
-		}
-	}
-
-	/**
-	 * Update the beta plugin automatically.
-	 *
-	 * @since 2.19.16
-	 * @return void
-	 */
-	public function update_beta_plugin() {
-		$this->check_permission_nonce( 'spectra_blocks_update_beta_plugin' );
-
-		// Validate required constants and user capabilities.
-		if ( ! defined( 'SPECTRA_BLOCKS_BASE' ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Plugin identifier not defined.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Check if user has permission to update plugins.
-		if ( ! current_user_can( 'update_plugins' ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'You do not have permission to update plugins.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Delete the update transients to force a fresh check.
-		delete_site_transient( 'update_plugins' );
-		delete_transient( 'update_plugins' );
-
-		// Delete the beta version transient.
-		$transient_key = md5( 'spectra_blocks_beta_testers_response_key' );
-		delete_site_transient( $transient_key );
-
-		// Trigger WordPress to check for updates.
-		wp_update_plugins();
-
-		// Get the update information.
-		$update_plugins = get_site_transient( 'update_plugins' );
-		$plugin_slug    = SPECTRA_BLOCKS_BASE;
-
-		// Validate transient structure.
-		if ( ! is_object( $update_plugins ) || ! isset( $update_plugins->response ) || ! is_array( $update_plugins->response ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'No updates available to install.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Check if update is available.
-		if ( ! is_object( $update_plugins ) || ! isset( $update_plugins->response[ $plugin_slug ] ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'No updates available to install.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Check if plugin is currently active.
-		$was_active = is_plugin_active( $plugin_slug );
-
-		// Include required WordPress files for plugin update.
-		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
-		require_once ABSPATH . 'wp-admin/includes/misc.php';
-
-		// Create a custom skin to suppress output.
-		$skin = new \WP_Ajax_Upgrader_Skin();
-
-		// Create the upgrader instance.
-		$upgrader = new \Plugin_Upgrader( $skin );
-
-		// Perform the plugin update.
-		$result = $upgrader->upgrade( $plugin_slug );
-
-		// Check if update was successful.
-		if ( is_wp_error( $result ) ) {
-			wp_send_json_error(
-				array(
-					'messsage' => sprintf(
-						// Translators: %s is the error message.
-						__( 'Update failed: %s', 'spectra-blocks' ),
-						$result->get_error_message()
-					),
-				)
-			);
-		} elseif ( false === $result ) {
-			wp_send_json_error(
-				array(
-					'messsage' => __( 'Update failed. Please try again or update manually from the plugins page.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		// Reactivate the plugin if it was active before.
-		if ( $was_active ) {
-			$activate_result = activate_plugin( $plugin_slug );
-			if ( is_wp_error( $activate_result ) ) {
-				wp_send_json_error(
-					array(
-						'messsage' => sprintf(
-							// Translators: %s is the error message.
-							__( 'Plugin updated but reactivation failed: %s', 'spectra-blocks' ),
-							$activate_result->get_error_message()
-						),
-					)
-				);
-			}
-		}
-
-		// Get the new version after update.
-		$plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin_slug );
-		$new_version = isset( $plugin_data['Version'] ) ? $plugin_data['Version'] : '';
-
-		wp_send_json_success(
-			array(
-				'messsage'    => sprintf(
-					// Translators: %s is the new version number.
-					__( 'Successfully updated to version %s!', 'spectra-blocks' ),
-					esc_html( $new_version )
-				),
-				'new_version' => $new_version,
-				'reload'      => true,
-			)
-		);
-
-	}
-
-	/**
-	 * Save setting - Enables file generation.
-	 *
-	 * @return void
-	 */
-	public function enable_file_generation() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_file_generation' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( '_spectra_blocks_allow_file_generation', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Delete all Assets.
-	 *
-	 * @since 2.6.2
-	 * @return void
-	 */
-	public function delete_all_assets() {
-
-		$value = $this->check_post_value();
-
-		$wp_upload_dir = \Spectra_Blocks_Helper::get_upload_dir_path();
-
-		if ( file_exists( $wp_upload_dir . 'custom-style-blocks.css' ) ) {
-			wp_delete_file( $wp_upload_dir . 'custom-style-blocks.css' );
-		}
-
-		if ( ! empty( $value ) ) {
-
-			$file_generation = \Spectra_Blocks_Helper::allow_file_generation();
-
-			if ( 'enabled' === $file_generation ) {
-
-				\Spectra_Blocks_Helper::delete_asset_dir();
-			}
-
-			\Spectra_Blocks_Admin_Helper::create_specific_stylesheet();
-
-			/* Update the asset version */
-			\Spectra_Blocks_Admin_Helper::update_admin_settings_option( '__spectra_blocks_asset_version', time() );
-
-		}
-	}
-	/**
-	 * Save setting - Regenerates assets.
-	 *
-	 * @return void
-	 */
-	public function regenerate_assets() {
-		$this->check_permission_nonce( 'spectra_blocks_regenerate_assets' );
-		
-		/* Update the asset version */
-		\Spectra_Blocks_Admin_Helper::create_specific_stylesheet();
-		\Spectra_Blocks_Admin_Helper::update_admin_settings_option( '__spectra_blocks_asset_version', time() );
-
-		$response_data = array(
-			'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ),
-		);
-		wp_send_json_success( $response_data );
 	}
 
 	/**
@@ -1152,21 +746,6 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
-	 * Save setting - All Instagram Users' Media.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.1
-	 */
-	public function insta_all_users_media() {
-		$this->check_permission_nonce( 'spectra_blocks_insta_all_users_media' );
-		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
-		// The previous $value is not sanitized, as the array sanitization is handled in the class method used below.
-		$this->save_admin_settings( 'spectra_blocks_insta_all_users_media', $this->sanitize_form_inputs( $value ) );
-	}
-
-	/**
 	 * Ajax Request - Refresh All Instagram Tokens.
 	 *
 	 * @return void
@@ -1238,7 +817,7 @@ class Common_Settings extends Ajax_Base {
 				}
 
 				foreach ( $styles_get['post_ids'] as $post_id ) {
-					if ( ! $post_id || in_array( $post_id, $post_ids ) ) {
+					if ( ! $post_id || in_array( $post_id, $post_ids, true ) ) {
 						continue;
 					}
 
@@ -1249,8 +828,6 @@ class Common_Settings extends Ajax_Base {
 					$post_ids[] = $post_id;
 				}
 			}
-
-			update_option( '__spectra_blocks_asset_version', time() );
 		}
 
 		foreach ( $create_block_array as $block_name => $index ) {
@@ -1353,8 +930,7 @@ class Common_Settings extends Ajax_Base {
 						)
 					);
 				}
-			} else {
-				if ( Zip_Ai_Module::enable( $module ) ) {
+			} elseif ( Zip_Ai_Module::enable( $module ) ) {
 					wp_send_json_success(
 						array(
 							'messsage' => sprintf(
@@ -1364,17 +940,16 @@ class Common_Settings extends Ajax_Base {
 							),
 						)
 					);
-				} else {
-					wp_send_json_error(
-						array(
-							'messsage' => sprintf(
-							// Translators: %s is the module name.
-								__( 'Unable to enable %s', 'spectra-blocks' ),
-								$module_name
-							),
-						)
-					);
-				}
+			} else {
+				wp_send_json_error(
+					array(
+						'messsage' => sprintf(
+						// Translators: %s is the module name.
+							__( 'Unable to enable %s', 'spectra-blocks' ),
+							$module_name
+						),
+					)
+				);
 			}
 		} else {
 			wp_send_json_error( array( 'messsage' => __( 'Unable to save setting.', 'spectra-blocks' ) ) );

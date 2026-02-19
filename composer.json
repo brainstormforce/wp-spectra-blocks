@@ -12,9 +12,15 @@
         "brainstormforce/astra-notices": "~1",
         "brainstormforce/nps-survey": "^1",
         "brainstormforce/utm-analytics": "^0.0.3",
-        "brainstormforce/zipwp-images": "^1"
+        "brainstormforce/zipwp-images": "^1",
+        "brainstormforce/gutenberg-templates": "~2"
     },
     "repositories": [
+        {
+            "name": "brainstormforce/gutenberg-templates",
+            "type": "vcs",
+            "url": "git@github.com:brainstormforce/gutenberg-templates.git"
+        },
         {
             "name": "brainstormforce/zip-ai",
             "type": "vcs",
@@ -49,14 +55,25 @@
                 "brainstormforce/astra-notices",
                 "brainstormforce/nps-survey",
                 "brainstormforce/utm-analytics",
-                "brainstormforce/zipwp-images"
+                "brainstormforce/zipwp-images",
+                "brainstormforce/gutenberg-templates"
             ]
         }
     },
     "autoload": {
-        "psr-4": {
-            "Spectra\\": "includes/"
-        }
+        "classmap": ["includes/"]
+    },
+    "replace": {
+        "automattic/vipwpcs": "*"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.9 || ^4.0",
+        "wp-coding-standards/wpcs": "^3.1",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+    },
+    "scripts": {
+        "lint": "phpcs",
+        "lint:fix": "phpcbf"
     },
     "config": {
         "allow-plugins": {

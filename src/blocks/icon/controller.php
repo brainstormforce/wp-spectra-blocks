@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Icon
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 use Spectra\Helpers\Renderer;
@@ -101,7 +99,7 @@ if ( $render_link ) {
 	$element_attributes['href']   = $attributes['linkURL'];
 	$element_attributes['target'] = $target;
 	$element_attributes['rel']    = $rel;
-	
+
 	// Only add aria-label to links if the icon is not decorative.
 	$accessibility_mode = $attributes['accessibilityMode'] ?? '';
 	if ( 'decorative' !== $accessibility_mode ) {

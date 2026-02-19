@@ -3,15 +3,13 @@
  * Controller for rendering the Popup Builder block (V3)
  * Replicates V2 popup builder functionality with V3 architecture
  * Incorporates responsive CSS features from v2 frontend.css.php
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\PopupBuilder
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -19,7 +17,7 @@ use Spectra\Helpers\Core;
 $block_id           = $attributes['block_id'] ?? wp_unique_id( 'spectra-popup-' );
 $variation_selected = $attributes['variationSelected'] ?? false;
 $variant_type       = $attributes['variantType'] ?? 'popup';
-$dimRatio           = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 1 );
+$dim_ratio          = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 1 );
 // Get attributes with fallbacks.
 $popup_position_v          = $attributes['popupPositionV'] ?? 'top';
 $popup_content_alignment_v = $attributes['popupContentAlignmentV'] ?? 'flex-start';
@@ -172,7 +170,7 @@ $style_configs = array(
 		'key'        => 'dimRatio',
 		'css_var'    => '--spectra-overlay-opacity',
 		'class_name' => 'spectra-dim-ratio',
-		'value'      => $dimRatio,
+		'value'      => $dim_ratio,
 	),
 	array(
 		'key'        => 'popupOverlayColor',
@@ -224,11 +222,11 @@ if ( ! function_exists( 'spectra_get_popup_id' ) ) {
 	 * Detect the actual popup post ID using multiple methods.
 	 *
 	 * @param array $attributes Block attributes.
-	 * @param array $block Block data (optional).
+	 * @param array $_block     Block data (reserved for future use, intentionally unused).
 	 * @return int The popup post ID.
 	 */
-	function spectra_get_popup_id( $attributes = array(), $block = array() ) {
-		
+	function spectra_get_popup_id( $attributes = array(), $_block = array() ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+
 		// Method 1: Check if we have popup ID in attributes (for shortcode/explicit rendering).
 		if ( ! empty( $attributes['popupId'] ) ) {
 			$popup_id = (int) preg_replace( '/\D/', '', $attributes['popupId'] ); // \D matches any non-digit.
@@ -236,7 +234,7 @@ if ( ! function_exists( 'spectra_get_popup_id' ) ) {
 				return $popup_id;
 			}
 		}
-		
+
 		// Fallback - use current page ID.
 		return get_the_ID();
 	}
@@ -318,8 +316,8 @@ $wrapper_config = array(
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
 	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
-		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) && 
-		'video' === $responsive_controls[ $device ]['background']['type'] && 
+		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
+		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
 		}

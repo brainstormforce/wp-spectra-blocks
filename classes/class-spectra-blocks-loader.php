@@ -49,21 +49,14 @@ class Spectra_Blocks_Loader {
 		$classes_dir = SPECTRA_BLOCKS_DIR . 'classes/';
 
 		require_once $classes_dir . 'class-spectra-blocks-settings.php';
-		require_once $classes_dir . 'class-spectra-blocks-upload.php';
 		require_once $classes_dir . 'class-spectra-blocks-filesystem.php';
 		require_once $classes_dir . 'class-spectra-blocks-security-helper.php';
 		require_once $classes_dir . 'class-spectra-blocks-helper.php';
 		require_once $classes_dir . 'class-spectra-blocks-admin-helper.php';
 		require_once $classes_dir . 'class-spectra-blocks-rest-api.php';
-		require_once $classes_dir . 'class-spectra-blocks-caching.php';
 
 		Spectra_Blocks_Rest_Api::init();
-		Spectra_Blocks_Caching::init();
 		add_action( 'init', array( 'Spectra_Blocks_Helper', 'init' ) );
-
-		if ( file_exists( $classes_dir . 'utils.php' ) ) {
-			require_once $classes_dir . 'utils.php';
-		}
 
 		// Lib wrappers.
 		$lib_dir = SPECTRA_BLOCKS_DIR . 'lib/';
@@ -85,13 +78,16 @@ class Spectra_Blocks_Loader {
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-zipwp-images.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-zipwp-images.php';
 		}
+		if ( file_exists( $lib_dir . 'class-spectra-blocks-ast-block-templates.php' ) ) {
+			require_once $lib_dir . 'class-spectra-blocks-ast-block-templates.php';
+		}
 	}
 
 	/**
 	 * Load admin dashboard.
 	 */
 	private static function load_admin() {
-		$admin_loader = SPECTRA_BLOCKS_DIR . 'admin/admin-loader.php';
+		$admin_loader = SPECTRA_BLOCKS_DIR . 'admin/class-admin-loader.php';
 		if ( file_exists( $admin_loader ) ) {
 			require_once $admin_loader;
 		}

@@ -43,15 +43,15 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 * Get an option value.
 		 *
 		 * @param string $key              Full option key.
-		 * @param mixed  $default          Default value.
+		 * @param mixed  $fallback          Default value.
 		 * @param bool   $network_override Use network option on multisite.
 		 * @return mixed
 		 */
-		public static function get_admin_settings_option( $key, $default = false, $network_override = false ) {
+		public static function get_admin_settings_option( $key, $fallback = false, $network_override = false ) {
 			if ( $network_override && is_multisite() ) {
-				return get_site_option( $key, $default );
+				return get_site_option( $key, $fallback );
 			}
-			return get_option( $key, $default );
+			return get_option( $key, $fallback );
 		}
 
 		/**
@@ -100,32 +100,30 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			}
 
 			return array(
-				'spectra_blocks_beta'                         => self::get_admin_settings_option( 'spectra_blocks_beta', 'no' ),
-				'_spectra_blocks_allow_file_generation'       => self::get_admin_settings_option( '_spectra_blocks_allow_file_generation', 'enabled' ),
-				'spectra_blocks_enable_templates_button'      => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
-				'spectra_blocks_enable_on_page_css_button'    => self::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
-				'spectra_blocks_enable_block_condition'       => self::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
-				'spectra_blocks_enable_masonry_gallery'       => self::get_admin_settings_option( 'spectra_blocks_enable_masonry_gallery', 'enabled' ),
-				'spectra_blocks_enable_quick_action_sidebar'  => self::get_admin_settings_option( 'spectra_blocks_enable_quick_action_sidebar', 'enabled' ),
-				'spectra_blocks_enable_animations_extension'  => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
-				'spectra_blocks_enable_gbs_extension'         => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
-				'spectra_blocks_enable_block_responsive'      => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
-				'spectra_blocks_select_font_globally'         => self::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
-				'spectra_blocks_load_select_font_globally'    => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
-				'spectra_blocks_load_gfonts_locally'          => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
-				'spectra_blocks_collapse_panels'              => self::get_admin_settings_option( 'spectra_blocks_collapse_panels', 'enabled' ),
-				'spectra_blocks_copy_paste'                   => self::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
-				'spectra_blocks_preload_local_fonts'          => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
-				'spectra_blocks_visibility_mode'              => self::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
-				'spectra_blocks_container_global_padding'     => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
+				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
+				'spectra_blocks_enable_on_page_css_button' => self::get_admin_settings_option( 'spectra_blocks_enable_on_page_css_button', 'yes' ),
+				'spectra_blocks_enable_block_condition'    => self::get_admin_settings_option( 'spectra_blocks_enable_block_condition', 'disabled' ),
+				'spectra_blocks_enable_masonry_gallery'    => self::get_admin_settings_option( 'spectra_blocks_enable_masonry_gallery', 'enabled' ),
+				'spectra_blocks_enable_quick_action_sidebar' => self::get_admin_settings_option( 'spectra_blocks_enable_quick_action_sidebar', 'enabled' ),
+				'spectra_blocks_enable_animations_extension' => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
+				'spectra_blocks_enable_gbs_extension'      => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
+				'spectra_blocks_enable_block_responsive'   => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
+				'spectra_blocks_select_font_globally'      => self::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
+				'spectra_blocks_load_select_font_globally' => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
+				'spectra_blocks_load_gfonts_locally'       => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
+				'spectra_blocks_collapse_panels'           => self::get_admin_settings_option( 'spectra_blocks_collapse_panels', 'enabled' ),
+				'spectra_blocks_copy_paste'                => self::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
+				'spectra_blocks_preload_local_fonts'       => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
+				'spectra_blocks_visibility_mode'           => self::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
+				'spectra_blocks_container_global_padding'  => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
 				'spectra_blocks_container_global_elements_gap' => self::get_admin_settings_option( 'spectra_blocks_container_global_elements_gap', 20 ),
-				'spectra_blocks_btn_inherit_from_theme'       => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
-				'spectra_blocks_blocks_editor_spacing'        => apply_filters( 'spectra_blocks_default_editor_spacing', self::get_admin_settings_option( 'spectra_blocks_blocks_editor_spacing', 0 ) ),
-				'spectra_blocks_load_font_awesome_5'          => self::get_admin_settings_option( 'spectra_blocks_load_font_awesome_5' ),
-				'spectra_blocks_auto_block_recovery'          => self::get_admin_settings_option( 'spectra_blocks_auto_block_recovery' ),
-				'spectra_blocks_analytics_optin'              => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
-				'wp_is_block_theme'                           => self::is_block_theme(),
-				'zip_ai_modules'                              => $zip_ai_modules,
+				'spectra_blocks_btn_inherit_from_theme'    => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
+				'spectra_blocks_blocks_editor_spacing'     => apply_filters( 'spectra_blocks_default_editor_spacing', self::get_admin_settings_option( 'spectra_blocks_blocks_editor_spacing', 0 ) ),
+				'spectra_blocks_load_font_awesome_5'       => self::get_admin_settings_option( 'spectra_blocks_load_font_awesome_5' ),
+				'spectra_blocks_auto_block_recovery'       => self::get_admin_settings_option( 'spectra_blocks_auto_block_recovery' ),
+				'spectra_blocks_analytics_optin'           => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
+				'wp_is_block_theme'                        => self::is_block_theme(),
+				'zip_ai_modules'                           => $zip_ai_modules,
 			);
 		}
 
@@ -176,10 +174,8 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 
 			if ( class_exists( '\BSF_UTM_Analytics\Inc\Utils' ) && is_callable( '\BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link' ) ) {
 				$url = \BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link( $url, 'spectra-blocks' );
-			} else {
-				if ( ! empty( $source ) ) {
+			} elseif ( ! empty( $source ) ) {
 					$url = add_query_arg( 'utm_source', sanitize_text_field( $source ), $url );
-				}
 			}
 
 			if ( ! empty( $medium ) ) {
@@ -222,89 +218,5 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			return 'US';
 		}
 
-		// -------------------------------------------------------------------------
-		// Rollback
-		// -------------------------------------------------------------------------
-
-		/**
-		 * Get available rollback versions from the WordPress.org plugin API.
-		 *
-		 * @return array
-		 */
-		public function get_rollback_versions() {
-			$transient_key     = 'spectra_blocks_rollback_versions_' . SPECTRA_BLOCKS_VER;
-			$rollback_versions = get_transient( $transient_key );
-
-			if ( ! empty( $rollback_versions ) ) {
-				return $rollback_versions;
-			}
-
-			require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-
-			$plugin_information = plugins_api(
-				'plugin_information',
-				array(
-					'slug' => 'spectra-blocks',
-				)
-			);
-
-			if ( is_wp_error( $plugin_information ) || empty( $plugin_information->versions ) || ! is_array( $plugin_information->versions ) ) {
-				return array();
-			}
-
-			krsort( $plugin_information->versions );
-
-			$rollback_versions = array();
-			$max_versions      = 10;
-
-			foreach ( $plugin_information->versions as $version => $download_link ) {
-				if ( preg_match( '/(trunk|beta|rc|dev)/i', strtolower( $version ) ) ) {
-					continue;
-				}
-
-				if ( version_compare( $version, SPECTRA_BLOCKS_VER, '>=' ) ) {
-					continue;
-				}
-
-				$rollback_versions[] = $version;
-			}
-
-			usort( $rollback_versions, array( __CLASS__, 'sort_rollback_versions' ) );
-			$rollback_versions = array_slice( $rollback_versions, 0, $max_versions, true );
-
-			set_transient( $transient_key, $rollback_versions, WEEK_IN_SECONDS );
-
-			return $rollback_versions;
-		}
-
-		/**
-		 * Sort rollback versions descending.
-		 *
-		 * @param string $prev Previous version.
-		 * @param string $next Next version.
-		 * @return int
-		 */
-		public static function sort_rollback_versions( $prev, $next ) {
-			if ( version_compare( $prev, $next, '==' ) ) {
-				return 0;
-			}
-			return version_compare( $prev, $next, '>' ) ? -1 : 1;
-		}
-
-		// -------------------------------------------------------------------------
-		// CSS Asset
-		// -------------------------------------------------------------------------
-
-		/**
-		 * Create the combined stylesheet for enabled blocks.
-		 * For V3 (spectra-blocks), CSS is handled via block.json registered stylesheets.
-		 * This method is a no-op placeholder to satisfy call sites carried over from V2.
-		 *
-		 * @return void
-		 */
-		public static function create_specific_stylesheet() {
-			// V3 blocks use block.json stylesheets — no combined stylesheet needed.
-			do_action( 'spectra_blocks_create_specific_stylesheet' );
-		}
 	}
 }

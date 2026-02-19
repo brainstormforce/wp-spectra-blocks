@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the counter block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Counter
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Get counter-specific attributes.
@@ -65,7 +63,7 @@ if ( 'circular' === $counter_style || 'bar' === $counter_style ) {
 		'class_name' => 'spectra-counter-progress-bg-color',
 		'value'      => $progress_background_color ? $progress_background_color : '#e0e0e0',
 	);
-	
+
 	if ( 'circular' === $counter_style ) {
 		$config[] = array(
 			'key'        => 'progressSize',
@@ -80,7 +78,7 @@ if ( 'circular' === $counter_style || 'bar' === $counter_style ) {
 			'value'      => ( $progress_stroke_width ? $progress_stroke_width : 8 ) . 'px', // Default applied only when used.
 		);
 	}
-	
+
 	if ( 'bar' === $counter_style ) {
 		$config[] = array(
 			'key'        => 'barHeight',
@@ -88,7 +86,7 @@ if ( 'circular' === $counter_style || 'bar' === $counter_style ) {
 			'class_name' => 'spectra-counter-bar-height',
 			'value'      => $bar_height ? $bar_height : '32px', // Default applied only when used.
 		);
-		
+
 		// Only add border radius if it's set.
 		if ( null !== $bar_border_radius ) {
 			$config[] = array(
@@ -97,7 +95,7 @@ if ( 'circular' === $counter_style || 'bar' === $counter_style ) {
 				'class_name' => 'spectra-counter-bar-border-radius',
 				'value'      => $bar_border_radius,
 			);
-		}   
+		}
 	}
 }
 

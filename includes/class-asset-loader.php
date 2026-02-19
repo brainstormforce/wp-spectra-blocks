@@ -35,7 +35,7 @@ class AssetLoader {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'handle_frontend_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_extensions_frontend_assets' ) );
-		
+
 		// Load utility functions for GT integration.
 		$this->load_gt_utils();
 	}
@@ -163,7 +163,6 @@ class AssetLoader {
 			'is_rtl'                   => is_rtl() ? '1' : '0',
 			'spectra_pro_status'       => $spectra_pro_status,
 			'current_post_id'          => (int) get_the_ID(),
-			'font_awesome_5_polyfill'  => spectra_blocks_get_font_awesome_polyfiller(),
 			'spectra_blocks_svg_icons' => $merged_icons,
 		);
 
@@ -277,7 +276,7 @@ class AssetLoader {
 		if ( ! function_exists( 'spectra_blocks_get_v3_blocks_css_for_preview' ) ) {
 			require_once SPECTRA_BLOCKS_DIR . 'includes/utils.php';
 		}
-		
+
 		return spectra_blocks_get_v3_blocks_css_for_preview( $post_id );
 	}
 

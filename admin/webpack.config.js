@@ -70,23 +70,12 @@ const dashboardConfig = Object.assign( {}, commonConfig, {
 	optimization: {
 		...( commonConfig.optimization || {} ),
 		splitChunks: {
-			chunks: 'all',
+			// Only split async chunks (loaded via import()). Initial (sync) chunks must be
+			// explicitly registered with wp_enqueue_script — WordPress only knows about the
+			// entry file, so splitting initial chunks causes a blank page.
+			chunks: 'async',
 			cacheGroups: {
-				// Extract @bsf/force-ui into a shared chunk (used on every page).
-				forceUi: {
-					test: /[\\/]node_modules[\\/]@bsf[\\/]/,
-					name: 'vendor-bsf',
-					chunks: 'all',
-					priority: 30,
-				},
-				// Extract react-related packages shared across pages.
-				reactVendor: {
-					test: /[\\/]node_modules[\\/](react|react-dom|react-redux|react-router|redux|scheduler)[\\/]/,
-					name: 'vendor-react',
-					chunks: 'all',
-					priority: 20,
-				},
-				// General vendor chunk for remaining node_modules.
+				// Share node_modules code that appears in 2+ async page chunks.
 				vendors: {
 					test: /[\\/]node_modules[\\/]/,
 					name: 'vendor',

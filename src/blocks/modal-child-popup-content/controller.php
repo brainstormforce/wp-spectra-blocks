@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
- * 
+ *
  * @package Spectra\Blocks\ModalChildPopupContent
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -44,7 +42,7 @@ foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 $video_background       = null;
 $has_responsive_overlay = false;
 
-$dimRatio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 100 );
+$dim_ratio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 100 );
 
 foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
@@ -87,7 +85,7 @@ $config = array(
 		'key'        => 'dimRatio',
 		'css_var'    => '--spectra-overlay-opacity',
 		'class_name' => null,
-		'value'      => $dimRatio,
+		'value'      => $dim_ratio,
 	),
 );
 
@@ -102,7 +100,7 @@ if ( $is_window_positioning && 'custom' === $modal_position ) {
 			'class_name' => null,
 		);
 	}
-	
+
 	if ( $v_position ) {
 		$config[] = array(
 			'key'        => 'vPos',
@@ -117,8 +115,8 @@ if ( $is_window_positioning && 'custom' === $modal_position ) {
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
 	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
-		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) && 
-		'video' === $responsive_controls[ $device ]['background']['type'] && 
+		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
+		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
 		}

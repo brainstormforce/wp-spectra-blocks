@@ -1,14 +1,12 @@
 <?php
 /**
  * Controller for rendering the slider child block.
- * 
+ *
  * @since 3.0.0
  * @package Spectra\Blocks\SliderChild
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 use Spectra\Helpers\Core;
 
@@ -129,8 +127,8 @@ if ( ! empty( $overflow ) ) {
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
 	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
-		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) && 
-		'video' === $responsive_controls[ $device ]['background']['type'] && 
+		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
+		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
 		}
@@ -148,4 +146,4 @@ if ( ! empty( $responsive_video_data ) ) {
 // Get the block wrapper attributes, and extend the styles and classes.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, $wrapper_config, $additional_classes, $background_styles );
 
-return 'file:./view.php'; 
+return 'file:./view.php';

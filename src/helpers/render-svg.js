@@ -325,14 +325,7 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
     }
 
     // For icon names (not uploaded SVGs), proceed with original logic
-    let fontAwesomeElement;
-    // Load Polyfiller Array if needed.
-    if ( 0 !== window.spectra_blocks_info?.font_awesome_5_polyfill?.length ) {
-        fontAwesomeElement = window.spectra_blocks_info.spectra_blocks_svg_icons[ svg ];
-        if ( ! fontAwesomeElement ) {
-            fontAwesomeElement = window.spectra_blocks_info.spectra_blocks_svg_icons[ window.spectra_blocks_info.font_awesome_5_polyfill?.[ svg ] ];
-        }
-    }
+    const fontAwesomeElement = window.spectra_blocks_info?.spectra_blocks_svg_icons?.[ svg ];
 
     // If this SVG is not set, abandon ship.
     if ( ! fontAwesomeElement ) {

@@ -1,15 +1,13 @@
 <?php
 /**
  * Controller for rendering the block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\List
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Set the attributes with fallback if required.
@@ -37,7 +35,7 @@ $total_items = 0;
 if ( isset( $block->inner_blocks ) && is_array( $block->inner_blocks ) ) {
 	foreach ( $block->inner_blocks as $inner_block ) {
 		if ( is_object( $inner_block ) && 'spectra/list-child-item' === $inner_block->name ) {
-			$total_items++;
+			++$total_items;
 		}
 	}
 }

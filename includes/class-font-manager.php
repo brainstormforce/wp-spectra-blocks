@@ -50,7 +50,7 @@ class FontManager {
 
 	/**
 	 * Filters theme.json to add custom fonts.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param WP_Theme_JSON_Data $theme_json Theme JSON object.
@@ -61,17 +61,17 @@ class FontManager {
 
 		// Get the current theme.json and fontFamilies defined (if any).
 		$theme_json_path = get_stylesheet_directory() . '/theme.json';
-		// phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown -- Reading local theme.json file.
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local theme.json file.
 		$theme_json_raw = file_exists( $theme_json_path ) ? json_decode( file_get_contents( $theme_json_path ), true ) : array();
 		$font_data      = isset( $theme_json_raw['settings']['typography']['fontFamilies'] ) ? $theme_json_raw['settings']['typography']['fontFamilies'] : array();
 		if ( empty( $fonts_to_add ) ) {
 			$fonts_to_add = self::get_default_google_fonts();
 		}
-		
+
 		// Check if current theme is Twenty Twenty-Four and adjust slugs accordingly.
 		$current_theme = wp_get_theme()->get_stylesheet();
 		$is_2024_theme = ( 'twentytwentyfour' === $current_theme );
-		
+
 		if ( $is_2024_theme ) {
 			foreach ( $fonts_to_add as &$font ) {
 				if ( 'Inter' === $font['name'] ) {
@@ -82,10 +82,10 @@ class FontManager {
 			}
 			unset( $font );
 		}
-		
+
 		// Step 1: Collect all slugs from theme fonts.
 		$theme_slugs = array_map(
-			function( $font ) {
+			function ( $font ) {
 				return $font['slug'];
 			},
 			$font_data
@@ -94,7 +94,7 @@ class FontManager {
 		// Step 2: Filter out default fonts that are already present in theme fonts.
 		$fonts_to_add = array_filter(
 			$fonts_to_add,
-			function( $font ) use ( $theme_slugs ) {
+			function ( $font ) use ( $theme_slugs ) {
 				return ! in_array( $font['slug'], $theme_slugs, true );
 			}
 		);
@@ -103,11 +103,11 @@ class FontManager {
 		$version    = isset( $theme_data['version'] ) ? $theme_data['version'] : 3;
 
 		$font_data = array();
-		if ( isset( 
-			$theme_data['settings'], 
-			$theme_data['settings']['typography'], 
-			$theme_data['settings']['typography']['fontFamilies'], 
-			$theme_data['settings']['typography']['fontFamilies']['custom'] 
+		if ( isset(
+			$theme_data['settings'],
+			$theme_data['settings']['typography'],
+			$theme_data['settings']['typography']['fontFamilies'],
+			$theme_data['settings']['typography']['fontFamilies']['custom']
 		) ) {
 			$font_data = $theme_data['settings']['typography']['fontFamilies']['custom'];
 		}
@@ -135,7 +135,7 @@ class FontManager {
 						),
 					),
 				),
-			) 
+			)
 		);
 
 		return $theme_json;
@@ -177,13 +177,13 @@ class FontManager {
 		$fonts_to_add    = array_diff( $new_fonts, $old_fonts );
 
 		if ( empty( $fonts_to_delete ) && empty( $fonts_to_add ) ) {
-			return; 
+			return;
 		}
 
 		$cached_fonts  = $this->get_cached_google_fonts();
 		$updated_fonts = array_filter(
 			array_map(
-				function( $font ) use ( $fonts_to_delete ) {
+				function ( $font ) use ( $fonts_to_delete ) {
 					if ( in_array( $font['name'], $fonts_to_delete, true ) ) {
 						return null;
 					}
@@ -191,7 +191,7 @@ class FontManager {
 					return $font;
 				},
 				$cached_fonts
-			) 
+			)
 		);
 
 		if ( ! empty( $fonts_to_delete ) ) {
@@ -212,7 +212,7 @@ class FontManager {
 
 	/**
 	 * Deletes a list of fonts from the local storage.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $fonts List of fonts to delete. Each font should have a 'slug' key with the font slug.
@@ -224,10 +224,10 @@ class FontManager {
 		}
 
 		global $wpdb;
-		$font_slugs = array_map( fn( $font) => str_replace( ' ', '-', strtolower( $font ) ), $fonts );
+		$font_slugs = array_map( fn( $font ) => str_replace( ' ', '-', strtolower( $font ) ), $fonts );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-		$font_family_ids = $wpdb->get_col( 
+		$font_family_ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT ID FROM {$wpdb->posts} 
 					WHERE post_type = %s 
@@ -236,7 +236,6 @@ class FontManager {
 			)
 		);
 
-	
 		$font_dir = wp_get_font_dir();
 		if ( empty( $font_family_ids ) || empty( $font_dir['path'] ) ) {
 			return;
@@ -246,7 +245,7 @@ class FontManager {
 			if ( '1' !== get_post_meta( $font_family_id, '_is_spectra_font_family', true ) ) {
 				continue;
 			}
-	
+
 			$font_face_ids = get_posts(
 				array(
 					'post_type'      => 'wp_font_face',
@@ -256,7 +255,7 @@ class FontManager {
 					'no_found_rows'  => true,
 				)
 			);
-	
+
 			if ( empty( $font_face_ids ) ) {
 				continue;
 			}
@@ -266,22 +265,22 @@ class FontManager {
 
 				if ( ! empty( $font_file_name ) ) {
 					$font_path = trailingslashit( $font_dir['path'] ) . $font_file_name;
-	
+
 					if ( file_exists( $font_path ) ) {
-						wp_delete_file( $font_path ); 
+						wp_delete_file( $font_path );
 					}
 				}
 
-				wp_delete_post( $font_face_id, true ); 
+				wp_delete_post( $font_face_id, true );
 			}
-	
+
 			wp_delete_post( $font_family_id, true );
 		}
-	}       
+	}
 
 	/**
 	 * Registers the given fonts locally using the `/wp/v2/font-families` REST endpoint.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $fonts The list of font families to register, where each item is an associative array.
@@ -317,7 +316,7 @@ class FontManager {
 
 	/**
 	 * Create font family via REST API
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $font Font data.
@@ -333,8 +332,8 @@ class FontManager {
 					'slug'       => $font['slug'],
 					'fontFamily' => $font['fontFamily'],
 					'preview'    => isset( $font['preview'] ) ? $font['preview'] : '',
-				) 
-			) 
+				)
+			)
 		);
 
 		$response = rest_do_request( $request );
@@ -354,7 +353,7 @@ class FontManager {
 
 	/**
 	 * Register font faces for a font family
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param int   $font_family_id Font family ID.
@@ -379,7 +378,7 @@ class FontManager {
 
 						continue;
 					}
-				} 
+				}
 
 				$file = $this->download_file( $original_src );
 				if ( is_wp_error( $file['tmp_name'] ) ) {
@@ -415,7 +414,7 @@ class FontManager {
 
 	/**
 	 * Checks if a font is already registered.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $slug The font slug.
@@ -438,7 +437,7 @@ class FontManager {
 
 	/**
 	 * Checks if a font face is already registered.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $settings The font face settings used to generate the title.
@@ -461,7 +460,7 @@ class FontManager {
 
 	/**
 	 * Downloads a file from a URL.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $file_url URL of the file.
@@ -483,14 +482,14 @@ class FontManager {
 
 	/**
 	 * Handles font file uploads.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $file Single file item from $_FILES.
 	 * @return array Array containing uploaded file attributes on success, or error on failure.
 	 */
 	private function handle_font_file_upload( $file ) {
-		add_filter( 'upload_mimes', array( 'WP_Font_Utils', 'get_allowed_font_mime_types' ) ); // phpcs:ignore
+		add_filter( 'upload_mimes', array( 'WP_Font_Utils', 'get_allowed_font_mime_types' ) );
 		$font_dir       = wp_get_font_dir();
 		$set_upload_dir = function () use ( $font_dir ) {
 			return $font_dir;
@@ -516,7 +515,7 @@ class FontManager {
 
 	/**
 	 * Sanitizes font face src.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $value Source value.
@@ -529,7 +528,7 @@ class FontManager {
 
 	/**
 	 * Handles font upload errors.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array  $file File data.
@@ -571,7 +570,7 @@ class FontManager {
 
 	/**
 	 * Get font names if they exist in the font collection.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string|array $font_names Single font name or an array of font names.
@@ -582,17 +581,17 @@ class FontManager {
 			return array();
 		}
 
-		$font_lookup = array_flip( $font_names ); 
+		$font_lookup = array_flip( $font_names );
 		$font_data   = array();
-	
+
 		foreach ( $this->get_google_font_families() as $font ) {
-			if ( isset( $font['font_family_settings']['name'] ) 
-				&& isset( $font_lookup[ $font['font_family_settings']['name'] ] ) 
+			if ( isset( $font['font_family_settings']['name'] )
+				&& isset( $font_lookup[ $font['font_family_settings']['name'] ] )
 			) {
 				$font_data[] = $font['font_family_settings'];
 			}
 		}
-	
+
 		return $font_data;
 	}
 
@@ -621,9 +620,9 @@ class FontManager {
 
 	/**
 	 * Check if the Load Google Fonts Locally setting is enabled.
-	 * 
+	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return bool True if the setting is enabled, false otherwise.
 	 */
 	public static function is_enabled_load_locally() {
@@ -651,7 +650,7 @@ class FontManager {
 			$fonts = self::is_enabled_load_locally() ? $this->register_fonts_locally( $fonts ) : $fonts;
 			set_transient( self::FONT_CACHE_KEY, $fonts );
 		}
-	
+
 		return $fonts;
 	}
 

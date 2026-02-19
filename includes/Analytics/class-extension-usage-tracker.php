@@ -41,13 +41,13 @@ class ExtensionUsageTracker {
 	public function init() {
 		// Hook into WordPress save_post to track extension usage.
 		add_action( 'save_post', array( $this, 'track_post_extension_usage' ), 10, 2 );
-		
+
 		// Hook into BSF Analytics stats collection.
 		add_filter( 'bsf_core_stats', array( $this, 'add_extension_stats' ), 25 );
-		
+
 		// Hook into settings changes to handle cleanup.
 		add_action( 'update_option_spectra_blocks_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
-		
+
 		// Initialize usage data if not exists.
 		$this->init_extension_data();
 	}
@@ -195,12 +195,12 @@ class ExtensionUsageTracker {
 	 */
 	private function update_extension_data( $post_id, $extensions ) {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
-		
+
 		// Ensure structure exists.
 		if ( ! isset( $analytics_data['usage_data'] ) ) {
 			$analytics_data['usage_data'] = array();
 		}
-		
+
 		$analytics_data['usage_data'][ $post_id ] = array(
 			'extensions' => $extensions,
 			'count'      => count( $extensions ),
@@ -219,7 +219,7 @@ class ExtensionUsageTracker {
 	 */
 	private function update_extension_statistics( $extensions ) {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
-		
+
 		// Ensure structure exists.
 		if ( ! isset( $analytics_data['statistics'] ) ) {
 			$analytics_data['statistics'] = array(
@@ -229,7 +229,7 @@ class ExtensionUsageTracker {
 				'last_updated'          => time(),
 			);
 		}
-		
+
 		$stats = &$analytics_data['statistics'];
 
 		// Initialize stats if malformed.
@@ -250,7 +250,7 @@ class ExtensionUsageTracker {
 			if ( ! isset( $stats['most_used_extensions'][ $extension_name ] ) ) {
 				$stats['most_used_extensions'][ $extension_name ] = 0;
 			}
-			$stats['most_used_extensions'][ $extension_name ]++;
+			++$stats['most_used_extensions'][ $extension_name ];
 		}
 
 		// Update timestamp.
@@ -298,11 +298,11 @@ class ExtensionUsageTracker {
 				'total_extension_instances'   => $total_extension_instances,
 				'unique_extensions_used'      => count( $stats['most_used_extensions'] ?? array() ),
 				'total_extensions_available'  => count( $available_extensions ),
-				'extension_adoption_rate'     => count( $available_extensions ) > 0 
+				'extension_adoption_rate'     => count( $available_extensions ) > 0
 					? round( ( count( $stats['most_used_extensions'] ?? array() ) / count( $available_extensions ) ) * 100, 2 )
 					: 0,
-				'average_extensions_per_post' => empty( $stats['posts_with_extensions'] ) 
-					? 0 
+				'average_extensions_per_post' => empty( $stats['posts_with_extensions'] )
+					? 0
 					: round( $total_extension_instances / $stats['posts_with_extensions'], 2 ),
 			)
 		);
@@ -319,7 +319,7 @@ class ExtensionUsageTracker {
 	public function get_top_used_extensions( $limit = 10 ) {
 		$stats     = $this->get_extension_statistics();
 		$most_used = $stats['most_used_extensions'] ?? array();
-		
+
 		arsort( $most_used );
 		return array_slice( $most_used, 0, $limit, true );
 	}
@@ -344,10 +344,10 @@ class ExtensionUsageTracker {
 
 		if ( is_dir( $extensions_dir ) && is_readable( $extensions_dir ) ) {
 			$extension_dirs = array_filter( glob( $extensions_dir . '*' ), 'is_dir' );
-			
+
 			foreach ( $extension_dirs as $extension_path ) {
 				$extension_name = basename( $extension_path );
-				
+
 				// Skip hidden directories and common non-extension files.
 				if ( strpos( $extension_name, '.' ) === 0 ) {
 					continue;
@@ -359,7 +359,6 @@ class ExtensionUsageTracker {
 				}
 			}
 		}
-
 
 		// Allow filtering for extensibility, including Pro extensions.
 		$available_extensions = apply_filters( 'spectra_analytics_available_extensions', $available_extensions );
@@ -495,7 +494,7 @@ class ExtensionUsageTracker {
 		foreach ( $available_extensions as $extension_name ) {
 			// Call extension-specific analytics method if it exists.
 			$method_name = 'get_' . str_replace( '-', '_', $extension_name ) . '_specific_analytics';
-			
+
 			if ( method_exists( $this, $method_name ) ) {
 				$specific_data[ $extension_name ] = $this->$method_name();
 			}
@@ -527,15 +526,15 @@ class ExtensionUsageTracker {
 	private function get_extension_usage_data( $extension_name ) {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
 		$usage_data     = $analytics_data['usage_data'] ?? array();
-		
+
 		$extension_usage = array();
-		
+
 		foreach ( $usage_data as $post_id => $post_data ) {
 			if ( in_array( $extension_name, $post_data['extensions'] ?? array(), true ) ) {
 				$extension_usage[ $post_id ] = $post_data;
 			}
 		}
-		
+
 		return $extension_usage;
 	}
 
@@ -550,30 +549,30 @@ class ExtensionUsageTracker {
 		// This method tracks which animation types are most used.
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
 		$usage_data     = $analytics_data['usage_data'] ?? array();
-		
+
 		$animation_types           = array();
 		$total_animation_instances = 0;
-		
+
 		foreach ( $usage_data as $post_data ) {
 			if ( ! in_array( 'animations', $post_data['extensions'] ?? array(), true ) ) {
 				continue;
 			}
-			
+
 			// In a real implementation, you'd parse the post content to extract
 			// specific animation types from block attributes like spectraAnimationType.
 			// For now, we'll use a placeholder structure.
-			$total_animation_instances++;
-			
+			++$total_animation_instances;
+
 			// Placeholder: In real implementation, extract from post content.
 			$animation_types['fadeIn'] = ( $animation_types['fadeIn'] ?? 0 ) + 1;
 		}
-		
+
 		if ( 0 === $total_animation_instances ) {
 			return array();
 		}
-		
+
 		arsort( $animation_types );
-		
+
 		return array(
 			'total_animation_instances' => $total_animation_instances,
 			'animation_types_used'      => $animation_types,
@@ -593,30 +592,30 @@ class ExtensionUsageTracker {
 		// This method tracks which mask types are most used.
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
 		$usage_data     = $analytics_data['usage_data'] ?? array();
-		
+
 		$mask_types           = array();
 		$total_mask_instances = 0;
-		
+
 		foreach ( $usage_data as $post_data ) {
 			if ( ! in_array( 'image-mask', $post_data['extensions'] ?? array(), true ) ) {
 				continue;
 			}
-			
+
 			// In a real implementation, you'd parse the post content to extract
 			// specific mask types from block attributes like spectraImageMask.
 			// For now, we'll use a placeholder structure.
-			$total_mask_instances++;
-			
+			++$total_mask_instances;
+
 			// Placeholder: In real implementation, extract from post content.
 			$mask_types['circle'] = ( $mask_types['circle'] ?? 0 ) + 1;
 		}
-		
+
 		if ( 0 === $total_mask_instances ) {
 			return array();
 		}
-		
+
 		arsort( $mask_types );
-		
+
 		return array(
 			'total_mask_instances' => $total_mask_instances,
 			'mask_types_used'      => $mask_types,

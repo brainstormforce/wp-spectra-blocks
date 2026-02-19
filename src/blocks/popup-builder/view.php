@@ -13,7 +13,6 @@ use Spectra\Helpers\Renderer;
 // Bail out if this file is called directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 }
 
 // Set global context for V3 popup rendering.
@@ -66,10 +65,10 @@ $close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['
 
 ?>
 <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
-	<?php 
+	<?php
 	if ( 'popup' !== $variant_type ) :
 		Renderer::background_video( $background );
-	endif; 
+	endif;
 	?>
 	<?php if ( $has_overlay && 'popup' === $variant_type ) : ?>
 		<div 
@@ -93,7 +92,7 @@ $close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['
 		aria-hidden="true"
 		tabindex="-1"
 	>
-	<?php 
+	<?php
 	if ( 'banner' !== $variant_type ) :
 		Renderer::background_video( $background );
 	endif;
@@ -108,7 +107,7 @@ $close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['
 					type="button"
 					title="<?php echo esc_attr( $close_aria_label ); ?>"
 				>
-					<?php 
+					<?php
 					Renderer::svg_html(
 						$close_icon,
 						$attributes['flipForRTL'] ?? false,

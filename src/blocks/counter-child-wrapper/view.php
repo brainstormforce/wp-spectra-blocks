@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the counter child wrapper block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\CounterChildWrapper
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\HtmlSanitizer;
 ?>
 

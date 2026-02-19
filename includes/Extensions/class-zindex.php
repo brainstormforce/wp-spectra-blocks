@@ -15,7 +15,7 @@ use WP_HTML_Tag_Processor;
 
 /**
  * Z-Index class.
- * 
+ *
  * @since 3.0.0
  */
 class ZIndex {
@@ -28,7 +28,7 @@ class ZIndex {
 	 * Hooks into render_block to add z-index styles to blocks.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function init() {
@@ -68,7 +68,7 @@ class ZIndex {
 
 	/**
 	 * Determine whether the block should be processed for z-index.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
@@ -82,7 +82,7 @@ class ZIndex {
 
 	/**
 	 * Retrieve sanitized z-index value.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $attrs Block attributes.
@@ -105,7 +105,7 @@ class ZIndex {
 	 * Apply z-index styles to block content.
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject z-index styles into the first tag.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $content Block content.
@@ -124,15 +124,15 @@ class ZIndex {
 
 		// Get existing style attribute.
 		$existing_style = $processor->get_attribute( 'style' ) ? $processor->get_attribute( 'style' ) : '';
-		
+
 		// Add z-index CSS custom property.
 		$z_index_style = "--spectra-z-index: {$z_index};";
-		
+
 		// Combine with existing styles.
 		$new_style = $existing_style ? $existing_style . ' ' . $z_index_style : $z_index_style;
-		
+
 		$processor->set_attribute( 'style', $new_style );
-		
+
 		// Add has-z-index class.
 		$existing_class = $processor->get_attribute( 'class' ) ? $processor->get_attribute( 'class' ) : '';
 		$new_class      = trim( $existing_class . ' has-z-index' );
@@ -145,7 +145,7 @@ class ZIndex {
 	 * Check if a block is allowed for z-index.
 	 *
 	 * Uses allowed prefixes to determine if a block should receive z-index styles.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.

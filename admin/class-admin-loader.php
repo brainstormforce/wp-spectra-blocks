@@ -45,15 +45,15 @@ class Admin_Loader {
 	/**
 	 * Autoload classes.
 	 *
-	 * @param string $class class name.
+	 * @param string $class_name class name.
 	 */
-	public function autoload( $class ) {
+	public function autoload( $class_name ) {
 
-		if ( 0 !== strpos( $class, __NAMESPACE__ ) ) {
+		if ( 0 !== strpos( $class_name, __NAMESPACE__ ) ) {
 			return;
 		}
 
-		$class_to_load = $class;
+		$class_to_load = $class_name;
 
 		if ( ! class_exists( $class_to_load ) ) {
 			$filename = strtolower(
@@ -64,7 +64,9 @@ class Admin_Loader {
 				)
 			);
 
-			$file = SPECTRA_BLOCKS_ADMIN_DIR . $filename . '.php';
+			$dir  = dirname( $filename );
+			$base = basename( $filename );
+			$file = SPECTRA_BLOCKS_ADMIN_DIR . ( '.' === $dir ? '' : $dir . DIRECTORY_SEPARATOR ) . 'class-' . $base . '.php';
 
 			// if the file redable, include it.
 			if ( is_readable( $file ) ) {

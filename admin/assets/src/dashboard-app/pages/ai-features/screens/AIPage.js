@@ -147,6 +147,7 @@ const AIPage = () => {
 
 	// Get the current Zip AI status.
 	const dispatch = useDispatch();
+	const initialStateSetFlag = useSelector( ( state ) => state.initialStateSetFlag );
 	const currentZipAiStatus = useSelector( ( state ) => state.zipAiModules );
 	const { ai_assistant: zipAiAssistant, ai_design_copilot: zipAiDesignCopilot } = currentZipAiStatus;
 
@@ -228,10 +229,16 @@ const AIPage = () => {
 	};
 
 	useEffect( () => {
+		if ( ! initialStateSetFlag ) {
+			return;
+		}
+		// Modules are known (ZipAI active), or initial state loaded with no modules (ZipAI inactive).
 		if ( zipAiAssistantStatus !== undefined && zipAiDesignCopilotStatus !== undefined ) {
 			setIsLoading( false );
+		} else if ( ! zipAiAssistant && ! zipAiDesignCopilot ) {
+			setIsLoading( false );
 		}
-	}, [ zipAiAssistantStatus, zipAiDesignCopilotStatus ] );
+	}, [ initialStateSetFlag, zipAiAssistantStatus, zipAiDesignCopilotStatus, zipAiAssistant, zipAiDesignCopilot ] );
 
 	// Mini-Render: The Info Card.
 	const renderInfoCard = ( cardDetails ) => (

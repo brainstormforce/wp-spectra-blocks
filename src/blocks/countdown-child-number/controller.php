@@ -7,9 +7,7 @@
  * @package Spectra\Blocks\CountdownChildNumber
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\BlockAttributes;
 
 // Define the ARIA role for accessibility, indicating this is a timer region.
@@ -43,4 +41,3 @@ $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $con
 
 // return the view.
 return 'file:./view.php';
-

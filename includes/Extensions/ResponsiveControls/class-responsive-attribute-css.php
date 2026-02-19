@@ -5,6 +5,8 @@
  * @package spectra-blocks
  */
 
+namespace Spectra\Extensions\ResponsiveControls;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -18,8 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package Spectra\Extensions\ResponsiveControls
  * @since 3.0.0
  */
-
-namespace Spectra\Extensions\ResponsiveControls;
 
 /**
  * Handles CSS generation for block-specific responsive attributes.
@@ -126,20 +126,20 @@ class ResponsiveAttributeCSS {
 			),
 		),
 		'spectra/button'                       => array(
-			'size' => array( 
+			'size' => array(
 				'default'   => '16px',
 				'selector'  => ' svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
 
-			'gap'  => array( 
+			'gap'  => array(
 				'default'  => '10px',
 				'property' => 'gap',
 				'selector' => '.wp-block-spectra-button.wp-block-button__link',
 			),
 		),
 		'spectra/icon'                         => array(
-			'size' => array( 
+			'size' => array(
 				'default'   => '48px',
 				'selector'  => ' svg.spectra-icon',
 				'formatter' => 'format_svg_size',
@@ -340,7 +340,7 @@ class ResponsiveAttributeCSS {
 	public static function get_responsive_attributes( string $block_name ): array {
 		// Get attribute definitions with filter applied.
 		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
-		
+
 		return array_keys( $attr_definitions[ $block_name ] ?? array() );
 	}
 
@@ -377,7 +377,7 @@ class ResponsiveAttributeCSS {
 
 		$css_rules = array();
 		$defs      = $attr_definitions[ $block_name ];
-		
+
 		// Special handling for spectra/content text shadow.
 		if ( 'spectra/content' === $block_name && isset( $attrs['enableTextShadow'] ) && $attrs['enableTextShadow'] ) {
 			// Text shadow settings.
@@ -391,9 +391,9 @@ class ResponsiveAttributeCSS {
 				$offset_x = $text_shadow_offset_x . 'px';
 				$offset_y = $text_shadow_offset_y . 'px';
 				$blur     = $text_shadow_blur . 'px';
-				
+
 				$text_shadow_css = "{$offset_x} {$offset_y} {$blur} {$text_shadow_color}";
-				
+
 				// Use style_attr to ensure text-shadow is not filtered out by WordPress Style Engine.
 				$css_rules[] = array(
 					'selector'   => '',
@@ -481,7 +481,7 @@ class ResponsiveAttributeCSS {
 					$mask_css .= '-webkit-mask-repeat: repeat-x;';
 					$mask_css .= '-webkit-mask-position: center;';
 					$mask_css .= '-webkit-mask-size: var(--spectra-separator-size, 5px) 100%;';
-				}           
+				}
 			} elseif ( 'solid' === $separator_style ) {
 				$declarations['height']           = $separator_height;
 				$declarations['background-color'] = $color_var;
@@ -634,13 +634,13 @@ class ResponsiveAttributeCSS {
 						$def['property'] => $value,
 					),
 				);
-			}       
+			}
 		}
 
 		// Separate rules with style_attr from regular rules.
 		$style_attr_css = '';
 		$regular_rules  = array();
-		
+
 		foreach ( $css_rules as $rule ) {
 			if ( isset( $rule['style_attr'] ) ) {
 				// Handle rules with style_attr directly.
@@ -650,7 +650,7 @@ class ResponsiveAttributeCSS {
 				$regular_rules[] = $rule;
 			}
 		}
-		
+
 		// Generate optimized CSS using WordPress Style Engine for regular rules.
 		$style_engine_css = '';
 		if ( ! empty( $regular_rules ) ) {
@@ -661,7 +661,7 @@ class ResponsiveAttributeCSS {
 				)
 			);
 		}
-		
+
 		// Combine both CSS outputs.
 		return $style_engine_css . $style_attr_css;
 	}
@@ -676,43 +676,43 @@ class ResponsiveAttributeCSS {
 	private static function build_full_selector( string $base_selector, array $def ): string {
 		$selector = $def['selector'] ?? '';
 		$state    = $def['state'] ?? '';
-		
+
 		// Handle comma-separated selectors.
 		if ( strpos( $selector, ',' ) !== false ) {
 			// First, check if the selector starts with a space (descendant selector).
 			$needs_space = strpos( $selector, ' ' ) === 0;
-			
+
 			$parts          = explode( ',', $selector );
 			$combined_parts = array_map(
-				function( $part ) use ( $base_selector, $state, $needs_space ) {
+				function ( $part ) use ( $base_selector, $state, $needs_space ) {
 					// Trim the part but preserve the leading space logic.
 					$part = trim( $part );
-					
+
 					// If original selector had leading space, ensure we add it back.
 					if ( $needs_space && strpos( $part, ' ' ) !== 0 ) {
 						$part = ' ' . $part;
 					}
-					
+
 					return $base_selector . $part . $state;
 				},
 				$parts
 			);
 			return implode( ', ', $combined_parts );
 		}
-		
+
 		// Single selector.
 		return $base_selector . $selector . $state;
 	}
 
 	/**
 	 * Format SVG size value for CSS.
-	 * 
+	 *
 	 * Sets both width and height properties for SVG elements.
 	 *
 	 * @param mixed $val The size value.
 	 * @return array CSS properties for SVG sizing.
 	 */
-	private static function format_svg_size( $val ): array {
+	private static function format_svg_size( $val ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) ) {
 			return array();
 		}
@@ -725,17 +725,17 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format counter margin values with px unit.
-	 * 
+	 *
 	 * Converts numeric margin values to CSS values with px unit.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed $val The margin value (numeric).
-	 * @param array $def The attribute definition (unused).
-	 * @param array $block_attrs The block attributes (unused).
+	 * @param array $_def The attribute definition (unused).
+	 * @param array $_block_attrs The block attributes (unused).
 	 * @return string The formatted value with px unit.
 	 */
-	private static function format_counter_margin( $val, $def = array(), $block_attrs = array() ): string {
+	private static function format_counter_margin( $val, $_def = array(), $_block_attrs = array() ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) ) {
 			return '0px';
 		}
@@ -751,11 +751,11 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format slider arrow distance for CSS.
-	 * 
+	 *
 	 * Sets the positioning of slider navigation arrows based on the distance value.
 	 * Uses the base selector to ensure CSS is scoped to the specific slider instance,
 	 * preventing conflicts when multiple sliders are on the same page.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The distance value.
@@ -763,7 +763,7 @@ class ResponsiveAttributeCSS {
 	 * @param string $base_selector The scoped base selector for this block instance.
 	 * @return array Array of CSS rule arrays.
 	 */
-	private static function format_slider_arrow_distance( $val, $def = array(), $base_selector = '' ): array {
+	private static function format_slider_arrow_distance( $val, $def = array(), $base_selector = '' ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$val = is_null( $val ) ? '1px' : $val;
 		return array(
 			array(
@@ -785,15 +785,15 @@ class ResponsiveAttributeCSS {
 	 * Format slider pagination top margin for CSS.
 	 *
 	 * Sets CSS declarations based on the provided margin value.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed $val The margin value.
 	 * @return array CSS declarations.
 	 */
-	private static function format_slider_pagination_top_margin( $val ): array {
+	private static function format_slider_pagination_top_margin( $val ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$bottom_value = ! is_null( $val ) ? $val : '0%';
-		
+
 		// Return single rule with bottom property to match frontend CSS.
 		return array(
 			array(
@@ -802,7 +802,7 @@ class ResponsiveAttributeCSS {
 					'bottom' => $bottom_value,
 				),
 				'style_attr'   => 'bottom: ' . $bottom_value . ';',
-	
+
 			),
 		);
 	}
@@ -813,7 +813,7 @@ class ResponsiveAttributeCSS {
 		 * Sets height on slides and min-height on slide content when slider has responsive height.
 		 * Generates multiple CSS rules to handle both the slide height and content min-height.
 		 * Uses the base selector to ensure CSS is scoped to the specific slider instance.
-		 * 
+		 *
 		 * @since 3.0.0
 		 *
 		 * @param mixed  $val The height value.
@@ -822,10 +822,10 @@ class ResponsiveAttributeCSS {
 		 * @param array  $block_attrs The block attributes.
 		 * @return array Array of CSS rule arrays.
 		 */
-	private static function format_popup_builder_height( $val, $def = array(), $base_selector = '', $block_attrs = array() ): array {
+	private static function format_popup_builder_height( $val, $def = array(), $base_selector = '', $block_attrs = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$height_value = ! is_null( $val ) ? $val : 'auto';
 		$rules        = array();
-		
+
 		$rules[] = array(
 			'selector'     => $base_selector . ' .spectra-popup-builder__wrapper--banner',
 			'declarations' => array(
@@ -879,7 +879,7 @@ class ResponsiveAttributeCSS {
 					'max-height' => $height_value,
 				),
 			);
-			
+
 		}
 
 		return $rules;
@@ -892,7 +892,7 @@ class ResponsiveAttributeCSS {
 	 * Generates CSS rules that override default 250px min-height with responsive values.
 	 * This ensures consistent slider height rendering between editor and frontend, including 100% values.
 	 * Uses the base selector to ensure CSS is scoped to the specific slider instance.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The height value.
@@ -900,10 +900,10 @@ class ResponsiveAttributeCSS {
 	 * @param string $base_selector The scoped base selector for this block instance.
 	 * @return array Array of CSS rule arrays.
 	 */
-	private static function format_slider_height( $val, $def = array(), $base_selector = '' ): array {
+	private static function format_slider_height( $val, $def = array(), $base_selector = '' ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$height_value = ! is_null( $val ) ? $val : 'auto';
 		$rules        = array();
-		
+
 		// Set height on the .swiper container (matches editor's inline style on .swiper element).
 		$rules[] = array(
 			'selector'     => $base_selector . ' .swiper',
@@ -921,7 +921,7 @@ class ResponsiveAttributeCSS {
 				),
 			);
 		}
-		
+
 		// Set min-height on slide-content to override default 250px including for 100% values.
 		if ( 'auto' !== $height_value ) {
 			$rules[] = array(
@@ -940,7 +940,7 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Generates actual background CSS properties for frontend, since style.scss no longer contains them.
 	 * Handles complex background attributes including gradients, images, colors, and positioning.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed  $val The background attribute value.
@@ -949,7 +949,7 @@ class ResponsiveAttributeCSS {
 	 * @param array  $attrs The block attributes.
 	 * @return array CSS declarations for background properties or multiple rules.
 	 */
-	private static function format_background( $val, $def = array(), $background_selector = '', $attrs = array() ): array {
+	private static function format_background( $val, $def = array(), $background_selector = '', $attrs = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		$rules     = array();
 		$has_image = false;
 		$has_video = false;
@@ -969,13 +969,13 @@ class ResponsiveAttributeCSS {
 					'selector'   => $background_selector,
 					'style_attr' => 'position: relative;',
 				);
-				
+
 				// Create a new stacking context with z-index.
 				$rules[] = array(
 					'selector'   => $background_selector,
 					'style_attr' => 'z-index: 0;',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => $background_selector . '::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
@@ -1010,7 +1010,7 @@ class ResponsiveAttributeCSS {
 						'selector'   => $background_selector,
 						'style_attr' => 'position: relative;',
 					);
-					
+
 					// Create a new stacking context with z-index.
 					$rules[] = array(
 						'selector'   => $background_selector,
@@ -1021,14 +1021,14 @@ class ResponsiveAttributeCSS {
 						'selector'   => $background_selector . '::before',
 						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 					);
-					
+
 					$rules[] = array(
 						'selector'   => '.spectra-background-color-hover ' . $background_selector . ':hover::before',
 						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 					);
 					return $rules;
 				}
-			} 
+			}
 
 			// Also check for backgroundImage.
 			if ( isset( $val['backgroundImage'] ) && ! empty( $val['backgroundImage'] ) ) {
@@ -1049,6 +1049,9 @@ class ResponsiveAttributeCSS {
 					$rules[] = array(
 						'selector'   => $background_selector . ' > .spectra-background-video__wrapper::after',
 						'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); z-index: 1;',
+					);
+
+					$rules[] = array(
 						'selector'   => $background_selector . '::before',
 						'style_attr' => 'content: ""; position: absolute; display: block; inset: 0;',
 					);
@@ -1057,19 +1060,19 @@ class ResponsiveAttributeCSS {
 						'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 						'style_attr' => 'z-index: -1',
 					);
-					
+
 					// Add hover rules for video with overlay - the overlay itself changes on hover.
 					// Use empty selector to maintain current element context.
 					$rules[] = array(
 						'selector'   => '.spectra-background-color-hover ' . $background_selector . ':hover > .spectra-background-video__wrapper::after',
 						'style_attr' => 'background: var(--spectra-background-color-hover);',
 					);
-					
+
 					$rules[] = array(
 						'selector'   => '.spectra-background-gradient-hover ' . $background_selector . ':hover > .spectra-background-video__wrapper::after',
 						'style_attr' => 'background: var(--spectra-background-gradient-hover);',
 					);
-					
+
 				} else {
 					// For image backgrounds, create the overlay without depending on classes.
 					// This creates a ::before pseudo-element dynamically.
@@ -1078,26 +1081,25 @@ class ResponsiveAttributeCSS {
 						'selector'   => $background_selector,
 						'style_attr' => 'position: relative;',
 					);
-					
+
 					// Create a new stacking context with z-index.
 					$rules[] = array(
 						'selector'   => $background_selector,
 						'style_attr' => 'z-index: 0;',
 					);
-					
+
 					$rules[] = array(
 						'selector'   => $background_selector . '::before',
 						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 					);
-					
-					
+
 					// Add hover rules for overlay scenarios - override overlay background on hover.
 					// Use :where() for low specificity to allow Global Styles override.
 					$rules[] = array(
 						'selector'   => ':where(.spectra-background-color-hover) ' . $background_selector . ':hover::before',
 						'style_attr' => 'background: var(--spectra-background-color-hover);',
 					);
-					
+
 					$rules[] = array(
 						'selector'   => ':where(.spectra-background-gradient-hover) ' . $background_selector . ':hover::before',
 						'style_attr' => 'background: var(--spectra-background-gradient-hover);',
@@ -1110,13 +1112,13 @@ class ResponsiveAttributeCSS {
 					'selector'   => $background_selector . ':where()::before',
 					'style_attr' => 'display: none;',
 				);
-				
+
 				// Also hide video overlay if present.
 				$rules[] = array(
 					'selector'   => $background_selector . ':where() > .spectra-background-video__wrapper::after',
 					'style_attr' => 'display: none;',
 				);
-				
+
 				// For backgrounds without overlay, we still need hover functionality.
 				if ( $has_video ) {
 					// Add hover overlay for video backgrounds without overlay.
@@ -1136,19 +1138,19 @@ class ResponsiveAttributeCSS {
 						'selector'   => $background_selector,
 						'style_attr' => 'position: relative;',
 					);
-					
+
 					// Create ::before pseudo-element for hover only.
 					// Use :where() for low specificity to allow Global Styles override.
 					$rules[] = array(
 						'selector'   => ':where(.spectra-background-color-hover) ' . $background_selector . ':hover::before',
 						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 					);
-					
+
 					$rules[] = array(
 						'selector'   => ':where(.spectra-background-gradient-hover) ' . $background_selector . ':hover::before',
 						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 					);
-					
+
 				}
 			}
 
@@ -1165,7 +1167,7 @@ class ResponsiveAttributeCSS {
 					'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 					'style_attr' => 'display: block !important;',
 				);
-				
+
 				// Position video wrapper to respect borders.
 				// The video wrapper should be positioned inside the border area.
 				$rules[] = array(
@@ -1185,7 +1187,7 @@ class ResponsiveAttributeCSS {
 			// Always ensure the container maintains position relative for proper stacking.
 			if ( $has_image || $has_video ) {
 				$declarations['position'] = 'relative';
-				
+
 				// Position direct children above any overlays.
 				$rules[] = array(
 					'selector'     => $background_selector . ' > *:not(.spectra-background-video__wrapper)',
@@ -1197,12 +1199,12 @@ class ResponsiveAttributeCSS {
 			}
 
 			// Continue with regular background processing for all breakpoints.
-			
+
 			// Handle background properties (size, position, repeat) even without an image.
 			// These can be set independently in responsive controls.
 			if ( isset( $val['backgroundSize'] ) || isset( $val['backgroundPosition'] ) || isset( $val['backgroundRepeat'] ) || isset( $val['positionMode'] ) || isset( $val['positionX'] ) || isset( $val['positionY'] ) ) {
 				$css_vars = array();
-				
+
 				if ( isset( $val['backgroundSize'] ) ) {
 					// Handle custom background size with width.
 					if ( 'custom' === $val['backgroundSize'] ) {
@@ -1212,11 +1214,11 @@ class ResponsiveAttributeCSS {
 						$css_vars[] = '--spectra-background-size: ' . $val['backgroundSize'];
 					}
 				}
-				
+
 				if ( isset( $val['backgroundRepeat'] ) ) {
 					$css_vars[] = '--spectra-background-repeat: ' . $val['backgroundRepeat'];
 				}
-				
+
 				if ( isset( $val['backgroundPosition'] ) ) {
 					$bg_position = 'center center';
 					if ( is_array( $val['backgroundPosition'] ) && isset( $val['backgroundPosition']['x'] ) && isset( $val['backgroundPosition']['y'] ) ) {
@@ -1226,12 +1228,12 @@ class ResponsiveAttributeCSS {
 					}
 					$css_vars[] = '--spectra-background-position: ' . $bg_position;
 				}
-				
+
 				if ( ! empty( $css_vars ) ) {
 					// Add the CSS variables to the container.
 					// Use background_selector if provided, otherwise use empty selector for current element.
 					$bg_selector = ! empty( $background_selector ) ? $background_selector : '';
-				
+
 					$rules[] = array(
 						'selector'   => $background_selector,
 						'style_attr' => implode( '; ', $css_vars ) . ';',
@@ -1315,7 +1317,7 @@ class ResponsiveAttributeCSS {
 					array(
 						'selector'     => '',
 						'declarations' => $declarations,
-					) 
+					)
 				);
 			}
 
@@ -1341,7 +1343,7 @@ class ResponsiveAttributeCSS {
 				'selector'   => '',
 				'style_attr' => 'position: relative;',
 			);
-			
+
 			$rules[] = array(
 				'selector'   => '::before',
 				'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block;',
@@ -1376,19 +1378,19 @@ class ResponsiveAttributeCSS {
 					'selector'   => '',
 					'style_attr' => 'position: relative;',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => '::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => '.spectra-background-color-hover:hover::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 				);
 				return $rules;
 			}
-		} 
+		}
 
 		// Also check for backgroundImage.
 		if ( isset( $val['backgroundImage'] ) && ! empty( $val['backgroundImage'] ) ) {
@@ -1410,6 +1412,9 @@ class ResponsiveAttributeCSS {
 				$rules[] = array(
 					'selector'   => ' > .spectra-background-video__wrapper::after',
 					'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); z-index: 1;',
+				);
+
+				$rules[] = array(
 					'selector'   => '::before',
 					'style_attr' => 'content: ""; position: absolute; display: block; inset: 0;',
 				);
@@ -1418,19 +1423,19 @@ class ResponsiveAttributeCSS {
 					'selector'   => ' > .spectra-background-video__wrapper',
 					'style_attr' => 'z-index: -1',
 				);
-				
+
 				// Add hover rules for video with overlay - the overlay itself changes on hover.
 				// Use empty selector to maintain current element context.
 				$rules[] = array(
 					'selector'   => '.spectra-background-color-hover:hover > .spectra-background-video__wrapper::after',
 					'style_attr' => 'background: var(--spectra-background-color-hover);',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => '.spectra-background-gradient-hover:hover > .spectra-background-video__wrapper::after',
 					'style_attr' => 'background: var(--spectra-background-gradient-hover);',
 				);
-				
+
 			} else {
 				// For image backgrounds, create the overlay without depending on classes.
 				// This creates a ::before pseudo-element dynamically.
@@ -1439,20 +1444,19 @@ class ResponsiveAttributeCSS {
 					'selector'   => '',
 					'style_attr' => 'position: relative;',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => '::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block;',
 				);
-				
-				
+
 				// Add hover rules for overlay scenarios - override overlay background on hover.
 				// Use :where() for low specificity to allow Global Styles override.
 				$rules[] = array(
 					'selector'   => ':where(.spectra-background-color-hover):hover::before',
 					'style_attr' => 'background: var(--spectra-background-color-hover);',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => ':where(.spectra-background-gradient-hover):hover::before',
 					'style_attr' => 'background: var(--spectra-background-gradient-hover);',
@@ -1466,25 +1470,25 @@ class ResponsiveAttributeCSS {
 							'selector'   => ' .spectra-popup-builder__wrapper--popup',
 							'style_attr' => 'position: relative;',
 						);
-						
+
 						// Create a new stacking context with z-index.
 						$rules[] = array(
 							'selector'   => ' .spectra-popup-builder__wrapper--popup',
 							'style_attr' => 'z-index: 0;',
 						);
-						
+
 						$rules[] = array(
 							'selector'   => ' .spectra-popup-builder__wrapper--popup::before',
 							'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 						);
-						
+
 						// Add hover rules for overlay scenarios - override overlay background on hover.
 						// Use :where() for low specificity to allow Global Styles override.
 						$rules[] = array(
 							'selector'   => ':where(.spectra-background-color-hover) .spectra-popup-builder__wrapper--popup:hover::before',
 							'style_attr' => 'background: var(--spectra-background-color-hover);',
 						);
-						
+
 						$rules[] = array(
 							'selector'   => ':where(.spectra-background-gradient-hover) .spectra-popup-builder__wrapper--popup:hover::before',
 							'style_attr' => 'background: var(--spectra-background-gradient-hover);',
@@ -1498,13 +1502,13 @@ class ResponsiveAttributeCSS {
 				'selector'   => ':where()::before',
 				'style_attr' => 'display: none;',
 			);
-			
+
 			// Also hide video overlay if present.
 			$rules[] = array(
 				'selector'   => ':where() > .spectra-background-video__wrapper::after',
 				'style_attr' => 'display: none;',
 			);
-			
+
 			// For backgrounds without overlay, we still need hover functionality.
 			if ( $has_video ) {
 				// Add hover overlay for video backgrounds without overlay.
@@ -1524,19 +1528,19 @@ class ResponsiveAttributeCSS {
 					'selector'   => '',
 					'style_attr' => 'position: relative;',
 				);
-				
+
 				// Create ::before pseudo-element for hover only.
 				// Use :where() for low specificity to allow Global Styles override.
 				$rules[] = array(
 					'selector'   => ':where(.spectra-background-color-hover):hover::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 				);
-				
+
 				$rules[] = array(
 					'selector'   => ':where(.spectra-background-gradient-hover):hover::before',
 					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
 				);
-				
+
 			}
 		}
 
@@ -1553,7 +1557,7 @@ class ResponsiveAttributeCSS {
 				'selector'   => ' > .spectra-background-video__wrapper',
 				'style_attr' => 'display: block !important;',
 			);
-			
+
 			// Position video wrapper to respect borders.
 			// The video wrapper should be positioned inside the border area.
 			$rules[] = array(
@@ -1573,7 +1577,7 @@ class ResponsiveAttributeCSS {
 		// Always ensure the container maintains position relative for proper stacking.
 		if ( $has_image || $has_video ) {
 			$declarations['position'] = 'relative';
-			
+
 			// Position direct children above any overlays.
 			$rules[] = array(
 				'selector'     => ' > *:not(.spectra-background-video__wrapper)',
@@ -1585,7 +1589,7 @@ class ResponsiveAttributeCSS {
 		}
 
 		// Continue with regular background processing for all breakpoints.
-		
+
 		// Handle background properties (size, position, repeat, attachment) even without an image.
 		// These can be set independently in responsive controls.
 		if ( isset( $val['backgroundSize'] ) || isset( $val['backgroundPosition'] ) || isset( $val['backgroundRepeat'] ) || isset( $val['backgroundAttachment'] ) || isset( $val['positionMode'] ) || isset( $val['positionX'] ) || isset( $val['positionY'] ) ) {
@@ -1632,7 +1636,7 @@ class ResponsiveAttributeCSS {
 				}
 				$css_vars[] = '--spectra-background-position: ' . $bg_position;
 			}
-			
+
 			if ( ! empty( $css_vars ) ) {
 				// Add the CSS variables to the container.
 				// Use background_selector if provided, otherwise use empty selector for current element.
@@ -1739,7 +1743,7 @@ class ResponsiveAttributeCSS {
 				array(
 					'selector'     => '',
 					'declarations' => $declarations,
-				) 
+				)
 			);
 		}
 
@@ -1760,10 +1764,10 @@ class ResponsiveAttributeCSS {
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay position attribute value (e.g., 'center', 'top left', or focal point object).
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_position( $val, $def = array() ): array {
+	private static function format_overlay_position( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
 			return array();
@@ -1801,15 +1805,15 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format overlay attachment for CSS.
-	 * 
+	 *
 	 * Generates CSS custom properties for overlay background attachment.
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay attachment attribute value (e.g., 'scroll', 'fixed').
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_attachment( $val, $def = array() ): array {
+	private static function format_overlay_attachment( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
@@ -1827,15 +1831,15 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format overlay repeat for CSS.
-	 * 
+	 *
 	 * Generates CSS custom properties for overlay background repeat.
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay repeat attribute value (e.g., 'no-repeat', 'repeat').
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_repeat( $val, $def = array() ): array {
+	private static function format_overlay_repeat( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
@@ -1858,11 +1862,11 @@ class ResponsiveAttributeCSS {
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay size attribute value (e.g., 'cover', 'contain', 'auto', 'custom').
-	 * @param array $def The attribute definition.
-	 * @param array $block_attrs The block attributes.
+	 * @param array $_def The attribute definition.
+	 * @param array $_block_attrs The block attributes.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_size( $val, $def = array(), $block_attrs = array() ): array {
+	private static function format_overlay_size( $val, $_def = array(), $_block_attrs = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
@@ -1897,12 +1901,12 @@ class ResponsiveAttributeCSS {
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay blend mode attribute value (e.g., 'normal', 'multiply', 'overlay').
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_blend_mode( $val, $def = array() ): array {
+	private static function format_overlay_blend_mode( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		
+
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
@@ -1913,7 +1917,7 @@ class ResponsiveAttributeCSS {
 				),
 			);
 		}
-		
+
 		// If overlayType is 'none' or not 'image', clear the overlay blend mode.
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
 			return array(
@@ -1923,11 +1927,11 @@ class ResponsiveAttributeCSS {
 				),
 			);
 		}
-		
+
 		if ( is_null( $val ) || '' === $val ) {
 			$val = 'normal';
 		}
-		
+
 		return array(
 			array(
 				'selector'   => '',
@@ -1938,17 +1942,17 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format overlay opacity for CSS.
-	 * 
+	 *
 	 * Generates CSS custom properties for overlay opacity.
 	 *
 	 * @since 3.0.0
 	 * @param mixed $val The overlay opacity attribute value (0-100).
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_opacity( $val, $def = array() ): array {
+	private static function format_overlay_opacity( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		
+
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
@@ -1959,7 +1963,7 @@ class ResponsiveAttributeCSS {
 				),
 			);
 		}
-		
+
 		// If overlayType is 'none' or not 'image', clear the overlay opacity.
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
 			return array(
@@ -1975,12 +1979,12 @@ class ResponsiveAttributeCSS {
 		}
 
 		$opacity_decimal = ( (float) $val ) / 100;
-		
+
 		// Ensure we don't generate NaN.
 		if ( ! is_finite( $opacity_decimal ) ) {
 			$opacity_decimal = 0.5; // Default to 50%.
 		}
-		
+
 		return array(
 			array(
 				'selector'   => '',
@@ -1991,16 +1995,16 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format overlay image for CSS.
-	 * 
+	 *
 	 * Generates CSS custom properties for overlay images.
 	 *
 	 * @param mixed $val The overlay image attribute value.
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array CSS rules with CSS custom properties.
 	 */
-	private static function format_overlay_image( $val, $def = array() ): array {
+	private static function format_overlay_image( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		
+
 		// Check background type - if video, don't apply overlay.
 		$background_type = $current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
@@ -2011,7 +2015,7 @@ class ResponsiveAttributeCSS {
 				),
 			);
 		}
-		
+
 		// If overlayType is 'none' or not 'image', clear the overlay image.
 		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
 			return array(
@@ -2037,7 +2041,7 @@ class ResponsiveAttributeCSS {
 		} elseif ( is_string( $val ) ) {
 			$image_url = $val;
 		}
-		
+
 		if ( empty( $image_url ) ) {
 			return array(
 				array(
@@ -2057,15 +2061,15 @@ class ResponsiveAttributeCSS {
 
 	/**
 	 * Format overlay type for CSS.
-	 * 
-	 * This formatter doesn't generate CSS directly but ensures overlayType is available 
+	 *
+	 * This formatter doesn't generate CSS directly but ensures overlayType is available
 	 * in the global context for other overlay formatters to reference.
 	 *
 	 * @param mixed $val The overlay type attribute value.
-	 * @param array $def The attribute definition.
+	 * @param array $_def The attribute definition.
 	 * @return array Empty array - no CSS rules generated.
 	 */
-	private static function format_overlay_type( $val, $def = array() ): array {
+	private static function format_overlay_type( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		// This formatter doesn't generate CSS but ensures overlayType is tracked
 		// for use by other overlay formatters.
 		return array();
@@ -2075,13 +2079,13 @@ class ResponsiveAttributeCSS {
 	 * Format image scale value for CSS object-fit property.
 	 *
 	 * Converts WordPress image scale values to CSS object-fit values.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param mixed $val The scale value.
 	 * @return string CSS object-fit value.
 	 */
-	private static function format_image_scale( $val ): string {
+	private static function format_image_scale( $val ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
 		if ( is_null( $val ) ) {
 			return 'fill';
 		}

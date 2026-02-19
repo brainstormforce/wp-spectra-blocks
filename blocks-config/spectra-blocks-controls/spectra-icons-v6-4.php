@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Font awesome icons array array file.
  *
- * @package     UAGB
+ * @package     SpectraBlocks
  * @author      Brainstorm Force
  * @link        https://wpspectra.com/
  */

@@ -15,7 +15,7 @@ use WP_HTML_Tag_Processor;
 
 /**
  * Animations class.
- * 
+ *
  * @since 3.0.0
  */
 class Animations {
@@ -24,7 +24,7 @@ class Animations {
 
 	/**
 	 * Flag indicating if animation assets are needed.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @var bool
@@ -37,7 +37,7 @@ class Animations {
 	 * Hooks into render_block, asset registration, and conditional asset enqueue.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function init() {
@@ -88,11 +88,11 @@ class Animations {
 	 * Enqueue AOS CSS and JS assets.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function enqueue_block_assets() {
-		
+
 		if ( ! wp_script_is( 'spectra-blocks-aos-js', 'registered' ) ) {
 			wp_register_script( 'spectra-blocks-aos-js', SPECTRA_BLOCKS_URL . 'assets/js/aos.min.js', array(), SPECTRA_BLOCKS_VER, true );
 		}
@@ -109,14 +109,14 @@ class Animations {
 	 * Handle frontend asset registration and enqueueing
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	public function handle_frontend_assets() {
 		if ( is_admin() ) {
 			return;
 		}
-		
+
 		$this->register_animation_assets();
 
 		// Enqueue AOS assets. if needed.
@@ -129,7 +129,7 @@ class Animations {
 
 	/**
 	 * Determine whether the block should be processed for animations.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $block Block data.
@@ -143,7 +143,7 @@ class Animations {
 
 	/**
 	 * Retrieve sanitized animation attributes.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param array $attrs Block attributes.
@@ -163,7 +163,7 @@ class Animations {
 	 * Apply animation attributes to block content.
 	 *
 	 * Uses WP_HTML_Tag_Processor to safely inject data attributes into the first tag.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $content    Block content.
@@ -193,7 +193,7 @@ class Animations {
 	 * Check if a block is allowed for animations.
 	 *
 	 * Uses allowed prefixes to determine if a block should receive AOS attributes.
-	 * 
+	 *
 	 * @since 3.0.0
 	 *
 	 * @param string $block_name Block name.
@@ -207,7 +207,7 @@ class Animations {
 	 * Register animation assets.
 	 *
 	 * @since 3.0.0
-	 * 
+	 *
 	 * @return void
 	 */
 	private function register_animation_assets() {
@@ -220,4 +220,4 @@ class Animations {
 			true
 		);
 	}
-} 
+}

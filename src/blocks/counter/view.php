@@ -1,15 +1,13 @@
 <?php
 /**
  * View for rendering the counter block.
- * 
+ *
  * @since 3.0.0
  *
  * @package Spectra\Blocks\Counter
  */
 
-
 defined( 'ABSPATH' ) || exit;
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 use Spectra\Helpers\HtmlSanitizer;
 
 // Add prefix, suffix, and separator data attributes to wrapper attributes before sanitization.
@@ -25,7 +23,7 @@ $wrapper_attributes   .= $additional_attributes;
 
 ?>
 <?php
-if ( 'circular' === $counter_style ) : 
+if ( 'circular' === $counter_style ) :
 	// Parse progress size (apply default only when used, following icon pattern).
 	$size_value = (int) str_replace( 'px', '', $progress_size ? $progress_size : '300px' );
 	if ( $size_value <= 0 ) {
@@ -68,7 +66,7 @@ if ( 'circular' === $counter_style ) :
 		</div>
 	</div>
 	<?php
-else : 
+else :
 	// Simple and bar styles - render content directly (includes counter-child-wrapper).
 	?>
 	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
