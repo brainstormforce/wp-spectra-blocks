@@ -1,5 +1,8 @@
 node_modules/
 vendor/
+lib/
+build/
+admin/assets/build/
 *.zip
 .DS_Store
 .claude/
