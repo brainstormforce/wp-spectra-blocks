@@ -75,7 +75,7 @@ const QuickAccess = () => {
 				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
 					<a
 						className="no-underline hover:underline hover:text-field-label"
-						href="https://wordpress.org/support/plugin/spectra-blocks/reviews/?rate=5#new-post"
+						href="https://wordpress.org/support/plugin/spectra-blocks/reviews/"
 						target="_blank"
 						rel="noreferrer"
 					>

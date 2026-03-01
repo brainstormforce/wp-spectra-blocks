@@ -168,12 +168,12 @@ class Common_Settings extends Ajax_Base {
 	 *  @since 2.5.0
 	 */
 	private function check_post_value( $key = 'value' ) {
-		// nonce verification done in function check_permission_nonce.
+		// Nonce verification done in check_permission_nonce() which must be called before this method.
 		if ( ! isset( $_POST[ $key ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			wp_send_json_error( array( 'messsage' => __( 'No post data found!', 'spectra-blocks' ) ) );
 		}
-		// security validation done as per data type in function save_admin_settings.
-		return wp_unslash( $_POST[ $key ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification.Missing
+		// Apply base sanitization; callers should still sanitize per their own data type.
+		return sanitize_text_field( wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -183,30 +183,12 @@ class Common_Settings extends Ajax_Base {
 	 */
 	public function pro_activate() {
 		$this->check_permission_nonce( 'spectra_blocks_pro_activate', 'activate_plugins' );
-		wp_clean_plugins_cache();
-		$value = $this->check_post_value();
-		$value = sanitize_text_field( wp_unslash( $value ) );
 
-		if ( empty( $value ) ) {
-			$response_data = array( 'messsage' => $this->get_error_msg( 'default' ) );
-			wp_send_json_error( $response_data );
-		}
-
-		$activate = activate_plugin( 'spectra-pro/spectra-pro.php' );
-
-		if ( is_wp_error( $activate ) ) {
-			wp_send_json_error(
-				array(
-					'success' => false,
-					'message' => $activate->get_error_message(),
-				)
-			);
-		}
-
+		// Return redirect URL instead of activating directly — activation should be done from the Plugins page.
 		wp_send_json_success(
 			array(
-				'success' => true,
-				'message' => __( 'Plugin Successfully Activated', 'spectra-blocks' ),
+				'redirect' => admin_url( 'plugins.php' ),
+				'message'  => __( 'Please activate the plugin from the Plugins page.', 'spectra-blocks' ),
 			)
 		);
 	}
@@ -710,12 +692,6 @@ class Common_Settings extends Ajax_Base {
 	public function enable_legacy_design_library() {
 		$this->check_permission_nonce( 'spectra_blocks_enable_legacy_design_library' );
 		$value = $this->check_post_value();
-
-		// 'register-v2-blocks' is an intentional shared cross-plugin option key (no spectra_blocks_ prefix)
-		// used by the original Spectra plugin to toggle V2 block registration. Kept as-is for compatibility.
-		$v2_blocks_value = 'enabled' === $value ? 'yes' : 'no';
-		update_option( 'register-v2-blocks', $v2_blocks_value );
-
 		$this->save_admin_settings( 'spectra_blocks_enable_legacy_design_library', sanitize_text_field( $value ) );
 	}
 

@@ -106,7 +106,6 @@ class Spectra_Blocks_Loader {
 	private static function setup_hooks() {
 		add_action( 'plugins_loaded', array( __CLASS__, 'load_plugin' ) );
 		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
-
 		register_activation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_activation' ) );
 		register_deactivation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_deactivation' ) );
 	}

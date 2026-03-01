@@ -125,7 +125,7 @@ $close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['
 	</div>
 
 </div>
-<script><?php echo $js; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JavaScript output is controlled and generated in controller.php ?></script>
+<?php wp_print_inline_script_tag( $js ); ?>
 <?php
 // Clean up global context.
 unset( $GLOBALS['spectra_v3_popup_context'] );

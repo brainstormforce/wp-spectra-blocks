@@ -9,9 +9,9 @@
  * @since 3.0.0
  *
  * phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
- * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
- * phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedInterfaceFound
  */
+
+namespace Spectra;
 
 defined( 'ABSPATH' ) || exit;
 

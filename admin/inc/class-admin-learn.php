@@ -48,7 +48,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/add-your-first-block.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/add-your-first-block.png',
 									'alt' => __( 'Add Your First Spectra Block in Editor', 'spectra-blocks' ),
 								),
 							),
@@ -69,7 +69,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/01/insert-ready-made-template-1.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/insert-ready-made-template-1.png',
 									'alt' => __( 'Inseart the Ready-Made Spectra sections in Editor', 'spectra-blocks' ),
 								),
 							),
@@ -98,7 +98,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/replace-placeholder-content.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/replace-placeholder-content.png',
 									'alt' => __( 'Replace Placeholder Content', 'spectra-blocks' ),
 								),
 							),
@@ -119,7 +119,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/customize-cta-sections.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/customize-cta-sections.png',
 									'alt' => __( 'Customize CTA Sections in Astra', 'spectra-blocks' ),
 								),
 							),
@@ -140,7 +140,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/block-settings-styles.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/block-settings-styles.png',
 									'alt' => __( 'Block Settings & Styles', 'spectra-blocks' ),
 								),
 							),
@@ -173,7 +173,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/change-page-layout.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/change-page-layout.png',
 									'alt' => __( 'Choose Page Layout', 'spectra-blocks' ),
 								),
 							),
@@ -194,7 +194,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/show-and-hide-elements.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/show-and-hide-elements.png',
 									'alt' => __( 'Show or Hide Elements', 'spectra-blocks' ),
 								),
 							),
@@ -226,7 +226,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/open-global-styles.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/open-global-styles.png',
 									'alt' => __( 'Open Global Styles', 'spectra-blocks' ),
 								),
 							),
@@ -248,7 +248,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/find-global-styles-in-block-settings.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/find-global-styles-in-block-settings.png',
 									'alt' => __( 'Find Global Styles in Block Settings', 'spectra-blocks' ),
 								),
 							),
@@ -270,7 +270,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/set-global-colors-fonts-spacing.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/set-global-colors-fonts-spacing.png',
 									'alt' => __( 'Set Global Colors, Fonts & Spacing', 'spectra-blocks' ),
 								),
 							),
@@ -292,7 +292,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/use-block-defaults.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/use-block-defaults.png',
 									'alt' => __( 'Use Block Defaults', 'spectra-blocks' ),
 								),
 							),
@@ -324,7 +324,7 @@ class Admin_Learn {
 						'content' => array(
 							'type' => 'image',
 							'data' => array(
-								'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/preview-your-changes.png',
+								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/preview-your-changes.png',
 								'alt' => __( 'Preview Your Changes', 'spectra-blocks' ),
 							),
 						),
@@ -345,7 +345,7 @@ class Admin_Learn {
 						'content' => array(
 							'type' => 'image',
 							'data' => array(
-								'src' => 'https://wpspectra.com/wp-content/uploads/2026/02/publish-your-page.png',
+								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/publish-your-page.png',
 								'alt' => __( 'Publish Your Page', 'spectra-blocks' ),
 							),
 						),

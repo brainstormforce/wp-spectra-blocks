@@ -945,9 +945,10 @@ class HtmlSanitizer {
 		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
 		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
 
-		// Restore style tag if it was extracted.
+		// Restore style tag if it was extracted — strip any HTML tags from CSS content for safety.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
-			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
+			$style_content = wp_strip_all_tags( $style_content );
+			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 
 		if ( $should_echo ) {
@@ -957,6 +958,184 @@ class HtmlSanitizer {
 		}
 
 		return $sanitized;
+	}
+
+	/**
+	 * Get the allowed SVG tags and attributes for wp_kses().
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array Allowed SVG tags with their attributes.
+	 */
+	public static function get_svg_allowed_tags(): array {
+		return array(
+			'svg'      => array(
+				'aria-controls'       => true,
+				'aria-current'        => true,
+				'aria-describedby'    => true,
+				'aria-details'        => true,
+				'aria-expanded'       => true,
+				'aria-hidden'         => true,
+				'aria-label'          => true,
+				'aria-labelledby'     => true,
+				'aria-live'           => true,
+				'class'               => true,
+				'role'                => true,
+				'xmlns'               => true,
+				'width'               => true,
+				'height'              => true,
+				'viewBox'             => true,
+				'viewbox'             => true,
+				'preserveAspectRatio' => true,
+				'preserveaspectratio' => true,
+				'fill'                => true,
+				'focusable'           => true,
+				'stroke'              => true,
+				'stroke-width'        => true,
+				'fill-rule'           => true,
+				'stroke-linecap'      => true,
+				'stroke-linejoin'     => true,
+				'stroke-miterlimit'   => true,
+				'style'               => true,
+			),
+			'g'        => array(
+				'transform' => true,
+				'style'     => true,
+				'class'     => true,
+				'fill'      => true,
+				'stroke'    => true,
+			),
+			'path'     => array(
+				'd'               => true,
+				'fill'            => true,
+				'opacity'         => true,
+				'stroke'          => true,
+				'stroke-width'    => true,
+				'stroke-linecap'  => true,
+				'stroke-linejoin' => true,
+				'transform'       => true,
+				'style'           => true,
+				'class'           => true,
+			),
+			'circle'   => array(
+				'cx'           => true,
+				'cy'           => true,
+				'r'            => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+			),
+			'rect'     => array(
+				'x'            => true,
+				'y'            => true,
+				'width'        => true,
+				'height'       => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+				'rx'           => true,
+				'ry'           => true,
+			),
+			'line'     => array(
+				'x1'           => true,
+				'y1'           => true,
+				'x2'           => true,
+				'y2'           => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+			),
+			'polygon'  => array(
+				'points'       => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+			),
+			'polyline' => array(
+				'points'       => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+			),
+			'ellipse'  => array(
+				'cx'           => true,
+				'cy'           => true,
+				'rx'           => true,
+				'ry'           => true,
+				'fill'         => true,
+				'stroke'       => true,
+				'stroke-width' => true,
+				'style'        => true,
+				'class'        => true,
+				'transform'    => true,
+			),
+			'text'     => array(
+				'x'           => true,
+				'y'           => true,
+				'fill'        => true,
+				'stroke'      => true,
+				'font-family' => true,
+				'font-size'   => true,
+				'text-anchor' => true,
+				'style'       => true,
+				'class'       => true,
+				'transform'   => true,
+			),
+			'defs'     => array(
+				'class' => true,
+			),
+			'clippath' => array(
+				'id'    => true,
+				'class' => true,
+			),
+			'clipPath' => array(
+				'id'    => true,
+				'class' => true,
+			),
+			'mask'     => array(
+				'id'    => true,
+				'class' => true,
+			),
+			'use'      => array(
+				'href'       => true,
+				'xlink:href' => true,
+				'x'          => true,
+				'y'          => true,
+				'width'      => true,
+				'height'     => true,
+				'transform'  => true,
+				'style'      => true,
+				'class'      => true,
+			),
+			'symbol'   => array(
+				'id'      => true,
+				'viewBox' => true,
+				'viewbox' => true,
+				'class'   => true,
+			),
+			'title'    => array(
+				'id'    => true,
+				'class' => true,
+			),
+			'desc'     => array(
+				'id'    => true,
+				'class' => true,
+			),
+		);
 	}
 
 	/**

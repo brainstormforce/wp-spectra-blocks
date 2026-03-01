@@ -4,7 +4,6 @@
 node_modules/
 package.json
 package-lock.json
-composer.json
 composer.lock
 phpcs.xml
 webpack.config.js

@@ -44,8 +44,7 @@ class Renderer {
 				$svg_content       = self::add_svg_attributes( $svg_content, $additional_props, $flip_for_rtl );
 				$sanitized_content = HtmlSanitizer::sanitize_svg( $svg_content );
 
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is sanitized by HtmlSanitizer::sanitize_svg().
-				echo $sanitized_content;
+				echo wp_kses( $sanitized_content, HtmlSanitizer::get_svg_allowed_tags() );
 			}
 			return;
 		}
@@ -53,8 +52,7 @@ class Renderer {
 		// Handle raw SVG content.
 		if ( ! empty( $icon ) && is_string( $icon ) && strpos( $icon, '<svg' ) !== false ) {
 			$svg_content = self::add_svg_attributes( $icon, $additional_props, $flip_for_rtl );
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is sanitized by HtmlSanitizer::sanitize_svg()
-			echo HtmlSanitizer::sanitize_svg( $svg_content );
+			echo wp_kses( HtmlSanitizer::sanitize_svg( $svg_content ), HtmlSanitizer::get_svg_allowed_tags() );
 			return;
 		}
 

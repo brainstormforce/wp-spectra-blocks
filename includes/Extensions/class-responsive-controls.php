@@ -751,7 +751,8 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				wp_add_inline_style( $this->style_handle, $combined_css );
+				// wp_add_inline_style() handles sanitization internally.
+				wp_add_inline_style( $this->style_handle, wp_strip_all_tags( $combined_css ) );
 
 				// Mark as added to avoid duplicates.
 				$this->inline_css_added[ $spectra_id ] = true;

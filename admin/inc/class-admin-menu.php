@@ -195,14 +195,13 @@ class Admin_Menu {
 					}
 				}
 
-				$activate = activate_plugins( $plugin );
-
-				if ( ! is_wp_error( $activate ) ) {
-
-					do_action( 'spectra_blocks_plugin_activated', $plugin );
-
-					wp_send_json_success( esc_html__( 'Plugin Activated.', 'spectra-blocks' ) );
-				}
+				// Return redirect URL instead of activating directly — activation should be done from the Plugins page.
+				wp_send_json_success(
+					array(
+						'redirect' => admin_url( 'plugins.php' ),
+						'message'  => esc_html__( 'Please activate the plugin from the Plugins page.', 'spectra-blocks' ),
+					)
+				);
 			}
 
 			if ( 'theme' === $type ) {
@@ -220,23 +219,22 @@ class Admin_Menu {
 						\BSF_UTM_Analytics\Inc\Utils::update_referer( 'spectra-blocks', $slug );
 					}
 
-					$activate = switch_theme( $slug );
-
-					if ( ! is_wp_error( $activate ) ) {
-
-						do_action( 'spectra_blocks_theme_activated', $plugin );
-
-						wp_send_json_success( esc_html__( 'Theme Activated.', 'spectra-blocks' ) );
-					}
+					// Return redirect URL instead of switching directly — activation should be done from the Themes page.
+					wp_send_json_success(
+						array(
+							'redirect' => admin_url( 'themes.php' ),
+							'message'  => esc_html__( 'Please activate the theme from the Themes page.', 'spectra-blocks' ),
+						)
+					);
 				}
 			}
 		}
 
 		if ( isset( $type ) ) {
 			if ( 'plugin' === $type ) {
-				wp_send_json_error( esc_html__( 'Could not activate plugin. Please activate from the Plugins page.', 'spectra-blocks' ) );
+				wp_send_json_error( esc_html__( 'Could not process plugin. Please activate from the Plugins page.', 'spectra-blocks' ) );
 			} elseif ( 'theme' === $type ) {
-				wp_send_json_error( esc_html__( 'Could not activate theme. Please activate from the Themes page.', 'spectra-blocks' ) );
+				wp_send_json_error( esc_html__( 'Could not process theme. Please activate from the Themes page.', 'spectra-blocks' ) );
 			}
 		}
 	}

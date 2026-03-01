@@ -875,8 +875,8 @@ class BlockUsageTracker {
 		if ( 'spectra-pro' === $block_prefix ) {
 			// Check multiple possible locations for Spectra Pro blocks.
 			$possible_dirs = array(
-				WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/build/blocks/',
-				WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/src/blocks/',
+				wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/build/blocks/' ),
+				wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/src/blocks/' ),
 			);
 
 			$blocks_dir = '';
@@ -1071,7 +1071,7 @@ class BlockUsageTracker {
 	 */
 	private function is_spectra_pro_available() {
 		// Check if Spectra Pro plugin directory exists.
-		$pro_plugin_dir = WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2';
+		$pro_plugin_dir = wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2' );
 		if ( ! is_dir( $pro_plugin_dir ) ) {
 			return false;
 		}

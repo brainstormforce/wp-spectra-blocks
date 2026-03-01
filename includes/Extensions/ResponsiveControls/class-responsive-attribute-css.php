@@ -371,9 +371,8 @@ class ResponsiveAttributeCSS {
 		}
 
 		// Make attributes globally available for formatters.
-		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		$current_block_attrs = $attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		global $spectra_blocks_current_block_attrs;
+		$spectra_blocks_current_block_attrs = $attrs;
 
 		$css_rules = array();
 		$defs      = $attr_definitions[ $block_name ];
@@ -1768,21 +1767,21 @@ class ResponsiveAttributeCSS {
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_position( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
+		global $spectra_blocks_current_block_attrs;
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array();
 		}
 
 		$position_value = '50% 50%'; // Default center position.
 
 		// Handle custom positioning mode with any unit.
-		if ( isset( $current_block_attrs['overlayPositionMode'] ) && 'custom' === $current_block_attrs['overlayPositionMode'] ) {
+		if ( isset( $spectra_blocks_current_block_attrs['overlayPositionMode'] ) && 'custom' === $spectra_blocks_current_block_attrs['overlayPositionMode'] ) {
 			// If centralized position is enabled, force both to 50%.
-			if ( isset( $current_block_attrs['overlayPositionCentered'] ) && $current_block_attrs['overlayPositionCentered'] ) {
+			if ( isset( $spectra_blocks_current_block_attrs['overlayPositionCentered'] ) && $spectra_blocks_current_block_attrs['overlayPositionCentered'] ) {
 				$position_value = '50% 50%';
 			} else {
-				$x_pos          = isset( $current_block_attrs['overlayPositionX'] ) ? $current_block_attrs['overlayPositionX'] : '0%';
-				$y_pos          = isset( $current_block_attrs['overlayPositionY'] ) ? $current_block_attrs['overlayPositionY'] : '0%';
+				$x_pos          = isset( $spectra_blocks_current_block_attrs['overlayPositionX'] ) ? $spectra_blocks_current_block_attrs['overlayPositionX'] : '0%';
+				$y_pos          = isset( $spectra_blocks_current_block_attrs['overlayPositionY'] ) ? $spectra_blocks_current_block_attrs['overlayPositionY'] : '0%';
 				$position_value = $x_pos . ' ' . $y_pos;
 			}
 		} elseif ( is_array( $val ) && isset( $val['x'] ) && isset( $val['y'] ) ) {
@@ -1817,8 +1816,8 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
+		global $spectra_blocks_current_block_attrs;
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array();
 		}
 		return array(
@@ -1843,8 +1842,8 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
+		global $spectra_blocks_current_block_attrs;
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array();
 		}
 		return array(
@@ -1870,14 +1869,14 @@ class ResponsiveAttributeCSS {
 		if ( is_null( $val ) || '' === $val ) {
 			return array();
 		}
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] ) {
+		global $spectra_blocks_current_block_attrs;
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array();
 		}
 
 		// Handle custom size with width.
 		if ( 'custom' === $val ) {
-			$width = isset( $current_block_attrs['overlayCustomWidth'] ) ? $current_block_attrs['overlayCustomWidth'] : '100%';
+			$width = isset( $spectra_blocks_current_block_attrs['overlayCustomWidth'] ) ? $spectra_blocks_current_block_attrs['overlayCustomWidth'] : '100%';
 			return array(
 				array(
 					'selector'   => '',
@@ -1905,10 +1904,10 @@ class ResponsiveAttributeCSS {
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_blend_mode( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		global $spectra_blocks_current_block_attrs;
 
 		// Check background type - if video, don't apply overlay.
-		$background_type = $current_block_attrs['background']['type'] ?? null;
+		$background_type = $spectra_blocks_current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
 			return array(
 				array(
@@ -1919,7 +1918,7 @@ class ResponsiveAttributeCSS {
 		}
 
 		// If overlayType is 'none' or not 'image', clear the overlay blend mode.
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] || 'none' === $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array(
 				array(
 					'selector'   => '',
@@ -1951,10 +1950,10 @@ class ResponsiveAttributeCSS {
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_opacity( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		global $spectra_blocks_current_block_attrs;
 
 		// Check background type - if video, don't apply overlay.
-		$background_type = $current_block_attrs['background']['type'] ?? null;
+		$background_type = $spectra_blocks_current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
 			return array(
 				array(
@@ -1965,7 +1964,7 @@ class ResponsiveAttributeCSS {
 		}
 
 		// If overlayType is 'none' or not 'image', clear the overlay opacity.
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] || 'none' === $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array(
 				array(
 					'selector'   => '',
@@ -2003,10 +2002,10 @@ class ResponsiveAttributeCSS {
 	 * @return array CSS rules with CSS custom properties.
 	 */
 	private static function format_overlay_image( $val, $_def = array() ): array { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
-		global $current_block_attrs; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
+		global $spectra_blocks_current_block_attrs;
 
 		// Check background type - if video, don't apply overlay.
-		$background_type = $current_block_attrs['background']['type'] ?? null;
+		$background_type = $spectra_blocks_current_block_attrs['background']['type'] ?? null;
 		if ( 'video' === $background_type ) {
 			return array(
 				array(
@@ -2017,7 +2016,7 @@ class ResponsiveAttributeCSS {
 		}
 
 		// If overlayType is 'none' or not 'image', clear the overlay image.
-		if ( ! isset( $current_block_attrs['overlayType'] ) || 'image' !== $current_block_attrs['overlayType'] || 'none' === $current_block_attrs['overlayType'] ) {
+		if ( ! isset( $spectra_blocks_current_block_attrs['overlayType'] ) || 'image' !== $spectra_blocks_current_block_attrs['overlayType'] || 'none' === $spectra_blocks_current_block_attrs['overlayType'] ) {
 			return array(
 				array(
 					'selector'   => '',

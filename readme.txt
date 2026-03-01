@@ -2,7 +2,7 @@
 Contributors: brainstormforce
 Tags: gutenberg, blocks, page builder, container, accordion
 Requires at least: 6.6
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 8.1
 Stable tag: 0.0.1
 License: GPL-2.0-or-later
@@ -28,11 +28,6 @@ All blocks support responsive conditions, animations, sticky positioning, and z-
 * Sticky container support
 * SVG upload support with server-side sanitization
 
-**Third-Party Services:**
-
-This plugin uses the Google Maps JavaScript API to render the Google Map block. Usage is subject to Google's [Terms of Service](https://developers.google.com/maps/terms) and [Privacy Policy](https://policies.google.com/privacy). An API key is required; no data is sent without a key being configured.
-
-The admin dashboard loads the Inter font from Google Fonts (fonts.googleapis.com) for use in the settings interface. This request is made when an admin visits the plugin settings page. Usage is subject to Google's [Privacy Policy](https://policies.google.com/privacy).
 
 == Installation ==
 
@@ -60,6 +55,66 @@ No. Spectra Blocks is a fully standalone plugin and does not require the origina
 2. Container block with Flex/Grid/Constrained layout options.
 3. Accordion block with customizable colors and animation settings.
 4. Tabs block with horizontal and vertical orientations.
+
+== Source Code ==
+
+This plugin's JavaScript and CSS are built from source files using standard WordPress build tools.
+
+* Block source files are located in the `src/` directory (excluded from the distribution zip for size).
+* Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
+* The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
+* Source code is available on GitHub: [https://github.com/brainstormforce/spectra-blocks](https://github.com/brainstormforce/spectra-blocks)
+
+To build from source:
+
+1. `npm install && npm run build` — compiles block JavaScript and CSS.
+2. `cd admin && npm install && npm run build` — compiles the admin dashboard React app.
+
+== External Services ==
+
+This plugin connects to the following third-party services under certain conditions:
+
+= Google Maps API =
+The Google Map block uses the Google Maps JavaScript API to render interactive maps. An API key must be configured by the user before any requests are made. No data is sent without a key being configured.
+* Service URL: `https://maps.googleapis.com/`
+* [Terms of Service](https://developers.google.com/maps/terms)
+* [Privacy Policy](https://policies.google.com/privacy)
+
+= Google Fonts =
+The admin dashboard settings page loads the Inter font from Google Fonts for the settings interface typography.
+* Service URL: `https://fonts.googleapis.com/`
+* [Privacy Policy](https://policies.google.com/privacy)
+
+= ZipWP API =
+When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
+* Service URL: `https://api.zipwp.com/`
+* [Terms of Service](https://zipwp.com/terms/)
+* [Privacy Policy](https://zipwp.com/privacy-policy/)
+
+= Starter Templates Credit Server =
+When AI features are enabled, the plugin checks the credit balance for AI content generation features.
+* Service URL: `https://credits.startertemplates.com/`
+* [Privacy Policy](https://startertemplates.com/privacy-policy/)
+
+= Brainstorm Force Store =
+When the "Get Spectra Pro" upsell is displayed, the plugin may fetch pricing and license information from the Brainstorm Force store.
+* Service URL: `https://store.brainstormforce.com/`
+* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+= ipify =
+When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
+* Service URL: `https://api.ipify.org/`
+* [Privacy Policy](https://www.ipify.org/)
+
+= WordPress.org =
+When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
+* Service URL: `https://downloads.wordpress.org/`
+* [Privacy Policy](https://wordpress.org/about/privacy/)
+
+= WebsiteDemos.net =
+When the Starter Templates library is enabled, template data may be synced from the WebsiteDemos.net service.
+* Service URL: `https://websitedemos.net/`
+* [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 == Changelog ==
 
