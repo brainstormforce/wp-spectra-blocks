@@ -173,6 +173,43 @@ module.exports = function ( grunt ) {
 
 	grunt.loadNpmTasks( 'grunt-text-replace' );
 
+	// ── Custom tasks ────────────────────────────────────────────────────
+
+	// Add missing ABSPATH direct-access guards to lib PHP files.
+	// WordPress.org requires every PHP file to prevent direct access.
+	grunt.registerTask( 'lib-abspath-guard', 'Add ABSPATH exit guard to lib PHP files', function () {
+		const glob = require( 'glob' );
+		const guard = "defined( 'ABSPATH' ) || exit;";
+		const files = glob.sync( 'lib/**/*.php', { cwd: PLUGIN_ROOT } );
+		let patched = 0;
+
+		files.forEach( function ( relPath ) {
+			const filePath = path.join( PLUGIN_ROOT, relPath );
+			const content = fs.readFileSync( filePath, 'utf8' );
+
+			// Skip files that already have an ABSPATH check.
+			if ( /defined\s*\(\s*['"]ABSPATH['"]\s*\)/.test( content ) ) {
+				return;
+			}
+
+			// Insert guard after the opening docblock, or after <?php if no docblock.
+			let updated;
+			const docblockEnd = content.indexOf( '*/\n' );
+			if ( docblockEnd !== -1 && docblockEnd < 200 ) {
+				const pos = docblockEnd + 3; // after "*/\n"
+				updated = content.slice( 0, pos ) + '\n' + guard + '\n' + content.slice( pos );
+			} else {
+				updated = content.replace( /^<\?php\s*\n/, '<?php\n' + guard + '\n' );
+			}
+
+			fs.writeFileSync( filePath, updated, 'utf8' );
+			patched++;
+			grunt.log.writeln( '  ✓ ' + relPath );
+		} );
+
+		grunt.log.ok( 'Patched ' + patched + ' file(s) with ABSPATH guard.' );
+	} );
+
 	// ── Composite tasks ──────────────────────────────────────────────────
 
 	// Sync all lib text domains (JS + PHP) to plugin slug.
@@ -181,6 +218,7 @@ module.exports = function ( grunt ) {
 		'replace:lib_php_textdomain',
 		'replace:lib_php_add_textdomain',
 	] );
+
 
 	// Version bump: grunt bump-version --ver=<version>
 	grunt.registerTask( 'bump-version', function () {
