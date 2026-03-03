@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, page builder, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.1
+Stable tag: 0.0.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,6 +117,16 @@ When the Starter Templates library is enabled, template data may be synced from 
 * [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 == Changelog ==
+
+= 0.0.2 =
+* Fix: Address WordPress.org plugin review compliance issues.
+* Fix: Sanitize all input data and escape all output.
+* Fix: Use wp_print_inline_script_tag() for inline scripts.
+* Fix: Prefix all global variables and class names.
+* Fix: Bundle learn section images locally.
+* Fix: Remove direct plugin activation and theme switching.
+* Fix: Document all external services in readme.txt.
+* Update: Tested up to WordPress 6.9.
 
 = 0.0.1 =
 * Initial release.

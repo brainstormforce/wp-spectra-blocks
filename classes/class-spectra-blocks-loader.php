@@ -72,9 +72,6 @@ class Spectra_Blocks_Loader {
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-nps-survey.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-nps-survey.php';
 		}
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-utm-analytics.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-utm-analytics.php';
-		}
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-zipwp-images.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-zipwp-images.php';
 		}
@@ -101,23 +98,26 @@ class Spectra_Blocks_Loader {
 	}
 
 	/**
-	 * Set up activation/deactivation hooks and text domain.
+	 * Set up activation/deactivation hooks.
 	 */
 	private static function setup_hooks() {
 		add_action( 'plugins_loaded', array( __CLASS__, 'load_plugin' ) );
-		add_action( 'init', array( __CLASS__, 'load_textdomain' ) );
 		register_activation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_activation' ) );
 		register_deactivation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_deactivation' ) );
+
+		// Sync lib text domains to plugin slug for WP.org compliance.
+		add_filter( 'zip_ai_library_textdomain', array( __CLASS__, 'sync_library_textdomain' ) );
 	}
 
 	/**
-	 * Load plugin text domain for translations.
+	 * Sync library text domains to the plugin text domain.
 	 *
 	 * @since x.x.x
-	 * @return void
+	 * @param string $textdomain The library text domain.
+	 * @return string The plugin text domain.
 	 */
-	public static function load_textdomain() {
-		load_plugin_textdomain( 'spectra-blocks', false, dirname( SPECTRA_BLOCKS_BASE ) . '/languages/' );
+	public static function sync_library_textdomain( $textdomain ) {
+		return 'spectra-blocks';
 	}
 
 	/**

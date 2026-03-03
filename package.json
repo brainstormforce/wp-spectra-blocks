@@ -1,6 +1,6 @@
 {
 	"name": "spectra-blocks",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Spectra Blocks - A fresh Gutenberg block plugin",
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",
@@ -12,9 +12,11 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
 		"packages-update": "wp-scripts packages-update",
-		"makepot": "wp i18n make-pot . languages/spectra-blocks.pot --skip-audit --exclude=node_modules,vendor,lib,build,admin/assets/build,admin/assets/src,bin",
+		"synctextdomains": "grunt synctextdomains",
+		"i18n": "grunt i18n",
+		"makepot": "grunt i18n && wp i18n make-pot . languages/spectra-blocks.pot --skip-audit --exclude=node_modules,vendor,lib,build,admin/assets/build,admin/assets/src,bin",
 		"update-icons": "node bin/generate-icons.js",
-		"zip": "bash bin/create-zip.sh",
+		"zip": "grunt zip",
 		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
 		"start:fresh": "del-cli build/* && wp-scripts start --experimental-modules --webpack-copy-php"
 	},
@@ -33,7 +35,9 @@
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.5.0",
-		"del-cli": "^7.0.0"
+		"del-cli": "^7.0.0",
+		"grunt": "^1.6.1",
+		"grunt-text-replace": "^0.4.0"
 	},
 	"overrides": {
 		"minimatch": ">=10.2.1",

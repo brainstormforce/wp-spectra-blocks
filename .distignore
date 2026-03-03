@@ -6,9 +6,13 @@ package.json
 package-lock.json
 composer.lock
 phpcs.xml
+phpcs.xml.dist
+phpinsights.php
 webpack.config.js
+Gruntfile.js
 babel.config.js
 jest.config.js
+bin/
 
 # Source files (compiled build/ is included, raw src/ is not needed)
 src/
@@ -20,13 +24,21 @@ phpunit.xml.dist
 playwright.config.js
 e2e/
 
-# CI / git
+# CI / git / linter configs
 .github/
 .travis.yml
 .circleci/
 .gitignore
 .gitattributes
+.distignore
 .editorconfig
+.eslintrc.js
+.eslintignore
+.prettierrc.js
+.prettierignore
+.stylelintrc
+.stylelintignore
+.browserslistrc
 
 # Docs & IDE
 *.md
@@ -38,6 +50,14 @@ e2e/
 # Private / internal
 CLAUDE.md
 wp-org-submission-report*.md
+.claude/
+.git/
+
+# Archive artifacts in lib/
+*.zip
+
+# Composer installs BSF libs into vendor/brainstormforce/ but plugin loads from lib/ — exclude duplicate
+vendor/brainstormforce/
 
 # Admin source (admin/assets/build/ is included, raw source is not needed)
 admin/assets/src/

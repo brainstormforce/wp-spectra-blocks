@@ -11,7 +11,6 @@
         "brainstormforce/zip-ai": "~2",
         "brainstormforce/astra-notices": "~1",
         "brainstormforce/nps-survey": "^1",
-        "brainstormforce/utm-analytics": "^0.0.3",
         "brainstormforce/zipwp-images": "^1",
         "brainstormforce/gutenberg-templates": "~2"
     },
@@ -32,11 +31,6 @@
             "url": "git@github.com:brainstormforce/zipwp-images.git"
         },
         {
-            "name": "brainstormforce/utm-analytics",
-            "type": "vcs",
-            "url": "git@github.com:brainstormforce/utm-analytics.git"
-        },
-        {
             "name": "brainstormforce/nps-survey",
             "type": "vcs",
             "url": "git@github.com:brainstormforce/nps-survey.git"
@@ -54,7 +48,6 @@
                 "brainstormforce/zip-ai",
                 "brainstormforce/astra-notices",
                 "brainstormforce/nps-survey",
-                "brainstormforce/utm-analytics",
                 "brainstormforce/zipwp-images",
                 "brainstormforce/gutenberg-templates"
             ]
