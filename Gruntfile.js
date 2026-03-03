@@ -177,6 +177,8 @@ module.exports = function ( grunt ) {
 
 	// Add missing ABSPATH direct-access guards to lib PHP files.
 	// WordPress.org requires every PHP file to prevent direct access.
+	// For namespaced files the guard goes AFTER namespace/use (PHP requirement).
+	// For non-namespaced files the guard goes after the opening docblock.
 	grunt.registerTask( 'lib-abspath-guard', 'Add ABSPATH exit guard to lib PHP files', function () {
 		const glob = require( 'glob' );
 		const guard = "defined( 'ABSPATH' ) || exit;";
@@ -192,14 +194,29 @@ module.exports = function ( grunt ) {
 				return;
 			}
 
-			// Insert guard after the opening docblock, or after <?php if no docblock.
 			let updated;
-			const docblockEnd = content.indexOf( '*/\n' );
-			if ( docblockEnd !== -1 && docblockEnd < 200 ) {
-				const pos = docblockEnd + 3; // after "*/\n"
-				updated = content.slice( 0, pos ) + '\n' + guard + '\n' + content.slice( pos );
+
+			// Find the last `use ...;` line — guard goes after it.
+			const lastUse = content.match( /^use\s+[^;]+;\s*\n/gm );
+			const hasNamespace = /^namespace\s+/m.test( content );
+
+			if ( hasNamespace && lastUse ) {
+				// Insert after the last use statement.
+				const lastUseStr = lastUse[ lastUse.length - 1 ];
+				const lastUsePos = content.lastIndexOf( lastUseStr ) + lastUseStr.length;
+				updated = content.slice( 0, lastUsePos ) + '\n' + guard + '\n' + content.slice( lastUsePos );
+			} else if ( hasNamespace ) {
+				// Namespace but no use — insert after namespace line.
+				updated = content.replace( /(^namespace\s+[^;]+;\s*\n)/m, '$1\n' + guard + '\n' );
 			} else {
-				updated = content.replace( /^<\?php\s*\n/, '<?php\n' + guard + '\n' );
+				// No namespace — insert after opening docblock or after <?php.
+				const docblockEnd = content.indexOf( '*/\n' );
+				if ( docblockEnd !== -1 && docblockEnd < 200 ) {
+					const pos = docblockEnd + 3;
+					updated = content.slice( 0, pos ) + '\n' + guard + '\n' + content.slice( pos );
+				} else {
+					updated = content.replace( /^<\?php\s*\n/, '<?php\n' + guard + '\n' );
+				}
 			}
 
 			fs.writeFileSync( filePath, updated, 'utf8' );
