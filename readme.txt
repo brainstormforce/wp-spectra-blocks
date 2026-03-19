@@ -101,6 +101,12 @@ When the "Get Spectra Pro" upsell is displayed, the plugin may fetch pricing and
 * Service URL: `https://store.brainstormforce.com/`
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
+= Unsplash =
+When using the AI-powered image library, images may be fetched from Unsplash. The bundled ZipWP Images library downloads free stock photos based on user-selected keywords. Image URLs and attribution data are retrieved from the Unsplash API.
+* Service URL: `https://unsplash.com/`
+* [Terms of Service](https://unsplash.com/terms)
+* [Privacy Policy](https://unsplash.com/privacy)
+
 = ipify =
 When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
 * Service URL: `https://api.ipify.org/`
