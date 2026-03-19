@@ -47,7 +47,8 @@ const VideoTutorials = () => {
 
 	const getThumbnailUrl = ( videoUrl ) => {
 		const videoId = videoUrl.split( '/embed/' )[ 1 ];
-		return `https://img.youtube.com/vi/${ videoId }/hqdefault.jpg`;
+		const pluginUrl = spectra_blocks_react?.plugin_url || '';
+		return `${ pluginUrl }assets/admin/images/video-thumb-${ videoId }.jpg`;
 	};
 
 	return (

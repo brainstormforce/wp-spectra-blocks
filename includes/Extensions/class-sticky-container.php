@@ -179,6 +179,9 @@ class StickyContainer {
 		$existing_style = $processor->get_attribute( 'style' ) ? $processor->get_attribute( 'style' ) : '';
 
 		// Add sticky offset CSS custom property (offset already includes unit).
+		// Sanitize the offset value — do NOT use esc_attr() here because the value is passed
+		// to set_attribute() which already handles attribute escaping internally.
+		$offset       = sanitize_text_field( $offset );
 		$offset_style = "--spectra-sticky-offset: {$offset};";
 
 		// Add keepInsideParent CSS custom property.

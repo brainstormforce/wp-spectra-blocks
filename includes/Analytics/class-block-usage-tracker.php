@@ -874,9 +874,11 @@ class BlockUsageTracker {
 		// Determine the blocks directory based on prefix.
 		if ( 'spectra-pro' === $block_prefix ) {
 			// Check multiple possible locations for Spectra Pro blocks.
+			// Resolve the plugins directory by stripping trailing slash before dirname().
+			$plugins_base = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
 			$possible_dirs = array(
-				wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/build/blocks/' ),
-				wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2/src/blocks/' ),
+				$plugins_base . 'spectra-pro/spectra-pro-v2/build/blocks/',
+				$plugins_base . 'spectra-pro/spectra-pro-v2/src/blocks/',
 			);
 
 			$blocks_dir = '';
@@ -1070,8 +1072,10 @@ class BlockUsageTracker {
 	 * @return bool True if Spectra Pro is available, false otherwise.
 	 */
 	private function is_spectra_pro_available() {
-		// Check if Spectra Pro plugin directory exists.
-		$pro_plugin_dir = wp_normalize_path( WP_PLUGIN_DIR . '/spectra-pro/spectra-pro-v2' );
+		// Check if Spectra Pro plugin directory exists using function-based path resolution.
+		// Strip trailing slash before dirname() to reliably go up one level.
+		$plugins_base   = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
+		$pro_plugin_dir = $plugins_base . 'spectra-pro/spectra-pro-v2';
 		if ( ! is_dir( $pro_plugin_dir ) ) {
 			return false;
 		}

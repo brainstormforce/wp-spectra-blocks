@@ -116,6 +116,12 @@ When the Starter Templates library is enabled, template data may be synced from 
 * Service URL: `https://websitedemos.net/`
 * [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
+= YouTube =
+The admin dashboard settings page embeds tutorial videos from YouTube using the privacy-enhanced mode (youtube-nocookie.com). Videos are loaded only when a user clicks play on the admin dashboard. No user data is sent until playback is initiated.
+* Service URL: `https://www.youtube-nocookie.com/`
+* [Terms of Service](https://www.youtube.com/t/terms)
+* [Privacy Policy](https://policies.google.com/privacy)
+
 == Changelog ==
 
 = 0.0.2 =
