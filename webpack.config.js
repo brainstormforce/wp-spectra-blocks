@@ -15,6 +15,9 @@ const commonAliases = {
 module.exports = [
 	{
 		...defaultConfig[ 0 ],
+		performance: {
+			hints: false,
+		},
 		resolve: {
 			alias: {
 				...defaultConfig[ 0 ].resolve.alias,
