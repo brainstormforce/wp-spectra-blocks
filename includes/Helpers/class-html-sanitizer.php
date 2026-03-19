@@ -955,8 +955,7 @@ class HtmlSanitizer {
 		}
 
 		if ( $should_echo ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaping not required because it's already sanitized using wp_kses.
-			echo $sanitized;
+			echo wp_kses( $sanitized, self::get_render_allowed_tags() );
 			return;
 		}
 
@@ -1139,6 +1138,25 @@ class HtmlSanitizer {
 				'class' => true,
 			),
 		);
+	}
+
+	/**
+	 * Get allowed tags for render() output — combines post HTML, SVG, and style tags.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array Allowed tags with their attributes.
+	 */
+	public static function get_render_allowed_tags(): array {
+		$allowed = wp_kses_allowed_html( 'post' );
+		$allowed = array_merge( $allowed, self::get_svg_allowed_tags() );
+
+		// Allow style tag for SureForms inline styles restored during render.
+		$allowed['style'] = array(
+			'type' => true,
+		);
+
+		return $allowed;
 	}
 
 	/**

@@ -339,6 +339,7 @@ module.exports = function ( grunt ) {
 	grunt.registerTask( 'zip', 'Create production-ready zip for WordPress.org', [
 		'zip-build',
 		'zip-composer-prod',
+		'lib-abspath-guard',
 		'synctextdomains',
 		'zip-stage',
 		'zip-package',
