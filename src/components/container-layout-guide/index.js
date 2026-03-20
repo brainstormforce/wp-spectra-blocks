@@ -11,6 +11,7 @@ import {
  * Internal dependencies.
  */
 import './style.scss';
+import { getPluginUrl } from '@spectra-config';
 
 /**
  * Container Layout Guide Component
@@ -26,10 +27,12 @@ import './style.scss';
  */
 const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 
+	const guideVideoBase = `${ getPluginUrl() }assets/images/layout-guide/`;
+
 	// Guide pages explaining each layout type.
 	const guidePages = [
 		{
-			image: <img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Container-Layouts.gif" width="520" height="400" alt={ __( 'Container Layout Guide Introduction', 'spectra-blocks' ) } />,
+			image: <video src={ `${ guideVideoBase }Understanding-Container-Layouts.webm` } width="520" height="400" autoPlay loop muted playsInline />,
 			content: (
 				<div className="spectra-layout-guide__page">
 					<h2>{ __( 'Understanding Container Layouts', 'spectra-blocks' ) }</h2>
@@ -44,7 +47,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flow-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flow Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Flow-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -65,7 +68,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Flex-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Flex Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Flex-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -86,7 +89,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Grid-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Grid Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Grid-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -107,7 +110,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Constrained-Layout.gif" width="520" height="400" alt={ __( 'Container Layout Guide Constrained Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Constrained-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -128,7 +131,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Understanding-Layout-Changes-1.gif" width="520" height="400" alt={ __( 'Container Layout Guide Understanding Layout Changes', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Understanding-Layout-Changes-1.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -170,7 +173,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src="https://wpspectra.com/wp-content/uploads/2026/02/Content-Alignment.gif" width="520" height="400" alt={ __( 'Content Alignment', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Content-Alignment.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">

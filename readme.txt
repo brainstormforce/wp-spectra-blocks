@@ -101,6 +101,12 @@ When the "Get Spectra Pro" upsell is displayed, the plugin may fetch pricing and
 * Service URL: `https://store.brainstormforce.com/`
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
+= Unsplash =
+When using the AI-powered image library, images may be fetched from Unsplash. The bundled ZipWP Images library downloads free stock photos based on user-selected keywords. Image URLs and attribution data are retrieved from the Unsplash API.
+* Service URL: `https://unsplash.com/`
+* [Terms of Service](https://unsplash.com/terms)
+* [Privacy Policy](https://unsplash.com/privacy)
+
 = ipify =
 When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
 * Service URL: `https://api.ipify.org/`
@@ -115,6 +121,12 @@ When installing recommended plugins or themes from the admin dashboard, the plug
 When the Starter Templates library is enabled, template data may be synced from the WebsiteDemos.net service.
 * Service URL: `https://websitedemos.net/`
 * [Privacy Policy](https://startertemplates.com/privacy-policy/)
+
+= YouTube =
+The admin dashboard settings page embeds tutorial videos from YouTube using the privacy-enhanced mode (youtube-nocookie.com). Videos are loaded only when a user clicks play on the admin dashboard. No user data is sent until playback is initiated.
+* Service URL: `https://www.youtube-nocookie.com/`
+* [Terms of Service](https://www.youtube.com/t/terms)
+* [Privacy Policy](https://policies.google.com/privacy)
 
 == Changelog ==
 

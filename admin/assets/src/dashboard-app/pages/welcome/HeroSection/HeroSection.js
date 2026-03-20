@@ -6,10 +6,10 @@ import { useState, useEffect } from 'react';
 
 const HeroSection = () => {
 	const proVideoUrl = `https://www.youtube-nocookie.com/embed/3zDGUBaDwiU`; // eslint-disable-line no-unused-vars
-	const proVideoThumbnailUrl = 'https://img.youtube.com/vi/3zDGUBaDwiU/hqdefault.jpg';
+	const proVideoThumbnailUrl = `${ spectra_blocks_react?.plugin_url || '' }assets/admin/images/video-thumb-pro.jpg`;
 
 	const freeVideoUrl = `https://www.youtube-nocookie.com/embed/GLNzTxArR6Y`; // eslint-disable-line no-unused-vars
-	const freeVideoThumbnailUrl = 'https://img.youtube.com/vi/GLNzTxArR6Y/hqdefault.jpg';
+	const freeVideoThumbnailUrl = `${ spectra_blocks_react?.plugin_url || '' }assets/admin/images/video-thumb-free.jpg`;
 
 	// temporary adding an doc link for video until we get new video.
 	const docLink = 'https://wpspectra.com/docs/getting-started-v3/';

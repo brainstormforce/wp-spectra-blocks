@@ -945,9 +945,12 @@ class HtmlSanitizer {
 		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
 		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
 
-		// Restore style tag if it was extracted — strip any HTML tags from CSS content for safety.
+		// Restore style tag if it was extracted — sanitize CSS content for safety.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
+			// Strip HTML tags from CSS content.
 			$style_content = wp_strip_all_tags( $style_content );
+			// Remove CSS injection patterns (expression, javascript, behavior, etc.).
+			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript)\s*:/i', '', $style_content );
 			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 

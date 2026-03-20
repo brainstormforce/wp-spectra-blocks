@@ -180,10 +180,13 @@ class Animations {
 			return $content;
 		}
 
-		$processor->set_attribute( 'data-aos', $attributes['type'] );
-		$processor->set_attribute( 'data-aos-duration', $attributes['time'] );
-		$processor->set_attribute( 'data-aos-delay', $attributes['delay'] );
-		$processor->set_attribute( 'data-aos-easing', $attributes['easing'] );
+		// Sanitize values before passing to set_attribute().
+		// Note: Do NOT use esc_attr() here — WP_HTML_Tag_Processor::set_attribute()
+		// already escapes attribute values internally, and esc_attr() would cause double encoding.
+		$processor->set_attribute( 'data-aos', sanitize_text_field( $attributes['type'] ) );
+		$processor->set_attribute( 'data-aos-duration', sanitize_text_field( $attributes['time'] ) );
+		$processor->set_attribute( 'data-aos-delay', sanitize_text_field( $attributes['delay'] ) );
+		$processor->set_attribute( 'data-aos-easing', sanitize_text_field( $attributes['easing'] ) );
 		$processor->set_attribute( 'data-aos-once', $attributes['once'] ? 'false' : 'true' ); // If `Play Repeatedly on Scroll`(spectraAnimationOnce) is enabled, set `data-aos-once` to false otherwise true.
 
 		return $processor->get_updated_html();

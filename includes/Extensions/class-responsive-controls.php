@@ -751,8 +751,11 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				// wp_add_inline_style() handles sanitization internally.
-				wp_add_inline_style( $this->style_handle, wp_strip_all_tags( $combined_css ) );
+				// Sanitize: strip tags and remove any potentially dangerous content.
+				$safe_css = wp_strip_all_tags( $combined_css );
+				// Remove any remaining script-injection patterns from CSS.
+				$safe_css = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript)\s*:/i', '', $safe_css );
+				wp_add_inline_style( $this->style_handle, $safe_css );
 
 				// Mark as added to avoid duplicates.
 				$this->inline_css_added[ $spectra_id ] = true;
@@ -2711,7 +2714,14 @@ class ResponsiveControls {
 		$declarations = array();
 
 		foreach ( $styles as $property => $value ) {
-			$declarations[] = esc_attr( $property ) . ':' . esc_attr( $value );
+			// Sanitize CSS property name: only allow alphanumeric, hyphens, and underscores.
+			$safe_property = preg_replace( '/[^a-zA-Z0-9\-_]/', '', $property );
+			// Sanitize CSS value: strip tags and remove dangerous characters.
+			$safe_value = preg_replace( '/[;<>{}]/', '', wp_strip_all_tags( $value ) );
+
+			if ( ! empty( $safe_property ) && '' !== $safe_value ) {
+				$declarations[] = $safe_property . ':' . $safe_value;
+			}
 		}
 
 		return implode( ';', $declarations );
