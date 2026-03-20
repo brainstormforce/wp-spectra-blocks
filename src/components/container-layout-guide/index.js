@@ -27,12 +27,12 @@ import { getPluginUrl } from '@spectra-config';
  */
 const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 
-	const guideImageBase = `${ getPluginUrl() }assets/images/layout-guide/`;
+	const guideVideoBase = `${ getPluginUrl() }assets/images/layout-guide/`;
 
 	// Guide pages explaining each layout type.
 	const guidePages = [
 		{
-			image: <img src={ `${ guideImageBase }Understanding-Container-Layouts.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Introduction', 'spectra-blocks' ) } />,
+			image: <video src={ `${ guideVideoBase }Understanding-Container-Layouts.webm` } width="520" height="400" autoPlay loop muted playsInline />,
 			content: (
 				<div className="spectra-layout-guide__page">
 					<h2>{ __( 'Understanding Container Layouts', 'spectra-blocks' ) }</h2>
@@ -47,7 +47,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Flow-Layout.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Flow Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Flow-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -68,7 +68,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Flex-Layout.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Flex Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Flex-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -89,7 +89,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Grid-Layout.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Grid Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Grid-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -110,7 +110,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Constrained-Layout.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Constrained Layout', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Constrained-Layout.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -131,7 +131,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Understanding-Layout-Changes-1.gif` } width="520" height="400" alt={ __( 'Container Layout Guide Understanding Layout Changes', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Understanding-Layout-Changes-1.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
@@ -173,7 +173,7 @@ const ContainerLayoutGuide = ( { isVisible, onClose } ) => {
 		},
 		{
 			image: (
-				<img src={ `${ guideImageBase }Content-Alignment.gif` } width="520" height="400" alt={ __( 'Content Alignment', 'spectra-blocks' ) } />
+				<video src={ `${ guideVideoBase }Content-Alignment.webm` } width="520" height="400" autoPlay loop muted playsInline />
 			),
 			content: (
 				<div className="spectra-layout-guide__page">
