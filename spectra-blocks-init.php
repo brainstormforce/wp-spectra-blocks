@@ -51,11 +51,13 @@ spectra_blocks_init();
 add_action(
 	'init',
 	function () {
-		// Enable SVG uploads.
+		// Enable SVG uploads for users with unfiltered_html capability.
 		add_filter(
 			'upload_mimes',
 			function ( $mimes ) {
-				$mimes['svg'] = 'image/svg+xml';
+				if ( current_user_can( 'unfiltered_html' ) ) {
+					$mimes['svg'] = 'image/svg+xml';
+				}
 				return $mimes;
 			}
 		);

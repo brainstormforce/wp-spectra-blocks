@@ -53,22 +53,24 @@
         },
         {
             "name": "brainstormforce/bsf-analytics",
-            "version": "1.1.19",
+            "version": "1.1.20",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/bsf-analytics.git",
-                "reference": "dd61dec2c46c56bd0cb4d5dfa8748e4cdb555804"
+                "reference": "02bedc539178701f7c7c51e5a91806dee16c92ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/bsf-analytics/zipball/dd61dec2c46c56bd0cb4d5dfa8748e4cdb555804",
-                "reference": "dd61dec2c46c56bd0cb4d5dfa8748e4cdb555804",
+                "url": "https://api.github.com/repos/brainstormforce/bsf-analytics/zipball/02bedc539178701f7c7c51e5a91806dee16c92ef",
+                "reference": "02bedc539178701f7c7c51e5a91806dee16c92ef",
                 "shasum": ""
             },
             "require-dev": {
+                "10up/wp_mock": "^1.0",
                 "brainmaestro/composer-git-hooks": "^2.6",
                 "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
                 "phpcompatibility/phpcompatibility-wp": "2.1.0",
+                "phpunit/phpunit": "^9.6",
                 "wp-coding-standards/wpcs": "2.2.1"
             },
             "type": "wordpress-plugin",
@@ -87,6 +89,9 @@
                 "lint": [
                     "phpcs --standard=phpcs.xml.dist --report-summary --report-source"
                 ],
+                "test": [
+                    "phpunit"
+                ],
                 "post-install-cmd": [
                     "vendor/bin/cghooks add --ignore-lock"
                 ],
@@ -96,10 +101,10 @@
             },
             "description": "Library to gather non sensitive analytics data to enhance bsf products.",
             "support": {
-                "source": "https://github.com/brainstormforce/bsf-analytics/tree/1.1.19",
+                "source": "https://github.com/brainstormforce/bsf-analytics/tree/1.1.20",
                 "issues": "https://github.com/brainstormforce/bsf-analytics/issues"
             },
-            "time": "2026-03-01T10:39:58+00:00"
+            "time": "2026-03-04T12:22:59+00:00"
         },
         {
             "name": "brainstormforce/gutenberg-templates",
@@ -174,16 +179,16 @@
         },
         {
             "name": "brainstormforce/nps-survey",
-            "version": "1.0.17",
+            "version": "1.0.20",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/nps-survey.git",
-                "reference": "cc3ea43e127f88d658f822030b3ff09396c8f303"
+                "reference": "6f4d911fc756e3dec82c8265725f730d57e1ceb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/nps-survey/zipball/cc3ea43e127f88d658f822030b3ff09396c8f303",
-                "reference": "cc3ea43e127f88d658f822030b3ff09396c8f303",
+                "url": "https://api.github.com/repos/brainstormforce/nps-survey/zipball/6f4d911fc756e3dec82c8265725f730d57e1ceb3",
+                "reference": "6f4d911fc756e3dec82c8265725f730d57e1ceb3",
                 "shasum": ""
             },
             "require-dev": {
@@ -227,10 +232,10 @@
             },
             "description": "NPS Survey Plugin",
             "support": {
-                "source": "https://github.com/brainstormforce/nps-survey/tree/1.0.17",
+                "source": "https://github.com/brainstormforce/nps-survey/tree/1.0.20",
                 "issues": "https://github.com/brainstormforce/nps-survey/issues"
             },
-            "time": "2026-03-02T10:26:50+00:00"
+            "time": "2026-03-20T12:11:33+00:00"
         },
         {
             "name": "brainstormforce/zip-ai",
@@ -299,16 +304,16 @@
         },
         {
             "name": "brainstormforce/zipwp-images",
-            "version": "v1.0.21",
+            "version": "1.0.22",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zipwp-images.git",
-                "reference": "7c38528ae1afd762aaca55309b563e163a23f9fb"
+                "reference": "98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/7c38528ae1afd762aaca55309b563e163a23f9fb",
-                "reference": "7c38528ae1afd762aaca55309b563e163a23f9fb",
+                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d",
+                "reference": "98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d",
                 "shasum": ""
             },
             "require": {
@@ -365,10 +370,10 @@
             ],
             "description": "Free images library from ZipWP",
             "support": {
-                "source": "https://github.com/brainstormforce/zipwp-images/tree/v1.0.21",
+                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.22",
                 "issues": "https://github.com/brainstormforce/zipwp-images/issues"
             },
-            "time": "2026-03-03T04:44:46+00:00"
+            "time": "2026-03-20T11:55:03+00:00"
         },
         {
             "name": "composer/installers",
@@ -989,5 +994,5 @@
         "php": ">=8.1"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

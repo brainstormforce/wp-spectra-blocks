@@ -77,8 +77,12 @@ class Admin_Menu {
 		add_action( 'admin_init', array( $this, 'settings_admin_scripts' ) );
 		add_filter(
 			'admin_footer_text',
-			function () {
-				return ''; // Return an empty string to remove the text.
+			function ( $text ) {
+				$screen = get_current_screen();
+				if ( $screen && false !== strpos( $screen->id, 'spectra-blocks' ) ) {
+					return '';
+				}
+				return $text;
 			}
 		);
 
