@@ -304,16 +304,16 @@
         },
         {
             "name": "brainstormforce/zipwp-images",
-            "version": "1.0.22",
+            "version": "1.0.23",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zipwp-images.git",
-                "reference": "98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d"
+                "reference": "3a556bcc7002d38d1c4e3ff240062ee97cc93ec8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d",
-                "reference": "98ea7e7af91bea42f7eda8f5463ad8b38ca65c1d",
+                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/3a556bcc7002d38d1c4e3ff240062ee97cc93ec8",
+                "reference": "3a556bcc7002d38d1c4e3ff240062ee97cc93ec8",
                 "shasum": ""
             },
             "require": {
@@ -370,10 +370,10 @@
             ],
             "description": "Free images library from ZipWP",
             "support": {
-                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.22",
+                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.23",
                 "issues": "https://github.com/brainstormforce/zipwp-images/issues"
             },
-            "time": "2026-03-20T11:55:03+00:00"
+            "time": "2026-03-23T13:09:28+00:00"
         },
         {
             "name": "composer/installers",
