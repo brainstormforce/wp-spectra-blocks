@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "brainstormforce/astra-notices",
-            "version": "v1.1.15",
+            "version": "1.1.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/brainstormforce/astra-notices.git",
-                "reference": "04979264a6a572e762624152a7e636bd35a1b4f2"
+                "reference": "94c997be3350dae255899e99e5d35d5793e8b5d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/astra-notices/zipball/04979264a6a572e762624152a7e636bd35a1b4f2",
-                "reference": "04979264a6a572e762624152a7e636bd35a1b4f2",
+                "url": "https://api.github.com/repos/brainstormforce/astra-notices/zipball/94c997be3350dae255899e99e5d35d5793e8b5d6",
+                "reference": "94c997be3350dae255899e99e5d35d5793e8b5d6",
                 "shasum": ""
             },
             "require": {
@@ -47,9 +47,9 @@
             "description": "Easily create admin notices",
             "support": {
                 "issues": "https://github.com/brainstormforce/astra-notices/issues",
-                "source": "https://github.com/brainstormforce/astra-notices/tree/v1.1.15"
+                "source": "https://github.com/brainstormforce/astra-notices/tree/1.1.16"
             },
-            "time": "2026-03-02T10:24:12+00:00"
+            "time": "2026-03-24T07:00:24+00:00"
         },
         {
             "name": "brainstormforce/bsf-analytics",
@@ -108,16 +108,16 @@
         },
         {
             "name": "brainstormforce/gutenberg-templates",
-            "version": "2.4.22",
+            "version": "2.4.23",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/gutenberg-templates.git",
-                "reference": "0e4cc078ef40d7430f58aac3b0c1939f1bf9d2eb"
+                "reference": "620a21bf6552a2d5c981f5a80ad55b5c292a10d7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/0e4cc078ef40d7430f58aac3b0c1939f1bf9d2eb",
-                "reference": "0e4cc078ef40d7430f58aac3b0c1939f1bf9d2eb",
+                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/620a21bf6552a2d5c981f5a80ad55b5c292a10d7",
+                "reference": "620a21bf6552a2d5c981f5a80ad55b5c292a10d7",
                 "shasum": ""
             },
             "require": {
@@ -172,23 +172,23 @@
             ],
             "description": "Gutenberg single page templates, and blocks library to imported your website easily.",
             "support": {
-                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/2.4.22",
+                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/2.4.23",
                 "issues": "https://github.com/brainstormforce/gutenberg-templates/issues"
             },
-            "time": "2026-03-23T12:58:06+00:00"
+            "time": "2026-03-24T06:42:38+00:00"
         },
         {
             "name": "brainstormforce/nps-survey",
-            "version": "1.0.20",
+            "version": "1.0.21",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/nps-survey.git",
-                "reference": "6f4d911fc756e3dec82c8265725f730d57e1ceb3"
+                "reference": "5a20f0a05e3ecd11a611e49ff27145932a924a52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/nps-survey/zipball/6f4d911fc756e3dec82c8265725f730d57e1ceb3",
-                "reference": "6f4d911fc756e3dec82c8265725f730d57e1ceb3",
+                "url": "https://api.github.com/repos/brainstormforce/nps-survey/zipball/5a20f0a05e3ecd11a611e49ff27145932a924a52",
+                "reference": "5a20f0a05e3ecd11a611e49ff27145932a924a52",
                 "shasum": ""
             },
             "require-dev": {
@@ -232,23 +232,23 @@
             },
             "description": "NPS Survey Plugin",
             "support": {
-                "source": "https://github.com/brainstormforce/nps-survey/tree/1.0.20",
+                "source": "https://github.com/brainstormforce/nps-survey/tree/1.0.21",
                 "issues": "https://github.com/brainstormforce/nps-survey/issues"
             },
-            "time": "2026-03-20T12:11:33+00:00"
+            "time": "2026-03-24T05:29:05+00:00"
         },
         {
             "name": "brainstormforce/zip-ai",
-            "version": "2.0.7",
+            "version": "2.0.8",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zip-ai.git",
-                "reference": "658f84c591bc9acc2379a088af107add88f14cc0"
+                "reference": "3a731bb65e075ad0ee80359ac291dfc55ebe59c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zip-ai/zipball/658f84c591bc9acc2379a088af107add88f14cc0",
-                "reference": "658f84c591bc9acc2379a088af107add88f14cc0",
+                "url": "https://api.github.com/repos/brainstormforce/zip-ai/zipball/3a731bb65e075ad0ee80359ac291dfc55ebe59c9",
+                "reference": "3a731bb65e075ad0ee80359ac291dfc55ebe59c9",
                 "shasum": ""
             },
             "require": {
@@ -297,23 +297,23 @@
             ],
             "description": "Library which interacts with SCS and provide multiple useful modules",
             "support": {
-                "source": "https://github.com/brainstormforce/zip-ai/tree/2.0.7",
+                "source": "https://github.com/brainstormforce/zip-ai/tree/2.0.8",
                 "issues": "https://github.com/brainstormforce/zip-ai/issues"
             },
-            "time": "2026-03-03T04:37:24+00:00"
+            "time": "2026-03-24T06:25:13+00:00"
         },
         {
             "name": "brainstormforce/zipwp-images",
-            "version": "1.0.23",
+            "version": "1.0.25",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zipwp-images.git",
-                "reference": "3a556bcc7002d38d1c4e3ff240062ee97cc93ec8"
+                "reference": "f158be6ef84451297143065938ad10797667a086"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/3a556bcc7002d38d1c4e3ff240062ee97cc93ec8",
-                "reference": "3a556bcc7002d38d1c4e3ff240062ee97cc93ec8",
+                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/f158be6ef84451297143065938ad10797667a086",
+                "reference": "f158be6ef84451297143065938ad10797667a086",
                 "shasum": ""
             },
             "require": {
@@ -370,10 +370,10 @@
             ],
             "description": "Free images library from ZipWP",
             "support": {
-                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.23",
+                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.25",
                 "issues": "https://github.com/brainstormforce/zipwp-images/issues"
             },
-            "time": "2026-03-23T13:09:28+00:00"
+            "time": "2026-03-24T06:40:50+00:00"
         },
         {
             "name": "composer/installers",

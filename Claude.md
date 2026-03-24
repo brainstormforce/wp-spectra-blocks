@@ -82,7 +82,6 @@ BSF shared libraries (`lib/`) are managed via Composer with private VCS reposito
 - `brainstormforce/zip-ai` — Zip AI assistant integration
 - `brainstormforce/astra-notices` — Admin notices
 - `brainstormforce/nps-survey` — NPS survey
-- `brainstormforce/utm-analytics` — UTM tracking
 - `brainstormforce/zipwp-images` — ZipWP image library
 
 `composer install` requires SSH access to BSF private GitHub repos (same as UAG/Spectra).
