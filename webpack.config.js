@@ -1,6 +1,34 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const path = require( 'path' );
+const fs = require( 'fs' );
 const glob = require( 'glob' );
+
+/**
+ * Webpack plugin to prepend ABSPATH guard to generated .asset.php files.
+ * WordPress.org requires all PHP files to prevent direct access.
+ */
+class AbsPathGuardPlugin {
+	apply( compiler ) {
+		compiler.hooks.afterEmit.tap( 'AbsPathGuardPlugin', ( compilation ) => {
+			const outputPath = compilation.outputOptions.path;
+			const findAssetPhp = ( dir ) => {
+				const entries = fs.readdirSync( dir, { withFileTypes: true } );
+				entries.forEach( ( entry ) => {
+					const fullPath = path.join( dir, entry.name );
+					if ( entry.isDirectory() ) {
+						findAssetPhp( fullPath );
+					} else if ( entry.name.endsWith( '.asset.php' ) ) {
+						const content = fs.readFileSync( fullPath, 'utf8' );
+						if ( ! content.includes( 'ABSPATH' ) ) {
+							fs.writeFileSync( fullPath, content.replace( '<?php', "<?php if ( ! defined( 'ABSPATH' ) ) { exit; } " ) );
+						}
+					}
+				} );
+			};
+			findAssetPhp( outputPath );
+		} );
+	}
+}
 
 // Define common aliases used in Spectra Blocks.
 const commonAliases = {
@@ -24,6 +52,10 @@ module.exports = [
 				...commonAliases,
 			},
 		},
+		plugins: [
+			...( defaultConfig[ 0 ].plugins || [] ),
+			new AbsPathGuardPlugin(),
+		],
 		entry: () => {
 			const entries = defaultConfig[ 0 ].entry();
 
@@ -64,5 +96,9 @@ module.exports = [
 				...commonAliases,
 			},
 		},
+		plugins: [
+			...( defaultConfig[ 1 ].plugins || [] ),
+			new AbsPathGuardPlugin(),
+		],
 	},
 ];

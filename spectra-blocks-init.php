@@ -66,6 +66,10 @@ add_action(
 		add_filter(
 			'wp_check_filetype_and_ext',
 			function ( $data, $file, $filename, $mimes ) {
+				if ( ! current_user_can( 'unfiltered_html' ) ) {
+					return $data;
+				}
+
 				$filetype = wp_check_filetype( $filename, $mimes );
 
 				if ( 'svg' === $filetype['ext'] ) {

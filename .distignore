@@ -72,10 +72,26 @@ admin/postcss.config.js
 # Library test files (not needed in production, flagged by WP.org)
 lib/astra-notices/tests/
 lib/bsf-analytics/tests/
+lib/gutenberg-templates/tests/
+lib/zip-ai/tests/
+lib/zipwp-images/tests/
+lib/nps-survey/tests/
 
 # Library docs with review filter URLs (flagged by WP.org)
 lib/astra-notices/README.MD
 lib/astra-notices/README.md
+
+# Library dev configs (not needed in production)
+lib/*/phpstan.neon
+lib/*/phpstan-baseline.neon
+lib/*/phpinsights.php
+lib/*/.gitignore
+lib/*/.distignore
+lib/*/composer.json
+lib/*/package.json
+lib/*/package-lock.json
+lib/*/node_modules/
+lib/*/webpack.config.js
 
 # Dev artifacts (hidden files / test output)
 .env

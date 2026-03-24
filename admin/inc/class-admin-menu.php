@@ -323,7 +323,7 @@ class Admin_Menu {
 	public function settings_admin_scripts() {
 
 		// Enqueue admin scripts.
-		if ( ( ! empty( $_GET['page'] ) && ( $this->menu_slug === sanitize_text_field( wp_unslash( $_GET['page'] ) ) || false !== strpos( sanitize_text_field( wp_unslash( $_GET['page'] ) ), $this->menu_slug . '_' ) ) ) || ( array_key_exists( 'post_type', $_GET ) && 'spectra-popup' === sanitize_key( $_GET['post_type'] ) ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.PHP.YodaConditions.NotYoda -- $_GET['page'] does not provide nonce; property comparison has no literal side.
+		if ( ( ! empty( $_GET['page'] ) && ( $this->menu_slug === sanitize_text_field( wp_unslash( $_GET['page'] ) ) || false !== strpos( sanitize_text_field( wp_unslash( $_GET['page'] ) ), $this->menu_slug . '_' ) ) ) || ( array_key_exists( 'post_type', $_GET ) && 'spectra-popup' === sanitize_key( wp_unslash( $_GET['post_type'] ) ) ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.PHP.YodaConditions.NotYoda -- $_GET['page'] does not provide nonce; property comparison has no literal side.
 			add_action( 'admin_enqueue_scripts', array( $this, 'styles_scripts' ) );
 		}
 	}

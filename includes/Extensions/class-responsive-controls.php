@@ -810,7 +810,7 @@ class ResponsiveControls {
 		// The customizer has its own save process and calling wp_update_post during
 		// it can cause wp_send_json_error with empty messages.
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification already handled by WordPress before save_post hook.
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === $_POST['action'] ) {
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && 'customize_save' === sanitize_text_field( wp_unslash( $_POST['action'] ) ) ) {
 			return;
 		}
 

@@ -1,6 +1,34 @@
 // Load the default @wordpress/scripts config object
 const path = require( 'path' );
+const fs = require( 'fs' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+
+/**
+ * Webpack plugin to prepend ABSPATH guard to generated .asset.php files.
+ * WordPress.org requires all PHP files to prevent direct access.
+ */
+class AbsPathGuardPlugin {
+	apply( compiler ) {
+		compiler.hooks.afterEmit.tap( 'AbsPathGuardPlugin', ( compilation ) => {
+			const outputPath = compilation.outputOptions.path;
+			const findAssetPhp = ( dir ) => {
+				const entries = fs.readdirSync( dir, { withFileTypes: true } );
+				entries.forEach( ( entry ) => {
+					const fullPath = path.join( dir, entry.name );
+					if ( entry.isDirectory() ) {
+						findAssetPhp( fullPath );
+					} else if ( entry.name.endsWith( '.asset.php' ) ) {
+						const content = fs.readFileSync( fullPath, 'utf8' );
+						if ( ! content.includes( 'ABSPATH' ) ) {
+							fs.writeFileSync( fullPath, content.replace( '<?php', "<?php if ( ! defined( 'ABSPATH' ) ) { exit; } " ) );
+						}
+					}
+				} );
+			};
+			findAssetPhp( outputPath );
+		} );
+	}
+}
 const newPath = path.join( __dirname, '../' );
 
 // Use the defaultConfig but add the common aliases, modules and plugins.
@@ -47,6 +75,7 @@ const commonConfig = {
 
 			return true;
 		} ),
+		new AbsPathGuardPlugin(),
 	],
 };
 
