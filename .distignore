@@ -68,3 +68,18 @@ admin/package-lock.json
 admin/webpack.config.js
 admin/tailwind.config.js
 admin/postcss.config.js
+
+# Library test files (not needed in production, flagged by WP.org)
+lib/astra-notices/tests/
+lib/bsf-analytics/tests/
+
+# Library docs with review filter URLs (flagged by WP.org)
+lib/astra-notices/README.MD
+lib/astra-notices/README.md
+
+# Dev artifacts (hidden files / test output)
+.env
+.phpunit.result.cache
+.phpunit.cache/
+test-results/
+playwright-report/

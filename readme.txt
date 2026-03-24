@@ -128,6 +128,26 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Terms of Service](https://www.youtube.com/t/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
+= BSF Analytics =
+When the user opts in to share anonymous usage data, the bundled BSF Analytics library sends non-personal site environment data (WordPress version, theme, active plugins) to help improve the plugin.
+* Service URL: `https://analytics.brainstormforce.com/`
+* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+= BSF Metrics =
+When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
+* Service URL: `https://metrics.brainstormforce.com/`
+* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+= ipinfo.io =
+When using the AI-powered image library, the bundled libraries may detect the user's country via IP geolocation to select the appropriate image provider (e.g., Unsplash for regions where Pexels is unavailable).
+* Service URL: `https://ipinfo.io/`
+* [Privacy Policy](https://ipinfo.io/privacy-policy)
+
+= Brainstorm Force Support =
+When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
+* Service URL: `https://support.brainstormforce.com/`
+* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
 == Changelog ==
 
 = 0.0.2 =
