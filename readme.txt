@@ -72,6 +72,13 @@ To build from source:
 1. `npm install && npm run build` — compiles block JavaScript and CSS.
 2. `cd admin && npm install && npm run build` — compiles the admin dashboard React app.
 
+= Third-Party Libraries =
+
+The following pre-compiled third-party libraries are bundled in `assets/`:
+
+* **Swiper** (slider functionality) — Source: [https://github.com/nolimits4web/swiper](https://github.com/nolimits4web/swiper) — License: MIT
+* **AOS** (Animate on Scroll) — Source: [https://github.com/michalsnik/aos](https://github.com/michalsnik/aos) — License: MIT
+
 = Bundled Library Source =
 
 This plugin includes compiled JavaScript from the following Brainstorm Force libraries. Source code for each is available on GitHub:
@@ -121,7 +128,7 @@ When using the AI-powered image library, images may be fetched from Unsplash. Th
 = ipify =
 When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
 * Service URL: `https://api.ipify.org/`
-* [Privacy Policy](https://www.ipify.org/)
+* Note: ipify.org is an open-source project and does not maintain a separate privacy policy page. The service returns only the requester's IP address and does not store or track any data. Source: [https://github.com/rdegges/ipify-api](https://github.com/rdegges/ipify-api)
 
 = WordPress.org =
 When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
@@ -158,6 +165,12 @@ When using the AI-powered image library, the bundled libraries may detect the us
 When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
 * Service URL: `https://support.brainstormforce.com/`
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+= Spectra Blocks News (wpspectra.com) =
+The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made when a logged-in administrator views the plugin dashboard.
+* Service URL: `https://wpspectra.com/whats-new/feed/`
+* Data sent: None (standard GET request with no user data)
+* [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
 

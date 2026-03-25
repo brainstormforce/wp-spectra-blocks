@@ -945,14 +945,23 @@ class HtmlSanitizer {
 		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
 		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
 
-		// Restore style tag if it was extracted — sanitize CSS content for safety.
+		// Restore extracted SureForms CSS via wp_add_inline_style() instead of raw <style> tag.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
 			$style_content = wp_strip_all_tags( $style_content );
 			// Strip CSS comments and unicode escapes to prevent obfuscated injection (e.g. expre/**/ssion, \65xpression).
 			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content );
 			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content );
 			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript|url\s*\()/i', '', $style_content );
-			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
+
+			// Remove the placeholder from content.
+			$sanitized = str_replace( '<!--STYLE_PLACEHOLDER-->', '', $sanitized );
+
+			// Enqueue CSS via WordPress API. Register a minimal handle if not already registered.
+			if ( ! wp_style_is( 'spectra-blocks-srfm-inline', 'registered' ) ) {
+				wp_register_style( 'spectra-blocks-srfm-inline', false ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion -- Inline-only handle, no external file.
+				wp_enqueue_style( 'spectra-blocks-srfm-inline' );
+			}
+			wp_add_inline_style( 'spectra-blocks-srfm-inline', $style_content );
 		}
 
 		if ( $should_echo ) {
@@ -1151,11 +1160,6 @@ class HtmlSanitizer {
 	public static function get_render_allowed_tags(): array {
 		$allowed = wp_kses_allowed_html( 'post' );
 		$allowed = array_merge( $allowed, self::get_svg_allowed_tags() );
-
-		// Allow style tag for SureForms inline styles restored during render.
-		$allowed['style'] = array(
-			'type' => true,
-		);
 
 		return $allowed;
 	}

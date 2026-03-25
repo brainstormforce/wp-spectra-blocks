@@ -731,7 +731,8 @@ class Common_Settings extends Ajax_Base {
 	public function insta_refresh_all_tokens() {
 		// nonce verification is done in above function check_permission_nonce.
 		$this->check_permission_nonce( 'spectra_blocks_insta_refresh_all_tokens' );
-		if ( ! empty( $_POST['value'] ) && class_exists( '\SpectraPro\BlocksConfig\InstagramFeed\Block' ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$value = isset( $_POST['value'] ) ? sanitize_text_field( wp_unslash( $_POST['value'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in check_permission_nonce() above.
+		if ( ! empty( $value ) && class_exists( '\SpectraPro\BlocksConfig\InstagramFeed\Block' ) ) {
 			\SpectraPro\BlocksConfig\InstagramFeed\Block::refresh_all_instagram_users();
 			wp_send_json_success( array( 'messsage' => __( 'Successfully refreshed tokens!', 'spectra-blocks' ) ) );
 		}
