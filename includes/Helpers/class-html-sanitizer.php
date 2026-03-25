@@ -947,10 +947,11 @@ class HtmlSanitizer {
 
 		// Restore style tag if it was extracted — sanitize CSS content for safety.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
-			// Strip HTML tags from CSS content.
 			$style_content = wp_strip_all_tags( $style_content );
-			// Remove CSS injection patterns (expression, javascript, behavior, etc.).
-			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript)\s*:/i', '', $style_content );
+			// Strip CSS comments and unicode escapes to prevent obfuscated injection (e.g. expre/**/ssion, \65xpression).
+			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content );
+			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content );
+			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript|url\s*\()/i', '', $style_content );
 			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 
