@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, page builder, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.2
+Stable tag: 0.0.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -149,6 +149,18 @@ When verifying plugin license status, the bundled Starter Templates library may 
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 == Changelog ==
+
+= 0.0.4 =
+* Fix: Updated Swiper library to v12.1.3.
+* Fix: Added wp_kses() escaping at render output point in HtmlSanitizer.
+* Fix: Wired lib-abspath-guard into grunt zip build pipeline.
+
+= 0.0.3 =
+* Fix: Added ABSPATH guards to all generated .asset.php files via webpack plugin.
+* Fix: Added wp_unslash() before sanitization on all superglobal accesses.
+* Fix: Added function_exists() guards around core file includes.
+* Fix: Added capability check to SVG upload filter.
+* Fix: Updated all shared libraries to latest versions.
 
 = 0.0.2 =
 * Fix: Address WordPress.org plugin review compliance issues.
