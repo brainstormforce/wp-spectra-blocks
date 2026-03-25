@@ -60,6 +60,8 @@ No. Spectra Blocks is a fully standalone plugin and does not require the origina
 
 This plugin's JavaScript and CSS are built from source files using standard WordPress build tools.
 
+= Plugin Source =
+
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
@@ -69,6 +71,15 @@ To build from source:
 
 1. `npm install && npm run build` — compiles block JavaScript and CSS.
 2. `cd admin && npm install && npm run build` — compiles the admin dashboard React app.
+
+= Bundled Library Source =
+
+This plugin includes compiled JavaScript from the following Brainstorm Force libraries. Source code for each is available on GitHub:
+
+* `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/gutenberg-templates](https://github.com/brainstormforce/gutenberg-templates) (build: `npm install && npm run build`)
+* `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/zip-ai](https://github.com/brainstormforce/zip-ai) (build: `npm install && npm run build`)
+* `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/nps-survey](https://github.com/brainstormforce/nps-survey) (build: `npm install && npm run build`)
+* `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/zipwp-images](https://github.com/brainstormforce/zipwp-images) (build: `npm install && npm run build`)
 
 == External Services ==
 
