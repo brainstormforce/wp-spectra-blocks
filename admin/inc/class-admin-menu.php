@@ -473,6 +473,7 @@ class Admin_Menu {
 				'admin_base_url'                      => admin_url(),
 				'spectra_blocks_base_url'             => admin_url( 'admin.php?page=' . $this->menu_slug ),
 				'plugin_dir'                          => SPECTRA_BLOCKS_URL,
+				'plugin_url'                          => SPECTRA_BLOCKS_URL,
 				'preview_url'                         => SPECTRA_BLOCKS_URL . 'admin/assets/',
 				'plugin_ver'                          => SPECTRA_BLOCKS_VER,
 				'admin_url'                           => admin_url( 'admin.php' ),
