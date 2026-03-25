@@ -108,16 +108,16 @@
         },
         {
             "name": "brainstormforce/gutenberg-templates",
-            "version": "2.4.23",
+            "version": "2.4.24",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/gutenberg-templates.git",
-                "reference": "620a21bf6552a2d5c981f5a80ad55b5c292a10d7"
+                "reference": "d43ea0a7560630699c72a30f123d4161937fdc2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/620a21bf6552a2d5c981f5a80ad55b5c292a10d7",
-                "reference": "620a21bf6552a2d5c981f5a80ad55b5c292a10d7",
+                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/d43ea0a7560630699c72a30f123d4161937fdc2a",
+                "reference": "d43ea0a7560630699c72a30f123d4161937fdc2a",
                 "shasum": ""
             },
             "require": {
@@ -172,10 +172,10 @@
             ],
             "description": "Gutenberg single page templates, and blocks library to imported your website easily.",
             "support": {
-                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/2.4.23",
+                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/2.4.24",
                 "issues": "https://github.com/brainstormforce/gutenberg-templates/issues"
             },
-            "time": "2026-03-24T06:42:38+00:00"
+            "time": "2026-03-25T15:11:58+00:00"
         },
         {
             "name": "brainstormforce/nps-survey",
@@ -239,16 +239,16 @@
         },
         {
             "name": "brainstormforce/zip-ai",
-            "version": "2.0.8",
+            "version": "2.0.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zip-ai.git",
-                "reference": "3a731bb65e075ad0ee80359ac291dfc55ebe59c9"
+                "reference": "979521f1055f83846e0112c24fe56c06041d3665"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zip-ai/zipball/3a731bb65e075ad0ee80359ac291dfc55ebe59c9",
-                "reference": "3a731bb65e075ad0ee80359ac291dfc55ebe59c9",
+                "url": "https://api.github.com/repos/brainstormforce/zip-ai/zipball/979521f1055f83846e0112c24fe56c06041d3665",
+                "reference": "979521f1055f83846e0112c24fe56c06041d3665",
                 "shasum": ""
             },
             "require": {
@@ -297,23 +297,23 @@
             ],
             "description": "Library which interacts with SCS and provide multiple useful modules",
             "support": {
-                "source": "https://github.com/brainstormforce/zip-ai/tree/2.0.8",
+                "source": "https://github.com/brainstormforce/zip-ai/tree/2.0.9",
                 "issues": "https://github.com/brainstormforce/zip-ai/issues"
             },
-            "time": "2026-03-24T06:25:13+00:00"
+            "time": "2026-03-25T12:56:32+00:00"
         },
         {
             "name": "brainstormforce/zipwp-images",
-            "version": "1.0.25",
+            "version": "1.0.26",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/zipwp-images.git",
-                "reference": "f158be6ef84451297143065938ad10797667a086"
+                "reference": "ab6d916ca1b5c7c5dda636a1ad0a4bec5ab9184c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/f158be6ef84451297143065938ad10797667a086",
-                "reference": "f158be6ef84451297143065938ad10797667a086",
+                "url": "https://api.github.com/repos/brainstormforce/zipwp-images/zipball/ab6d916ca1b5c7c5dda636a1ad0a4bec5ab9184c",
+                "reference": "ab6d916ca1b5c7c5dda636a1ad0a4bec5ab9184c",
                 "shasum": ""
             },
             "require": {
@@ -370,10 +370,10 @@
             ],
             "description": "Free images library from ZipWP",
             "support": {
-                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.25",
+                "source": "https://github.com/brainstormforce/zipwp-images/tree/1.0.26",
                 "issues": "https://github.com/brainstormforce/zipwp-images/issues"
             },
-            "time": "2026-03-24T06:40:50+00:00"
+            "time": "2026-03-25T11:23:17+00:00"
         },
         {
             "name": "composer/installers",
