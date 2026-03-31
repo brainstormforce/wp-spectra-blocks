@@ -54,7 +54,7 @@ const TemplatesButton = () => {
 					value={ enableTemplatesStatus }
 					onChange={ updateEnableTemplatesStatus }
 					size="md"
-					className="spectra-blocks-remove-ring border-none"
+					className="spectra-blocks-remove-ring"
 				/>
 			</SettingsItem>
 		</>

@@ -1,36 +1,12 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { useSelector, useDispatch } from 'react-redux';
-
-import getApiData from '@Controls/getApiData';
-import { Container, Label, Badge } from '@bsf/force-ui';
+import { Badge } from '@bsf/force-ui';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
 
 export default function DynamicContent() {
-	const dispatch = useDispatch();
-	const dynamicContentMode = useSelector( ( state ) => state.dynamicContentMode );
-
-	const dynamicContentHandler = ( value ) => {
-		dispatch( { type: 'UPDATE_DYNAMIC_CONTENT_MODE', payload: value } );
-		// Create an object with the security and value properties
-		const data = {
-			security: spectra_blocks_react.dynamic_content_mode_nonce,
-			value,
-		};
-		// Call the getApiData function with the specified parameters
-		const getApiFetchData = getApiData( {
-			url: spectra_blocks_react.ajax_url,
-			action: 'spectra_blocks_dynamic_content_mode',
-			data,
-		} );
-		// Wait for the API call to complete, then update the state to show a notification that the settings have been saved
-		getApiFetchData.then( () => {
-			dispatch( {
-				type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
-				payload: __( 'Successfully saved!', 'spectra-blocks' ),
-			} );
-		} );
-	};
+	if ( spectra_blocks_react.pro_plugin_status === 'Activated' ) {
+		return null;
+	}
 
 	const dynamicModalData = {
 		title: __( 'Unlock Dynamic Content', 'spectra-blocks' ),
@@ -48,95 +24,32 @@ export default function DynamicContent() {
 	};
 
 	return (
-		<>
-			{ spectra_blocks_react.pro_plugin_status !== 'Activated' ? (
-				<UpgradeNotices
-					title={
-						<div className="flex gap-2 items-center">
-							{ __( 'Dynamic Content', 'spectra-blocks' ) }
-							<Badge
-								label={ __( 'PRO', 'spectra-blocks' ) }
-								size="xxs"
-								type="pill"
-								variant="inverse"
-							/>
-						</div>
-					}
-					description={ __(
-						'Choose how you want to display dynamic content settings',
-						'spectra-blocks'
-					) }
-					upgradeText={ __(
-						'delivers relevant content for higher engagement.',
-						'spectra-blocks'
-					) }
-					upgradeBold={ __( 'Personalized content', 'spectra-blocks' ) }
-					modalData={ dynamicModalData }
-					dynamicContent={ true }
-				/>
-			) : (
-				<>
-					<SettingsItem
-						title={ __( 'Dynamic Content', 'spectra-blocks' ) }
-						settingText={ __(
-							'Choose how you want to display dynamic content settings.',
-							'spectra-blocks'
-						) }
-					>
-						<div
-							className="flex justify-center items-center rounded-sm overflow-hidden"
-							style={ { border: '1px solid #e5e7eb', borderRadius: '0.25rem' } }
-						>
-							<div
-								onClick={ () => dynamicContentHandler( 'popup' ) }
-								className={ `${
-									dynamicContentMode === 'popup'
-										? 'text-text-inverse bg-background-brand'
-										: 'text-text-secondary'
-								} p-2 cursor-pointer` }
-								style={ { border: 'none', borderRight: '1px solid #e5e7eb' } }
-							>
-								Popup
-							</div>
-							<div
-								onClick={ () => dynamicContentHandler( 'sidebar' ) }
-								className={ `${
-									dynamicContentMode === 'popup'
-										? 'text-text-secondary'
-										: 'text-text-inverse bg-background-brand'
-								} p-2 cursor-pointer` }
-								style={ { border: 'none' } }
-							>
-								Sidebar
-							</div>
-						</div>
-					</SettingsItem>
-					<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />
-				</>
+		<UpgradeNotices
+			title={
+				<div className="flex gap-2 items-center">
+					{ __( 'Dynamic Content', 'spectra-blocks' ) }
+					<Badge
+						label={ __( 'PRO', 'spectra-blocks' ) }
+						size="xxs"
+						type="pill"
+						variant="inverse"
+					/>
+				</div>
+			}
+			description={ __(
+				'Choose how you want to display dynamic content settings',
+				'spectra-blocks'
 			) }
-		</>
+			upgradeText={ __(
+				'delivers relevant content for higher engagement.',
+				'spectra-blocks'
+			) }
+			upgradeBold={ __( 'Personalized content', 'spectra-blocks' ) }
+			modalData={ dynamicModalData }
+			dynamicContent={ true }
+		/>
 	);
 }
-
-const SettingsItem = ( { title, settingText, children } ) => {
-	return (
-		<Container
-			align="center"
-			className="mb-0.5 w-full flex lg:items-center items-start justify-between lg:flex-row flex-col"
-		>
-			<Container.Item className="space-y-1 lg:max-w-[480px]">
-				<Label className="font-semibold mb-1" htmlFor="default-width" size="md">
-					{ title }
-				</Label>
-				<Label className="m-0 font-normal" size="sm" tag="p" variant="help">
-					{ settingText }
-				</Label>
-			</Container.Item>
-
-			{ children }
-		</Container>
-	);
-};
 
 const DynamicImage = () => (
 	<svg

@@ -24,11 +24,6 @@ const globalDataReducer = ( state = {}, action ) => {
                 ...state,
                 enableTemplates: action.payload,
             };
-		case 'UPDATE_ON_PAGE_CSS_BUTTON':
-			return {
-				...state,
-				enableOnPageCSS: action.payload,
-			};
         case 'UPDATE_ENABLE_SELECTED_FONT_FAMILIES':
             return {
                 ...state,
@@ -54,120 +49,21 @@ const globalDataReducer = ( state = {}, action ) => {
                 ...state,
                 enablePreloadLocalFonts: action.payload,
             };
-        case 'UPDATE_ENABLE_COLLAPSE_PANELS':
-            return {
-                ...state,
-                enableCollapsePanels: action.payload,
-            };
-        case 'UPDATE_ENABLE_COPY_PASTE_STYLES':
-            return {
-                ...state,
-                enableCopyPasteStyles: action.payload,
-            };
-        case 'UPDATE_ENABLE_DISPLAY_CONDITIONS':
-            return {
-                ...state,
-                enableDisplayConditions: action.payload,
-            };
-        case 'UPDATE_ENABLE_MASONRY_EXTENSION':
-            return {
-                ...state,
-                enableMasonryExtension: action.payload,
-            };
-		case 'UPDATE_ENABLE_QUICK_ACTION_SIDEBAR_EXTENSION':
-            return {
-                ...state,
-                enableQuickActionSidebarExtension: action.payload,
-            };
         case 'UPDATE_ENABLE_ANIMATIONS_EXTENSION':
             return {
                 ...state,
                 enableAnimationsExtension: action.payload,
             };
-        case 'UPDATE_RECAPTCHA_VERSION':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					recaptchaVersion: action.payload
-				},
-            };
-        case 'UPDATE_RECAPTCHA_BADGE':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					recaptchaBadgeHide: action.payload
-				},
-            };
-        case 'UPDATE_RECAPTCHA_SITE_KEY':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					recaptchaSiteKey: action.payload
-				},
-            };
-        case 'UPDATE_RECAPTCHA_SECRET_KEY':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					recaptchaSecretKey: action.payload
-				},
-            };
-        case 'UPDATE_SOCIAL_REGISTER':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					socialRegister: action.payload
-				},
-            };
-        case 'UPDATE_GOOGLE_CLIENT_ID':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					googleClientId: action.payload
-				},
-            };
-        case 'UPDATE_FACEBOOK_APP_ID':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					facebookAppId: action.payload
-				},
-            };
-        case 'UPDATE_FACEBOOK_APP_SECRET':
-            return {
-                ...state,
-                social: {
-					...state.social,
-					facebookAppSecret: action.payload
-				}
-			}
         case 'UPDATE_ENABLE_DYNAMIC_CONTENT_EXTENSION':
             return {
                 ...state,
                 enableDynamicContentExtension: action.payload,
-            };
-        case 'UPDATE_DYNAMIC_CONTENT_MODE':
-            return {
-                ...state,
-                dynamicContentMode: action.payload,
             };
 		case 'UPDATE_ENABLE_RESPONSIVE_CONDITIONS':
 			return {
 				...state,
 				enableResponsiveConditions: action.payload,
 			};
-		case 'UPDATE_CONTENT_WIDTH':
-			return {
-				...state,
-				contentWidth: action.payload,
-				};
 		case 'UPDATE_RECAPTCHA_SITE_KEY_V2':
 			return {
 					...state,
@@ -193,36 +89,6 @@ const globalDataReducer = ( state = {}, action ) => {
 				...state,
 				settingsSavedNotification: action.payload,
 			};
-		case 'UPDATE_VISIBILITY_MODE':
-			return {
-				...state,
-				visibilityMode: action.payload,
-			};
-		case 'UPDATE_VISIBILITY_PAGE':
-			return {
-				...state,
-				visibilityPage: action.payload,
-			};
-		case 'UPDATE_BLOCKS_EDITOR_SPACING':
-			return {
-				...state,
-				blocksEditorSpacing: action.payload,
-				};
-        case 'UPDATE_ENABLE_FONT_AWESOME_5':
-            return {
-                ...state,
-                enableFontAwesome5: action.payload,
-            };
-        case 'UPDATE_ENABLE_LEGACY_DESIGN_LIBRARY':
-            return {
-                ...state,
-                enableLegacyDesignLibrary: action.payload,
-            };
-        case 'UPDATE_ENABLE_AUTO_BLOCK_RECOVERY':
-            return {
-                ...state,
-                enableAutoBlockRecovery: action.payload,
-            };
         case 'UPDATE_DISABLE_CSS_CACHE':
             return {
                 ...state,
@@ -238,11 +104,6 @@ const globalDataReducer = ( state = {}, action ) => {
 				...state,
 				containerGlobalElementsGap: action.payload,
 				};
-        case 'UPDATE_INSTA_LINKED_ACCOUNTS':
-            return {
-                ...state,
-                instaLinkedAccounts: action.payload,
-            };
         case 'UPDATE_BTN_INHERIT_FROM_THEME':
             return {
                 ...state,
@@ -264,8 +125,6 @@ const globalDataReducer = ( state = {}, action ) => {
 				...state,
 				enableGBSExtension: enableAll,
 				enableAnimationsExtension: enableAll,
-				enableMasonryExtension: enableAll,
-				enableDisplayConditions: enableAll,
 				enableDynamicContentExtension: enableAll,
 				enableResponsiveConditions: enableAll
 			}; 

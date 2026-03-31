@@ -74,7 +74,9 @@ class Admin_Menu {
 
 		/* Setup the Admin Menu */
 		add_action( 'admin_menu', array( $this, 'setup_menu' ) );
+		add_action( 'admin_menu', array( $this, 'rename_classic_spectra_menu' ), 99 );
 		add_action( 'admin_init', array( $this, 'settings_admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_submenu_styles' ) );
 		add_filter(
 			'admin_footer_text',
 			function ( $text ) {
@@ -364,16 +366,6 @@ class Admin_Menu {
 			array( $this, 'render' )
 		);
 
-		// Finally, add the Settings Submenu.
-		add_submenu_page(
-			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
-			__( 'Settings', 'spectra-blocks' ),
-			$capability,
-			$menu_slug . '&path=settings',
-			array( $this, 'render' )
-		);
-
 		// Add the AI Features Submenu if Zip AI Library is loaded.
 		if ( defined( 'ZIP_AI_VERSION' ) ) {
 			add_submenu_page(
@@ -387,7 +379,7 @@ class Admin_Menu {
 		}
 
 		// Use this action hook to add sub menu to above menu.
-		do_action( 'spectra_after_menu_register', $menu_slug );
+		do_action( 'spectra_blocks_after_menu_register', $menu_slug );
 
 		// Add the Learn tab in Submenu.
 		add_submenu_page(
@@ -399,8 +391,18 @@ class Admin_Menu {
 			array( $this, 'render' )
 		);
 
+		// Finally, add the Settings Submenu.
+		add_submenu_page(
+			$menu_slug,
+			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Settings', 'spectra-blocks' ),
+			$capability,
+			$menu_slug . '&path=settings',
+			array( $this, 'render' )
+		);
+
 		// Add the Free vs Pro Submenu.
-		if ( ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ) ) {
+		if ( ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
 			add_submenu_page(
 				$menu_slug,
 				__( 'Free vs Pro', 'spectra-blocks' ),
@@ -448,6 +450,16 @@ class Admin_Menu {
 	}
 
 	/**
+	 * Enqueues the sidebar submenu styles on all admin pages.
+	 *
+	 * @since x.x.x
+	 * @return void
+	 */
+	public function enqueue_submenu_styles() {
+		wp_enqueue_style( 'spectra-blocks-submenu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
+	}
+
+	/**
 	 * Enqueues the needed CSS/JS for the builder's admin settings page.
 	 *
 	 * @since 1.0.0
@@ -458,7 +470,6 @@ class Admin_Menu {
 		$blocks_info = $this->get_blocks_info_for_activation_deactivation();
 		wp_enqueue_style( $admin_slug . '-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap', array(), SPECTRA_BLOCKS_VER );
 		// Styles.
-		wp_enqueue_style( $admin_slug . '-menu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'wp-components' );
 
 		$theme = wp_get_theme();
@@ -483,7 +494,6 @@ class Admin_Menu {
 				'blocks_info'                         => $blocks_info,
 				'reusable_url'                        => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
 				'global_data'                         => Admin_Helper::get_options(),
-				'spectra_blocks_content_width_set_by' => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_content_width_set_by', __( 'Spectra', 'spectra-blocks' ) ),
 				'spectra_pro_installed'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ),
 				'spectra_pro_licensing'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/admin/license-handler.php' ),
 				'spectra_pro_status'                  => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
@@ -754,6 +764,29 @@ class Admin_Menu {
 		$json_plugins_data = wp_json_encode( $plugins_data );
 
 		wp_localize_script( $handle, 'spectra_blocks_plugins_data', $plugins_data );
+	}
+
+	/**
+	 * Rename the Ultimate Addons for Gutenberg admin menu to "Spectra Classic"
+	 * when both plugins are active simultaneously.
+	 *
+	 * @since x.x.x
+	 * @return void
+	 */
+	public function rename_classic_spectra_menu() {
+		if ( ! defined( 'UAGB_VER' ) ) {
+			return;
+		}
+
+		global $menu, $submenu;
+
+		foreach ( $menu as $key => $item ) {
+			if ( isset( $item[2] ) && 'spectra' === $item[2] ) {
+				$menu[ $key ][0] = __( 'Spectra Classic', 'spectra-blocks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
+
 	}
 }
 

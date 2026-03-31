@@ -1,11 +1,7 @@
 .spectra-blocks-remove-ring input[type="checkbox"],
 .spectra-blocks-remove-ring a,
 .spectra-blocks-remove-ring {
-	outline: none !important;
-	--tw-ring-inset: auto !important;
-	box-shadow: unset !important;
-}
-
-.border-none > input {
-	border: none !important;
+  outline: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
 }

@@ -467,8 +467,22 @@
 .spectra-blocks-remove-ring a,
 .spectra-blocks-remove-ring {
   outline: none;
-  --tw-ring-inset: auto;
-  box-shadow: unset;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-ring-offset-shadow: 0 0 #0000;
+}
+
+/* Neutralize WP admin and @tailwindcss/forms checkbox styles for force-ui Switch */
+/* stylelint-disable-next-line selector-class-pattern */
+.group\/switch > input[type="checkbox"] {
+  &::before,
+  &:checked::before {
+    content: "" !important;
+    display: none !important;
+  }
+
+  &:checked {
+    background-image: none !important;
+  }
 }
 
 .settings-input > {

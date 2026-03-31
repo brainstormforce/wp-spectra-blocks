@@ -5,24 +5,15 @@ import { applyFilters } from '@wordpress/hooks';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Title, Badge } from '@bsf/force-ui';
-import AssetsGeneration from '@DashboardApp/pages/settings/AssetsGeneration';
-import OnPageCSS from '@DashboardApp/pages/settings/OnPageCSS';
 import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
 import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
 import PreloadLocalFonts from '@DashboardApp/pages/settings/PreloadLocalFonts';
 import DisableCSSCache from '@DashboardApp/pages/settings/DisableCSSCache';
 import ClearV3Cache from '@DashboardApp/pages/settings/ClearV3Cache';
-import CopyPasteStyles from '@DashboardApp/pages/settings/CopyPasteStyles';
 import DynamicContent from './dynamic-content';
-import ContentWidth from '@DashboardApp/pages/settings/ContentWidth';
-import BlocksEditorSpacing from '@DashboardApp/pages/settings/BlocksEditorSpacing';
-import Visibility from '@DashboardApp/pages/settings/Visibility';
 import SettingsSkeleton from '@DashboardApp/pages/settings/SettingsSkeleton';
 import BlockSettings from '@DashboardApp/pages/settings/BlockSettings';
-import LoadFontAwesome5 from '@DashboardApp/pages/settings/LoadFontAwesome5';
-import EnableLegacyDesignLibrary from '@DashboardApp/pages/settings/EnableLegacyDesignLibrary';
-import AutoBlockRecovery from '@DashboardApp/pages/settings/AutoBlockRecovery';
 import ContainerGlobalPadding from '@DashboardApp/pages/settings/ContainerGlobalPadding';
 import ContainerGlobalElementsGap from '@DashboardApp/pages/settings/ContainerGlobalElementsGap';
 import MyAccount from '@DashboardApp/pages/settings/MyAccount';
@@ -31,52 +22,14 @@ import InheritFromTheme from '@DashboardApp/pages/settings/InheritFromTheme';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
 import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
 
-// Import Block Settings ( Integrations ).
-import InstagramUsers from '@DashboardApp/pages/settings/block-settings/InstagramUsers';
-
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
-import QuickActionBar from '@DashboardApp/pages/settings/editor-enhancements/QuickActionBar';
-import CollapsePanels from '@DashboardApp/pages/settings/editor-enhancements/CollapsePanels';
 
 import { useLocation, useHistory } from 'react-router-dom';
 import { useEffect } from '@wordpress/element';
 
 import UagbSidebar from './Sidebar';
 import { useState } from 'react';
-
-const InstagramSvg = () => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<g clipPath="url(#clip0_10608_12749)">
-			<path
-				d="M14.1665 1.66675H5.83317C3.53198 1.66675 1.6665 3.53223 1.6665 5.83342V14.1667C1.6665 16.4679 3.53198 18.3334 5.83317 18.3334H14.1665C16.4677 18.3334 18.3332 16.4679 18.3332 14.1667V5.83342C18.3332 3.53223 16.4677 1.66675 14.1665 1.66675Z"
-				stroke="#6005FF"
-				strokeWidth="1.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M13.3333 9.47501C13.4361 10.1685 13.3176 10.8769 12.9947 11.4992C12.6718 12.1215 12.1609 12.6262 11.5346 12.9414C10.9083 13.2566 10.1986 13.3663 9.50641 13.255C8.81419 13.1436 8.17472 12.8167 7.67895 12.321C7.18318 11.8252 6.85636 11.1857 6.74497 10.4935C6.63359 9.8013 6.74331 9.09159 7.05852 8.46532C7.37374 7.83905 7.87841 7.32812 8.50074 7.00521C9.12307 6.68229 9.83138 6.56383 10.5249 6.66667C11.2324 6.77158 11.8873 7.10123 12.393 7.60693C12.8987 8.11263 13.2283 8.76757 13.3333 9.47501Z"
-				stroke="#6005FF"
-				strokeWidth="1.25"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M14.5835 5.41675H14.5918"
-				stroke="#6005FF"
-				strokeWidth="1.25"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</g>
-		<defs>
-			<clipPath id="clip0_10608_12749">
-				<rect width="20" height="20" fill="white" />
-			</clipPath>
-		</defs>
-	</svg>
-);
 
 const Settings = () => {
 	const query = new URLSearchParams( useLocation()?.search );
@@ -107,11 +60,6 @@ const Settings = () => {
 					slug: 'global-settings',
 					icon: SettingsIcons[ 'global-settings' ],
 				},
-				{
-					name: __( 'Editor Enhancements', 'spectra-blocks' ),
-					slug: 'editor-enhancements',
-					icon: SettingsIcons.templates,
-				},
 			],
 		},
 		{
@@ -128,11 +76,6 @@ const Settings = () => {
 			name: 'Preferences',
 			children: [
 				{
-					name: __( 'Site Visibility', 'spectra-blocks' ),
-					slug: 'site-visibility',
-					icon: SettingsIcons[ 'site-visibility' ],
-				},
-				{
 					name: __( 'Integrations', 'spectra-blocks' ),
 					slug: 'block-settings',
 					icon: SettingsIcons[ 'block-settings' ],
@@ -143,21 +86,12 @@ const Settings = () => {
 
 	const tabTitles = {
 		'global-settings': __( 'Editor Options', 'spectra-blocks' ),
-		'editor-enhancements': __( 'Editor Enhancements', 'spectra-blocks' ),
 		'fonts-performance': __( 'Performance', 'spectra-blocks' ),
 		'fse-support': __( 'Theme Fonts', 'spectra-blocks' ),
 		'block-settings': __( 'Integrations', 'spectra-blocks' ),
-		'site-visibility': __( 'Site Visibility', 'spectra-blocks' ),
 		'license': __( 'My Account', 'spectra-blocks' ),
 	};
 
-	if ( 'yes' === spectra_blocks_admin_react.enable_v2_blocks ) {
-		navigation[2].children.unshift( {
-			name: __( 'Asset Generation', 'spectra-blocks' ),
-			slug: 'asset-generation',
-			icon: SettingsIcons['asset-generation'],
-		} )
-	}
 
 	if ( spectraIsBlockTheme ) {
 		navigation[ 3 ].children.unshift( {
@@ -200,7 +134,6 @@ const Settings = () => {
 			'spectra-blocks'
 		),
 		features: [
-			__( 'Instagram Feed Block', 'spectra-blocks' ),
 			__( 'Global Block Styles', 'spectra-blocks' ),
 			__( 'Dynamic Content', 'spectra-blocks' ),
 			__( 'Loop Builder', 'spectra-blocks' ),
@@ -209,21 +142,6 @@ const Settings = () => {
 		],
 	};
 
-	const instagramModalData = {
-		title: __( 'Unlock Instagram Feed', 'spectra-blocks' ),
-		Image: InstagramModalImage,
-		header: __( 'Display Your Instagram Journey on Your Website', 'spectra-blocks' ),
-		description: __(
-			'Grab the attention of visitors with high quality photos and videos directly from your instagram feed.',
-			'spectra-blocks'
-		),
-		features: [
-			__( 'Image gallery layouts that suit your website', 'spectra-blocks' ),
-			__( 'Supports multiple Instagram accounts', 'spectra-blocks' ),
-			__( 'Abundant customization options', 'spectra-blocks' ),
-			__( 'Drive organic traffic with instagram captions', 'spectra-blocks' ),
-		],
-	};
 
 	return (
 		<Container className="lg:grid lg:grid-cols-[16rem_1fr] flex gap-4 bg-background-secondary flex-auto">
@@ -240,47 +158,6 @@ const Settings = () => {
 					</Container>
 
 					<Container className="w-full rounded-xl" direction="column" gap="sm">
-						{ 'yes' === spectra_blocks_admin_react.enable_v2_blocks && spectra_blocks_react.pro_plugin_status !== 'Activated' && (
-							<div className="bg-background-primary p-6 rounded-xl mb-8 shadow">
-								<UpgradeNotices
-									title={
-										<div className="flex gap-2 items-center">
-											{ __( 'Instagram Feed', 'spectra-blocks' ) }
-											<Badge
-												label={ __( 'PRO', 'spectra-blocks' ) }
-												size="xxs"
-												type="pill"
-												variant="inverse"
-											/>
-										</div>
-									}
-									description={ __(
-										'please upgrade to use this feature.',
-										'spectra-blocks'
-									) }
-									upgradeText={ __(
-										'Integrate your Instagram feed into your site.',
-										'spectra-blocks'
-									) }
-									upgradeBold={
-										<>
-											<div className="flex items-center gap-2">
-												<InstagramSvg />
-												{ __( 'Enhance engagement.', 'spectra-blocks' ) }
-											</div>
-										</>
-									}
-									modalData={ instagramModalData }
-								/>
-							</div>
-						) }
-
-						{ 'yes' === spectra_blocks_admin_react.enable_v2_blocks && spectra_blocks_react.spectra_pro_status && (
-							<div className="bg-background-primary p-6 rounded-xl mb-8 shadow">
-								<InstagramUsers />
-							</div>
-						) }
-
 						<div className="bg-background-primary p-6 rounded-xl shadow">
 							<BlockSettings />
 						</div>
@@ -303,26 +180,13 @@ const Settings = () => {
 					>
 						{ 'global-settings' === currentTab && (
 							<>
-								<ContentWidth />
 								<InheritFromTheme />
 								<ContainerGlobalPadding />
 								<ContainerGlobalElementsGap />
 								<DynamicContent />
-								<BlocksEditorSpacing />
-								<OnPageCSS />
-								<CopyPasteStyles />
-								<AutoBlockRecovery />
-								<LoadFontAwesome5 />
+								<TemplatesButton />
+								<BSFAnalyticsOption />
 							</>
-						) }
-						{ 'global-settings' === currentTab && (
-							<EnableLegacyDesignLibrary />
-						) }
-						{'global-settings' === currentTab && (
-							<BSFAnalyticsOption />
-						)}
-						{ 'editor-enhancements' === currentTab && (
-							<TemplatesButton />
 						) }
 						{ 'fonts-performance' === currentTab && (
 							<>
@@ -334,11 +198,6 @@ const Settings = () => {
 							</>
 						) }
 						{ 'fse-support' === currentTab && spectraIsBlockTheme && <FSEFontFamilies /> }
-						{ 'site-visibility' === currentTab && (
-							<>
-								<Visibility />
-							</>
-						) }
 						{ 'license' === currentTab && (
 							<>
 								{ 'Activated' !== spectra_blocks_react.pro_plugin_status && (
@@ -361,14 +220,8 @@ const Settings = () => {
 							switch ( currentTab ) {
 								case 'global-settings':
 									return applyFilters( 'spectra.adminSettings.globalSettings', null );
-								case 'editor-enhancements':
-									return applyFilters( 'spectra.adminSettings.editorEnhancements', null );
 								case 'fonts-performance':
 									return applyFilters( 'spectra.adminSettings.fontsPerformance', null );
-								case 'site-visibility':
-									return applyFilters( 'spectra.adminSettings.siteVisibility', null );
-								case 'asset-generation':
-									return applyFilters( 'spectra.adminSettings.assetGeneration', null );
 								default:
 									return null;
 							}
