@@ -62,6 +62,7 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
@@ -87,6 +88,7 @@ This plugin includes compiled JavaScript from the following Brainstorm Force lib
 * `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/zip-ai](https://github.com/brainstormforce/zip-ai) (build: `npm install && npm run build`)
 * `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/nps-survey](https://github.com/brainstormforce/nps-survey) (build: `npm install && npm run build`)
 * `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/zipwp-images](https://github.com/brainstormforce/zipwp-images) (build: `npm install && npm run build`)
+
 
 == External Services ==
 
@@ -185,6 +187,7 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 * Fix: Added function_exists() guards around core file includes.
 * Fix: Added capability check to SVG upload filter.
 * Fix: Updated all shared libraries to latest versions.
+
 
 = 0.0.2 =
 * Fix: Address WordPress.org plugin review compliance issues.

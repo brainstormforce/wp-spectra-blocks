@@ -259,7 +259,7 @@ module.exports = function ( grunt ) {
 	//
 	// Note: grunt-contrib-copy / grunt-contrib-compress use recursive glob
 	// patterns that are broken on Node >= 23 (Symbol conversion error).
-	// We use rsync + zip via execSync instead — reliable on macOS / Linux.
+	// We use Node.js fs + glob + adm-zip instead — cross-platform (macOS / Linux / Windows).
 	//
 	// Pipeline:
 	//   1. zip-build          → npm run build:fresh + admin build
@@ -274,7 +274,8 @@ module.exports = function ( grunt ) {
 			'Building ' + PLUGIN_SLUG + ' v' + grunt.config.get( 'pkg.version' )
 		);
 		run( 'npm run build:fresh' );
-		run( 'rm -rf admin/assets/build' );
+		fs.rmSync( path.join( PLUGIN_ROOT, 'admin', 'assets', 'build' ), { recursive: true, force: true } );
+		grunt.log.writeln( '→ rm -rf admin/assets/build' );
 		run( 'npm run build', { cwd: path.join( PLUGIN_ROOT, 'admin' ) } );
 	} );
 
@@ -282,7 +283,8 @@ module.exports = function ( grunt ) {
 		run( 'composer install --no-dev --quiet' );
 	} );
 
-	grunt.registerTask( 'zip-stage', 'Stage plugin files via rsync', function () {
+	grunt.registerTask( 'zip-stage', 'Stage plugin files (cross-platform, no rsync)', function () {
+		const glob = require( 'glob' );
 		const stagingDir = path.join( PARENT_DIR, PLUGIN_SLUG + '-staging', PLUGIN_SLUG );
 
 		// Remove duplicate vendor packages before staging.
@@ -292,21 +294,60 @@ module.exports = function ( grunt ) {
 			grunt.log.writeln( '→ Removed duplicate vendor/brainstormforce/' );
 		}
 
-		// Rsync to staging directory, excluding dev artifacts.
-		// Uses .distignore as the exclude file for a single source of truth.
-		run(
-			'rsync -a --delete' +
-			' --exclude-from=".distignore"' +
-			' ./' +
-			' "' + stagingDir + '/"'
-		);
+		// Parse .distignore into glob ignore patterns.
+		const distignoreLines = fs
+			.readFileSync( path.join( PLUGIN_ROOT, '.distignore' ), 'utf8' )
+			.split( /\r?\n/ )
+			.map( ( l ) => l.trim() )
+			.filter( ( l ) => l && ! l.startsWith( '#' ) );
 
+		// Convert each .distignore entry to glob ignore patterns.
+		// rsync exclude rules: patterns WITHOUT a mid-slash match at any depth,
+		// patterns WITH a mid-slash are anchored to the root.
+		// e.g. ".git/" → match anywhere → "**/.git" + "**/.git/**"
+		// e.g. "lib/*/phpstan.neon" → anchored → "lib/*/phpstan.neon"
+		const ignorePatterns = distignoreLines.flatMap( ( entry ) => {
+			const clean = entry.replace( /\/$/, '' ); // strip trailing slash
+			// A pattern is "anchored" if it contains a slash that is NOT at the end.
+			const hasInternalSlash = clean.includes( '/' );
+			if ( hasInternalSlash ) {
+				// Anchored pattern — match relative to root only.
+				return [ clean, clean + '/**' ];
+			}
+			// Un-anchored pattern — match at any depth in the tree.
+			return [ clean, clean + '/**', '**/' + clean, '**/' + clean + '/**' ];
+		} );
+
+		// Collect all files to copy (directories are implicit).
+		const filesToCopy = glob.sync( '**/*', {
+			cwd: PLUGIN_ROOT,
+			dot: true,
+			nodir: true,
+			ignore: ignorePatterns,
+		} );
+
+		// Reset staging dir cleanly.
+		fs.rmSync( stagingDir, { recursive: true, force: true } );
+		fs.mkdirSync( stagingDir, { recursive: true } );
+
+		let copied = 0;
+		filesToCopy.forEach( ( relPath ) => {
+			const src = path.join( PLUGIN_ROOT, relPath );
+			const dest = path.join( stagingDir, relPath );
+			fs.mkdirSync( path.dirname( dest ), { recursive: true } );
+			fs.copyFileSync( src, dest );
+			copied++;
+		} );
+
+		grunt.log.writeln( '→ Copied ' + copied + ' files to staging' );
 		grunt.log.ok( 'Staged to: ' + stagingDir );
 	} );
 
-	grunt.registerTask( 'zip-package', 'Create zip from staging and cleanup', function () {
+	grunt.registerTask( 'zip-package', 'Create zip from staging (cross-platform, no zip CLI)', function () {
+		const AdmZip = require( 'adm-zip' );
 		const version = grunt.config.get( 'pkg.version' );
 		const stagingParent = path.join( PARENT_DIR, PLUGIN_SLUG + '-staging' );
+		const stagingDir = path.join( stagingParent, PLUGIN_SLUG );
 		const zipFile = path.join( PARENT_DIR, PLUGIN_SLUG + '.' + version + '.zip' );
 
 		// Remove old zip if it exists.
@@ -315,11 +356,27 @@ module.exports = function ( grunt ) {
 			grunt.log.writeln( '→ Removed old zip' );
 		}
 
-		// Create zip from staging directory.
-		run(
-			'zip -rq "' + zipFile + '" "' + PLUGIN_SLUG + '"',
-			{ cwd: stagingParent }
-		);
+		// Build zip using adm-zip (pure Node.js, cross-platform).
+		const zip = new AdmZip();
+
+		const addDirRecursive = ( dir, zipBasePath ) => {
+			const entries = fs.readdirSync( dir, { withFileTypes: true } );
+			entries.forEach( ( entry ) => {
+				const fullPath = path.join( dir, entry.name );
+				const entryPath = zipBasePath + '/' + entry.name;
+				if ( entry.isDirectory() ) {
+					addDirRecursive( fullPath, entryPath );
+				} else {
+					zip.addFile(
+						entryPath,
+						fs.readFileSync( fullPath )
+					);
+				}
+			} );
+		};
+
+		addDirRecursive( stagingDir, PLUGIN_SLUG );
+		zip.writeZip( zipFile );
 
 		// Remove staging directory.
 		fs.rmSync( stagingParent, { recursive: true, force: true } );
@@ -346,3 +403,4 @@ module.exports = function ( grunt ) {
 		'zip-restore',
 	] );
 };
+
