@@ -18,7 +18,7 @@ $close_icon_position = $block->context['spectra/modal/closeIconPosition'] ?? '';
 $h_position          = ! empty( $attributes['hPos'] ) ? $attributes['hPos'] : ( $block->context['spectra/modal/hPos'] ?? '' );
 $v_position          = ! empty( $attributes['vPos'] ) ? $attributes['vPos'] : ( $block->context['spectra/modal/vPos'] ?? '' );
 $appear_effect       = $block->context['spectra/modal/appearEffect'] ?? '';
-$is_pro              = is_plugin_active( 'spectra-pro/spectra-pro.php' );
+$is_pro              = is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' );
 
 // Check if we need a wrapper - add wrapper if NOT window positioning.
 $needs_wrapper = ! ( 'window-top-left' === $close_icon_position || 'window-top-right' === $close_icon_position );

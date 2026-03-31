@@ -307,7 +307,7 @@ class Admin_Menu {
 		);
 
 		// Check if Spectra Pro plugin is not active.
-		if ( ! is_plugin_active( 'spectra-pro/spectra-pro.php' ) && ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ) ) {
+		if ( ! is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) && ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
 			$free_links[] = '<a href="' . esc_url( $spectra_pro ) . '" target="_blank" rel="noreferrer" class="spectra-plugins-go-pro">' . __( 'Get Spectra Pro', 'spectra-blocks' ) . '</a>';
 		}
 
@@ -380,6 +380,16 @@ class Admin_Menu {
 
 		// Use this action hook to add sub menu to above menu.
 		do_action( 'spectra_blocks_after_menu_register', $menu_slug );
+
+		// Add the Popup Builder Submenu.
+		add_submenu_page(
+			$menu_slug,
+			__( 'Popup Builder', 'spectra-blocks' ),
+			__( 'Popup Builder', 'spectra-blocks' ),
+			$capability,
+			'edit.php?post_type=spectra-popup',
+			null
+		);
 
 		// Add the Learn tab in Submenu.
 		add_submenu_page(
@@ -494,9 +504,9 @@ class Admin_Menu {
 				'blocks_info'                         => $blocks_info,
 				'reusable_url'                        => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
 				'global_data'                         => Admin_Helper::get_options(),
-				'spectra_pro_installed'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ),
-				'spectra_pro_licensing'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/admin/license-handler.php' ),
-				'spectra_pro_status'                  => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
+				'spectra_pro_installed'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ),
+				'spectra_pro_licensing'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/admin/license-handler.php' ),
+				'spectra_pro_status'                  => is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ),
 				'spectra_pro_ver'                     => defined( 'SPECTRA_PRO_VER' ) ? SPECTRA_PRO_VER : null,
 				'spectra_custom_fonts'                => apply_filters( 'spectra_system_fonts', array() ),
 				'spectra_admin_video'                 => apply_filters( 'spectra_display_admin_video', true ),
@@ -525,8 +535,8 @@ class Admin_Menu {
 				'plugin_activate_text'                => esc_html__( 'Activate', 'spectra-blocks' ),
 				'plugin_manager_nonce'                => wp_create_nonce( 'spectra_plugin_manager_nonce' ),
 				'installer_nonce'                     => wp_create_nonce( 'updates' ),
-				'pro_installed_status'                => 'inactive' === self::get_plugin_status( 'spectra-pro/spectra-pro.php' ) ? true : false,
-				'pro_plugin_status'                   => self::get_plugin_status( 'spectra-pro/spectra-pro.php' ),
+				'pro_installed_status'                => 'inactive' === self::get_plugin_status( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ? true : false,
+				'pro_plugin_status'                   => self::get_plugin_status( 'spectra-blocks-pro/spectra-blocks-pro.php' ),
 				'contry_code'                         => \Spectra_Blocks_Admin_Helper::get_user_country_code(),
 				'clear_v3_cache_nonce'                => wp_create_nonce( 'spectra_blocks_clear_v3_cache' ),
 				'disable_css_cache_nonce'             => wp_create_nonce( 'spectra_blocks_disable_css_cache' ),

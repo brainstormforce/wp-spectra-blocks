@@ -142,8 +142,8 @@ class AssetLoader {
 		}
 		$installed_plugins  = get_plugins();
 		$spectra_pro_status = 'not-installed';
-		if ( isset( $installed_plugins['spectra-pro/spectra-pro.php'] ) ) {
-			$spectra_pro_status = is_plugin_active( 'spectra-pro/spectra-pro.php' ) ? 'active' : 'inactive';
+		if ( isset( $installed_plugins['spectra-blocks-pro/spectra-blocks-pro.php'] ) ) {
+			$spectra_pro_status = is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ? 'active' : 'inactive';
 		}
 
 		// Load and merge SVG icon data from icon chunk files.
@@ -164,6 +164,8 @@ class AssetLoader {
 			'spectra_pro_status'       => $spectra_pro_status,
 			'current_post_id'          => (int) get_the_ID(),
 			'spectra_blocks_svg_icons' => $merged_icons,
+			'contry_code'              => \Spectra_Blocks_Admin_Helper::get_user_country_code(),
+			'upsellModalEditor'        => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-editor', 'upsell-popup-view-plan' ),
 		);
 
 		// Compute the icon category list from custom_categories per icon.

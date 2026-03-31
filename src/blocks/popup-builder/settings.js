@@ -6,6 +6,7 @@ import { memo, useState, useEffect, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
+import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	Dashicon,
 	ToggleControl,
@@ -1104,6 +1105,11 @@ const Settings = ( props ) => {
 			<PopupGeneralSettings { ...props } />
 			<PopupCloseSettings { ...props } />
 			<PopupRepetitionSettings {...props} />
+			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
+				<InspectorControls group="settings">
+					<UpgradeComponent control={ { campaign: 'popup-builder' } } />
+				</InspectorControls>
+			) }
 			{ proModalControls && proModalSetup }
 			<PopupColorSettings { ...props } />
 			<PopupOpacitySettings { ...props } />

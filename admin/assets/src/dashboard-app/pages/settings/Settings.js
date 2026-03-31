@@ -11,7 +11,6 @@ import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
 import PreloadLocalFonts from '@DashboardApp/pages/settings/PreloadLocalFonts';
 import DisableCSSCache from '@DashboardApp/pages/settings/DisableCSSCache';
 import ClearV3Cache from '@DashboardApp/pages/settings/ClearV3Cache';
-import DynamicContent from './dynamic-content';
 import SettingsSkeleton from '@DashboardApp/pages/settings/SettingsSkeleton';
 import BlockSettings from '@DashboardApp/pages/settings/BlockSettings';
 import ContainerGlobalPadding from '@DashboardApp/pages/settings/ContainerGlobalPadding';
@@ -20,6 +19,7 @@ import MyAccount from '@DashboardApp/pages/settings/MyAccount';
 import MyAccountUpgradeToPro from '@DashboardApp/pages/settings/MyAccountUpgradeToPro';
 import InheritFromTheme from '@DashboardApp/pages/settings/InheritFromTheme';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
+import ProActiveStatus from '@DashboardApp/pages/settings/ProActiveStatus';
 import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
 
 // Import Editor Enhancements.
@@ -135,7 +135,6 @@ const Settings = () => {
 		),
 		features: [
 			__( 'Global Block Styles', 'spectra-blocks' ),
-			__( 'Dynamic Content', 'spectra-blocks' ),
 			__( 'Loop Builder', 'spectra-blocks' ),
 			__( 'Popup Builder', 'spectra-blocks' ),
 			__( 'And more…', 'spectra-blocks' ),
@@ -183,7 +182,6 @@ const Settings = () => {
 								<InheritFromTheme />
 								<ContainerGlobalPadding />
 								<ContainerGlobalElementsGap />
-								<DynamicContent />
 								<TemplatesButton />
 								<BSFAnalyticsOption />
 							</>
@@ -212,7 +210,8 @@ const Settings = () => {
 										modalData={ accountModalData }
 									/>
 								) }
-								{ spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && <MyAccount /> }	
+								{ spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && <MyAccount /> }
+								{ 'Activated' === spectra_blocks_react.pro_plugin_status && ! spectra_blocks_react.spectra_pro_licensing && <ProActiveStatus /> }
 							</>
 						) }
 						{/* Apply filters for all tabs */}

@@ -37,6 +37,7 @@ import Background from '@spectra-components/background';
 import BlockControlLink from '@spectra-components/block-control-link';
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
+import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient-control';
 import ShadowControl from '@spectra-components/shadow-control';
 
@@ -1529,6 +1530,11 @@ const Settings = ( props ) => {
 				</InspectorControls>
 			) }
 			<ShapeDividerSettings { ...props } />
+			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
+				<InspectorControls group="settings">
+					<UpgradeComponent control={ { campaign: 'dynamic-content' } } />
+				</InspectorControls>
+			) }
 		</>
 	);
 };

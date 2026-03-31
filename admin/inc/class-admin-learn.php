@@ -210,7 +210,7 @@ class Admin_Learn {
 			);
 		}
 
-		if ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) ) {
+		if ( is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
 			$chapters[] = array(
 				'id'          => 'global-styles',
 				'title'       => __( 'Global Styles', 'spectra-blocks' ),

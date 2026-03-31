@@ -15,7 +15,7 @@ use Spectra\Helpers\Core;
 $slider_id = 'spectra-slider-' . wp_unique_id();
 
 // Check if Spectra Pro is active (same pattern as modal).
-$is_pro_activated = is_plugin_active( 'spectra-pro/spectra-pro.php' );
+$is_pro_activated = is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' );
 
 /**
  * Get effective slides per view with Pro fallback logic.
