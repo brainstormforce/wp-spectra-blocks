@@ -35,12 +35,16 @@ if ( $should_hide ) {
 	$custom_classes[] = 'is-hidden';
 }
 
+// Add inline style if should hide.
+$inline_styles = $should_hide ? array( 'display' => 'none' ) : array();
+
 // Get the block wrapper attributes.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes(
 	$attributes,
 	$style_configs,
 	array(),
-	$custom_classes
+	$custom_classes,
+	$inline_styles
 );
 
 // Return the view.

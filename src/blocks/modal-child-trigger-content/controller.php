@@ -33,14 +33,19 @@ $config = array(
 );
 
 // Custom classes.
+$is_hidden = 'text' !== $modal_trigger;
+
 $custom_classes = array(
-	'text' !== $modal_trigger ? 'is-hidden' : '',
+	$is_hidden ? 'is-hidden' : '',
 	$drop_cap_class,
 	'modal-trigger-element',
 );
 
+// Inline style fallback to guarantee hiding regardless of CSS specificity.
+$custom_styles = $is_hidden ? array( 'display' => 'none' ) : array();
+
 // Get the block wrapper attributes, and extend the styles and classes.
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'id' => $anchor ), $custom_classes );
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'id' => $anchor ), $custom_classes, $custom_styles );
 
 // Add the text if it exists, else make the placeholder as the text.
 $text = ! empty( $attributes['text'] ) ? $attributes['text'] : __( 'Get started by writing something!', 'spectra-blocks' );
