@@ -85,6 +85,12 @@ class Spectra_Blocks_Loader {
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-ast-block-templates.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-ast-block-templates.php';
 		}
+
+		// Load learn actions for block editor guided steps.
+		require_once $classes_dir . 'class-spectra-blocks-learn-actions.php';
+
+		// Load learn actions for admin dashboard guided tooltips.
+		require_once $classes_dir . 'class-spectra-blocks-admin-learn-actions.php';
 	}
 
 	/**
