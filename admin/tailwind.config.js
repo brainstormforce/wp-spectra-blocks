@@ -252,6 +252,9 @@ module.exports = {
 	},
 	plugins: [
 		require( '@tailwindcss/forms' ),
+		require( 'tailwindcss/plugin' )( ( { addVariant } ) => {
+			addVariant( 'not-rtl', '&:not([dir="rtl"], [dir="rtl"] *)' );
+		} ),
 	],
 	corePlugins: {
 		preflight: false,

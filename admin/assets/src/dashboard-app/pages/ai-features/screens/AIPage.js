@@ -646,7 +646,7 @@ const AIPage = () => {
 
 											<Switch
 												size="md"
-												className="spectra-blocks-remove-ring"
+												className="spectra-blocks-remove-ring border-none"
 												value={ zipAiAssistantStatus }
 												onChange={ () =>
 													updateZipAiStatus( 'ai_assistant', zipAiAssistantStatus )
@@ -686,7 +686,7 @@ const AIPage = () => {
 
 											<Switch
 												size="md"
-												className="spectra-blocks-remove-ring"
+												className="spectra-blocks-remove-ring border-none"
 												value={ zipAiDesignCopilotStatus }
 												onChange={ () =>
 													updateZipAiStatus( 'ai_design_copilot', zipAiDesignCopilotStatus )

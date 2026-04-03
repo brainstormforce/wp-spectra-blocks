@@ -47,7 +47,7 @@ const InheritFromThemeRender = () => {
 					value={ enableInheritTheme }
 					onChange={ updateEnableInheritFromTheme }
 					size="md"
-					className="spectra-blocks-remove-ring"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />

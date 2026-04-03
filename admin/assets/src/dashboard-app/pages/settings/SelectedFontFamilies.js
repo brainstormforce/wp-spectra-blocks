@@ -137,7 +137,7 @@ const SelectedFontFamilies = () => {
 					value={ enableSelectedFontFamiliesStatus }
 					onChange={ updateEnableSelectedFontFamilies }
 					size="md"
-					className="spectra-blocks-remove-ring"
+					className="spectra-blocks-remove-ring border-none"
 				/>
 			</SettingsItem>
 

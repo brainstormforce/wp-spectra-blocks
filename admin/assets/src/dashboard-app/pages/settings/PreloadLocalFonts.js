@@ -54,7 +54,7 @@ const PreloadLocalFonts = () => {
 						value={ enablePreloadLocalFontsStatus }
 						onChange={ updatePreloadLocalFontsStatus }
 						size="md"
-						className="spectra-blocks-remove-ring"
+						className="spectra-blocks-remove-ring border-none"
 					/>
 				</SettingsItem>
 			) : (
@@ -70,7 +70,7 @@ const PreloadLocalFonts = () => {
 						onChange={ updatePreloadLocalFontsStatus }
 						size="md"
 						disabled
-						className="spectra-blocks-remove-ring"
+						className="spectra-blocks-remove-ring border-none"
 					/>
 				</SettingsItemDisabled>
 			) }
