@@ -101,6 +101,11 @@ class AssetLoader {
 	 * @return void
 	 */
 	public function enqueue_editor_assets() {
+		// Register Swiper assets so the editor has access to the global Swiper object.
+		$this->register_block_assets();
+		wp_enqueue_script( 'swiper-script' );
+		wp_enqueue_style( 'swiper-style' );
+
 		// Load the common editor styles.
 		$css_file = SPECTRA_BLOCKS_DIR . 'build/styles/editor.css';
 
@@ -203,14 +208,14 @@ class AssetLoader {
 			'swiper-style',
 			SPECTRA_BLOCKS_URL . 'assets/css/swiper-bundle.min.css',
 			array(),
-			'11.0.5'
+			'12.1.3'
 		);
 
 		wp_register_script(
 			'swiper-script',
 			SPECTRA_BLOCKS_URL . 'assets/js/swiper-bundle.min.js',
 			array(),
-			'11.0.5',
+			'12.1.3',
 			true
 		);
 

@@ -5,10 +5,6 @@ import { useInnerBlocksProps, store as blockEditorStore, useBlockProps } from '@
 import { useRefEffect } from '@wordpress/compose';
 import { select, subscribe, useSelect } from '@wordpress/data';
 import { memo, useEffect, useRef, } from '@wordpress/element';
-// Swiper CSS (extracted at build time, no JS bundle cost).
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
 /**
  * Internal dependencies.
  */
@@ -187,11 +183,10 @@ const Render = memo( ( props ) => {
 
 			// Initialize the slider based on the breakpoints.
 			const initSwiper = async () => {
-				// Dynamically import Swiper only when the editor renders a slider block.
-				const [ { default: Swiper }, { Navigation, Pagination, Autoplay } ] = await Promise.all( [
-					import( /* webpackChunkName: "swiper-core" */ 'swiper' ),
-					import( /* webpackChunkName: "swiper-modules" */ 'swiper/modules' ),
-				] );
+				// Swiper is externalized to the global provided by swiper-bundle.min.js.
+				// All standard modules are pre-registered in the bundle.
+				const SwiperModule = await import( 'swiper' );
+				const Swiper = SwiperModule.default || SwiperModule;
 
 		// Use correct document context for navigation and pagination selectors.
 		const targetDoc = getEditorDocument();
@@ -214,7 +209,6 @@ const Render = memo( ( props ) => {
 		
 		// Initialize the slider options.
 		const options = {
-			modules: [ Navigation, Pagination, Autoplay ],
 			slidesPerView: parseFloat( effectiveSlidesPerView || 1 ),
 			spaceBetween: getSpaceBetween(),
 					slidesOffsetAfter:0,

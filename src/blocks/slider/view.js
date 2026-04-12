@@ -1,17 +1,7 @@
 /**
  * External dependencies.
  */
-import {
-	Navigation,
-	Pagination,
-	Autoplay,
-	HashNavigation,
-	A11y,
-} from 'swiper/modules';
 import Swiper from 'swiper';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
 import { applyFilters } from '@wordpress/hooks';
 
 /**
@@ -134,16 +124,10 @@ const initSlider = ( sliderId ) => {
 	);
 	const paginationEl = sliderElement.querySelector( '.swiper-pagination' );
 
-	// Initialize base modules including A11y.
-	let modules = [ Navigation, Pagination, Autoplay, A11y ];
-
-	// If hash navigation is enabled, add the HashNavigation module.
-	if ( params.hashNavigation?.enabled ) {
-		modules.push( HashNavigation );
-	}
-
-	// Allow extensions to modify modules and parameters.
-	modules = applyFilters( 'spectra.sliderModules', modules, params );
+	// The standalone swiper-bundle.min.js pre-registers all standard modules
+	// (Navigation, Pagination, Autoplay, HashNavigation, A11y, etc.).
+	// Only custom/third-party modules from extensions need to be passed here.
+	const modules = applyFilters( 'spectra.sliderModules', [], params );
 	params = applyFilters( 'spectra.sliderParams', params, params );
 
 	// Sanitize slidesPerView values - convert 'auto' to numeric 1 for legacy data.
@@ -173,7 +157,7 @@ const initSlider = ( sliderId ) => {
 
 	// Create the Swiper configuration.
 	const config = {
-		modules,
+		...( modules.length > 0 ? { modules } : {} ),
 		...params,
 		// Base slider settings.
 		slidesPerView: params.slidesPerView || 1,

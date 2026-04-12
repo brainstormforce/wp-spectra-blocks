@@ -1,7 +1,52 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const path = require( 'path' );
 const fs = require( 'fs' );
 const glob = require( 'glob' );
+
+/**
+ * Swiper externalization helpers.
+ *
+ * Maps 'swiper' and 'swiper/modules' to the global `Swiper` variable
+ * provided by the standalone swiper-bundle.min.js so the library is not
+ * bundled into webpack output (avoids WP.org compliance flags).
+ *
+ * @since x.x.x
+ */
+const SWIPER_REQUESTS = new Set( [ 'swiper', 'swiper/modules' ] );
+
+function requestToExternal( request ) {
+	if ( SWIPER_REQUESTS.has( request ) ) {
+		return 'Swiper';
+	}
+}
+
+function requestToHandle( request ) {
+	if ( SWIPER_REQUESTS.has( request ) ) {
+		return 'swiper-script';
+	}
+}
+
+/**
+ * Replace the default DependencyExtractionWebpackPlugin with a custom
+ * instance that externalizes Swiper, while keeping all default @wordpress/*
+ * externalization behaviour.
+ *
+ * @param {Array} plugins The plugins array from a webpack config.
+ * @return {Array} Updated plugins array.
+ */
+function withSwiperExternals( plugins ) {
+	return [
+		...( plugins || [] ).filter(
+			( plugin ) =>
+				plugin.constructor.name !== 'DependencyExtractionWebpackPlugin'
+		),
+		new DependencyExtractionWebpackPlugin( {
+			requestToExternal,
+			requestToHandle,
+		} ),
+	];
+}
 
 /**
  * Webpack plugin to prepend ABSPATH guard to generated .asset.php files.
@@ -40,11 +85,24 @@ const commonAliases = {
 	'@spectra-config': path.resolve( __dirname, 'src/helpers/plugin-config.js' ),
 };
 
+// Swiper CSS imports are handled by the registered 'swiper-style' handle — ignore them in webpack.
+const swiperCssExternals = {
+	'swiper/css': '',
+	'swiper/css/navigation': '',
+	'swiper/css/pagination': '',
+};
+
 module.exports = [
 	{
 		...defaultConfig[ 0 ],
 		performance: {
 			hints: false,
+		},
+		externals: {
+			...( typeof defaultConfig[ 0 ].externals === 'object' && ! Array.isArray( defaultConfig[ 0 ].externals )
+				? defaultConfig[ 0 ].externals
+				: {} ),
+			...swiperCssExternals,
 		},
 		resolve: {
 			alias: {
@@ -53,7 +111,7 @@ module.exports = [
 			},
 		},
 		plugins: [
-			...( defaultConfig[ 0 ].plugins || [] ),
+			...withSwiperExternals( defaultConfig[ 0 ].plugins ),
 			new AbsPathGuardPlugin(),
 		],
 		entry: () => {
@@ -90,6 +148,12 @@ module.exports = [
 	},
 	{
 		...defaultConfig[ 1 ],
+		externals: {
+			...( typeof defaultConfig[ 1 ].externals === 'object' && ! Array.isArray( defaultConfig[ 1 ].externals )
+				? defaultConfig[ 1 ].externals
+				: {} ),
+			...swiperCssExternals,
+		},
 		resolve: {
 			alias: {
 				...defaultConfig[ 1 ].resolve.alias,
@@ -97,7 +161,7 @@ module.exports = [
 			},
 		},
 		plugins: [
-			...( defaultConfig[ 1 ].plugins || [] ),
+			...withSwiperExternals( defaultConfig[ 1 ].plugins ),
 			new AbsPathGuardPlugin(),
 		],
 	},
