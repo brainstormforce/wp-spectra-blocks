@@ -174,6 +174,10 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 
 == Changelog ==
 
+= 0.0.5 =
+* Fix: Externalized Swiper library from webpack build to resolve WP.org "Out of Date Libraries" compliance flag.
+* Fix: Improved Swiper asset loading via block.json declarations for proper editor iframe and frontend support.
+
 = 0.0.4 =
 * Fix: Updated Swiper library to v12.1.3.
 * Fix: Added wp_kses() escaping at render output point in HtmlSanitizer.
