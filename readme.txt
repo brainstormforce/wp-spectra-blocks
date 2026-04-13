@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, page builder, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.4
+Stable tag: 0.0.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,7 +65,7 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
-* Source code is available on GitHub: [https://github.com/brainstormforce/spectra-blocks](https://github.com/brainstormforce/spectra-blocks)
+* Source code is available on GitHub: [https://github.com/brainstormforce/wp-spectra-blocks](https://github.com/brainstormforce/wp-spectra-blocks)
 
 To build from source:
 
@@ -83,10 +83,10 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 
 This plugin includes compiled JavaScript from the following Brainstorm Force libraries. Source code for each is available on GitHub:
 
-* `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/gutenberg-templates](https://github.com/brainstormforce/gutenberg-templates) (build: `npm install && npm run build`)
-* `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/zip-ai](https://github.com/brainstormforce/zip-ai) (build: `npm install && npm run build`)
-* `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/nps-survey](https://github.com/brainstormforce/nps-survey) (build: `npm install && npm run build`)
-* `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/zipwp-images](https://github.com/brainstormforce/zipwp-images) (build: `npm install && npm run build`)
+* `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/bsf-gutenberg-templates](https://github.com/brainstormforce/bsf-gutenberg-templates) (build: `npm install && npm run build`)
+* `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/bsf-zip-ai](https://github.com/brainstormforce/bsf-zip-ai) (build: `npm install && npm run build`)
+* `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/bsf-nps-survey](https://github.com/brainstormforce/bsf-nps-survey) (build: `npm install && npm run build`)
+* `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/bsf-zipwp-images](https://github.com/brainstormforce/bsf-zipwp-images) (build: `npm install && npm run build`)
 
 == External Services ==
 
@@ -175,8 +175,9 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 == Changelog ==
 
 = 0.0.5 =
-* Fix: Externalized Swiper library from webpack build to resolve WP.org "Out of Date Libraries" compliance flag.
+* Fix: Externalized Swiper library from webpack build.
 * Fix: Improved Swiper asset loading via block.json declarations for proper editor iframe and frontend support.
+* Fix: Updated GitHub repository URLs for source repositories.
 
 = 0.0.4 =
 * Fix: Updated Swiper library to v12.1.3.

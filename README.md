@@ -21,7 +21,7 @@ A fresh, standalone WordPress Gutenberg block plugin built on the [WordPress Int
 
 ```bash
 # 1. Clone the repository
-git clone git@github.com:brainstormforce/spectra-blocks.git
+git clone git@github.com:brainstormforce/wp-spectra-blocks.git
 cd spectra-blocks
 
 # 2. Install PHP dependencies (requires SSH access to BSF private repos)
