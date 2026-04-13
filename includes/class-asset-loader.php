@@ -103,8 +103,6 @@ class AssetLoader {
 	public function enqueue_editor_assets() {
 		// Register Swiper assets so the editor has access to the global Swiper object.
 		$this->register_block_assets();
-		wp_enqueue_script( 'swiper-script' );
-		wp_enqueue_style( 'swiper-style' );
 
 		// Load the common editor styles.
 		$css_file = SPECTRA_BLOCKS_DIR . 'build/styles/editor.css';
@@ -238,8 +236,6 @@ class AssetLoader {
 	public function enqueue_frontend_assets() {
 		// Only enqueue if slider block is present.
 		if ( has_block( 'spectra/slider' ) ) {
-			wp_enqueue_style( 'swiper-style' );
-			wp_enqueue_script( 'swiper-script' );
 			wp_enqueue_script( 'modal-script' );
 		}
 	}
