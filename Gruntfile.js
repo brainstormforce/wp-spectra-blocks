@@ -60,25 +60,8 @@ module.exports = function ( grunt ) {
 				],
 			},
 
-			// Version bump: @since x.x.x → current version in PHP files.
-			plugin_since: {
-				src: [
-					'*.php',
-					'**/*.php',
-					'!node_modules/**',
-					'!vendor/**',
-					'!bin/**',
-					'!tests/**',
-					'!lib/**',
-				],
-				overwrite: true,
-				replacements: [
-					{
-						from: /x\.x\.x/gi,
-						to: '<%= pkg.version %>',
-					},
-				],
-			},
+			// plugin_since is handled by the custom 'replace-since' task below
+			// to avoid Grunt's bundled glob breaking on Node >= 20.
 
 			// Sync lib JS text domains → spectra-blocks.
 			lib_js_textdomain: {
@@ -227,6 +210,27 @@ module.exports = function ( grunt ) {
 		grunt.log.ok( 'Patched ' + patched + ' file(s) with ABSPATH guard.' );
 	} );
 
+	// Replace @since x.x.x → current version in PHP files.
+	// Uses find + sed instead of Grunt's glob (broken on Node >= 20).
+	grunt.registerTask( 'replace-since', 'Replace x.x.x with current version in PHP files', function () {
+		const version = grunt.config.get( 'pkg.version' );
+		if ( ! version ) {
+			grunt.fail.fatal( 'pkg.version is not set.' );
+		}
+		// find all .php files, excluding dirs that should not be touched.
+		// sed -i '' is macOS syntax; on Linux use sed -i (no quotes).
+		const sedFlag = process.platform === 'darwin' ? "-i ''" : '-i';
+		run(
+			'find . -name "*.php"' +
+			' -not -path "./node_modules/*"' +
+			' -not -path "./vendor/*"' +
+			' -not -path "./bin/*"' +
+			' -not -path "./tests/*"' +
+			' -not -path "./lib/*"' +
+			' -exec sed ' + sedFlag + ' "s/x\\.x\\.x/' + version + '/g" {} +'
+		);
+	} );
+
 	// ── Composite tasks ──────────────────────────────────────────────────
 
 	// Sync all lib text domains (JS + PHP) to plugin slug.
@@ -246,7 +250,7 @@ module.exports = function ( grunt ) {
 				'replace:stable_tag',
 				'replace:plugin_const',
 				'replace:plugin_main',
-				'replace:plugin_since',
+				'replace-since',
 			] );
 		} else {
 			grunt.fail.fatal( 'Usage: grunt bump-version --ver=1.0.0' );
