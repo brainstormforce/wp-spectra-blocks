@@ -109,6 +109,14 @@ When the AI features are enabled and authorized, the plugin communicates with th
 * [Terms of Service](https://zipwp.com/terms/)
 * [Privacy Policy](https://zipwp.com/privacy-policy/)
 
+= ZipWP (app.zipwp.com) =
+When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in the Spectra Blocks AI dashboard, the browser is redirected to the ZipWP web app for authentication, account management, or billing. The redirect is user-initiated; no plugin-originated data is sent until the user interacts with the linked pages.
+* Service URL: `https://app.zipwp.com/`
+* Data sent: only the data the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
+* When: only after the user clicks an authorization / billing link in the plugin's admin dashboard.
+* [Terms of Service](https://zipwp.com/terms/)
+* [Privacy Policy](https://zipwp.com/privacy-policy/)
+
 = Starter Templates Credit Server =
 When AI features are enabled, the plugin checks the credit balance for AI content generation features.
 * Service URL: `https://credits.startertemplates.com/`
