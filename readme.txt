@@ -106,7 +106,7 @@ The admin dashboard settings page loads the Inter font from Google Fonts for the
 = ZipWP API =
 When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
 * Service URL: `https://api.zipwp.com/`
-* [Terms of Service](https://zipwp.com/terms/)
+* [Terms of Service](https://zipwp.com/terms-and-conditions/)
 * [Privacy Policy](https://zipwp.com/privacy-policy/)
 
 = ZipWP (app.zipwp.com) =
@@ -114,7 +114,7 @@ When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in 
 * Service URL: `https://app.zipwp.com/`
 * Data sent: only the data the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
 * When: only after the user clicks an authorization / billing link in the plugin's admin dashboard.
-* [Terms of Service](https://zipwp.com/terms/)
+* [Terms of Service](https://zipwp.com/terms-and-conditions/)
 * [Privacy Policy](https://zipwp.com/privacy-policy/)
 
 = Starter Templates Credit Server =
