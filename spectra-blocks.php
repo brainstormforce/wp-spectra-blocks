@@ -46,7 +46,7 @@ require_once SPECTRA_BLOCKS_DIR . 'classes/class-spectra-blocks-loader.php';
 function spectra_blocks_fail_php_version() {
 	/* translators: %s: PHP version */
 	$message = sprintf( esc_html__( 'Spectra Blocks requires PHP version %s+. The plugin is currently NOT RUNNING.', 'spectra-blocks' ), '8.1' );
-	printf( '<div class="error"><p>%s</p></div>', wp_kses_post( wpautop( $message ) ) );
+	printf( '<div class="notice notice-error"><p>%s</p></div>', wp_kses_post( wpautop( $message ) ) );
 }
 
 /**
@@ -55,5 +55,5 @@ function spectra_blocks_fail_php_version() {
 function spectra_blocks_fail_wp_version() {
 	/* translators: %s: WordPress version */
 	$message = sprintf( esc_html__( 'Spectra Blocks requires WordPress version %s+. The plugin is currently NOT RUNNING.', 'spectra-blocks' ), '6.6' );
-	printf( '<div class="error"><p>%s</p></div>', wp_kses_post( wpautop( $message ) ) );
+	printf( '<div class="notice notice-error"><p>%s</p></div>', wp_kses_post( wpautop( $message ) ) );
 }
