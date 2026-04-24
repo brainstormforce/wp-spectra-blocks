@@ -176,6 +176,14 @@ class Admin_Menu {
 		// Run a security check.
 		check_ajax_referer( 'updates', 'nonce' );
 
+		// The 'updates' nonce is a WordPress-core-owned handle available to any
+		// authenticated user viewing the Plugins or Updates page, so enforce a
+		// unified capability gate here before the handler branches by $_POST['type'].
+		// The per-branch checks below remain as defence-in-depth.
+		if ( ! current_user_can( 'activate_plugins' ) && ! current_user_can( 'switch_themes' ) ) {
+			wp_send_json_error( esc_html__( 'You do not have permission to activate plugins or themes on this site.', 'spectra-blocks' ) );
+		}
+
 		if ( isset( $_POST['plugin'] ) ) {
 
 			$type = '';
