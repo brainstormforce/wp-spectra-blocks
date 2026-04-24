@@ -1,6 +1,6 @@
 === Spectra Blocks ===
 Contributors: brainstormforce
-Tags: gutenberg, blocks, page builder, container, accordion
+Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
