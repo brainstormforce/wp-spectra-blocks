@@ -201,6 +201,11 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v3() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v3' );
 		$value = $this->check_post_value();
+		// The dashboard receives a masked sentinel for stored secrets; preserve
+		// the existing value when the user did not re-enter it.
+		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
+			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
+		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v3', sanitize_text_field( $value ) );
 	}
 
@@ -212,6 +217,11 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v2() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v2' );
 		$value = $this->check_post_value();
+		// The dashboard receives a masked sentinel for stored secrets; preserve
+		// the existing value when the user did not re-enter it.
+		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
+			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
+		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v2', sanitize_text_field( $value ) );
 	}
 
@@ -496,7 +506,12 @@ class Common_Settings extends Ajax_Base {
 			$social['facebookAppId'] = sanitize_text_field( wp_unslash( $_POST['facebookAppId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppSecret'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppSecret'] = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$incoming_fb_secret = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// The dashboard receives a masked sentinel for stored secrets;
+			// preserve the existing value when the user did not re-enter it.
+			if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK !== $incoming_fb_secret ) {
+				$social['facebookAppSecret'] = $incoming_fb_secret;
+			}
 		}
 
 		$this->save_admin_settings( 'spectra_blocks_social', $social );
