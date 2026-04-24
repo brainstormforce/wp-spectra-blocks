@@ -92,9 +92,9 @@ This plugin includes compiled JavaScript from the following Brainstorm Force lib
 
 This plugin connects to the following third-party services under certain conditions:
 
-= Google Maps API =
-The Google Map block uses the Google Maps JavaScript API to render interactive maps. An API key must be configured by the user before any requests are made. No data is sent without a key being configured.
-* Service URL: `https://maps.googleapis.com/`
+= Google Maps (maps.google.com) =
+The Google Map block embeds a map on the frontend using the public Google Maps embed URL (`https://maps.google.com/maps?q=...&output=embed`). No API key is required and no data is sent from the server. The request is made by the visitor's browser each time a page containing the block is rendered; the address entered in the block is included in the URL so Google can return the matching map tile.
+* Service URL: `https://maps.google.com/maps`
 * [Terms of Service](https://developers.google.com/maps/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
