@@ -367,7 +367,7 @@ class Common_Settings extends Ajax_Base {
 	public function select_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_select_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$this->save_admin_settings( 'spectra_blocks_select_font_globally', $this->sanitize_form_inputs( $value ) );
 	}
 
@@ -380,7 +380,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally_delete() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally_delete' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$value = $this->sanitize_form_inputs( $value );
 		\Spectra_Blocks_FSE_Fonts_Compatibility::delete_theme_font_family( $value );
 	}
@@ -394,7 +394,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 
 		// Note: 'spectra_global_fse_fonts' is an intentional shared cross-plugin option key,
 		// allowing FSE font data to be shared between Spectra Blocks and Spectra Pro.
@@ -610,7 +610,7 @@ class Common_Settings extends Ajax_Base {
 		if ( '' !== $status ) {
 			$status_value = 'disabled' === $status ? 'disabled' : 'enabled';
 		}
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$value = $this->sanitize_form_inputs( $value );
 
 		if ( '' !== $status ) {
@@ -716,7 +716,7 @@ class Common_Settings extends Ajax_Base {
 	public function insta_linked_accounts() {
 		$this->check_permission_nonce( 'spectra_blocks_insta_linked_accounts' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		// The previous $value is not sanitized, as the array sanitization is handled in the class method used below.
 		$this->save_admin_settings( 'spectra_blocks_insta_linked_accounts', $this->sanitize_form_inputs( $value ) );
 	}
