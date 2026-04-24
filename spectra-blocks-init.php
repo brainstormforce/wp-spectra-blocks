@@ -98,19 +98,20 @@ add_action(
 				}
 
 				// Sanitize using enshrined/svg-sanitize to strip scripts and external entity refs.
-				if ( class_exists( '\enshrined\svgSanitize\Sanitizer' ) ) {
-					$sanitizer = new \enshrined\svgSanitize\Sanitizer();
-					$clean_svg = $sanitizer->sanitize( $svg_content );
-					if ( false === $clean_svg || empty( $clean_svg ) ) {
-						$file['error'] = __( 'SVG file failed security check.', 'spectra-blocks' );
-						return $file;
-					}
-					file_put_contents( $file['tmp_name'], $clean_svg ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
-				} elseif ( strpos( $svg_content, '<svg' ) === false ) {
-					// Fallback: reject if no <svg> tag found (sanitizer unavailable).
-					$file['error'] = __( 'Invalid SVG file.', 'spectra-blocks' );
+				// If the sanitizer is unavailable (e.g. vendor/ not installed), refuse the upload
+				// rather than let a potentially malicious SVG through untouched.
+				if ( ! class_exists( '\enshrined\svgSanitize\Sanitizer' ) ) {
+					$file['error'] = __( 'SVG upload is unavailable: the SVG sanitizer library is missing. Please contact the site administrator.', 'spectra-blocks' );
 					return $file;
 				}
+
+				$sanitizer = new \enshrined\svgSanitize\Sanitizer();
+				$clean_svg = $sanitizer->sanitize( $svg_content );
+				if ( false === $clean_svg || empty( $clean_svg ) ) {
+					$file['error'] = __( 'SVG file failed security check.', 'spectra-blocks' );
+					return $file;
+				}
+				file_put_contents( $file['tmp_name'], $clean_svg ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
 
 				return $file;
 			},
