@@ -98,11 +98,6 @@ The Google Map block embeds a map on the frontend using the public Google Maps e
 * [Terms of Service](https://developers.google.com/maps/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
-= Google Fonts =
-The admin dashboard settings page loads the Inter font from Google Fonts for the settings interface typography.
-* Service URL: `https://fonts.googleapis.com/`
-* [Privacy Policy](https://policies.google.com/privacy)
-
 = ZipWP API =
 When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
 * Service URL: `https://api.zipwp.com/`
