@@ -99,3 +99,7 @@ lib/*/webpack.config.js
 .phpunit.cache/
 test-results/
 playwright-report/
+
+# Composer credential files — never ship in submission zip (contain GitHub PATs)
+auth.json
+lib/*/auth.json
