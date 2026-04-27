@@ -39,7 +39,6 @@ const setInitialState = ( store ) => {
 			enableAutoBlockRecovery: data.spectra_blocks_auto_block_recovery,
 			disableCSSCache: data.spectra_blocks_disable_css_cache,
 			social: data.social,
-            instaLinkedAccounts: data?.insta_linked_accounts,
             coreBlocks: data.spectra_core_blocks,
             enableAnimationsExtension: data.spectra_blocks_enable_animations_extension,
             spectraFSEFonts: data.spectra_global_fse_fonts,

@@ -91,8 +91,6 @@ class Common_Settings extends Ajax_Base {
 			'enable_legacy_design_library',
 			'auto_block_recovery',
 			'pro_activate',
-			'insta_linked_accounts',
-			'insta_refresh_all_tokens',
 			'btn_inherit_from_theme',
 			'zip_ai_module_status',
 			'zip_ai_verify_authenticity',
@@ -719,39 +717,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_auto_block_recovery' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_auto_block_recovery', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - All Linked Instagram Accounts.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.1
-	 */
-	public function insta_linked_accounts() {
-		$this->check_permission_nonce( 'spectra_blocks_insta_linked_accounts' );
-		$value = $this->check_post_value();
-		$value = json_decode( $value, true );
-		// The previous $value is not sanitized, as the array sanitization is handled in the class method used below.
-		$this->save_admin_settings( 'spectra_blocks_insta_linked_accounts', $this->sanitize_form_inputs( $value ) );
-	}
-
-	/**
-	 * Ajax Request - Refresh All Instagram Tokens.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.1
-	 */
-	public function insta_refresh_all_tokens() {
-		// nonce verification is done in above function check_permission_nonce.
-		$this->check_permission_nonce( 'spectra_blocks_insta_refresh_all_tokens' );
-		$value = isset( $_POST['value'] ) ? sanitize_text_field( wp_unslash( $_POST['value'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in check_permission_nonce() above.
-		if ( ! empty( $value ) && class_exists( '\SpectraPro\BlocksConfig\InstagramFeed\Block' ) ) {
-			\SpectraPro\BlocksConfig\InstagramFeed\Block::refresh_all_instagram_users();
-			wp_send_json_success( array( 'messsage' => __( 'Successfully refreshed tokens!', 'spectra-blocks' ) ) );
-		}
-		wp_send_json_error( array( 'messsage' => __( 'Failed to refresh tokens', 'spectra-blocks' ) ) );
 	}
 
 	/**
