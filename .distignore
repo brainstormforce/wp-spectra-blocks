@@ -100,6 +100,9 @@ lib/*/webpack.config.js
 test-results/
 playwright-report/
 
+# macOS Finder metadata — never ship
+.DS_Store
+
 # Composer credential files — never ship in submission zip (contain GitHub PATs)
 auth.json
 lib/*/auth.json
