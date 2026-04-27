@@ -464,7 +464,6 @@ class Admin_Menu {
 
 		$admin_slug  = 'spectra-blocks-admin';
 		$blocks_info = $this->get_blocks_info_for_activation_deactivation();
-		wp_enqueue_style( $admin_slug . '-font', SPECTRA_BLOCKS_URL . 'admin/assets/fonts/inter.css', array(), SPECTRA_BLOCKS_VER );
 		// Styles.
 		wp_enqueue_style( $admin_slug . '-menu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'wp-components' );
@@ -728,16 +727,8 @@ class Admin_Menu {
 			SPECTRA_BLOCKS_VER
 		);
 
-		wp_register_style(
-			'spectra-blocks-admin-font',
-			SPECTRA_BLOCKS_URL . 'admin/assets/fonts/inter.css',
-			array(),
-			SPECTRA_BLOCKS_VER
-		);
-
 		wp_enqueue_script( $handle );
 		wp_set_script_translations( $handle, 'spectra-blocks', SPECTRA_BLOCKS_DIR . 'languages' );
-		wp_enqueue_style( 'spectra-blocks-admin-font' );
 		if ( isset( $_GET['page'] ) && 'spectra-blocks' === $_GET['page'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- $_GET['page'] does not provide nonce.
 			wp_enqueue_style( $handle );
 		}
