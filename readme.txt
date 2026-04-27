@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.5
+Stable tag: 0.0.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,12 +81,15 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 
 = Bundled Library Source =
 
-This plugin includes compiled JavaScript from the following Brainstorm Force libraries. Source code for each is available on GitHub:
+Source code for each bundled library and third-party utility used by this plugin:
 
 * `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/bsf-gutenberg-templates](https://github.com/brainstormforce/bsf-gutenberg-templates) (build: `npm install && npm run build`)
 * `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/bsf-zip-ai](https://github.com/brainstormforce/bsf-zip-ai) (build: `npm install && npm run build`)
 * `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/bsf-nps-survey](https://github.com/brainstormforce/bsf-nps-survey) (build: `npm install && npm run build`)
 * `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/bsf-zipwp-images](https://github.com/brainstormforce/bsf-zipwp-images) (build: `npm install && npm run build`)
+* `lib/astra-notices/` — Source: [https://github.com/brainstormforce/astra-notices](https://github.com/brainstormforce/astra-notices) (plain PHP, ships unbuilt)
+* `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
+* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
 
 == External Services ==
 
@@ -128,11 +131,6 @@ When using the AI-powered image library, images may be fetched from Unsplash. Th
 * [Terms of Service](https://unsplash.com/terms)
 * [Privacy Policy](https://unsplash.com/privacy)
 
-= ipify =
-When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
-* Service URL: `https://api.ipify.org/`
-* Note: ipify.org is an open-source project and does not maintain a separate privacy policy page. The service returns only the requester's IP address and does not store or track any data. Source: [https://github.com/rdegges/ipify-api](https://github.com/rdegges/ipify-api)
-
 = WordPress.org =
 When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
 * Service URL: `https://downloads.wordpress.org/`
@@ -158,11 +156,6 @@ When the user opts in to share anonymous usage data, the bundled BSF Analytics l
 When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
 * Service URL: `https://metrics.brainstormforce.com/`
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
-
-= ipinfo.io =
-When using the AI-powered image library, the bundled libraries may detect the user's country via IP geolocation to select the appropriate image provider (e.g., Unsplash for regions where Pexels is unavailable).
-* Service URL: `https://ipinfo.io/`
-* [Privacy Policy](https://ipinfo.io/privacy-policy)
 
 = Brainstorm Force Support =
 When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
