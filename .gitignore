@@ -10,3 +10,4 @@ admin/assets/build/
 .claude/
 wp-org-submission-report*.md
 .vscode/
+config.bat
