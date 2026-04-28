@@ -170,6 +170,11 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 
 == Changelog ==
 
+= 0.0.6 =
+* Fix: Removed server-side IP geolocation lookups (WordPress.org compliance).
+* Fix: Hardened the SVG upload sanitizer to fail closed when the sanitizer library is unavailable.
+* Update: Documented all external services accessed by the plugin in readme.txt.
+
 = 0.0.5 =
 * Fix: Externalized Swiper library from webpack build.
 * Fix: Improved Swiper asset loading via block.json declarations for proper editor iframe and frontend support.
