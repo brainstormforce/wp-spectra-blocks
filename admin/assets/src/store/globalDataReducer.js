@@ -238,11 +238,6 @@ const globalDataReducer = ( state = {}, action ) => {
 				...state,
 				containerGlobalElementsGap: action.payload,
 				};
-        case 'UPDATE_INSTA_LINKED_ACCOUNTS':
-            return {
-                ...state,
-                instaLinkedAccounts: action.payload,
-            };
         case 'UPDATE_BTN_INHERIT_FROM_THEME':
             return {
                 ...state,

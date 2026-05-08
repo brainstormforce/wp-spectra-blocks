@@ -71,23 +71,14 @@ class Admin_Helper {
 			'copy_paste'                         => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_copy_paste', 'enabled' ),
 			'preload_local_fonts'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
 			'btn_inherit_from_theme'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
-			'social'                             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option(
-				'spectra_blocks_social',
-				array(
-					'socialRegister'    => false,
-					'googleClientId'    => '',
-					'facebookAppId'     => '',
-					'facebookAppSecret' => '',
-				)
-			),
+			'social'                             => self::get_social_settings_with_masked_secret(),
 			'dynamic_content_mode'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_dynamic_content_mode', 'popup' ),
 			'visibility_mode'                    => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_visibility_mode', 'disabled' ),
 			'visibility_page'                    => self::get_visibility_page(),
 			'recaptcha_site_key_v2'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v2', '' ),
-			'recaptcha_secret_key_v2'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v2', '' ),
+			'recaptcha_secret_key_v2'            => \Spectra_Blocks_Admin_Helper::mask_secret_value( \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v2', '' ) ),
 			'recaptcha_site_key_v3'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_site_key_v3', '' ),
-			'recaptcha_secret_key_v3'            => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v3', '' ),
-			'insta_linked_accounts'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_insta_linked_accounts', array() ),
+			'recaptcha_secret_key_v3'            => \Spectra_Blocks_Admin_Helper::mask_secret_value( \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v3', '' ) ),
 			'spectra_global_fse_fonts'           => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_global_fse_fonts', array() ),
 			'theme_fonts'                        => $theme_font_families,
 			'zip_ai_modules'                     => $zip_ai_modules,
@@ -96,6 +87,36 @@ class Admin_Helper {
 		);
 
 		return $options;
+	}
+
+	/**
+	 * Fetch the stored social-settings array with the Facebook App Secret
+	 * replaced by a masked sentinel.
+	 *
+	 * Called from the admin dashboard payload builder so the raw secret is
+	 * never included in the localized script or REST response. The paired
+	 * save handler preserves the stored secret when the incoming value
+	 * equals the sentinel.
+	 *
+	 * @since x.x.x
+	 * @return array
+	 */
+	public static function get_social_settings_with_masked_secret() {
+		$social = \Spectra_Blocks_Admin_Helper::get_admin_settings_option(
+			'spectra_blocks_social',
+			array(
+				'socialRegister'    => false,
+				'googleClientId'    => '',
+				'facebookAppId'     => '',
+				'facebookAppSecret' => '',
+			)
+		);
+
+		if ( is_array( $social ) && isset( $social['facebookAppSecret'] ) ) {
+			$social['facebookAppSecret'] = \Spectra_Blocks_Admin_Helper::mask_secret_value( $social['facebookAppSecret'] );
+		}
+
+		return is_array( $social ) ? $social : array();
 	}
 
 	/**

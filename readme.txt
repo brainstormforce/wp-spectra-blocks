@@ -1,10 +1,10 @@
 === Spectra Blocks ===
 Contributors: brainstormforce
-Tags: gutenberg, blocks, page builder, container, accordion
+Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.5
+Stable tag: 0.0.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -81,32 +81,38 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 
 = Bundled Library Source =
 
-This plugin includes compiled JavaScript from the following Brainstorm Force libraries. Source code for each is available on GitHub:
+Source code for each bundled library and third-party utility used by this plugin:
 
 * `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/bsf-gutenberg-templates](https://github.com/brainstormforce/bsf-gutenberg-templates) (build: `npm install && npm run build`)
 * `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/bsf-zip-ai](https://github.com/brainstormforce/bsf-zip-ai) (build: `npm install && npm run build`)
 * `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/bsf-nps-survey](https://github.com/brainstormforce/bsf-nps-survey) (build: `npm install && npm run build`)
 * `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/bsf-zipwp-images](https://github.com/brainstormforce/bsf-zipwp-images) (build: `npm install && npm run build`)
+* `lib/astra-notices/` — Source: [https://github.com/brainstormforce/astra-notices](https://github.com/brainstormforce/astra-notices) (plain PHP, ships unbuilt)
+* `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
+* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
 
 == External Services ==
 
 This plugin connects to the following third-party services under certain conditions:
 
-= Google Maps API =
-The Google Map block uses the Google Maps JavaScript API to render interactive maps. An API key must be configured by the user before any requests are made. No data is sent without a key being configured.
-* Service URL: `https://maps.googleapis.com/`
+= Google Maps (maps.google.com) =
+The Google Map block embeds a map on the frontend using the public Google Maps embed URL (`https://maps.google.com/maps?q=...&output=embed`). No API key is required and no data is sent from the server. The request is made by the visitor's browser each time a page containing the block is rendered; the address entered in the block is included in the URL so Google can return the matching map tile.
+* Service URL: `https://maps.google.com/maps`
 * [Terms of Service](https://developers.google.com/maps/terms)
-* [Privacy Policy](https://policies.google.com/privacy)
-
-= Google Fonts =
-The admin dashboard settings page loads the Inter font from Google Fonts for the settings interface typography.
-* Service URL: `https://fonts.googleapis.com/`
 * [Privacy Policy](https://policies.google.com/privacy)
 
 = ZipWP API =
 When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
 * Service URL: `https://api.zipwp.com/`
-* [Terms of Service](https://zipwp.com/terms/)
+* [Terms of Service](https://zipwp.com/terms-and-conditions/)
+* [Privacy Policy](https://zipwp.com/privacy-policy/)
+
+= ZipWP (app.zipwp.com) =
+When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in the Spectra Blocks AI dashboard, the browser is redirected to the ZipWP web app for authentication, account management, or billing. The redirect is user-initiated; no plugin-originated data is sent until the user interacts with the linked pages.
+* Service URL: `https://app.zipwp.com/`
+* Data sent: only the data the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
+* When: only after the user clicks an authorization / billing link in the plugin's admin dashboard.
+* [Terms of Service](https://zipwp.com/terms-and-conditions/)
 * [Privacy Policy](https://zipwp.com/privacy-policy/)
 
 = Starter Templates Credit Server =
@@ -124,11 +130,6 @@ When using the AI-powered image library, images may be fetched from Unsplash. Th
 * Service URL: `https://unsplash.com/`
 * [Terms of Service](https://unsplash.com/terms)
 * [Privacy Policy](https://unsplash.com/privacy)
-
-= ipify =
-When AI features are enabled, the bundled Zip AI library may detect the user's IP address for authorization purposes.
-* Service URL: `https://api.ipify.org/`
-* Note: ipify.org is an open-source project and does not maintain a separate privacy policy page. The service returns only the requester's IP address and does not store or track any data. Source: [https://github.com/rdegges/ipify-api](https://github.com/rdegges/ipify-api)
 
 = WordPress.org =
 When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
@@ -156,11 +157,6 @@ When the user submits an NPS (Net Promoter Score) survey response from the admin
 * Service URL: `https://metrics.brainstormforce.com/`
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
-= ipinfo.io =
-When using the AI-powered image library, the bundled libraries may detect the user's country via IP geolocation to select the appropriate image provider (e.g., Unsplash for regions where Pexels is unavailable).
-* Service URL: `https://ipinfo.io/`
-* [Privacy Policy](https://ipinfo.io/privacy-policy)
-
 = Brainstorm Force Support =
 When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
 * Service URL: `https://support.brainstormforce.com/`
@@ -173,6 +169,11 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 * [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 0.0.6 =
+* Fix: Removed server-side IP geolocation lookups (WordPress.org compliance).
+* Fix: Hardened the SVG upload sanitizer to fail closed when the sanitizer library is unavailable.
+* Update: Documented all external services accessed by the plugin in readme.txt.
 
 = 0.0.5 =
 * Fix: Externalized Swiper library from webpack build.

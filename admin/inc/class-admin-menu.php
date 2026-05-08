@@ -176,6 +176,14 @@ class Admin_Menu {
 		// Run a security check.
 		check_ajax_referer( 'updates', 'nonce' );
 
+		// The 'updates' nonce is a WordPress-core-owned handle available to any
+		// authenticated user viewing the Plugins or Updates page, so enforce a
+		// unified capability gate here before the handler branches by $_POST['type'].
+		// The per-branch checks below remain as defence-in-depth.
+		if ( ! current_user_can( 'activate_plugins' ) && ! current_user_can( 'switch_themes' ) ) {
+			wp_send_json_error( esc_html__( 'You do not have permission to activate plugins or themes on this site.', 'spectra-blocks' ) );
+		}
+
 		if ( isset( $_POST['plugin'] ) ) {
 
 			$type = '';
@@ -456,7 +464,6 @@ class Admin_Menu {
 
 		$admin_slug  = 'spectra-blocks-admin';
 		$blocks_info = $this->get_blocks_info_for_activation_deactivation();
-		wp_enqueue_style( $admin_slug . '-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap', array(), SPECTRA_BLOCKS_VER );
 		// Styles.
 		wp_enqueue_style( $admin_slug . '-menu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'wp-components' );
@@ -720,16 +727,8 @@ class Admin_Menu {
 			SPECTRA_BLOCKS_VER
 		);
 
-		wp_register_style(
-			'spectra-blocks-admin-google-fonts',
-			'https://fonts.googleapis.com/css2?family=Inter:wght@200&display=swap',
-			array(),
-			SPECTRA_BLOCKS_VER
-		);
-
 		wp_enqueue_script( $handle );
 		wp_set_script_translations( $handle, 'spectra-blocks', SPECTRA_BLOCKS_DIR . 'languages' );
-		wp_enqueue_style( 'spectra-blocks-admin-google-fonts' );
 		if ( isset( $_GET['page'] ) && 'spectra-blocks' === $_GET['page'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- $_GET['page'] does not provide nonce.
 			wp_enqueue_style( $handle );
 		}

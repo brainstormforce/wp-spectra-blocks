@@ -26,17 +26,6 @@ export const proBlocks = [
 	},
 
 	{
-		title: __( 'Instagram Feed', 'spectra-blocks' ),
-		slug: 'instagram-feed',
-		link: 'instagram-feed-legacy',
-		icon: React.cloneElement( Spectra_Block_Icons[ 'instagram-feed' ], { className: 'w-5 h-5' } ),
-		is_pro: true,
-		is_active: null,
-		is_core: false,
-		is_extension: false,
-	},
-
-	{
 		title: __( 'Loop Builder', 'spectra-blocks' ),
 		slug: 'loop-builder',
 		link: 'advanced-loop-builder-legacy',

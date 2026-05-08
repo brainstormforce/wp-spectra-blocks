@@ -91,8 +91,6 @@ class Common_Settings extends Ajax_Base {
 			'enable_legacy_design_library',
 			'auto_block_recovery',
 			'pro_activate',
-			'insta_linked_accounts',
-			'insta_refresh_all_tokens',
 			'btn_inherit_from_theme',
 			'zip_ai_module_status',
 			'zip_ai_verify_authenticity',
@@ -201,6 +199,11 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v3() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v3' );
 		$value = $this->check_post_value();
+		// The dashboard receives a masked sentinel for stored secrets; preserve
+		// the existing value when the user did not re-enter it.
+		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
+			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
+		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v3', sanitize_text_field( $value ) );
 	}
 
@@ -212,6 +215,11 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v2() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v2' );
 		$value = $this->check_post_value();
+		// The dashboard receives a masked sentinel for stored secrets; preserve
+		// the existing value when the user did not re-enter it.
+		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
+			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
+		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v2', sanitize_text_field( $value ) );
 	}
 
@@ -367,7 +375,7 @@ class Common_Settings extends Ajax_Base {
 	public function select_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_select_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$this->save_admin_settings( 'spectra_blocks_select_font_globally', $this->sanitize_form_inputs( $value ) );
 	}
 
@@ -380,7 +388,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally_delete() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally_delete' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$value = $this->sanitize_form_inputs( $value );
 		\Spectra_Blocks_FSE_Fonts_Compatibility::delete_theme_font_family( $value );
 	}
@@ -394,7 +402,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 
 		// Note: 'spectra_global_fse_fonts' is an intentional shared cross-plugin option key,
 		// allowing FSE font data to be shared between Spectra Blocks and Spectra Pro.
@@ -496,7 +504,12 @@ class Common_Settings extends Ajax_Base {
 			$social['facebookAppId'] = sanitize_text_field( wp_unslash( $_POST['facebookAppId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 		if ( isset( $_POST['facebookAppSecret'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppSecret'] = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$incoming_fb_secret = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			// The dashboard receives a masked sentinel for stored secrets;
+			// preserve the existing value when the user did not re-enter it.
+			if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK !== $incoming_fb_secret ) {
+				$social['facebookAppSecret'] = $incoming_fb_secret;
+			}
 		}
 
 		$this->save_admin_settings( 'spectra_blocks_social', $social );
@@ -610,7 +623,7 @@ class Common_Settings extends Ajax_Base {
 		if ( '' !== $status ) {
 			$status_value = 'disabled' === $status ? 'disabled' : 'enabled';
 		}
-		$value = json_decode( stripslashes( $value ), true );
+		$value = json_decode( $value, true );
 		$value = $this->sanitize_form_inputs( $value );
 
 		if ( '' !== $status ) {
@@ -704,39 +717,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_auto_block_recovery' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_auto_block_recovery', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - All Linked Instagram Accounts.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.1
-	 */
-	public function insta_linked_accounts() {
-		$this->check_permission_nonce( 'spectra_blocks_insta_linked_accounts' );
-		$value = $this->check_post_value();
-		$value = json_decode( stripslashes( $value ), true );
-		// The previous $value is not sanitized, as the array sanitization is handled in the class method used below.
-		$this->save_admin_settings( 'spectra_blocks_insta_linked_accounts', $this->sanitize_form_inputs( $value ) );
-	}
-
-	/**
-	 * Ajax Request - Refresh All Instagram Tokens.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.1
-	 */
-	public function insta_refresh_all_tokens() {
-		// nonce verification is done in above function check_permission_nonce.
-		$this->check_permission_nonce( 'spectra_blocks_insta_refresh_all_tokens' );
-		$value = isset( $_POST['value'] ) ? sanitize_text_field( wp_unslash( $_POST['value'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in check_permission_nonce() above.
-		if ( ! empty( $value ) && class_exists( '\SpectraPro\BlocksConfig\InstagramFeed\Block' ) ) {
-			\SpectraPro\BlocksConfig\InstagramFeed\Block::refresh_all_instagram_users();
-			wp_send_json_success( array( 'messsage' => __( 'Successfully refreshed tokens!', 'spectra-blocks' ) ) );
-		}
-		wp_send_json_error( array( 'messsage' => __( 'Failed to refresh tokens', 'spectra-blocks' ) ) );
 	}
 
 	/**

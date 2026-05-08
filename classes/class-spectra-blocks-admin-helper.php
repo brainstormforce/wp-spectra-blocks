@@ -70,6 +70,34 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		}
 
 		/**
+		 * Sentinel string returned in place of a stored secret value.
+		 *
+		 * The admin dashboard receives this sentinel (instead of the real secret)
+		 * when reading options that hold API keys. On save, a handler that
+		 * receives the sentinel must interpret it as "user did not re-enter the
+		 * secret" and skip the write.
+		 *
+		 * @since x.x.x
+		 */
+		const SECRET_MASK = '****';
+
+		/**
+		 * Return a masked placeholder for a stored secret.
+		 *
+		 * Returns the sentinel (four asterisks) when a non-empty value is stored,
+		 * or an empty string when no value is stored. The raw secret is never
+		 * returned; use {@see get_admin_settings_option()} directly on the write
+		 * path when the true value is needed.
+		 *
+		 * @param mixed $raw The raw value read from storage.
+		 * @return string Sentinel or empty string.
+		 * @since x.x.x
+		 */
+		public static function mask_secret_value( $raw ) {
+			return ( is_string( $raw ) && '' !== $raw ) ? self::SECRET_MASK : '';
+		}
+
+		/**
 		 * Delete an option.
 		 *
 		 * @param string $key              Full option key.

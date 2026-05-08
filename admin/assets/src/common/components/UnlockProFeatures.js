@@ -91,10 +91,6 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 						<ul className="list-none pl-0 space-y-2">
 							<li className="flex items-center space-x-2 text-field-label text-sm">
 								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Instagram Feed Block', 'spectra-blocks' ) }</span>
-							</li>
-							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
 								<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
@@ -256,10 +252,6 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 				<div className="grid grid-cols-2 gap-3">
 					<ul className="list-none pl-0 space-y-2">
-						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Instagram Feed Block', 'spectra-blocks' ) }</span>
-						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
 							<Check size={ 14 } className="text-brand-primary-600" />
 							<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
