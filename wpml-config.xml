@@ -1,0 +1,95 @@
+<wpml-config>
+	<custom-types>
+		<custom-type translate="0">spectra-popup</custom-type>
+	</custom-types>
+	<gutenberg-blocks>
+		<!-- Content (heading / paragraph) -->
+		<gutenberg-block type="spectra/content" translate="1">
+			<xpath>//*[self::p or self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6 or self::div or self::span]</xpath>
+		</gutenberg-block>
+
+		<!-- Button -->
+		<gutenberg-block type="spectra/button" translate="1">
+			<xpath>//div[@class="spectra-button__link"]</xpath>
+			<xpath type="link">//a/@href</xpath>
+			<key name="text" />
+			<key name="linkURL" type="link" />
+			<key name="ariaLabel" />
+		</gutenberg-block>
+
+		<!-- Accordion header content -->
+		<gutenberg-block type="spectra/accordion-child-header-content" translate="1">
+			<xpath>//*[self::span or self::div or self::p or self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]</xpath>
+			<key name="text" />
+		</gutenberg-block>
+
+		<!-- Countdown label -->
+		<gutenberg-block type="spectra/countdown-child-label" translate="1">
+			<key name="text" />
+		</gutenberg-block>
+
+		<!-- Counter number (prefix / suffix) -->
+		<gutenberg-block type="spectra/counter-child-number" translate="1">
+			<xpath>//span[@class="spectra-counter-prefix"]</xpath>
+			<xpath>//span[@class="spectra-counter-suffix"]</xpath>
+		</gutenberg-block>
+
+		<!-- Modal trigger button -->
+		<gutenberg-block type="spectra/modal-child-button" translate="1">
+			<xpath>//div[@class="spectra-button__link"]</xpath>
+			<key name="text" />
+			<key name="ariaLabel" />
+		</gutenberg-block>
+
+		<!-- Modal trigger content (text) -->
+		<gutenberg-block type="spectra/modal-child-content" translate="1">
+			<xpath>//*[self::p or self::span or self::div or self::h1 or self::h2 or self::h3 or self::h4 or self::h5 or self::h6]</xpath>
+			<key name="text" />
+		</gutenberg-block>
+
+		<!-- Tabs tab button -->
+		<gutenberg-block type="spectra/tabs-child-tab-button" translate="1">
+			<xpath>//button/div[@class="spectra-button__link"]</xpath>
+			<key name="text" />
+		</gutenberg-block>
+
+		<!-- Layout / wrapper blocks — no translatable content -->
+		<gutenberg-block type="spectra/container" translate="0" />
+		<gutenberg-block type="spectra/accordion" translate="0" />
+		<gutenberg-block type="spectra/accordion-child-item" translate="0" />
+		<gutenberg-block type="spectra/accordion-child-header" translate="0" />
+		<gutenberg-block type="spectra/accordion-child-header-icon" translate="0" />
+		<gutenberg-block type="spectra/accordion-child-details" translate="0" />
+		<gutenberg-block type="spectra/buttons" translate="0" />
+		<gutenberg-block type="spectra/countdown" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-day" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-hour" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-minute" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-second" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-number" translate="0" />
+		<gutenberg-block type="spectra/countdown-child-separator" translate="0" />
+		<gutenberg-block type="spectra/counter" translate="0" />
+		<gutenberg-block type="spectra/counter-child-wrapper" translate="0" />
+		<gutenberg-block type="spectra/counter-child-progress-bar" translate="0" />
+		<gutenberg-block type="spectra/google-map" translate="0" />
+		<gutenberg-block type="spectra/icon" translate="0" />
+		<gutenberg-block type="spectra/icons" translate="0" />
+		<gutenberg-block type="spectra/list" translate="0" />
+		<gutenberg-block type="spectra/list-child-item" translate="0" />
+		<gutenberg-block type="spectra/list-child-icon" translate="0" />
+		<gutenberg-block type="spectra/modal" translate="0" />
+		<gutenberg-block type="spectra/modal-child-icon" translate="0" />
+		<gutenberg-block type="spectra/modal-child-trigger" translate="0" />
+		<gutenberg-block type="spectra/modal-popup" translate="0" />
+		<gutenberg-block type="spectra/modal-popup-content" translate="0" />
+		<gutenberg-block type="spectra/modal-child-popup-close-icon" translate="0" />
+		<gutenberg-block type="spectra/popup-builder" translate="0" />
+		<gutenberg-block type="spectra/separator" translate="0" />
+		<gutenberg-block type="spectra/slider" translate="0" />
+		<gutenberg-block type="spectra/slider-child" translate="0" />
+		<gutenberg-block type="spectra/tabs" translate="0" />
+		<gutenberg-block type="spectra/tabs-child-tab-wrapper" translate="0" />
+		<gutenberg-block type="spectra/tabs-child-tab-trigger" translate="0" />
+		<gutenberg-block type="spectra/tabs-child-tabpanel" translate="0" />
+	</gutenberg-blocks>
+</wpml-config>

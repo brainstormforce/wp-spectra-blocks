@@ -284,7 +284,10 @@ class PopupBuilder {
 			),
 		);
 
-		register_post_type( 'spectra-popup', $type_args );
+		// Guard against duplicate registration when UAGB is also active.
+		if ( ! post_type_exists( 'spectra-popup' ) ) {
+			register_post_type( 'spectra-popup', $type_args );
+		}
 
 		register_post_meta(
 			'spectra-popup',

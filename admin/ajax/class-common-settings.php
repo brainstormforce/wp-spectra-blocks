@@ -56,10 +56,6 @@ class Common_Settings extends Ajax_Base {
 
 		$ajax_events = array(
 			'enable_templates_button',
-			'enable_on_page_css_button',
-			'enable_block_condition',
-			'enable_masonry_gallery',
-			'enable_quick_action_sidebar',
 			'enable_block_responsive',
 			'enable_dynamic_content',
 			'enable_animations_extension',
@@ -72,24 +68,12 @@ class Common_Settings extends Ajax_Base {
 			'select_font_globally',
 			'load_gfonts_locally',
 			'preload_local_fonts',
-			'collapse_panels',
-			'copy_paste',
-			'social',
-			'dynamic_content_mode',
-			'content_width',
 			'container_global_padding',
 			'container_global_elements_gap',
-			'blocks_editor_spacing',
 			'recaptcha_site_key_v2',
 			'recaptcha_secret_key_v2',
 			'recaptcha_site_key_v3',
 			'recaptcha_secret_key_v3',
-			'visibility_mode',
-			'visibility_page',
-			'fetch_pages',
-			'load_font_awesome_5',
-			'enable_legacy_design_library',
-			'auto_block_recovery',
 			'pro_activate',
 			'btn_inherit_from_theme',
 			'zip_ai_module_status',
@@ -199,11 +183,6 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v3() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v3' );
 		$value = $this->check_post_value();
-		// The dashboard receives a masked sentinel for stored secrets; preserve
-		// the existing value when the user did not re-enter it.
-		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
-			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
-		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v3', sanitize_text_field( $value ) );
 	}
 
@@ -215,11 +194,6 @@ class Common_Settings extends Ajax_Base {
 	public function recaptcha_secret_key_v2() {
 		$this->check_permission_nonce( 'spectra_blocks_recaptcha_secret_key_v2' );
 		$value = $this->check_post_value();
-		// The dashboard receives a masked sentinel for stored secrets; preserve
-		// the existing value when the user did not re-enter it.
-		if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK === $value ) {
-			wp_send_json_success( array( 'messsage' => __( 'Successfully saved data!', 'spectra-blocks' ) ) );
-		}
 		$this->save_admin_settings( 'spectra_blocks_recaptcha_secret_key_v2', sanitize_text_field( $value ) );
 	}
 
@@ -246,71 +220,6 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
-	 * Save settings - Saves fetch_pages.
-	 *
-	 * @return void
-	 */
-	public function fetch_pages() {
-		$this->check_permission_nonce( 'spectra_blocks_fetch_pages' );
-
-		$args = array(
-			'post_type'      => 'page',
-			'posts_per_page' => 5,
-		);
-		// nonce verification is done in above function check_permission_nonce.
-		$keyword = ( isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		if ( ! empty( $keyword ) ) {
-			$args['s'] = $keyword;
-		}
-
-		$results = array();
-		$pages   = get_posts( $args );
-		if ( is_array( $pages ) ) {
-			foreach ( $pages as $page ) {
-				$results[] = array(
-					'label' => $page->post_title,
-					'value' => $page->ID,
-				);
-			}
-		}
-
-		wp_send_json_success( $results );
-	}
-
-	/**
-	 * Save settings - Saves visibility_page.
-	 *
-	 * @return void
-	 */
-	public function visibility_page() {
-		$this->check_permission_nonce( 'spectra_blocks_visibility_page' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_visibility_page', intval( $value ) );
-	}
-
-	/**
-	 * Save settings - Saves visibility_mode.
-	 *
-	 * @return void
-	 */
-	public function visibility_mode() {
-		$this->check_permission_nonce( 'spectra_blocks_visibility_mode' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_visibility_mode', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Saves content_width.
-	 *
-	 * @return void
-	 */
-	public function content_width() {
-		$this->check_permission_nonce( 'spectra_blocks_content_width' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_content_width', sanitize_text_field( $value ) );
-	}
-
-	/**
 	 * Save setting - Saves container global padding.
 	 *
 	 * @return void
@@ -330,17 +239,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_container_global_elements_gap' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_container_global_elements_gap', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Saves blocks editor spacing.
-	 *
-	 * @return void
-	 */
-	public function blocks_editor_spacing() {
-		$this->check_permission_nonce( 'spectra_blocks_blocks_editor_spacing' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_blocks_editor_spacing', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -375,7 +273,7 @@ class Common_Settings extends Ajax_Base {
 	public function select_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_select_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( $value, true );
+		$value = json_decode( stripslashes( $value ), true );
 		$this->save_admin_settings( 'spectra_blocks_select_font_globally', $this->sanitize_form_inputs( $value ) );
 	}
 
@@ -388,7 +286,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally_delete() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally_delete' );
 		$value = $this->check_post_value();
-		$value = json_decode( $value, true );
+		$value = json_decode( stripslashes( $value ), true );
 		$value = $this->sanitize_form_inputs( $value );
 		\Spectra_Blocks_FSE_Fonts_Compatibility::delete_theme_font_family( $value );
 	}
@@ -402,7 +300,7 @@ class Common_Settings extends Ajax_Base {
 	public function fse_font_globally() {
 		$this->check_permission_nonce( 'spectra_blocks_fse_font_globally' );
 		$value = $this->check_post_value();
-		$value = json_decode( $value, true );
+		$value = json_decode( stripslashes( $value ), true );
 
 		// Note: 'spectra_global_fse_fonts' is an intentional shared cross-plugin option key,
 		// allowing FSE font data to be shared between Spectra Blocks and Spectra Pro.
@@ -418,30 +316,6 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
-	 * Save setting - Enables masonry gallery.
-	 *
-	 * @return void
-	 */
-	public function enable_masonry_gallery() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_masonry_gallery' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_enable_masonry_gallery', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Enables quick action sidebar.
-	 *
-	 * @since 2.12.0
-	 * @return void
-	 */
-	public function enable_quick_action_sidebar() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_quick_action_sidebar' );
-		$value = $this->check_post_value();
-		$value = 'disabled' === $value ? 'disabled' : 'enabled';
-		$this->save_admin_settings( 'spectra_blocks_enable_quick_action_sidebar', sanitize_text_field( $value ) );
-	}
-
-	/**
 	 * Save setting - Loads gfonts locally.
 	 *
 	 * @return void
@@ -453,82 +327,6 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
-	 * Save setting - Collapses panels.
-	 *
-	 * @return void
-	 */
-	public function collapse_panels() {
-		$this->check_permission_nonce( 'spectra_blocks_collapse_panels' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_collapse_panels', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Enables copy paste.
-	 *
-	 * @return void
-	 */
-	public function copy_paste() {
-		$this->check_permission_nonce( 'spectra_blocks_copy_paste' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_copy_paste', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Saves social settings.
-	 *
-	 * @return void
-	 *
-	 * @since 2.1.0
-	 */
-	public function social() {
-		$this->check_permission_nonce( 'spectra_blocks_social' );
-
-		$social = \Spectra_Blocks_Admin_Helper::get_admin_settings_option(
-			'spectra_blocks_social',
-			array(
-				'socialRegister'    => false,
-				'googleClientId'    => '',
-				'facebookAppId'     => '',
-				'facebookAppSecret' => '',
-			)
-		);
-		// nonce verification is done in above function check_permission_nonce.
-		if ( isset( $_POST['socialRegister'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['socialRegister'] = rest_sanitize_boolean( sanitize_text_field( wp_unslash( $_POST['socialRegister'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		}
-		if ( isset( $_POST['googleClientId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['googleClientId'] = sanitize_text_field( wp_unslash( $_POST['googleClientId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		}
-		if ( isset( $_POST['facebookAppId'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$social['facebookAppId'] = sanitize_text_field( wp_unslash( $_POST['facebookAppId'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		}
-		if ( isset( $_POST['facebookAppSecret'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$incoming_fb_secret = sanitize_text_field( wp_unslash( $_POST['facebookAppSecret'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			// The dashboard receives a masked sentinel for stored secrets;
-			// preserve the existing value when the user did not re-enter it.
-			if ( \Spectra_Blocks_Admin_Helper::SECRET_MASK !== $incoming_fb_secret ) {
-				$social['facebookAppSecret'] = $incoming_fb_secret;
-			}
-		}
-
-		$this->save_admin_settings( 'spectra_blocks_social', $social );
-	}
-
-	/**
-	 * Save setting - Enables dynamic content mode.
-	 *
-	 * @return void
-	 *
-	 * @since 2.1.0
-	 */
-	public function dynamic_content_mode() {
-		$this->check_permission_nonce( 'spectra_blocks_dynamic_content_mode' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_dynamic_content_mode', sanitize_text_field( $value ) );
-	}
-
-	/**
 	 * Save setting - Preloads local fonts.
 	 *
 	 * @return void
@@ -537,19 +335,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_preload_local_fonts' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_preload_local_fonts', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Enables block conditions.
-	 *
-	 * @return void
-	 *
-	 * @since 2.4.0
-	 */
-	public function enable_block_condition() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_block_condition' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_enable_block_condition', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -601,17 +386,6 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
-	 * Save setting - Enables the on-page CSS button .
-	 *
-	 * @return void
-	 */
-	public function enable_on_page_css_button() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_on_page_css_button' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_enable_on_page_css_button', sanitize_text_field( $value ) );
-	}
-
-	/**
 	 * Save setting - Activates and deactivates blocks .
 	 *
 	 * @return void
@@ -623,7 +397,7 @@ class Common_Settings extends Ajax_Base {
 		if ( '' !== $status ) {
 			$status_value = 'disabled' === $status ? 'disabled' : 'enabled';
 		}
-		$value = json_decode( $value, true );
+		$value = json_decode( stripslashes( $value ), true );
 		$value = $this->sanitize_form_inputs( $value );
 
 		if ( '' !== $status ) {
@@ -631,9 +405,7 @@ class Common_Settings extends Ajax_Base {
 			$update_all_extensions = array(
 				'spectra_blocks_enable_animations_extension',
 				'spectra_blocks_enable_dynamic_content',
-				'spectra_blocks_enable_block_condition',
 				'spectra_blocks_enable_block_responsive',
-				'spectra_blocks_enable_masonry_gallery',
 				'spectra_blocks_enable_gbs_extension',
 				'_spectra_blocks_blocks',
 			);
@@ -684,39 +456,6 @@ class Common_Settings extends Ajax_Base {
 		}
 
 		return $new_settings;
-	}
-
-	/**
-	 * Save setting - Loads font awesome 5.
-	 *
-	 * @return void
-	 */
-	public function load_font_awesome_5() {
-		$this->check_permission_nonce( 'spectra_blocks_load_font_awesome_5' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_load_font_awesome_5', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Enables legacy design library.
-	 *
-	 * @return void
-	 */
-	public function enable_legacy_design_library() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_legacy_design_library' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_enable_legacy_design_library', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Auto recovers the block.
-	 *
-	 * @return void
-	 */
-	public function auto_block_recovery() {
-		$this->check_permission_nonce( 'spectra_blocks_auto_block_recovery' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_auto_block_recovery', sanitize_text_field( $value ) );
 	}
 
 	/**

@@ -43,8 +43,10 @@ $config = array(
 );
 
 // Custom classes.
+$is_hidden = 'icon' !== $modal_trigger;
+
 $custom_classes = array(
-	'icon' !== $modal_trigger ? 'is-hidden' : '',
+	$is_hidden ? 'is-hidden' : '',
 	'modal-trigger-element',
 );
 
@@ -93,12 +95,16 @@ if ( ! empty( $anchor ) ) {
 	$wrapper_config['id'] = esc_attr( $anchor );
 }
 
+// Inline style fallback to guarantee hiding regardless of CSS specificity.
+$custom_styles = $is_hidden ? array( 'display' => 'none' ) : array();
+
 // Get the block wrapper attributes.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes(
 	$attributes,
 	$config,
 	$wrapper_config,
-	$custom_classes
+	$custom_classes,
+	$custom_styles
 );
 
 // Render the icon block.

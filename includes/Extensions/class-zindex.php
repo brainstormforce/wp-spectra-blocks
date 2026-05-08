@@ -189,6 +189,6 @@ class ZIndex {
 		}
 
 		// Allow blocks with specific prefixes.
-		return preg_match( '/^(spectra-blocks\/|spectra-pro\/|core\/)/', $block_name );
+		return preg_match( '/^(spectra\/|spectra-pro\/|core\/)/', $block_name );
 	}
 }

@@ -90,15 +90,20 @@ $config = array(
 );
 
 // Base classes.
+$is_hidden = 'button' !== $modal_trigger;
+
 $custom_classes = array(
-	'button' !== $modal_trigger ? 'is-hidden' : '',
+	$is_hidden ? 'is-hidden' : '',
 	'wp-block-button',
 	'wp-block-button__link wp-element-button',
 	'modal-trigger-element',
 );
 
+// Inline style fallback to guarantee hiding regardless of CSS specificity.
+$custom_styles = $is_hidden ? array( 'display' => 'none' ) : array();
+
 // Get the block wrapper attributes, and extend the styles and classes.
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'id' => $anchor ), $custom_classes );
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'id' => $anchor ), $custom_classes, $custom_styles );
 
 // return the view.
 return 'file:./view.php';

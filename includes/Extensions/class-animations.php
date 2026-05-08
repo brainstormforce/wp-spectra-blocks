@@ -203,7 +203,7 @@ class Animations {
 	 * @return bool
 	 */
 	private function is_allowed_block( $block_name ) {
-		return preg_match( '/^(spectra-blocks\/|spectra-pro\/|core\/)/', $block_name );
+		return preg_match( '/^(spectra\/|spectra-pro\/|core\/)/', $block_name );
 	}
 
 	/**

@@ -15,13 +15,16 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Singleton {
 	/**
-	 * The single instance of the class.
+	 * Instances indexed by class name.
+	 *
+	 * Using an array keyed by class name prevents child classes that share a
+	 * common parent (e.g. AbstractAbility) from overwriting each other's instance.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @var object
+	 * @var array<string, object>
 	 */
-	protected static $instance = null;
+	protected static $instances = array();
 
 	/**
 	 * Constructor.
@@ -37,13 +40,14 @@ trait Singleton {
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return object Instance.
+	 * @return static Instance.
 	 */
 	final public static function instance() {
-		if ( null === static::$instance ) {
-			static::$instance = new static();
+		$class = static::class;
+		if ( ! isset( static::$instances[ $class ] ) ) {
+			static::$instances[ $class ] = new static();
 		}
-		return static::$instance;
+		return static::$instances[ $class ];
 	}
 
 	/**

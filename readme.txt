@@ -62,6 +62,7 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
@@ -90,6 +91,7 @@ Source code for each bundled library and third-party utility used by this plugin
 * `lib/astra-notices/` — Source: [https://github.com/brainstormforce/astra-notices](https://github.com/brainstormforce/astra-notices) (plain PHP, ships unbuilt)
 * `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
 * `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
+
 
 == External Services ==
 
@@ -191,6 +193,7 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 * Fix: Added function_exists() guards around core file includes.
 * Fix: Added capability check to SVG upload filter.
 * Fix: Updated all shared libraries to latest versions.
+
 
 = 0.0.2 =
 * Fix: Address WordPress.org plugin review compliance issues.

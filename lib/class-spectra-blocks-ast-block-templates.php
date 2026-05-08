@@ -124,8 +124,17 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		public function load() {
 			global $ast_block_templates_init;
 
-			if ( is_file( realpath( $ast_block_templates_init ) ) ) {
-				include_once realpath( $ast_block_templates_init );
+			// Bail when no plugin registered an entry point (e.g. CI runners
+			// without `composer install`). Without this guard, PHP 8.1+
+			// emits a `realpath(null)` deprecation that is printed before
+			// any `header()` call and breaks every subsequent `wp_redirect`.
+			if ( empty( $ast_block_templates_init ) ) {
+				return;
+			}
+
+			$resolved = realpath( $ast_block_templates_init );
+			if ( $resolved && is_file( $resolved ) ) {
+				include_once $resolved;
 			}
 		}
 	}

@@ -58,26 +58,39 @@ class Spectra_Blocks_Loader {
 		Spectra_Blocks_Rest_Api::init();
 		add_action( 'init', array( 'Spectra_Blocks_Helper', 'init' ) );
 
-		// Lib wrappers.
+		// Shared BSF libraries — use class_exists / global version negotiation
+		// to avoid conflicts when UAGB (or another BSF plugin) is also active.
 		$lib_dir = SPECTRA_BLOCKS_DIR . 'lib/';
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-bsf-analytics.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-bsf-analytics.php';
+
+		// BSF Analytics.
+		if ( ! class_exists( 'BSF_Analytics_Loader' ) && file_exists( $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php' ) ) {
+			require_once $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php';
 		}
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-zip-ai.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-zip-ai.php';
+
+		// Zip AI — global version negotiation via $zip_ai_version / $zip_ai_path.
+		self::load_versioned_lib( $lib_dir . 'zip-ai/version.json', 'zip-ai', $lib_dir . 'zip-ai/zip-ai.php', 'plugins_loaded', 15 );
+
+		// Astra Notices.
+		if ( file_exists( $lib_dir . 'astra-notices/class-astra-notices.php' ) ) {
+			require_once $lib_dir . 'astra-notices/class-astra-notices.php';
 		}
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-astra-notices.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-astra-notices.php';
-		}
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-nps-survey.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-nps-survey.php';
-		}
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-zipwp-images.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-zipwp-images.php';
-		}
+
+		// NPS Survey — global version negotiation via $nps_survey_version / $nps_survey_init.
+		self::load_versioned_lib( $lib_dir . 'nps-survey/version.json', 'nps-survey', $lib_dir . 'nps-survey/nps-survey.php', 'init', 999 );
+
+		// ZipWP Images — global version negotiation via $zipwp_images_version / $zipwp_images_init.
+		self::load_versioned_lib( $lib_dir . 'zipwp-images/version.json', 'zipwp-images', $lib_dir . 'zipwp-images/zipwp-images.php', 'init' );
+
+		// Gutenberg Templates (Design Library).
 		if ( file_exists( $lib_dir . 'class-spectra-blocks-ast-block-templates.php' ) ) {
 			require_once $lib_dir . 'class-spectra-blocks-ast-block-templates.php';
 		}
+
+		// Load learn actions for block editor guided steps.
+		require_once $classes_dir . 'class-spectra-blocks-learn-actions.php';
+
+		// Load learn actions for admin dashboard guided tooltips.
+		require_once $classes_dir . 'class-spectra-blocks-admin-learn-actions.php';
 	}
 
 	/**
@@ -136,6 +149,65 @@ class Spectra_Blocks_Loader {
 	 */
 	public static function on_deactivation() {
 		flush_rewrite_rules();
+	}
+
+	/**
+	 * Load a BSF library that uses global version negotiation.
+	 *
+	 * Multiple plugins may bundle the same library. Each registers its
+	 * version via a global variable; the highest version wins and its
+	 * entry-point is included on the specified hook.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $version_file Absolute path to the library's version.json.
+	 * @param string $lib_key      Key inside version.json (e.g. 'zip-ai').
+	 * @param string $entry_file   Absolute path to the library's main PHP file.
+	 * @param string $hook         WordPress hook to load on (e.g. 'init').
+	 * @param int    $priority     Hook priority.
+	 * @return void
+	 */
+	private static function load_versioned_lib( $version_file, $lib_key, $entry_file, $hook = 'init', $priority = 10 ) {
+		$version_file = realpath( $version_file );
+		if ( ! $version_file || ! is_file( $version_file ) ) {
+			return;
+		}
+
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$file_data = json_decode( file_get_contents( $version_file ), true );
+		$version   = isset( $file_data[ $lib_key ] ) ? $file_data[ $lib_key ] : '0';
+		$path      = realpath( $entry_file );
+
+		// Global variable names follow BSF convention: $<lib_key>_version, $<lib_key>_path (or _init).
+		$var_version = str_replace( '-', '_', $lib_key ) . '_version';
+		$var_path    = str_replace( '-', '_', $lib_key ) . '_init';
+
+		// Some libs use _path instead of _init (e.g. zip-ai).
+		if ( 'zip_ai' === str_replace( '-', '_', $lib_key ) ) {
+			$var_path = 'zip_ai_path';
+		}
+
+		global $$var_version, $$var_path;
+
+		if ( null === $$var_version ) {
+			$$var_version = '0';
+		}
+
+		if ( version_compare( $version, $$var_version, '>=' ) ) {
+			$$var_version = $version;
+			$$var_path    = $path;
+		}
+
+		add_action(
+			$hook,
+			static function () use ( $var_path ) {
+				global $$var_path;
+				if ( ! empty( $$var_path ) && is_file( realpath( $$var_path ) ) ) {
+					include_once realpath( $$var_path );
+				}
+			},
+			$priority
+		);
 	}
 }
 

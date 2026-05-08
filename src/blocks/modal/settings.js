@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	InspectorControls,
 } from '@wordpress/block-editor';
+import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
     __experimentalToolsPanel as ToolsPanel,
@@ -230,6 +231,11 @@ const Settings = ( props ) => (
 	<>
 		<BlockSettings { ...{ ...props } } />
 		<TabBlockControls { ...{ ...props } } />
+		{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
+			<InspectorControls group="settings">
+				<UpgradeComponent control={ { campaign: 'modal' } } />
+			</InspectorControls>
+		) }
 	</>
 );
 
