@@ -206,10 +206,11 @@ class ListPopups extends AbstractAbility {
 		$popups = array();
 
 		foreach ( $query->posts as $post ) {
-			$popups[] = array(
+			$popup_type = get_post_meta( $post->ID, 'spectra-popup-type', true );
+			$popups[]   = array(
 				'id'         => $post->ID,
 				'title'      => $post->post_title,
-				'type'       => get_post_meta( $post->ID, 'spectra-popup-type', true ) ?: 'unset',
+				'type'       => $popup_type ? $popup_type : 'unset',
 				'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-popup-enabled', true ),
 				'repetition' => (float) get_post_meta( $post->ID, 'spectra-popup-repetition', true ),
 				'date'       => $post->post_date,

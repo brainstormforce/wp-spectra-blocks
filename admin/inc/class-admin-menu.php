@@ -795,7 +795,6 @@ class Admin_Menu {
 				break;
 			}
 		}
-
 	}
 }
 

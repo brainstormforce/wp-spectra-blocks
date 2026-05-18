@@ -173,11 +173,12 @@ class GetPopup extends AbstractAbility {
 			);
 		}
 
+		$popup_type = get_post_meta( $post->ID, 'spectra-popup-type', true );
 		return array(
 			'id'         => $post->ID,
 			'title'      => $post->post_title,
 			'content'    => $post->post_content,
-			'type'       => get_post_meta( $post->ID, 'spectra-popup-type', true ) ?: 'unset',
+			'type'       => $popup_type ? $popup_type : 'unset',
 			'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-popup-enabled', true ),
 			'repetition' => (float) get_post_meta( $post->ID, 'spectra-popup-repetition', true ),
 			'status'     => $post->post_status,
