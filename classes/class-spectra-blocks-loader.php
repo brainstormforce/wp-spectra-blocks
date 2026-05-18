@@ -116,7 +116,7 @@ class Spectra_Blocks_Loader {
 	 * @param string $textdomain The library text domain.
 	 * @return string The plugin text domain.
 	 */
-	public static function sync_library_textdomain( $textdomain ) {
+	public static function sync_library_textdomain( $textdomain ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return 'spectra-blocks';
 	}
 

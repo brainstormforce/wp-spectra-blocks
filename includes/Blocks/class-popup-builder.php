@@ -339,7 +339,6 @@ class PopupBuilder {
 	 */
 	public function popup_toggle_scripts() {
 
-
 		global $pagenow;
 
 		$screen = get_current_screen();

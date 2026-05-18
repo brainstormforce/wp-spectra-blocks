@@ -875,7 +875,7 @@ class BlockUsageTracker {
 		if ( 'spectra-pro' === $block_prefix ) {
 			// Check multiple possible locations for Spectra Pro blocks.
 			// Resolve the plugins directory by stripping trailing slash before dirname().
-			$plugins_base = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
+			$plugins_base  = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
 			$possible_dirs = array(
 				$plugins_base . 'spectra-pro/spectra-pro-v2/build/blocks/',
 				$plugins_base . 'spectra-pro/spectra-pro-v2/src/blocks/',
