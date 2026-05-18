@@ -99,7 +99,7 @@ export const RenderBlockVariation = ( props ) => {
 	if (
 		! [ 'spectra', 'spectra-pro' ].includes( pluginName )
 		|| ( 'spectra' === pluginName && ! window?.spectra_blocks_info?.plugin_url )
-		|| ( 'spectra-pro' === pluginName && ! window?.spectra_pro_blocks_info?.spectra_pro_url )
+		|| ( 'spectra-pro' === pluginName && ! window?.spectra_blocks_pro_info?.spectra_pro_url )
 	) {
 		return null;
 	}
@@ -116,7 +116,7 @@ export const RenderBlockVariation = ( props ) => {
 			imagePath = `${ window.spectra_blocks_info.plugin_url }`;
 			break;
 		case 'spectra-pro':
-			imagePath = `${ window.spectra_pro_blocks_info.spectra_pro_url }/spectra-pro-v2`;
+			imagePath = `${ window.spectra_blocks_pro_info.spectra_pro_url }`;
 			break;
 	}
 

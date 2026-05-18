@@ -83,7 +83,13 @@ class BlockManager {
 		}
 
 		if ( ! empty( $block_files ) ) {
+			$registry = \WP_Block_Type_Registry::get_instance();
 			foreach ( $block_files as $block_file ) {
+				// Skip blocks already registered by another plugin (e.g. UAGB).
+				$metadata = wp_json_file_decode( $block_file, array( 'associative' => true ) );
+				if ( ! empty( $metadata['name'] ) && $registry->is_registered( $metadata['name'] ) ) {
+					continue;
+				}
 				register_block_type_from_metadata( $block_file );
 			}
 		}

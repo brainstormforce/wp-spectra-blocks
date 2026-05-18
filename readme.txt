@@ -62,6 +62,7 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
@@ -191,6 +192,7 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 * Fix: Added function_exists() guards around core file includes.
 * Fix: Added capability check to SVG upload filter.
 * Fix: Updated all shared libraries to latest versions.
+
 
 = 0.0.2 =
 * Fix: Address WordPress.org plugin review compliance issues.

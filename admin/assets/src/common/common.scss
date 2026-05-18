@@ -98,6 +98,15 @@
     line-height: 1.3em;
   }
 
+  // Prevent global h3 styles from overriding force-ui Accordion triggers.
+  // Accordion.Trigger renders as h3 with a child button[aria-expanded].
+  h3:has([aria-expanded]) {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
   .spectra-blocks-field {
     border-radius: 2px;
   }
@@ -275,7 +284,7 @@
     font-size: 1.8rem;
   }
 
-  h3 {
+  h3:not(:has([aria-expanded])) {
     font-size: 1.125rem;
   }
 }
