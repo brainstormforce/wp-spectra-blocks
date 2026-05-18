@@ -138,7 +138,7 @@ class ExtensionManager {
 		if ( 'image-mask' === $folder_name ) {
 			wp_localize_script(
 				$handle,
-				'spectraExtensions',
+				'spectraBlocksExtensions',
 				array(
 					'pluginUrl' => trailingslashit( SPECTRA_BLOCKS_URL ),
 					'assetsUrl' => trailingslashit( SPECTRA_BLOCKS_URL ) . 'assets/',

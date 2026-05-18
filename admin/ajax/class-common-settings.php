@@ -941,7 +941,7 @@ class Common_Settings extends Ajax_Base {
 	public function enable_bsf_analytics_option() {
 		$this->check_permission_nonce( 'spectra_blocks_enable_bsf_analytics_option' );
 		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_analytics_optin', sanitize_text_field( $value ) );
+		$this->save_admin_settings( 'spectra_blocks_analytics_optin', sanitize_text_field( $value ) );
 	}
 
 	/**

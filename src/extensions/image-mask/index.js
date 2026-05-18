@@ -11,7 +11,7 @@ import Edit from './edit';
 import { spectraClassNames } from '@spectra-helpers';
 
 // Get the plugin URL from the localized data and convert to relative path.
-const pluginUrl = window?.spectraExtensions?.pluginUrl || '';
+const pluginUrl = window?.spectraBlocksExtensions?.pluginUrl || '';
 
 // Extract relative path from full URL for portability (handles subdirectory installs).
 const getRelativePath = ( url ) => {

@@ -203,14 +203,14 @@ class AssetLoader {
 	public function register_block_assets() {
 		// Register Swiper assets that can be used by blocks.
 		wp_register_style(
-			'swiper-style',
+			'spectra-blocks-swiper-style',
 			SPECTRA_BLOCKS_URL . 'assets/css/swiper-bundle.min.css',
 			array(),
 			'12.1.3'
 		);
 
 		wp_register_script(
-			'swiper-script',
+			'spectra-blocks-swiper-script',
 			SPECTRA_BLOCKS_URL . 'assets/js/swiper-bundle.min.js',
 			array(),
 			'12.1.3',
@@ -218,7 +218,7 @@ class AssetLoader {
 		);
 
 		wp_register_script(
-			'modal-script',
+			'spectra-blocks-modal-script',
 			SPECTRA_BLOCKS_URL . 'assets/js/modal-script.js',
 			array(),
 			SPECTRA_BLOCKS_VER,
@@ -236,7 +236,9 @@ class AssetLoader {
 	public function enqueue_frontend_assets() {
 		// Only enqueue if slider block is present.
 		if ( has_block( 'spectra/slider' ) ) {
-			wp_enqueue_script( 'modal-script' );
+			wp_enqueue_style( 'spectra-blocks-swiper-style' );
+			wp_enqueue_script( 'spectra-blocks-swiper-script' );
+			wp_enqueue_script( 'spectra-blocks-modal-script' );
 		}
 	}
 

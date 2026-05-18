@@ -751,10 +751,7 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				// Sanitize: strip tags and remove any potentially dangerous content.
 				$safe_css = wp_strip_all_tags( $combined_css );
-				// Remove any remaining script-injection patterns from CSS.
-				$safe_css = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript)\s*:/i', '', $safe_css );
 				wp_add_inline_style( $this->style_handle, $safe_css );
 
 				// Mark as added to avoid duplicates.
