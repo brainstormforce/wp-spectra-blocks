@@ -971,6 +971,7 @@ class ResponsiveControls {
 		 * @param bool $enable_cache Whether to enable caching. Default is true.
 		 * @return bool True to enable caching, false to disable.
 		 */
+		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
 		$enable_cache = apply_filters( 'spectra_enable_css_cache', true );
 
 		// Generate cache key.
@@ -1076,6 +1077,7 @@ class ResponsiveControls {
 		 * @param string $spectra_id The unique ID of the block instance.
 		 * @return string Modified CSS selector.
 		 */
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 		$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
 
 		// Detect if we're in pattern preview context by checking if we're being called from the pattern preview function.
@@ -1120,6 +1122,7 @@ class ResponsiveControls {
 			 * @param string $spectra_id The unique ID of the block instance.
 			 * @return string Modified CSS selector.
 			 */
+			// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 			$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
 
 			// Special handling for slider-child in pattern preview.
@@ -1354,6 +1357,7 @@ class ResponsiveControls {
 		 * @param string $block_name The name of the block (e.g., 'spectra/container').
 		 * @return string Modified CSS string that will be injected into the page.
 		 */
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 		$css = apply_filters( 'spectra_responsive_css', $css, $spectra_id, $block_name );
 
 		return $css;

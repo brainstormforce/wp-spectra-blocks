@@ -353,7 +353,7 @@ class BlockUsageTracker {
 			}
 		}
 
-		// Apply filter to allow modification of tracked blocks.
+		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
 		$root_level_blocks = apply_filters( 'spectra_analytics_tracked_blocks', $root_level_blocks, $blocks );
 
 		return array_unique( $root_level_blocks );
@@ -1080,7 +1080,7 @@ class BlockUsageTracker {
 			return false;
 		}
 
-		// Apply filter to allow override.
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 		return apply_filters( 'spectra_analytics_include_pro_blocks', true );
 	}
 

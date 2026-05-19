@@ -181,7 +181,7 @@ class ExtensionUsageTracker {
 			}
 		}
 
-		// Allow filtering of detected extensions for future extensibility.
+		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
 		return apply_filters( 'spectra_analytics_detected_extensions', array_unique( $extensions ), $attributes );
 	}
 
@@ -360,7 +360,7 @@ class ExtensionUsageTracker {
 			}
 		}
 
-		// Allow filtering for extensibility, including Pro extensions.
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 		$available_extensions = apply_filters( 'spectra_analytics_available_extensions', $available_extensions );
 
 		// Cache for 6 hours since extensions don't change often.
@@ -499,7 +499,7 @@ class ExtensionUsageTracker {
 				$specific_data[ $extension_name ] = $this->$method_name();
 			}
 
-			// Apply filter to allow Pro extensions to add their specific data.
+			// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 			$specific_data[ $extension_name ] = apply_filters(
 				"spectra_analytics_extension_specific_{$extension_name}",
 				$specific_data[ $extension_name ] ?? array(),
