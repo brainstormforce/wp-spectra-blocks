@@ -2711,10 +2711,8 @@ class ResponsiveControls {
 		$declarations = array();
 
 		foreach ( $styles as $property => $value ) {
-			// Sanitize CSS property name: only allow alphanumeric, hyphens, and underscores.
-			$safe_property = preg_replace( '/[^a-zA-Z0-9\-_]/', '', $property );
-			// Sanitize CSS value: strip tags and remove dangerous characters.
-			$safe_value = preg_replace( '/[;<>{}]/', '', wp_strip_all_tags( $value ) );
+			$safe_property = sanitize_html_class( $property );
+			$safe_value    = wp_strip_all_tags( preg_replace( '/[;<>{}]/', '', $value ) ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip CSS injection chars before WP sanitizer.
 
 			if ( ! empty( $safe_property ) && '' !== $safe_value ) {
 				$declarations[] = $safe_property . ':' . $safe_value;
