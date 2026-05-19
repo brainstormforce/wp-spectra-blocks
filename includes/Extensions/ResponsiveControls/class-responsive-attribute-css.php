@@ -339,7 +339,7 @@ class ResponsiveAttributeCSS {
 	 */
 	public static function get_responsive_attributes( string $block_name ): array {
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 
 		return array_keys( $attr_definitions[ $block_name ] ?? array() );
 	}
@@ -363,7 +363,7 @@ class ResponsiveAttributeCSS {
 		array $block_attrs = array()
 	): string {
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 
 		// Return empty string if no definitions exist for this block.
 		if ( ! isset( $attr_definitions[ $block_name ] ) ) {

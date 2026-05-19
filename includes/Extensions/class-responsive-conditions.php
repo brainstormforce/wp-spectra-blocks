@@ -186,7 +186,7 @@ class ResponsiveConditions {
 		 * @return array Modified array of excluded block names.
 		 */
 		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
-		$excluded_blocks = apply_filters( 'spectra_excluded_responsive_conditions_blocks', array(), $block_name );
+		$excluded_blocks = apply_filters( 'spectra_blocks_excluded_responsive_conditions_blocks', array(), $block_name );
 
 		// Check if block is excluded.
 		if ( in_array( $block_name, $excluded_blocks, true ) ) {
@@ -203,7 +203,7 @@ class ResponsiveConditions {
 		 * @param string $block_name       The current block name being checked.
 		 * @return array Modified array of supported block names.
 		 */
-		$supported_blocks = apply_filters( 'spectra_supported_responsive_conditions_blocks', array( 'core/image' ), $block_name ); // Cross-plugin extension point — spectra-blocks-pro hooks here.
+		$supported_blocks = apply_filters( 'spectra_blocks_supported_responsive_conditions_blocks', array( 'core/image' ), $block_name ); // Cross-plugin extension point — spectra-blocks-pro hooks here.
 
 		// Check if block is explicitly supported.
 		if ( in_array( $block_name, $supported_blocks, true ) ) {
@@ -220,7 +220,7 @@ class ResponsiveConditions {
 		 * @param string $block_name       The current block name being checked.
 		 * @return array Modified array of allowed prefixes.
 		 */
-		$allowed_prefixes = apply_filters( 'spectra_allowed_responsive_conditions_prefixes', array( 'spectra/', 'spectra-pro/' ), $block_name ); // Cross-plugin extension point — spectra-blocks-pro hooks here.
+		$allowed_prefixes = apply_filters( 'spectra_blocks_allowed_responsive_conditions_prefixes', array( 'spectra/', 'spectra-pro/' ), $block_name ); // Cross-plugin extension point — spectra-blocks-pro hooks here.
 
 		// Check if block has an allowed prefix.
 		foreach ( $allowed_prefixes as $prefix ) {

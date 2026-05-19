@@ -182,7 +182,7 @@ class ExtensionUsageTracker {
 		}
 
 		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
-		return apply_filters( 'spectra_analytics_detected_extensions', array_unique( $extensions ), $attributes );
+		return apply_filters( 'spectra_blocks_analytics_detected_extensions', array_unique( $extensions ), $attributes );
 	}
 
 	/**
@@ -361,7 +361,7 @@ class ExtensionUsageTracker {
 		}
 
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$available_extensions = apply_filters( 'spectra_analytics_available_extensions', $available_extensions );
+		$available_extensions = apply_filters( 'spectra_blocks_analytics_available_extensions', $available_extensions );
 
 		// Cache for 6 hours since extensions don't change often.
 		wp_cache_set( self::EXTENSIONS_CACHE_KEY, $available_extensions, 'spectra', 6 * HOUR_IN_SECONDS );
@@ -501,7 +501,7 @@ class ExtensionUsageTracker {
 
 			// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 			$specific_data[ $extension_name ] = apply_filters(
-				"spectra_analytics_extension_specific_{$extension_name}",
+				"spectra_blocks_analytics_extension_specific_{$extension_name}",
 				$specific_data[ $extension_name ] ?? array(),
 				$this->get_extension_usage_data( $extension_name )
 			);

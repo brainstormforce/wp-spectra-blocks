@@ -397,7 +397,7 @@ class ResponsiveControls {
 	 */
 	public function init() {
 		// Hook into the CSS cache filter to respect the disable cache option.
-		add_filter( 'spectra_enable_css_cache', array( $this, 'maybe_disable_css_cache' ) );
+		add_filter( 'spectra_blocks_enable_css_cache', array( $this, 'maybe_disable_css_cache' ) );
 
 		// Register responsive stylesheet early to ensure it's available for all blocks.
 		add_action( 'init', array( $this, 'register_responsive_style' ) );
@@ -941,8 +941,8 @@ class ResponsiveControls {
 			$attrs['spectraId'] = 'spectra-' . wp_generate_uuid4();
 
 			// Disable caching for dynamically generated IDs to ensure fresh CSS.
-			if ( ! has_filter( 'spectra_enable_css_cache', '__return_false' ) ) {
-				add_filter( 'spectra_enable_css_cache', '__return_false' );
+			if ( ! has_filter( 'spectra_blocks_enable_css_cache', '__return_false' ) ) {
+				add_filter( 'spectra_blocks_enable_css_cache', '__return_false' );
 			}
 		}
 	}
@@ -972,10 +972,10 @@ class ResponsiveControls {
 		 * @return bool True to enable caching, false to disable.
 		 */
 		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
-		$enable_cache = apply_filters( 'spectra_enable_css_cache', true );
+		$enable_cache = apply_filters( 'spectra_blocks_enable_css_cache', true );
 
 		// Generate cache key.
-		$cache_key = 'spectra_responsive_css_' . $spectra_id . '_' . SPECTRA_BLOCKS_VER;
+		$cache_key = 'spectra_blocks_responsive_css_' . $spectra_id . '_' . SPECTRA_BLOCKS_VER;
 
 		// Generate hash fingerprint including block name for proper cache invalidation.
 		$cache_data    = array(
@@ -1055,7 +1055,7 @@ class ResponsiveControls {
 		 *
 		 * Example usage:
 		 * ```php
-		 * add_filter( 'spectra_responsive_css_selector', function( $selector, $block_name, $spectra_id ) {
+		 * add_filter( 'spectra_blocks_responsive_css_selector', function( $selector, $block_name, $spectra_id ) {
 		 *     // Use lower specificity for theme compatibility
 		 *     if ( 'spectra/container' === $block_name ) {
 		 *         return ".wp-block-spectra-container[data-spectra-id='{$spectra_id}']";
@@ -1078,7 +1078,7 @@ class ResponsiveControls {
 		 * @return string Modified CSS selector.
 		 */
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
+		$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
 
 		// Detect if we're in pattern preview context by checking if we're being called from the pattern preview function.
 		$is_pattern_preview = false;
@@ -1123,7 +1123,7 @@ class ResponsiveControls {
 			 * @return string Modified CSS selector.
 			 */
 			// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-			$selector = apply_filters( 'spectra_responsive_css_selector', $selector, $block_name, $spectra_id );
+			$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
 
 			// Special handling for slider-child in pattern preview.
 			if ( 'spectra/slider-child' === $block_name ) {
@@ -1329,7 +1329,7 @@ class ResponsiveControls {
 		 *
 		 * Example usage:
 		 * ```php
-		 * add_filter( 'spectra_responsive_css', function( $css, $spectra_id, $block_name ) {
+		 * add_filter( 'spectra_blocks_responsive_css', function( $css, $spectra_id, $block_name ) {
 		 *     // Fix z-index issues for modal blocks
 		 *     if ( 'spectra/modal' === $block_name ) {
 		 *         $css = str_replace( 'z-index: 999', 'z-index: 9999', $css );
@@ -1358,7 +1358,7 @@ class ResponsiveControls {
 		 * @return string Modified CSS string that will be injected into the page.
 		 */
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$css = apply_filters( 'spectra_responsive_css', $css, $spectra_id, $block_name );
+		$css = apply_filters( 'spectra_blocks_responsive_css', $css, $spectra_id, $block_name );
 
 		return $css;
 	}
@@ -1952,7 +1952,7 @@ class ResponsiveControls {
 		 * @return array Filtered list of flex text alignment blocks.
 		 */
 		$flex_blocks = apply_filters(
-			'spectra_flex_text_align_blocks',
+			'spectra_blocks_flex_text_align_blocks',
 			array(
 				// Core Spectra blocks with button-like flex behavior.
 				'spectra/button',                      // Button block.

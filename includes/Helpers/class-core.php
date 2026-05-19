@@ -36,7 +36,7 @@ class Core {
 	/**
 	 * Get Json Data.
 	 *
-	 * Customize and add icons via 'spectra_icon_chunks' filter.
+	 * Customize and add icons via 'spectra_blocks_icon_chunks' filter.
 	 *
 	 * @since 3.0.0
 	 *
@@ -60,7 +60,7 @@ class Core {
 
 		// Filter the icons if required.
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$filtered_icons_chunks = apply_filters( 'spectra_icon_chunks', $icons_chunks );
+		$filtered_icons_chunks = apply_filters( 'spectra_blocks_icon_chunks', $icons_chunks );
 
 		// If the filtered array is valid, update the icon chunks.
 		if ( is_array( $filtered_icons_chunks ) && ! empty( $filtered_icons_chunks ) ) {
