@@ -169,13 +169,13 @@ class SearchPostsByBlock extends AbstractAbility {
 		// Search for the block comment in post_content.
 		global $wpdb;
 
-		$search_term = $wpdb->esc_like( 'wp:' . $block_name ) . '%';
+		$search_term            = $wpdb->esc_like( 'wp:' . $block_name ) . '%';
 		$post_type_placeholders = implode( ',', array_fill( 0, count( $post_types ), '%s' ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT ID, post_title, post_type FROM {$wpdb->posts} WHERE post_content LIKE %s AND post_type IN ({$post_type_placeholders}) AND post_status = 'publish' ORDER BY post_date DESC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT ID, post_title, post_type FROM {$wpdb->posts} WHERE post_content LIKE %s AND post_type IN ({$post_type_placeholders}) AND post_status = 'publish' ORDER BY post_date DESC LIMIT %d",
 				array_merge(
 					array( '%<!-- ' . $search_term ),
 					$post_types,
@@ -183,6 +183,7 @@ class SearchPostsByBlock extends AbstractAbility {
 				)
 			)
 		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		$posts = array();
 		foreach ( $results as $row ) {

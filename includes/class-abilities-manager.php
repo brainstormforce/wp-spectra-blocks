@@ -9,6 +9,8 @@
 
 namespace Spectra;
 
+defined( 'ABSPATH' ) || exit;
+
 use Spectra\Traits\Singleton;
 use Spectra\Abilities\ListAvailableBlocks;
 use Spectra\Abilities\GetBlockConfig;
