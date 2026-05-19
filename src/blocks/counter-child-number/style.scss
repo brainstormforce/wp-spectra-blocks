@@ -5,7 +5,7 @@
  */
 
 .wp-block-spectra-counter-child-number {
-	color: currentColor;
+	color: currentcolor;
 	font-size: 52px;
 
 	.spectra-counter-number {
@@ -36,6 +36,7 @@
 		color: var(--spectra-prefix-color, currentColor);
 		flex-shrink: 0; // Ensure prefix doesn't affect counter width calculations.
 	}
+
 	.spectra-counter-suffix {
 		display: inline;
 		margin-left: var(--spectra-suffix-left-margin, 0);
@@ -46,9 +47,11 @@
 
 // Higher specificity rules to override container text color inheritance
 .wp-block-spectra-container[class*="wp-block"] .wp-block-spectra-counter-child-number {
+
 	.spectra-counter-prefix {
 		color: var(--spectra-prefix-color, currentColor);
 	}
+
 	.spectra-counter-suffix {
 		color: var(--spectra-suffix-color, currentColor);
 	}
@@ -56,9 +59,11 @@
 
 // Higher specificity rules to override counter text color inheritance.
 .wp-block-spectra-counter[class*="wp-block"].spectra-text-color .wp-block-spectra-counter-child-number {
+
 	.spectra-counter-prefix {
 		color: var(--spectra-prefix-color, currentColor) !important;
 	}
+
 	.spectra-counter-suffix {
 		color: var(--spectra-suffix-color, currentColor) !important;
 	}

@@ -8,12 +8,15 @@ $default-text-icon-gap: 10px;
 	&.has-text-align-right {
 		justify-content: right;
 	}
+
 	&.has-text-align-left {
 		justify-content: left;
 	}
+
 	&.has-text-align-center {
 		justify-content: center;
 	}
+
 	&:not(.has-text-align-right):not(.has-text-align-left) {
 		justify-content: center;
 	}

@@ -1,4 +1,5 @@
 /* Note that '@' rules like mixin and include have been stable and known for a long time. */
+
 /* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
 /* stylelint-disable at-rule-no-unknown */
 
@@ -30,6 +31,7 @@
 	// Apply overflow clip when has video background and border-radius
 	&.has-video-background,
 	&.has-image-background {
+
 		&[style*="border-radius"] {
 			overflow: hidden; // Fallback for older browsers
 			overflow: clip !important;   // Modern standard for proper border-radius clipping
@@ -104,6 +106,7 @@
 		}
 
 		&.spectra-overlay-color {
+
 			&::before {
 				content: "";
 				position: absolute;

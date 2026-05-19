@@ -10,11 +10,13 @@
 	&[data-spectra-id] > * {
 		margin: 0;
 	}
+
 	&[data-spectra-id] .spectra-counter-content-wrapper > * {
 		margin: 0;
 	}
 	// Circular progress style
 	&.spectra-counter--circular {
+
 		.spectra-counter-circular-wrapper {
 			position: relative;
 			display: inline-flex;
@@ -95,23 +97,23 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: currentColor;
+		color: currentcolor;
 
 		svg {
 			width: 1em;
 			height: 1em;
-			fill: currentColor;
+			fill: currentcolor;
 		}
 	}
 
 	.spectra-counter-number {
-		color: currentColor; // Prevent layout shifts during counter animation.
+		color: currentcolor; // Prevent layout shifts during counter animation.
 		contain: layout; // Ensure stable positioning without blocking text decoration
 		position: relative;
 	}
 
 	.spectra-counter-text {
-		color: currentColor;
+		color: currentcolor;
 		line-height: 1.4;
 	}
 
@@ -129,6 +131,7 @@
 	// as circular counter to ensure consistent visual appearance
 	&.spectra-counter--simple,
 	&.spectra-counter--bar {
+
 		.wp-block-spectra-counter-child-number {
 			line-height: 1;
 		}
@@ -151,6 +154,7 @@
 
 	// Hover effects
 	&:hover {
+
 		.spectra-counter-progress-circle {
 			stroke: var(--spectra-text-color-hover, var(--spectra-counter-progress-color, #007cba));
 		}
@@ -162,7 +166,9 @@
 
 	// Responsive adjustments
 	@media (max-width: 768px) {
+
 		&.spectra-counter--circular {
+
 			.spectra-counter-progress {
 				width: calc(var(--spectra-counter-progress-size, 300px) * 0.8);
 				height: calc(var(--spectra-counter-progress-size, 300px) * 0.8);
@@ -190,6 +196,7 @@
 		&.p {
 			margin-bottom: 0;
 		}
+
 		&.spectra-text-color {
 			color: var(--spectra-text-color);
 
@@ -213,6 +220,7 @@
 // Editor-only margins using CSS variables (lower specificity than responsive controls)
 // Note: These rules are outside the main block to have lower specificity
 .wp-block-spectra-counter .spectra-counter-progress-label {
+
 	.spectra-counter-prefix {
 		margin-right: var(--spectra-prefix-right-margin, 0);
 	}

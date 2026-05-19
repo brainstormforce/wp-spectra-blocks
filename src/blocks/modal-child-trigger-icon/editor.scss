@@ -17,5 +17,5 @@
 
 // Ensure custom SVG elements inherit color properly in the editor for both fill and stroke.
 .wp-block-spectra-modal-child-trigger-icon[class*="wp-block"].spectra-text-color svg.spectra-custom-svg {
-	color: currentColor;
+	color: currentcolor;
 }

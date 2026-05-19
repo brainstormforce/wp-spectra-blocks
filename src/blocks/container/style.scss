@@ -1,416 +1,415 @@
 // Static styles - specificity (0,1,0) and higher.
 .wp-block-spectra-container {
-  max-width: 100%;
-  padding: 10px;
-  box-sizing: border-box;
-  position: relative;
+	max-width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	position: relative;
 
-  // Reset CSS variables for nested containers to prevent inheritance
-  .wp-block-spectra-container {
-    --spectra-overlay-opacity: initial;
-    --spectra-shape-divider-top-width: initial;
-    --spectra-shape-divider-top-height: initial;
-    --spectra-shape-divider-bottom-width: initial;
-    --spectra-shape-divider-bottom-height: initial;
-  }
+	// Reset CSS variables for nested containers to prevent inheritance
+	.wp-block-spectra-container {
+		--spectra-overlay-opacity: initial;
+		--spectra-shape-divider-top-width: initial;
+		--spectra-shape-divider-top-height: initial;
+		--spectra-shape-divider-bottom-width: initial;
+		--spectra-shape-divider-bottom-height: initial;
+	}
 
-  > *:not(.spectra-container__shape):not(.spectra-background-video__wrapper) {
-    z-index: 2;
-    position: relative;
-  }
+	> *:not(.spectra-container__shape):not(.spectra-background-video__wrapper) {
+		z-index: 2;
+		position: relative;
+	}
 
-  // Ensure all pseudo-elements inherit border-radius for overlay effects
-  &::before,
-  &::after {
-    border-radius: inherit;
-  }
-  &:not(.alignfull) {
-    width: 100%;
-  }
+	// Ensure all pseudo-elements inherit border-radius for overlay effects
+	&::before,
+	&::after {
+		border-radius: inherit;
+	}
 
-  // Only clip overflow when there are background images/videos that need border-radius clipping
-  // This allows negative margins to work properly when no background is present
-  &.has-video-background[style*="border-radius"],
-  &.has-image-background[style*="border-radius"],
-  &.spectra-background-image[style*="border-radius"] {
-    overflow: hidden; // Fallback for older browsers
-    overflow: clip; // Modern standard for proper border-radius clipping
-  }
+	&:not(.alignfull) {
+		width: 100%;
+	}
 
-  // Default flex-wrap overriding for flex layout.
-  &.wp-block-spectra-container-is-layout-flex {
-    flex-wrap: nowrap;
-  }
+	// Only clip overflow when there are background images/videos that need border-radius clipping
+	// This allows negative margins to work properly when no background is present
+	&.has-video-background[style*="border-radius"],
+	&.has-image-background[style*="border-radius"],
+	&.spectra-background-image[style*="border-radius"] {
+		overflow: hidden; // Fallback for older browsers
+		overflow: clip; // Modern standard for proper border-radius clipping
+	}
 
-  // Dynamic styles - specificity (0,2,0) and higher.
-  &[class*="wp-block"] {
-    // WordPress core color picker support - ensure children inherit colors.
-    &.has-text-color {
-      // All children should inherit the WordPress core color.
-      * {
-        color: inherit;
-      }
-    }
+	// Default flex-wrap overriding for flex layout.
+	&.wp-block-spectra-container-is-layout-flex {
+		flex-wrap: nowrap;
+	}
 
-    // WordPress core background color support.
-    &.has-background {
-      // WordPress core background should be respected.
-      background: inherit;
-    }
+	// Dynamic styles - specificity (0,2,0) and higher.
+	&[class*="wp-block"] {
+		// WordPress core color picker support - ensure children inherit colors.
+		&.has-text-color {
+			// All children should inherit the WordPress core color.
+			* {
+				color: inherit;
+			}
+		}
 
-    // Text color of content inside container.
-    &.spectra-text-color {
-      color: var(--spectra-text-color);
+		// WordPress core background color support.
+		&.has-background {
+			// WordPress core background should be respected.
+			background: inherit;
+		}
 
-      * {
-        color: inherit;
-      }
-    }
+		// Text color of content inside container.
+		&.spectra-text-color {
+			color: var(--spectra-text-color);
 
-    // Variable based CSS - Simple Background Color (only when no background image).
-    &.spectra-background-color:not(.spectra-background-image) {
-      // Create isolation to prevent opacity from affecting children
-      isolation: isolate;
+			* {
+				color: inherit;
+			}
+		}
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--spectra-background-color);
-        opacity: var(--spectra-overlay-opacity, 1);
-        pointer-events: none;
-      }
-    }
+		// Variable based CSS - Simple Background Color (only when no background image).
+		&.spectra-background-color:not(.spectra-background-image) {
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
 
-    // Variable based CSS - Simple Background Gradient (only when no background image).
-    &.spectra-background-gradient:not(.spectra-background-image) {
-      // Create isolation to prevent opacity from affecting children
-      isolation: isolate;
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-color);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+			}
+		}
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--spectra-background-gradient);
-        opacity: var(--spectra-overlay-opacity, 1);
-        pointer-events: none;
-      }
-    }
+		// Variable based CSS - Simple Background Gradient (only when no background image).
+		&.spectra-background-gradient:not(.spectra-background-image) {
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
 
-    // Variable based CSS - Background Color with Background Image.
-    &.spectra-background-color.spectra-background-image {
-      position: relative;
-      // Create isolation to prevent opacity from affecting children
-      isolation: isolate;
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-gradient);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+			}
+		}
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--spectra-background-color);
-        opacity: var(--spectra-overlay-opacity, 1);
-        pointer-events: none;
-        z-index: 0;
-      }
+		// Variable based CSS - Background Color with Background Image.
+		&.spectra-background-color.spectra-background-image {
+			position: relative;
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
 
-      > *:not(.spectra-background-video__wrapper):not(
-          .spectra-container__shape
-        ) {
-        position: relative;
-        z-index: 3;
-      }
-    }
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-color);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
 
-    // Variable based CSS - Background Gradient with Background Image.
-    &.spectra-background-gradient.spectra-background-image {
-      position: relative;
-      // Create isolation to prevent opacity from affecting children
-      isolation: isolate;
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
+				position: relative;
+				z-index: 3;
+			}
+		}
 
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: var(--spectra-background-gradient);
-        opacity: var(--spectra-overlay-opacity, 1);
-        pointer-events: none;
-        z-index: 0;
-      }
+		// Variable based CSS - Background Gradient with Background Image.
+		&.spectra-background-gradient.spectra-background-image {
+			position: relative;
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
 
-      > *:not(.spectra-background-video__wrapper):not(
-          .spectra-container__shape
-        ) {
-        position: relative;
-        z-index: 3;
-      }
-    }
+			&::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: var(--spectra-background-gradient);
+				opacity: var(--spectra-overlay-opacity, 1);
+				pointer-events: none;
+				z-index: 0;
+			}
 
-    // -------------------------------- //
-    // The hover states for this block. //
-    // -------------------------------- //
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
+				position: relative;
+				z-index: 3;
+			}
+		}
 
-    // Variable based CSS - Text Hover Color.
-    &.spectra-text-color-hover:hover {
-      color: var(--spectra-text-color-hover) !important;
+		// -------------------------------- //
+		// The hover states for this block. //
+		// -------------------------------- //
 
-      * {
-        color: inherit !important;
-      }
-    }
+		// Variable based CSS - Text Hover Color.
+		&.spectra-text-color-hover:hover {
+			color: var(--spectra-text-color-hover) !important;
 
-    // Variable based CSS - Simple Background Color Hover (only when no background image).
-    &.spectra-background-color-hover:not(
-        .spectra-background-image
-      ):hover::before {
-      background: var(--spectra-background-color-hover);
-      opacity: var(--spectra-overlay-opacity, 1);
-    }
+			* {
+				color: inherit !important;
+			}
+		}
 
-    // Variable based CSS - Simple Background Gradient Hover (only when no background image).
-    &.spectra-background-gradient-hover:not(
-        .spectra-background-image
-      ):hover::before {
-      background: var(--spectra-background-gradient-hover);
-      opacity: var(--spectra-overlay-opacity, 1);
-    }
+		// Variable based CSS - Simple Background Color Hover (only when no background image).
+		&.spectra-background-color-hover:not(
+		.spectra-background-image
+	):hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity, 1);
+		}
 
-    // Variable based CSS - Background Color Hover with Background Image.
-    &.spectra-background-color-hover.spectra-background-image:hover::before {
-      background: var(--spectra-background-color-hover);
-      opacity: var(--spectra-overlay-opacity, 1);
-    }
+		// Variable based CSS - Simple Background Gradient Hover (only when no background image).
+		&.spectra-background-gradient-hover:not(
+		.spectra-background-image
+	):hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity, 1);
+		}
 
-    // Variable based CSS - Background Gradient Hover with Background Image.
-    &.spectra-background-gradient-hover.spectra-background-image:hover::before {
-      background: var(--spectra-background-gradient-hover);
-      opacity: var(--spectra-overlay-opacity, 1);
-    }
+		// Variable based CSS - Background Color Hover with Background Image.
+		&.spectra-background-color-hover.spectra-background-image:hover::before {
+			background: var(--spectra-background-color-hover);
+			opacity: var(--spectra-overlay-opacity, 1);
+		}
 
-    &.spectra-background-gradient:not(.has-video-background) {
-      // Create isolation to prevent opacity from affecting children
-      isolation: isolate;
+		// Variable based CSS - Background Gradient Hover with Background Image.
+		&.spectra-background-gradient-hover.spectra-background-image:hover::before {
+			background: var(--spectra-background-gradient-hover);
+			opacity: var(--spectra-overlay-opacity, 1);
+		}
 
-      &::before {
-        background: var(
-          --spectra-background-gradient,
-          var(--spectra-background-color)
-        );
-        content: "";
-        inset: 0;
-        opacity: var(--spectra-overlay-opacity);
-        position: absolute;
-      }
-    }
+		&.spectra-background-gradient:not(.has-video-background) {
+			// Create isolation to prevent opacity from affecting children
+			isolation: isolate;
 
-    // Variable based CSS - Container Overlay (only when no video background).
-    &.has-container-overlay:not(.has-video-background) {
-      position: relative;
-      // Create stacking context for blend modes
-      isolation: isolate;
+			&::before {
+				background:
+ var(--spectra-background-gradient, var(--spectra-background-color));
+				content: "";
+				inset: 0;
+				opacity: var(--spectra-overlay-opacity);
+				position: absolute;
+			}
+		}
 
-      &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: var(--spectra-overlay-image, none);
-        background-position: var(--spectra-overlay-position, center);
-        background-attachment: var(--spectra-overlay-attachment, scroll);
-        background-repeat: var(--spectra-overlay-repeat, no-repeat);
-        background-size: var(--spectra-overlay-size, cover);
-        opacity: var(--spectra-overlay-opacity-value, 0);
-        pointer-events: none;
-        z-index: 1;
-        border-radius: inherit;
-        mix-blend-mode: var(--spectra-overlay-blend-mode, normal);
-        background-blend-mode: var(--spectra-overlay-blend-mode, normal);
-      }
+		// Variable based CSS - Container Overlay (only when no video background).
+		&.has-container-overlay:not(.has-video-background) {
+			position: relative;
+			// Create stacking context for blend modes
+			isolation: isolate;
 
-      > *:not(.spectra-container__shape) {
-        position: relative;
-        z-index: 2;
-      }
+			&::after {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-image: var(--spectra-overlay-image, none);
+				background-position: var(--spectra-overlay-position, center);
+				background-attachment: var(--spectra-overlay-attachment, scroll);
+				background-repeat: var(--spectra-overlay-repeat, no-repeat);
+				background-size: var(--spectra-overlay-size, cover);
+				opacity: var(--spectra-overlay-opacity-value, 0);
+				pointer-events: none;
+				z-index: 1;
+				border-radius: inherit;
+				mix-blend-mode: var(--spectra-overlay-blend-mode, normal);
+				background-blend-mode: var(--spectra-overlay-blend-mode, normal);
+			}
 
-      // Ensure overlay is hidden when no image is set
-      &[style*="--spectra-overlay-image: none"]::after {
-        display: none;
-      }
-    }
+			> *:not(.spectra-container__shape) {
+				position: relative;
+				z-index: 2;
+			}
 
-    // Video background specific styles
-    &.has-video-background {
-      .spectra-background-video__wrapper {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        pointer-events: none;
-        border-radius: inherit;
+			// Ensure overlay is hidden when no image is set
+			&[style*="--spectra-overlay-image: none"]::after {
+				display: none;
+			}
+		}
 
-        video {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: inherit;
-        }
-      }
+		// Video background specific styles
+		&.has-video-background {
 
-      // Ensure content is above video (exclude video wrapper and shape dividers)
-      > *:not(.spectra-background-video__wrapper):not(
-          .spectra-container__shape
-        ) {
-        position: relative;
-        z-index: 1;
-      }
-    }
+			.spectra-background-video__wrapper {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				pointer-events: none;
+				border-radius: inherit;
 
-    // Variable based CSS - Box Shadow.
-    &.spectra-box-shadow {
-      box-shadow: var(--spectra-box-shadow) !important;
-    }
+				video {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					border-radius: inherit;
+				}
+			}
 
-    // Variable based CSS - Box Shadow Hover.
-    // If hover shadow is set, use it; otherwise fall back to normal shadow
-    &.spectra-box-shadow:hover {
-      box-shadow: var(
-        --spectra-box-shadow-hover,
-        var(--spectra-box-shadow)
-      ) !important;
-    }
+			// Ensure content is above video (exclude video wrapper and shape dividers)
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
+				position: relative;
+				z-index: 1;
+			}
+		}
 
-    // Override for when hover shadow is explicitly set
-    &.spectra-box-shadow-hover:hover {
-      box-shadow: var(--spectra-box-shadow-hover) !important;
-    }
+		// Variable based CSS - Box Shadow.
+		&.spectra-box-shadow {
+			box-shadow: var(--spectra-box-shadow) !important;
+		}
 
-    // -------------------------------- //
-    // Border hover support.            //
-    // -------------------------------- //
+		// Variable based CSS - Box Shadow Hover.
+		// If hover shadow is set, use it; otherwise fall back to normal shadow
+		&.spectra-box-shadow:hover {
+			box-shadow:
+ var(--spectra-box-shadow-hover, var(--spectra-box-shadow)) !important;
+		}
 
-    // Border hover support - only change color, preserve responsive width/style from WordPress core.
-    &.spectra-border-hover:focus,
-    &.spectra-border-hover:hover {
-      border-color: var(--spectra-border-hover-color) !important;
-    }
+		// Override for when hover shadow is explicitly set
+		&.spectra-box-shadow-hover:hover {
+			box-shadow: var(--spectra-box-shadow-hover) !important;
+		}
 
-    // Border hover override - reset core WordPress border styles.
-    :where(&.spectra-border-hover-override) {
-      &:focus,
-      &:hover {
-        border-color: unset !important;
-      }
+		// -------------------------------- //
+		// Border hover support.            //
+		// -------------------------------- //
 
-      &.spectra-border-hover:focus,
-      &.spectra-border-hover:hover {
-        border-color: var(--spectra-border-hover-color) !important;
-      }
-    }
-  }
+		// Border hover support - only change color, preserve responsive width/style from WordPress core.
+		&.spectra-border-hover:focus,
+		&.spectra-border-hover:hover {
+			border-color: var(--spectra-border-hover-color) !important;
+		}
 
-  // -------------------------------- //
-  // Shape Divider CSS Start          //
-  // -------------------------------- //
-  .spectra-container__shape {
-    overflow: hidden;
-    position: absolute;
-    left: 0;
-    width: 100%;
-    line-height: 0;
-    direction: ltr;
-    z-index: 0;
-  }
+		// Border hover override - reset core WordPress border styles.
+		:where(&.spectra-border-hover-override) {
 
-  // Reset WordPress constrained layout margins for shape dividers.
-  // Uses :where() for low specificity so theme styles can override if needed.
-  &.is-layout-constrained > :where(.spectra-container__shape) {
-    margin-left: 0;
-    margin-right: 0;
-    max-width: none;
-  }
+			&:focus,
+			&:hover {
+				border-color: unset !important;
+			}
 
-  .spectra-container__shape-top {
-    top: -3px;
+			&.spectra-border-hover:focus,
+			&.spectra-border-hover:hover {
+				border-color: var(--spectra-border-hover-color) !important;
+			}
+		}
+	}
 
-    svg {
-      width: var(--spectra-shape-divider-top-width, 100%);
-      height: var(--spectra-shape-divider-top-height, 100px);
-    }
+	// -------------------------------- //
+	// Shape Divider CSS Start          //
+	// -------------------------------- //
+	.spectra-container__shape {
+		overflow: hidden;
+		position: absolute;
+		left: 0;
+		width: 100%;
+		line-height: 0;
+		direction: ltr;
+		z-index: 0;
+	}
 
-    .spectra-container__shape-fill {
-      fill: var(--spectra-shape-divider-top-color, #333);
-    }
-  }
+	// Reset WordPress constrained layout margins for shape dividers.
+	// Uses :where() for low specificity so theme styles can override if needed.
+	&.is-layout-constrained > :where(.spectra-container__shape) {
+		margin-left: 0;
+		margin-right: 0;
+		max-width: none;
+	}
 
-  .spectra-container__shape-bottom {
-    bottom: -3px;
-    // Bottom shape is rotated 180deg by default so it points upward into the container
-    -webkit-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    transform: rotate(180deg);
+	.spectra-container__shape-top {
+		top: -3px;
 
-    svg {
-      width: var(--spectra-shape-divider-bottom-width, 100%);
-      height: var(--spectra-shape-divider-bottom-height, 100px);
-    }
+		svg {
+			width: var(--spectra-shape-divider-top-width, 100%);
+			height: var(--spectra-shape-divider-top-height, 100px);
+		}
 
-    .spectra-container__shape-fill {
-      fill: var(--spectra-shape-divider-bottom-color, #333);
-    }
-  }
+		.spectra-container__shape-fill {
+			fill: var(--spectra-shape-divider-top-color, #333);
+		}
+	}
 
-  // Invert flips the shape - for bottom it removes the default rotation, for top it adds rotation
-  .spectra-container__shape.spectra-container__invert.spectra-container__shape-top {
-    -webkit-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    transform: rotate(180deg);
-  }
+	.spectra-container__shape-bottom {
+		bottom: -3px;
+		// Bottom shape is rotated 180deg by default so it points upward into the container
+		-webkit-transform: rotate(180deg);
+		-ms-transform: rotate(180deg);
+		transform: rotate(180deg);
 
-  .spectra-container__shape.spectra-container__invert.spectra-container__shape-bottom {
-    -webkit-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
+		svg {
+			width: var(--spectra-shape-divider-bottom-width, 100%);
+			height: var(--spectra-shape-divider-bottom-height, 100px);
+		}
 
-  .spectra-container__shape.spectra-container__shape-flip svg {
-    transform: translateX(-50%) rotateY(180deg);
-  }
+		.spectra-container__shape-fill {
+			fill: var(--spectra-shape-divider-bottom-color, #333);
+		}
+	}
 
-  .spectra-container__shape svg {
-    display: block;
-    position: relative;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    -ms-transform: translateX(-50%);
-    transform: translateX(-50%);
-  }
+	// Invert flips the shape - for bottom it removes the default rotation, for top it adds rotation
+	.spectra-container__shape.spectra-container__invert.spectra-container__shape-top {
+		-webkit-transform: rotate(180deg);
+		-ms-transform: rotate(180deg);
+		transform: rotate(180deg);
+	}
 
-  .spectra-container__shape .spectra-container__shape-fill {
-    -webkit-transform-origin: center;
-    -ms-transform-origin: center;
-    transform-origin: center;
-    -webkit-transform: rotateY(0deg);
-    transform: rotateY(0deg);
-  }
+	.spectra-container__shape.spectra-container__invert.spectra-container__shape-bottom {
+		-webkit-transform: rotate(0deg);
+		-ms-transform: rotate(0deg);
+		transform: rotate(0deg);
+	}
 
-  .spectra-container__shape.spectra-container__shape-above-content {
-    z-index: 9;
-    pointer-events: none;
-  }
-  // Shape Divider CSS End
+	.spectra-container__shape.spectra-container__shape-flip svg {
+		transform: translateX(-50%) rotateY(180deg);
+	}
+
+	.spectra-container__shape svg {
+		display: block;
+		position: relative;
+		left: 50%;
+		-webkit-transform: translateX(-50%);
+		-ms-transform: translateX(-50%);
+		transform: translateX(-50%);
+	}
+
+	.spectra-container__shape .spectra-container__shape-fill {
+		-webkit-transform-origin: center;
+		-ms-transform-origin: center;
+		transform-origin: center;
+		-webkit-transform: rotateY(0deg);
+		transform: rotateY(0deg);
+	}
+
+	.spectra-container__shape.spectra-container__shape-above-content {
+		z-index: 9;
+		pointer-events: none;
+	}
+	// Shape Divider CSS End
 }

@@ -62,8 +62,10 @@ body.spectra-modal-active {
 
 	// horizontal and vertical custom position css - with proper specificity for CSS variables.
 	&[class*="spectra-modal"] {
+
 		.horizontal-position,
 		.vertical-position {
+
 			&.spectra-modal-popup-wrap {
 				position: absolute;
 				left: var(--spectra-modal-h-position);

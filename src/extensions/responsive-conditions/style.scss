@@ -17,6 +17,7 @@
  * Hide blocks when .spectra-hide-mobile class is present
  */
 @media (max-width: 767.98px) {
+
 	.spectra-hide-mobile {
 		display: none !important;
 	}
@@ -27,6 +28,7 @@
  * Hide blocks when .spectra-hide-tablet class is present
  */
 @media (min-width: 768px) and (max-width: 1023.98px) {
+
 	.spectra-hide-tablet {
 		display: none !important;
 	}
@@ -37,6 +39,7 @@
  * Hide blocks when .spectra-hide-desktop class is present
  */
 @media (min-width: 1024px) {
+
 	.spectra-hide-desktop {
 		display: none !important;
 	}

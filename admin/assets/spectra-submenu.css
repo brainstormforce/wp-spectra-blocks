@@ -15,7 +15,7 @@
 	width: 100%;
 }
 
-/* Add the separator after the second last item in the Spectra Settings Submenu */
+/* Add the separator after the second last item */
 #toplevel_page_spectra .wp-submenu li:nth-child(5)::after {
 	content: "";
 	border-bottom: 1px solid rgb(255 255 255 / 0.2);
@@ -25,7 +25,7 @@
 	width: 100%;
 }
 
-.wp-submenu li:has( > a[href*="path=free-vs-pro"]) {
+#toplevel_page_spectra .wp-submenu li:has(> a[href*="path=free-vs-pro"]) {
 	background-color: #00a32a !important;
 }
 
@@ -34,22 +34,28 @@
 	font-weight: 500;
 }
 
-.wp-submenu li:has( > a[href*="path=free-vs-pro"]):hover {
+#toplevel_page_spectra .wp-submenu li:has(> a[href*="path=free-vs-pro"]):hover {
 	background-color: #008000 !important;
 }
 
-/* Add negative margins to the top separator if this is not the current submenu */
-#toplevel_page_spectra.wp-not-current-submenu .wp-submenu li.wp-first-item::after {
+/* Add negative margins to the top separator when not current submenu */
+#toplevel_page_spectra.wp-not-current-submenu
+.wp-submenu
+li.wp-first-item::after {
 	margin: 8px -3px;
 }
 
-/* Add negative margins to the bottom separator if this is not the current submenu */
-#toplevel_page_spectra.wp-not-current-submenu .wp-submenu li:nth-last-child(2)::after {
+/* Add negative margins to the bottom separator when not current submenu */
+#toplevel_page_spectra.wp-not-current-submenu
+.wp-submenu
+li:nth-last-child(2)::after {
 	margin: 8px -3px;
 }
 
 /* Upgrade now button in sub-menu */
-#toplevel_page_spectra .wp-submenu a[href="admin.php?page=spectra&path=upgrade-now"] {
+#toplevel_page_spectra
+.wp-submenu
+a[href="admin.php?page=spectra&path=upgrade-now"] {
 	background-color: #6104ff;
 	color: #fff;
 	padding: 6px 12px 6px 12px;
@@ -63,8 +69,12 @@
 	line-height: 18px;
 }
 
-#toplevel_page_spectra .wp-submenu a[href="admin.php?page=spectra&path=upgrade-now"]:focus,
-#toplevel_page_spectra .wp-submenu a[href="admin.php?page=spectra&path=upgrade-now"]:hover {
+#toplevel_page_spectra
+.wp-submenu
+a[href="admin.php?page=spectra&path=upgrade-now"]:focus,
+#toplevel_page_spectra
+.wp-submenu
+a[href="admin.php?page=spectra&path=upgrade-now"]:hover {
 	box-shadow: unset;
 	background-color: #5300e0;
 }

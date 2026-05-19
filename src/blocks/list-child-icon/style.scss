@@ -58,17 +58,17 @@
 
 	// Ensure custom SVG elements inherit color properly for both fill and stroke.
 	&[class*="wp-block"].spectra-text-color svg.spectra-custom-svg {
-		color: currentColor;
+		color: currentcolor;
 	}
 
 	// Ensure custom SVG elements inherit hover color properly for both fill and stroke.
 	&[class*="wp-block"].spectra-text-color-hover:hover svg.spectra-custom-svg {
-		color: currentColor;
+		color: currentcolor;
 	}
 
 	// Handle parent hover states for custom SVGs
 	.wp-block-spectra-list-child-item:hover &.spectra-text-color-hover svg.spectra-custom-svg,
 	.wp-block-spectra-list-child-item:focus-within &.spectra-text-color-hover svg.spectra-custom-svg {
-		color: currentColor;
+		color: currentcolor;
 	}
 }

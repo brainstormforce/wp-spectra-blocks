@@ -56,7 +56,7 @@ $secondary-color: #5733ff4d;
 		.components-button,
 		.components-button.is-secondary,
 		.components-button.is-tertiary,
-		.components-button:hover:not( :disabled ) {
+		.components-button:hover:not(:disabled) {
 			box-shadow: none;
 			outline: none;
 			color: $variation-icon-color !important; // WP CSS using important, to override it we need to use the same.
@@ -72,7 +72,7 @@ $secondary-color: #5733ff4d;
 		}
 
 		// The SVG for all buttons that aren't disabled.
-		.components-button:hover:not( :disabled ) svg {
+		.components-button:hover:not(:disabled) svg {
 			color: $variation-icon-color-hover !important; // WP CSS using important, to override it we need to use the same.
 		}
 

@@ -4,7 +4,7 @@
 .is-layout-flow > .wp-block-spectra-button {
 
 	// But only when it's in the none, left, right or center constrained layout mode.
-	&:where( :not( .alignwide ):not( .alignfull ) ) {
+	&:where(:not(.alignwide):not(.alignfull)) {
 		max-width: fit-content;
 	}
 }
@@ -33,9 +33,11 @@
 	&.has-text-align-right {
 		justify-content: right;
 	}
+
 	&.has-text-align-left {
 		justify-content: left;
 	}
+
 	&.has-text-align-center {
 		justify-content: center;
 	}
@@ -60,7 +62,7 @@
 
 			// Default fill for FontAwesome icons (not custom SVGs)
 			&:not(.spectra-custom-svg) {
-				fill: currentColor;
+				fill: currentcolor;
 			}
 		}
 	}
@@ -107,6 +109,7 @@
 
 		// Variable based CSS - Icon Color for custom SVGs.
 		&.spectra-icon-color {
+
 			svg.spectra-custom-svg {
 				color: var(--spectra-icon-color);
 			}
@@ -114,8 +117,10 @@
 
 		// When icon color is set but NO icon hover color, still inherit text hover on hover
 		&.spectra-icon-color:not(.spectra-icon-color-hover) {
+
 			&:hover,
 			&:focus {
+
 				svg.spectra-custom-svg {
 					color: var(--spectra-text-color-hover, var(--spectra-icon-color));
 				}
@@ -167,6 +172,7 @@
 
 			// Variable based CSS - Icon Color for custom SVGs when active.
 			&.spectra-icon-color-active {
+
 				svg.spectra-custom-svg {
 					color: var(--spectra-icon-color-active, var(--spectra-text-color-active, currentColor));
 				}
@@ -206,6 +212,7 @@
 
 				// Variable based CSS - Icon Color for custom SVGs when active and hovered.
 				&.spectra-icon-color-active-hover {
+
 					svg.spectra-custom-svg {
 						color: var(--spectra-icon-color-active-hover, var(--spectra-text-color-active-hover, currentColor));
 					}
@@ -252,6 +259,7 @@
 
 			// Variable based CSS - Icon Color for custom SVGs on hover.
 			&.spectra-icon-color-hover {
+
 				svg.spectra-custom-svg {
 					color: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
 				}
