@@ -80,8 +80,8 @@ class AssetLoader {
 			$relative_path = str_replace( $css_path, '', $css_file );
 			$style_type    = dirname( $relative_path );
 
-			// Extract the file name without the extension and prepend with 'spectra-' and the directory name.
-			$handle = 'spectra-' . trim( $style_type, '/' ) . '-' . basename( $css_file, '.css' );
+			// Extract the file name without the extension and prepend with 'spectra-blocks-' and the directory name.
+			$handle = 'spectra-blocks-' . trim( $style_type, '/' ) . '-' . basename( $css_file, '.css' );
 
 			// Register the style.
 			wp_register_style(
@@ -108,7 +108,7 @@ class AssetLoader {
 		$css_file = SPECTRA_BLOCKS_DIR . 'build/styles/editor.css';
 
 		// Create the handle for the common editor styles.
-		$handle = 'spectra-editor';
+		$handle = 'spectra-blocks-editor';
 
 		// Register the common editor styles.
 		wp_register_style(
@@ -252,8 +252,8 @@ class AssetLoader {
 	 * @return void
 	 */
 	public function enqueue_extensions_frontend_assets() {
-		wp_enqueue_style( 'spectra-extensions-image-mask' );
-		wp_enqueue_style( 'spectra-extensions-z-index' );
+		wp_enqueue_style( 'spectra-blocks-extensions-image-mask' );
+		wp_enqueue_style( 'spectra-blocks-extensions-z-index' );
 	}
 
 	/**

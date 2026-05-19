@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7fc6407fc4d50133ff7c9e3409664a75",
+    "content-hash": "dc2c22e045227468391e285898f55d32",
     "packages": [
         {
             "name": "brainstormforce/astra-notices",
@@ -108,16 +108,16 @@
         },
         {
             "name": "brainstormforce/gutenberg-templates",
-            "version": "2.4.28",
+            "version": "dev-wporg-sanitization-fix-v2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/gutenberg-templates.git",
-                "reference": "b5c977ad7d98f0092f41832eb74841d7cb067584"
+                "reference": "d40c8edec58d58cdd9bbc758342497654de1a1ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/b5c977ad7d98f0092f41832eb74841d7cb067584",
-                "reference": "b5c977ad7d98f0092f41832eb74841d7cb067584",
+                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/d40c8edec58d58cdd9bbc758342497654de1a1ed",
+                "reference": "d40c8edec58d58cdd9bbc758342497654de1a1ed",
                 "shasum": ""
             },
             "require": {
@@ -172,10 +172,10 @@
             ],
             "description": "Gutenberg single page templates, and blocks library to imported your website easily.",
             "support": {
-                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/2.4.28",
+                "source": "https://github.com/brainstormforce/gutenberg-templates/tree/wporg-sanitization-fix-v2",
                 "issues": "https://github.com/brainstormforce/gutenberg-templates/issues"
             },
-            "time": "2026-05-19T07:26:35+00:00"
+            "time": "2026-05-19T14:34:42+00:00"
         },
         {
             "name": "brainstormforce/nps-survey",
@@ -989,8 +989,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "brainstormforce/gutenberg-templates": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

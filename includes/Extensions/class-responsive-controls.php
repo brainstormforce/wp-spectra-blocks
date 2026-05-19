@@ -525,7 +525,7 @@ class ResponsiveControls {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		wp_enqueue_style( 'spectra-extensions-responsive-controls' );
+		wp_enqueue_style( 'spectra-blocks-extensions-responsive-controls' );
 	}
 
 	/**

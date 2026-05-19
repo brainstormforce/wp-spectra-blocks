@@ -248,7 +248,7 @@ class ResponsiveConditions {
 
 		if ( file_exists( $css_file ) ) {
 			wp_register_style(
-				'spectra-responsive-conditions',
+				'spectra-blocks-responsive-conditions',
 				$css_url,
 				array(),
 				filemtime( $css_file ),
@@ -270,9 +270,9 @@ class ResponsiveConditions {
 	public function enqueue_frontend_css_if_needed() {
 		// Only enqueue if needed and not already enqueued.
 		if ( $this->needs_assets &&
-		wp_style_is( 'spectra-responsive-conditions', 'registered' ) &&
-		! wp_style_is( 'spectra-responsive-conditions', 'enqueued' ) ) {
-			wp_enqueue_style( 'spectra-responsive-conditions' );
+		wp_style_is( 'spectra-blocks-responsive-conditions', 'registered' ) &&
+		! wp_style_is( 'spectra-blocks-responsive-conditions', 'enqueued' ) ) {
+			wp_enqueue_style( 'spectra-blocks-responsive-conditions' );
 		}
 	}
 
@@ -284,6 +284,6 @@ class ResponsiveConditions {
 	 * @return void
 	 */
 	public function enqueue_editor_assets() {
-		wp_enqueue_style( 'spectra-extensions-responsive-conditions' );
+		wp_enqueue_style( 'spectra-blocks-extensions-responsive-conditions' );
 	}
 }

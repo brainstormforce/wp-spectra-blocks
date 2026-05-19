@@ -234,7 +234,7 @@ class StickyContainer {
 			);
 
 			wp_register_script(
-				'spectra-sticky-container',
+				'spectra-blocks-sticky-container',
 				$js_url,
 				$js_asset['dependencies'],
 				$js_asset['version'],
@@ -259,9 +259,9 @@ class StickyContainer {
 		}
 
 		// Enqueue JS if registered and not already enqueued.
-		if ( wp_script_is( 'spectra-sticky-container', 'registered' ) &&
-		! wp_script_is( 'spectra-sticky-container', 'enqueued' ) ) {
-			wp_enqueue_script( 'spectra-sticky-container' );
+		if ( wp_script_is( 'spectra-blocks-sticky-container', 'registered' ) &&
+		! wp_script_is( 'spectra-blocks-sticky-container', 'enqueued' ) ) {
+			wp_enqueue_script( 'spectra-blocks-sticky-container' );
 		}
 	}
 }

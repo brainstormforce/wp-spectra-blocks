@@ -12,7 +12,7 @@
         "brainstormforce/astra-notices": "~1",
         "brainstormforce/nps-survey": "^1",
         "brainstormforce/zipwp-images": "^1",
-        "brainstormforce/gutenberg-templates": "~2"
+        "brainstormforce/gutenberg-templates": "dev-wporg-sanitization-fix-v2"
     },
     "repositories": [
         {
@@ -74,6 +74,6 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

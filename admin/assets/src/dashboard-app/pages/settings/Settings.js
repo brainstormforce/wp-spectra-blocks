@@ -5,8 +5,6 @@ import { applyFilters } from '@wordpress/hooks';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Title, Badge } from '@bsf/force-ui';
-import AssetsGeneration from '@DashboardApp/pages/settings/AssetsGeneration';
-import OnPageCSS from '@DashboardApp/pages/settings/OnPageCSS';
 import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
 import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
