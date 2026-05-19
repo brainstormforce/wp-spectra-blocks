@@ -76,7 +76,7 @@ class Admin_Helper {
 			'spectra_global_fse_fonts'           => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_global_fse_fonts', array() ),
 			'theme_fonts'                        => $theme_font_families,
 			'zip_ai_modules'                     => $zip_ai_modules,
-			'enable_bsf_analytics_option'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_analytics_optin', 'no' ),
+			'enable_bsf_analytics_option'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
 			'spectra_blocks_disable_css_cache'   => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_disable_css_cache', 'disabled' ),
 		);
 

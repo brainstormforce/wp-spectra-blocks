@@ -186,7 +186,7 @@ class AddGoogleFont extends AbstractAbility {
 		update_option( 'spectra_blocks_global_fonts', $selected );
 
 		// Clear font cache so the new font is picked up.
-		delete_transient( 'spectra_google_fonts_cache' );
+		delete_transient( 'spectra_blocks_google_fonts_cache' );
 
 		return array(
 			'success' => true,

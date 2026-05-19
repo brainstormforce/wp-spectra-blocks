@@ -187,7 +187,7 @@ class RemoveGoogleFont extends AbstractAbility {
 		update_option( 'spectra_blocks_global_fonts', $filtered );
 
 		// Clear font cache.
-		delete_transient( 'spectra_google_fonts_cache' );
+		delete_transient( 'spectra_blocks_google_fonts_cache' );
 
 		return array(
 			'success' => true,
