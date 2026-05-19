@@ -178,6 +178,10 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 
 == Changelog ==
 
+= 0.0.7 =
+* Fix: WordPress.org compliance fixes — sanitize CSS properties/values in inline styles.
+* Update: Updated all shared libraries to latest versions.
+
 = 0.0.6 =
 * Fix: Removed server-side IP geolocation lookups (WordPress.org compliance).
 * Fix: Hardened the SVG upload sanitizer to fail closed when the sanitizer library is unavailable.
