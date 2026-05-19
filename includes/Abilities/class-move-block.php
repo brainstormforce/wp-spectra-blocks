@@ -161,8 +161,8 @@ class MoveBlock extends AbstractAbility {
 			return $post;
 		}
 
-		$all_blocks    = parse_blocks( $post->post_content );
-		$from_raw      = $this->find_block_raw_index( $all_blocks, $from_index );
+		$all_blocks = parse_blocks( $post->post_content );
+		$from_raw   = $this->find_block_raw_index( $all_blocks, $from_index );
 
 		if ( is_wp_error( $from_raw ) ) {
 			return $from_raw;

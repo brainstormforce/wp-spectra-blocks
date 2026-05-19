@@ -137,7 +137,7 @@ class CreateContent extends AbstractAbility {
 		$attrs = array( 'tagName' => $tag_name );
 
 		if ( ! empty( $params['textAlign'] ) ) {
-			$align = sanitize_text_field( $params['textAlign'] );
+			$align          = sanitize_text_field( $params['textAlign'] );
 			$allowed_aligns = array( 'left', 'center', 'right', 'justify' );
 			if ( in_array( $align, $allowed_aligns, true ) ) {
 				$attrs['textAlign'] = $align;

@@ -380,7 +380,7 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 		$enabled_result = ListPopups::instance()->execute( array( 'status' => 'enabled' ) );
 
 		foreach ( $enabled_result['popups'] as $popup ) {
-			$this->assertTrue( $popup['enabled'], "All returned popups should be enabled." );
+			$this->assertTrue( $popup['enabled'], 'All returned popups should be enabled.' );
 		}
 	}
 
@@ -470,7 +470,7 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 		$disabled_result = ListPopups::instance()->execute( array( 'status' => 'disabled' ) );
 
 		foreach ( $disabled_result['popups'] as $popup ) {
-			$this->assertFalse( $popup['enabled'], "All returned popups should be disabled." );
+			$this->assertFalse( $popup['enabled'], 'All returned popups should be disabled.' );
 		}
 	}
 

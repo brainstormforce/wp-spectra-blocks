@@ -275,7 +275,7 @@ class ContentCrudAbilitiesTest extends WP_UnitTestCase {
 		$post_id = $this->create_post_with_blocks();
 
 		// Get initial block count.
-		$initial = GetPostContent::instance()->execute( array( 'post_id' => $post_id ) );
+		$initial       = GetPostContent::instance()->execute( array( 'post_id' => $post_id ) );
 		$initial_count = $initial['count'];
 
 		$result = RemoveBlock::instance()->execute(
@@ -417,7 +417,7 @@ class ContentCrudAbilitiesTest extends WP_UnitTestCase {
 	public function test_duplicate_block_execute_success() {
 		$post_id = $this->create_post_with_blocks();
 
-		$initial = GetPostContent::instance()->execute( array( 'post_id' => $post_id ) );
+		$initial       = GetPostContent::instance()->execute( array( 'post_id' => $post_id ) );
 		$initial_count = $initial['count'];
 
 		$result = DuplicateBlock::instance()->execute(

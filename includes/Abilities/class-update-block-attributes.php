@@ -159,7 +159,7 @@ class UpdateBlockAttributes extends AbstractAbility {
 			return $raw_index;
 		}
 
-		$block_name                    = $all_blocks[ $raw_index ]['blockName'];
+		$block_name                        = $all_blocks[ $raw_index ]['blockName'];
 		$all_blocks[ $raw_index ]['attrs'] = array_merge(
 			$all_blocks[ $raw_index ]['attrs'] ?? array(),
 			$new_attrs

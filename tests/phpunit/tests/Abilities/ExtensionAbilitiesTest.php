@@ -1133,7 +1133,7 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 
 		$result = ApplyImageMask::instance()->execute(
 			array(
-				'post_id'    => $post_id,
+				'post_id'     => $post_id,
 				'block_index' => 0,
 				'shape'       => 'hexagon',
 				'size'        => 'cover',
@@ -1626,12 +1626,19 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['success'] );
 
 		// Verify all condition keys are gone.
-		$attrs = $this->get_block_attrs( $post_id );
+		$attrs          = $this->get_block_attrs( $post_id );
 		$condition_keys = array(
-			'UAGHideDesktop', 'UAGHideMob', 'UAGHideTab',
-			'UAGLoggedIn', 'UAGLoggedOut', 'UAGUserRole',
-			'UAGBrowser', 'UAGSystem', 'UAGDay',
-			'UAGDisplayConditions', 'UAGResponsiveConditions',
+			'UAGHideDesktop',
+			'UAGHideMob',
+			'UAGHideTab',
+			'UAGLoggedIn',
+			'UAGLoggedOut',
+			'UAGUserRole',
+			'UAGBrowser',
+			'UAGSystem',
+			'UAGDay',
+			'UAGDisplayConditions',
+			'UAGResponsiveConditions',
 		);
 		foreach ( $condition_keys as $key ) {
 			$this->assertArrayNotHasKey( $key, $attrs, "Key '$key' should be removed." );

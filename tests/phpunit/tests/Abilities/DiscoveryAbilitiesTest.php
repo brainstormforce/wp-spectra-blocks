@@ -129,7 +129,7 @@ class DiscoveryAbilitiesTest extends WP_UnitTestCase {
 			$this->markTestSkipped( 'Need at least 2 blocks to test sorting.' );
 		}
 
-		$names = array_column( $result['blocks'], 'name' );
+		$names  = array_column( $result['blocks'], 'name' );
 		$sorted = $names;
 		sort( $sorted );
 		$this->assertSame( $sorted, $names );

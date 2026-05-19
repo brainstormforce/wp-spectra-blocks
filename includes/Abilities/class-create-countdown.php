@@ -75,31 +75,31 @@ class CreateCountdown extends AbstractAbility {
 			'required'   => array( 'endDateTime' ),
 			'properties' => array_merge(
 				array(
-					'endDateTime'  => array(
+					'endDateTime' => array(
 						'type'        => 'string',
 						'description' => __( 'Target date and time in ISO 8601 format (e.g. "2025-12-31T23:59:59").', 'spectra-blocks' ),
 					),
-					'showDays'     => array(
+					'showDays'    => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to show the days unit.', 'spectra-blocks' ),
 						'default'     => true,
 					),
-					'showHours'    => array(
+					'showHours'   => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to show the hours unit.', 'spectra-blocks' ),
 						'default'     => true,
 					),
-					'showMinutes'  => array(
+					'showMinutes' => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to show the minutes unit.', 'spectra-blocks' ),
 						'default'     => true,
 					),
-					'showSeconds'  => array(
+					'showSeconds' => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to show the seconds unit.', 'spectra-blocks' ),
 						'default'     => true,
 					),
-					'labels'       => array(
+					'labels'      => array(
 						'type'        => 'object',
 						'description' => __( 'Custom labels for each time unit.', 'spectra-blocks' ),
 						'properties'  => array(

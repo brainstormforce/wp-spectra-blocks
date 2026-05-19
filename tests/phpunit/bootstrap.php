@@ -24,8 +24,8 @@ require_once "$_tests_dir/includes/functions.php";
 
 // Stub WordPress Abilities API functions when running on WP < 6.8.
 // Check if the WP test installation provides the Abilities API file to avoid redeclaration.
-$_wp_test_dir = getenv( 'WP_PHPUNIT__DIR' ) ?: ( getenv( 'WP_DEVELOP_DIR' ) ? getenv( 'WP_DEVELOP_DIR' ) . '/src' : '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
-$_wp_install_dir = getenv( 'WP_TESTS_INSTALLATION' ) ?: ( rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+$_wp_test_dir          = getenv( 'WP_PHPUNIT__DIR' ) ?: ( getenv( 'WP_DEVELOP_DIR' ) ? getenv( 'WP_DEVELOP_DIR' ) . '/src' : '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound, Universal.Operators.DisallowShortTernary.Found -- PHPUnit bootstrap convention
+$_wp_install_dir       = getenv( 'WP_TESTS_INSTALLATION' ) ?: ( rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound, Universal.Operators.DisallowShortTernary.Found -- PHPUnit bootstrap convention
 $_wp_has_abilities_api = file_exists( "$_wp_install_dir/wp-includes/abilities-api.php" ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
 
 if ( ! $_wp_has_abilities_api && ! function_exists( 'wp_register_ability' ) ) {
@@ -39,8 +39,8 @@ if ( ! $_wp_has_abilities_api && ! function_exists( 'wp_register_ability' ) ) {
 	 * @return void
 	 */
 	function wp_register_ability( $name, $args = array() ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WP API stub
-		global $_spectra_test_registered_abilities;
-		$_spectra_test_registered_abilities[ $name ] = $args;
+		global $_spectra_test_registered_abilities; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- test stub
+		$_spectra_test_registered_abilities[ $name ] = $args; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- test stub
 	}
 }
 
@@ -55,8 +55,8 @@ if ( ! $_wp_has_abilities_api && ! function_exists( 'wp_register_ability_categor
 	 * @return void
 	 */
 	function wp_register_ability_category( $slug, $args = array() ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- WP API stub
-		global $_spectra_test_registered_ability_categories;
-		$_spectra_test_registered_ability_categories[ $slug ] = $args;
+		global $_spectra_test_registered_ability_categories; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- test stub
+		$_spectra_test_registered_ability_categories[ $slug ] = $args; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- test stub
 	}
 }
 

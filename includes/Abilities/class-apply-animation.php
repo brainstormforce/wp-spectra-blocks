@@ -91,38 +91,38 @@ class ApplyAnimation extends AbstractAbility {
 			'type'       => 'object',
 			'required'   => array( 'post_id', 'block_index', 'type' ),
 			'properties' => array(
-				'post_id'     => array(
+				'post_id'                   => array(
 					'type'        => 'integer',
 					'description' => __( 'The post ID containing the block.', 'spectra-blocks' ),
 				),
-				'block_index' => array(
+				'block_index'               => array(
 					'type'        => 'integer',
 					'description' => __( 'The 0-based block index.', 'spectra-blocks' ),
 				),
-				'type'        => array(
+				'type'                      => array(
 					'type'        => 'string',
 					'description' => __( 'Animation type (e.g. "fadeIn", "slideInUp", "zoomIn").', 'spectra-blocks' ),
 				),
-				'duration'    => array(
+				'duration'                  => array(
 					'type'        => 'integer',
 					'description' => __( 'Animation duration in milliseconds. Default 1000.', 'spectra-blocks' ),
 					'default'     => 1000,
 				),
-				'delay'       => array(
+				'delay'                     => array(
 					'type'        => 'integer',
 					'description' => __( 'Animation delay in milliseconds. Default 0.', 'spectra-blocks' ),
 					'default'     => 0,
 				),
-				'easing'      => array(
+				'easing'                    => array(
 					'type'        => 'string',
 					'description' => __( 'Animation easing function. Default "ease".', 'spectra-blocks' ),
 					'default'     => 'ease',
 				),
-				'repeat'      => array(
+				'repeat'                    => array(
 					'type'        => 'string',
 					'description' => __( 'Animation repeat behavior.', 'spectra-blocks' ),
 				),
-				'delay_interval' => array(
+				'delay_interval'            => array(
 					'type'        => 'integer',
 					'description' => __( 'Delay interval for staggered animations.', 'spectra-blocks' ),
 				),

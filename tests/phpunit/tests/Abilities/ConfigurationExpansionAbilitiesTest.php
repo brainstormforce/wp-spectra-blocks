@@ -504,7 +504,7 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		$result2 = AddGoogleFont::instance()->execute( array( 'family' => 'Poppins' ) );
 		$this->assertSame( 2, $result2['count'] );
 
-		$saved = get_option( 'spectra_blocks_global_fonts', array() );
+		$saved  = get_option( 'spectra_blocks_global_fonts', array() );
 		$labels = array_column( $saved, 'label' );
 		$this->assertContains( 'Montserrat', $labels );
 		$this->assertContains( 'Poppins', $labels );
@@ -702,7 +702,7 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		$list = \Spectra\Abilities\ListSelectedFonts::instance()->execute( array() );
 		// Font may not appear in ListSelectedFonts because that queries FontManager cache,
 		// but the option should reflect it.
-		$saved = get_option( 'spectra_blocks_global_fonts', array() );
+		$saved  = get_option( 'spectra_blocks_global_fonts', array() );
 		$labels = array_column( $saved, 'label' );
 		$this->assertContains( 'Raleway', $labels );
 
@@ -710,7 +710,7 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		RemoveGoogleFont::instance()->execute( array( 'family' => 'Raleway' ) );
 
 		// Verify gone.
-		$saved = get_option( 'spectra_blocks_global_fonts', array() );
+		$saved  = get_option( 'spectra_blocks_global_fonts', array() );
 		$labels = array_column( $saved, 'label' );
 		$this->assertNotContains( 'Raleway', $labels );
 	}

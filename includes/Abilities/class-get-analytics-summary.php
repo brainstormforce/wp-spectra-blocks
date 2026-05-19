@@ -104,23 +104,23 @@ class GetAnalyticsSummary extends AbstractAbility {
 		return array(
 			'type'       => 'object',
 			'properties' => array(
-				'block_usage_stats'      => array(
+				'block_usage_stats'       => array(
 					'type'        => 'object',
 					'description' => __( 'Block usage statistics including total posts, most used blocks, and distribution.', 'spectra-blocks' ),
 				),
-				'top_used_blocks'        => array(
+				'top_used_blocks'         => array(
 					'type'        => 'object',
 					'description' => __( 'Top used blocks with usage counts.', 'spectra-blocks' ),
 				),
-				'block_adoption_rate'    => array(
+				'block_adoption_rate'     => array(
 					'type'        => 'object',
 					'description' => __( 'Block adoption metrics — used vs available blocks.', 'spectra-blocks' ),
 				),
-				'site_activity'          => array(
+				'site_activity'           => array(
 					'type'        => 'object',
 					'description' => __( 'Site activity level — inactive, active_site, or super_site.', 'spectra-blocks' ),
 				),
-				'extension_usage_stats'  => array(
+				'extension_usage_stats'   => array(
 					'type'        => 'object',
 					'description' => __( 'Extension usage statistics.', 'spectra-blocks' ),
 				),

@@ -94,7 +94,7 @@ class LayoutAbilitiesTest extends WP_UnitTestCase {
 	 * Test CreateContainer with inner content.
 	 */
 	public function test_create_container_with_content() {
-		$inner = '<!-- wp:paragraph --><p>Hello</p><!-- /wp:paragraph -->';
+		$inner  = '<!-- wp:paragraph --><p>Hello</p><!-- /wp:paragraph -->';
 		$result = CreateContainer::instance()->execute(
 			array( 'content' => $inner )
 		);

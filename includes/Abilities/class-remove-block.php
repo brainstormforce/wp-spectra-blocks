@@ -114,8 +114,8 @@ class RemoveBlock extends AbstractAbility {
 		return array(
 			'type'       => 'object',
 			'properties' => array(
-				'success'      => array( 'type' => 'boolean' ),
-				'removed_block' => array( 'type' => 'string' ),
+				'success'          => array( 'type' => 'boolean' ),
+				'removed_block'    => array( 'type' => 'string' ),
 				'blocks_remaining' => array( 'type' => 'integer' ),
 			),
 		);

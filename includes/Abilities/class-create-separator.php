@@ -116,8 +116,8 @@ class CreateSeparator extends AbstractAbility {
 		$attrs = array();
 
 		if ( ! empty( $params['separatorStyle'] ) ) {
-			$style           = sanitize_text_field( $params['separatorStyle'] );
-			$allowed_styles  = array( 'solid', 'dashed', 'dotted', 'double' );
+			$style                   = sanitize_text_field( $params['separatorStyle'] );
+			$allowed_styles          = array( 'solid', 'dashed', 'dotted', 'double' );
 			$attrs['separatorStyle'] = in_array( $style, $allowed_styles, true ) ? $style : 'solid';
 		}
 

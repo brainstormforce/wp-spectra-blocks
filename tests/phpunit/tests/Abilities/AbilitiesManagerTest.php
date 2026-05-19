@@ -108,8 +108,8 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 	private function ensure_registered(): void {
 		if ( ! $this->has_real_abilities_api() ) {
 			global $_spectra_test_registered_abilities, $_spectra_test_registered_ability_categories;
-			$_spectra_test_registered_abilities           = array();
-			$_spectra_test_registered_ability_categories   = array();
+			$_spectra_test_registered_abilities          = array();
+			$_spectra_test_registered_ability_categories = array();
 
 			$manager = AbilitiesManager::instance();
 			$manager->register_categories();

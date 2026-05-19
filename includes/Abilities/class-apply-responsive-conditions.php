@@ -91,23 +91,23 @@ class ApplyResponsiveConditions extends AbstractAbility {
 			'type'       => 'object',
 			'required'   => array( 'post_id', 'block_index' ),
 			'properties' => array(
-				'post_id'     => array(
+				'post_id'            => array(
 					'type'        => 'integer',
 					'description' => __( 'The post ID containing the block.', 'spectra-blocks' ),
 				),
-				'block_index' => array(
+				'block_index'        => array(
 					'type'        => 'integer',
 					'description' => __( 'The 0-based block index.', 'spectra-blocks' ),
 				),
-				'hide_desktop' => array(
+				'hide_desktop'       => array(
 					'type'        => 'boolean',
 					'description' => __( 'Hide this block on desktop.', 'spectra-blocks' ),
 				),
-				'hide_tablet' => array(
+				'hide_tablet'        => array(
 					'type'        => 'boolean',
 					'description' => __( 'Hide this block on tablet.', 'spectra-blocks' ),
 				),
-				'hide_mobile' => array(
+				'hide_mobile'        => array(
 					'type'        => 'boolean',
 					'description' => __( 'Hide this block on mobile.', 'spectra-blocks' ),
 				),
@@ -115,31 +115,31 @@ class ApplyResponsiveConditions extends AbstractAbility {
 					'type'        => 'string',
 					'description' => __( 'Display condition mode.', 'spectra-blocks' ),
 				),
-				'user_role'   => array(
+				'user_role'          => array(
 					'type'        => 'array',
 					'items'       => array( 'type' => 'string' ),
 					'description' => __( 'User roles that can see this block.', 'spectra-blocks' ),
 				),
-				'browser'     => array(
+				'browser'            => array(
 					'type'        => 'array',
 					'items'       => array( 'type' => 'string' ),
 					'description' => __( 'Browsers to target.', 'spectra-blocks' ),
 				),
-				'os'          => array(
+				'os'                 => array(
 					'type'        => 'array',
 					'items'       => array( 'type' => 'string' ),
 					'description' => __( 'Operating systems to target.', 'spectra-blocks' ),
 				),
-				'day'         => array(
+				'day'                => array(
 					'type'        => 'array',
 					'items'       => array( 'type' => 'string' ),
 					'description' => __( 'Days of the week to show the block.', 'spectra-blocks' ),
 				),
-				'logged_in'   => array(
+				'logged_in'          => array(
 					'type'        => 'boolean',
 					'description' => __( 'Show only to logged-in users.', 'spectra-blocks' ),
 				),
-				'logged_out'  => array(
+				'logged_out'         => array(
 					'type'        => 'boolean',
 					'description' => __( 'Show only to logged-out users.', 'spectra-blocks' ),
 				),
@@ -158,9 +158,9 @@ class ApplyResponsiveConditions extends AbstractAbility {
 		return array(
 			'type'       => 'object',
 			'properties' => array(
-				'success'              => array( 'type' => 'boolean' ),
-				'block_name'           => array( 'type' => 'string' ),
-				'conditions_applied'   => array( 'type' => 'object' ),
+				'success'            => array( 'type' => 'boolean' ),
+				'block_name'         => array( 'type' => 'string' ),
+				'conditions_applied' => array( 'type' => 'object' ),
 			),
 		);
 	}

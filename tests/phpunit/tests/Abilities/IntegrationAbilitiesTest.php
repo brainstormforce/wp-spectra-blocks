@@ -296,9 +296,9 @@ class IntegrationAbilitiesTest extends WP_UnitTestCase {
 		// Apply responsive conditions.
 		ApplyResponsiveConditions::instance()->execute(
 			array(
-				'post_id'      => $post_id,
-				'block_index'  => 0,
-				'hide_mobile'  => true,
+				'post_id'     => $post_id,
+				'block_index' => 0,
+				'hide_mobile' => true,
 			)
 		);
 
