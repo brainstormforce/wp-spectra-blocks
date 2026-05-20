@@ -151,12 +151,6 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Terms of Service](https://www.youtube.com/t/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
-= BSF Analytics =
-When the user opts in to share anonymous usage data, the bundled BSF Analytics library sends non-personal site environment data (WordPress version, theme, active plugins) to help improve the plugin.
-* Service URL: `https://analytics.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
-
 = BSF Metrics =
 When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
 * Service URL: `https://metrics.brainstormforce.com/`
