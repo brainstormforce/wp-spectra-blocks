@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useRef } from 'react';
-import styles from './editor.lazy.scss';
-import { useLayoutEffect } from '@wordpress/element';
+import './editor.lazy.scss';
 import { Modal } from '@wordpress/components';
 import { spectraProFeatures } from './SpectraProFeatures';
 import './common.scss';
@@ -16,14 +15,6 @@ import './common.scss';
  * @return {Element} The rendered component.
  */
 const UpgradeComponent = ( props ) => {
-	// Add and remove the CSS on the drop and remove of the component.
-	useLayoutEffect( () => {
-		styles.use();
-		return () => {
-			styles.unuse();
-		};
-	}, [] );
-
 	const { campaign = 'default' } = props.control;
 
 	return (
