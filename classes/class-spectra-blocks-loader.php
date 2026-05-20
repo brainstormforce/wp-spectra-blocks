@@ -190,12 +190,12 @@ class Spectra_Blocks_Loader {
 		global $$var_version, $$var_path;
 
 		if ( null === $$var_version ) {
-			$$var_version = '0';
+			$$var_version = '0'; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
 		}
 
 		if ( version_compare( $version, $$var_version, '>=' ) ) {
-			$$var_version = $version;
-			$$var_path    = $path;
+			$$var_version = $version; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
+			$$var_path    = $path; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
 		}
 
 		add_action(
