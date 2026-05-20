@@ -201,14 +201,6 @@ class Admin_Menu {
 				if ( ! current_user_can( 'activate_plugins' ) ) {
 					wp_send_json_error( esc_html__( 'Plugin activation is disabled for you on this site.', 'spectra-blocks' ) );
 				}
-				if ( isset( $_POST['slug'] ) ) {
-					$slug = sanitize_key( wp_unslash( $_POST['slug'] ) );
-					if ( class_exists( '\BSF_UTM_Analytics\Inc\Utils' ) && is_callable( '\BSF_UTM_Analytics\Inc\Utils::update_referer' ) ) {
-						// If the plugin is found and the update_referer function is callable, update the referer with the corresponding product slug.
-						\BSF_UTM_Analytics\Inc\Utils::update_referer( 'spectra-blocks', $slug );
-					}
-				}
-
 				// Return redirect URL instead of activating directly — activation should be done from the Plugins page.
 				wp_send_json_success(
 					array(
@@ -226,11 +218,6 @@ class Admin_Menu {
 					// Check for permissions.
 					if ( ! ( current_user_can( 'switch_themes' ) ) ) {
 						wp_send_json_error( esc_html__( 'Theme activation is disabled for you on this site.', 'spectra-blocks' ) );
-					}
-
-					if ( class_exists( '\BSF_UTM_Analytics\Inc\Utils' ) && is_callable( '\BSF_UTM_Analytics\Inc\Utils::update_referer' ) ) {
-						// If the theme is found and the update_referer function is callable, update the referer with the corresponding product slug.
-						\BSF_UTM_Analytics\Inc\Utils::update_referer( 'spectra-blocks', $slug );
 					}
 
 					// Return redirect URL instead of switching directly — activation should be done from the Themes page.

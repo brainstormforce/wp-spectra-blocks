@@ -190,10 +190,8 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			$base_url = defined( 'SPECTRA_BLOCKS_URI' ) ? SPECTRA_BLOCKS_URI : trailingslashit( 'https://wpspectra.com/' );
 			$url      = trailingslashit( esc_url( $base_url . ltrim( $path, '/' ) ) );
 
-			if ( class_exists( '\BSF_UTM_Analytics\Inc\Utils' ) && is_callable( '\BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link' ) ) {
-				$url = \BSF_UTM_Analytics\Inc\Utils::get_utm_ready_link( $url, 'spectra-blocks' );
-			} elseif ( ! empty( $source ) ) {
-					$url = add_query_arg( 'utm_source', sanitize_text_field( $source ), $url );
+			if ( ! empty( $source ) ) {
+				$url = add_query_arg( 'utm_source', sanitize_text_field( $source ), $url );
 			}
 
 			if ( ! empty( $medium ) ) {
