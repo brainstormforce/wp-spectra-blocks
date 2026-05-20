@@ -173,7 +173,12 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 == Changelog ==
 
 = 0.0.7 =
+* Fix: Removed bsf-analytics library — not used in Spectra Blocks.
+* Fix: Removed residual BSF_UTM_Analytics references from plugin own code.
+* Fix: Replaced lazy SCSS import pattern incompatible with WordPress build tooling.
 * Fix: WordPress.org compliance fixes — sanitize CSS properties/values in inline styles.
+* Fix: Renamed astra-notices script/style handles to bsf-astra-notices.
+* Fix: Renamed common-word AJAX actions in zip-ai lib to use zip_ai_ prefix.
 * Update: Updated all shared libraries to latest versions.
 
 = 0.0.6 =
