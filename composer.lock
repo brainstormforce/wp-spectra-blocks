@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc2c22e045227468391e285898f55d32",
+    "content-hash": "74b78e9aacc7f11fad61a85baece1ccf",
     "packages": [
         {
             "name": "brainstormforce/astra-notices",
@@ -50,61 +50,6 @@
                 "source": "https://github.com/brainstormforce/astra-notices/tree/1.2.2"
             },
             "time": "2026-05-19T05:43:54+00:00"
-        },
-        {
-            "name": "brainstormforce/bsf-analytics",
-            "version": "1.1.26",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:brainstormforce/bsf-analytics.git",
-                "reference": "e9079f78d4cf7a3e85ea61e94f842e2f8e00ee68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/bsf-analytics/zipball/e9079f78d4cf7a3e85ea61e94f842e2f8e00ee68",
-                "reference": "e9079f78d4cf7a3e85ea61e94f842e2f8e00ee68",
-                "shasum": ""
-            },
-            "require-dev": {
-                "10up/wp_mock": "^1.0",
-                "brainmaestro/composer-git-hooks": "^2.6",
-                "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
-                "phpcompatibility/phpcompatibility-wp": "2.1.0",
-                "phpunit/phpunit": "^9.6",
-                "wp-coding-standards/wpcs": "2.2.1"
-            },
-            "type": "wordpress-plugin",
-            "extra": {
-                "hooks": {
-                    "pre-commit": [
-                        "echo committing as $(git config user.name)",
-                        "sh bin/block-commits-with-merge-conflict.sh"
-                    ]
-                }
-            },
-            "scripts": {
-                "format": [
-                    "phpcbf --standard=phpcs.xml.dist --report-summary --report-source"
-                ],
-                "lint": [
-                    "phpcs --standard=phpcs.xml.dist --report-summary --report-source"
-                ],
-                "test": [
-                    "phpunit"
-                ],
-                "post-install-cmd": [
-                    "vendor/bin/cghooks add --ignore-lock"
-                ],
-                "post-update-cmd": [
-                    "vendor/bin/cghooks update"
-                ]
-            },
-            "description": "Library to gather non sensitive analytics data to enhance bsf products.",
-            "support": {
-                "source": "https://github.com/brainstormforce/bsf-analytics/tree/1.1.26",
-                "issues": "https://github.com/brainstormforce/bsf-analytics/issues"
-            },
-            "time": "2026-04-20T10:30:24+00:00"
         },
         {
             "name": "brainstormforce/gutenberg-templates",

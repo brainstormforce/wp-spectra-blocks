@@ -62,11 +62,6 @@ class Spectra_Blocks_Loader {
 		// to avoid conflicts when UAGB (or another BSF plugin) is also active.
 		$lib_dir = SPECTRA_BLOCKS_DIR . 'lib/';
 
-		// BSF Analytics.
-		if ( ! class_exists( 'BSF_Analytics_Loader' ) && file_exists( $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php' ) ) {
-			require_once $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php';
-		}
-
 		// Zip AI — global version negotiation via $zip_ai_version / $zip_ai_path.
 		self::load_versioned_lib( $lib_dir . 'zip-ai/version.json', 'zip-ai', $lib_dir . 'zip-ai/zip-ai.php', 'plugins_loaded', 15 );
 
