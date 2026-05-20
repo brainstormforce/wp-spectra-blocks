@@ -71,8 +71,8 @@ class Spectra_Blocks_Loader {
 		self::load_versioned_lib( $lib_dir . 'zip-ai/version.json', 'zip-ai', $lib_dir . 'zip-ai/zip-ai.php', 'plugins_loaded', 15 );
 
 		// Astra Notices.
-		if ( file_exists( $lib_dir . 'astra-notices/class-astra-notices.php' ) ) {
-			require_once $lib_dir . 'astra-notices/class-astra-notices.php';
+		if ( file_exists( $lib_dir . 'astra-notices/class-bsf-admin-notices.php' ) ) {
+			require_once $lib_dir . 'astra-notices/class-bsf-admin-notices.php';
 		}
 
 		// NPS Survey — global version negotiation via $nps_survey_version / $nps_survey_init.
