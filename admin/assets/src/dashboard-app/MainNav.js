@@ -12,11 +12,6 @@ const Navigation = () => {
 			path: '',
 		},
 		{
-			name: __( 'Settings', 'spectra-blocks' ),
-			slug: spectra_blocks_react.home_slug,
-			path: 'settings',
-		},
-		{
 			name: __( 'Popup Builder', 'spectra-blocks' ),
 			slug: spectra_blocks_react.home_slug,
 			path: 'spectra-popup',
@@ -25,6 +20,11 @@ const Navigation = () => {
 			name: __( 'Learn', 'spectra-blocks' ),
 			slug: spectra_blocks_react.home_slug,
 			path: 'learn',
+		},
+		{
+			name: __( 'Settings', 'spectra-blocks' ),
+			slug: spectra_blocks_react.home_slug,
+			path: 'settings',
 		},
 	];
 
@@ -39,7 +39,7 @@ const Navigation = () => {
 
 	// Only add the AI Features tab before settings if Zip AI data was successfully localized.
 	if ( spectra_blocks_react?.zip_ai_admin_nonce ) {
-		menus.splice( 2, 0, {
+		menus.splice( 3, 0, {
 			name: __( 'AI Features', 'spectra-blocks' ),
 			slug: spectra_blocks_react.home_slug,
 			path: 'ai-features',

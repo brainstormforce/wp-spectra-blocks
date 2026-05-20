@@ -9,6 +9,7 @@ use Spectra\AssetLoader;
 use Spectra\BlockManager;
 use Spectra\ExtensionManager;
 use Spectra\AnalyticsManager;
+use Spectra\AbilitiesManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,6 +41,7 @@ function spectra_blocks_init() {
 	( AssetLoader::instance() )->init();
 	( ExtensionManager::instance() )->init();
 	( AnalyticsManager::instance() )->init();
+	( AbilitiesManager::instance() )->init();
 }
 
 // Call directly since this file is loaded inside a plugins_loaded callback.

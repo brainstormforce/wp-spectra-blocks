@@ -99,6 +99,13 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 			// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 			$file_data = json_decode( file_get_contents( $file ), true );
 
+			// These globals are part of the BSF cross-plugin version-negotiation
+			// protocol for the gutenberg-templates library. Multiple BSF plugins
+			// (Astra, Starter Templates, Spectra) each register their bundled
+			// version; the highest version wins and its entry point is stored in
+			// $ast_block_templates_init. Using global variables is intentional
+			// here — they are not standalone local variables but shared state
+			// coordinated across plugins.
 			global $ast_block_templates_version, $ast_block_templates_init;
 
 			$path    = realpath( dirname( __FILE__ ) . '/gutenberg-templates/ast-block-templates.php' );
@@ -122,10 +129,20 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		 * @return void
 		 */
 		public function load() {
+			// Global part of BSF cross-plugin version-negotiation — see version_check() comment.
 			global $ast_block_templates_init;
 
-			if ( is_file( realpath( $ast_block_templates_init ) ) ) {
-				include_once realpath( $ast_block_templates_init );
+			// Bail when no plugin registered an entry point (e.g. CI runners
+			// without `composer install`). Without this guard, PHP 8.1+
+			// emits a `realpath(null)` deprecation that is printed before
+			// any `header()` call and breaks every subsequent `wp_redirect`.
+			if ( empty( $ast_block_templates_init ) ) {
+				return;
+			}
+
+			$resolved = realpath( $ast_block_templates_init );
+			if ( $resolved && is_file( $resolved ) ) {
+				include_once $resolved;
 			}
 		}
 	}

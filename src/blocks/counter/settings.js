@@ -3,6 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
+import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import { memo } from '@wordpress/element';
 import {
 	TextControl,
@@ -575,6 +576,11 @@ const Settings = memo( ( props ) => {
 			<DimensionSettings { ...props } />
 			<ProgressSettings { ...props } />
 			<ColorSettings { ...props } />
+			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
+				<InspectorControls group="settings">
+					<UpgradeComponent control={ { campaign: 'dynamic-content' } } />
+				</InspectorControls>
+			) }
 		</>
 	);
 } );

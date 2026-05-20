@@ -18,6 +18,7 @@
 
 // Variable based CSS - Text Shadow for editor.
 .wp-block-spectra-content {
+
 	&.spectra-text-shadow {
 		text-shadow: var(--spectra-text-shadow);
 	}

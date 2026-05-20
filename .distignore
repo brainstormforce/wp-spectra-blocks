@@ -71,7 +71,6 @@ admin/postcss.config.js
 
 # Library test files (not needed in production, flagged by WP.org)
 lib/astra-notices/tests/
-lib/bsf-analytics/tests/
 lib/gutenberg-templates/tests/
 lib/zip-ai/tests/
 lib/zipwp-images/tests/

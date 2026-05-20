@@ -1,0 +1,148 @@
+<?php
+/**
+ * Get Analytics Summary ability.
+ *
+ * Returns complete analytics data — block usage, extension usage, site activity.
+ *
+ * @package Spectra\Abilities
+ */
+
+namespace Spectra\Abilities;
+
+use Spectra\AnalyticsManager;
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * GetAnalyticsSummary ability class.
+ *
+ * @since x.x.x
+ */
+class GetAnalyticsSummary extends AbstractAbility {
+
+	/**
+	 * Get the ability name.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string
+	 */
+	public function get_name(): string {
+		return 'spectra-blocks/get-analytics-summary';
+	}
+
+	/**
+	 * Get the ability label.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string
+	 */
+	public function get_label(): string {
+		return __( 'Get Spectra Analytics Summary', 'spectra-blocks' );
+	}
+
+	/**
+	 * Get the ability description.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string
+	 */
+	public function get_description(): string {
+		return __( 'Returns complete analytics data including block usage statistics, top used blocks, extension usage, adoption rates, and site activity level.', 'spectra-blocks' );
+	}
+
+	/**
+	 * Get the ability category.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return string
+	 */
+	public function get_category(): string {
+		return 'spectra-blocks-discovery';
+	}
+
+	/**
+	 * Get ability annotations for REST discovery.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array
+	 */
+	public function get_annotations(): array {
+		return array(
+			'readonly'    => true,
+			'destructive' => false,
+			'idempotent'  => true,
+		);
+	}
+
+	/**
+	 * Get the input schema.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array
+	 */
+	public function get_input_schema(): array {
+		return array(
+			'type'       => 'object',
+			'properties' => new \stdClass(),
+		);
+	}
+
+	/**
+	 * Get the output schema.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array
+	 */
+	public function get_output_schema(): array {
+		return array(
+			'type'       => 'object',
+			'properties' => array(
+				'block_usage_stats'       => array(
+					'type'        => 'object',
+					'description' => __( 'Block usage statistics including total posts, most used blocks, and distribution.', 'spectra-blocks' ),
+				),
+				'top_used_blocks'         => array(
+					'type'        => 'object',
+					'description' => __( 'Top used blocks with usage counts.', 'spectra-blocks' ),
+				),
+				'block_adoption_rate'     => array(
+					'type'        => 'object',
+					'description' => __( 'Block adoption metrics — used vs available blocks.', 'spectra-blocks' ),
+				),
+				'site_activity'           => array(
+					'type'        => 'object',
+					'description' => __( 'Site activity level — inactive, active_site, or super_site.', 'spectra-blocks' ),
+				),
+				'extension_usage_stats'   => array(
+					'type'        => 'object',
+					'description' => __( 'Extension usage statistics.', 'spectra-blocks' ),
+				),
+				'extension_adoption_rate' => array(
+					'type'        => 'object',
+					'description' => __( 'Extension adoption metrics.', 'spectra-blocks' ),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Execute the ability.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array $params Input parameters.
+	 * @return array Analytics summary data.
+	 */
+	public function execute( array $params ): array {
+		$manager = AnalyticsManager::instance();
+
+		return $manager->get_block_analytics_summary();
+	}
+}

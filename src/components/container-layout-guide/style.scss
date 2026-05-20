@@ -3,9 +3,11 @@
  */
 
 .spectra-layout-guide {
+
 	&.components-modal__frame.components-guide {
 		max-height: 800px;
 	}
+
 	.components-guide__container {
 		gap: 10px;
 	}
@@ -45,6 +47,7 @@
 			font-style: normal;
 			font-weight: 400;
 		}
+
 		strong {
 			color: #1e1e1e;
 			font-weight: 600;
@@ -114,7 +117,9 @@
 
 // Responsive adjustments
 @media (max-width: 768px) {
+
 	.spectra-layout-guide {
+
 		&__page {
 			padding: 1.5rem;
 		}

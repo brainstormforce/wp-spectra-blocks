@@ -1,4 +1,5 @@
 /* Note that '@' rules like mixin and include have been stable and known for a long time. */
+
 /* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
 /* stylelint-disable at-rule-no-unknown */
 
@@ -115,6 +116,7 @@
 		}
 
 		&.spectra-overlay-color {
+
 			&::before {
 				content: "";
 				position: absolute;
@@ -224,6 +226,7 @@
 
 		// Variable based CSS - Background Color Hover with Background Image for Editor.
 		&.spectra-background-color-hover.spectra-background-image:hover {
+
 			&::before {
 				content: "";
 				position: absolute;
@@ -240,6 +243,7 @@
 
 		// Variable based CSS - Background Gradient Hover with Background Image for Editor.
 		&.spectra-background-gradient-hover.spectra-background-image:hover {
+
 			&::before {
 				content: "";
 				position: absolute;
@@ -350,6 +354,7 @@
 
 	// Border hover override - reset core WordPress border styles.
 	:where(&.spectra-border-hover-override) {
+
 		&:focus,
 		&:hover {
 			border-color: unset !important;
@@ -366,6 +371,7 @@
 	// In flow layout, the image resizer should work normally with its inline width
 	&.wp-block-spectra-container-is-layout-flex,
 	&.wp-block-spectra-container-is-layout-grid {
+
 		.wp-block-image {
 			// Constrain the figure wrapper in flex/grid layouts
 			max-width: 100%;

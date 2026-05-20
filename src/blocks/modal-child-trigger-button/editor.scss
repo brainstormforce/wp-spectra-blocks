@@ -7,12 +7,15 @@ $default-text-icon-gap: 10px;
 	&.has-text-align-right {
 		justify-content: right;
 	}
+
 	&.has-text-align-left {
 		justify-content: left;
 	}
+
 	&.has-text-align-center {
 		justify-content: center;
 	}
+
 	&:not(.has-text-align-right):not(.has-text-align-left) {
 		justify-content: center;
 	}
@@ -40,6 +43,7 @@ $default-text-icon-gap: 10px;
 
 	// Variable based CSS - Text Color.
 	&.spectra-text-color {
+
 		.spectra-button__link {
 			color: var(--spectra-text-color, #fff);
 		}
@@ -64,7 +68,7 @@ $default-text-icon-gap: 10px;
 
 			// Default fill for FontAwesome icons (not custom SVGs)
 			&:not(.spectra-custom-svg) {
-				fill: currentColor;
+				fill: currentcolor;
 			}
 
 			// Variable based CSS - Icon Color for FontAwesome icons.
@@ -79,7 +83,7 @@ $default-text-icon-gap: 10px;
 
 			// For custom SVGs without specific icon color, inherit text color
 			&.spectra-custom-svg:not(.spectra-icon-color) {
-				color: currentColor;
+				color: currentcolor;
 			}
 		}
 
@@ -111,6 +115,7 @@ $default-text-icon-gap: 10px;
 
 		// Variable based CSS - Text Color on Focus.
 		&.spectra-text-color-hover {
+
 			.spectra-button__link {
 				color: var(--spectra-text-color-hover);
 			}

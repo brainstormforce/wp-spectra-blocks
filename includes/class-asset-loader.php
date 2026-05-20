@@ -80,8 +80,8 @@ class AssetLoader {
 			$relative_path = str_replace( $css_path, '', $css_file );
 			$style_type    = dirname( $relative_path );
 
-			// Extract the file name without the extension and prepend with 'spectra-' and the directory name.
-			$handle = 'spectra-' . trim( $style_type, '/' ) . '-' . basename( $css_file, '.css' );
+			// Extract the file name without the extension and prepend with 'spectra-blocks-' and the directory name.
+			$handle = 'spectra-blocks-' . trim( $style_type, '/' ) . '-' . basename( $css_file, '.css' );
 
 			// Register the style.
 			wp_register_style(
@@ -108,7 +108,7 @@ class AssetLoader {
 		$css_file = SPECTRA_BLOCKS_DIR . 'build/styles/editor.css';
 
 		// Create the handle for the common editor styles.
-		$handle = 'spectra-editor';
+		$handle = 'spectra-blocks-editor';
 
 		// Register the common editor styles.
 		wp_register_style(
@@ -145,8 +145,8 @@ class AssetLoader {
 		}
 		$installed_plugins  = get_plugins();
 		$spectra_pro_status = 'not-installed';
-		if ( isset( $installed_plugins['spectra-pro/spectra-pro.php'] ) ) {
-			$spectra_pro_status = is_plugin_active( 'spectra-pro/spectra-pro.php' ) ? 'active' : 'inactive';
+		if ( isset( $installed_plugins['spectra-blocks-pro/spectra-blocks-pro.php'] ) ) {
+			$spectra_pro_status = is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ? 'active' : 'inactive';
 		}
 
 		// Load and merge SVG icon data from icon chunk files.
@@ -167,6 +167,8 @@ class AssetLoader {
 			'spectra_pro_status'       => $spectra_pro_status,
 			'current_post_id'          => (int) get_the_ID(),
 			'spectra_blocks_svg_icons' => $merged_icons,
+			'contry_code'              => \Spectra_Blocks_Admin_Helper::get_user_country_code(),
+			'upsellModalEditor'        => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-editor', 'upsell-popup-view-plan' ),
 		);
 
 		// Compute the icon category list from custom_categories per icon.
@@ -203,14 +205,14 @@ class AssetLoader {
 	public function register_block_assets() {
 		// Register Swiper assets that can be used by blocks.
 		wp_register_style(
-			'swiper-style',
+			'spectra-blocks-swiper-style',
 			SPECTRA_BLOCKS_URL . 'assets/css/swiper-bundle.min.css',
 			array(),
 			'12.1.3'
 		);
 
 		wp_register_script(
-			'swiper-script',
+			'spectra-blocks-swiper-script',
 			SPECTRA_BLOCKS_URL . 'assets/js/swiper-bundle.min.js',
 			array(),
 			'12.1.3',
@@ -218,7 +220,7 @@ class AssetLoader {
 		);
 
 		wp_register_script(
-			'modal-script',
+			'spectra-blocks-modal-script',
 			SPECTRA_BLOCKS_URL . 'assets/js/modal-script.js',
 			array(),
 			SPECTRA_BLOCKS_VER,
@@ -236,7 +238,9 @@ class AssetLoader {
 	public function enqueue_frontend_assets() {
 		// Only enqueue if slider block is present.
 		if ( has_block( 'spectra/slider' ) ) {
-			wp_enqueue_script( 'modal-script' );
+			wp_enqueue_style( 'spectra-blocks-swiper-style' );
+			wp_enqueue_script( 'spectra-blocks-swiper-script' );
+			wp_enqueue_script( 'spectra-blocks-modal-script' );
 		}
 	}
 
@@ -248,8 +252,8 @@ class AssetLoader {
 	 * @return void
 	 */
 	public function enqueue_extensions_frontend_assets() {
-		wp_enqueue_style( 'spectra-extensions-image-mask' );
-		wp_enqueue_style( 'spectra-extensions-z-index' );
+		wp_enqueue_style( 'spectra-blocks-extensions-image-mask' );
+		wp_enqueue_style( 'spectra-blocks-extensions-z-index' );
 	}
 
 	/**

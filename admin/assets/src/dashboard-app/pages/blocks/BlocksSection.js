@@ -30,18 +30,14 @@ const BlocksSection = () => {
 	} );
 	const [ activeExtensions, setActiveExtensions ] = useState( {
 		'animations': null,
-		'display-conditions': null,
 		'dynamic-content': null,
 		'global-block-styles': null,
-		'masonry-gallery': null,
 		'responsive-conditions': null,
 	} );
 	const [ extensionStatuses, setExtensionStatuses ] = useState( {
 		'animations': blocksStatuses.animations,
-		'display-conditions': blocksStatuses[ 'display-conditions' ],
 		'dynamic-content': blocksStatuses[ 'dynamic-content' ],
 		'global-block-styles': blocksStatuses[ 'global-block-styles' ],
-		'masonry-gallery': blocksStatuses[ 'masonry-gallery' ],
 		'responsive-conditions': blocksStatuses[ 'responsive-conditions' ],
 	} );
 
@@ -112,24 +108,6 @@ const BlocksSection = () => {
 				trigger: extensionStatuses.animations,
 				setTrigger: setExtensionStatuses,
 			},
-			{
-				icon: React.cloneElement( Spectra_Block_Icons[ 'display-conditions' ], { className: 'w-5 h-5' } ),
-				id: '40',
-				is_active: true,
-				is_core: false,
-				is_extension: true,
-				is_pro: false,
-				link: 'display-conditions',
-				slug: 'display-conditions',
-				title: __( 'Display Conditions', 'spectra-blocks' ),
-				extensionKey: 'enableDisplayConditions',
-				nonce: spectra_blocks_react.enable_block_condition_nonce,
-				action: 'spectra_blocks_enable_block_condition',
-				actionType: 'UPDATE_ENABLE_DISPLAY_CONDITIONS',
-				onChange: setActiveExtensions,
-				trigger: extensionStatuses[ 'display-conditions' ],
-				setTrigger: setExtensionStatuses,
-			},
 		];
 
 		if ( filterState.type !== 'free' || filterState.type !== null ) {
@@ -176,24 +154,6 @@ const BlocksSection = () => {
 
 		extesions = [
 			...extesions,
-			{
-				icon: React.cloneElement( Spectra_Block_Icons[ 'masonry-gallery' ], { className: 'w-5 h-5' } ),
-				id: '43',
-				is_active: true,
-				is_core: false,
-				is_extension: true,
-				is_pro: false,
-				link: 'masonry-image-gallery',
-				slug: 'masonry-gallery',
-				title: __( 'Masonry Gallery', 'spectra-blocks' ),
-				extensionKey: 'enableMasonryExtension',
-				nonce: spectra_blocks_react.enable_masonry_gallery_nonce,
-				action: 'spectra_blocks_enable_masonry_gallery',
-				actionType: 'UPDATE_ENABLE_MASONRY_EXTENSION',
-				onChange: setActiveExtensions,
-				trigger: extensionStatuses[ 'masonry-gallery' ],
-				setTrigger: setExtensionStatuses,
-			},
 			{
 				icon: React.cloneElement( Spectra_Block_Icons[ 'responsive-conditions' ], { className: 'w-5 h-5' } ),
 				id: '44',

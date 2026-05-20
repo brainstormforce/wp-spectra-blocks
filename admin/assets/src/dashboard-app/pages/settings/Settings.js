@@ -4,37 +4,26 @@ import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { Container, Title } from '@bsf/force-ui';
-import AssetsGeneration from '@DashboardApp/pages/settings/AssetsGeneration';
-import OnPageCSS from '@DashboardApp/pages/settings/OnPageCSS';
+import { Container, Title, Badge } from '@bsf/force-ui';
 import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
 import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
 import PreloadLocalFonts from '@DashboardApp/pages/settings/PreloadLocalFonts';
 import DisableCSSCache from '@DashboardApp/pages/settings/DisableCSSCache';
 import ClearV3Cache from '@DashboardApp/pages/settings/ClearV3Cache';
-import CopyPasteStyles from '@DashboardApp/pages/settings/CopyPasteStyles';
-import DynamicContent from './dynamic-content';
-import ContentWidth from '@DashboardApp/pages/settings/ContentWidth';
-import BlocksEditorSpacing from '@DashboardApp/pages/settings/BlocksEditorSpacing';
-import Visibility from '@DashboardApp/pages/settings/Visibility';
 import SettingsSkeleton from '@DashboardApp/pages/settings/SettingsSkeleton';
 import BlockSettings from '@DashboardApp/pages/settings/BlockSettings';
-import LoadFontAwesome5 from '@DashboardApp/pages/settings/LoadFontAwesome5';
-import EnableLegacyDesignLibrary from '@DashboardApp/pages/settings/EnableLegacyDesignLibrary';
-import AutoBlockRecovery from '@DashboardApp/pages/settings/AutoBlockRecovery';
 import ContainerGlobalPadding from '@DashboardApp/pages/settings/ContainerGlobalPadding';
 import ContainerGlobalElementsGap from '@DashboardApp/pages/settings/ContainerGlobalElementsGap';
 import MyAccount from '@DashboardApp/pages/settings/MyAccount';
 import MyAccountUpgradeToPro from '@DashboardApp/pages/settings/MyAccountUpgradeToPro';
 import InheritFromTheme from '@DashboardApp/pages/settings/InheritFromTheme';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
+import ProActiveStatus from '@DashboardApp/pages/settings/ProActiveStatus';
 import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
 
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
-import QuickActionBar from '@DashboardApp/pages/settings/editor-enhancements/QuickActionBar';
-import CollapsePanels from '@DashboardApp/pages/settings/editor-enhancements/CollapsePanels';
 
 import { useLocation, useHistory } from 'react-router-dom';
 import { useEffect } from '@wordpress/element';
@@ -71,11 +60,6 @@ const Settings = () => {
 					slug: 'global-settings',
 					icon: SettingsIcons[ 'global-settings' ],
 				},
-				{
-					name: __( 'Editor Enhancements', 'spectra-blocks' ),
-					slug: 'editor-enhancements',
-					icon: SettingsIcons.templates,
-				},
 			],
 		},
 		{
@@ -92,11 +76,6 @@ const Settings = () => {
 			name: 'Preferences',
 			children: [
 				{
-					name: __( 'Site Visibility', 'spectra-blocks' ),
-					slug: 'site-visibility',
-					icon: SettingsIcons[ 'site-visibility' ],
-				},
-				{
 					name: __( 'Integrations', 'spectra-blocks' ),
 					slug: 'block-settings',
 					icon: SettingsIcons[ 'block-settings' ],
@@ -107,21 +86,12 @@ const Settings = () => {
 
 	const tabTitles = {
 		'global-settings': __( 'Editor Options', 'spectra-blocks' ),
-		'editor-enhancements': __( 'Editor Enhancements', 'spectra-blocks' ),
 		'fonts-performance': __( 'Performance', 'spectra-blocks' ),
 		'fse-support': __( 'Theme Fonts', 'spectra-blocks' ),
 		'block-settings': __( 'Integrations', 'spectra-blocks' ),
-		'site-visibility': __( 'Site Visibility', 'spectra-blocks' ),
 		'license': __( 'My Account', 'spectra-blocks' ),
 	};
 
-	if ( 'yes' === spectra_blocks_admin_react.enable_v2_blocks ) {
-		navigation[2].children.unshift( {
-			name: __( 'Asset Generation', 'spectra-blocks' ),
-			slug: 'asset-generation',
-			icon: SettingsIcons['asset-generation'],
-		} )
-	}
 
 	if ( spectraIsBlockTheme ) {
 		navigation[ 3 ].children.unshift( {
@@ -165,7 +135,6 @@ const Settings = () => {
 		),
 		features: [
 			__( 'Global Block Styles', 'spectra-blocks' ),
-			__( 'Dynamic Content', 'spectra-blocks' ),
 			__( 'Loop Builder', 'spectra-blocks' ),
 			__( 'Popup Builder', 'spectra-blocks' ),
 			__( 'And more…', 'spectra-blocks' ),
@@ -209,26 +178,12 @@ const Settings = () => {
 					>
 						{ 'global-settings' === currentTab && (
 							<>
-								<ContentWidth />
 								<InheritFromTheme />
 								<ContainerGlobalPadding />
 								<ContainerGlobalElementsGap />
-								<DynamicContent />
-								<BlocksEditorSpacing />
-								<OnPageCSS />
-								<CopyPasteStyles />
-								<AutoBlockRecovery />
-								<LoadFontAwesome5 />
+								<TemplatesButton />
+								<BSFAnalyticsOption />
 							</>
-						) }
-						{ 'global-settings' === currentTab && (
-							<EnableLegacyDesignLibrary />
-						) }
-						{'global-settings' === currentTab && (
-							<BSFAnalyticsOption />
-						)}
-						{ 'editor-enhancements' === currentTab && (
-							<TemplatesButton />
 						) }
 						{ 'fonts-performance' === currentTab && (
 							<>
@@ -240,11 +195,6 @@ const Settings = () => {
 							</>
 						) }
 						{ 'fse-support' === currentTab && spectraIsBlockTheme && <FSEFontFamilies /> }
-						{ 'site-visibility' === currentTab && (
-							<>
-								<Visibility />
-							</>
-						) }
 						{ 'license' === currentTab && (
 							<>
 								{ 'Activated' !== spectra_blocks_react.pro_plugin_status && (
@@ -259,7 +209,8 @@ const Settings = () => {
 										modalData={ accountModalData }
 									/>
 								) }
-								{ spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && <MyAccount /> }	
+								{ spectra_blocks_react.spectra_pro_status && spectra_blocks_react.spectra_pro_licensing && <MyAccount /> }
+								{ 'Activated' === spectra_blocks_react.pro_plugin_status && ! spectra_blocks_react.spectra_pro_licensing && <ProActiveStatus /> }
 							</>
 						) }
 						{/* Apply filters for all tabs */}
@@ -267,14 +218,8 @@ const Settings = () => {
 							switch ( currentTab ) {
 								case 'global-settings':
 									return applyFilters( 'spectra.adminSettings.globalSettings', null );
-								case 'editor-enhancements':
-									return applyFilters( 'spectra.adminSettings.editorEnhancements', null );
 								case 'fonts-performance':
 									return applyFilters( 'spectra.adminSettings.fontsPerformance', null );
-								case 'site-visibility':
-									return applyFilters( 'spectra.adminSettings.siteVisibility', null );
-								case 'asset-generation':
-									return applyFilters( 'spectra.adminSettings.assetGeneration', null );
 								default:
 									return null;
 							}

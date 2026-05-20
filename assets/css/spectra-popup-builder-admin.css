@@ -1,0 +1,97 @@
+/**
+ * Spectra Blocks — Popup Builder admin styles.
+ *
+ * Styles for the enable/disable toggle switch displayed in the Popup Builder
+ * post-type list table in the WordPress admin.
+ *
+ * @since x.x.x
+ */
+
+/* Reset admin list-table background to match WP's default striped rows. */
+#wpwrap,
+.striped > tbody > :nth-child(odd) {
+  background-color: #f8fafc;
+}
+
+/* Toggle switch base */
+.spectra-popup-builder__switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  padding: 2px;
+  margin: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 100px;
+  box-sizing: border-box;
+  background: #64748b;
+  opacity: 0.7;
+  transition:
+    background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.spectra-popup-builder__switch.spectra-popup-builder__switch--disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background: #e2e8f0;
+}
+
+/* Toggle knob */
+.spectra-popup-builder__switch > span {
+  pointer-events: none;
+  display: flex;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.06),
+    0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border-radius: inherit;
+  transform: translate(2px, 1px);
+  transition:
+    background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* RTL knob initial position */
+.spectra-popup-builder__switch.is-rtl-toggle > span {
+  transform: translate(-2px, 1px);
+}
+
+/* Active (enabled) state */
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active {
+  background: #007cba;
+  opacity: 1;
+}
+
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active span {
+  transform: translate(20px, 1px);
+}
+
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active.is-rtl-toggle
+  span {
+  transform: translate(-20px, 1px);
+}
+
+/* Column widths in the Popup Builder list table */
+.post-type-spectra-popup .wp-list-table #author,
+.post-type-spectra-popup .wp-list-table #spectra_popup_toggle,
+.post-type-spectra-popup .wp-list-table #spectra_popup_type {
+  width: 150px;
+}
+
+.post-type-spectra-popup .wp-list-table #spectra_popup_trigger {
+  width: 200px;
+}
+
+/* Center the toggle in its column */
+td.column-spectra_popup_toggle,
+th.column-spectra_popup_toggle {
+  text-align: center;
+}
+
+td.spectra_popup_toggle.column-spectra_popup_toggle
+  .spectra-popup-builder__switch {
+  margin: 0 auto;
+}

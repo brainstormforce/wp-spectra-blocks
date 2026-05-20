@@ -204,11 +204,11 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": [ "swiper-style", "file:./index.css" ],
+	"editorStyle": [ "spectra-blocks-swiper-style", "file:./index.css" ],
 	"style": [ "file:./style-index.css", "spectra-blocks-common", "spectra-components-icon-picker" ],
 	"render": "file:./view.php",
-	"viewScript": [ "swiper-script", "file:./view.js" ],
-	"viewStyle": [ "swiper-style", "spectra-blocks-common" ],
+	"viewScript": [ "spectra-blocks-swiper-script", "file:./view.js" ],
+	"viewStyle": [ "spectra-blocks-swiper-style", "spectra-blocks-common" ],
 	"providesContext": {
 		"spectra/slider/textColor": "textColor"
 	}

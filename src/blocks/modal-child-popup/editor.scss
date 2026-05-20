@@ -1,9 +1,12 @@
 .editor-styles-wrapper {
+
 	.spectra-modal-wrapper {
+
 		.wp-block-spectra-modal-popup {
 
 			&.spectra-modal-type-right-off-canvas {
 				justify-content: end;
+
 				.spectra-modal-popup-wrap {
 					margin: 0 !important;
 				}
@@ -15,6 +18,7 @@
 
 			&.spectra-modal-type-left-off-canvas {
 				justify-content: left;
+
 				.spectra-modal-popup-wrap {
 					margin: 0;
 				}
@@ -40,6 +44,7 @@
 				padding: 60px;
 				position: relative;
 			}
+
 			&:not(.active) {
 				display: none;
 			}
@@ -61,6 +66,7 @@
 }
 
 .rtl .editor-styles-wrapper {
+
 	.spectra-modal-button-link .spectra-modal-content-wrapper > svg {
 		// Fixed 5px left/right margin when before/after button icon.
 		margin-left: 5px;

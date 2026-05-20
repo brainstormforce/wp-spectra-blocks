@@ -24,6 +24,7 @@
 	&::after {
 		border-radius: inherit;
 	}
+
 	&:not(.alignfull) {
 		width: 100%;
 	}
@@ -34,14 +35,13 @@
 	&.has-image-background[style*="border-radius"],
 	&.spectra-background-image[style*="border-radius"] {
 		overflow: hidden; // Fallback for older browsers
-		overflow: clip;   // Modern standard for proper border-radius clipping
+		overflow: clip; // Modern standard for proper border-radius clipping
 	}
 
 	// Default flex-wrap overriding for flex layout.
 	&.wp-block-spectra-container-is-layout-flex {
 		flex-wrap: nowrap;
 	}
-
 
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
@@ -123,7 +123,9 @@
 				z-index: 0;
 			}
 
-			> *:not(.spectra-background-video__wrapper):not(.spectra-container__shape) {
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
 				position: relative;
 				z-index: 3;
 			}
@@ -148,7 +150,9 @@
 				z-index: 0;
 			}
 
-			> *:not(.spectra-background-video__wrapper):not(.spectra-container__shape) {
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
 				position: relative;
 				z-index: 3;
 			}
@@ -168,13 +172,17 @@
 		}
 
 		// Variable based CSS - Simple Background Color Hover (only when no background image).
-		&.spectra-background-color-hover:not(.spectra-background-image):hover::before {
+		&.spectra-background-color-hover:not(
+		.spectra-background-image
+	):hover::before {
 			background: var(--spectra-background-color-hover);
 			opacity: var(--spectra-overlay-opacity, 1);
 		}
 
 		// Variable based CSS - Simple Background Gradient Hover (only when no background image).
-		&.spectra-background-gradient-hover:not(.spectra-background-image):hover::before {
+		&.spectra-background-gradient-hover:not(
+		.spectra-background-image
+	):hover::before {
 			background: var(--spectra-background-gradient-hover);
 			opacity: var(--spectra-overlay-opacity, 1);
 		}
@@ -196,7 +204,8 @@
 			isolation: isolate;
 
 			&::before {
-				background: var(--spectra-background-gradient, var(--spectra-background-color));
+				background:
+ var(--spectra-background-gradient, var(--spectra-background-color));
 				content: "";
 				inset: 0;
 				opacity: var(--spectra-overlay-opacity);
@@ -243,6 +252,7 @@
 
 		// Video background specific styles
 		&.has-video-background {
+
 			.spectra-background-video__wrapper {
 				position: absolute;
 				top: 0;
@@ -262,7 +272,9 @@
 			}
 
 			// Ensure content is above video (exclude video wrapper and shape dividers)
-			> *:not(.spectra-background-video__wrapper):not(.spectra-container__shape) {
+			> *:not(.spectra-background-video__wrapper):not(
+			.spectra-container__shape
+		) {
 				position: relative;
 				z-index: 1;
 			}
@@ -276,7 +288,8 @@
 		// Variable based CSS - Box Shadow Hover.
 		// If hover shadow is set, use it; otherwise fall back to normal shadow
 		&.spectra-box-shadow:hover {
-			box-shadow: var(--spectra-box-shadow-hover, var(--spectra-box-shadow)) !important;
+			box-shadow:
+ var(--spectra-box-shadow-hover, var(--spectra-box-shadow)) !important;
 		}
 
 		// Override for when hover shadow is explicitly set
@@ -296,6 +309,7 @@
 
 		// Border hover override - reset core WordPress border styles.
 		:where(&.spectra-border-hover-override) {
+
 			&:focus,
 			&:hover {
 				border-color: unset !important;

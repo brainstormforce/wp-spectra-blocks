@@ -57,7 +57,7 @@ const BsfLearnChapter = ( { chapters, defaultValue, onStepCompletionChange, onLe
 				return (
 					<Accordion.Item
 						key={ id }
-						className="bg-background-primary border-0.5 [&:hover>h3]:bg-transparent rounded-lg overflow-hidden [&:has([aria-expanded='true'])]:shadow-xs transition-all duration-200 ease-in-out"
+						className="bg-background-primary border-[0.5px] [&:hover>h3]:bg-transparent rounded-lg overflow-hidden [&:has([aria-expanded='true'])]:shadow-xs transition-shadow duration-200 ease-in-out"
 						value={ id }
 					>
 						<Accordion.Trigger className="group p-3 sm:p-4 hover:bg-transparent [&>svg]:hidden [&>div]:flex-grow [&[aria-expanded='true']_.learn-chevron-right]:rotate-90 [&[aria-expanded='true']_.learn-more-btn]:flex">
@@ -125,10 +125,10 @@ const BsfLearnChapter = ( { chapters, defaultValue, onStepCompletionChange, onLe
 							</div>
 						</Accordion.Trigger>
 
-						<Accordion.Content className="overflow-visible [&>div]:p-0">
+						<Accordion.Content className="[&>div]:p-0">
 							{ description && (
 								<Text
-									className="px-3 sm:px-4 ml-7 mr-0 sm:mx-8 -mt-2 pb-4 max-w-full sm:max-w-[72%]"
+									className="px-3 sm:px-4 ml-7 mr-0 sm:mx-8 pb-4 max-w-full sm:max-w-[72%]"
 									size={ 14 }
 									color="secondary"
 									weight={ 400 }

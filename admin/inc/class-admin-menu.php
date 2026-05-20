@@ -74,7 +74,9 @@ class Admin_Menu {
 
 		/* Setup the Admin Menu */
 		add_action( 'admin_menu', array( $this, 'setup_menu' ) );
+		add_action( 'admin_menu', array( $this, 'rename_classic_spectra_menu' ), 99 );
 		add_action( 'admin_init', array( $this, 'settings_admin_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_submenu_styles' ) );
 		add_filter(
 			'admin_footer_text',
 			function ( $text ) {
@@ -313,7 +315,7 @@ class Admin_Menu {
 		);
 
 		// Check if Spectra Pro plugin is not active.
-		if ( ! is_plugin_active( 'spectra-pro/spectra-pro.php' ) && ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ) ) {
+		if ( ! is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) && ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
 			$free_links[] = '<a href="' . esc_url( $spectra_pro ) . '" target="_blank" rel="noreferrer" class="spectra-plugins-go-pro">' . __( 'Get Spectra Pro', 'spectra-blocks' ) . '</a>';
 		}
 
@@ -372,16 +374,6 @@ class Admin_Menu {
 			array( $this, 'render' )
 		);
 
-		// Finally, add the Settings Submenu.
-		add_submenu_page(
-			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
-			__( 'Settings', 'spectra-blocks' ),
-			$capability,
-			$menu_slug . '&path=settings',
-			array( $this, 'render' )
-		);
-
 		// Add the AI Features Submenu if Zip AI Library is loaded.
 		if ( defined( 'ZIP_AI_VERSION' ) ) {
 			add_submenu_page(
@@ -395,7 +387,17 @@ class Admin_Menu {
 		}
 
 		// Use this action hook to add sub menu to above menu.
-		do_action( 'spectra_after_menu_register', $menu_slug );
+		do_action( 'spectra_blocks_after_menu_register', $menu_slug );
+
+		// Add the Popup Builder Submenu.
+		add_submenu_page(
+			$menu_slug,
+			__( 'Popup Builder', 'spectra-blocks' ),
+			__( 'Popup Builder', 'spectra-blocks' ),
+			$capability,
+			'edit.php?post_type=spectra-popup',
+			null
+		);
 
 		// Add the Learn tab in Submenu.
 		add_submenu_page(
@@ -407,8 +409,18 @@ class Admin_Menu {
 			array( $this, 'render' )
 		);
 
+		// Finally, add the Settings Submenu.
+		add_submenu_page(
+			$menu_slug,
+			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Settings', 'spectra-blocks' ),
+			$capability,
+			$menu_slug . '&path=settings',
+			array( $this, 'render' )
+		);
+
 		// Add the Free vs Pro Submenu.
-		if ( ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ) ) {
+		if ( ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
 			add_submenu_page(
 				$menu_slug,
 				__( 'Free vs Pro', 'spectra-blocks' ),
@@ -456,6 +468,16 @@ class Admin_Menu {
 	}
 
 	/**
+	 * Enqueues the sidebar submenu styles on all admin pages.
+	 *
+	 * @since x.x.x
+	 * @return void
+	 */
+	public function enqueue_submenu_styles() {
+		wp_enqueue_style( 'spectra-blocks-submenu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
+	}
+
+	/**
 	 * Enqueues the needed CSS/JS for the builder's admin settings page.
 	 *
 	 * @since 1.0.0
@@ -465,7 +487,6 @@ class Admin_Menu {
 		$admin_slug  = 'spectra-blocks-admin';
 		$blocks_info = $this->get_blocks_info_for_activation_deactivation();
 		// Styles.
-		wp_enqueue_style( $admin_slug . '-menu-style', SPECTRA_BLOCKS_URL . 'admin/assets/spectra-submenu.css', array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'wp-components' );
 
 		$theme = wp_get_theme();
@@ -476,32 +497,31 @@ class Admin_Menu {
 		$localize            = apply_filters(
 			'spectra_blocks_admin_localize',
 			array(
-				'current_user'                        => ! empty( wp_get_current_user()->user_firstname ) ? wp_get_current_user()->user_firstname : wp_get_current_user()->display_name,
-				'admin_base_url'                      => admin_url(),
-				'spectra_blocks_base_url'             => admin_url( 'admin.php?page=' . $this->menu_slug ),
-				'plugin_dir'                          => SPECTRA_BLOCKS_URL,
-				'plugin_url'                          => SPECTRA_BLOCKS_URL,
-				'preview_url'                         => SPECTRA_BLOCKS_URL . 'admin/assets/',
-				'plugin_ver'                          => SPECTRA_BLOCKS_VER,
-				'admin_url'                           => admin_url( 'admin.php' ),
-				'ajax_url'                            => admin_url( 'admin-ajax.php' ),
-				'wp_pages_url'                        => admin_url( 'post-new.php?post_type=page' ),
-				'home_slug'                           => $this->menu_slug,
-				'blocks_info'                         => $blocks_info,
-				'reusable_url'                        => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
-				'global_data'                         => Admin_Helper::get_options(),
-				'spectra_blocks_content_width_set_by' => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_content_width_set_by', __( 'Spectra', 'spectra-blocks' ) ),
-				'spectra_pro_installed'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/spectra-pro.php' ),
-				'spectra_pro_licensing'               => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-pro/admin/license-handler.php' ),
-				'spectra_pro_status'                  => is_plugin_active( 'spectra-pro/spectra-pro.php' ),
-				'spectra_pro_ver'                     => defined( 'SPECTRA_PRO_VER' ) ? SPECTRA_PRO_VER : null,
-				'spectra_custom_fonts'                => apply_filters( 'spectra_system_fonts', array() ),
-				'spectra_admin_video'                 => apply_filters( 'spectra_display_admin_video', true ),
-				'is_allow_registration'               => (bool) get_option( 'users_can_register' ),
-				'theme_fonts'                         => $theme_font_families,
-				'is_block_theme'                      => \Spectra_Blocks_Admin_Helper::is_block_theme(),
-				'spectra_blocks_site_url'             => SPECTRA_BLOCKS_URI,
-				'spectra_website'                     => array(
+				'current_user'            => ! empty( wp_get_current_user()->user_firstname ) ? wp_get_current_user()->user_firstname : wp_get_current_user()->display_name,
+				'admin_base_url'          => admin_url(),
+				'spectra_blocks_base_url' => admin_url( 'admin.php?page=' . $this->menu_slug ),
+				'plugin_dir'              => SPECTRA_BLOCKS_URL,
+				'plugin_url'              => SPECTRA_BLOCKS_URL,
+				'preview_url'             => SPECTRA_BLOCKS_URL . 'admin/assets/',
+				'plugin_ver'              => SPECTRA_BLOCKS_VER,
+				'admin_url'               => admin_url( 'admin.php' ),
+				'ajax_url'                => admin_url( 'admin-ajax.php' ),
+				'wp_pages_url'            => admin_url( 'post-new.php?post_type=page' ),
+				'home_slug'               => $this->menu_slug,
+				'blocks_info'             => $blocks_info,
+				'reusable_url'            => esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
+				'global_data'             => Admin_Helper::get_options(),
+				'spectra_pro_installed'   => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ),
+				'spectra_pro_licensing'   => file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/admin/license-handler.php' ),
+				'spectra_pro_status'      => is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ),
+				'spectra_pro_ver'         => defined( 'SPECTRA_PRO_VER' ) ? SPECTRA_PRO_VER : null,
+				'spectra_custom_fonts'    => apply_filters( 'spectra_system_fonts', array() ),
+				'spectra_admin_video'     => apply_filters( 'spectra_display_admin_video', true ),
+				'is_allow_registration'   => (bool) get_option( 'users_can_register' ),
+				'theme_fonts'             => $theme_font_families,
+				'is_block_theme'          => \Spectra_Blocks_Admin_Helper::is_block_theme(),
+				'spectra_blocks_site_url' => SPECTRA_BLOCKS_URI,
+				'spectra_website'         => array(
 					'baseUrl'                => SPECTRA_BLOCKS_URI,
 					'docsUrl'                => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/docs/', 'free-plugin', 'spectra-dashboard', 'documentation' ),
 					'docsCategoryDynamicUrl' => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/docs-category/{{category}}', 'free-plugin', 'spectra-dashboard', 'documentation' ),
@@ -515,18 +535,18 @@ class Admin_Menu {
 					'whatsNewFeedUrl'        => esc_url( SPECTRA_BLOCKS_URI . '/whats-new/feed/' ),
 					'upsellModalAdmin'       => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-dashboard', 'upsell-popup-view-plan' ),
 				),
-				'plugin_installing_text'              => esc_html__( 'Installing', 'spectra-blocks' ),
-				'plugin_installed_text'               => esc_html__( 'Installed', 'spectra-blocks' ),
-				'plugin_activating_text'              => esc_html__( 'Activating', 'spectra-blocks' ),
-				'plugin_activated_text'               => esc_html__( 'Activated', 'spectra-blocks' ),
-				'plugin_activate_text'                => esc_html__( 'Activate', 'spectra-blocks' ),
-				'plugin_manager_nonce'                => wp_create_nonce( 'spectra_plugin_manager_nonce' ),
-				'installer_nonce'                     => wp_create_nonce( 'updates' ),
-				'pro_installed_status'                => 'inactive' === self::get_plugin_status( 'spectra-pro/spectra-pro.php' ) ? true : false,
-				'pro_plugin_status'                   => self::get_plugin_status( 'spectra-pro/spectra-pro.php' ),
-				'contry_code'                         => \Spectra_Blocks_Admin_Helper::get_user_country_code(),
-				'clear_v3_cache_nonce'                => wp_create_nonce( 'spectra_blocks_clear_v3_cache' ),
-				'disable_css_cache_nonce'             => wp_create_nonce( 'spectra_blocks_disable_css_cache' ),
+				'plugin_installing_text'  => esc_html__( 'Installing', 'spectra-blocks' ),
+				'plugin_installed_text'   => esc_html__( 'Installed', 'spectra-blocks' ),
+				'plugin_activating_text'  => esc_html__( 'Activating', 'spectra-blocks' ),
+				'plugin_activated_text'   => esc_html__( 'Activated', 'spectra-blocks' ),
+				'plugin_activate_text'    => esc_html__( 'Activate', 'spectra-blocks' ),
+				'plugin_manager_nonce'    => wp_create_nonce( 'spectra_plugin_manager_nonce' ),
+				'installer_nonce'         => wp_create_nonce( 'updates' ),
+				'pro_installed_status'    => 'inactive' === self::get_plugin_status( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ? true : false,
+				'pro_plugin_status'       => self::get_plugin_status( 'spectra-blocks-pro/spectra-blocks-pro.php' ),
+				'contry_code'             => \Spectra_Blocks_Admin_Helper::get_user_country_code(),
+				'clear_v3_cache_nonce'    => wp_create_nonce( 'spectra_blocks_clear_v3_cache' ),
+				'disable_css_cache_nonce' => wp_create_nonce( 'spectra_blocks_disable_css_cache' ),
 			)
 		);
 
@@ -753,6 +773,28 @@ class Admin_Menu {
 		$json_plugins_data = wp_json_encode( $plugins_data );
 
 		wp_localize_script( $handle, 'spectra_blocks_plugins_data', $plugins_data );
+	}
+
+	/**
+	 * Rename the Ultimate Addons for Gutenberg admin menu to "Spectra Classic"
+	 * when both plugins are active simultaneously.
+	 *
+	 * @since x.x.x
+	 * @return void
+	 */
+	public function rename_classic_spectra_menu() {
+		if ( ! defined( 'UAGB_VER' ) ) {
+			return;
+		}
+
+		global $menu, $submenu;
+
+		foreach ( $menu as $key => $item ) {
+			if ( isset( $item[2] ) && 'spectra' === $item[2] ) {
+				$menu[ $key ][0] = __( 'Spectra Classic', 'spectra-blocks' ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
 	}
 }
 

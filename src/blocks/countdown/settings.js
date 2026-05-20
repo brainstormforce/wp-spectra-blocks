@@ -2,6 +2,7 @@
  * External dependencies.
  */
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
+import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
@@ -864,6 +865,11 @@ const Settings = ( props ) => {
 			<LabelSettings { ...{ ...props } } />
 			<ColorSettings { ...{ ...props } } />
 			<DimensionSettings { ...{ ...props } } />
+			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
+				<InspectorControls group="settings">
+					<UpgradeComponent control={ { campaign: 'countdown' } } />
+				</InspectorControls>
+			) }
 		</>
 	);
 };

@@ -338,8 +338,8 @@ class ResponsiveAttributeCSS {
 	 * @return array<string> List of responsive attribute names.
 	 */
 	public static function get_responsive_attributes( string $block_name ): array {
-		// Get attribute definitions with filter applied.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 
 		return array_keys( $attr_definitions[ $block_name ] ?? array() );
 	}
@@ -362,8 +362,8 @@ class ResponsiveAttributeCSS {
 		string $background_selector = '',
 		array $block_attrs = array()
 	): string {
-		// Get attribute definitions with filter applied.
-		$attr_definitions = apply_filters( 'spectra_responsive_attr_definitions', self::ATTR_DEFINITIONS );
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
+		$attr_definitions = apply_filters( 'spectra_blocks_responsive_attr_definitions', self::ATTR_DEFINITIONS );
 
 		// Return empty string if no definitions exist for this block.
 		if ( ! isset( $attr_definitions[ $block_name ] ) ) {
@@ -1047,7 +1047,7 @@ class ResponsiveAttributeCSS {
 					// Apply the background color/gradient to the overlay.
 					$rules[] = array(
 						'selector'   => $background_selector . ' > .spectra-background-video__wrapper::after',
-						'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); z-index: 1;',
+						'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1); z-index: 1;',
 					);
 
 					$rules[] = array(
@@ -1409,17 +1409,17 @@ class ResponsiveAttributeCSS {
 				// For video backgrounds, create overlay directly on wrapper::after when needed.
 				// Apply the background color/gradient to the overlay.
 				$rules[] = array(
-					'selector'   => ' > .spectra-background-video__wrapper::after',
-					'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); z-index: 1;',
+					'selector'   => $background_selector . ' > .spectra-background-video__wrapper::after',
+					'style_attr' => 'content: ""; position: absolute; inset: 0; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1); z-index: 1;',
 				);
 
 				$rules[] = array(
-					'selector'   => '::before',
+					'selector'   => $background_selector . '::before',
 					'style_attr' => 'content: ""; position: absolute; display: block; inset: 0;',
 				);
 
 				$rules[] = array(
-					'selector'   => ' > .spectra-background-video__wrapper',
+					'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 					'style_attr' => 'z-index: -1',
 				);
 
@@ -1512,12 +1512,12 @@ class ResponsiveAttributeCSS {
 			if ( $has_video ) {
 				// Add hover overlay for video backgrounds without overlay.
 				$rules[] = array(
-					'selector'   => '::before',
+					'selector'   => $background_selector . '::before',
 					'style_attr' => 'content: ""; position: absolute; display: block; inset: 0;',
 				);
 
 				$rules[] = array(
-					'selector'   => ' > .spectra-background-video__wrapper',
+					'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 					'style_attr' => 'z-index: -1',
 				);
 			} elseif ( $has_image ) {
@@ -1553,14 +1553,14 @@ class ResponsiveAttributeCSS {
 		if ( $has_video ) {
 			// Show video wrapper for video breakpoints.
 			$rules[] = array(
-				'selector'   => ' > .spectra-background-video__wrapper',
+				'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 				'style_attr' => 'display: block !important;',
 			);
 
 			// Position video wrapper to respect borders.
 			// The video wrapper should be positioned inside the border area.
 			$rules[] = array(
-				'selector'   => ' > .spectra-background-video__wrapper',
+				'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 				'style_attr' => 'top: 0; right: 0; bottom: 0; left: 0; box-sizing: border-box;',
 			);
 
@@ -1579,7 +1579,7 @@ class ResponsiveAttributeCSS {
 
 			// Position direct children above any overlays.
 			$rules[] = array(
-				'selector'     => ' > *:not(.spectra-background-video__wrapper)',
+				'selector'     => $background_selector . ' > *:not(.spectra-background-video__wrapper)',
 				'declarations' => array(
 					'position' => 'relative',
 					'z-index'  => '1',

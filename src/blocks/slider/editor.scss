@@ -54,6 +54,7 @@
 	// Apply overflow clip when has video background and border-radius
 	&.has-video-background,
 	&.has-image-background {
+
 		&[style*="border-radius"] {
 			overflow: hidden; // Fallback for older browsers
 			overflow: clip !important;   // Modern standard for proper border-radius clipping
@@ -89,6 +90,7 @@
 			position: relative;
 			z-index: 3;
 		}
+
 		& > .spectra-background-video__wrapper {
 			z-index: 1;
 		}
@@ -103,6 +105,7 @@
 
 	// Dynamic video background styles
 	&.wp-block-spectra-slider__background {
+
 		video {
 			object-position: var(--spectra-background-position, center);
 		}

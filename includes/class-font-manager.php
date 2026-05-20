@@ -34,7 +34,7 @@ class FontManager {
 	 *
 	 * @var string
 	 */
-	const FONT_CACHE_KEY = 'spectra_google_fonts_cache';
+	const FONT_CACHE_KEY = 'spectra_blocks_google_fonts_cache';
 
 	/**
 	 * Initializes the font manager by hooking into the 'wp_enqueue_scripts' action.

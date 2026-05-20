@@ -5,6 +5,7 @@
  */
 
 .wp-block-spectra-google-map {
+
 	.spectra-google-map {
 		position: relative;
 		display: block;
@@ -27,6 +28,7 @@
 			border-width: 2px;
 			border-color: #ccc;
 			background-color: #f9f9f9;
+
 			&:hover {
 				border-color: #007cba;
 				background-color: #f0f6fc;
@@ -52,6 +54,7 @@
 
 	// Selected state
 	&.is-selected {
+
 		.spectra-google-map__iframe {
 			outline: 2px solid #007cba;
 			outline-offset: 2px;
@@ -60,12 +63,14 @@
 
 	// Block validation state
 	&.has-warning {
+
 		.spectra-google-map__iframe {
 			border-color: #f56e28;
 		}
 	}
 
 	&.has-error {
+
 		.spectra-google-map__iframe {
 			border-color: #d63638;
 		}

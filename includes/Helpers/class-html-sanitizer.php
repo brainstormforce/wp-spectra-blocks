@@ -952,9 +952,9 @@ class HtmlSanitizer {
 		// The final output passes through wp_kses() with an explicit allowed tags list.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
 			$style_content = wp_strip_all_tags( $style_content );
-			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content );
-			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content );
-			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript|url\s*\()/i', '', $style_content );
+			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip CSS comments.
+			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip hex escapes.
+			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript|url\s*\()/i', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip injection patterns.
 			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 

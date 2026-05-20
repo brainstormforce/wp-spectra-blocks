@@ -10,7 +10,7 @@
 
 			// For custom SVGs, set color on the SVG element so currentColor works for both fill and stroke
 			svg.spectra-custom-svg {
-				color: currentColor;
+				color: currentcolor;
 			}
 		}
 
@@ -20,7 +20,7 @@
 
 			// For custom SVGs on hover, set color on the SVG element so currentColor works
 			svg.spectra-custom-svg {
-				color: currentColor;
+				color: currentcolor;
 			}
 		}
 	}

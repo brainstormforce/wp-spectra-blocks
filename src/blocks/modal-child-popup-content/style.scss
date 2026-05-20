@@ -23,6 +23,7 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 	// Apply overflow clip when has video background and border-radius
 	&.has-video-background,
 	&.has-image-background {
+
 		&[style*="border-radius"] {
 			overflow: hidden; // Fallback for older browsers
 			overflow: clip !important;   // Modern standard for proper border-radius clipping

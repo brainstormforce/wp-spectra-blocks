@@ -1,0 +1,15 @@
+# Minified third-party assets
+assets/css/*.min.css
+
+# Build output
+build/
+admin/assets/build/
+
+# Node modules
+node_modules/
+
+# Bundled libraries (linted in their own repos)
+lib/
+
+# Composer vendor directory
+vendor/

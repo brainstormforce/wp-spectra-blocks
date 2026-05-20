@@ -43,6 +43,7 @@
 	}
 	// Loading state.
 	&.is-loading {
+
 		&__iframe {
 			opacity: 0.7;
 			pointer-events: none;

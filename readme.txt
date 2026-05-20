@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.6
+Stable tag: 0.0.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,6 +62,7 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+
 * Block source files are located in the `src/` directory (excluded from the distribution zip for size).
 * Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
 * The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
@@ -118,11 +119,13 @@ When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in 
 = Starter Templates Credit Server =
 When AI features are enabled, the plugin checks the credit balance for AI content generation features.
 * Service URL: `https://credits.startertemplates.com/`
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 = Brainstorm Force Store =
-When the "Get Spectra Pro" upsell is displayed, the plugin may fetch pricing and license information from the Brainstorm Force store.
+When the "Get Spectra Pro" upsell is displayed in the admin dashboard, pricing information is fetched from the Brainstorm Force store. This request is made by the administrator's browser, not the plugin server.
 * Service URL: `https://store.brainstormforce.com/`
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 = Unsplash =
@@ -139,6 +142,7 @@ When installing recommended plugins or themes from the admin dashboard, the plug
 = WebsiteDemos.net =
 When the Starter Templates library is enabled, template data may be synced from the WebsiteDemos.net service.
 * Service URL: `https://websitedemos.net/`
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 = YouTube =
@@ -147,28 +151,30 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Terms of Service](https://www.youtube.com/t/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
-= BSF Analytics =
-When the user opts in to share anonymous usage data, the bundled BSF Analytics library sends non-personal site environment data (WordPress version, theme, active plugins) to help improve the plugin.
-* Service URL: `https://analytics.brainstormforce.com/`
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
-
 = BSF Metrics =
 When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
 * Service URL: `https://metrics.brainstormforce.com/`
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 = Brainstorm Force Support =
 When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
 * Service URL: `https://support.brainstormforce.com/`
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 = Spectra Blocks News (wpspectra.com) =
-The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made when a logged-in administrator views the plugin dashboard.
+The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made by the administrator's browser, not the plugin server.
 * Service URL: `https://wpspectra.com/whats-new/feed/`
 * Data sent: None (standard GET request with no user data)
+* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 0.0.7 =
+* Fix: WordPress.org compliance fixes — sanitize CSS properties/values in inline styles.
+* Update: Updated all shared libraries to latest versions.
 
 = 0.0.6 =
 * Fix: Removed server-side IP geolocation lookups (WordPress.org compliance).
@@ -191,6 +197,7 @@ The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to
 * Fix: Added function_exists() guards around core file includes.
 * Fix: Added capability check to SVG upload filter.
 * Fix: Updated all shared libraries to latest versions.
+
 
 = 0.0.2 =
 * Fix: Address WordPress.org plugin review compliance issues.

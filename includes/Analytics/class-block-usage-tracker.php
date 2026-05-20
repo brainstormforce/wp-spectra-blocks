@@ -327,7 +327,7 @@ class BlockUsageTracker {
 			if ( ! empty( $block_prefix ) && ! empty( $block_name ) ) {
 				// Apply security filter to ensure only allowed blocks are tracked.
 				$allowed_block = apply_filters(
-					'spectra_analytics_allow_block_tracking',
+					'spectra_blocks_analytics_allow_block_tracking',
 					true,
 					$block_name,
 					$block_prefix,
@@ -353,8 +353,8 @@ class BlockUsageTracker {
 			}
 		}
 
-		// Apply filter to allow modification of tracked blocks.
-		$root_level_blocks = apply_filters( 'spectra_analytics_tracked_blocks', $root_level_blocks, $blocks );
+		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
+		$root_level_blocks = apply_filters( 'spectra_blocks_analytics_tracked_blocks', $root_level_blocks, $blocks );
 
 		return array_unique( $root_level_blocks );
 	}
@@ -875,7 +875,7 @@ class BlockUsageTracker {
 		if ( 'spectra-pro' === $block_prefix ) {
 			// Check multiple possible locations for Spectra Pro blocks.
 			// Resolve the plugins directory by stripping trailing slash before dirname().
-			$plugins_base = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
+			$plugins_base  = wp_normalize_path( dirname( rtrim( SPECTRA_BLOCKS_DIR, '/\\' ) ) ) . '/';
 			$possible_dirs = array(
 				$plugins_base . 'spectra-pro/spectra-pro-v2/build/blocks/',
 				$plugins_base . 'spectra-pro/spectra-pro-v2/src/blocks/',
@@ -950,7 +950,7 @@ class BlockUsageTracker {
 
 			// Apply security filter to ensure only safe blocks are included.
 			$allow_block = apply_filters(
-				'spectra_analytics_allow_root_block',
+				'spectra_blocks_analytics_allow_root_block',
 				true,
 				$block_name,
 				$block_prefix,
@@ -1080,8 +1080,8 @@ class BlockUsageTracker {
 			return false;
 		}
 
-		// Apply filter to allow override.
-		return apply_filters( 'spectra_analytics_include_pro_blocks', true );
+		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
+		return apply_filters( 'spectra_blocks_analytics_include_pro_blocks', true );
 	}
 
 	/**

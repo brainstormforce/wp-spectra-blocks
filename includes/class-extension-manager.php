@@ -102,7 +102,7 @@ class ExtensionManager {
 
 		$extension_dir = dirname( $extension_file );
 		$folder_name   = basename( $extension_dir ); // Get extension folder name.
-		$handle        = "spectra-3-extension-{$folder_name}-editor";
+		$handle        = "spectra-blocks-extension-{$folder_name}-editor";
 		$script_url    = SPECTRA_BLOCKS_URL . "build/extensions/{$folder_name}/index.js";
 		$script_path   = SPECTRA_BLOCKS_DIR . "build/extensions/{$folder_name}/index.js";
 
@@ -138,7 +138,7 @@ class ExtensionManager {
 		if ( 'image-mask' === $folder_name ) {
 			wp_localize_script(
 				$handle,
-				'spectraExtensions',
+				'spectraBlocksExtensions',
 				array(
 					'pluginUrl' => trailingslashit( SPECTRA_BLOCKS_URL ),
 					'assetsUrl' => trailingslashit( SPECTRA_BLOCKS_URL ) . 'assets/',
@@ -153,6 +153,6 @@ class ExtensionManager {
 		 *
 		 * @since 3.0.0
 		 */
-		do_action( 'spectra_3_extensions_editor_assets', $folder_name, $asset_file );
+		do_action( 'spectra_blocks_extensions_editor_assets', $folder_name, $asset_file );
 	}
 }

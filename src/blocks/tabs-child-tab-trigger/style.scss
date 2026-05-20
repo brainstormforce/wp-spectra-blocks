@@ -1,4 +1,5 @@
 /* Note that '@' rules like mixin and include have been stable and known for a long time. */
+
 /* Disabling the no unknown '@' rules check, as all rules added here are cross-checked to be valid. */
 /* stylelint-disable at-rule-no-unknown */
 
@@ -21,6 +22,7 @@
 
 	// Static structural styles for text color
 	&.spectra-text-color {
+
 		h1,
 		h2,
 		h3,
@@ -67,7 +69,7 @@
 			// For custom SVGs when active, set color on the SVG element so currentColor works
 			&.spectra-custom-svg:not(.spectra-icon-color-active) {
 				fill: none !important;
-				color: currentColor !important;
+				color: currentcolor !important;
 			}
 		}
 

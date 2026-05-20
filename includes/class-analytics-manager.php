@@ -52,6 +52,8 @@ class AnalyticsManager {
 	public function get_block_analytics_summary() {
 		$tracker = BlockUsageTracker::instance();
 
+		$extension_tracker = ExtensionUsageTracker::instance();
+
 		return array(
 			// Block analytics.
 			'block_usage_stats'       => $tracker->get_usage_statistics(),
@@ -61,8 +63,8 @@ class AnalyticsManager {
 			// Site activity KPIs (Active Site / Super Site).
 			'site_activity'           => $tracker->get_site_activity_level(),
 			// Extension analytics.
-			'extension_usage_stats'   => $tracker->get_extension_statistics(),
-			'top_used_extensions'     => $tracker->get_top_used_extensions( 4 ),
+			'extension_usage_stats'   => $extension_tracker->get_extension_statistics(),
+			'top_used_extensions'     => $extension_tracker->get_top_used_extensions( 4 ),
 			'extension_adoption_rate' => $this->calculate_extension_adoption_rate(),
 		);
 	}
@@ -100,7 +102,7 @@ class AnalyticsManager {
 	 * @return array Extension adoption statistics.
 	 */
 	private function calculate_extension_adoption_rate() {
-		$tracker         = BlockUsageTracker::instance();
+		$tracker         = ExtensionUsageTracker::instance();
 		$extension_stats = $tracker->get_extension_statistics();
 		$used_extensions = $extension_stats['most_used_extensions'] ?? array();
 

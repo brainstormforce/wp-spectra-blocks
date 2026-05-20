@@ -56,8 +56,8 @@ class Modal {
 		$this->register_modal_assets();
 
 		// Enqueue only in editor.
-		if ( wp_script_is( 'spectra-modal-settings', 'registered' ) ) {
-			wp_enqueue_script( 'spectra-modal-settings' );
+		if ( wp_script_is( 'spectra-blocks-modal-settings', 'registered' ) ) {
+			wp_enqueue_script( 'spectra-blocks-modal-settings' );
 		}
 	}
 
@@ -72,8 +72,8 @@ class Modal {
 
 		$this->register_modal_assets();
 
-		if ( $this->needs_assets && wp_script_is( 'spectra-modal-settings', 'registered' ) ) {
-			wp_enqueue_script( 'spectra-modal-settings' );
+		if ( $this->needs_assets && wp_script_is( 'spectra-blocks-modal-settings', 'registered' ) ) {
+			wp_enqueue_script( 'spectra-blocks-modal-settings' );
 		}
 	}
 
@@ -86,7 +86,7 @@ class Modal {
 	 */
 	private function register_modal_assets() {
 		wp_register_script(
-			'spectra-modal-settings',
+			'spectra-blocks-modal-settings',
 			SPECTRA_BLOCKS_URL . 'assets/js/modal-script.js',
 			array( 'wp-hooks' ),
 			SPECTRA_BLOCKS_VER,
