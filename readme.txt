@@ -1,7 +1,7 @@
 === Spectra Blocks ===
 Contributors: brainstormforce
 Tags: gutenberg, blocks, block-editor, container, accordion
-Requires at least: 6.6
+Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
 Stable tag: 0.0.8
@@ -43,7 +43,7 @@ PHP 8.1 or higher is required.
 
 = What WordPress version is required? =
 
-WordPress 6.6 or higher is required.
+WordPress 6.9 or higher is required.
 
 = Does this plugin require the original Spectra plugin? =
 
