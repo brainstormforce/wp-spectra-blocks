@@ -172,6 +172,10 @@ class AssetLoader {
 		);
 
 		// Compute the icon category list from custom_categories per icon.
+		// Cast keys to strings: array_merge() converts numeric string keys ('0','1'…) to PHP integers.
+		// Without strval(), wp_json_encode outputs JS numbers which are falsy for icons named '0',
+		// breaking the icon || 'star' fallback in the icon picker.
+		$icon_keys      = array_map( 'strval', array_keys( $merged_icons ) );
 		$categories_map = array();
 		foreach ( $merged_icons as $icon_data ) {
 			if ( ! empty( $icon_data['custom_categories'] ) && is_array( $icon_data['custom_categories'] ) ) {
@@ -189,7 +193,7 @@ class AssetLoader {
 
 		// Output the global variables as an inline script before wp-blocks runs.
 		$js  = 'var spectra_blocks_info = ' . wp_json_encode( $editor_vars ) . ';' . "\n";
-		$js .= 'window.spectraBlocksSvgIcons = Object.keys( spectra_blocks_info.spectra_blocks_svg_icons || {} );' . "\n";
+		$js .= 'window.spectraBlocksSvgIcons = ' . wp_json_encode( $icon_keys ) . ';' . "\n";
 		$js .= 'window.spectraBlocksIconCategoryList = ' . wp_json_encode( $icon_category_list ) . ';' . "\n";
 
 		wp_add_inline_script( 'wp-blocks', $js, 'before' );
