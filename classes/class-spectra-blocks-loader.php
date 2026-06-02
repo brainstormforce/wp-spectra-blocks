@@ -89,7 +89,6 @@ class Spectra_Blocks_Loader {
 		add_action( 'plugins_loaded', array( __CLASS__, 'load_plugin' ) );
 		register_activation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_activation' ) );
 		register_deactivation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_deactivation' ) );
-
 	}
 
 	/**
@@ -109,7 +108,6 @@ class Spectra_Blocks_Loader {
 	public static function on_deactivation() {
 		flush_rewrite_rules();
 	}
-
 }
 
 Spectra_Blocks_Loader::init();
