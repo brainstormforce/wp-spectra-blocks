@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.6
 Tested up to: 6.9
 Requires PHP: 8.1
-Stable tag: 0.0.7
+Stable tag: 0.0.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -128,6 +128,11 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Privacy Policy](https://policies.google.com/privacy)
 
 == Changelog ==
+
+= 0.0.8 =
+* Fix: Remove bundled BSF shared libraries (zip-ai, astra-notices, nps-survey, zipwp-images, gutenberg-templates) to resolve WordPress.org plugin review compliance issues.
+* Fix: Remove admin dashboard RSS feed fetch (What's New panel) that contacted wpspectra.com without explicit opt-in.
+* Update: Simplify External Services documentation to cover only services used by core plugin functionality.
 
 = 0.0.7 =
 * Fix: WordPress.org compliance fixes — sanitize CSS properties/values in inline styles.

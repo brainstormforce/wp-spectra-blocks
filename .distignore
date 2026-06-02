@@ -53,11 +53,8 @@ wp-org-submission-report*.md
 .claude/
 .git/
 
-# Archive artifacts in lib/
+# Archive artifacts
 *.zip
-
-# Composer installs BSF libs into vendor/brainstormforce/ but plugin loads from lib/ — exclude duplicate
-vendor/brainstormforce/
 
 # Admin source (admin/assets/build/ is included, raw source is not needed)
 admin/assets/src/
@@ -68,29 +65,6 @@ admin/package-lock.json
 admin/webpack.config.js
 admin/tailwind.config.js
 admin/postcss.config.js
-
-# Library test files (not needed in production, flagged by WP.org)
-lib/astra-notices/tests/
-lib/gutenberg-templates/tests/
-lib/zip-ai/tests/
-lib/zipwp-images/tests/
-lib/nps-survey/tests/
-
-# Library docs with review filter URLs (flagged by WP.org)
-lib/astra-notices/README.MD
-lib/astra-notices/README.md
-
-# Library dev configs (not needed in production)
-lib/*/phpstan.neon
-lib/*/phpstan-baseline.neon
-lib/*/phpinsights.php
-lib/*/.gitignore
-lib/*/.distignore
-lib/*/composer.json
-lib/*/package.json
-lib/*/package-lock.json
-lib/*/node_modules/
-lib/*/webpack.config.js
 
 # Dev artifacts (hidden files / test output)
 .env
@@ -104,4 +78,3 @@ playwright-report/
 
 # Composer credential files — never ship in submission zip (contain GitHub PATs)
 auth.json
-lib/*/auth.json
