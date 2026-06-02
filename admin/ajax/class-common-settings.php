@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SpectraBlocksAdmin\Ajax\Ajax_Base;
 use SpectraBlocksAdmin\Inc\Admin_Helper;
 
-use ZipAI\Classes\Helper as Zip_Ai_Helper;
-use ZipAI\Classes\Module as Zip_Ai_Module;
 
 /**
  * Class Common_Settings.
@@ -76,8 +74,6 @@ class Common_Settings extends Ajax_Base {
 			'recaptcha_secret_key_v3',
 			'pro_activate',
 			'btn_inherit_from_theme',
-			'zip_ai_module_status',
-			'zip_ai_verify_authenticity',
 			'enable_bsf_analytics_option',
 			'clear_v3_cache',
 			'disable_css_cache',
@@ -690,103 +686,6 @@ class Common_Settings extends Ajax_Base {
 
 			$wp_filesystem = spectra_blocks_filesystem();
 			$wp_filesystem->put_contents( $path_and_file_name, $_block_css, FS_CHMOD_FILE );
-		}
-	}
-
-	/**
-	 * Save setting - Enables or Disables the given Zip AI Module.
-	 *
-	 * @since 2.10.2
-	 * @return void
-	 */
-	public function zip_ai_module_status() {
-		// Check permission.
-		$this->check_permission_nonce( 'spectra_blocks_zip_ai_module_status' );
-		// Check the post value.
-		$value = $this->check_post_value();
-		// Check the post module.
-		$module = $this->check_post_value( 'module' );
-
-		// If module is not a string, then abandon ship.
-		if ( ! is_string( $module ) ) {
-			// Since the module was not a string, set it to a blank string and send an error message as the response.
-			$module = '';
-			wp_send_json_error( array( 'messsage' => __( 'Module not found!', 'spectra-blocks' ) ) );
-		}
-
-		// Sanitize the module.
-		$module = sanitize_text_field( $module );
-
-		// Replace the underscores in the module name with spaces, make the word AI capital, and capitalize the first letter of each word.
-		$module_name = ucwords( str_replace( '_', ' ', str_replace( 'ai', 'AI', $module ) ) );
-
-		// Check if the Zip AI Module is available.
-		if ( class_exists( '\ZipAI\Classes\Module' ) ) {
-			// If the value is 'disabled', disable the Zip AI Module - else enable it.
-			if ( 'disabled' === $value ) {
-				if ( Zip_Ai_Module::disable( $module ) ) {
-					wp_send_json_success(
-						array(
-							'messsage' => sprintf(
-							// Translators: %s is the module name.
-								__( '%s disabled!', 'spectra-blocks' ),
-								$module_name
-							),
-						)
-					);
-				} else {
-					wp_send_json_error(
-						array(
-							'messsage' => sprintf(
-							// Translators: %s is the module name.
-								__( 'Unable to disable %s', 'spectra-blocks' ),
-								$module_name
-							),
-						)
-					);
-				}
-			} elseif ( Zip_Ai_Module::enable( $module ) ) {
-					wp_send_json_success(
-						array(
-							'messsage' => sprintf(
-							// Translators: %s is the module name.
-								__( '%s enabled!', 'spectra-blocks' ),
-								$module_name
-							),
-						)
-					);
-			} else {
-				wp_send_json_error(
-					array(
-						'messsage' => sprintf(
-						// Translators: %s is the module name.
-							__( 'Unable to enable %s', 'spectra-blocks' ),
-							$module_name
-						),
-					)
-				);
-			}
-		} else {
-			wp_send_json_error( array( 'messsage' => __( 'Unable to save setting.', 'spectra-blocks' ) ) );
-		}
-	}
-
-	/**
-	 * Ajax Request - Verify if Zip AI is authorized.
-	 *
-	 * @since 2.10.2
-	 * @return void
-	 */
-	public function zip_ai_verify_authenticity() {
-		// Check permission.
-		$this->check_permission_nonce( 'spectra_blocks_zip_ai_verify_authenticity' );
-
-		// If the Zip AI Helper Class exists, return a success based on the authorizatoin status, else return an error.
-		if ( class_exists( '\ZipAI\Classes\Helper' ) ) {
-			// Send a boolean based on whether the auth token has been added.
-			wp_send_json_success( array( 'is_authorized' => Zip_Ai_Helper::is_authorized() ) );
-		} else {
-			wp_send_json_error( array( 'messsage' => __( 'Unable to verify authenticity.', 'spectra-blocks' ) ) );
 		}
 	}
 

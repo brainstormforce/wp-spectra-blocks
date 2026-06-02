@@ -6,45 +6,7 @@
     "require": {
         "php": ">=8.1",
         "composer/installers": "^2.0",
-        "enshrined/svg-sanitize": "^0.22.0",
-        "brainstormforce/zip-ai": "~2",
-        "brainstormforce/astra-notices": "~1",
-        "brainstormforce/nps-survey": "^1",
-        "brainstormforce/zipwp-images": "^1",
-        "brainstormforce/gutenberg-templates": "dev-master"
-    },
-    "repositories": [
-        {
-            "name": "brainstormforce/gutenberg-templates",
-            "type": "vcs",
-            "url": "git@github.com:brainstormforce/gutenberg-templates.git"
-        },
-        {
-            "name": "brainstormforce/zip-ai",
-            "type": "vcs",
-            "url": "git@github.com:brainstormforce/zipwp-ai-sdk.git"
-        },
-        {
-            "name": "brainstormforce/zipwp-images",
-            "type": "vcs",
-            "url": "git@github.com:brainstormforce/zipwp-images.git"
-        },
-        {
-            "name": "brainstormforce/nps-survey",
-            "type": "vcs",
-            "url": "git@github.com:brainstormforce/nps-survey.git"
-        }
-    ],
-    "extra": {
-        "installer-paths": {
-            "lib/{$name}/": [
-                "brainstormforce/zip-ai",
-                "brainstormforce/astra-notices",
-                "brainstormforce/nps-survey",
-                "brainstormforce/zipwp-images",
-                "brainstormforce/gutenberg-templates"
-            ]
-        }
+        "enshrined/svg-sanitize": "^0.22.0"
     },
     "autoload": {
         "classmap": ["includes/"]
@@ -67,6 +29,6 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         }
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

@@ -631,20 +631,12 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 						case 'insert-ready-made-sections':
 							waitForEditor(() => {
 								setTimeout(() => {
-									waitForElement('#ast-block-templates-button-wrap', (element) => {
-										if (isDistractionFreeMode()) {
-											return;
+									// Design library removed in this version.
+									setTimeout(() => {
+										if (window.history && window.history.replaceState) {
+											window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
 										}
-										highlightElement( element, 5000, '" . esc_js( __( 'To access design library click here.', 'spectra-blocks' ) ) . "' );
-
-										// Remove hash after successful execution
-										setTimeout(() => {
-											if (window.history && window.history.replaceState) {
-												window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-											}
-										}, 500);
-									}, 1000);
-								}, 2000);
+									}, 500);
 							});
 							break;
 
