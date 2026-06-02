@@ -163,7 +163,6 @@ class AbilitiesManager {
 			MoveBlock::class,
 			DuplicateBlock::class,
 
-
 			// Configuration.
 			GetPluginSettings::class,
 			UpdatePluginSetting::class,
