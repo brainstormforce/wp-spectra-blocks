@@ -629,15 +629,6 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 							break;
 
 						case 'insert-ready-made-sections':
-							waitForEditor(() => {
-								setTimeout(() => {
-									// Design library removed in this version.
-									setTimeout(() => {
-										if (window.history && window.history.replaceState) {
-											window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-										}
-									}, 500);
-							});
 							break;
 
 						case 'replace-placeholder-content':
