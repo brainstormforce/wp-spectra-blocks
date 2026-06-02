@@ -74,7 +74,6 @@ class Common_Settings extends Ajax_Base {
 			'recaptcha_secret_key_v3',
 			'pro_activate',
 			'btn_inherit_from_theme',
-			'enable_bsf_analytics_option',
 			'clear_v3_cache',
 			'disable_css_cache',
 		);
@@ -687,18 +686,6 @@ class Common_Settings extends Ajax_Base {
 			$wp_filesystem = spectra_blocks_filesystem();
 			$wp_filesystem->put_contents( $path_and_file_name, $_block_css, FS_CHMOD_FILE );
 		}
-	}
-
-	/**
-	 * Save setting - Usage data.
-	 *
-	 * @since 2.19.5
-	 * @return void
-	 */
-	public function enable_bsf_analytics_option() {
-		$this->check_permission_nonce( 'spectra_blocks_enable_bsf_analytics_option' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_analytics_optin', sanitize_text_field( $value ) );
 	}
 
 	/**

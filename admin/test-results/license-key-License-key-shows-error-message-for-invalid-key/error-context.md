@@ -1,0 +1,452 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation "Main menu":
+      - link "Skip to main content" [ref=e3] [cursor=pointer]:
+        - /url: "#wpbody-content"
+      - link "Skip to toolbar" [ref=e4] [cursor=pointer]:
+        - /url: "#wp-toolbar"
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "Dashboard" [ref=e9] [cursor=pointer]:
+            - /url: index.php
+            - generic [ref=e10]: 
+            - generic [ref=e11]: Dashboard
+          - list [ref=e12]:
+            - listitem [ref=e13]:
+              - link "Home" [ref=e14] [cursor=pointer]:
+                - /url: index.php
+            - listitem [ref=e15]:
+              - link "Updates 15" [ref=e16] [cursor=pointer]:
+                - /url: update-core.php
+                - text: Updates
+                - generic [ref=e17]: "15"
+        - listitem [ref=e18]:
+          - link "Astra" [ref=e19] [cursor=pointer]:
+            - /url: admin.php?page=astra
+            - generic [ref=e21]: Astra
+          - list [ref=e22]:
+            - listitem [ref=e23]:
+              - link "Dashboard" [ref=e24] [cursor=pointer]:
+                - /url: admin.php?page=astra
+            - listitem [ref=e25]:
+              - link "Customize" [ref=e26] [cursor=pointer]:
+                - /url: customize.php
+            - listitem [ref=e27]:
+              - link "Site Builder" [ref=e28] [cursor=pointer]:
+                - /url: admin.php?page=theme-builder-free
+            - listitem [ref=e29]:
+              - link "Learn 5" [ref=e30] [cursor=pointer]:
+                - /url: admin.php?page=astra&path=learn
+                - text: Learn
+                - generic [ref=e31]: "5"
+        - listitem [ref=e32]
+        - listitem [ref=e34]:
+          - link "Posts" [ref=e35] [cursor=pointer]:
+            - /url: edit.php
+            - generic [ref=e36]: 
+            - generic [ref=e37]: Posts
+          - list [ref=e38]:
+            - listitem [ref=e39]:
+              - link "All Posts" [ref=e40] [cursor=pointer]:
+                - /url: edit.php
+            - listitem [ref=e41]:
+              - link "Add Post" [ref=e42] [cursor=pointer]:
+                - /url: post-new.php
+            - listitem [ref=e43]:
+              - link "Categories" [ref=e44] [cursor=pointer]:
+                - /url: edit-tags.php?taxonomy=category
+            - listitem [ref=e45]:
+              - link "Tags" [ref=e46] [cursor=pointer]:
+                - /url: edit-tags.php?taxonomy=post_tag
+        - listitem [ref=e47]:
+          - link "Media" [ref=e48] [cursor=pointer]:
+            - /url: upload.php
+            - generic [ref=e49]: 
+            - generic [ref=e50]: Media
+          - list [ref=e51]:
+            - listitem [ref=e52]:
+              - link "Library" [ref=e53] [cursor=pointer]:
+                - /url: upload.php
+            - listitem [ref=e54]:
+              - link "Add Media File" [ref=e55] [cursor=pointer]:
+                - /url: media-new.php
+        - listitem [ref=e56]:
+          - link "Pages" [ref=e57] [cursor=pointer]:
+            - /url: edit.php?post_type=page
+            - generic [ref=e58]: 
+            - generic [ref=e59]: Pages
+          - list [ref=e60]:
+            - listitem [ref=e61]:
+              - link "All Pages" [ref=e62] [cursor=pointer]:
+                - /url: edit.php?post_type=page
+            - listitem [ref=e63]:
+              - link "Add Page" [ref=e64] [cursor=pointer]:
+                - /url: post-new.php?post_type=page
+        - listitem [ref=e65]:
+          - link "Comments" [ref=e66] [cursor=pointer]:
+            - /url: edit-comments.php
+            - generic [ref=e67]: 
+            - generic [ref=e68]: Comments
+        - listitem [ref=e69]:
+          - link "SureForms" [ref=e70] [cursor=pointer]:
+            - /url: admin.php?page=sureforms_menu
+            - generic [ref=e72]: SureForms
+          - list [ref=e73]:
+            - listitem [ref=e74]:
+              - link "Dashboard" [ref=e75] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_menu
+            - listitem [ref=e76]:
+              - link "Forms" [ref=e77] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_forms
+            - listitem [ref=e78]:
+              - link "New Form" [ref=e79] [cursor=pointer]:
+                - /url: admin.php?page=add-new-form
+            - listitem [ref=e80]:
+              - link "Entries" [ref=e81] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_entries
+            - listitem [ref=e82]:
+              - link "Payments" [ref=e83] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_payments
+            - listitem [ref=e84]:
+              - link "Quizzes New" [ref=e85] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_quiz_entries
+            - listitem [ref=e86]:
+              - link "Survey Reports New" [ref=e87] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_survey_reports
+            - listitem [ref=e88]:
+              - link "Settings" [ref=e89] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_form_settings
+            - listitem [ref=e90]:
+              - link "Learn" [ref=e91] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_learn
+            - listitem [ref=e92]:
+              - link "SMTP" [ref=e93] [cursor=pointer]:
+                - /url: admin.php?page=sureforms_smtp
+            - listitem [ref=e94]:
+              - link "Upgrade" [ref=e95] [cursor=pointer]:
+                - /url: https://sureforms.com/upgrade?utm_medium=submenu_link_upgrade
+        - listitem [ref=e96]:
+          - link "Spectra" [ref=e97] [cursor=pointer]:
+            - /url: admin.php?page=spectra-blocks
+            - generic [ref=e99]: Spectra
+          - list [ref=e100]:
+            - listitem [ref=e101]:
+              - link "Dashboard" [ref=e102] [cursor=pointer]:
+                - /url: admin.php?page=spectra-blocks
+            - listitem [ref=e103]:
+              - link "AI Features" [ref=e104] [cursor=pointer]:
+                - /url: admin.php?page=spectra-blocks&path=ai-features
+            - listitem [ref=e105]:
+              - link "Global Styles" [ref=e106] [cursor=pointer]:
+                - /url: admin.php?page=spectra-blocks&path=global-styles
+            - listitem [ref=e107]:
+              - link "Popup Builder" [ref=e108] [cursor=pointer]:
+                - /url: edit.php?post_type=spectra-popup
+            - listitem [ref=e109]:
+              - link "Learn" [ref=e110] [cursor=pointer]:
+                - /url: admin.php?page=spectra-blocks&path=learn
+            - listitem [ref=e111]:
+              - link "Settings" [ref=e112] [cursor=pointer]:
+                - /url: admin.php?page=spectra-blocks&path=settings
+        - listitem [ref=e113]:
+          - link "Dummy Content Generator" [ref=e114] [cursor=pointer]:
+            - /url: admin.php?page=wp_dummy_content_generator-dashboard
+            - generic [ref=e115]: 
+            - generic [ref=e116]: Dummy Content Generator
+          - list [ref=e117]:
+            - listitem [ref=e118]:
+              - link "Dummy Content Generator" [ref=e119] [cursor=pointer]:
+                - /url: admin.php?page=wp_dummy_content_generator-dashboard
+            - listitem [ref=e120]:
+              - link "Generate Users" [ref=e121] [cursor=pointer]:
+                - /url: admin.php?page=wp_dummy_content_generator-users
+            - listitem [ref=e122]:
+              - link "Generate Posts" [ref=e123] [cursor=pointer]:
+                - /url: admin.php?page=wp_dummy_content_generator-posts
+            - listitem [ref=e124]:
+              - link "Generate Products" [ref=e125] [cursor=pointer]:
+                - /url: admin.php?page=wp_dummy_content_generator-products
+            - listitem [ref=e126]:
+              - link "Manage Thumbnails" [ref=e127] [cursor=pointer]:
+                - /url: admin.php?page=wp_dummy_content_generator-thumbnails
+        - listitem [ref=e128]
+        - listitem [ref=e130]:
+          - link "Appearance" [ref=e131] [cursor=pointer]:
+            - /url: themes.php
+            - generic [ref=e132]: 
+            - generic [ref=e133]: Appearance
+          - list [ref=e134]:
+            - listitem [ref=e135]:
+              - link "Themes 1" [ref=e136] [cursor=pointer]:
+                - /url: themes.php
+                - text: Themes
+                - generic [ref=e137]: "1"
+            - listitem [ref=e138]:
+              - link "Design" [ref=e139] [cursor=pointer]:
+                - /url: site-editor.php
+            - listitem [ref=e140]:
+              - link "Customize" [ref=e141] [cursor=pointer]:
+                - /url: customize.php?return=%2Fwp-admin%2Fadmin.php%3Fpage%3Dspectra-blocks%26path%3Dsettings%26settings%3Dlicense
+            - listitem [ref=e142]:
+              - link "Widgets" [ref=e143] [cursor=pointer]:
+                - /url: widgets.php
+            - listitem [ref=e144]:
+              - link "Fonts" [ref=e145] [cursor=pointer]:
+                - /url: font-library.php
+            - listitem [ref=e146]:
+              - link "Menus" [ref=e147] [cursor=pointer]:
+                - /url: nav-menus.php
+            - listitem [ref=e148]:
+              - link "Theme File Editor" [ref=e149] [cursor=pointer]:
+                - /url: theme-editor.php
+        - listitem [ref=e150]:
+          - link "Plugins 14" [ref=e151] [cursor=pointer]:
+            - /url: plugins.php
+            - generic [ref=e152]: 
+            - generic [ref=e153]:
+              - text: Plugins
+              - generic [ref=e154]: "14"
+          - list [ref=e155]:
+            - listitem [ref=e156]:
+              - link "Installed Plugins" [ref=e157] [cursor=pointer]:
+                - /url: plugins.php
+            - listitem [ref=e158]:
+              - link "Add Plugin" [ref=e159] [cursor=pointer]:
+                - /url: plugin-install.php
+            - listitem [ref=e160]:
+              - link "Plugin File Editor" [ref=e161] [cursor=pointer]:
+                - /url: plugin-editor.php
+        - listitem [ref=e162]:
+          - link "Users" [ref=e163] [cursor=pointer]:
+            - /url: users.php
+            - generic [ref=e164]: 
+            - generic [ref=e165]: Users
+          - list [ref=e166]:
+            - listitem [ref=e167]:
+              - link "All Users" [ref=e168] [cursor=pointer]:
+                - /url: users.php
+            - listitem [ref=e169]:
+              - link "Add User" [ref=e170] [cursor=pointer]:
+                - /url: user-new.php
+            - listitem [ref=e171]:
+              - link "Profile" [ref=e172] [cursor=pointer]:
+                - /url: profile.php
+        - listitem [ref=e173]:
+          - link "Tools" [ref=e174] [cursor=pointer]:
+            - /url: tools.php
+            - generic [ref=e175]: 
+            - generic [ref=e176]: Tools
+          - list [ref=e177]:
+            - listitem [ref=e178]:
+              - link "Available Tools" [ref=e179] [cursor=pointer]:
+                - /url: tools.php
+            - listitem [ref=e180]:
+              - link "Import" [ref=e181] [cursor=pointer]:
+                - /url: import.php
+            - listitem [ref=e182]:
+              - link "Export" [ref=e183] [cursor=pointer]:
+                - /url: export.php
+            - listitem [ref=e184]:
+              - link "Site Health 1" [ref=e185] [cursor=pointer]:
+                - /url: site-health.php
+                - text: Site Health
+                - generic [ref=e186]: "1"
+            - listitem [ref=e187]:
+              - link "Export Personal Data" [ref=e188] [cursor=pointer]:
+                - /url: export-personal-data.php
+            - listitem [ref=e189]:
+              - link "Erase Personal Data" [ref=e190] [cursor=pointer]:
+                - /url: erase-personal-data.php
+            - listitem [ref=e191]:
+              - link "Plugin Check" [ref=e192] [cursor=pointer]:
+                - /url: tools.php?page=plugin-check
+            - listitem [ref=e193]:
+              - link "Plugin Check Namer" [ref=e194] [cursor=pointer]:
+                - /url: tools.php?page=plugin-check-namer
+            - listitem [ref=e195]:
+              - link "WP Reset" [ref=e196] [cursor=pointer]:
+                - /url: tools.php?page=wp-reset
+            - listitem [ref=e197]:
+              - link "Beta Testing" [ref=e198] [cursor=pointer]:
+                - /url: tools.php?page=wp-beta-tester
+            - listitem [ref=e199]:
+              - link "Scheduled Actions" [ref=e200] [cursor=pointer]:
+                - /url: tools.php?page=action-scheduler
+        - listitem [ref=e201]:
+          - link "Settings" [ref=e202] [cursor=pointer]:
+            - /url: options-general.php
+            - generic [ref=e203]: 
+            - generic [ref=e204]: Settings
+          - list [ref=e205]:
+            - listitem [ref=e206]:
+              - link "General" [ref=e207] [cursor=pointer]:
+                - /url: options-general.php
+            - listitem [ref=e208]:
+              - link "Connectors" [ref=e209] [cursor=pointer]:
+                - /url: options-connectors.php
+            - listitem [ref=e210]:
+              - link "Writing" [ref=e211] [cursor=pointer]:
+                - /url: options-writing.php
+            - listitem [ref=e212]:
+              - link "Reading" [ref=e213] [cursor=pointer]:
+                - /url: options-reading.php
+            - listitem [ref=e214]:
+              - link "Discussion" [ref=e215] [cursor=pointer]:
+                - /url: options-discussion.php
+            - listitem [ref=e216]:
+              - link "Media" [ref=e217] [cursor=pointer]:
+                - /url: options-media.php
+            - listitem [ref=e218]:
+              - link "Permalinks" [ref=e219] [cursor=pointer]:
+                - /url: options-permalink.php
+            - listitem [ref=e220]:
+              - link "Privacy" [ref=e221] [cursor=pointer]:
+                - /url: options-privacy.php
+            - listitem [ref=e222]:
+              - link "Plugin Check" [ref=e223] [cursor=pointer]:
+                - /url: options-general.php?page=plugin-check-settings
+            - listitem [ref=e224]:
+              - link "ERA Assistant" [ref=e225] [cursor=pointer]:
+                - /url: options-general.php?page=zipwp-mcp-assistant
+            - listitem [ref=e226]:
+              - link "ERA Code Snippets" [ref=e227] [cursor=pointer]:
+                - /url: options-general.php?page=era-snippets
+        - listitem [ref=e228]:
+          - button "Collapse Main menu" [expanded] [ref=e229] [cursor=pointer]:
+            - generic [ref=e231]: Collapse Menu
+    - generic [ref=e232]:
+      - generic [ref=e233]:
+        - navigation "Toolbar":
+          - menu:
+            - group [ref=e234]:
+              - menuitem "About WordPress" [ref=e235] [cursor=pointer]:
+                - generic [ref=e237]: About WordPress
+            - group [ref=e238]:
+              - menuitem "Spectra-local-site" [ref=e239] [cursor=pointer]
+            - group [ref=e240]:
+              - menuitem "15 updates available" [ref=e241] [cursor=pointer]:
+                - generic [ref=e243]: "15"
+                - generic [ref=e244]: 15 updates available
+            - group [ref=e245]:
+              - menuitem "⌘K Open command palette" [ref=e246] [cursor=pointer]:
+                - generic [ref=e248]:
+                  - text: ⌘K
+                  - generic [ref=e249]: Open command palette
+            - group [ref=e250]:
+              - menuitem "0 Comments in moderation" [ref=e251] [cursor=pointer]:
+                - generic [ref=e253]: "0"
+                - generic [ref=e254]: 0 Comments in moderation
+            - group [ref=e255]:
+              - menuitem "New" [ref=e256] [cursor=pointer]:
+                - generic [ref=e258]: New
+            - group [ref=e259]:
+              - menuitem " Manage dummy data" [ref=e260] [cursor=pointer]:
+                - generic [ref=e261]: 
+                - text: Manage dummy data
+          - menu [ref=e262]:
+            - group [ref=e263]:
+              - menuitem "Howdy, root" [ref=e264] [cursor=pointer]
+      - main [ref=e265]:
+        - generic [ref=e266]:
+          - text:  
+          - generic [ref=e270]:
+            - navigation [ref=e271]:
+              - generic [ref=e272]:
+                - link [ref=e275] [cursor=pointer]:
+                  - /url: admin.php?page=spectra-blocks
+                  - img [ref=e276]
+                - generic [ref=e281]:
+                  - link "Welcome" [ref=e282] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks
+                  - link "Popup Builder" [ref=e283] [cursor=pointer]:
+                    - /url: http://spectra-local-site.local:10019/wp-admin/edit.php?post_type=spectra-popup
+                  - link "Learn" [ref=e284] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks&path=learn
+                  - link "Global Styles" [ref=e285] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks&path=global-styles
+                  - link "AI Features" [ref=e286] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks&path=ai-features
+                  - link "Settings" [ref=e287] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks&path=settings
+                    - text: Settings
+                - generic [ref=e289]:
+                  - button "Pro Open Menu" [ref=e292] [cursor=pointer]:
+                    - generic [ref=e294]: Pro
+                    - generic [ref=e295]: Open Menu
+                  - link [ref=e297] [cursor=pointer]:
+                    - /url: https://wpspectra.com/docs/?utm_source=free-plugin&utm_medium=spectra-dashboard&utm_campaign=documentation
+                    - img [ref=e298]
+                  - generic [ref=e303] [cursor=pointer]:
+                    - img [ref=e304]
+                    - generic [ref=e306]: "9"
+                  - button "Open Menu" [ref=e309] [cursor=pointer]:
+                    - img [ref=e311]
+                    - generic [ref=e314]: Open Menu
+            - generic [ref=e315]:
+              - generic [ref=e320]:
+                - menu [ref=e322]:
+                  - link "My Account" [ref=e323] [cursor=pointer]:
+                    - /url: admin.php?page=spectra-blocks&path=settings&settings=license
+                    - menuitem "My Account" [ref=e324]:
+                      - img [ref=e325]
+                      - generic [ref=e328]: My Account
+                - generic [ref=e329]:
+                  - button "Editor" [expanded] [ref=e330] [cursor=pointer]:
+                    - generic [ref=e331]: Editor
+                  - menu [ref=e332]:
+                    - link "Editor Options" [ref=e333] [cursor=pointer]:
+                      - /url: admin.php?page=spectra-blocks&path=settings&settings=global-settings
+                      - menuitem "Editor Options" [ref=e334]:
+                        - img [ref=e335]
+                        - generic [ref=e338]: Editor Options
+                - generic [ref=e339]:
+                  - button "Utilities" [expanded] [ref=e340] [cursor=pointer]:
+                    - generic [ref=e341]: Utilities
+                  - menu [ref=e342]:
+                    - link "Performance" [ref=e343] [cursor=pointer]:
+                      - /url: admin.php?page=spectra-blocks&path=settings&settings=fonts-performance
+                      - menuitem "Performance" [ref=e344]:
+                        - img [ref=e345]
+                        - generic [ref=e347]: Performance
+                - generic [ref=e348]:
+                  - button "Preferences" [expanded] [ref=e349] [cursor=pointer]:
+                    - generic [ref=e350]: Preferences
+                  - menu [ref=e351]:
+                    - link "Integrations" [ref=e352] [cursor=pointer]:
+                      - /url: admin.php?page=spectra-blocks&path=settings&settings=block-settings
+                      - menuitem "Integrations" [ref=e353]:
+                        - img [ref=e354]
+                        - generic [ref=e357]: Integrations
+              - generic [ref=e358]:
+                - heading "My Account" [level=2] [ref=e361]
+                - generic [ref=e363]:
+                  - generic [ref=e365]: License Key
+                  - generic [ref=e366]:
+                    - paragraph [ref=e367]:
+                      - text: Activate
+                      - link "Spectra Pro" [ref=e368] [cursor=pointer]:
+                        - /url: https://wpspectra.com/pricing
+                      - text: to get professional support and automatic updates from your WordPress dashboard. If you don't have a license, you can
+                      - link "get it here »" [ref=e369] [cursor=pointer]:
+                        - /url: https://store.brainstormforce.com/
+                    - paragraph [ref=e370]: Please enter your valid license key below to activate Spectra Pro!
+                    - generic [ref=e371]:
+                      - generic [ref=e372]:
+                        - textbox "Paste your license key here" [ref=e373]
+                        - img [ref=e374]
+                      - button "Activate" [ref=e376] [cursor=pointer]
+    - contentinfo [ref=e377]:
+      - paragraph
+      - paragraph [ref=e378]: Version 7.0
+  - generic [ref=e379]:
+    - generic [ref=e380]:
+      - text: Press
+      - generic [ref=e381]: ⌘⇧E
+      - text: to open ERA
+    - button "Dismiss" [ref=e382] [cursor=pointer]: ×
+  - button "ERA Assistant" [ref=e383] [cursor=pointer]:
+    - img [ref=e384]
+```

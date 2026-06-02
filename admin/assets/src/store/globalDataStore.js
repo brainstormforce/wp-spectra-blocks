@@ -37,7 +37,6 @@ const initialState = {
 	spectraIsBlockTheme: false,
 	enableGBSExtension: '',
 	zipAiModules: [],
-	enableBSFAnalyticsOption: 'no',
 };
 
 const globalDataStore = createStore(

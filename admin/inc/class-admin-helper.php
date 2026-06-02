@@ -65,7 +65,6 @@ class Admin_Helper {
 			'recaptcha_secret_key_v3'            => \Spectra_Blocks_Admin_Helper::mask_secret_value( \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_recaptcha_secret_key_v3', '' ) ),
 			'spectra_global_fse_fonts'           => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_global_fse_fonts', array() ),
 			'theme_fonts'                        => $theme_font_families,
-			'enable_bsf_analytics_option'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
 			'spectra_blocks_disable_css_cache'   => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_disable_css_cache', 'disabled' ),
 		);
 
