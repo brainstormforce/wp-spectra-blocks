@@ -48,7 +48,6 @@ class UpdatePluginSetting extends AbstractAbility {
 		'spectra_blocks_blocks_editor_spacing',
 		'spectra_blocks_load_font_awesome_5',
 		'spectra_blocks_auto_block_recovery',
-		'spectra_blocks_analytics_optin',
 	);
 
 	/**

@@ -1,58 +1,17 @@
 import { Disclosure } from '@headlessui/react';
 import { Link } from 'react-router-dom';
 import { __, sprintf } from '@wordpress/i18n';
-import useWhatsNewRSS from '@Utils/whats-new-library/useWhatsNewRSS';
 import { Container, Topbar, Badge, DropdownMenu } from '@bsf/force-ui';
 import { X, CircleHelp, SquareArrowOutUpRight, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AdminHeader = ( props ) => {
-	// Initialize RSS library hook.
-	useWhatsNewRSS( {
-		rssFeedURL: spectra_blocks_admin_react.spectra_website?.whatsNewFeedUrl,
-		selector: '#spectra-whats-new',
-		triggerButton: {
-			beforeBtn:
-				'<div class="w-8 sm:w-10 h-8 sm:h-10 flex items-center whitespace-nowrap justify-center cursor-pointer rounded-full border border-slate-200">',
-			icon:
-				'<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.16667 3.90182V15.0335C8.16667 15.8434 7.51008 16.5 6.70015 16.5C6.08038 16.5 5.52752 16.1104 5.31907 15.5267L3.53039 10.4024M14 9.83333C15.3807 9.83333 16.5 8.71404 16.5 7.33333C16.5 5.95262 15.3807 4.83333 14 4.83333M3.53039 10.4024C2.33691 9.89508 1.5 8.71194 1.5 7.33333C1.5 5.49238 2.99238 4 4.83333 4H6.36007C9.77727 4 12.7141 2.97159 14 1.5L14 13.1667C12.7141 11.6951 9.77727 10.6667 6.36007 10.6667L4.83331 10.6667C4.37098 10.6667 3.93064 10.5725 3.53039 10.4024Z" stroke="#475569" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"></path></svg>',
-			afterBtn: '</div>',
-		},
-		flyout: {
-			title: __( "What's New?", 'spectra-blocks' ),
-			formatDate: ( date ) => {
-				const dayOfWeek = date.toLocaleDateString( 'en-US', { weekday: 'long' } );
-				const month = date.toLocaleDateString( 'en-US', { month: 'long' } );
-				const day = date.getDate();
-				const year = date.getFullYear();
-
-				// Format the date string
-				const formattedDate = `${ dayOfWeek } ${ month } ${ day }, ${ year }`;
-
-				return formattedDate;
-			},
-		},
-	} );
-
 	const { children } = props;
 
 	const [ clicked, setClicked ] = useState( false );
 	const [ isDropOpen1, setIsDropOpen1 ] = useState( false );
 	const [ isDropOpen2, setIsDropOpen2 ] = useState( false );
 	const [ showHeader, setShowHeader ] = useState( true );
-
-	const creditDetails = spectra_blocks_react.zip_ai_credit_details;
-
-	useEffect( () => {
-		const rssButton = document.querySelector( '.whats-new-rss-trigger-button' );
-		if ( rssButton ) {
-			rssButton.style.width = '100%';
-			rssButton.style.height = '100%';
-			rssButton.style.display = 'flex';
-			rssButton.style.justifyContent = 'center';
-			rssButton.style.alignItems = 'center';
-		}
-	}, [] );
 
 	useEffect( () => {
 		// Function to handle the Esc key press
@@ -162,19 +121,6 @@ const AdminHeader = ( props ) => {
 			</defs>
 		</svg>
 	);
-
-	const formattedCredits = () => {
-		const num = creditDetails?.used;
-		if ( num == null ) {
-			return '0';
-		}
-		if ( num === 0 ) {
-			return '0';
-		} else if ( num >= 1000 ) {
-			return `${ ( num / 1000 ).toFixed( 1 ).replace( /\.0$/, '' ) }k`;
-		}
-		return num.toLocaleString( 'en-US' );
-	};
 
 	const openLink = ( link ) => {
 		if ( ! link ) return;
@@ -345,9 +291,7 @@ const AdminHeader = ( props ) => {
 						</a>
 					</Topbar.Item>
 
-					<div id="spectra-whats-new" size={ 16 }></div>
-
-					<Topbar.Item className="relative after:content-[''] after:inline-block after:size-1.5 after:bg-background-important after:rounded-full after:absolute after:-top-0.5 after:left-5">
+					<Topbar.Item className="relative">
 						<DropdownMenu placement="bottom-end" isOpen={ isDropOpen2 } onOpenChange={ setIsDropOpen2 }>
 							<DropdownMenu.Trigger>
 								{ /* <Avatar size="xs"> */ }
@@ -387,38 +331,6 @@ const AdminHeader = ( props ) => {
 										</div>
 									</DropdownMenu.Item>
 
-									<DropdownMenu.Item>
-										<div className="flex w-full justify-between items-center font-[Figtree]">
-											<div className="flex gap-1">
-												{ ai() }
-
-												<div>{ __( 'AI Credits', 'spectra-blocks' ) }</div>
-											</div>
-
-											<Badge
-												label={ sprintf(
-													/* translators: credits in k format */
-													__( ' %s', 'spectra-blocks' ),
-													formattedCredits()
-												) }
-												size="xxs"
-												variant="green"
-											/>
-										</div>
-									</DropdownMenu.Item>
-									<DropdownMenu.Item
-										onClick={ () => openLink( 'https://app.zipwp.com/org/billing' ) }
-									>
-										<div className="flex w-full justify-between items-center font-[Figtree]">
-											<div className="flex gap-1">
-												{ plan() }
-
-												{ __( 'Manage Plan', 'spectra-blocks' ) }
-											</div>
-
-											<SquareArrowOutUpRight size={ 16 } className="text-text-tertiary" />
-										</div>
-									</DropdownMenu.Item>
 								</DropdownMenu.List>
 							</DropdownMenu.Content>
 							</DropdownMenu.ContentWrapper>

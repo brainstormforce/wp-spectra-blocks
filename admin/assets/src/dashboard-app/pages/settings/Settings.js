@@ -20,7 +20,6 @@ import MyAccountUpgradeToPro from '@DashboardApp/pages/settings/MyAccountUpgrade
 import InheritFromTheme from '@DashboardApp/pages/settings/InheritFromTheme';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
 import ProActiveStatus from '@DashboardApp/pages/settings/ProActiveStatus';
-import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
 
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
@@ -182,7 +181,6 @@ const Settings = () => {
 								<ContainerGlobalPadding />
 								<ContainerGlobalElementsGap />
 								<TemplatesButton />
-								<BSFAnalyticsOption />
 							</>
 						) }
 						{ 'fonts-performance' === currentTab && (

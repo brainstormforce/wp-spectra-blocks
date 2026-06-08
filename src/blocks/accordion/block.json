@@ -95,7 +95,7 @@
 	"editorStyle": "file:./index.css",
 	"style": [
 		"file:./style-index.css",
-		"spectra-components-icon-picker"
+		"spectra-blocks-components-icon-picker"
 	],
 	"render": "file:./view.php",
 	"viewScriptModule": "file:./view.js",

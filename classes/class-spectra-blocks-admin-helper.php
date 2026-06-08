@@ -122,11 +122,6 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 * @return array
 		 */
 		public static function get_admin_settings_shareable_data() {
-			$zip_ai_modules = array();
-			if ( class_exists( '\ZipAI\Classes\Module' ) ) {
-				$zip_ai_modules = \ZipAI\Classes\Module::get_all_modules();
-			}
-
 			return array(
 				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
 				'spectra_blocks_enable_animations_extension' => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
@@ -139,9 +134,7 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 				'spectra_blocks_container_global_padding'  => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
 				'spectra_blocks_container_global_elements_gap' => self::get_admin_settings_option( 'spectra_blocks_container_global_elements_gap', 20 ),
 				'spectra_blocks_btn_inherit_from_theme'    => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
-				'spectra_blocks_analytics_optin'           => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
 				'wp_is_block_theme'                        => self::is_block_theme(),
-				'zip_ai_modules'                           => $zip_ai_modules,
 			);
 		}
 

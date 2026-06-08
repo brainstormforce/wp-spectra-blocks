@@ -4,10 +4,7 @@
  *
  * Fires when the plugin is deleted from WordPress admin. Removes plugin-specific
  * options, transients, and post-meta. Does NOT touch user-generated content
- * (published posts, custom post types) or shared-library state (options
- * prefixed with bsf_*, ast_block_templates_*, etc.) — those libraries are
- * reused across other BSF products (Astra, Starter Templates, SureForms) and
- * remain owned by whichever plugin is still active.
+ * (published posts, custom post types).
  *
  * @package Spectra_Blocks
  */
@@ -86,18 +83,6 @@ $spectra_blocks_user_meta_keys = array(
 foreach ( $spectra_blocks_user_meta_keys as $spectra_blocks_user_meta_key ) {
 	$wpdb->delete( $wpdb->usermeta, array( 'meta_key' => $spectra_blocks_user_meta_key ), array( '%s' ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 }
-
-/**
- * Clean orphaned transients created by the plugin.
- *
- * Historically the bundled gutenberg-templates / zipwp-images libraries wrote
- * a `zipwp_images_server_country_code` transient for geolocation-based image
- * engine selection. Geolocation has been removed for WP.org compliance; any
- * residual transient value is now unused and is cleaned up here so uninstall
- * leaves no trace.
- */
-delete_transient( 'zipwp_images_server_country_code' );
-delete_site_transient( 'zipwp_images_server_country_code' );
 
 /**
  * Remove the plugin's cache directory under wp-content/uploads/.

@@ -27,7 +27,6 @@ use Spectra\Abilities\CreateModal;
 use Spectra\Abilities\CreateSeparator;
 use Spectra\Abilities\CreateSlider;
 use Spectra\Abilities\CreateTabs;
-use Spectra\Abilities\GetAnalyticsSummary;
 use Spectra\Abilities\ToggleBlockActivation;
 use Spectra\Abilities\ListPopups;
 use Spectra\Abilities\GetPopup;
@@ -101,7 +100,7 @@ class AbilitiesManager {
 		$categories = array(
 			'spectra-blocks-discovery'     => array(
 				'label'       => __( 'Spectra Blocks — Discovery', 'spectra-blocks' ),
-				'description' => __( 'Discover available blocks, read post content, search for blocks across the site, and view analytics.', 'spectra-blocks' ),
+				'description' => __( 'Discover available blocks, read post content, and search for blocks across the site.', 'spectra-blocks' ),
 			),
 			'spectra-blocks-content'       => array(
 				'label'       => __( 'Spectra Blocks — Content', 'spectra-blocks' ),
@@ -163,9 +162,6 @@ class AbilitiesManager {
 			RemoveBlock::class,
 			MoveBlock::class,
 			DuplicateBlock::class,
-
-			// Analytics.
-			GetAnalyticsSummary::class,
 
 			// Configuration.
 			GetPluginSettings::class,

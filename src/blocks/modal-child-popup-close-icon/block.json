@@ -49,7 +49,7 @@
 	"editorStyle": "file:./index.css",
 	"style": [
 		"file:./style-index.css",
-		"spectra-components-icon-picker"
+		"spectra-blocks-components-icon-picker"
 	],
 	"attributes": {
 		"anchor": {

@@ -1,10 +1,10 @@
 === Spectra Blocks ===
 Contributors: brainstormforce
 Tags: gutenberg, blocks, block-editor, container, accordion
-Requires at least: 6.6
-Tested up to: 6.9
+Requires at least: 6.9
+Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 0.0.7
+Stable tag: 0.0.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,7 +43,7 @@ PHP 8.1 or higher is required.
 
 = What WordPress version is required? =
 
-WordPress 6.6 or higher is required.
+WordPress 6.9 or higher is required.
 
 = Does this plugin require the original Spectra plugin? =
 
@@ -84,13 +84,8 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 
 Source code for each bundled library and third-party utility used by this plugin:
 
-* `lib/gutenberg-templates/dist/` and `lib/gutenberg-templates/inc/block/dist/` — Source: [https://github.com/brainstormforce/bsf-gutenberg-templates](https://github.com/brainstormforce/bsf-gutenberg-templates) (build: `npm install && npm run build`)
-* `lib/zip-ai/sidebar/build/` and `lib/zip-ai/admin/dashboard-app/build/` — Source: [https://github.com/brainstormforce/bsf-zip-ai](https://github.com/brainstormforce/bsf-zip-ai) (build: `npm install && npm run build`)
-* `lib/nps-survey/dist/` — Source: [https://github.com/brainstormforce/bsf-nps-survey](https://github.com/brainstormforce/bsf-nps-survey) (build: `npm install && npm run build`)
-* `lib/zipwp-images/dist/` — Source: [https://github.com/brainstormforce/bsf-zipwp-images](https://github.com/brainstormforce/bsf-zipwp-images) (build: `npm install && npm run build`)
-* `lib/astra-notices/` — Source: [https://github.com/brainstormforce/astra-notices](https://github.com/brainstormforce/astra-notices) (plain PHP, ships unbuilt)
 * `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
-* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
+* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/force-ui](https://github.com/brainstormforce/force-ui) (build: `npm install && npm run build` in the `admin/` directory)
 
 == External Services ==
 
@@ -102,25 +97,13 @@ The Google Map block embeds a map on the frontend using the public Google Maps e
 * [Terms of Service](https://developers.google.com/maps/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
-= ZipWP API =
-When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
-* Service URL: `https://api.zipwp.com/`
-* [Terms of Service](https://zipwp.com/terms-and-conditions/)
-* [Privacy Policy](https://zipwp.com/privacy-policy/)
-
-= ZipWP (app.zipwp.com) =
-When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in the Spectra Blocks AI dashboard, the browser is redirected to the ZipWP web app for authentication, account management, or billing. The redirect is user-initiated; no plugin-originated data is sent until the user interacts with the linked pages.
-* Service URL: `https://app.zipwp.com/`
-* Data sent: only the data the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
-* When: only after the user clicks an authorization / billing link in the plugin's admin dashboard.
-* [Terms of Service](https://zipwp.com/terms-and-conditions/)
-* [Privacy Policy](https://zipwp.com/privacy-policy/)
-
-= Starter Templates Credit Server =
-When AI features are enabled, the plugin checks the credit balance for AI content generation features.
-* Service URL: `https://credits.startertemplates.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://startertemplates.com/privacy-policy/)
+= Google Fonts =
+When the "Load Google Fonts Locally" option is enabled by an administrator, the plugin downloads selected font files from Google Fonts to the site's uploads directory so they are served from the local server instead of Google's CDN. This download happens once per font, triggered by an administrator saving font settings. No user data is sent; only the font file URL is requested.
+* Service URL: `https://fonts.googleapis.com/` and `https://fonts.gstatic.com/`
+* Data sent: Font file URL only (no user data)
+* When: Only when an administrator enables local font loading and saves the font settings
+* [Terms of Service](https://developers.google.com/fonts/terms)
+* [Privacy Policy](https://policies.google.com/privacy)
 
 = Brainstorm Force Store =
 When the "Get Spectra Pro" upsell is displayed in the admin dashboard, pricing information is fetched from the Brainstorm Force store. This request is made by the administrator's browser, not the plugin server.
@@ -128,22 +111,10 @@ When the "Get Spectra Pro" upsell is displayed in the admin dashboard, pricing i
 * [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
 * [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
-= Unsplash =
-When using the AI-powered image library, images may be fetched from Unsplash. The bundled ZipWP Images library downloads free stock photos based on user-selected keywords. Image URLs and attribution data are retrieved from the Unsplash API.
-* Service URL: `https://unsplash.com/`
-* [Terms of Service](https://unsplash.com/terms)
-* [Privacy Policy](https://unsplash.com/privacy)
-
 = WordPress.org =
 When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
 * Service URL: `https://downloads.wordpress.org/`
 * [Privacy Policy](https://wordpress.org/about/privacy/)
-
-= WebsiteDemos.net =
-When the Starter Templates library is enabled, template data may be synced from the WebsiteDemos.net service.
-* Service URL: `https://websitedemos.net/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 = YouTube =
 The admin dashboard settings page embeds tutorial videos from YouTube using the privacy-enhanced mode (youtube-nocookie.com). Videos are loaded only when a user clicks play on the admin dashboard. No user data is sent until playback is initiated.
@@ -151,26 +122,11 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Terms of Service](https://www.youtube.com/t/terms)
 * [Privacy Policy](https://policies.google.com/privacy)
 
-= BSF Metrics =
-When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
-* Service URL: `https://metrics.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
-
-= Brainstorm Force Support =
-When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
-* Service URL: `https://support.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
-
-= Spectra Blocks News (wpspectra.com) =
-The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made by the administrator's browser, not the plugin server.
-* Service URL: `https://wpspectra.com/whats-new/feed/`
-* Data sent: None (standard GET request with no user data)
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://wpspectra.com/privacy-policy/)
-
 == Changelog ==
+
+= 0.0.8 =
+* Update: Tested up to WordPress 7.0.
+* Fix: Address WordPress.org plugin review compliance issues.
 
 = 0.0.7 =
 * Fix: Removed bsf-analytics library — not used in Spectra Blocks.

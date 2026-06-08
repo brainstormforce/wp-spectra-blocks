@@ -14,9 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use ZipAI\Classes\Helper as Zip_Ai_Helper;
-use ZipAI\Classes\Module as Zip_Ai_Module;
-
 
 /**
  * Class Admin_Menu.
@@ -519,7 +516,6 @@ class Admin_Menu {
 					'freeVsPro'              => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-dashboard', 'free-vs-pro' ),
 					'setting'                => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-dashboard', 'setting' ),
 					'uagDashboard'           => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-dashboard', 'uag-dashboard' ),
-					'whatsNewFeedUrl'        => esc_url( SPECTRA_BLOCKS_URI . '/whats-new/feed/' ),
 					'upsellModalAdmin'       => \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'spectra-dashboard', 'upsell-popup-view-plan' ),
 				),
 				'plugin_installing_text'  => esc_html__( 'Installing', 'spectra-blocks' ),
@@ -536,55 +532,6 @@ class Admin_Menu {
 				'disable_css_cache_nonce' => wp_create_nonce( 'spectra_blocks_disable_css_cache' ),
 			)
 		);
-
-		// If the Zip AI Assets is available, add the Zip AI localizations.
-		if ( is_array( $localize )
-			&& class_exists( '\ZipAI\Classes\Helper' )
-			&& class_exists( '\ZipAI\Classes\Module' )
-			&& defined( 'ZIP_AI_CREDIT_TOPUP_URL' )
-			&& is_string( ZIP_AI_CREDIT_TOPUP_URL )
-		) {
-
-			$localize = array_merge(
-				$localize,
-				array(
-					'zip_ai_auth_middleware'  => Zip_Ai_Helper::get_auth_middleware_url(
-						array(
-							'plugin' => 'spectra',
-							'source' => 'spectra',
-						)
-					),
-					'zip_ai_auth_revoke_url'  => Zip_Ai_Helper::get_auth_revoke_url(),
-					'zip_ai_credit_topup_url' => esc_url( add_query_arg( 'source', 'spectra', ZIP_AI_CREDIT_TOPUP_URL ) ),
-					'zip_ai_is_authorized'    => Zip_Ai_Helper::is_authorized(),
-					'zip_ai_is_chat_enabled'  => Zip_Ai_Module::is_enabled( 'ai_assistant' ),
-					'zip_ai_admin_nonce'      => wp_create_nonce( 'zip_ai_admin_nonce' ),
-					'zip_ai_credit_details'   => Zip_Ai_Helper::get_credit_details(),
-					'zip_ai_status'           => Zip_AI_Helper::get_setting( 'status' ),
-				)
-			);
-
-			// In Zip AI version 1.1.2, the ZIPWP API constant was added - if this is available, get the current plan details.
-			if ( defined( 'ZIP_AI_ZIPWP_API' ) ) {
-				$response_zipwp_plan = Zip_Ai_Helper::get_current_plan_details();
-
-				// If the response is not an error, then proceed to localize the required details.
-				if ( is_array( $response_zipwp_plan ) && 'error' !== $response_zipwp_plan['status'] ) {
-					// Create the base array to be localized.
-					$current_zipwp_plan = array();
-
-					// Add the team name if it exists.
-					if ( ! empty( $response_zipwp_plan['team']['name'] ) ) {
-						$current_zipwp_plan['team_name'] = $response_zipwp_plan['team']['name'];
-					}
-
-					// If the final array is not empty, localize it.
-					if ( ! empty( $current_zipwp_plan ) ) {
-						$localize['zip_ai_current_plan'] = $current_zipwp_plan;
-					}
-				}
-			}
-		}
 
 		// First register any pre-required scripts.
 		do_action( 'spectra_admin_prerequisite_scripts' );

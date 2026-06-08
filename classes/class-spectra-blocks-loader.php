@@ -58,29 +58,6 @@ class Spectra_Blocks_Loader {
 		Spectra_Blocks_Rest_Api::init();
 		add_action( 'init', array( 'Spectra_Blocks_Helper', 'init' ) );
 
-		// Shared BSF libraries — use class_exists / global version negotiation
-		// to avoid conflicts when UAGB (or another BSF plugin) is also active.
-		$lib_dir = SPECTRA_BLOCKS_DIR . 'lib/';
-
-		// Zip AI — global version negotiation via $zip_ai_version / $zip_ai_path.
-		self::load_versioned_lib( $lib_dir . 'zip-ai/version.json', 'zip-ai', $lib_dir . 'zip-ai/zip-ai.php', 'plugins_loaded', 15 );
-
-		// Astra Notices.
-		if ( file_exists( $lib_dir . 'astra-notices/class-bsf-admin-notices.php' ) ) {
-			require_once $lib_dir . 'astra-notices/class-bsf-admin-notices.php';
-		}
-
-		// NPS Survey — global version negotiation via $nps_survey_version / $nps_survey_init.
-		self::load_versioned_lib( $lib_dir . 'nps-survey/version.json', 'nps-survey', $lib_dir . 'nps-survey/nps-survey.php', 'init', 999 );
-
-		// ZipWP Images — global version negotiation via $zipwp_images_version / $zipwp_images_init.
-		self::load_versioned_lib( $lib_dir . 'zipwp-images/version.json', 'zipwp-images', $lib_dir . 'zipwp-images/zipwp-images.php', 'init' );
-
-		// Gutenberg Templates (Design Library).
-		if ( file_exists( $lib_dir . 'class-spectra-blocks-ast-block-templates.php' ) ) {
-			require_once $lib_dir . 'class-spectra-blocks-ast-block-templates.php';
-		}
-
 		// Load learn actions for block editor guided steps.
 		require_once $classes_dir . 'class-spectra-blocks-learn-actions.php';
 
@@ -112,20 +89,6 @@ class Spectra_Blocks_Loader {
 		add_action( 'plugins_loaded', array( __CLASS__, 'load_plugin' ) );
 		register_activation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_activation' ) );
 		register_deactivation_hook( SPECTRA_BLOCKS_FILE, array( __CLASS__, 'on_deactivation' ) );
-
-		// Sync lib text domains to plugin slug for WP.org compliance.
-		add_filter( 'zip_ai_library_textdomain', array( __CLASS__, 'sync_library_textdomain' ) );
-	}
-
-	/**
-	 * Sync library text domains to the plugin text domain.
-	 *
-	 * @since x.x.x
-	 * @param string $textdomain The library text domain.
-	 * @return string The plugin text domain.
-	 */
-	public static function sync_library_textdomain( $textdomain ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-		return 'spectra-blocks';
 	}
 
 	/**
@@ -144,65 +107,6 @@ class Spectra_Blocks_Loader {
 	 */
 	public static function on_deactivation() {
 		flush_rewrite_rules();
-	}
-
-	/**
-	 * Load a BSF library that uses global version negotiation.
-	 *
-	 * Multiple plugins may bundle the same library. Each registers its
-	 * version via a global variable; the highest version wins and its
-	 * entry-point is included on the specified hook.
-	 *
-	 * @since x.x.x
-	 *
-	 * @param string $version_file Absolute path to the library's version.json.
-	 * @param string $lib_key      Key inside version.json (e.g. 'zip-ai').
-	 * @param string $entry_file   Absolute path to the library's main PHP file.
-	 * @param string $hook         WordPress hook to load on (e.g. 'init').
-	 * @param int    $priority     Hook priority.
-	 * @return void
-	 */
-	private static function load_versioned_lib( $version_file, $lib_key, $entry_file, $hook = 'init', $priority = 10 ) {
-		$version_file = realpath( $version_file );
-		if ( ! $version_file || ! is_file( $version_file ) ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		$file_data = json_decode( file_get_contents( $version_file ), true );
-		$version   = isset( $file_data[ $lib_key ] ) ? $file_data[ $lib_key ] : '0';
-		$path      = realpath( $entry_file );
-
-		// Global variable names follow BSF convention: $<lib_key>_version, $<lib_key>_path (or _init).
-		$var_version = str_replace( '-', '_', $lib_key ) . '_version';
-		$var_path    = str_replace( '-', '_', $lib_key ) . '_init';
-
-		// Some libs use _path instead of _init (e.g. zip-ai).
-		if ( 'zip_ai' === str_replace( '-', '_', $lib_key ) ) {
-			$var_path = 'zip_ai_path';
-		}
-
-		global $$var_version, $$var_path;
-
-		if ( null === $$var_version ) {
-			$$var_version = '0'; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
-		}
-
-		if ( version_compare( $version, $$var_version, '>=' ) ) {
-			$$var_version = $version; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
-			$$var_path    = $path; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- BSF shared-lib version negotiation uses library-owned globals.
-		}
-
-		add_action(
-			$hook,
-			static function () use ( $var_path ) {
-				global $$var_path;
-				if ( ! empty( $$var_path ) && is_file( realpath( $$var_path ) ) ) {
-					include_once realpath( $$var_path );
-				}
-			},
-			$priority
-		);
 	}
 }
 
