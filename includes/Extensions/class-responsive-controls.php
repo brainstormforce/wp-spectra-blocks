@@ -751,8 +751,7 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				$safe_css = wp_strip_all_tags( $combined_css );
-				wp_add_inline_style( $this->style_handle, $safe_css );
+				wp_add_inline_style( $this->style_handle, $this->sanitize_inline_css( $combined_css ) );
 
 				// Mark as added to avoid duplicates.
 				$this->inline_css_added[ $spectra_id ] = true;
@@ -2702,6 +2701,24 @@ class ResponsiveControls {
 		}
 
 		return $styles;
+	}
+
+	/**
+	 * Sanitize a CSS string for safe output via wp_add_inline_style().
+	 *
+	 * Strips HTML markup to prevent injection outside the style context and
+	 * removes CSS expression syntax to guard against legacy injection vectors.
+	 * CSS passed here is programmatically generated from block attributes that
+	 * are validated by the block editor schema — this is the final output gate.
+	 *
+	 * @since x.x.x
+	 * @param string $css Raw generated CSS string.
+	 * @return string Sanitized CSS safe for inline output.
+	 */
+	private function sanitize_inline_css( $css ) {
+		$css = wp_strip_all_tags( $css );
+		$css = str_ireplace( 'expression(', '', $css );
+		return $css;
 	}
 
 	/**

@@ -62,16 +62,14 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+All compiled assets are built from source using webpack. The full source code is publicly available on GitHub: [https://github.com/brainstormforce/wp-spectra-blocks](https://github.com/brainstormforce/wp-spectra-blocks)
 
-* Block source files are located in the `src/` directory (excluded from the distribution zip for size).
-* Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
-* The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
-* Source code is available on GitHub: [https://github.com/brainstormforce/wp-spectra-blocks](https://github.com/brainstormforce/wp-spectra-blocks)
+Compiled-to-source directory mapping:
 
-To build from source:
-
-1. `npm install && npm run build` — compiles block JavaScript and CSS.
-2. `cd admin && npm install && npm run build` — compiles the admin dashboard React app.
+* `build/blocks/*/` — compiled from [src/blocks/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/blocks/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `build/extensions/*/` — compiled from [src/extensions/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/extensions/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `build/styles/*/` — compiled from [src/styles/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/styles/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `admin/assets/build/*/` — compiled from [admin/assets/src/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/admin/assets/src/) using webpack (build: `cd admin && npm install && npm run build`)
 
 = Third-Party Libraries =
 
