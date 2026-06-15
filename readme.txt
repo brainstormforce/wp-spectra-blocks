@@ -70,6 +70,7 @@ Compiled-to-source directory mapping:
 * `build/extensions/*/` — compiled from [src/extensions/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/extensions/) using `@wordpress/scripts` (build: `npm install && npm run build`)
 * `build/styles/*/` — compiled from [src/styles/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/styles/) using `@wordpress/scripts` (build: `npm install && npm run build`)
 * `admin/assets/build/*/` — compiled from [admin/assets/src/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/admin/assets/src/) using webpack (build: `cd admin && npm install && npm run build`)
+* `blocks-config/spectra-blocks-controls/spectra-icons-v6-*.php` — generated from Font Awesome 6.x free icon metadata by [bin/generate-icons.js](https://github.com/brainstormforce/wp-spectra-blocks/blob/master/bin/generate-icons.js) (run: `npm run update-icons`)
 
 = Third-Party Libraries =
 
