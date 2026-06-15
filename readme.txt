@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 0.0.8
+Stable tag: 0.0.9
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,10 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Privacy Policy](https://policies.google.com/privacy)
 
 == Changelog ==
+
+= 0.0.9 =
+* Fix: Strengthen inline CSS output escaping in responsive controls.
+* Fix: Add explicit compiled-to-source directory mappings in readme for WordPress.org compliance.
 
 = 0.0.8 =
 * Update: Tested up to WordPress 7.0.

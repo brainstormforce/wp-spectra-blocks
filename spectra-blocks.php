@@ -4,7 +4,7 @@
  * Plugin URI: https://wpspectra.com
  * Author: Brainstorm Force
  * Author URI: https://www.brainstormforce.com
- * Version: 0.0.8
+ * Version: 0.0.9
  * Description: A fresh, clean Gutenberg block plugin built on Spectra V3 with modern standards.
  * Text Domain: spectra-blocks
  * Domain Path: /languages
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 define( 'SPECTRA_BLOCKS_FILE', __FILE__ );
 define( 'SPECTRA_BLOCKS_DIR', plugin_dir_path( SPECTRA_BLOCKS_FILE ) );
 define( 'SPECTRA_BLOCKS_URL', plugins_url( '/', SPECTRA_BLOCKS_FILE ) );
-define( 'SPECTRA_BLOCKS_VER', '0.0.8' );
+define( 'SPECTRA_BLOCKS_VER', '0.0.9' );
 define( 'SPECTRA_BLOCKS_SLUG', 'spectra-blocks' );
 
 // PHP version check.
