@@ -84,7 +84,7 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 Source code for each bundled library and third-party utility used by this plugin:
 
 * `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
-* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/force-ui](https://github.com/brainstormforce/force-ui) (build: `npm install && npm run build` in the `admin/` directory)
+* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
 
 == External Services ==
 
