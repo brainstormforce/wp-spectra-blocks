@@ -11,7 +11,7 @@ A fresh, standalone WordPress Gutenberg block plugin built on the [WordPress Int
 | Dependency | Minimum |
 |------------|---------|
 | PHP | 8.1 |
-| WordPress | 6.6 |
+| WordPress | 6.9 |
 | Node.js | 20+ |
 | Composer | 2.x |
 
@@ -24,7 +24,7 @@ A fresh, standalone WordPress Gutenberg block plugin built on the [WordPress Int
 git clone git@github.com:brainstormforce/wp-spectra-blocks.git
 cd spectra-blocks
 
-# 2. Install PHP dependencies (requires SSH access to BSF private repos)
+# 2. Install PHP dependencies
 composer install
 
 # 3. Install JS dependencies and build
@@ -54,7 +54,7 @@ npm run zip
 
 This runs the full build pipeline and produces `spectra-blocks.x.x.x.zip` ready for WordPress.org upload.
 
-> **Note:** `composer install` requires SSH access to BSF private GitHub repositories. The `lib/` directory is populated by Composer and is not committed to this repo.
+> **Note:** Composer installs `vendor/enshrined/svg-sanitize` from Packagist — no private repo access required.
 
 ---
 

@@ -4,7 +4,7 @@ Tags: gutenberg, blocks, block-editor, container, accordion
 Requires at least: 6.9
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 0.0.8
+Stable tag: 0.0.9
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -62,16 +62,15 @@ This plugin's JavaScript and CSS are built from source files using standard Word
 
 = Plugin Source =
 
+All compiled assets are built from source using webpack. The full source code is publicly available on GitHub: [https://github.com/brainstormforce/wp-spectra-blocks](https://github.com/brainstormforce/wp-spectra-blocks)
 
-* Block source files are located in the `src/` directory (excluded from the distribution zip for size).
-* Admin dashboard source files are located in `admin/assets/src/` (also excluded from distribution).
-* The compiled, production-ready assets are in `build/` and `admin/assets/build/` respectively.
-* Source code is available on GitHub: [https://github.com/brainstormforce/wp-spectra-blocks](https://github.com/brainstormforce/wp-spectra-blocks)
+Compiled-to-source directory mapping:
 
-To build from source:
-
-1. `npm install && npm run build` — compiles block JavaScript and CSS.
-2. `cd admin && npm install && npm run build` — compiles the admin dashboard React app.
+* `build/blocks/*/` — compiled from [src/blocks/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/blocks/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `build/extensions/*/` — compiled from [src/extensions/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/extensions/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `build/styles/*/` — compiled from [src/styles/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/src/styles/) using `@wordpress/scripts` (build: `npm install && npm run build`)
+* `admin/assets/build/*/` — compiled from [admin/assets/src/](https://github.com/brainstormforce/wp-spectra-blocks/tree/master/admin/assets/src/) using webpack (build: `cd admin && npm install && npm run build`)
+* `blocks-config/spectra-blocks-controls/spectra-icons-v6-*.php` — generated from Font Awesome 6.x free icon metadata by [bin/generate-icons.js](https://github.com/brainstormforce/wp-spectra-blocks/blob/master/bin/generate-icons.js) (run: `npm run update-icons`)
 
 = Third-Party Libraries =
 
@@ -85,7 +84,7 @@ The following pre-compiled third-party libraries are bundled in `assets/`:
 Source code for each bundled library and third-party utility used by this plugin:
 
 * `vendor/enshrined/svg-sanitize/` — Source: [https://github.com/darylldoyle/svg-sanitizer](https://github.com/darylldoyle/svg-sanitizer) (plain PHP, ships unbuilt)
-* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/force-ui](https://github.com/brainstormforce/force-ui) (build: `npm install && npm run build` in the `admin/` directory)
+* `admin/assets/build/dashboard-app.js` — bundles the `@bsf/force-ui` admin UI components — Source: [https://github.com/brainstormforce/bsf-admin-ui](https://github.com/brainstormforce/bsf-admin-ui) (build: `npm install && npm run build` in the `admin/` directory)
 
 == External Services ==
 
@@ -123,6 +122,10 @@ The admin dashboard settings page embeds tutorial videos from YouTube using the 
 * [Privacy Policy](https://policies.google.com/privacy)
 
 == Changelog ==
+
+= 0.0.9 =
+* Fix: Strengthen inline CSS output escaping in responsive controls.
+* Fix: Add explicit compiled-to-source directory mappings in readme for WordPress.org compliance.
 
 = 0.0.8 =
 * Update: Tested up to WordPress 7.0.
