@@ -7,18 +7,29 @@
  * @package Spectra\Blocks\Countdown
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the block attributes.
 $end_date_time = $attributes['endDateTime'] ?? '';
+$timer_type    = $attributes['timerType'] ?? 'date';
 $show_days     = $attributes['showDays'] ?? true;
 $show_hours    = $attributes['showHours'] ?? true;
 $show_minutes  = $attributes['showMinutes'] ?? true;
 $show_seconds  = $attributes['showSeconds'] ?? true;
 
-// If no end date-time is set or all time units are hidden, return empty string to prevent rendering.
-if ( empty( $end_date_time ) || ( ! $show_days && ! $show_hours && ! $show_minutes && ! $show_seconds ) ) {
+// Nothing to render when all time units are hidden.
+if ( ! $show_days && ! $show_hours && ! $show_minutes && ! $show_seconds ) {
+	return '';
+}
+
+// A DATE timer without an end date-time has nothing to count to — skip it.
+// Non-date timer types (e.g. Pro's evergreen) compute their own deadline
+// per visitor and legitimately have NO endDateTime; they must still render
+// (previously this guard silently emitted NOTHING for evergreen blocks —
+// the deadline runtime never got a DOM node to drive). Without Pro active,
+// a non-date block renders its static placeholder tiles, which is a visible
+// signal rather than a vanished section.
+if ( 'date' === $timer_type && empty( $end_date_time ) ) {
 	return '';
 }
 

@@ -408,9 +408,9 @@ function manageSlideFocus( swiper ) {
 /**
  * Setup enhanced focus management for proper keyboard navigation.
  *
- * @param {Object} swiper The Swiper instance.
+ * @param {Object}  swiper        The Swiper instance.
  * @param {Element} sliderElement The slider container element.
- * @param {Object} params The slider configuration parameters.
+ * @param {Object}  params        The slider configuration parameters.
  */
 function setupEnhancedFocusManagement( swiper, sliderElement, params ) {
 	// Ensure navigation buttons are always focusable.

@@ -1,0 +1,26 @@
+// Post Template Block Frontend Styles
+
+// Support both <ul> (grid/masonry) and <div> (carousel) wrapper elements
+ul.wp-block-spectra-post-template,
+div.wp-block-spectra-post-template {
+	// Reset list styles to resolve theme compatibility issues
+	margin-top: 0;
+	margin-bottom: 0;
+	max-width: 100%;
+	list-style: none;
+	padding: 0;
+	box-sizing: border-box;
+	font-size: inherit;
+
+	// All child elements within the template will inherit the font-size
+	* {
+		font-size: inherit;
+	}
+
+	// Individual post items (li for grid/masonry, div for carousel)
+	li,
+	div.spectra-post-item {
+		list-style: none;
+	}
+}
+

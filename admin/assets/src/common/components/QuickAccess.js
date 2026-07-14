@@ -1,96 +1,87 @@
 import { __ } from '@wordpress/i18n';
-import { Container, Label, Badge } from '@bsf/force-ui';
-import { Headset, CircleHelp, MessageSquare, Star } from 'lucide-react';
+import { Badge } from '@bsf/force-ui';
+import { Headset, BookOpen, CircleHelp, MessageSquare, Star, Rocket } from 'lucide-react';
+
+const QUICK_ACCESS_ITEMS = [
+	{
+		icon: <Rocket size={ 20 } />,
+		label: __( 'Setup Wizard', 'spectra-blocks' ),
+		href: 'admin.php?page=spectra-blocks-onboarding',
+		external: false,
+		pro: false,
+	},
+	{
+		icon: <Headset size={ 20 } />,
+		label: __( 'VIP Priority Support', 'spectra-blocks' ),
+		href: null,
+		hrefKey: 'vipPrioritySupportUrl',
+		external: true,
+		pro: true,
+	},
+	{
+		icon: <BookOpen size={ 20 } />,
+		label: __( 'Knowledge Base', 'spectra-blocks' ),
+		href: null,
+		hrefKey: 'docsUrl',
+		external: true,
+		pro: false,
+	},
+	{
+		icon: <CircleHelp size={ 20 } />,
+		label: __( 'Help Center', 'spectra-blocks' ),
+		href: null,
+		hrefKey: 'docsUrl',
+		external: true,
+		pro: false,
+	},
+	{
+		icon: <MessageSquare size={ 20 } />,
+		label: __( 'Join the Community', 'spectra-blocks' ),
+		href: 'https://www.facebook.com/groups/wpastra',
+		external: true,
+		pro: false,
+	},
+	{
+		icon: <Star size={ 20 } />,
+		label: __( 'Rate Us', 'spectra-blocks' ),
+		href: 'https://wordpress.org/support/plugin/spectra-blocks/reviews/',
+		external: true,
+		pro: false,
+	},
+];
 
 const QuickAccess = () => {
 	return (
-		<Container
-			className="bg-white border border-solid border-border-subtle rounded-lg p-3"
-			containerType="flex"
-			direction="column"
-			gap="xs"
+		<div
+			className="bg-white border border-solid border-border-subtle"
+			style={ { borderRadius: '16px', padding: '28px 32px' } }
 		>
-			<Container.Item className="md:w-full lg:w-full p-1">
-				<Label className="font-semibold text-text-primary">
-					{ __( 'Quick Access', 'spectra-blocks' ) }
-				</Label>
-			</Container.Item>
-			<Container.Item className="flex flex-col md:w-full lg:w-full bg-field-primary-background gap-1 p-1 rounded-lg">
-				<div className="p-2 gap-1 items-center flex bg-background-primary rounded-md shadow-soft-shadow-inner">
-					<a
-						className="no-underline hover:underline hover:text-field-label"
-						href={spectra_blocks_admin_react.spectra_website?.vipPrioritySupportUrl}
-						target="_blank"
-						rel="noreferrer"
-					>
-						<Container align="center" className="gap-1 p-1" containerType="flex" direction="row">
-							<Container.Item className="flex">
-								<Headset size={ 24 } className="m-1 no-underline text-text-primary" />
-							</Container.Item>
-							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'VIP Support', 'spectra-blocks' ) }</Label>
-							</Container.Item>
-							{ spectra_blocks_react.pro_plugin_status !== 'Activated' && (
-								<Container.Item>
-									<Badge icon={ null } label="PRO" size="xxs" variant="inverse" />
-								</Container.Item>
+			<div className="font-semibold text-[18px] mb-[18px]" style={ { color: '#1C1E26' } }>
+				{ __( 'Quick Access', 'spectra-blocks' ) }
+			</div>
+			<div className="grid grid-cols-2 gap-3">
+				{ QUICK_ACCESS_ITEMS.map( ( item, index ) => {
+					const href = item.href || spectra_blocks_admin_react?.spectra_website?.[ item.hrefKey ] || '#';
+					const showPro = item.pro && spectra_blocks_react?.pro_plugin_status !== 'Activated';
+					return (
+						<a
+							key={ index }
+							href={ href }
+							target={ item.external ? '_blank' : undefined }
+							rel={ item.external ? 'noreferrer' : undefined }
+							className="no-underline flex items-center gap-[10px] cursor-pointer hover:bg-[#f9f9f9]"
+							style={ { border: '1px solid #EDEEF0', borderRadius: '10px', padding: '10px 14px' } }
+						>
+							<span style={ { color: '#4B5563', display: 'flex', flexShrink: 0 } }>{ item.icon }</span>
+							<span className="text-[15px] font-semibold" style={ { color: '#1C1E26' } }>{ item.label }</span>
+							{ showPro && (
+								<Badge icon={ null } label="PRO" size="xxs" variant="inverse" />
 							) }
-						</Container>
-					</a>
-				</div>
-				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
-					<a
-						className="no-underline hover:underline hover:text-field-label"
-						href={spectra_blocks_admin_react.spectra_website?.docsUrl}
-						target="_blank"
-						rel="noreferrer"
-					>
-						<Container align="center" className="gap-1 p-1" containerType="flex" direction="row">
-							<Container.Item className="flex">
-								<CircleHelp size={ 24 } className="m-1 no-underline text-text-primary" />
-							</Container.Item>
-							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Help Center', 'spectra-blocks' ) }</Label>
-							</Container.Item>
-						</Container>
-					</a>
-				</div>
-				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
-					<a
-						className="no-underline hover:underline hover:text-field-label"
-						href="https://www.facebook.com/groups/wpastra"
-						target="_blank"
-						rel="noreferrer"
-					>
-						<Container align="center" className="gap-1 p-1" containerType="flex" direction="row">
-							<Container.Item className="flex">
-								<MessageSquare size={ 24 } className="m-1 no-underline text-text-primary" />
-							</Container.Item>
-							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Join The Community', 'spectra-blocks' ) }</Label>
-							</Container.Item>
-						</Container>
-					</a>
-				</div>
-				<div className="p-2 gap-1 flex items-center bg-background-primary rounded-md shadow-soft-shadow-inner">
-					<a
-						className="no-underline hover:underline hover:text-field-label"
-						href="https://wordpress.org/support/plugin/spectra-blocks/reviews/"
-						target="_blank"
-						rel="noreferrer"
-					>
-						<Container align="center" className="gap-1 p-1" containerType="flex" direction="row">
-							<Container.Item className="flex">
-								<Star size={ 24 } className="m-1 no-underline text-text-primary" />
-							</Container.Item>
-							<Container.Item className="flex">
-								<Label className="py-0 px-1 font-normal cursor-pointer">{ __( 'Rate Us', 'spectra-blocks' ) }</Label>
-							</Container.Item>
-						</Container>
-					</a>
-				</div>
-			</Container.Item>
-		</Container>
+						</a>
+					);
+				} ) }
+			</div>
+		</div>
 	);
 };
 

@@ -1,4 +1,4 @@
-import { User, Settings, LayoutTemplate, PackageCheck, GitCompare, Zap, Eye, Blocks, Type } from 'lucide-react';
+import { User, Settings, LayoutTemplate, PackageCheck, GitCompare, Zap, Eye, Blocks, Type, Bot } from 'lucide-react';
 
 const SettingsIcons = {
     'asset-generation' : (
@@ -27,6 +27,9 @@ const SettingsIcons = {
     ),
     'font' : (
         <Type />
+    ),
+    'mcp' : (
+        <Bot />
     )
 };
 

@@ -68,7 +68,7 @@ const Render = ( props ) => {
 	);
 
 	// If editorInnerBlocksPreview (Expiry Mode) is true or minutes is not showing, don't render anything.
-	if ( editorInnerBlocksPreview || ! showMinutes ) return null;
+	if ( editorInnerBlocksPreview || ! showMinutes ) {return null;}
 
 	return (
 		<BlockContextProvider value={ blockContext }>

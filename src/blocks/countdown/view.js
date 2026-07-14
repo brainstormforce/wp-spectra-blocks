@@ -10,7 +10,7 @@ import frontendTimerManager from './frontend-timer-manager';
  *
  * @since x.x.x
  *
- * @param {Object} time Time object with days, hours, minutes, seconds, and isExpired properties.
+ * @param {Object} time   Time object with days, hours, minutes, seconds, and isExpired properties.
  * @param {Object} labels Labels object with dayLabel, daysLabel, hourLabel, hoursLabel, minuteLabel, minutesLabel, secondLabel, and secondsLabel properties.
  * @return {Object} Countdown object with days, hours, minutes, seconds, isExpired, daysLabel, hoursLabel, minutesLabel, and secondsLabel properties.
  */
@@ -31,8 +31,8 @@ const createCountdownObject = ( time, labels ) => ( {
  *
  * @since x.x.x
  *
- * @param {Element} ref - The root element of the countdown block.
- * @param {Object} countdown - The object with the current state of the countdown, as returned by createCountdownObject.
+ * @param {Element} ref       - The root element of the countdown block.
+ * @param {Object}  countdown - The object with the current state of the countdown, as returned by createCountdownObject.
  * @return {void}
  */
 const updateCountdownDOM = ( ref, countdown ) => {
@@ -46,7 +46,7 @@ const updateCountdownDOM = ( ref, countdown ) => {
 	timeUnits.forEach( ( unit ) => {
 		const unitSelector = `.wp-block-spectra-countdown-child-${ unit.type }`;
 		const unitElement = ref.querySelector( unitSelector );
-		if ( ! unitElement ) return;
+		if ( ! unitElement ) {return;}
 
 		const finalNumber = countdown[ unit.value ] || 0;
 		const formattedNumber = String( finalNumber ).padStart( 2, '0' );

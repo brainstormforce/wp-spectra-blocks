@@ -89,6 +89,9 @@
 		},
 		"backgroundGradientHover": {
 			"type": "string"
+		},
+		"style": {
+			"type": "object"
 		}
 	}
 }

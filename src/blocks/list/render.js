@@ -6,7 +6,7 @@ import { ToolbarButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { createBlock } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { memo, useCallback } from '@wordpress/element';
+import { useCallback } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -30,7 +30,7 @@ function useOutdentList( clientId ) {
 
 	return useCallback( () => {
 		const parentBlockId = getBlockRootClientId( clientId );
-		if ( !parentBlockId ) return;
+		if ( !parentBlockId ) {return;}
 
 		const parentBlockName = getBlockName( parentBlockId );
 
@@ -60,18 +60,18 @@ function useOutdentList( clientId ) {
 /**
  * Outdent UI component.
  *
- * @param {Object} props Component props.
+ * @param {Object} props          Component props.
  * @param {string} props.clientId Block client ID.
  * @return {JSX.Element} Component to render.
  */
 function OutdentUI( { clientId } ) {
-	const isRTL = '1' === spectra_blocks_info.is_rtl ? true : false;
+	const isRTL = '1' === window?.spectra_blocks_info?.is_rtl;
 	const outdentList = useOutdentList( clientId );
 	const canOutdent = useSelect(
 		( select ) => {
 			const { getBlockRootClientId, getBlockName } = select( blockEditorStore );
 			const parentId = getBlockRootClientId( clientId );
-			if ( !parentId ) return false;
+			if ( !parentId ) {return false;}
 			const parentName = getBlockName( parentId );
 			return parentName === 'spectra/list-child-item' || parentName === 'spectra/list';
 		},
@@ -97,7 +97,7 @@ function OutdentUI( { clientId } ) {
  * @since x.x.x
  * @return {Element} Element to render.
  */
-const Render = memo( ( props ) => {
+const Render = ( props ) => {
 	const {
 		attributes,
 		setAttributes,
@@ -188,6 +188,6 @@ const Render = memo( ( props ) => {
 			{ controls }
 		</>
 	);
-} );
+};
 
 export default Render;

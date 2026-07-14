@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildLabel
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the 'showLabels' context from the parent countdown block.
 // This determines whether labels (like "Days", "Hours") should be shown.

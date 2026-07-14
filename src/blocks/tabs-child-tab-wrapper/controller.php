@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\TabsChildTabWrapper
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // If there are no tab inner blocks, don't render this tab wrapper.
 if ( empty( $block->parsed_block['innerBlocks'] ) ) {

@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * RemoveAnimation ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class RemoveAnimation extends AbstractAbility {
 
 	/**
 	 * Animation attribute keys.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @var string[]
 	 */
@@ -40,7 +40,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -51,7 +51,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -62,7 +62,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -73,7 +73,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -84,7 +84,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -99,7 +99,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -123,7 +123,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -145,7 +145,7 @@ class RemoveAnimation extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Result or error.

@@ -5,7 +5,7 @@
 	overflow-wrap: break-word;
 	word-break: break-word;
 
-	&:not(h1, h2, h3, h4, h5, h6) {
+	&:not(h1,h2,h3,h4,h5,h6) {
 		line-height: inherit;
 	}
 	// Override theme heading colors with equal/higher specificity.
@@ -37,6 +37,7 @@
 
 		// The hover state for this block.
 		&:hover {
+
 			// Variable based CSS - Text Hover Color.
 			&.spectra-text-color-hover {
 				color: var(--spectra-text-color-hover) !important;
@@ -57,11 +58,6 @@
 		&.spectra-link-hover-color a:focus {
 			color: var(--spectra-link-hover-color);
 		}
-
-		// Variable based CSS - Text Shadow.
-		&.spectra-text-shadow {
-			text-shadow: var(--spectra-text-shadow);
-		}
 	}
 }
 
@@ -80,3 +76,4 @@
 		color: inherit;
 	}
 }
+

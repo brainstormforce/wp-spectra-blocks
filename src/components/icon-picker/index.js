@@ -237,10 +237,6 @@ const IconPickerInternal = ( props ) => {
 		if ( value && typeof value === 'object' && value.library === 'svg' ) {
 			return 'image';
 		}
-		// New FA object format: { name, svg: { solid/brands/regular } }
-		if ( value && typeof value === 'object' && value.name && value.svg ) {
-			return 'icon';
-		}
 		if ( value && typeof value === 'string' ) {
 			return 'icon';
 		}
@@ -257,8 +253,8 @@ const IconPickerInternal = ( props ) => {
 	} );
 
 	// Get the stored icons and category lists (memoized to prevent recreation)
-	const defaultIcons = useMemo( () => [ ...window.spectraBlocksSvgIcons ], [] );
-	const iconCategoryList = useMemo( () => [ ...window.spectraBlocksIconCategoryList ], [] );
+	const defaultIcons = useMemo( () => [ ...wp.UAGBSvgIcons ], [] );
+	const iconCategoryList = useMemo( () => [ ...wp.uagb_icon_category_list ], [] );
 
 	// State and functions for the modal.
 	const openModal = useCallback( () => {
@@ -363,7 +359,7 @@ const IconPickerInternal = ( props ) => {
  */
 const IconPicker = ( props ) => {
 	// If the required localization asset isn't available, abandon ship.
-	if ( ! window.spectraBlocksSvgIcons || ! window.spectraBlocksIconCategoryList || ! window?.spectra_blocks_info?.spectra_blocks_svg_icons ) {
+	if ( ! wp.UAGBSvgIcons || ! wp.uagb_icon_category_list || ! window?.spectra_blocks_info?.uagb_svg_icons ) {
 		return null;
 	}
 

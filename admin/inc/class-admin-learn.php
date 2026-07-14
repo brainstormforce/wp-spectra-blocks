@@ -77,7 +77,7 @@ class Admin_Learn {
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
 							'url'        => ( 'yes' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ) ? $homepage_url . '#learn-insert-ready-made-sections' : admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ) ),
-							'isExternal' => true,
+							'isExternal' => ( 'yes' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ) ),
 						),
 						'completed'   => false,
 					),

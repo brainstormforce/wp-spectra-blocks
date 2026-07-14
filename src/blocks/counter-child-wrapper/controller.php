@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CounterChildWrapper
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the block wrapper attributes with layout support.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes(

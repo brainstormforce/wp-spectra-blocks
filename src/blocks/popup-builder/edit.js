@@ -102,26 +102,29 @@ const Edit = ( props ) => {
 	}, [ isSelected, isOpen, setAttributes ] );
 
 	useEffect( () => {
-		if ( 'spectra-popup' !== postType ) {
+		const isLegacyPopup = 'spectra-popup' === postType;
+		if ( 'spectra-blocks-popup' !== postType && ! isLegacyPopup ) {
 			return;
 		}
+		const typeKey    = isLegacyPopup ? 'spectra-popup-type' : 'spectra-blocks-popup-type';
+		const enabledKey = isLegacyPopup ? 'spectra-popup-enabled' : 'spectra-blocks-popup-enabled';
 		setMeta(
 			! variationSelected
 				? {
 						...meta,
-						'spectra-popup-type': 'unset',
-						'spectra-popup-enabled': false,
+						[ typeKey ]: 'unset',
+						[ enabledKey ]: false,
 				  }
 				: {
 						...meta,
-						'spectra-popup-type': variantType,
-						'spectra-popup-enabled': true,
+						[ typeKey ]: variantType,
+						[ enabledKey ]: true,
 				  }
 		);
 	}, [ variationSelected, variantType ] );
 
 	// Early return if not in popup post type context
-	if ( 'spectra-popup' !== window.typenow ) {
+	if ( 'spectra-blocks-popup' !== window.typenow && 'spectra-popup' !== window.typenow ) {
 		return null;
 	}
 

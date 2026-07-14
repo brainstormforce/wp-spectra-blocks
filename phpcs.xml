@@ -11,6 +11,7 @@
     <exclude-pattern>*/build/*</exclude-pattern>
     <exclude-pattern>*/lib/*</exclude-pattern>
     <exclude-pattern>*/blocks-config/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
 
     <!-- Only check PHP files -->
     <arg name="extensions" value="php"/>
@@ -63,5 +64,51 @@
     -->
     <rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound">
         <exclude-pattern>*/src/blocks/*</exclude-pattern>
+    </rule>
+
+    <!--
+        PHPUnit test classes follow PHPUnit's PascalCase convention (e.g. SanitizerTest.php
+        for class SanitizerTest), which the WPCS hyphenated-lowercase file-name sniffs reject.
+        Test files are not loaded by the plugin runtime; exclude file-name sniffs for tests/.
+    -->
+    <rule ref="WordPress.Files.FileName">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!--
+        The Style Guide / Global Styles colour engine works in the OKLCH colour space and
+        uses its standard single-letter notation as variable names ($L = lightness,
+        $C = chroma, $H = hue). Lower-casing these to satisfy snake_case would lose the
+        domain meaning, so exclude the variable-name sniff for the colour-math directories only.
+    -->
+    <rule ref="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase">
+        <exclude-pattern>*/includes/GlobalStyles/*</exclude-pattern>
+        <exclude-pattern>*/includes/StyleGuide/*</exclude-pattern>
+    </rule>
+
+    <!--
+        Relax a few production-oriented sniffs for the PHPUnit suite (tests/):
+        - DocComment short descriptions are not expected on PHPUnit test methods.
+        - GlobalVariablesOverride: tests legitimately set $post to build a render context.
+        - NonEnqueuedScript: tests embed <script> strings as sanitizer input/assertions.
+        - CommentedOutCode: test fixtures contain code-like example markup in comments.
+    -->
+    <rule ref="Generic.Commenting.DocComment">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.GlobalVariablesOverride">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="WordPress.WP.EnqueuedResources.NonEnqueuedScript">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.PHP.CommentedOutCode">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
+
+    <!-- Tests register simulated hooks and set globals to build fixtures; the plugin
+         prefix requirement does not apply to that test scaffolding. -->
+    <rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+        <exclude-pattern>*/tests/*</exclude-pattern>
     </rule>
 </ruleset>

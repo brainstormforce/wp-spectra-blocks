@@ -105,7 +105,7 @@ const BlockSettings = () => {
 				<Label className="m-0" size="sm" tag="div" variant="help">
 					<div className='mb-1'>
 						{ __(
-							'To enable reCAPTCHA for your form, please follow the steps mentioned ',
+							'To enable reCAPTCHA for your form, please follow the steps mentioned',
 							'spectra-blocks'
 						) }
 						<a
@@ -114,7 +114,7 @@ const BlockSettings = () => {
 							target="_blank"
 							rel="noreferrer"
 						>
-							{ __( 'here. ', 'spectra-blocks' ) }
+							{ __( 'here.', 'spectra-blocks' ) }
 						</a>
 					</div>
 				</Label>

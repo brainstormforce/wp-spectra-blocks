@@ -1,16 +1,16 @@
 import { Disclosure } from '@headlessui/react';
 import { Link } from 'react-router-dom';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Container, Topbar, Badge, DropdownMenu } from '@bsf/force-ui';
-import { X, CircleHelp, SquareArrowOutUpRight, User } from 'lucide-react';
+import { X, CircleHelp } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const AdminHeader = ( props ) => {
+
 	const { children } = props;
 
 	const [ clicked, setClicked ] = useState( false );
 	const [ isDropOpen1, setIsDropOpen1 ] = useState( false );
-	const [ isDropOpen2, setIsDropOpen2 ] = useState( false );
 	const [ showHeader, setShowHeader ] = useState( true );
 
 	useEffect( () => {
@@ -30,110 +30,13 @@ const AdminHeader = ( props ) => {
 		};
 	}, [ clicked ] );
 
-	const license = () => (
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path
-				d="M18.0001 5.33337L16.6667 6.66671M16.6667 6.66671L18.6667 8.66671L16.3334 11L14.3334 9.00004M16.6667 6.66671L14.3334 9.00004M11.5934 11.74C11.9376 12.0797 12.2113 12.4841 12.3986 12.9299C12.5859 13.3757 12.6831 13.8542 12.6847 14.3378C12.6864 14.8214 12.5923 15.3005 12.408 15.7476C12.2237 16.1947 11.9528 16.6009 11.6108 16.9428C11.2689 17.2847 10.8627 17.5557 10.4156 17.74C9.96852 17.9243 9.48939 18.0183 9.00582 18.0167C8.52224 18.0151 8.04376 17.9178 7.59792 17.7305C7.15209 17.5432 6.74771 17.2696 6.40806 16.9254C5.74015 16.2338 5.37057 15.3076 5.37892 14.3462C5.38728 13.3848 5.7729 12.4652 6.45273 11.7854C7.13256 11.1055 8.0522 10.7199 9.01359 10.7116C9.97498 10.7032 10.9012 11.0728 11.5927 11.7407L11.5934 11.74ZM11.5934 11.74L14.3334 9.00004"
-				stroke="#111827"
-				strokeWidth="1.25"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-		</svg>
-	);
-
-	const ai = () => (
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<g clipPath="url(#clip0_10419_2311)">
-				<path
-					d="M10.6247 14.3333C10.5651 14.1026 10.4449 13.892 10.2764 13.7236C10.1079 13.5551 9.89738 13.4348 9.66667 13.3753L5.57667 12.3206C5.50689 12.3008 5.44547 12.2588 5.40174 12.2009C5.35801 12.1431 5.33435 12.0725 5.33435 12C5.33435 11.9274 5.35801 11.8569 5.40174 11.799C5.44547 11.7411 5.50689 11.6991 5.57667 11.6793L9.66667 10.624C9.8973 10.5645 10.1078 10.4443 10.2763 10.276C10.4447 10.1076 10.565 9.89722 10.6247 9.66663L11.6793 5.57663C11.6989 5.50657 11.7409 5.44486 11.7989 5.40089C11.8568 5.35693 11.9276 5.33313 12.0003 5.33313C12.0731 5.33313 12.1438 5.35693 12.2018 5.40089C12.2597 5.44486 12.3017 5.50657 12.3213 5.57663L13.3753 9.66663C13.4349 9.89734 13.5551 10.1079 13.7236 10.2764C13.8921 10.4449 14.1026 10.5651 14.3333 10.6246L18.4233 11.6786C18.4937 11.698 18.5557 11.74 18.5999 11.798C18.6441 11.8561 18.668 11.927 18.668 12C18.668 12.0729 18.6441 12.1439 18.5999 12.2019C18.5557 12.26 18.4937 12.3019 18.4233 12.3213L14.3333 13.3753C14.1026 13.4348 13.8921 13.5551 13.7236 13.7236C13.5551 13.892 13.4349 14.1026 13.3753 14.3333L12.3207 18.4233C12.3011 18.4934 12.2591 18.5551 12.2011 18.599C12.1432 18.643 12.0724 18.6668 11.9997 18.6668C11.9269 18.6668 11.8562 18.643 11.7982 18.599C11.7403 18.5551 11.6983 18.4934 11.6787 18.4233L10.6247 14.3333Z"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M17.3334 6V8.66667"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M18.6667 7.33337H16"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M6.66663 15.3334V16.6667"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M7.33333 16H6"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-			</g>
-			<defs>
-				<clipPath id="clip0_10419_2311">
-					<rect width="16" height="16" fill="white" transform="translate(4 4)" />
-				</clipPath>
-			</defs>
-		</svg>
-	);
-
-	const plan = () => (
-		<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<g clipPath="url(#clip0_10419_2330)">
-				<path
-					d="M12 5.33337L5.33337 8.66671L12 12L18.6667 8.66671L12 5.33337Z"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M5.33337 15.3334L12 18.6667L18.6667 15.3334"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-				<path
-					d="M5.33337 12L12 15.3333L18.6667 12"
-					stroke="#111827"
-					strokeWidth="1.25"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				/>
-			</g>
-			<defs>
-				<clipPath id="clip0_10419_2330">
-					<rect width="16" height="16" fill="white" transform="translate(4 4)" />
-				</clipPath>
-			</defs>
-		</svg>
-	);
-
-	const openLink = ( link ) => {
-		if ( ! link ) return;
-		window.open( link, '_blank' );
-	};
-
 	return (
 		<Disclosure as="nav" className="bg-white shadow border border-solid border-border-subtle">
 			{ 'Install' === spectra_blocks_react.pro_plugin_status && showHeader && (
 				<Container align="center" justify="center" className="py-2 relative bg-[#E9E4FF]">
 					<div className="space-x-1 text-text-primary text-xs">
 						<span className="font-semibold">
-							{ __( "Unlock Spectra's Full Potential!", 'spectra-blocks' ) }
+							{ __( "Unlock Spectra Blocks' Full Potential!", 'spectra-blocks' ) }
 						</span>
 						<span className="font-normal">
 							{ __(
@@ -211,10 +114,10 @@ const AdminHeader = ( props ) => {
 						</Link>
 					</Topbar.Item>
 				</Topbar.Left>
-				<Topbar.Middle align="left" className="sm:h-[64px]">
+				<Topbar.Middle align="left" className="sm:h-[64px] min-w-0 overflow-hidden">
 					<Topbar.Item>
 						{ children && (
-							<div className="flex items-center [&>svg]:block h-full lg:gap-4 md:gap-2 gap-1 flex-wrap">
+							<div className="flex items-center [&>svg]:block h-full lg:gap-4 md:gap-2 gap-1 flex-nowrap overflow-x-auto">
 								{ children }
 							</div>
 						) }
@@ -291,51 +194,6 @@ const AdminHeader = ( props ) => {
 						</a>
 					</Topbar.Item>
 
-					<Topbar.Item className="relative">
-						<DropdownMenu placement="bottom-end" isOpen={ isDropOpen2 } onOpenChange={ setIsDropOpen2 }>
-							<DropdownMenu.Trigger>
-								{ /* <Avatar size="xs"> */ }
-								{ spectra_blocks_react.spectra_pro_installed &&
-								spectra_blocks_react.spectra_pro_ver &&
-								typeof ( spectra_blocks_user_data.firstName[ 0 ] + spectra_blocks_user_data.lastName[ 0 ] ) === 'string' ? (
-									<div className="bg-[#f3f0ff] text-black p-1 rounded-full font-[Figtree]">
-										{ spectra_blocks_user_data.firstName[ 0 ] + spectra_blocks_user_data.lastName[ 0 ] }
-									</div>
-								) : (
-									<div className="bg-[#f3f0ff] w-6 h-6 rounded-full flex justify-center items-center">
-										<User size={ 16 } />
-									</div>
-								) }
-								{ /* </Avatar> */ }
-								<span className="sr-only">{ __( 'Open Menu', 'spectra-blocks' ) }</span>
-							</DropdownMenu.Trigger>
-						<DropdownMenu.ContentWrapper>
-							<DropdownMenu.Content className="w-60">
-								<DropdownMenu.List>
-									<DropdownMenu.Item>
-										<div className="flex w-full justify-between items-center font-[Figtree]">
-											<div className="flex gap-1 font-[Figtree]">
-												{ license() }
-												{ __( 'License Status', 'spectra-blocks' ) }
-											</div>
-
-											<Badge
-												label={ sprintf(
-													/* translators: credits in k format */
-													__( ' %s', 'spectra-blocks' ),
-													spectra_blocks_react.license_status ? 'Active' : 'Inactive'
-												) }
-												size="xxs"
-												variant={ spectra_blocks_react.license_status ? 'green' : 'yellow' }
-											/>
-										</div>
-									</DropdownMenu.Item>
-
-								</DropdownMenu.List>
-							</DropdownMenu.Content>
-							</DropdownMenu.ContentWrapper>
-						</DropdownMenu>
-					</Topbar.Item>
 				</Topbar.Right>
 			</Topbar>
 		</Disclosure>

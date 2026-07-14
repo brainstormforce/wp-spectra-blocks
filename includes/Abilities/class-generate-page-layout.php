@@ -5,7 +5,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -17,14 +17,14 @@ defined( 'ABSPATH' ) || exit;
  * Accepts a structured array of blocks (with optional nesting) and serializes
  * them into valid Gutenberg block markup that can be inserted into a post.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class GeneratePageLayout extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -35,7 +35,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -46,7 +46,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -57,7 +57,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -68,7 +68,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -113,7 +113,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -124,7 +124,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error
@@ -150,7 +150,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Recursively serialize an array of block definitions into block markup.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $blocks Array of block definitions.
 	 * @param int   $depth  Current recursion depth (safety limit).
@@ -188,7 +188,7 @@ class GeneratePageLayout extends AbstractAbility {
 	/**
 	 * Serialize a single block definition into block comment markup.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $block Block definition.
 	 * @param int   $depth Current recursion depth.

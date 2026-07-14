@@ -107,6 +107,21 @@
 		padding: var(--spectra-popup-padding, 32px);
 	}
 
+	// Constrain the popup wrapper to the configured width/height instead
+	// of letting full-aligned inner blocks expand it to viewport width.
+	// The CSS variables are emitted on the root overlay by the controller
+	// from the `width` / `height` block attributes.
+	&.spectra-popup-builder--popup .spectra-popup-builder__wrapper--popup {
+		width: var(--spectra-popup-width, auto);
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+
+	&.spectra-popup-builder--popup.spectra-has-fixed-height .spectra-popup-builder__wrapper--popup {
+		height: var(--spectra-popup-height, auto);
+		max-height: 100%;
+	}
+
 	.spectra-popup-builder__wrapper {
 		pointer-events: auto;
 	}

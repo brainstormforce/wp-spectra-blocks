@@ -6,12 +6,12 @@ import BsfLearnStep from './BsfLearnStep';
 /**
  * Component for rendering a learn chapter with steps
  *
- * @param {Object} props - Component props
- * @param {Object} props.chapters - Chapters data object
- * @param {string} props.defaultValue - Default chapter ID to open
+ * @param {Object}   props                        - Component props
+ * @param {Object}   props.chapters               - Chapters data object
+ * @param {string}   props.defaultValue           - Default chapter ID to open
  * @param {Function} props.onStepCompletionChange - Callback when step completion status changes
- * @param {Function} props.onLearnHowClick - Callback to open learn how dialog
- * @returns {JSX.Element} - Rendered chapter component
+ * @param {Function} props.onLearnHowClick        - Callback to open learn how dialog
+ * @return {JSX.Element} - Rendered chapter component
  */
 const BsfLearnChapter = ( { chapters, defaultValue, onStepCompletionChange, onLearnHowClick } ) => {
 

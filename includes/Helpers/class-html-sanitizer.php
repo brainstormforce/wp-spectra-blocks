@@ -5,10 +5,7 @@
  * @package Spectra\Helpers
  */
 
-namespace Spectra\Helpers;
-
-defined( 'ABSPATH' ) || exit;
-
+namespace SpectraBlocks\Helpers;
 
 /**
  * Utility for re-using WP Kses-based sanitization rules.
@@ -33,17 +30,20 @@ class HtmlSanitizer {
 			 * Video tag with comprehensive attributes.
 			 */
 			'video'         => array(
-				'src'      => true,
-				'poster'   => true,
-				'preload'  => true,
-				'autoplay' => true,
-				'loop'     => true,
-				'muted'    => true,
-				'controls' => true,
-				'width'    => true,
-				'height'   => true,
-				'style'    => true,
-				'class'    => true,
+				'src'         => true,
+				'poster'      => true,
+				'preload'     => true,
+				'autoplay'    => true,
+				'loop'        => true,
+				'muted'       => true,
+				'controls'    => true,
+				'width'       => true,
+				'height'      => true,
+				'style'       => true,
+				'class'       => true,
+				'playsinline' => true,
+				'role'        => true,
+				'aria-hidden' => true,
 			),
 			/**
 			 * IFrame tag for embedded content like Google Maps.
@@ -247,6 +247,8 @@ class HtmlSanitizer {
 				'viewBox' => true,
 				'viewbox' => true,
 			),
+			// Note: 'polyline' with comprehensive attributes is defined earlier on line 180.
+
 			/**
 			 * Select tags with comprehensive attributes.
 			 */
@@ -821,7 +823,19 @@ class HtmlSanitizer {
 			),
 		);
 
-		return array_merge( $allowed_tags, $custom_tags );
+		$svg_tags = self::get_svg_allowed_tags();
+		$merged   = array_merge( $allowed_tags, $custom_tags, $svg_tags );
+
+		// get_svg_allowed_tags() includes 'a' with SVG-only attrs (href, xlink:href, …)
+		// but not HTML link attrs (target, rel, rev, name, download). array_merge with
+		// string keys keeps the LAST value, so the SVG 'a' entry overwrites the HTML
+		// one from wp_kses_allowed_html('post'), silently stripping target/rel from
+		// every rendered anchor. Re-merge here with html 'a' winning for shared keys.
+		if ( isset( $allowed_tags['a'] ) ) {
+			$merged['a'] = array_merge( $svg_tags['a'] ?? array(), $allowed_tags['a'] );
+		}
+
+		return $merged;
 	}
 
 	/**
@@ -941,25 +955,27 @@ class HtmlSanitizer {
 		self::allow_svg_css_properties();
 		$sanitized = wp_kses( $content, $allowed_tags );
 
-		// Clean up by removing only our own filters (not all filters on these hooks).
-		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
-		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
+		// Clean up by removing our filters.
+		remove_all_filters( 'safe_style_css' );
+		remove_all_filters( 'safecss_filter_attr_allow_css' );
 
-		// Restore extracted SureForms CSS variables. wp_add_inline_style() is not used here because
-		// render() executes during the_content filter (after wp_head), and the CSS must be co-located
-		// with the form HTML it styles. The CSS is thoroughly sanitized: HTML tags stripped, CSS comments
-		// and unicode escapes removed to prevent obfuscation, and known injection patterns blocked.
-		// The final output passes through wp_kses() with an explicit allowed tags list.
+		// Restore style tag if it was extracted.
 		if ( isset( $style_content ) && strpos( $sanitized, '<!--STYLE_PLACEHOLDER-->' ) !== false ) {
 			$style_content = wp_strip_all_tags( $style_content );
-			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip CSS comments.
-			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip hex escapes.
-			$style_content = preg_replace( '/(expression|javascript|behavior|vbscript|mocha|livescript|url\s*\()/i', '', $style_content ); // phpcs:ignore WordPress.PHP.PrecisionCheck.FoundNonStrict -- strip injection patterns.
+			// Keep gbs-base's sanitiser (allows legitimate `url()` such as
+			// background images while neutralising `url(javascript:` and the
+			// expression/behavior/vbscript/mocha/livescript vectors), and adopt
+			// dev's null-coalesce so preg_replace() never yields null.
+			$style_content = preg_replace( '/\/\*.*?\*\//s', '', $style_content ) ?? '';
+			$style_content = preg_replace( '/\\\\[0-9a-fA-F]{1,6}\s?/', '', $style_content ) ?? '';
+			$style_content = preg_replace( '/(expression|behavior|vbscript|mocha|livescript)/i', '', $style_content ) ?? '';
+			$style_content = preg_replace( '/url\s*\(\s*([\'"]?\s*)javascript\s*:/i', 'url(${1}blocked:', $style_content ) ?? '';
 			$sanitized     = str_replace( '<!--STYLE_PLACEHOLDER-->', '<style>' . $style_content . '</style>', $sanitized );
 		}
 
 		if ( $should_echo ) {
-			echo wp_kses( $sanitized, self::get_render_allowed_tags() );
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaping not required because it's already sanitized using wp_kses.
+			echo $sanitized;
 			return;
 		}
 
@@ -967,200 +983,307 @@ class HtmlSanitizer {
 	}
 
 	/**
+	 * Case-sensitive camelCase SVG attribute names — SSOT for BOTH the
+	 * allowlist (folded in lowercased, since wp_kses matches and emits
+	 * attribute names in lowercase) and the post-sanitize restore in
+	 * restore_svg_camelcase_attrs(). One list, two consumers — no drift.
+	 *
+	 * @var string[]
+	 */
+	private const SVG_CAMEL_ATTRS = array(
+		'viewBox',
+		'preserveAspectRatio',
+		'gradientUnits',
+		'gradientTransform',
+		'spreadMethod',
+		'patternUnits',
+		'patternContentUnits',
+		'patternTransform',
+		'clipPathUnits',
+		'maskUnits',
+		'maskContentUnits',
+		'markerWidth',
+		'markerHeight',
+		'markerUnits',
+		'refX',
+		'refY',
+		'filterUnits',
+		'primitiveUnits',
+		'stdDeviation',
+		'edgeMode',
+		'xChannelSelector',
+		'yChannelSelector',
+		'baseFrequency',
+		'numOctaves',
+		'stitchTiles',
+		'tableValues',
+		'kernelMatrix',
+		'kernelUnitLength',
+		'targetX',
+		'targetY',
+		'surfaceScale',
+		'specularConstant',
+		'specularExponent',
+		'diffuseConstant',
+		'pointsAtX',
+		'pointsAtY',
+		'pointsAtZ',
+		'limitingConeAngle',
+		'attributeName',
+		'attributeType',
+		'repeatCount',
+		'repeatDur',
+		'calcMode',
+		'keyTimes',
+		'keySplines',
+		'keyPoints',
+		'startOffset',
+	);
+
+	/**
 	 * Get the allowed SVG tags and attributes for wp_kses().
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array Allowed SVG tags with their attributes.
 	 */
 	public static function get_svg_allowed_tags(): array {
-		return array(
-			'svg'      => array(
-				'aria-controls'       => true,
-				'aria-current'        => true,
-				'aria-describedby'    => true,
-				'aria-details'        => true,
-				'aria-expanded'       => true,
-				'aria-hidden'         => true,
-				'aria-label'          => true,
-				'aria-labelledby'     => true,
-				'aria-live'           => true,
-				'class'               => true,
-				'role'                => true,
-				'xmlns'               => true,
-				'width'               => true,
-				'height'              => true,
-				'viewBox'             => true,
-				'viewbox'             => true,
-				'preserveAspectRatio' => true,
-				'preserveaspectratio' => true,
-				'fill'                => true,
-				'focusable'           => true,
-				'stroke'              => true,
-				'stroke-width'        => true,
-				'fill-rule'           => true,
-				'stroke-linecap'      => true,
-				'stroke-linejoin'     => true,
-				'stroke-miterlimit'   => true,
-				'style'               => true,
-			),
-			'g'        => array(
-				'transform' => true,
-				'style'     => true,
-				'class'     => true,
-				'fill'      => true,
-				'stroke'    => true,
-			),
-			'path'     => array(
-				'd'               => true,
-				'fill'            => true,
-				'opacity'         => true,
-				'stroke'          => true,
-				'stroke-width'    => true,
-				'stroke-linecap'  => true,
-				'stroke-linejoin' => true,
-				'transform'       => true,
-				'style'           => true,
-				'class'           => true,
-			),
-			'circle'   => array(
-				'cx'           => true,
-				'cy'           => true,
-				'r'            => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'rect'     => array(
-				'x'            => true,
-				'y'            => true,
-				'width'        => true,
-				'height'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-				'rx'           => true,
-				'ry'           => true,
-			),
-			'line'     => array(
-				'x1'           => true,
-				'y1'           => true,
-				'x2'           => true,
-				'y2'           => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'polygon'  => array(
-				'points'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'polyline' => array(
-				'points'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'ellipse'  => array(
-				'cx'           => true,
-				'cy'           => true,
-				'rx'           => true,
-				'ry'           => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'text'     => array(
-				'x'           => true,
-				'y'           => true,
-				'fill'        => true,
-				'stroke'      => true,
-				'font-family' => true,
-				'font-size'   => true,
-				'text-anchor' => true,
-				'style'       => true,
-				'class'       => true,
-				'transform'   => true,
-			),
-			'defs'     => array(
-				'class' => true,
-			),
-			'clippath' => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'clipPath' => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'mask'     => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'use'      => array(
-				'href'       => true,
-				'xlink:href' => true,
-				'x'          => true,
-				'y'          => true,
-				'width'      => true,
-				'height'     => true,
-				'transform'  => true,
-				'style'      => true,
-				'class'      => true,
-			),
-			'symbol'   => array(
-				'id'      => true,
-				'viewBox' => true,
-				'viewbox' => true,
-				'class'   => true,
-			),
-			'title'    => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'desc'     => array(
-				'id'    => true,
-				'class' => true,
-			),
+		// Built once per request: deterministic, no filter hook.
+		static $allowed = null;
+		if ( null !== $allowed ) {
+			return $allowed;
+		}
+
+		// Complete safe SVG presentation surface. Security is NOT enforced by
+		// limiting this set — it is enforced by the execution-vector denylist in
+		// sanitize_svg() (script/foreignObject excluded here; on*, unsafe href
+		// schemes and dangerous CSS stripped there). So any non-scripting vector
+		// graphic — gradients, filters, masks, patterns, markers, declarative
+		// animation — survives intact. Keys are lowercase: wp_kses lowercases
+		// element names for the lookup but preserves their case in output, so
+		// camelCase elements (linearGradient, feGaussianBlur) render valid.
+		$elements = array(
+			// Structure / containers.
+			'svg',
+			'g',
+			'defs',
+			'symbol',
+			'use',
+			'switch',
+			'a',
+			'image',
+			'title',
+			'desc',
+			'metadata',
+			'style',
+			// Shapes.
+			'path',
+			'rect',
+			'circle',
+			'ellipse',
+			'line',
+			'polyline',
+			'polygon',
+			// Text.
+			'text',
+			'tspan',
+			'textpath',
+			// Paint servers.
+			'lineargradient',
+			'radialgradient',
+			'stop',
+			'pattern',
+			// Clipping / masking / markers.
+			'clippath',
+			'mask',
+			'marker',
+			// Filter primitives.
+			'filter',
+			'feblend',
+			'fecolormatrix',
+			'fecomponenttransfer',
+			'fecomposite',
+			'feconvolvematrix',
+			'fediffuselighting',
+			'fedisplacementmap',
+			'fedistantlight',
+			'fedropshadow',
+			'feflood',
+			'fefunca',
+			'fefuncb',
+			'fefuncg',
+			'fefuncr',
+			'fegaussianblur',
+			'feimage',
+			'femerge',
+			'femergenode',
+			'femorphology',
+			'feoffset',
+			'fepointlight',
+			'fespecularlighting',
+			'fespotlight',
+			'fetile',
+			'feturbulence',
+			// Declarative (non-scripting) animation.
+			'animate',
+			'animatemotion',
+			'animatetransform',
+			'set',
+			'mpath',
 		);
+
+		// One shared attribute surface applied to every element. wp_kses also
+		// lowercases attribute NAMES, so the case-sensitive camelCase SVG attrs
+		// (SVG_CAMEL_ATTRS) are folded in lowercased here and restored after
+		// sanitization by restore_svg_camelcase_attrs(). on* handlers are absent
+		// here and additionally stripped in sanitize_svg().
+		$attributes = array_fill_keys(
+			array_merge(
+				array(
+					'id',
+					'class',
+					'style',
+					// `data-*` wildcard — preserves data attributes (e.g.
+					// `data-spectra-id`, which the responsive-controls CSS
+					// selector targets) when nested block HTML is re-sanitized
+					// by a parent block's HtmlSanitizer::render(). Without this,
+					// wp_kses strips every data-* attribute off the shared
+					// surface, breaking per-block CSS on inner blocks (buttons).
+					'data-*',
+					'role',
+					'tabindex',
+					'lang',
+					'aria-hidden',
+					'aria-label',
+					'aria-labelledby',
+					'aria-describedby',
+					'aria-controls',
+					'aria-current',
+					'aria-details',
+					'aria-expanded',
+					'aria-live',
+					'focusable',
+					'xmlns',
+					'xmlns:xlink',
+					'fill',
+					'fill-opacity',
+					'fill-rule',
+					'stroke',
+					'stroke-width',
+					'stroke-opacity',
+					'stroke-linecap',
+					'stroke-linejoin',
+					'stroke-miterlimit',
+					'stroke-dasharray',
+					'stroke-dashoffset',
+					'opacity',
+					'color',
+					'stop-color',
+					'stop-opacity',
+					'flood-color',
+					'flood-opacity',
+					'lighting-color',
+					'paint-order',
+					'mix-blend-mode',
+					'vector-effect',
+					'visibility',
+					'display',
+					'overflow',
+					'clip-path',
+					'clip-rule',
+					'mask',
+					'filter',
+					'marker-start',
+					'marker-mid',
+					'marker-end',
+					'x',
+					'y',
+					'x1',
+					'y1',
+					'x2',
+					'y2',
+					'cx',
+					'cy',
+					'r',
+					'rx',
+					'ry',
+					'dx',
+					'dy',
+					'width',
+					'height',
+					'points',
+					'd',
+					'offset',
+					'rotate',
+					'transform',
+					'transform-origin',
+					'font-family',
+					'font-size',
+					'font-weight',
+					'font-style',
+					'text-anchor',
+					'dominant-baseline',
+					'letter-spacing',
+					'word-spacing',
+					'href',
+					'xlink:href',
+					'orient',
+					'result',
+					'in',
+					'in2',
+					'mode',
+					'type',
+					'values',
+					'operator',
+					'k1',
+					'k2',
+					'k3',
+					'k4',
+					'scale',
+					'seed',
+					'slope',
+					'intercept',
+					'amplitude',
+					'exponent',
+					'radius',
+					'order',
+					'divisor',
+					'bias',
+					'azimuth',
+					'elevation',
+					'begin',
+					'end',
+					'dur',
+					'from',
+					'to',
+					'by',
+					'additive',
+					'accumulate',
+					'restart',
+					'path',
+				),
+				array_map( 'strtolower', self::SVG_CAMEL_ATTRS )
+			),
+			true
+		);
+
+		$allowed = array();
+		foreach ( $elements as $element ) {
+			$allowed[ $element ] = $attributes;
+		}
+
+		return $allowed;
 	}
 
 	/**
 	 * Get allowed tags for render() output — combines post HTML, SVG, and style tags.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array Allowed tags with their attributes.
 	 */
 	public static function get_render_allowed_tags(): array {
-		$allowed = wp_kses_allowed_html( 'post' );
-		$allowed = array_merge( $allowed, self::get_svg_allowed_tags() );
-
-		// Allow style tag for SureForms CSS variables preserved during render.
-		$allowed['style'] = array(
-			'type' => true,
-		);
-
-		return $allowed;
+		return self::get_allowed_tags();
 	}
 
 	/**
@@ -1241,6 +1364,39 @@ class HtmlSanitizer {
 	}
 
 	/**
+	 * Restore case-sensitive SVG camelCase attribute names after wp_kses.
+	 *
+	 * The wp_kses function lowercases attribute names; SVG attributes such as viewBox,
+	 * gradientUnits, gradientTransform and stdDeviation are case-sensitive,
+	 * so the lowercased forms are ignored by the browser. Restore the known
+	 * SVG camelCase attribute names from their lowercased forms. (Element
+	 * names are already preserved by wp_kses.)
+	 *
+	 * @param string $svg Sanitized SVG markup.
+	 * @return string SVG markup with camelCase attribute names restored.
+	 */
+	private static function restore_svg_camelcase_attrs( string $svg ): string {
+		// Build the lowercase => camelCase map once; a single regex pass
+		// restores every name. The (\s)…(\s*=) anchors confine matches to
+		// attribute-name position, never element content. Source: SVG_CAMEL_ATTRS.
+		static $map = null;
+		if ( null === $map ) {
+			$map = array();
+			foreach ( self::SVG_CAMEL_ATTRS as $camel ) {
+				$map[ strtolower( $camel ) ] = $camel;
+			}
+		}
+
+		return (string) preg_replace_callback(
+			'/(\s)(' . implode( '|', array_keys( $map ) ) . ')(\s*=)/',
+			static function ( $matches ) use ( $map ) {
+				return $matches[1] . $map[ $matches[2] ] . $matches[3];
+			},
+			$svg
+		);
+	}
+
+	/**
 	 * Sanitizes SVG content specifically for icon blocks.
 	 *
 	 * @since 3.0.0
@@ -1257,193 +1413,21 @@ class HtmlSanitizer {
 			return '';
 		}
 		// Define allowed SVG tags and attributes.
-		$allowed_svg_tags = array(
-			'svg'      => array(
-				'aria-controls'       => true,
-				'aria-current'        => true,
-				'aria-describedby'    => true,
-				'aria-details'        => true,
-				'aria-expanded'       => true,
-				'aria-hidden'         => true,
-				'aria-label'          => true,
-				'aria-labelledby'     => true,
-				'aria-live'           => true,
-				'class'               => true,
-				'role'                => true,
-				'xmlns'               => true,
-				'width'               => true,
-				'height'              => true,
-				'viewBox'             => true,
-				'viewbox'             => true,
-				'preserveAspectRatio' => true,
-				'preserveaspectratio' => true,
-				'fill'                => true,
-				'focusable'           => true,
-				'stroke'              => true,
-				'stroke-width'        => true,
-				'fill-rule'           => true,
-				'stroke-linecap'      => true,
-				'stroke-linejoin'     => true,
-				'stroke-miterlimit'   => true,
-				'style'               => true,
-			),
-			'g'        => array(
-				'transform' => true,
-				'style'     => true,
-				'class'     => true,
-				'fill'      => true,
-				'stroke'    => true,
-			),
-			'path'     => array(
-				'd'               => true,
-				'fill'            => true,
-				'opacity'         => true,
-				'stroke'          => true,
-				'stroke-width'    => true,
-				'stroke-linecap'  => true,
-				'stroke-linejoin' => true,
-				'transform'       => true,
-				'style'           => true,
-				'class'           => true,
-			),
-			'circle'   => array(
-				'cx'           => true,
-				'cy'           => true,
-				'r'            => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'rect'     => array(
-				'x'            => true,
-				'y'            => true,
-				'width'        => true,
-				'height'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-				'rx'           => true,
-				'ry'           => true,
-			),
-			'line'     => array(
-				'x1'           => true,
-				'y1'           => true,
-				'x2'           => true,
-				'y2'           => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'polygon'  => array(
-				'points'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'polyline' => array(
-				'points'       => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'ellipse'  => array(
-				'cx'           => true,
-				'cy'           => true,
-				'rx'           => true,
-				'ry'           => true,
-				'fill'         => true,
-				'stroke'       => true,
-				'stroke-width' => true,
-				'style'        => true,
-				'class'        => true,
-				'transform'    => true,
-			),
-			'text'     => array(
-				'x'           => true,
-				'y'           => true,
-				'fill'        => true,
-				'stroke'      => true,
-				'font-family' => true,
-				'font-size'   => true,
-				'text-anchor' => true,
-				'style'       => true,
-				'class'       => true,
-				'transform'   => true,
-			),
-			'defs'     => array(
-				'class' => true,
-			),
-			'clippath' => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'clipPath' => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'mask'     => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'use'      => array(
-				'href'       => true,
-				'xlink:href' => true,
-				'x'          => true,
-				'y'          => true,
-				'width'      => true,
-				'height'     => true,
-				'transform'  => true,
-				'style'      => true,
-				'class'      => true,
-			),
-			'symbol'   => array(
-				'id'      => true,
-				'viewBox' => true,
-				'viewbox' => true,
-				'class'   => true,
-			),
-			'title'    => array(
-				'id'    => true,
-				'class' => true,
-			),
-			'desc'     => array(
-				'id'    => true,
-				'class' => true,
-			),
-		);
-
-		// Preserve viewBox before sanitization as wp_kses sometimes strips it.
-		$viewbox_value = '';
-		if ( preg_match( '/viewBox\s*=\s*["\']([^"\']+)["\']/i', $svg_content, $matches ) ) {
-			$viewbox_value = $matches[1];
-		}
+		$allowed_svg_tags = self::get_svg_allowed_tags();
 
 		// Temporarily allow SVG CSS properties during processing.
 		self::allow_svg_css_properties();
 		$sanitized = wp_kses( $svg_content, $allowed_svg_tags );
 
-		// Clean up by removing only our own filters (not all filters on these hooks).
-		remove_filter( 'safe_style_css', array( __CLASS__, 'extend_safe_style_css' ) );
-		remove_filter( 'safecss_filter_attr_allow_css', array( __CLASS__, 'allow_css_transform_functions' ), 10 );
+		// Clean up by removing our filters.
+		remove_all_filters( 'safe_style_css' );
+		remove_all_filters( 'safecss_filter_attr_allow_css' );
 
-		// Re-add viewBox if it was stripped but we had one originally.
-		if ( ! empty( $viewbox_value ) && ! preg_match( '/viewBox\s*=/i', $sanitized ) ) {
-			$sanitized = preg_replace( '/(<svg[^>]*?)(\s*>)/i', '$1 viewBox="' . esc_attr( $viewbox_value ) . '"$2', $sanitized );
-		}
+		// wp_kses lowercases attribute names; SVG attribute names are case-
+		// sensitive (viewBox, gradientUnits, stdDeviation, …). Restore the
+		// known SVG camelCase attribute names so gradients, filters, patterns
+		// and markers resolve.
+		$sanitized = self::restore_svg_camelcase_attrs( $sanitized );
 
 		// Additional post-processing security checks.
 		if ( empty( $sanitized ) ) {
@@ -1464,7 +1448,7 @@ class HtmlSanitizer {
 		);
 
 		foreach ( $dangerous_patterns as $pattern ) {
-			$sanitized = preg_replace( $pattern, '', $sanitized );
+			$sanitized = preg_replace( $pattern, '', $sanitized ) ?? '';
 		}
 
 		return $sanitized;

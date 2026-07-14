@@ -13,7 +13,7 @@ const ProActiveStatus = () => {
 	const translatedDesc = sprintf(
 		/* translators: %s: plugin edition name */
 		__( 'You are using %s version.', 'spectra-blocks' ),
-		'<span class="text-text-primary font-medium">Spectra Pro</span>'
+		'<span class="text-text-primary font-medium">Spectra Blocks Pro</span>'
 	);
 
 	return (

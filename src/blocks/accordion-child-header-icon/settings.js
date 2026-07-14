@@ -126,7 +126,7 @@ export const BlockSettings = ( props ) => {
 										checked={ tabAttributes[ tab.name ].flipForRTLValue }
 										label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 										onChange={ () => setAttributes( { [ tabAttributes[ tab.name ].flipForRTLLabel ]: ! tabAttributes[ tab.name ].flipForRTLValue } ) }
-										help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
+										help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like "Arrow Right", "Chart Line", etc.', 'spectra-blocks' ) }
 									/>
 								</VStack>
 							) }
@@ -160,7 +160,7 @@ export const BlockSettings = ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -210,7 +210,7 @@ const DimensionSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -222,6 +222,7 @@ const ColorSettings = memo( ( props ) => {
 		clientId,
 		setAttributes,
 		attributes: {
+			textColor,
 			textColorHover,
 			backgroundColorHover,
 			backgroundGradientHover,
@@ -231,6 +232,12 @@ const ColorSettings = memo( ( props ) => {
 	return(
 		<InspectorColor
 			settings={ [
+				{
+					colorValue: textColor,
+					label: __( 'Icon Color', 'spectra-blocks' ),
+					onColorChange: ( value ) => setAttributes( { textColor: value } ),
+					resetAllFilter: () => setAttributes( { textColor: undefined } ),
+				},
 				{
 					colorValue: textColorHover,
 					label: __( 'Icon Hover/Focus', 'spectra-blocks' ),

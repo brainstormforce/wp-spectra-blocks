@@ -4,10 +4,12 @@ vendor/
 !/lib/class-spectra-blocks-*.php
 /build/
 admin/assets/build/
+artifact/
 *.zip
 *.log
 .DS_Store
 .claude/
 wp-org-submission-report*.md
+tests/playwright/screenshots/
 .vscode/
 config.bat

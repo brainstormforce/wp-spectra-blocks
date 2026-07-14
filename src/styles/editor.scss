@@ -8,7 +8,7 @@ $bg-light: #f4f4f4;
 $text-dark: #333;
 
 // Extension styles.
-@use "extensions/z-index";
+@import "extensions/z-index";
 
 svg {
 	// Colored block icons.
@@ -116,11 +116,6 @@ path:last-child {
 .spectra-block-icon--colored
 path:last-child {
 	fill: #2271b1;
-}
-
-.components-accessible-toolbar .components-button.is-pressed path:last-child,
-.components-toolbar .components-button.is-pressed path:last-child {
-	fill: #000;
 }
 
 // Default state

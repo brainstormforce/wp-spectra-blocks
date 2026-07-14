@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { Container } from '@bsf/force-ui';
+import Spectra_Block_Icons from '@Common/block-icons';
 import BlockItem from '@Common/components/BlockItem';
 
 const Blocks = () => {
@@ -18,7 +19,7 @@ const Blocks = () => {
 			icon: 'container',
 			is_pro: false,
 			is_active: true,
-			link: 'container-v3'
+			link: 'container-spectra-blocks'
 		},
 		{
 			title: __( 'Button', 'spectra-blocks' ),
@@ -26,7 +27,7 @@ const Blocks = () => {
 			icon: 'button',
 			is_pro: false,
 			is_active: true,
-			link: 'button-v3'
+			link: 'button-spectra-blocks'
 		},
 		{
 			title: __( 'Text', 'spectra-blocks' ),
@@ -34,7 +35,7 @@ const Blocks = () => {
 			icon: 'content',
 			is_pro: false,
 			is_active: true,
-			link: 'text-v3'
+			link: 'text-spectra-blocks'
 		},
 		{
 			title: __( 'Icon', 'spectra-blocks' ),
@@ -42,7 +43,7 @@ const Blocks = () => {
 			icon: 'icon',
 			is_pro: false,
 			is_active: true,
-			link: 'icon-v3'
+			link: 'icon-spectra-blocks'
 		},
 		{
 			title: __( 'Accordions', 'spectra-blocks' ),
@@ -50,7 +51,7 @@ const Blocks = () => {
 			icon: 'accordion',
 			is_pro: false,
 			is_active: true,
-			link: 'accordion-v3'
+			link: 'accordion-spectra-blocks'
 		},
 		{
 			title: __( 'Countdown', 'spectra-blocks' ),
@@ -58,7 +59,7 @@ const Blocks = () => {
 			icon: 'countdown',
 			is_pro: false,
 			is_active: true,
-			link: 'countdown-v3'
+			link: 'countdown-spectra-blocks'
 		},
 		{
 			title: __( 'Slider', 'spectra-blocks' ),
@@ -66,7 +67,7 @@ const Blocks = () => {
 			icon: 'slider',
 			is_pro: false,
 			is_active: true,
-			link: 'slider-v3'
+			link: 'slider-spectra-blocks'
 		},
 		{
 			title: __( 'Tabs', 'spectra-blocks' ),
@@ -74,7 +75,7 @@ const Blocks = () => {
 			icon: 'tabs',
 			is_pro: false,
 			is_active: true,
-			link: 'tabs-v3'
+			link: 'tabs-spectra-blocks'
 		},
 		{
 			title: __( 'Google Map', 'spectra-blocks' ),
@@ -82,7 +83,7 @@ const Blocks = () => {
 			icon: 'google-map',
 			is_pro: false,
 			is_active: true,
-			link: 'google-maps-v3'
+			link: 'google-maps-spectra-blocks'
 		},
 		{
 			title: __( 'Modal', 'spectra-blocks' ),
@@ -90,7 +91,7 @@ const Blocks = () => {
 			icon: 'modal',
 			is_pro: false,
 			is_active: true,
-			link: 'modal-v3'
+			link: 'modal-spectra-blocks'
 		},
 		{
 			title: __( 'List', 'spectra-blocks' ),
@@ -98,7 +99,7 @@ const Blocks = () => {
 			icon: 'list',
 			is_pro: false,
 			is_active: true,
-			link: 'list-v3'
+			link: 'list-spectra-blocks'
 		},
 		{
 			title: __( 'Separator', 'spectra-blocks' ),
@@ -106,7 +107,23 @@ const Blocks = () => {
 			icon: 'separator',
 			is_pro: false,
 			is_active: true,
-			link: 'separator-v3'
+			link: 'separator-spectra-blocks'
+		},
+		{
+			title: __( 'Post', 'spectra-blocks' ),
+			slug: 'post',
+			icon: React.cloneElement( Spectra_Block_Icons.post, { width: 24, height: 24 } ),
+			is_pro: false,
+			is_active: true,
+			link: 'post-spectra-blocks'
+		},
+		{
+			title: __( 'Counter', 'spectra-blocks' ),
+			slug: 'counter',
+			icon: React.cloneElement( Spectra_Block_Icons.counter, { width: 24, height: 24 } ),
+			is_pro: false,
+			is_active: true,
+			link: 'counter-spectra-blocks'
 		},
 	];
 

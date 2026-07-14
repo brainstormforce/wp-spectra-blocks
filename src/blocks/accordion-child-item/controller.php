@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildItem
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Make a unique ID for this accordion item.
 $accordion_item_id = wp_unique_id( 'spectra-accordion-item-' );

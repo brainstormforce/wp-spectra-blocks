@@ -7,7 +7,6 @@ import {
 	InspectorControls,
 	useSettings,
 } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
@@ -314,7 +313,7 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -440,7 +439,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Dimensions settings for responsive height control.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered dimension settings.
@@ -492,11 +491,6 @@ export default memo( ( props ) => {
 		<>
 			<BlockSettings { ...props } />
 			<DimensionSettings { ...props } />
-			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-				<InspectorControls group="settings">
-					<UpgradeComponent control={ { campaign: 'dynamic-content' } } />
-				</InspectorControls>
-			) }
 		</>
 	);
 } );

@@ -8,11 +8,10 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import edit from './edit';
 import save from './save';
-import metadata from './block.json';
 import blockIcons from '@spectra-helpers/block-icons';
 import './style.scss';
 
-registerBlockType( metadata.name, {
+registerBlockType( 'spectra/counter-child-progress-bar', {
 	icon: blockIcons.counterChildProgressBar(),
 	edit,
 	save,

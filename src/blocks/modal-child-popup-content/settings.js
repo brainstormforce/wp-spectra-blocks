@@ -25,7 +25,7 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -64,11 +64,8 @@ const BlockSettings = memo( ( props ) => {
 			>
 				<ToolsPanelItem
 					hasValue={ () => !! containerWidth }
-					label={ __( 'Width', 'spectra-blocks' ) }
+					label={ __( 'width', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { containerWidth: undefined } ) }
-					resetAllFilter={ () => ( {
-						containerWidth: undefined,
-					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -86,9 +83,6 @@ const BlockSettings = memo( ( props ) => {
 					hasValue={ () => !! contentHeight }
 					label={ __( 'Content Height', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { contentHeight: undefined } ) }
-					resetAllFilter={ () => ( {
-						contentHeight: undefined,
-					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -109,9 +103,6 @@ const BlockSettings = memo( ( props ) => {
 					hasValue={ () => !! containerHeight }
 					label={ __( 'Height', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { containerHeight: undefined } ) }
-					resetAllFilter={ () => ( {
-						containerHeight: undefined,
-					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -133,7 +124,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -184,7 +175,7 @@ const BackgroundSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -243,7 +234,7 @@ const ColorSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block opacity styles.

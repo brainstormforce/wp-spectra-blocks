@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * DeletePopup ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class DeletePopup extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -82,7 +82,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -107,7 +107,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -126,7 +126,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Check if the current user has permission.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -145,7 +145,7 @@ class DeletePopup extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Result or error.
@@ -163,7 +163,7 @@ class DeletePopup extends AbstractAbility {
 		$force_delete = ! empty( $params['force_delete'] );
 		$post         = get_post( $popup_id );
 
-		if ( ! $post || 'spectra-popup' !== $post->post_type ) {
+		if ( ! $post || 'spectra-blocks-popup' !== $post->post_type ) {
 			return new WP_Error(
 				'spectra_blocks_not_found',
 				__( 'The specified popup does not exist.', 'spectra-blocks' ),

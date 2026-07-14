@@ -30,7 +30,8 @@
 		"insert text",
 		"advanced text",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"supports": {
 		"anchor": true,
@@ -41,16 +42,16 @@
 			"fontSize": true,
 			"lineHeight": true,
 			"textAlign": true,
-			"__experimentalFontFamily":true,
-			"__experimentalFontStyle":true,
-			"__experimentalFontWeight":true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontStyle": true,
+			"__experimentalFontWeight": true,
 			"__experimentalTextDecoration": true,
 			"__experimentalLetterSpacing": true,
 			"__experimentalTextTransform": true,
 			"__experimentalWritingMode": true,
 			"__experimentalDefaultControls": {
 				"fontSize": true,
-				"fontFamily":true
+				"fontFamily": true
 			}
 		},
 		"__experimentalSlashInserter": true,
@@ -137,6 +138,10 @@
 		},
 		"textShadowOffsetY": {
 			"type": "number"
+		},
+		"htmlAttributes": {
+			"type": "object",
+			"default": {}
 		}
 	}
 }

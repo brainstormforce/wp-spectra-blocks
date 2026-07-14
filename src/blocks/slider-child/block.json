@@ -91,7 +91,7 @@
 	"editorStyle": "file:./index.css",
 	"style": [
 		"file:./style-index.css",
-		"spectra-components-block-appender"
+		"spectra-blocks-components-block-appender"
 	],
 	"render": "file:./view.php"
 }

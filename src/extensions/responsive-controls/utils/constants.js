@@ -244,7 +244,13 @@ export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
 		'topWidth',
 		'topHeight',
 		'bottomWidth',
-		'bottomHeight'
+		'bottomHeight',
+		'advBgGradientAngle',
+		'advBgGradientLocation1',
+		'advBgGradientLocation2',
+		'advBgGradientHoverAngle',
+		'advBgGradientHoverLocation1',
+		'advBgGradientHoverLocation2',
 	],
 	'spectra/google-map': [ 'height' ],
 	'spectra/content': [
@@ -288,8 +294,20 @@ export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
 	],
 	'spectra/popup-builder': [ 'width', 'height', 'background' ],
 	'spectra/counter': [ 'prefixRightMargin', 'suffixLeftMargin' ],
+	'spectra/post': [
+		'columns',
+		'columnGap',
+		'rowGap',
+		'slidesPerView',
+		'spaceBetween',
+		'arrowSize',
+		'arrowDistance',
+		'paginationTopMargin',
+	],
 	// Core Image block.
 	'core/image': [ 'width', 'height', 'aspectRatio', 'scale' ],
+	'spectra-pro/svg-animator': [ 'size', 'strokeWidth' ],
+	'spectra-pro/svg-animators': [],
 } );
 
 /**
@@ -327,6 +345,8 @@ export const RESPONSIVE_CONTROLS_PANELS = [
 	'General', // Note: important for Slider setting reset.
 	'Flex Direction',
 	'Overlay Settings',
+	'Carousel',
+	'Grid & Masonry',
 	'Shape Dividers',
 	'Separator',
 	// Core Image block - needed for reset handling.

@@ -15,7 +15,7 @@ import ProFeatures from './ProFeatures/ProFeatures';
 const Welcome = () => {
 	return (
 		<main className="bg-background-secondary min-h-[calc(100vh_-_8rem)]">
-			<h1 className="sr-only"> Spectra </h1>
+			<h1 className="sr-only"> Spectra Blocks </h1>
 			<Container className="md:p-8 sm:p-6 p-[0.7rem]" cols={12} containerType="grid" gap="2xl">
 				<Container.Item className="flex flex-col gap-8" colSpan={{ lg: 8, md: 12, sm: 12 }}>
 					<HeroSection />

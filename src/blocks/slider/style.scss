@@ -55,10 +55,6 @@
 		justify-content: center;
 		transition: all 0.3s ease;
 		border: 0;
-		padding: 0;
-		background: none;
-		cursor: pointer;
-		appearance: none;
 
 		// Slider navigation button after
 		&::after {
@@ -93,8 +89,7 @@
 		width: 100%;
 		left: 0;
 		right: 0;
-		bottom:
- calc(-0.3 * var(--spectra-pagination-margin-top, 0%)); // Uniform pixel-based positioning
+		bottom: calc(-0.3 * var(--spectra-pagination-margin-top, 0%)); // Uniform pixel-based positioning
 
 		// Remove all pointer events from the pagination bullets, but add then back to the individual bullet.
 		&.swiper-pagination-bullets {
@@ -173,18 +168,62 @@
 		z-index: 2;
 	}
 
+	// Video background positioning.
+	// isolation: isolate creates a stacking context so the PHP-emitted z-index:-1
+	// on the video wrapper stays contained within the slider (not the page).
+	// Without this, the video wrapper drops behind the page background.
+	// The SCSS z-index:0 below is overridden by the PHP rule at (0,5,0) specificity,
+	// but the wrapper is still correctly contained by the stacking context.
+	&.has-video-background {
+		isolation: isolate;
+
+		.spectra-background-video__wrapper {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: 0;
+			overflow: hidden;
+			pointer-events: none;
+			border-radius: inherit;
+
+			video {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: inherit;
+			}
+		}
+	}
+
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
-		// Variable based CSS - Simple Background Color.
+		// Background Color — matches container/slider-child pattern.
+		// Needs content + absolute positioning so the ::before box is actually painted.
 		&.spectra-background-color::before {
+			bottom: 0;
+			content: "";
+			left: 0;
+			opacity: var(--spectra-overlay-opacity, 1);
+			pointer-events: none;
+			position: absolute;
+			right: 0;
+			top: 0;
 			background: var(--spectra-background-color);
-			opacity: var(--spectra-overlay-opacity);
 		}
 
 		// Variable based CSS - Simple Background Gradient.
 		&.spectra-background-gradient::before {
+			bottom: 0;
+			content: "";
+			left: 0;
+			opacity: var(--spectra-overlay-opacity, 1);
+			pointer-events: none;
+			position: absolute;
+			right: 0;
+			top: 0;
 			background: var(--spectra-background-gradient);
-			opacity: var(--spectra-overlay-opacity);
 		}
 
 		// Text color for slider block itself (not child blocks to allow global styles)
@@ -196,8 +235,7 @@
 		.swiper-button-prev,
 		.swiper-button-next {
 			color: var(--spectra-navigation-color, #fff);
-			background-color:
- var(--spectra-arrow-background-color, rgba(0, 0, 0, 0.5));
+			background-color: var(--spectra-arrow-background-color, rgba(0, 0, 0, 0.5));
 
 			svg {
 
@@ -214,8 +252,7 @@
 			&:hover,
 			&:focus {
 				color: var(--spectra-arrow-color-hover, #fff);
-				background-color:
- var(--spectra-arrow-background-color-hover, rgba(0, 0, 0, 0.7));
+				background-color: var(--spectra-arrow-background-color-hover, rgba(0, 0, 0, 0.7));
 
 				svg {
 
@@ -242,8 +279,7 @@
 
 				&:hover,
 				&:focus {
-					background-color:
- var(--spectra-pagination-color-hover, var(--spectra-pagination-color, #363434));
+					background-color: var(--spectra-pagination-color-hover, var(--spectra-pagination-color, #363434));
 				}
 
 				&:focus-visible {
@@ -252,8 +288,7 @@
 
 				&.swiper-pagination-bullet-active,
 				&-active {
-					background-color:
- var(--spectra-pagination-color-active, var(--dot-active-color, #20030388));
+					background-color: var(--spectra-pagination-color-active, var(--dot-active-color, #20030388));
 				}
 			}
 		}

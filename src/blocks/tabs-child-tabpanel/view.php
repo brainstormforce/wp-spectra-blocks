@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\TabsChildTabpanel
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div

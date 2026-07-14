@@ -26,7 +26,7 @@ import { __ } from '@wordpress/i18n';
  */
 import IconPicker from '@spectra-components/icon-picker';
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra/tabs/helpers';
+import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
 
 /**
  * Element Sub-settings: General settings.
@@ -92,7 +92,7 @@ const BlockSettings = memo( ( props ) => {
 				- The flipForRTL attribute is not false. Default: false.
 				 */ }
 				<ToolsPanelItem
-					hasValue={ () => !! icon || !! flipForRTL }
+					hasValue={ () => !! icon || ! flipForRTL }
 					label={ __( 'Icon', 'spectra-blocks' ) }
 					onDeselect={ () =>
 						setAttributes( {
@@ -125,7 +125,7 @@ const BlockSettings = memo( ( props ) => {
 								setAttributes( { flipForRTL: ! flipForRTL } )
 							}
 							help={ __(
-								"Enable this for your RTL visitors if you are using a direction-specific icon. Like 'Arrow Right', 'Chart Line', etc. ",
+								'Enable this for your RTL visitors if you are using a direction-specific icon. Like "Arrow Right", "Chart Line", etc.',
 								'spectra-blocks'
 							) }
 						/>

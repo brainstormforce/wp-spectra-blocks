@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Countdown
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 ?>
 <div
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>

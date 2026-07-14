@@ -7,21 +7,21 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * ListAvailableBlocks ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class ListAvailableBlocks extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -32,7 +32,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -43,7 +43,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -54,7 +54,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -65,7 +65,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -80,7 +80,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -101,7 +101,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -137,7 +137,7 @@ class ListAvailableBlocks extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array List of blocks.
@@ -151,8 +151,10 @@ class ListAvailableBlocks extends AbstractAbility {
 		$blocks     = array();
 
 		foreach ( $all_blocks as $block_type ) {
-			// Only include spectra/ blocks.
-			if ( strpos( $block_type->name, 'spectra/' ) !== 0 ) {
+			// Include spectra/ (free) and spectra-pro/ (pro, when active) blocks.
+			$is_free = strpos( $block_type->name, 'spectra/' ) === 0;
+			$is_pro  = $this->is_pro_active() && strpos( $block_type->name, 'spectra-pro/' ) === 0;
+			if ( ! $is_free && ! $is_pro ) {
 				continue;
 			}
 

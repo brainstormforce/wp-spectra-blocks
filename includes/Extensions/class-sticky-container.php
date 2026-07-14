@@ -5,12 +5,9 @@
  * @package Spectra\Extensions
  */
 
-namespace Spectra\Extensions;
+namespace SpectraBlocks\Extensions;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
@@ -179,16 +176,13 @@ class StickyContainer {
 		$existing_style = $processor->get_attribute( 'style' ) ? $processor->get_attribute( 'style' ) : '';
 
 		// Add sticky offset CSS custom property (offset already includes unit).
-		// Sanitize the offset value — do NOT use esc_attr() here because the value is passed
-		// to set_attribute() which already handles attribute escaping internally.
-		$offset       = sanitize_text_field( $offset );
 		$offset_style = "--spectra-sticky-offset: {$offset};";
 
 		// Add keepInsideParent CSS custom property.
 		$keep_inside_parent_style = '--spectra-sticky-keep-inside-parent: ' . ( $keep_inside_parent ? '1' : '0' ) . ';';
 
-		// Combine with existing styles.
-		$new_style = $existing_style ? $existing_style . ' ' . $offset_style . ' ' . $keep_inside_parent_style : $offset_style . ' ' . $keep_inside_parent_style;
+		// Combine with existing styles. rtrim handles WP stripping the trailing semicolon in get_block_wrapper_attributes.
+		$new_style = $existing_style ? rtrim( trim( $existing_style ), ';' ) . '; ' . $offset_style . ' ' . $keep_inside_parent_style : $offset_style . ' ' . $keep_inside_parent_style;
 
 		$processor->set_attribute( 'style', $new_style );
 

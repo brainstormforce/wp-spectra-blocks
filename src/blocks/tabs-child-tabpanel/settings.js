@@ -8,7 +8,7 @@ import { memo } from '@wordpress/element';
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra/tabs/helpers';
+import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.

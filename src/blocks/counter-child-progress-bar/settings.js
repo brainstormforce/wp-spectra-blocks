@@ -19,7 +19,7 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 
 /**
  * General settings for the Progress Bar block.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -104,7 +104,7 @@ const GeneralSettings = memo( ( props ) => {
 
 /**
  * Color settings for the Progress Bar block.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

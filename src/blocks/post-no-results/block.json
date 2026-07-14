@@ -1,0 +1,82 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/post-no-results",
+	"version": "3.0.0",
+	"title": "No Results",
+	"category": "spectra",
+	"ancestor": [ "spectra/post" ],
+	"description": "Content to display when no posts are found",
+	"textdomain": "spectra-blocks",
+	"supports": {
+		"interactivity": true,
+		"html": false,
+		"reusable": false,
+		"align": true,
+		"shadow": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontFamily": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true,
+			"__experimentalDefaultControls": {
+				"blockGap": true
+			}
+		},
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"style": true,
+				"shadow": true
+			}
+		},
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true,
+			"link": false,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true
+			}
+		}
+	},
+	"usesContext": [
+		"spectra/post/query",
+		"spectra/post/queryId",
+		"spectra/post/pageKey",
+		"spectra/post/postsToShow"
+	],
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"attributes": {
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"editorScript": "file:./index.js"
+}

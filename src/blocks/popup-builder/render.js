@@ -160,8 +160,8 @@ const Render = ( props ) => {
 		'--spectra-close-icon-bg': closeIconBgColor,
 		'--spectra-content-align': contentAlign,
 		'--spectra-content-valign': ( () => {
-			if ( contentVAlign === 'top' ) return 'flex-start';
-			if ( contentVAlign === 'bottom' ) return 'flex-end';
+			if ( contentVAlign === 'top' ) {return 'flex-start';}
+			if ( contentVAlign === 'bottom' ) {return 'flex-end';}
 			return 'center';
 		} )(),
 		'--spectra-overlay-opacity': dimRatio / 100,

@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import { memo } from '@wordpress/element';
 import {
 	TextControl,
@@ -25,7 +24,7 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -402,7 +401,7 @@ const DimensionSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Progress settings for circular and bar styles.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -500,7 +499,7 @@ const ProgressSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -576,11 +575,6 @@ const Settings = memo( ( props ) => {
 			<DimensionSettings { ...props } />
 			<ProgressSettings { ...props } />
 			<ColorSettings { ...props } />
-			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-				<InspectorControls group="settings">
-					<UpgradeComponent control={ { campaign: 'dynamic-content' } } />
-				</InspectorControls>
-			) }
 		</>
 	);
 } );

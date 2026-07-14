@@ -123,7 +123,7 @@ const AdvancedGradientSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Overlay opacity settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block opacity styles.
@@ -180,4 +180,4 @@ const Settings = memo( ( props ) => (
 	</>
 ) );
 
-export default Settings;
+export default memo( Settings );

@@ -6,7 +6,6 @@ import { memo, useState, useEffect, useCallback } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	Dashicon,
 	ToggleControl,
@@ -49,17 +48,17 @@ const PopupRepetitionSettings = memo( () => {
 
 	// Initialize state from meta or defaults
 	const [ repetition, setRepetition ] = useState(
-		meta[ 'spectra-popup-repetition' ] || 1
+		meta[ 'spectra-blocks-popup-repetition' ] || 1
 	);
 	const [ infiniteRepeat, setInfiniteRepeat ] = useState( false );
 
 	// Setup infinite repeat state from meta on component mount
 	useEffect( () => {
-		if ( meta[ 'spectra-popup-repetition' ] === -1 ) {
+		if ( meta[ 'spectra-blocks-popup-repetition' ] === -1 ) {
 			setInfiniteRepeat( true );
 			setRepetition( 1 ); // Display value when infinite is enabled
-		} else if ( meta[ 'spectra-popup-repetition' ] ) {
-			setRepetition( meta[ 'spectra-popup-repetition' ] );
+		} else if ( meta[ 'spectra-blocks-popup-repetition' ] ) {
+			setRepetition( meta[ 'spectra-blocks-popup-repetition' ] );
 			setInfiniteRepeat( false );
 		}
 	}, [ meta ] );
@@ -80,7 +79,7 @@ const PopupRepetitionSettings = memo( () => {
 	const updateRepetitionMeta = ( value ) => {
 		setMeta( {
 			...meta,
-			'spectra-popup-repetition': value,
+			'spectra-blocks-popup-repetition': value,
 		} );
 	};
 
@@ -505,17 +504,30 @@ const PopupCloseSettings = memo( ( props ) => {
 	const [ isCopied, setIsCopied ] = useState( false );
 	const canUseClipboard = navigator.clipboard ? true : false;
 
-	// Handle copy to clipboard for the close popup class.
-	const handleCopyClass = useCallback( () => {
-		if ( ! canUseClipboard ) {
-			return;
+	// Update the close popup class ref when the close popup is changed.
+	const closeClassRef = useCallback( ( node ) => {
+		if ( canUseClipboard && node ) {
+			node.addEventListener( 'click', () => {
+				node.style.pointerEvents = 'none';
+				const hiddenInput = document.createElement( 'input' );
+
+				hiddenInput.style.display = 'none';
+				hiddenInput.setAttribute( 'value', `spectra-popup-close-${ window?.spectra_blocks_info?.current_post_id }` );
+				document.body.appendChild( hiddenInput );
+
+				hiddenInput.select();
+				hiddenInput.setSelectionRange( 0, 99999 );
+				navigator.clipboard.writeText( hiddenInput.value );
+
+				setIsCopied( true );
+				setTimeout( () => {
+					document.body.removeChild( hiddenInput );
+					setIsCopied( false );
+					node.style.pointerEvents = '';
+				}, 750 );
+			} );
 		}
-		navigator.clipboard.writeText( `spectra-popup-close-${ spectra_blocks_info.current_post_id }` );
-		setIsCopied( true );
-		setTimeout( () => {
-			setIsCopied( false );
-		}, 750 );
-	}, [ canUseClipboard ] );
+	}, [] );
 
 	if ( ! isDismissable ) {
 		return null;
@@ -800,7 +812,7 @@ const PopupCloseSettings = memo( ( props ) => {
 						'spectra-popup__notice',
 						canUseClipboard && 'spectra-popup__notice--clickable',
 					] ) }
-					onClick={ handleCopyClass }
+					ref={ closeClassRef }
 				>
 					{ canUseClipboard && (
 						<Dashicon
@@ -810,7 +822,7 @@ const PopupCloseSettings = memo( ( props ) => {
 							} }
 						/>
 					) }
-					{ `spectra-popup-close-${ spectra_blocks_info.current_post_id }` }
+					{ `spectra-popup-close-${ window?.spectra_blocks_info?.current_post_id }` }
 				</p>
 				<p className='spectra-popup__notice spectra-popup__notice--secondary'>
 					{ __(
@@ -1105,11 +1117,6 @@ const Settings = ( props ) => {
 			<PopupGeneralSettings { ...props } />
 			<PopupCloseSettings { ...props } />
 			<PopupRepetitionSettings {...props} />
-			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-				<InspectorControls group="settings">
-					<UpgradeComponent control={ { campaign: 'popup-builder' } } />
-				</InspectorControls>
-			) }
 			{ proModalControls && proModalSetup }
 			<PopupColorSettings { ...props } />
 			<PopupOpacitySettings { ...props } />

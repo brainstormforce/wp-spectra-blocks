@@ -15,7 +15,7 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 		border-radius: inherit;
 	}
 
-	> * {
+	> *:not(.spectra-background-video__wrapper) {
 		z-index: 0;
 		position: relative;
 	}
@@ -26,7 +26,7 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 
 		&[style*="border-radius"] {
 			overflow: hidden; // Fallback for older browsers
-			overflow: clip !important;   // Modern standard for proper border-radius clipping
+			overflow: clip !important; // Modern standard for proper border-radius clipping
 		}
 	}
 
@@ -46,7 +46,31 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 
 		&.has-video-background {
 			z-index: 0;
+			isolation: isolate;
 			overflow: clip !important;
+
+			.spectra-background-video__wrapper {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				pointer-events: none;
+				border-radius: inherit;
+
+				video {
+					width: 100%;
+					height: 100%;
+					object-fit: cover;
+					border-radius: inherit;
+				}
+			}
+
+			> *:not(.spectra-background-video__wrapper) {
+				position: relative;
+				z-index: 1;
+			}
 		}
 
 		// Positioning for modal content when wrapper is not present (window positioning)
@@ -69,6 +93,25 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 			h6 {
 				color: inherit;
 			}
+		}
+
+		// The colour/gradient overlay is painted on a ::before pseudo-element,
+		// which needs `content` + absolute positioning to actually render. On
+		// dev this base is emitted per-block by the responsive-CSS generator;
+		// gbs-base no longer produces it, so declare it statically here (matches
+		// dev's output and the editor's `.spectra-background-overlay::before`).
+		// Without it the pseudo-element is never generated and the background
+		// colour never paints on the frontend.
+		// @since x.x.x
+		&.spectra-background-color::before,
+		&.spectra-background-gradient::before,
+		&.spectra-background-color-hover::before,
+		&.spectra-background-gradient-hover::before {
+			content: "";
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			display: block;
 		}
 
 		// Variable based CSS - Simple Background Color.
@@ -104,6 +147,5 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 			background: var(--spectra-background-gradient-hover);
 			opacity: var(--spectra-overlay-opacity);
 		}
-
 	}
 }

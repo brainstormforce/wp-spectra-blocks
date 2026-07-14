@@ -15,7 +15,7 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 	/**
 	 * Class Spectra_Blocks_Learn_Actions
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 */
 	class Spectra_Blocks_Learn_Actions {
 
@@ -24,14 +24,14 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 		 *
 		 * @access private
 		 * @var self|null Class object.
-		 * @since x.x.x
+		 * @since 1.0.0
 		 */
 		private static $instance = null;
 
 		/**
 		 * Get instance.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @return self initialized object of class.
 		 */
 		public static function get_instance() {
@@ -44,7 +44,7 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 		/**
 		 * Constructor.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 */
 		public function __construct() {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_learn_actions_script' ) );
@@ -53,7 +53,7 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 		/**
 		 * Enqueue JavaScript for learn actions functionality.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public function enqueue_learn_actions_script() {
@@ -629,6 +629,23 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 							break;
 
 						case 'insert-ready-made-sections':
+							waitForEditor(() => {
+								setTimeout(() => {
+									waitForElement('#ast-block-templates-button-wrap', (element) => {
+										if (isDistractionFreeMode()) {
+											return;
+										}
+										highlightElement( element, 5000, '" . esc_js( __( 'To access design library click here.', 'spectra-blocks' ) ) . "' );
+
+										// Remove hash after successful execution
+										setTimeout(() => {
+											if (window.history && window.history.replaceState) {
+												window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+											}
+										}, 500);
+									}, 1000);
+								}, 2000);
+							});
 							break;
 
 						case 'replace-placeholder-content':

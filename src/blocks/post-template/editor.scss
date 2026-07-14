@@ -1,0 +1,25 @@
+// Post Template Block Editor Styles
+
+ul.wp-block-spectra-post-template {
+
+	&.block-editor-block-list__block {
+		// Font-size inheritance implementation for the editor
+		font-size: inherit;
+
+		// All child elements within the template will inherit the font-size
+		* {
+			font-size: inherit;
+		}
+	}
+
+	// Individual post items in editor
+	li {
+		list-style: none;
+	}
+
+	// Make room for arrows in editor
+	&.spectra-post-layout-carousel {
+		padding-left: 50px;
+		padding-right: 50px;
+	}
+}

@@ -91,7 +91,7 @@ const BlockItem = ( { block, is_extension } ) => {
 			<Container align="center" containerType="flex" direction="column" justify="between" gap="">
 				<div className="flex items-center justify-between w-full mb-1 p-1">
 					<div style={ { fontSize: '22px' } }>
-						<RenderBlockPreview blockName={ block.icon } />
+						{ typeof block.icon === 'string' ? <RenderBlockPreview blockName={ block.icon } /> : block.icon }
 					</div>
 
 					<div className="flex items-center gap-x-2">
@@ -105,7 +105,7 @@ const BlockItem = ( { block, is_extension } ) => {
 					<p className="text-sm font-medium text-text-primary m-0">{ block.title }</p>
 					<div className="flex items-center justify-between w-full">
 						<a
-							href={ `https://wpspectra.com/blocks-and-extensions/${ block.link }` }
+							href={ `https://wpspectra.com/docs/${ block.link }` }
 							target="_blank"
 							rel="noreferrer"
 							className="mt-1 text-text-tertiary no-underline"
@@ -131,7 +131,7 @@ const BlockItem = ( { block, is_extension } ) => {
 	return (
 		<Container align="center" containerType="flex" direction="column" justify="between" gap="">
 			<div className="flex items-center justify-between w-full mb-1 p-1">
-				<div style={{ fontSize: '22px' }}><RenderBlockPreview blockName={block.icon} /></div>
+				<div style={{ fontSize: '22px' }}>{ typeof block.icon === 'string' ? <RenderBlockPreview blockName={block.icon} /> : block.icon }</div>
 
 				<div className="flex items-center gap-x-2">
 					{ (
@@ -144,7 +144,7 @@ const BlockItem = ( { block, is_extension } ) => {
 				<p className="text-sm font-medium text-text-primary m-0">{ block.title }</p>
 				<div className="flex items-center justify-between w-full">
 					<a
-						href={ `https://wpspectra.com/blocks-and-extensions/${ block.link }` }
+						href={ `https://wpspectra.com/docs/${ block.link }` }
 						target="_blank"
 						rel="noreferrer"
 						className="mt-1 text-text-tertiary no-underline"

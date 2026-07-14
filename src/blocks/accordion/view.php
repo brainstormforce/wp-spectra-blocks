@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\Accordion
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Set the contexts required for the accordion wrapper.
 $accordion_contexts = array(

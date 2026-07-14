@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * CreatePopup ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class CreatePopup extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -107,7 +107,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -131,7 +131,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Check if the current user has permission.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -150,7 +150,7 @@ class CreatePopup extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Created popup data or error.
@@ -184,7 +184,7 @@ class CreatePopup extends AbstractAbility {
 
 		$post_data = array(
 			'post_title'   => $title,
-			'post_type'    => 'spectra-popup',
+			'post_type'    => 'spectra-blocks-popup',
 			'post_status'  => 'publish',
 			'post_content' => $content,
 		);
@@ -196,9 +196,9 @@ class CreatePopup extends AbstractAbility {
 		}
 
 		// Set popup meta.
-		update_post_meta( $popup_id, 'spectra-popup-type', $type );
-		update_post_meta( $popup_id, 'spectra-popup-enabled', $enabled );
-		update_post_meta( $popup_id, 'spectra-popup-repetition', $repetition );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', $type );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-enabled', $enabled );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-repetition', $repetition );
 
 		return array(
 			'popup_id'   => $popup_id,

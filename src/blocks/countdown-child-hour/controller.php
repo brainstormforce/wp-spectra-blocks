@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildHour
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the 'show' attribute from the block's attributes, default to true if not set.
 $show = $attributes['show'] ?? true;

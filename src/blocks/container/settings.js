@@ -37,14 +37,16 @@ import Background from '@spectra-components/background';
 import BlockControlLink from '@spectra-components/block-control-link';
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient-control';
 import ShadowControl from '@spectra-components/shadow-control';
+import { TAG_CONFIG } from './toolbar';
 
+// Derive SelectControl options from TAG_CONFIG (SSOT).
+const TAG_OPTIONS = Object.entries( TAG_CONFIG ).map( ( [ value, { label } ] ) => ( { value, label } ) );
 
 /**
  * Get description for HTML tag
- * 
+ *
  * @param {string} tag The HTML tag
  * @return {string} The description for the tag
  */
@@ -71,7 +73,7 @@ const getTagDescription = ( tag ) => {
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -112,7 +114,7 @@ const BlocksSettings = memo( ( props ) => {
 				} }
 			/>
 			)   }
-			<InspectorControls group="settings">
+			<InspectorControls>
 			{ layout?.type === 'flex' && (
 					<ToolsPanel
 						label={ __( 'Flex Direction', 'spectra-blocks' ) }
@@ -167,7 +169,7 @@ const BlocksSettings = memo( ( props ) => {
 						onDeselect={ () => setAttributes( {
 							htmlTag: 'div',
 						} ) }
-						resetAllFilter={ () => ( {
+						resetAll={ () => ( {
 							htmlTag: 'div',
 						} ) }
 						isShownByDefault
@@ -176,20 +178,7 @@ const BlocksSettings = memo( ( props ) => {
 							label={ __( 'HTML Tag', 'spectra-blocks' ) }
 							value={ htmlTag }
 							variant="default"
-							options={ [
-								{ value: 'div', label: __( 'Div', 'spectra-blocks' ) },
-								{ value: 'header', label: __( 'Header', 'spectra-blocks' ) },
-								{ value: 'footer', label: __( 'Footer', 'spectra-blocks' ) },
-								{ value: 'main', label: __( 'Main', 'spectra-blocks' ) },
-								{ value: 'article', label: __( 'Article', 'spectra-blocks' ) },
-								{ value: 'section', label: __( 'Section', 'spectra-blocks' ) },
-								{ value: 'aside', label: __( 'Aside', 'spectra-blocks' ) },
-								{ value: 'figure', label: __( 'Figure', 'spectra-blocks' ) },
-								{ value: 'figcaption', label: __( 'Figcaption', 'spectra-blocks' ) },
-								{ value: 'summary', label: __( 'Summary', 'spectra-blocks' ) },
-								{ value: 'nav', label: __( 'Nav', 'spectra-blocks' ) },
-								{ value: 'a', label: __( 'Link', 'spectra-blocks' ) },
-							] }
+							options={ TAG_OPTIONS }
 							onChange={ ( newHtmlTag ) => setAttributes( { htmlTag: newHtmlTag } ) }
 							help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'spectra-blocks' ) }
 						/>
@@ -228,7 +217,7 @@ const BlocksSettings = memo( ( props ) => {
 						onDeselect={ () => setAttributes( {
 							overflow: 'visible',
 						} ) }
-						resetAllFilter={ () => ( {
+						resetAll={ () => ( {
 							overflow: 'visible',
 						} ) }
 						isShownByDefault
@@ -254,7 +243,7 @@ const BlocksSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Style settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block styles.
@@ -303,7 +292,7 @@ const BlockStyles = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block dimentions styles.
@@ -404,7 +393,7 @@ const DimensionSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -517,11 +506,17 @@ const GradientSettings = memo( ( props ) => {
 			valueAttr: 'advBgGradient',
 			useAdvancedAttr: 'enableAdvBgGradient',
 			showTopBorder: true,
+			angleAttr: 'advBgGradientAngle',
+			location1Attr: 'advBgGradientLocation1',
+			location2Attr: 'advBgGradientLocation2',
 		},
 		{
 			label: __( 'Advanced BG Hover', 'spectra-blocks' ),
 			valueAttr: 'advBgGradientHover',
 			useAdvancedAttr: 'enableAdvBgGradientHover',
+			angleAttr: 'advBgGradientHoverAngle',
+			location1Attr: 'advBgGradientHoverLocation1',
+			location2Attr: 'advBgGradientHoverLocation2',
 		},
 	];
 
@@ -582,7 +577,7 @@ const OpacitySettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Shadow settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block shadow settings.
@@ -618,10 +613,10 @@ const ShadowSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Border Hover settings.
- * 
+ *
  * Provides a toggle and color picker to set the border color on hover.
  * The border width and style will match the normal border settings from WordPress core.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered border hover settings.
@@ -725,7 +720,7 @@ const BorderHoverSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Overlay settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered overlay settings.
@@ -1255,18 +1250,16 @@ const ShapeDividerSettings = memo( ( props ) => {
 				} }
 				panelId={ clientId }
 			>
-				{/* Divider Position Selector - UI-only toggle, no attribute to reset */}
+				{/* Divider Position Selector */}
 				<ToolsPanelItem
 					hasValue={ () => false }
 					label={ __( 'Divider Position', 'spectra-blocks' ) }
-					onDeselect={ () => {} }
-					resetAllFilter={ () => ( {} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
 					<ToggleGroupControl
 						__nextHasNoMarginBottom
-						label={ __( 'Shape Divider Type ', 'spectra-blocks' ) }
+						label={ __( 'Shape Divider Type', 'spectra-blocks' ) }
 						value={ visibleDivider }
 						onChange={ setVisibleDivider }
 						isBlock
@@ -1530,11 +1523,6 @@ const Settings = ( props ) => {
 				</InspectorControls>
 			) }
 			<ShapeDividerSettings { ...props } />
-			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-				<InspectorControls group="settings">
-					<UpgradeComponent control={ { campaign: 'dynamic-content' } } />
-				</InspectorControls>
-			) }
 		</>
 	);
 };

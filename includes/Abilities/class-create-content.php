@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * CreateContent ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class CreateContent extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -101,7 +101,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -112,7 +112,7 @@ class CreateContent extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Block markup or error.
@@ -134,13 +134,16 @@ class CreateContent extends AbstractAbility {
 			$tag_name = 'p';
 		}
 
-		$attrs = array( 'tagName' => $tag_name );
+		$attrs = array(
+			'tagName' => $tag_name,
+			'text'    => $text,
+		);
 
 		if ( ! empty( $params['textAlign'] ) ) {
 			$align          = sanitize_text_field( $params['textAlign'] );
 			$allowed_aligns = array( 'left', 'center', 'right', 'justify' );
 			if ( in_array( $align, $allowed_aligns, true ) ) {
-				$attrs['textAlign'] = $align;
+				$attrs['style'] = array( 'typography' => array( 'textAlign' => $align ) );
 			}
 		}
 

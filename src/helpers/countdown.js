@@ -39,8 +39,8 @@ export const formatDateForPicker = ( dateObj ) => {
  *
  * @since x.x.x
  *
- * @param {boolean} showDays Show days.
- * @param {boolean} showHours Show hours.
+ * @param {boolean} showDays    Show days.
+ * @param {boolean} showHours   Show hours.
  * @param {boolean} showMinutes Show minutes.
  * @param {boolean} showSeconds Show seconds.
  * @return {Object} Time units with zeros and isExpired flag.
@@ -58,9 +58,9 @@ const zeroTime = ( showDays, showHours, showMinutes, showSeconds ) => ( {
  *
  * @since x.x.x
  *
- * @param {number} ms Milliseconds remaining in countdown
- * @param {boolean} showDays Whether to calculate days
- * @param {boolean} showHours Whether to calculate hours
+ * @param {number}  ms          Milliseconds remaining in countdown
+ * @param {boolean} showDays    Whether to calculate days
+ * @param {boolean} showHours   Whether to calculate hours
  * @param {boolean} showMinutes Whether to calculate minutes
  * @param {boolean} showSeconds Whether to calculate seconds
  * @return {Object} Object containing:
@@ -107,11 +107,11 @@ const calculateTimeUnits = ( ms, showDays, showHours, showMinutes, showSeconds )
  *
  * @since x.x.x
  *
- * @param {string} endDateTime ISO 8601 date string.
- * @param {boolean} showDays Show days.
- * @param {boolean} showHours Show hours.
+ * @param {string}  endDateTime ISO 8601 date string.
+ * @param {boolean} showDays    Show days.
+ * @param {boolean} showHours   Show hours.
  * @param {boolean} showMinutes Show minutes.
- * 	@param {boolean} showSeconds Show seconds.
+ * @param {boolean} showSeconds Show seconds.
  * @return {Object} Remaining time parts and expiration status.
  */
 export const calculateRemainingTime = (
@@ -147,16 +147,16 @@ export const calculateRemainingTime = (
  *
  * @since x.x.x
  *
- * @param {boolean} showDays Show days.
- * @param {boolean} showHours Show hours.
+ * @param {boolean} showDays    Show days.
+ * @param {boolean} showHours   Show hours.
  * @param {boolean} showMinutes Show minutes.
  * @param {boolean} showSeconds Show seconds.
  * @return {number} Interval in milliseconds.
  */
 export const getUpdateInterval = ( showDays, showHours, showMinutes, showSeconds ) => {
-	if ( showSeconds ) return 1000; // Every second.
-	if ( showMinutes ) return 60000; // Every minute.
-	if ( showHours ) return 3600000; // Every hour.
+	if ( showSeconds ) {return 1000;} // Every second.
+	if ( showMinutes ) {return 60000;} // Every minute.
+	if ( showHours ) {return 3600000;} // Every hour.
 	return 86400000; // Every day (default).
 };
 

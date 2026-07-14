@@ -21,6 +21,12 @@ import { applyFilters } from '@wordpress/hooks';
  * @type {Array}
  */
 export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedZIndexBlocks', [
+	// Legacy Blocks
+	'uagb/cf7-styler',
+	'uagb/wp-search', 
+	'uagb/gf-styler',
+	'uagb/columns',
+	'uagb/section',
 	// Child blocks that inherit from parent
 	'spectra/accordion-child-details',
 	'spectra/accordion-child-header',

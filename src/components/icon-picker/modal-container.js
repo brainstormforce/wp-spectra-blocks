@@ -13,126 +13,9 @@ import RenderSVG from '@spectra-helpers/render-svg';
 import { spectraClassNames } from '@spectra-helpers';
 import HeaderContainer from './header-container';
 
-/**
- * Inner grid panel — owns its own container-dimension state so that the
- * measurement re-render never propagates up to ModalContainer.
- *
- * When ModalContainer mounts, WordPress's useFocusReturn (inside <Modal>)
- * attaches its ref and saves document.activeElement (the PickerButton div).
- * If ModalContainer re-renders right away, useFocusReturn's cleanup fires
- * and returns focus to that outside element, causing the Modal to close.
- * By isolating the dimension state here, ModalContainer itself never
- * re-renders on mount, so useFocusReturn cleanup never fires spuriously.
- *
- * @param {Object} props - Component props.
- * @since x.x.x
- * @return {Element} The icon grid panel.
- */
-const IconGridPanel = ( props ) => {
-	const {
-		iconList,
-		columns,
-		iconName,
-		insertIcon,
-		setInsertIcon,
-		value,
-		defaultIconsWithKeys,
-		rowIndexForFirstTime,
-	} = props;
-
-	const containerRef = useRef();
-	const [ height, setHeight ] = useState( 0 );
-	const [ width, setWidth ] = useState( 0 );
-
-	useEffect( () => {
-		const el = containerRef.current;
-		if ( el ) {
-			setHeight( el.offsetHeight );
-			setWidth( el.offsetWidth );
-		}
-	}, [] );
-
-	if ( ! iconList.length ) {
-		return (
-			<div className="spectra-blocks-ip-modal-container" ref={ containerRef }>
-				<div className="spectra-blocks-ip-icons icon-not-found">
-					<div className="spectra-blocks-icon-not-available">
-						<span>{ __( 'No Icons Found', 'spectra-blocks' ) }</span>
-					</div>
-				</div>
-			</div>
-		);
-	}
-
-	const iconTitle = ( actualTitle ) => {
-		if ( ! actualTitle ) {
-			return '';
-		}
-		return actualTitle.length < 11 ? actualTitle : actualTitle.slice( 0, 10 ) + '..';
-	};
-
-	function cellRenderer( renderer ) {
-		const { columnIndex, key, rowIndex, style } = renderer;
-		const currentIcon = iconList[ rowIndex ][ columnIndex ];
-
-		if ( ! currentIcon ) {
-			return null;
-		}
-
-		const iconClass = spectraClassNames( [
-			'spectra-blocks-icon-item',
-			iconName === currentIcon && 'default',
-			currentIcon === insertIcon && 'selected',
-		] );
-
-		const actualTitle = defaultIconsWithKeys[ currentIcon ]?.label
-			? defaultIconsWithKeys[ currentIcon ].label
-			: '';
-		return (
-			<div key={ key } style={ style }>
-				<div
-					className={ iconClass }
-					onClick={ () => {
-						if ( value !== currentIcon ) {
-							setInsertIcon( currentIcon );
-						}
-					} }
-				>
-					<RenderSVG svg={ currentIcon }/>
-					<Tooltip text={ actualTitle }>
-						<span>
-							{ iconTitle( actualTitle ) }
-						</span>
-					</Tooltip>
-				</div>
-			</div>
-		);
-	}
-
-	const heightAndWidth = width / columns;
-
-	return (
-		<div className="spectra-blocks-ip-modal-container" ref={ containerRef }>
-			<div className="spectra-blocks-ip-icons">
-				<Grid
-					cellRenderer={ cellRenderer }
-					columnCount={ iconList[ 0 ].length }
-					columnWidth={ columns === iconList[ 0 ].length ? heightAndWidth - 2 : 100 }
-					height={ height }
-					rowCount={ iconList.length }
-					rowHeight={ columns === iconList[ 0 ].length ? heightAndWidth : 100 }
-					width={ width }
-					scrollToRow={ rowIndexForFirstTime }
-					autoContainerWidth={ true }
-				/>
-			</div>
-		</div>
-	);
-};
-
 const ModalContainer = ( props ) => {
 	const { value, onChange, closeModal, defaultIcons, iconCategoryList } = props;
-	const defaultIconsWithKeys = { ...spectra_blocks_info.spectra_blocks_svg_icons };
+	const defaultIconsWithKeys = { ...( window?.spectra_blocks_info?.uagb_svg_icons ?? {} ) };
 	const columns = 8;
 
 	const setIconListWithChunks = ( icons ) => (
@@ -147,21 +30,32 @@ const ModalContainer = ( props ) => {
 	const [ categoryListName, setCategoryListName ] = useState( 'all' );
 	const [ iconListByCategory, setIconListByCategory ] = useState( defaultIcons );
 	const [ insertIcon, setInsertIcon ] = useState( '' );
+	const inputElement = useRef();
 
-	// Extract the raw icon name string from either the new object format or legacy string.
-	const iconName = ( typeof value === 'object' && value?.name ) ? value.name : value;
+	// Container states
+	const iconContainerRef = useRef();
+	const [ iconContainerHeight, setIconContainerHeight ] = useState( 0 );
+	const [ iconContainerWidth, setIconContainerWidth ] = useState( 0 );
 
 	/**
-	 * rowIndexForFirstTime: scroll-to row when the modal first opens.
-	 * Computed once via lazy initializer — no setState on mount — so
-	 * ModalContainer never re-renders after mount, which prevents
-	 * WordPress's useFocusReturn cleanup from returning focus to the
-	 * PickerButton (outside the modal) and closing the modal.
+	 * This is value when modal mount then we will show selected icon rest of time this will set to null.
 	 */
-	const [ rowIndexForFirstTime, setRowIndexForFirstTime ] = useState( () => {
-		const initialList = setIconListWithChunks( defaultIcons );
-		return initialList.findIndex( ( row_value ) => row_value.includes( iconName ) );
-	} );
+	const [ rowIndexForFirstTime, setRowIndexForFirstTime ] = useState( null );
+	const getContainerHeight = ( property ) => {
+		const element = iconContainerRef?.current;
+		if ( ! element ) {
+			return null;
+		}
+		return 'w' === property ? element.offsetWidth : element.offsetHeight;
+	};
+
+	useEffect( () => {
+		inputElement.current.focus();
+		setIconContainerHeight( getContainerHeight( 'h' ) );
+		setIconContainerWidth( getContainerHeight( 'w' ) );
+		const selectedIconRowIndex = iconList.findIndex( ( row_value ) => row_value.includes( value ) );
+		setRowIndexForFirstTime( selectedIconRowIndex );
+	}, [] );
 
 	// Click on category list.
 	const clickToCategoryList = ( category ) => {
@@ -205,9 +99,83 @@ const ModalContainer = ( props ) => {
 		setSearchIconInputValue( inputValue );
 	};
 
+	// Render icon list.
+	const renderIconList = () => {
+		if ( ! iconList.length ) {
+			return (
+				<div className="uagb-ip-icons icon-not-found">
+					<div className="uagb-icon-not-available">
+						<span>{ __( 'No Icons Found', 'spectra-blocks' ) }</span>
+					</div>
+				</div>
+			);
+		}
+		const iconTitle = ( actualTitle ) => {
+			if ( ! actualTitle ) {
+				return '';
+			}
+			return actualTitle.length < 11 ? actualTitle : actualTitle.slice( 0, 10 ) + '..';
+		};
+		// renderer.
+		function cellRenderer( renderer ) {
+			const { columnIndex, key, rowIndex, style } = renderer;
+			const currentIcon = iconList[ rowIndex ][ columnIndex ];
+
+			if ( ! currentIcon ) {
+				return null;
+			}
+
+			const iconClass = spectraClassNames( [
+				'uagb-icon-item',
+				value === currentIcon && 'default',
+				currentIcon === insertIcon && 'selected',
+			] );
+
+			const actualTitle = defaultIconsWithKeys[ currentIcon ]?.label
+				? defaultIconsWithKeys[ currentIcon ].label
+				: '';
+			return (
+				<div key={ key } style={ style }>
+					<div
+						className={ iconClass }
+						onClick={ () => {
+							if ( value !== currentIcon ) {
+								setInsertIcon( currentIcon );
+							}
+						} }
+					>
+						<RenderSVG svg={ currentIcon }/>
+						<Tooltip text={ actualTitle }>
+							<span>
+								{ iconTitle( actualTitle ) }
+							</span>
+						</Tooltip>
+					</div>
+				</div>
+			);
+		}
+		const heightAndWidth = iconContainerWidth / columns;
+		return (
+			<div className="uagb-ip-icons">
+				<Grid
+					cellRenderer={ cellRenderer }
+					columnCount={ iconList[ 0 ].length }
+					columnWidth={ columns === iconList[ 0 ].length ? heightAndWidth - 2 : 100 }
+					height={ iconContainerHeight }
+					rowCount={ iconList.length }
+					rowHeight={ columns === iconList[ 0 ].length ? heightAndWidth : 100 }
+					width={ iconContainerWidth }
+					scrollToRow={ rowIndexForFirstTime }
+					//
+					autoContainerWidth={ true }
+				/>
+			</div>
+		);
+	};
+
 	// List of categories.
 	const listOfCategory = () => (
-		<div className="spectra-blocks-ip-categories-list">
+		<div className="uagb-ip-categories-list">
 			<div
 				key="all"
 				className={ 'all' === categoryListName ? 'selected' : null }
@@ -237,11 +205,10 @@ const ModalContainer = ( props ) => {
 	// Modal component.
 	return (
 		<Modal
-			className="spectra-blocks-ip-modal-wrapper"
+			className="uagb-ip-modal-wrapper"
 			onRequestClose={ closeModal }
-			overlayClassName="spectra-blocks-ip-modal-wrapper-overlay"
+			overlayClassName="uagb-ip-modal-wrapper-overlay"
 			shouldCloseOnClickOutside={ false }
-			focusOnMount={ false }
 			closeButtonLabel={ __( 'Close', 'spectra-blocks' ) }
 		>
 			{ /* Header  */ }
@@ -252,37 +219,25 @@ const ModalContainer = ( props ) => {
 					setSearchIconInputValue( '' );
 				} }
 				searchIcon={ searchIcon }
+				inputElement={ inputElement }
 			/>
 			{ /* middle  */ }
-			<section className="spectra-blocks-ip-lr-container">
-				<div className="spectra-blocks-ip-left">{ listOfCategory() }</div>
-				<div className="spectra-blocks-ip-right">
-					<IconGridPanel
-						iconList={ iconList }
-						columns={ columns }
-						iconName={ iconName }
-						insertIcon={ insertIcon }
-						setInsertIcon={ setInsertIcon }
-						value={ value }
-						defaultIconsWithKeys={ defaultIconsWithKeys }
-						rowIndexForFirstTime={ rowIndexForFirstTime }
-					/>
+			<section className="uagb-ip-lr-container">
+				<div className="uagb-ip-left">{ listOfCategory() }</div>
+				<div className="uagb-ip-right">
+					<div className="uagb-ip-modal-container" ref={ iconContainerRef }>
+						{ renderIconList() }
+					</div>
 				</div>
 			</section>
 			{ /* Footer */ }
-			<section className="spectra-blocks-ip-footer">
+			<section className="uagb-ip-footer">
 				<button
 					className={ '' === insertIcon ? 'disable' : null }
 					onClick={
 						'' !== insertIcon
 							? () => {
-									const iconData = defaultIconsWithKeys[ insertIcon ];
-									const svgEntry = iconData?.svg?.brands ?? iconData?.svg?.solid ?? iconData?.svg?.regular ?? null;
-									onChange(
-										svgEntry
-											? { name: insertIcon, svg: { width: svgEntry.width, height: svgEntry.height, path: svgEntry.path } }
-											: insertIcon
-									);
+									onChange( insertIcon );
 									closeModal();
 							  }
 							: null

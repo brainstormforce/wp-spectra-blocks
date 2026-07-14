@@ -41,34 +41,41 @@ const Edit = ( props ) => {
 
 
 	// Get block variations and parents.
+	//
+	// Return a boolean `isRootContainer` derived inside the selector rather
+	// than the raw `parentBlocks` array. useSelect uses shallow equality on
+	// the returned object, and returning a fresh array on every store
+	// notification forces a re-render every time. Under Polylang — which
+	// re-emits many `blocks.registerBlockType` passes during editor mount —
+	// that re-render storm compounded with the write-back effect below,
+	// timing out the editor for 30+s. Deriving the primitive here keeps
+	// the effect quiet unless the parent structure meaningfully changes.
+	// The explicit `[ clientId, name ]` dep-array stabilises the selector
+	// identity for the same reason.
 	const {
 		defaultVariation,
 		blockChildren,
-		parentBlocks,
+		isRootContainer,
 	} = useSelect( ( select ) => {
-		// Use the selectors.
-		const {
-			getDefaultBlockVariation,
-		} = select( 'core/blocks' );
+		const { getDefaultBlockVariation } = select( 'core/blocks' );
 		const {
 			getBlockParents,
 			getBlocks,
 			getBlocksByClientId,
 		} = select( 'core/block-editor' );
 
-		// Get the parent (if any), the children (if any), and the parent ID (if any).
-		const currentBlockParents = getBlockParents( clientId );
+		const currentBlockParents  = getBlockParents( clientId );
 		const currentBlockChildren = getBlocks( clientId );
-		const currentParentBlocks = getBlocksByClientId( currentBlockParents );
+		const currentParentBlocks  = getBlocksByClientId( currentBlockParents );
 
-		// Return the required data.
+		const isRoot = ! currentParentBlocks || currentParentBlocks.length === 0 || ! currentParentBlocks.some( parent => parent.name && parent.name.includes( 'spectra' ) );
+
 		return {
 			defaultVariation: getDefaultBlockVariation( name ),
-			blockParents: currentBlockParents,
-			blockChildren: currentBlockChildren,
-			parentBlocks: currentParentBlocks,
+			blockChildren:    currentBlockChildren,
+			isRootContainer:  isRoot,
 		};
-	} );
+	}, [ clientId, name ] );
 
 	// Ref to track previous children count for auto-selection
 	// Initialize with current length to avoid auto-selection on mount/remount (e.g. switching device views)
@@ -77,10 +84,23 @@ const Edit = ( props ) => {
 	const { updateBlockAttributes, selectBlock } = useDispatch( 'core/block-editor' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
+	// Mount-once sentinel for the isBlockRootParent write-back below. Without
+	// it, the effect can retrigger indefinitely when Polylang re-emits
+	// `blocks.registerBlockType` filter passes during editor hydration — those
+	// passes reset the block's derived attributes to their block.json defaults
+	// (isBlockRootParent → false) while the useSelect keeps deriving `true`
+	// for a real root instance, so the effect writes → filter pass fires →
+	// attribute resets → effect writes again → 30 s+ deadlock (observed on
+	// language-compatibility.polylang.spec.js). One-shot semantics preserve
+	// the initial derivation without breaking legitimate root↔nested drags,
+	// because a real move would re-mount the component and reset the ref.
+	const hasSetRootParent = useRef( false );
+
 	// Set isBlockRootParent based on parent blocks and manage align support.
 	useEffect( () => {
-		const isRootContainer = ! parentBlocks || parentBlocks.length === 0 || ! parentBlocks.some( parent => parent.name && parent.name.includes( 'spectra' ) );
-
+		if ( hasSetRootParent.current ) {
+			return;
+		}
 		if ( isRootContainer !== attributes.isBlockRootParent ) {
 			const updates = { isBlockRootParent: isRootContainer };
 
@@ -95,7 +115,8 @@ const Edit = ( props ) => {
 
 			setAttributes( updates );
 		}
-	}, [ parentBlocks, attributes.isBlockRootParent, attributes.align ] );
+		hasSetRootParent.current = true;
+	}, [ isRootContainer, attributes.isBlockRootParent, attributes.align ] );
 
 	// Handle backward compatibility: Remove old core style.shadow when custom boxShadow is used.
 	// This prevents conflicts between the old WordPress core shadow and the new custom shadow system.

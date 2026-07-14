@@ -2,20 +2,18 @@
 /**
  * Shape Divider SVG Definitions
  *
- * @since x.x.x
- * @package Spectra\Blocks\Container
+ * @since 1.0.0
+ * @package SpectraBlocks\Blocks\Container
  */
 
-namespace Spectra\Blocks\Container;
-
-defined( 'ABSPATH' ) || exit;
+namespace SpectraBlocks\Blocks\Container;
 
 /**
  * Get shape SVG by type.
  *
  * @param string $type The shape type.
  * @return string The SVG markup.
- * @since x.x.x
+ * @since 1.0.0
  */
 function get_shape_svg( $type ) {
 	$shapes = array(

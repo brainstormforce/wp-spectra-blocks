@@ -7,8 +7,8 @@
  * @package Spectra\Blocks\Counter
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\Renderer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 // Add prefix, suffix, and separator data attributes to wrapper attributes before sanitization.
 $additional_attributes = sprintf(

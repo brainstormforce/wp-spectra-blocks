@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Buttons
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 /**
  * Render the buttons container with its child button blocks.

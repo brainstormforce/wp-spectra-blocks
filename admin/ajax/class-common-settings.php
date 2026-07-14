@@ -14,7 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use SpectraBlocksAdmin\Ajax\Ajax_Base;
 use SpectraBlocksAdmin\Inc\Admin_Helper;
-
+use SpectraBlocksAdmin\Inc\Admin_Menu;
+use ZipAI\Classes\Helper as Zip_Ai_Helper;
+use ZipAI\Classes\Module as Zip_Ai_Module;
 
 /**
  * Class Common_Settings.
@@ -66,32 +68,24 @@ class Common_Settings extends Ajax_Base {
 			'select_font_globally',
 			'load_gfonts_locally',
 			'preload_local_fonts',
-			'container_global_padding',
-			'container_global_elements_gap',
 			'recaptcha_site_key_v2',
 			'recaptcha_secret_key_v2',
 			'recaptcha_site_key_v3',
 			'recaptcha_secret_key_v3',
 			'pro_activate',
-			'btn_inherit_from_theme',
+			'zip_ai_module_status',
+			'zip_ai_verify_authenticity',
+			'install_zip_ai',
+			'activate_zip_ai',
+			'enable_bsf_analytics_option',
 			'clear_v3_cache',
 			'disable_css_cache',
+			'enable_abilities',
+			'enable_edit_abilities',
+			'enable_mcp_server',
 		);
 
 		$this->init_ajax_events( $ajax_events );
-	}
-
-	/**
-	 * Save global option of button to inherit from theme.
-	 *
-	 * @since 2.6.2
-	 * @return void
-	 */
-	public function btn_inherit_from_theme() {
-
-		$this->check_permission_nonce( 'spectra_blocks_btn_inherit_from_theme' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_btn_inherit_from_theme', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -229,23 +223,6 @@ class Common_Settings extends Ajax_Base {
 	 *
 	 * @return void
 	 */
-	public function container_global_padding() {
-		$this->check_permission_nonce( 'spectra_blocks_container_global_padding' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_container_global_padding', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Saves container global elements gap.
-	 *
-	 * @return void
-	 */
-	public function container_global_elements_gap() {
-		$this->check_permission_nonce( 'spectra_blocks_container_global_elements_gap' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_container_global_elements_gap', sanitize_text_field( $value ) );
-	}
-
 	/**
 	 * Save setting - Loads selected font globally.
 	 *
@@ -689,6 +666,166 @@ class Common_Settings extends Ajax_Base {
 	}
 
 	/**
+	 * Save setting - Enables or Disables the given Zip AI Module.
+	 *
+	 * @since 2.10.2
+	 * @return void
+	 */
+	public function zip_ai_module_status() {
+		// Check permission.
+		$this->check_permission_nonce( 'spectra_blocks_zip_ai_module_status' );
+		// Check the post value.
+		$value = $this->check_post_value();
+		// Check the post module.
+		$module = $this->check_post_value( 'module' );
+
+		// If module is not a string, then abandon ship.
+		if ( ! is_string( $module ) ) {
+			// Since the module was not a string, set it to a blank string and send an error message as the response.
+			$module = '';
+			wp_send_json_error( array( 'messsage' => __( 'Module not found!', 'spectra-blocks' ) ) );
+		}
+
+		// Sanitize the module.
+		$module = sanitize_text_field( $module );
+
+		// Replace the underscores in the module name with spaces, make the word AI capital, and capitalize the first letter of each word.
+		$module_name = ucwords( str_replace( '_', ' ', str_replace( 'ai', 'AI', $module ) ) );
+
+		// Check if the Zip AI Module is available.
+		if ( class_exists( '\ZipAI\Classes\Module' ) ) {
+			// If the value is 'disabled', disable the Zip AI Module - else enable it.
+			if ( 'disabled' === $value ) {
+				if ( Zip_Ai_Module::disable( $module ) ) {
+					wp_send_json_success(
+						array(
+							'messsage' => sprintf(
+							// Translators: %s is the module name.
+								__( '%s disabled!', 'spectra-blocks' ),
+								$module_name
+							),
+						)
+					);
+				} else {
+					wp_send_json_error(
+						array(
+							'messsage' => sprintf(
+							// Translators: %s is the module name.
+								__( 'Unable to disable %s', 'spectra-blocks' ),
+								$module_name
+							),
+						)
+					);
+				}
+			} elseif ( Zip_Ai_Module::enable( $module ) ) {
+					wp_send_json_success(
+						array(
+							'messsage' => sprintf(
+							// Translators: %s is the module name.
+								__( '%s enabled!', 'spectra-blocks' ),
+								$module_name
+							),
+						)
+					);
+			} else {
+				wp_send_json_error(
+					array(
+						'messsage' => sprintf(
+						// Translators: %s is the module name.
+							__( 'Unable to enable %s', 'spectra-blocks' ),
+							$module_name
+						),
+					)
+				);
+			}
+		} else {
+			wp_send_json_error( array( 'messsage' => __( 'Unable to save setting.', 'spectra-blocks' ) ) );
+		}
+	}
+
+	/**
+	 * Ajax Request - Verify if Zip AI is authorized.
+	 *
+	 * @since 2.10.2
+	 * @return void
+	 */
+	public function zip_ai_verify_authenticity() {
+		$this->check_permission_nonce( 'spectra_blocks_zip_ai_verify_authenticity' );
+		wp_send_json_success( array( 'is_authorized' => Admin_Menu::is_zip_ai_authorized() ) );
+	}
+
+	/**
+	 * Ajax Request - Install and activate the Zip AI plugin.
+	 *
+	 * @since 0.0.9
+	 * @return void
+	 */
+	public function install_zip_ai() {
+		$this->check_permission_nonce( 'spectra_blocks_install_zip_ai', 'install_plugins' );
+
+		if ( is_plugin_active( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE ) ) {
+			wp_send_json_success( array( 'status' => 'already_active' ) );
+		}
+
+		// Already downloaded but not active — skip download.
+		if ( file_exists( WP_PLUGIN_DIR . '/' . SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE ) ) {
+			wp_send_json_success( array( 'status' => 'already_installed' ) );
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+
+		$skin     = new \WP_Ajax_Upgrader_Skin();
+		$upgrader = new \Plugin_Upgrader( $skin );
+		$result   = $upgrader->install( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_URL );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( array( 'message' => $result->get_error_message() ) );
+		}
+
+		if ( true !== $result ) {
+			wp_send_json_error( array( 'message' => __( 'Plugin installation failed.', 'spectra-blocks' ) ) );
+		}
+
+		wp_send_json_success( array( 'status' => 'installed' ) );
+	}
+
+	/**
+	 * Activate the Zip AI plugin (separate step after install).
+	 *
+	 * @since 0.0.9
+	 * @return void
+	 */
+	public function activate_zip_ai() {
+		$this->check_permission_nonce( 'spectra_blocks_activate_zip_ai', 'activate_plugins' );
+
+		if ( is_plugin_active( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE ) ) {
+			wp_send_json_success( array( 'status' => 'already_active' ) );
+		}
+
+		$activated = activate_plugin( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE );
+
+		if ( is_wp_error( $activated ) ) {
+			wp_send_json_error( array( 'message' => $activated->get_error_message() ) );
+		}
+
+		wp_send_json_success( array( 'status' => 'activated' ) );
+	}
+
+
+	/**
+	 * Save setting - Usage data.
+	 *
+	 * @since 2.19.5
+	 * @return void
+	 */
+	public function enable_bsf_analytics_option() {
+		$this->check_permission_nonce( 'spectra_blocks_enable_bsf_analytics_option' );
+		$value = $this->check_post_value();
+		$this->save_admin_settings( 'spectra_blocks_analytics_optin', sanitize_text_field( $value ) );
+	}
+
+	/**
 	 * Save setting - Disable CSS Cache.
 	 *
 	 * @since 3.0.0
@@ -716,12 +853,16 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_clear_v3_cache' );
 
 		// Delete all Spectra responsive CSS transients.
-		// These transients follow the pattern: spectra_responsive_css_{$spectra_id}_{version}.
+		// These transients follow the pattern:
+		// spectra_blocks_responsive_css_{$spectra_id}_{version}_g{generator} — see
+		// ResponsiveControls::get_cached_responsive_css(). The prefix MUST match
+		// that key exactly (including the `blocks_` segment) or the LIKE matches
+		// nothing and the cache is never actually cleared.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Bulk deletion of transients requires direct query for performance; caching not applicable for DELETE operations.
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_spectra_responsive_css_' ) . '%'
+				$wpdb->esc_like( '_transient_spectra_blocks_responsive_css_' ) . '%'
 			)
 		);
 
@@ -730,7 +871,7 @@ class Common_Settings extends Ajax_Base {
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-				$wpdb->esc_like( '_transient_timeout_spectra_responsive_css_' ) . '%'
+				$wpdb->esc_like( '_transient_timeout_spectra_blocks_responsive_css_' ) . '%'
 			)
 		);
 
@@ -741,5 +882,41 @@ class Common_Settings extends Ajax_Base {
 			'messsage' => __( 'Cached styles cleared successfully!', 'spectra-blocks' ),
 		);
 		wp_send_json_success( $response_data );
+	}
+
+	/**
+	 * Save Abilities API master toggle.
+	 *
+	 * @since 0.0.9
+	 * @return void
+	 */
+	public function enable_abilities() {
+		$this->check_permission_nonce( 'spectra_blocks_enable_abilities' );
+		$value = $this->check_post_value();
+		$this->save_admin_settings( 'spectra_blocks_enable_abilities', sanitize_text_field( $value ) );
+	}
+
+	/**
+	 * Save Abilities API write toggle.
+	 *
+	 * @since 0.0.9
+	 * @return void
+	 */
+	public function enable_edit_abilities() {
+		$this->check_permission_nonce( 'spectra_blocks_enable_edit_abilities' );
+		$value = $this->check_post_value();
+		$this->save_admin_settings( 'spectra_blocks_enable_edit_abilities', sanitize_text_field( $value ) );
+	}
+
+	/**
+	 * Save MCP Server toggle.
+	 *
+	 * @since 0.0.9
+	 * @return void
+	 */
+	public function enable_mcp_server() {
+		$this->check_permission_nonce( 'spectra_blocks_enable_mcp_server' );
+		$value = $this->check_post_value();
+		$this->save_admin_settings( 'spectra_blocks_enable_mcp_server', sanitize_text_field( $value ) );
 	}
 }

@@ -20,7 +20,7 @@ import InspectorColor from '@spectra-components/inspector-color';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

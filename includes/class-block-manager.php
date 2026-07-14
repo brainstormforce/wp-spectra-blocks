@@ -5,14 +5,14 @@
  * @package Spectra
  */
 
-namespace Spectra;
+namespace SpectraBlocks;
 
 use RuntimeException;
-use Spectra\Blocks\Modal;
-use Spectra\Blocks\Countdown;
-use Spectra\Blocks\PopupBuilder;
-use Spectra\Helpers\Core;
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Blocks\Modal;
+use SpectraBlocks\Blocks\Countdown;
+use SpectraBlocks\Blocks\PopupBuilder;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Traits\Singleton;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -38,10 +38,24 @@ class BlockManager {
 		add_filter( 'block_type_metadata_settings', array( $this, 'configure_block_controller_settings' ), 11, 2 );
 
 		( Countdown::instance() )->init();
-		( PopupBuilder::instance() )->init();
+		add_action( 'init', array( PopupBuilder::instance(), 'register_popup_cpt' ) );
+		add_action( 'init', array( PopupBuilder::instance(), 'register_popup_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( PopupBuilder::instance(), 'enqueue_popup_scripts_for_post' ), 1 );
 		add_action( 'admin_enqueue_scripts', array( PopupBuilder::instance(), 'popup_toggle_scripts' ) );
 		add_action( 'wp_ajax_spectra_blocks_update_popup_status', array( PopupBuilder::instance(), 'update_popup_status' ) );
+		add_filter( 'manage_edit-spectra-blocks-popup_columns', array( PopupBuilder::instance(), 'add_popup_columns' ) );
+		add_action( 'manage_spectra-blocks-popup_posts_custom_column', array( PopupBuilder::instance(), 'render_popup_column' ), 10, 2 );
+
+		// Always hook manage_spectra-popup_posts_custom_column so that spectra-popup rows
+		// that appear inside the spectra-blocks-popup list get their columns rendered.
+		// WordPress fires the action based on each row's post_type, not the list's CPT.
+		// When UAGB is active we skip the manage_edit-spectra-popup_columns filter so we
+		// don't duplicate the "Enable/Disable" column on UAGB's own Spectra Classic list.
+		if ( ! defined( 'UAGB_VER' ) ) {
+			add_filter( 'manage_edit-spectra-popup_columns', array( PopupBuilder::instance(), 'add_popup_columns' ) );
+		}
+		add_action( 'manage_spectra-popup_posts_custom_column', array( PopupBuilder::instance(), 'render_popup_column' ), 10, 2 );
+		add_action( 'pre_get_posts', array( PopupBuilder::instance(), 'include_beta_popups_in_admin_list' ) );
 	}
 
 	/**
@@ -83,13 +97,7 @@ class BlockManager {
 		}
 
 		if ( ! empty( $block_files ) ) {
-			$registry = \WP_Block_Type_Registry::get_instance();
 			foreach ( $block_files as $block_file ) {
-				// Skip blocks already registered by another plugin (e.g. UAGB).
-				$metadata = wp_json_file_decode( $block_file, array( 'associative' => true ) );
-				if ( ! empty( $metadata['name'] ) && $registry->is_registered( $metadata['name'] ) ) {
-					continue;
-				}
 				register_block_type_from_metadata( $block_file );
 			}
 		}
@@ -137,7 +145,7 @@ class BlockManager {
 			return $settings;
 		}
 
-		$settings['render_callback'] = function ( $attributes, $content, $block ) use ( $controller_path, $metadata ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed -- params are available to included controller via closure scope
+		$settings['render_callback'] = function ( $attributes, $content, $block ) use ( $controller_path, $metadata ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 			// Include the controller and validate its output.
 			$view = include $controller_path;
 
@@ -189,7 +197,7 @@ class BlockManager {
 	/**
 	 * Retrieves the block category for Spectra inner/child blocks.
 	 *
-	 * @since x.x.x
+	 * @since 0.0.9
 	 *
 	 * @return array The inner block category configuration.
 	 */

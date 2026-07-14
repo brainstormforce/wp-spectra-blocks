@@ -30,7 +30,7 @@ import { select, dispatch } from '@wordpress/data';
  */
 import IconPicker from '@spectra-components/icon-picker';
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra/tabs/helpers';
+import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
 import { helperIcons } from '@spectra-helpers/block-icons';
 
 /**
@@ -137,7 +137,7 @@ const BlockSettings = memo( ( props ) => {
 									} )
 								}
 								help={ __(
-									"Enable this for your RTL visitors if you are using a direction-specific icon. Like 'Arrow Right', 'Chart Line', etc. ",
+									'Enable this for your RTL visitors if you are using a direction-specific icon. Like "Arrow Right", "Chart Line", etc.',
 									'spectra-blocks'
 								) }
 							/>

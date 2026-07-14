@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\ModalChildTriggerButton
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // The main attributes that need to exist.
 $text = $attributes['text'] ?? '';
@@ -68,6 +67,10 @@ $icon_props = array(
 $config = array(
 	array( 'key' => 'textColor' ),
 	array( 'key' => 'textColorHover' ),
+	array( 'key' => 'backgroundColor' ),
+	array( 'key' => 'backgroundColorHover' ),
+	array( 'key' => 'backgroundGradient' ),
+	array( 'key' => 'backgroundGradientHover' ),
 	array(
 		'key'        => 'iconColor',
 		'css_var'    => '--spectra-icon-color',
@@ -76,15 +79,6 @@ $config = array(
 	array(
 		'key'        => 'iconColorHover',
 		'css_var'    => '--spectra-icon-color-hover',
-		'class_name' => null,
-	),
-	array( 'key' => 'backgroundColor' ),
-	array( 'key' => 'backgroundColorHover' ),
-	array( 'key' => 'backgroundGradient' ),
-	array( 'key' => 'backgroundGradientHover' ),
-	array(
-		'key'        => 'gap',
-		'css_var'    => '--spectra-icon-gap',
 		'class_name' => null,
 	),
 );

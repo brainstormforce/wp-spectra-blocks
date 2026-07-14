@@ -1,1 +1,192 @@
-#wpwrap,.striped>tbody>:nth-child(odd){background-color:#f8fafc}.spectra-popup-builder__switch{position:relative;width:42px;height:22px;padding:2px;margin:inherit;cursor:pointer;border:none;border-radius:100px;box-sizing:border-box;background:#64748b;opacity:.7;transition:background .15s cubic-bezier(.4, 0, .2, 1),border-color .15s cubic-bezier(.4, 0, .2, 1)}.spectra-popup-builder__switch.spectra-popup-builder__switch--disabled{pointer-events:none;cursor:not-allowed;background:#e2e8f0}.spectra-popup-builder__switch>span{pointer-events:none;-js-display:flex;display:flex;width:16px;height:16px;background:#fff;box-shadow:0 1px 2px 0 #0000000f,0 1px 3px 0 #0000001a;border-radius:inherit;transform:translate(2px,1px);transition:background .15s cubic-bezier(.4, 0, .2, 1),transform .15s cubic-bezier(.4, 0, .2, 1)}.spectra-popup-builder__switch.is-rtl-toggle>span{transform:translate(-2px,1px)}.spectra-popup-builder__switch.spectra-popup-builder__switch--active{background:#007cba;opacity:1}.spectra-popup-builder__switch.spectra-popup-builder__switch--active span{transform:translate(20px,1px)}.spectra-popup-builder__switch.spectra-popup-builder__switch--active.is-rtl-toggle span{transform:translate(-20px,1px)}.post-type-spectra-popup .wp-list-table #author,.post-type-spectra-popup .wp-list-table #spectra_popup_toggle,.post-type-spectra-popup .wp-list-table #spectra_popup_type{width:150px}.post-type-spectra-popup .wp-list-table #spectra_popup_trigger{width:200px}td.column-spectra_popup_toggle,th.column-spectra_popup_toggle{text-align:center}td.spectra_popup_toggle.column-spectra_popup_toggle .spectra-popup-builder__switch{margin:0 auto}
+#wpwrap,
+.striped > tbody > :nth-child(odd) {
+  background-color: #f8fafc;
+}
+.spectra-popup-builder__switch {
+  position: relative;
+  width: 42px;
+  height: 22px;
+  padding: 2px;
+  margin: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: 100px;
+  box-sizing: border-box;
+  background: #64748b;
+  opacity: 0.7;
+  transition:
+    background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.spectra-popup-builder__switch.spectra-popup-builder__switch--disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background: #e2e8f0;
+}
+.spectra-popup-builder__switch > span {
+  pointer-events: none;
+  -js-display: flex;
+  display: flex;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  box-shadow:
+    0 1px 2px 0 #0000000f,
+    0 1px 3px 0 #0000001a;
+  border-radius: inherit;
+  transform: translate(2px, 1px);
+  transition:
+    background 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.spectra-popup-builder__switch.is-rtl-toggle > span {
+  transform: translate(-2px, 1px);
+}
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active {
+  background: #007cba;
+  opacity: 1;
+}
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active span {
+  transform: translate(20px, 1px);
+}
+.spectra-popup-builder__switch.spectra-popup-builder__switch--active.is-rtl-toggle
+  span {
+  transform: translate(-20px, 1px);
+}
+.post-type-spectra-blocks-popup .wp-list-table #author,
+.post-type-spectra-blocks-popup .wp-list-table #spectra_blocks_popup_toggle {
+  width: 150px;
+}
+.post-type-spectra-blocks-popup .wp-list-table #spectra_blocks_popup_trigger {
+  width: 200px;
+}
+.post-type-spectra-blocks-popup
+  .wp-list-table
+  #spectra_blocks_popup_quick_view {
+  width: 100px;
+}
+td.column-spectra_blocks_popup_toggle,
+th.column-spectra_blocks_popup_toggle {
+  text-align: center;
+}
+td.spectra_blocks_popup_toggle.column-spectra_blocks_popup_toggle
+  .spectra-popup-builder__switch {
+  margin: 0 auto;
+}
+td.column-spectra_blocks_popup_quick_view,
+th.column-spectra_blocks_popup_quick_view {
+  text-align: center;
+}
+.post-type-spectra-blocks-popup .spectra-popup-builder__button {
+  background: 0 0;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  color: #50575e;
+}
+.post-type-spectra-blocks-popup .spectra-popup-builder__button:hover {
+  color: #135e96;
+}
+td.spectra_blocks_popup_quick_view.column-spectra_blocks_popup_quick_view
+  .spectra-popup-builder__button
+  * {
+  pointer-events: none;
+}
+.spectra-popup-builder__modal--overlay {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  backdrop-filter: blur(4px);
+  background-color: rgba(107, 114, 128, 0.75);
+  opacity: 0;
+  transition: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.spectra-popup-builder__modal {
+  position: relative;
+  width: 100%;
+  max-width: 32rem;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+  opacity: 0;
+  transition: all 250ms ease;
+}
+.spectra-popup-builder__modal--padded {
+  padding: 16px 32px;
+}
+.spectra-popup-builder__modal--header {
+  border-bottom: 1px solid #e6e7e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.spectra-popup-builder__modal--title {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+.spectra-popup-builder__modal--type {
+  background-color: #f5f3ff;
+  color: #4f46e5;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.spectra-popup-builder__modal--body {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1px;
+  width: 100%;
+  background-color: #e6e7e9;
+}
+.spectra-popup-builder__modal--body div {
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.spectra-popup-builder__modal--body ul {
+  list-style-type: disc;
+  text-align: left;
+  padding-left: 12px;
+}
+.spectra-popup-builder__modal--footer {
+  border-top: 1px solid #e6e7e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.spectra-popup-builder__modal--status {
+  text-transform: capitalize;
+}
+.spectra-popup-builder__modal--close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  color: white;
+  top: 0;
+  right: -32px;
+  padding: 0;
+}
+.spectra-popup-builder__modal--close .dashicons {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 14px;
+}
+.spectra-popup-builder__modal--scroll-lock {
+  overflow: hidden;
+}

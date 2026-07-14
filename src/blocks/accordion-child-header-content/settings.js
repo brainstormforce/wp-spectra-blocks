@@ -18,7 +18,7 @@ import { helperIcons } from '@spectra-helpers/block-icons';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -62,7 +62,6 @@ const BlockSettings = memo( ( props ) => {
 					hasValue={ () => !! tagName && defaultTagName !== tagName }
 					label={ __( 'HTML Tag', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { tagName: defaultTagName } ) }
-					resetAllFilter={ () => ( { tagName: defaultTagName } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>

@@ -5,11 +5,11 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\CreatePopup;
-use Spectra\Abilities\GetPopup;
-use Spectra\Abilities\ListPopups;
-use Spectra\Abilities\TogglePopupStatus;
-use Spectra\Abilities\DeletePopup;
+use SpectraBlocks\Abilities\CreatePopup;
+use SpectraBlocks\Abilities\GetPopup;
+use SpectraBlocks\Abilities\ListPopups;
+use SpectraBlocks\Abilities\TogglePopupStatus;
+use SpectraBlocks\Abilities\DeletePopup;
 
 /**
  * Popup abilities test case.
@@ -25,9 +25,9 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 		wp_set_current_user( $user_id );
 
 		// Register the spectra-popup CPT if not already registered.
-		if ( ! post_type_exists( 'spectra-popup' ) ) {
+		if ( ! post_type_exists( 'spectra-blocks-popup' ) ) {
 			register_post_type(
-				'spectra-popup',
+				'spectra-blocks-popup',
 				array(
 					'public' => false,
 					'label'  => 'Spectra Popups',
@@ -44,7 +44,7 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 	 */
 	private function create_test_popup( array $args = array() ) {
 		$defaults = array(
-			'post_type'   => 'spectra-popup',
+			'post_type'   => 'spectra-blocks-popup',
 			'post_title'  => 'Test Popup',
 			'post_status' => 'publish',
 		);
@@ -52,9 +52,9 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 		$post_id = self::factory()->post->create( array_merge( $defaults, $args ) );
 
 		// Set default meta.
-		update_post_meta( $post_id, 'spectra-popup-type', $args['meta_type'] ?? 'banner' );
-		update_post_meta( $post_id, 'spectra-popup-enabled', $args['meta_enabled'] ?? false );
-		update_post_meta( $post_id, 'spectra-popup-repetition', $args['meta_repetition'] ?? 1 );
+		update_post_meta( $post_id, 'spectra-blocks-popup-type', $args['meta_type'] ?? 'banner' );
+		update_post_meta( $post_id, 'spectra-blocks-popup-enabled', $args['meta_enabled'] ?? false );
+		update_post_meta( $post_id, 'spectra-blocks-popup-repetition', $args['meta_repetition'] ?? 1 );
 
 		return $post_id;
 	}
@@ -154,8 +154,8 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'popup', get_post_meta( $result['popup_id'], 'spectra-popup-type', true ) );
-		$this->assertTrue( (bool) get_post_meta( $result['popup_id'], 'spectra-popup-enabled', true ) );
+		$this->assertSame( 'popup', get_post_meta( $result['popup_id'], 'spectra-blocks-popup-type', true ) );
+		$this->assertTrue( (bool) get_post_meta( $result['popup_id'], 'spectra-blocks-popup-enabled', true ) );
 	}
 
 	/**
@@ -506,7 +506,7 @@ class PopupAbilitiesTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['enabled'] );
 
 		// Verify meta was updated.
-		$this->assertTrue( (bool) get_post_meta( $popup_id, 'spectra-popup-enabled', true ) );
+		$this->assertTrue( (bool) get_post_meta( $popup_id, 'spectra-blocks-popup-enabled', true ) );
 	}
 
 	/**

@@ -13,7 +13,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
  */
 import { useSpectraStyles } from '@spectra-hooks';
 import { spectraClassNames } from '@spectra-helpers';
-import { getTabpanelIndex } from '@spectra/tabs/helpers';
+import { getTabpanelIndex } from '@spectra-blocks/tabs/helpers';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
 
 /**

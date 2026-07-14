@@ -4,7 +4,6 @@
 import { memo, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	__experimentalToolsPanel as ToolsPanel,
@@ -30,7 +29,7 @@ import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient
 
 /**
  * Navigation Icon Settings Component
- * 
+ *
  * @param {Object}   props               The element props.
  * @param {Object}   props.attributes
  * @param {Function} props.setAttributes
@@ -224,9 +223,6 @@ const BlockSettings = memo( ( props ) => {
 								slidesPerView: undefined,
 							} )
 						}
-						resetAllFilter={ () => ( {
-							slidesPerView: undefined,
-						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -245,9 +241,6 @@ const BlockSettings = memo( ( props ) => {
 								spaceBetween: undefined,
 							} )
 						}
-						resetAllFilter={ () => ( {
-							spaceBetween: undefined,
-						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -416,7 +409,7 @@ const BlockSettings = memo( ( props ) => {
 						onDeselect={ () => setAttributes( {
 							overflow: undefined,
 						} ) }
-						resetAllFilter={ () => ( {
+						resetAll={ () => ( {
 							overflow: undefined,
 						} ) }
 						isShownByDefault
@@ -467,10 +460,6 @@ const BlockSettings = memo( ( props ) => {
 								pagination: true,
 							} )
 						}
-						resetAllFilter={ () => ( {
-							navigation: true,
-							pagination: true,
-						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -522,10 +511,6 @@ const BlockSettings = memo( ( props ) => {
 									navigationNextIcon: 'arrow-right',
 								} )
 							}
-							resetAllFilter={ () => ( {
-								navigationPrevIcon: 'arrow-left',
-								navigationNextIcon: 'arrow-right',
-							} ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -922,7 +907,7 @@ const AdvancedGradientSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block opacity styles.
@@ -978,12 +963,7 @@ const Settings = memo( ( props ) => (
 		<AdvancedGradientSettings { ...{ ...props } } />
 		<OpacitySettings { ...{ ...props } } />
 		<BlockStyle { ...{ ...props } } />
-		{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-			<InspectorControls group="settings">
-				<UpgradeComponent control={ { campaign: 'slider' } } />
-			</InspectorControls>
-		) }
 	</>
 ) );
 
-export default Settings;
+export default memo( Settings );

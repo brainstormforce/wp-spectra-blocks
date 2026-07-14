@@ -75,11 +75,16 @@ const UnlockProItem = ( { blockInfo } ) => {
 };
 
 const Content = ( { icon, title, link } ) => {
+	const isLocked = spectra_blocks_react.pro_plugin_status !== 'Activated';
+
 	return (
 		<Container align="center" containerType="flex" direction="column" justify="between" gap="">
 			<div className="flex items-center justify-between w-full mb-1 p-1">
-				<div style={{ fontSize: '22px' }}>
-					<RenderBlockPreview blockName={icon} />
+				<div style={ { fontSize: '22px', ...( isLocked ? { filter: 'grayscale(1)', opacity: 0.5 } : {} ) } }>
+					{ typeof icon === 'string'
+						? <RenderBlockPreview blockName={icon} />
+						: icon
+					}
 				</div>
 				<div className="flex items-center gap-x-2">
 					{'Activated' !== spectra_blocks_react.pro_plugin_status ? (
@@ -103,7 +108,7 @@ const Content = ( { icon, title, link } ) => {
 				</Text>
 				<div className="flex items-center justify-between w-full">
 					<a
-						href={`https://wpspectra.com/blocks-and-extensions/${link}`}
+						href={`https://wpspectra.com/docs/${link}`}
 						target="_blank"
 						rel="noreferrer"
 						className="mt-1 text-text-tertiary no-underline"

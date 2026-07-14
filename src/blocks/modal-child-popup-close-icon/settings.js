@@ -29,7 +29,7 @@ import { getIconName } from '@spectra-helpers';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -117,7 +117,7 @@ const BlockSettings = memo( ( props ) => {
 							checked={ flipForRTL }
 							label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 							onChange={ () => setAttributes( { flipForRTL: ! flipForRTL } ) }
-							help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
+							help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like "Arrow Right", "Chart Line", etc.', 'spectra-blocks' ) }
 						/>
 					</VStack>
 				</ToolsPanelItem>
@@ -188,7 +188,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -238,7 +238,7 @@ const DimensionSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

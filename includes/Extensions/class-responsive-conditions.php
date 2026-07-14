@@ -5,12 +5,9 @@
  * @package Spectra\Extensions
  */
 
-namespace Spectra\Extensions;
+namespace SpectraBlocks\Extensions;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
@@ -91,9 +88,16 @@ class ResponsiveConditions {
 	 * @return bool
 	 */
 	private function should_process_block( $block ) {
-		return ! empty( $block['blockName'] )
-			&& isset( $block['attrs']['responsiveConditions'] )
-			&& $this->is_allowed_block( $block['blockName'] );
+		if ( empty( $block['blockName'] ) || ! $this->is_allowed_block( $block['blockName'] ) ) {
+			return false;
+		}
+
+		$attrs = $block['attrs'];
+
+		return isset( $attrs['responsiveConditions'] )
+			|| ! empty( $attrs['UAGHideDesktop'] )
+			|| ! empty( $attrs['UAGHideTab'] )
+			|| ! empty( $attrs['UAGHideMob'] );
 	}
 
 	/**
@@ -105,27 +109,34 @@ class ResponsiveConditions {
 	 * @return array Active responsive conditions.
 	 */
 	private function get_responsive_conditions( $attrs ) {
-		$responsive_conditions = $attrs['responsiveConditions'] ?? array();
-
-		if ( ! is_array( $responsive_conditions ) ) {
-			return array();
-		}
-
 		$active_conditions = array();
 
-		if ( isset( $responsive_conditions['hideOnDesktop'] ) && true === $responsive_conditions['hideOnDesktop'] ) {
+		// New format: responsiveConditions object.
+		$responsive_conditions = $attrs['responsiveConditions'] ?? array();
+		if ( is_array( $responsive_conditions ) ) {
+			if ( ! empty( $responsive_conditions['hideOnDesktop'] ) ) {
+				$active_conditions[] = 'spectra-hide-desktop';
+			}
+			if ( ! empty( $responsive_conditions['hideOnTablet'] ) ) {
+				$active_conditions[] = 'spectra-hide-tablet';
+			}
+			if ( ! empty( $responsive_conditions['hideOnMobile'] ) ) {
+				$active_conditions[] = 'spectra-hide-mobile';
+			}
+		}
+
+		// Legacy UAG v2 flat boolean attributes.
+		if ( ! empty( $attrs['UAGHideDesktop'] ) ) {
 			$active_conditions[] = 'spectra-hide-desktop';
 		}
-
-		if ( isset( $responsive_conditions['hideOnTablet'] ) && true === $responsive_conditions['hideOnTablet'] ) {
+		if ( ! empty( $attrs['UAGHideTab'] ) ) {
 			$active_conditions[] = 'spectra-hide-tablet';
 		}
-
-		if ( isset( $responsive_conditions['hideOnMobile'] ) && true === $responsive_conditions['hideOnMobile'] ) {
+		if ( ! empty( $attrs['UAGHideMob'] ) ) {
 			$active_conditions[] = 'spectra-hide-mobile';
 		}
 
-		return $active_conditions;
+		return array_unique( $active_conditions );
 	}
 
 	/**

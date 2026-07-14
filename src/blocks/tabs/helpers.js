@@ -200,11 +200,11 @@ export const removeCurrentTab = ( clientId, blockType = 'tab' ) => {
 /**
  * Remove tab button/trigger and its associated tabpanel.
  *
- * @param {string} clientId The current block's ID.
- * @param {Object} currentBlock The current block object.
- * @param {Object} tabsRootBlock The tabs root block object.
+ * @param {string}   clientId      The current block's ID.
+ * @param {Object}   currentBlock  The current block object.
+ * @param {Object}   tabsRootBlock The tabs root block object.
  * @param {Function} getBlockIndex Function to get block index.
- * @param {Function} removeBlock Function to remove block.
+ * @param {Function} removeBlock   Function to remove block.
  */
 const removeTabAndAssociatedTabpanel = (
 	clientId,
@@ -260,11 +260,11 @@ const removeTabAndAssociatedTabpanel = (
 /**
  * Remove tabpanel and its associated tab button/trigger.
  *
- * @param {string} clientId The current block's ID.
- * @param {Object} currentBlock The current block object.
- * @param {Object} tabsRootBlock The tabs root block object.
+ * @param {string}   clientId      The current block's ID.
+ * @param {Object}   currentBlock  The current block object.
+ * @param {Object}   tabsRootBlock The tabs root block object.
  * @param {Function} getBlockIndex Function to get block index.
- * @param {Function} removeBlock Function to remove block.
+ * @param {Function} removeBlock   Function to remove block.
  */
 const removeTabpanelAndAssociatedTabButton = (
 	clientId,
@@ -317,8 +317,8 @@ const removeTabpanelAndAssociatedTabButton = (
 /**
  * Remove the last tab button/trigger and its associated tabpanel.
  *
- * @param {Object} tabsRootBlock The tabs root block object.
- * @param {Function} removeBlock Function to remove block.
+ * @param {Object}   tabsRootBlock The tabs root block object.
+ * @param {Function} removeBlock   Function to remove block.
  */
 const removeLastTabButtonAndAssociatedTabpanel = (
 	tabsRootBlock,

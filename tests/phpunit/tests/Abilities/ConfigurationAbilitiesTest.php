@@ -5,11 +5,11 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\ToggleBlockActivation;
-use Spectra\Abilities\GetBlockActivationStatus;
-use Spectra\Abilities\GetPluginSettings;
-use Spectra\Abilities\ListSelectedFonts;
-use Spectra\Abilities\ListAvailableGoogleFonts;
+use SpectraBlocks\Abilities\ToggleBlockActivation;
+use SpectraBlocks\Abilities\GetBlockActivationStatus;
+use SpectraBlocks\Abilities\GetPluginSettings;
+use SpectraBlocks\Abilities\ListSelectedFonts;
+use SpectraBlocks\Abilities\ListAvailableGoogleFonts;
 
 /**
  * Configuration abilities test case.

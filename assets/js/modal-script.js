@@ -243,9 +243,9 @@ function cleanupModalHandlers( blockId ) {
 /**
  * Store an event handler for later cleanup
  *
- * @param {string} blockId - The modal block ID
- * @param {Element} element - The DOM element
- * @param {string} event - The event name
+ * @param {string}   blockId - The modal block ID
+ * @param {Element}  element - The DOM element
+ * @param {string}   event   - The event name
  * @param {Function} handler - The event handler function
  */
 function storeHandler( blockId, element, event, handler ) {
@@ -281,10 +281,10 @@ function attachOverlayClickClose( args ) {
 			
 			// Find the popup element
 			const popup = modal.querySelector( '.spectra-modal-popup' );
-			if ( !popup || !popup.classList.contains( 'active' ) ) return;
+			if ( !popup || !popup.classList.contains( 'active' ) ) {return;}
 			
 			const popupWrap = popup.querySelector( '.spectra-modal-popup-wrap' );
-			if ( !popupWrap ) return;
+			if ( !popupWrap ) {return;}
 			
 			// Click is on overlay if click is on popup but not inside popup-wrap
 			if ( e.target === popup ) {
@@ -335,7 +335,7 @@ function attachEscKeyClose( args ) {
  */
 function closeModal( blockId ) {
 	const modal = getDocumentElement().getElementById( blockId );
-	if ( ! modal ) return;
+	if ( ! modal ) {return;}
 
 	modal.classList.remove( 'active' );
 	
@@ -386,19 +386,19 @@ function attachKeyboardHandlers( args ) {
 	// Trap tab focus inside the modal
 	const keydownHandler = ( e ) => {
 		const modal = getDocumentElement().getElementById( args.blockId );
-		if ( ! modal || ! modal.classList.contains( 'active' ) ) return;
+		if ( ! modal || ! modal.classList.contains( 'active' ) ) {return;}
 		
 		// Check if the popup element is hidden (not the wrapper)
 		const popup = modal.querySelector( '.spectra-modal-popup' );
-		if ( popup && popup.getAttribute( 'aria-hidden' ) === 'true' ) return;
+		if ( popup && popup.getAttribute( 'aria-hidden' ) === 'true' ) {return;}
 		
 		const state = modalHandlers.get( args.blockId )?.state;
-		if ( ! state ) return;
+		if ( ! state ) {return;}
 
 		const focusable = modal.querySelectorAll(
 			'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
 		);
-		if ( !focusable.length ) return;
+		if ( !focusable.length ) {return;}
 
 		const first = focusable[0];
 		const last = focusable[focusable.length - 1];
@@ -445,7 +445,7 @@ function attachKeyboardHandlers( args ) {
 	// Prevent focus on elements outside modal when clicking
 	const focusinHandler = ( e ) => {
 		const modal = getDocumentElement().getElementById( args.blockId );
-		if ( ! modal || ! modal.classList.contains( 'active' ) ) return;
+		if ( ! modal || ! modal.classList.contains( 'active' ) ) {return;}
 		
 		// If focus moves outside the modal, bring it back
 		if ( !modal.contains( e.target ) ) {
@@ -465,18 +465,18 @@ function attachKeyboardHandlers( args ) {
 	// Set initial focus to first focusable element on modal open.
 	const openHandler = ( event ) => {
 		// Check if this event is for our modal
-		if ( event.detail?.blockId && event.detail.blockId !== args.blockId ) return;
+		if ( event.detail?.blockId && event.detail.blockId !== args.blockId ) {return;}
 		
 		const modal = getDocumentElement().getElementById( args.blockId );
-		if ( !modal || !modal.classList.contains( 'active' ) ) return;
+		if ( !modal || !modal.classList.contains( 'active' ) ) {return;}
 		
 		const state = modalHandlers.get( args.blockId )?.state;
-		if ( ! state ) return;
+		if ( ! state ) {return;}
 
 		const focusable = modal.querySelectorAll(
 			'a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])'
 		);
-		if ( !focusable.length ) return;
+		if ( !focusable.length ) {return;}
 		const activeElement = modal.ownerDocument.activeElement;
 
 		// Save currently focused element to return focus when modal closes.
@@ -511,7 +511,7 @@ function attachKeyboardHandlers( args ) {
  */
 function attachCloseButtonKeyboard( args ) {
 	const modal = getDocumentElement().getElementById( args.blockId );
-	if ( !modal ) return;
+	if ( !modal ) {return;}
 	
 	// Wait a bit for modal content to render
 	setTimeout( () => {

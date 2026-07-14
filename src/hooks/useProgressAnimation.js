@@ -1,6 +1,6 @@
 /**
  * Custom hook for progress animation in the editor
- * 
+ *
  * @since x.x.x
  */
 
@@ -35,7 +35,7 @@ const easingFunctions = {
 
 /**
  * Custom hook for progress animation
- * 
+ *
  * @param {Object} options Animation options
  * @return {Object} Progress animation values
  */

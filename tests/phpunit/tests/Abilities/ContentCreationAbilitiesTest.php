@@ -5,16 +5,17 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\CreateButtons;
-use Spectra\Abilities\CreateAccordion;
-use Spectra\Abilities\CreateCountdown;
-use Spectra\Abilities\CreateCounter;
-use Spectra\Abilities\CreateGoogleMap;
-use Spectra\Abilities\CreateIcons;
-use Spectra\Abilities\CreateList;
-use Spectra\Abilities\CreateSeparator;
-use Spectra\Abilities\CreateTabs;
-use Spectra\Abilities\CreateContent;
+use SpectraBlocks\Abilities\CreateButtons;
+use SpectraBlocks\Abilities\CreateAccordion;
+use SpectraBlocks\Abilities\CreateCountdown;
+use SpectraBlocks\Abilities\CreateCounter;
+use SpectraBlocks\Abilities\CreateGoogleMap;
+use SpectraBlocks\Abilities\CreateIcons;
+use SpectraBlocks\Abilities\CreateList;
+use SpectraBlocks\Abilities\CreateSeparator;
+use SpectraBlocks\Abilities\CreateTabs;
+use SpectraBlocks\Abilities\CreateContent;
+use SpectraBlocks\Abilities\CreatePost;
 
 /**
  * Content creation abilities test case.
@@ -1097,5 +1098,162 @@ class ContentCreationAbilitiesTest extends WP_UnitTestCase {
 
 		$this->assertIsArray( $result );
 		$this->assertStringContainsString( '"zoom":1', $result['block_markup'] );
+	}
+
+	// -------------------------------------------------------------------------
+	// CreatePost
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Test CreatePost metadata.
+	 */
+	public function test_create_post_metadata() {
+		$ability = CreatePost::instance();
+
+		$this->assertSame( 'spectra-blocks/create-post', $ability->get_name() );
+		$this->assertSame( 'spectra-blocks-content', $ability->get_category() );
+	}
+
+	/**
+	 * Test CreatePost execute with defaults.
+	 */
+	public function test_create_post_execute_defaults() {
+		$result = CreatePost::instance()->execute( array() );
+
+		$this->assertIsArray( $result );
+		$this->assertArrayHasKey( 'block_markup', $result );
+		$this->assertStringContainsString( '<!-- wp:spectra/post', $result['block_markup'] );
+		$this->assertStringContainsString( '<!-- /wp:spectra/post -->', $result['block_markup'] );
+		$this->assertStringContainsString( '"layoutType":"grid"', $result['block_markup'] );
+		$this->assertStringContainsString( '"postsToShow":6', $result['block_markup'] );
+	}
+
+	/**
+	 * Test CreatePost execute with carousel layout.
+	 */
+	public function test_create_post_carousel_layout() {
+		$result = CreatePost::instance()->execute(
+			array(
+				'layoutType'  => 'carousel',
+				'postsToShow' => 3,
+				'navigation'  => false,
+				'pagination'  => true,
+				'autoplay'    => false,
+				'loop'        => false,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$markup = $result['block_markup'];
+		$this->assertStringContainsString( '"layoutType":"carousel"', $markup );
+		$this->assertStringContainsString( '"postsToShow":3', $markup );
+		$this->assertStringContainsString( '"navigation":false', $markup );
+		$this->assertStringContainsString( '"pagination":true', $markup );
+		$this->assertStringContainsString( '"autoplay":false', $markup );
+		$this->assertStringContainsString( '"loop":false', $markup );
+	}
+
+	/**
+	 * Test CreatePost execute with custom orderBy and order.
+	 */
+	public function test_create_post_custom_query() {
+		$result = CreatePost::instance()->execute(
+			array(
+				'orderBy'  => 'title',
+				'order'    => 'asc',
+				'postType' => 'page',
+				'columns'  => 3,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$markup = $result['block_markup'];
+		$this->assertStringContainsString( '"orderBy":"title"', $markup );
+		$this->assertStringContainsString( '"order":"asc"', $markup );
+		$this->assertStringContainsString( '"postType":"page"', $markup );
+		$this->assertStringContainsString( '"columns":3', $markup );
+	}
+
+	/**
+	 * Test CreatePost with invalid layoutType falls back to grid.
+	 */
+	public function test_create_post_invalid_layout_defaults_to_grid() {
+		$result = CreatePost::instance()->execute(
+			array( 'layoutType' => 'invalid' )
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertStringContainsString( '"layoutType":"grid"', $result['block_markup'] );
+	}
+
+	/**
+	 * Test CreatePost with postsToShow 0 falls back to 6.
+	 */
+	public function test_create_post_zero_posts_defaults_to_six() {
+		$result = CreatePost::instance()->execute(
+			array( 'postsToShow' => 0 )
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertStringContainsString( '"postsToShow":6', $result['block_markup'] );
+	}
+
+	/**
+	 * Test CreatePost inserts into post when post_id given.
+	 */
+	public function test_create_post_execute_with_post_insertion() {
+		$post_id = self::factory()->post->create();
+
+		$result = CreatePost::instance()->execute(
+			array(
+				'post_id' => $post_id,
+				'mode'    => 'replace',
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertSame( $post_id, $result['post_id'] );
+		$this->assertStringContainsString( '<!-- wp:spectra/post', $result['post_content'] );
+	}
+
+	/**
+	 * Test CreatePost input schema.
+	 */
+	public function test_create_post_input_schema() {
+		$schema = CreatePost::instance()->get_input_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertArrayHasKey( 'layoutType', $schema['properties'] );
+		$this->assertArrayHasKey( 'postsToShow', $schema['properties'] );
+		$this->assertArrayHasKey( 'orderBy', $schema['properties'] );
+	}
+
+	/**
+	 * Test CreatePost output schema.
+	 */
+	public function test_create_post_output_schema() {
+		$schema = CreatePost::instance()->get_output_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertArrayHasKey( 'block_markup', $schema['properties'] );
+	}
+
+	/**
+	 * Test CreatePost denies subscribers.
+	 */
+	public function test_create_post_permission_subscriber() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+
+		$result = CreatePost::instance()->check_permission();
+		$this->assertWPError( $result );
+	}
+
+	/**
+	 * Test CreatePost variationSelected is always true in markup.
+	 */
+	public function test_create_post_variation_selected_in_markup() {
+		$result = CreatePost::instance()->execute( array() );
+
+		$this->assertStringContainsString( '"variationSelected":true', $result['block_markup'] );
 	}
 }

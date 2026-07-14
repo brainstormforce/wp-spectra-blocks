@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 
 // Get the plugin URL from the localized data.
-const pluginUrl = window?.spectraBlocksExtensions?.pluginUrl || '';
+const pluginUrl = window?.spectraExtensions?.pluginUrl || '';
 
 // Define SVG paths relative to the plugin URL, this is used to get the SVG for the mask, we are not importing the SVGs as they are converted to data URIs when imported and is causing issues with the image path in focal point picker.
 const SVG_PATHS = pluginUrl ? {

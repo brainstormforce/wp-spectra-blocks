@@ -1,20 +1,23 @@
 <?php
 /**
  * Tests for Extension abilities: ApplyAnimation, RemoveAnimation, ApplySticky, RemoveSticky,
- * ApplyResponsiveConditions, RemoveResponsiveConditions, ApplyZIndex, ApplyImageMask.
+ * ApplyResponsiveConditions, RemoveResponsiveConditions, ApplyZIndex, ApplyImageMask,
+ * ApplyDisplayConditions, RemoveDisplayConditions.
  *
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\ApplyAnimation;
-use Spectra\Abilities\RemoveAnimation;
-use Spectra\Abilities\ApplySticky;
-use Spectra\Abilities\RemoveSticky;
-use Spectra\Abilities\ApplyResponsiveConditions;
-use Spectra\Abilities\RemoveResponsiveConditions;
-use Spectra\Abilities\ApplyZIndex;
-use Spectra\Abilities\ApplyImageMask;
-use Spectra\Abilities\GetPostContent;
+use SpectraBlocks\Abilities\ApplyAnimation;
+use SpectraBlocks\Abilities\RemoveAnimation;
+use SpectraBlocks\Abilities\ApplySticky;
+use SpectraBlocks\Abilities\RemoveSticky;
+use SpectraBlocks\Abilities\ApplyResponsiveConditions;
+use SpectraBlocks\Abilities\RemoveResponsiveConditions;
+use SpectraBlocks\Abilities\ApplyZIndex;
+use SpectraBlocks\Abilities\ApplyImageMask;
+use SpectraBlocks\Abilities\ApplyDisplayConditions;
+use SpectraBlocks\Abilities\RemoveDisplayConditions;
+use SpectraBlocks\Abilities\GetPostContent;
 
 /**
  * Extension abilities test case.
@@ -545,14 +548,14 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 				'post_id'     => $post_id,
 				'block_index' => 0,
 				'shape'       => 'custom',
-				'custom_url'  => 'https://example.com/mask.svg',
+				'custom_url'  => home_url( '/wp-content/uploads/custom-mask.svg' ),
 			)
 		);
 
 		$this->assertIsArray( $result );
 		$this->assertTrue( $result['success'] );
 		$this->assertSame( 'custom', $result['mask_settings']['shape'] );
-		$this->assertSame( 'https://example.com/mask.svg', $result['mask_settings']['image']['url'] );
+		$this->assertSame( home_url( '/wp-content/uploads/custom-mask.svg' ), $result['mask_settings']['image']['url'] );
 	}
 
 	/**
@@ -1643,5 +1646,454 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		foreach ( $condition_keys as $key ) {
 			$this->assertArrayNotHasKey( $key, $attrs, "Key '$key' should be removed." );
 		}
+	}
+
+	// =========================================================================
+	// ApplyDisplayConditions
+	// =========================================================================
+
+	/**
+	 * Test ApplyDisplayConditions metadata.
+	 */
+	public function test_apply_display_conditions_metadata() {
+		$ability = ApplyDisplayConditions::instance();
+
+		$this->assertSame( 'spectra-blocks/apply-display-conditions', $ability->get_name() );
+		$this->assertSame( 'spectra-blocks-extensions', $ability->get_category() );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions execute success with hideWhenLoggedIn.
+	 */
+	public function test_apply_display_conditions_hide_when_logged_in() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => $post_id,
+				'block_index'      => 0,
+				'hideWhenLoggedIn' => true,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertTrue( $result['display_conditions']['hideWhenLoggedIn'] );
+		$this->assertSame( 'spectra/container', $result['block_name'] );
+
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertTrue( $attrs['displayConditions']['hideWhenLoggedIn'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions execute success with hideWhenLoggedOut.
+	 */
+	public function test_apply_display_conditions_hide_when_logged_out() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'           => $post_id,
+				'block_index'       => 0,
+				'hideWhenLoggedOut' => true,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertTrue( $result['display_conditions']['hideWhenLoggedOut'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions with hideForRole.
+	 */
+	public function test_apply_display_conditions_hide_for_role() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+				'hideForRole' => 'subscriber',
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( 'subscriber', $result['display_conditions']['hideForRole'] );
+
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertSame( 'subscriber', $attrs['displayConditions']['hideForRole'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions with hideForBrowser and hideForOS.
+	 */
+	public function test_apply_display_conditions_browser_and_os() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'        => $post_id,
+				'block_index'    => 0,
+				'hideForBrowser' => array( 'chrome' ),
+				'hideForOS'      => array( 'windows' ),
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( array( 'chrome' ), $result['display_conditions']['hideForBrowser'] );
+		$this->assertSame( array( 'windows' ), $result['display_conditions']['hideForOS'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions with hideOnDays filters invalid days.
+	 */
+	public function test_apply_display_conditions_hide_on_days() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+				'hideOnDays'  => array( 'monday', 'wednesday', 'invalid_day' ),
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertSame( array( 'monday', 'wednesday' ), $result['display_conditions']['hideOnDays'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions fails without required params.
+	 */
+	public function test_apply_display_conditions_missing_params() {
+		$result = ApplyDisplayConditions::instance()->execute( array() );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_missing_param', $result->get_error_code() );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions fails for non-existent post.
+	 */
+	public function test_apply_display_conditions_nonexistent_post() {
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => 999999,
+				'block_index'      => 0,
+				'hideWhenLoggedIn' => true,
+			)
+		);
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_invalid_post', $result->get_error_code() );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions fails for invalid block index.
+	 */
+	public function test_apply_display_conditions_invalid_block_index() {
+		$post_id = $this->create_post_with_block();
+
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => $post_id,
+				'block_index'      => 999,
+				'hideWhenLoggedIn' => true,
+			)
+		);
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_invalid_block_index', $result->get_error_code() );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions input schema.
+	 */
+	public function test_apply_display_conditions_input_schema() {
+		$schema = ApplyDisplayConditions::instance()->get_input_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertContains( 'post_id', $schema['required'] );
+		$this->assertContains( 'block_index', $schema['required'] );
+		$this->assertArrayHasKey( 'hideWhenLoggedIn', $schema['properties'] );
+		$this->assertArrayHasKey( 'hideForRole', $schema['properties'] );
+		$this->assertArrayHasKey( 'hideOnDays', $schema['properties'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions output schema.
+	 */
+	public function test_apply_display_conditions_output_schema() {
+		$schema = ApplyDisplayConditions::instance()->get_output_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertArrayHasKey( 'success', $schema['properties'] );
+		$this->assertArrayHasKey( 'block_name', $schema['properties'] );
+		$this->assertArrayHasKey( 'display_conditions', $schema['properties'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions denies subscribers.
+	 */
+	public function test_apply_display_conditions_permission_subscriber() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+
+		$result = ApplyDisplayConditions::instance()->check_permission();
+		$this->assertWPError( $result );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions merges with existing conditions.
+	 */
+	public function test_apply_display_conditions_merges_existing() {
+		$post_id = $this->create_post_with_block();
+
+		// Apply first condition.
+		ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => $post_id,
+				'block_index'      => 0,
+				'hideWhenLoggedIn' => true,
+			)
+		);
+
+		// Apply second condition — should not overwrite first.
+		ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+				'hideForRole' => 'editor',
+			)
+		);
+
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertTrue( $attrs['displayConditions']['hideWhenLoggedIn'] );
+		$this->assertSame( 'editor', $attrs['displayConditions']['hideForRole'] );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions grants access to editors.
+	 */
+	public function test_apply_display_conditions_permission_editor() {
+		$post_id = self::factory()->post->create();
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_content' => '<!-- wp:spectra/container {} --><!-- /wp:spectra/container -->',
+			)
+		);
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'        => $post_id,
+				'block_index'    => 0,
+				'hideForBrowser' => array( 'chrome' ),
+			)
+		);
+		$this->assertFalse( is_wp_error( $result ) );
+	}
+
+	/**
+	 * Test ApplyDisplayConditions with all invalid days stores empty array.
+	 */
+	public function test_apply_display_conditions_all_days_invalid() {
+		$post_id = self::factory()->post->create();
+		wp_update_post(
+			array(
+				'ID'           => $post_id,
+				'post_content' => '<!-- wp:spectra/container {} --><!-- /wp:spectra/container -->',
+			)
+		);
+		$result = ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+				'hideOnDays'  => array( 'Holiday', 'Funday', 'Someday' ),
+			)
+		);
+		$this->assertFalse( is_wp_error( $result ) );
+		$post       = get_post( $post_id );
+		$parsed     = parse_blocks( $post->post_content );
+		$conditions = $parsed[0]['attrs']['displayConditions'] ?? array();
+		$this->assertSame( array(), $conditions['hideOnDays'] ?? array() );
+	}
+
+	// =========================================================================
+	// RemoveDisplayConditions
+	// =========================================================================
+
+	/**
+	 * Test RemoveDisplayConditions metadata.
+	 */
+	public function test_remove_display_conditions_metadata() {
+		$ability = RemoveDisplayConditions::instance();
+
+		$this->assertSame( 'spectra-blocks/remove-display-conditions', $ability->get_name() );
+		$this->assertSame( 'spectra-blocks-extensions', $ability->get_category() );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions execute success when conditions exist.
+	 */
+	public function test_remove_display_conditions_execute_success() {
+		$post_id = $this->create_post_with_block();
+
+		// Apply conditions first.
+		ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => $post_id,
+				'block_index'      => 0,
+				'hideWhenLoggedIn' => true,
+				'hideForRole'      => 'subscriber',
+			)
+		);
+
+		// Then remove.
+		$result = RemoveDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertTrue( $result['removed'] );
+		$this->assertSame( 'spectra/container', $result['block_name'] );
+
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertArrayNotHasKey( 'displayConditions', $attrs );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions on block with no conditions returns removed: false.
+	 */
+	public function test_remove_display_conditions_when_none_present() {
+		$post_id = $this->create_post_with_block();
+
+		$result = RemoveDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+			)
+		);
+
+		$this->assertIsArray( $result );
+		$this->assertTrue( $result['success'] );
+		$this->assertFalse( $result['removed'] );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions fails without required params.
+	 */
+	public function test_remove_display_conditions_missing_params() {
+		$result = RemoveDisplayConditions::instance()->execute( array() );
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_missing_param', $result->get_error_code() );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions fails for non-existent post.
+	 */
+	public function test_remove_display_conditions_nonexistent_post() {
+		$result = RemoveDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => 999999,
+				'block_index' => 0,
+			)
+		);
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_invalid_post', $result->get_error_code() );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions fails for invalid block index.
+	 */
+	public function test_remove_display_conditions_invalid_block_index() {
+		$post_id = $this->create_post_with_block();
+
+		$result = RemoveDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 999,
+			)
+		);
+
+		$this->assertWPError( $result );
+		$this->assertSame( 'spectra_blocks_invalid_block_index', $result->get_error_code() );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions input schema.
+	 */
+	public function test_remove_display_conditions_input_schema() {
+		$schema = RemoveDisplayConditions::instance()->get_input_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertContains( 'post_id', $schema['required'] );
+		$this->assertContains( 'block_index', $schema['required'] );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions output schema.
+	 */
+	public function test_remove_display_conditions_output_schema() {
+		$schema = RemoveDisplayConditions::instance()->get_output_schema();
+
+		$this->assertSame( 'object', $schema['type'] );
+		$this->assertArrayHasKey( 'success', $schema['properties'] );
+		$this->assertArrayHasKey( 'block_name', $schema['properties'] );
+		$this->assertArrayHasKey( 'removed', $schema['properties'] );
+	}
+
+	/**
+	 * Test RemoveDisplayConditions denies subscribers.
+	 */
+	public function test_remove_display_conditions_permission_subscriber() {
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'subscriber' ) ) );
+
+		$result = RemoveDisplayConditions::instance()->check_permission();
+		$this->assertWPError( $result );
+	}
+
+	/**
+	 * Test display conditions apply → read → remove → verify clean state.
+	 */
+	public function test_display_conditions_apply_read_remove_cycle() {
+		$post_id = $this->create_post_with_block();
+
+		// Apply.
+		ApplyDisplayConditions::instance()->execute(
+			array(
+				'post_id'          => $post_id,
+				'block_index'      => 0,
+				'hideWhenLoggedIn' => true,
+				'hideForRole'      => 'subscriber',
+				'hideOnDays'       => array( 'monday', 'friday' ),
+			)
+		);
+
+		// Read and verify.
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertTrue( $attrs['displayConditions']['hideWhenLoggedIn'] );
+		$this->assertSame( 'subscriber', $attrs['displayConditions']['hideForRole'] );
+		$this->assertSame( array( 'monday', 'friday' ), $attrs['displayConditions']['hideOnDays'] );
+
+		// Remove.
+		RemoveDisplayConditions::instance()->execute(
+			array(
+				'post_id'     => $post_id,
+				'block_index' => 0,
+			)
+		);
+
+		// Verify clean.
+		$attrs = $this->get_block_attrs( $post_id );
+		$this->assertArrayNotHasKey( 'displayConditions', $attrs );
 	}
 }

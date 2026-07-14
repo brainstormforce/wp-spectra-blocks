@@ -92,7 +92,7 @@ const Render = memo( ( props ) => {
 		<div { ...blockProps }>
 			<embed
 				className="spectra-google-map__iframe"
-				title={ __( 'Google Map for ', 'spectra-blocks' ) + address }
+				title={ __( 'Google Map for', 'spectra-blocks' ) + address }
 				src={ mapUrl }
 				width="100%"
 				height="100%"

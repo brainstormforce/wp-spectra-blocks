@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import Render from './render';
+import render from './render';
 import Settings from './settings';
 
 
@@ -14,12 +14,10 @@ import Settings from './settings';
  * @return {Element} Element to render.
  */
 const Edit = ( props ) => {
-	const { isSelected } = props;
-
 	return (
 		<>
-			{ isSelected && <Settings { ...props } /> }
-			<Render { ...props } />
+			<Settings { ...props } />
+			{ render( props ) }
 		</>
 	);
 };

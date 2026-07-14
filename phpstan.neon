@@ -1,0 +1,19 @@
+# Start command: composer update --classmap-authoritative && vendor/bin/phpstan analyze
+
+includes:
+	 - phpstan-baseline.neon
+parameters:
+	level: 9
+	inferPrivatePropertyTypeFromConstructor: true
+	bootstrapFiles:
+		- %rootDir%/../../php-stubs/wordpress-stubs/wordpress-stubs.php
+	scanFiles:
+		- php/stubs/spectra-constants.php
+	paths:
+		- spectra-blocks.php
+		- includes
+	ignoreErrors:
+		-
+			identifier: missingType.generics
+	reportUnmatchedIgnoredErrors: false
+	excludePaths:

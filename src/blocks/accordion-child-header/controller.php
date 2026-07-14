@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildHeader
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Set the attributes with fallback if required - either from the parent item, or the parent accordion block.
 $allowed_header_elements   = array( 'button', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' );

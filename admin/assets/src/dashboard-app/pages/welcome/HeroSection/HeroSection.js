@@ -60,7 +60,7 @@ const HeroSection = () => {
 							className="text-text-primary"
 							size="lg"
 							tag="h2"
-							title={__( 'Welcome To Spectra', 'spectra-blocks' )}
+							title={__( 'Welcome To Spectra Blocks', 'spectra-blocks' )}
 						/>
 						<Badge
 							className="uppercase -translate-y-1/2 py-0 px-1 text-text-secondary bg-background-secondary"
@@ -73,11 +73,11 @@ const HeroSection = () => {
 					<Text className="py-3" size={14} color="secondary">
 						{ 'Activated' === spectra_blocks_react.pro_plugin_status
 							? __(
-									"Thanks for choosing Spectra Pro! You're now part of an exclusive community of website builders. Enjoy exploring the new features and creating something amazing. Let's take your site to the next level together.",
+									"Thanks for choosing Spectra Blocks Pro! You're now part of an exclusive community of website builders. Enjoy exploring the new features and creating something amazing. Let's take your site to the next level together.",
 									'spectra-blocks'
 							  )
 							: __(
-									'We designed Spectra to be intuitive but we do recommend learning how it works by checking our comprehensive documentation and watching the video below. Enjoy your time with Spectra!',
+									'We designed Spectra Blocks to be intuitive but we do recommend learning how it works by checking our comprehensive documentation and watching the video below. Enjoy your time with Spectra Blocks!',
 									'spectra-blocks'
 							  ) }
 					</Text>

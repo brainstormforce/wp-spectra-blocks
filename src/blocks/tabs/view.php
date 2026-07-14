@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Tabs
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div

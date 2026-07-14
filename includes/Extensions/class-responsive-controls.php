@@ -11,14 +11,11 @@
  * @since 3.0.0
  */
 
-namespace Spectra\Extensions;
+namespace SpectraBlocks\Extensions;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
-use Spectra\Helpers\Core;
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
@@ -35,6 +32,15 @@ use WP_HTML_Tag_Processor;
 class ResponsiveControls {
 
 	use Singleton;
+
+	/**
+	 * Whether the current rendering context is a pattern preview.
+	 * Set by preview functions to avoid debug_backtrace() on every block render.
+	 *
+	 * @since 1.0.0
+	 * @var bool
+	 */
+	public static $is_pattern_preview = false;
 
 	/**
 	 * Lists of blocks and prefixes for responsive control filtering.
@@ -84,6 +90,20 @@ class ResponsiveControls {
 	 * @since 3.0.0
 	 */
 	private $style_handle = 'spectra-responsive-styles';
+
+	/**
+	 * Generator fingerprint for the per-block CSS cache key.
+	 *
+	 * The cached transient stores GENERATED OUTPUT, so the key must
+	 * change whenever the generating code changes — otherwise a code
+	 * fix keeps serving stale CSS until SPECTRA_BLOCKS_VER rotates
+	 * (which never happens between dev builds). Bump on ANY change to
+	 * Responsive_Attribute_CSS / generate_responsive_css output.
+	 *
+	 * @var string
+	 * @since 1.0.0
+	 */
+	const CSS_GENERATOR_VERSION = '10';
 
 	/**
 	 * Add inline responsive CSS only once per request.
@@ -149,12 +169,28 @@ class ResponsiveControls {
 	 * List of blocks and their attributes to maintain for backward compatibility.
 	 *
 	 * @var array<string, array<string>> Block name => List of attributes.
-	 * @since x.x.x
+	 * @since 1.0.0
 	 */
 	private $backward_compatibility_attributes = array(
-		'spectra/separator' => array(
+		'spectra/separator'    => array(
 			'separatorStyle',
 			'separatorAlign',
+		),
+		// Old container/slider blocks stored these at root level before responsive controls
+		// fully adopted the responsiveControls structure. Without this mapping the
+		// root value never reaches the per-device CSS pipeline: `background` makes
+		// format_background return null (display:none video wrapper), and a
+		// root-level `height` is dropped entirely (container falls back to content
+		// height instead of the authored value). Map them into responsiveControls.lg.
+		'spectra/container'    => array(
+			'background',
+			'height',
+		),
+		'spectra/slider'       => array(
+			'background',
+		),
+		'spectra/slider-child' => array(
+			'background',
 		),
 	);
 
@@ -380,6 +416,14 @@ class ResponsiveControls {
 				'verticalAlignment' => 'center',
 			),
 		),
+		'spectra/post'                    => array(
+			'layout' => array(
+				'type'           => 'flex',
+				'flexWrap'       => 'nowrap',
+				'orientation'    => 'vertical',
+				'justifyContent' => 'stretch',
+			),
+		),
 	);
 
 	/**
@@ -436,7 +480,7 @@ class ResponsiveControls {
 	 * @return bool False if cache is disabled in settings, original value otherwise.
 	 */
 	public function maybe_disable_css_cache( $enable_cache ) {
-		$disable_cache = get_option( 'spectra_blocks_disable_css_cache', 'disabled' );
+		$disable_cache = \Spectra_Blocks_Settings::get( 'disable_css_cache', 'disabled' );
 
 		if ( 'enabled' === $disable_cache ) {
 			return false;
@@ -603,9 +647,33 @@ class ResponsiveControls {
 		 */
 		$this->blocks_default_layout = apply_filters( 'spectra_blocks_responsive_default_layout', $this->blocks_default_layout );
 
+		// `layout: { type: "default" }` is an explicit opt-out from per-block layout
+		// CSS — set by callers (e.g. SaaS pipelines) that want className-driven layout
+		// to be the sole source of truth, with no plugin-emitted flex/grid defaults
+		// competing for specificity. Block-UI users never write `type: "default"` via
+		// the layout panel (the panel writes `flex` / `grid` / `constrained`), so this
+		// branch only triggers for callers that have explicitly opted out.
+		//
+		// @since 1.0.0
+		$top_level_layout    = $block['attrs']['layout'] ?? array();
+		$is_explicit_default = isset( $top_level_layout['type'] ) && 'default' === $top_level_layout['type'];
+
 		// If no layout is defined, use the default layout for the block.
-		if ( empty( $responsive_controls_lg['layout'] ) && isset( $this->blocks_default_layout[ $block['blockName'] ] ) ) {
+		if (
+			empty( $responsive_controls_lg['layout'] )
+			&& ! $is_explicit_default
+			&& isset( $this->blocks_default_layout[ $block['blockName'] ] )
+		) {
 			$responsive_controls_lg['layout'] = $this->blocks_default_layout[ $block['blockName'] ]['layout'];
+		}
+
+		// Preserve the SaaS opt-out marker into responsiveControls.lg so it survives
+		// `remove_conflicting_core_attributes()` (which strips `layout` from $attrs because
+		// it's listed in $core_attributes). Without this carry-over the downstream
+		// `generate_responsive_css()` short-circuit can't see the marker and the WP-core
+		// `wp_get_layout_style()` block-gap (~1em margin between siblings) leaks through.
+		if ( $is_explicit_default && empty( $responsive_controls_lg['layout'] ) ) {
+			$responsive_controls_lg['layout'] = $top_level_layout;
 		}
 
 		// Correctly assign updated lg-specific controls back into the block.
@@ -623,7 +691,7 @@ class ResponsiveControls {
 	 * Dynamically maps root-level legacy attributes to the responsiveControls format
 	 * based on the blocks registered in $this->backward_compatibility_attributes.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 * @param array $block Block data.
 	 * @return array Modified block data.
 	 */
@@ -704,11 +772,11 @@ class ResponsiveControls {
 		// Ensure the block has a unique ID for CSS targeting.
 		$this->ensure_block_has_id( $attrs );
 
-		$spectra_id          = $attrs['spectraId'] ?? '';
+		$spectra_id          = Core::sanitize_spectra_id( $attrs['spectraId'] ?? '' );
 		$responsive_controls = $attrs['responsiveControls'] ?? array();
 		$block_name          = $block['blockName'] ?? '';
 
-		// Skip processing if no ID or responsive controls exist.
+		// Skip processing if no ID or no responsive controls.
 		if ( empty( $spectra_id ) || empty( $responsive_controls ) ) {
 			return $block_content;
 		}
@@ -751,7 +819,8 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				wp_add_inline_style( $this->style_handle, $this->sanitize_inline_css( $combined_css ) );
+				$safe_css = wp_strip_all_tags( $combined_css );
+				wp_add_inline_style( $this->style_handle, $safe_css );
 
 				// Mark as added to avoid duplicates.
 				$this->inline_css_added[ $spectra_id ] = true;
@@ -775,12 +844,30 @@ class ResponsiveControls {
 	 * @return string Filtered block HTML with appropriate layout support.
 	 */
 	public function maybe_skip_layout_support( $block_content, $block ) {
-		// Skip layout support for Spectra blocks as we handle it ourselves.
-		if ( Core::is_spectra_block( array( 'name' => $block['blockName'] ) ) ) {
+		// Skip layout support for Spectra blocks — with one exception.
+		//
+		// `spectra/container` reads `layout.type` and `layout.orientation`
+		// from its `$attributes['layout']` object, but the plugin's own code
+		// never emits CSS for `layout.flexWrap`, `layout.justifyContent`, or
+		// `layout.verticalAlignment` — the exact sub-attributes exposed by
+		// the inspector's Layout panel and set by the E2E regression tests.
+		// WP core's `wp_render_layout_support_flag` DOES emit that CSS
+		// correctly when the block declares `supports.layout` (which
+		// container's block.json does). Let it run for container so those
+		// attributes actually affect the frontend.
+		//
+		// All other Spectra blocks continue to skip — their layout classes
+		// are either irrelevant or managed by their own controller/view
+		// pipelines.
+		$block_name = $block['blockName'] ?? '';
+		if (
+			Core::is_spectra_block( array( 'name' => $block_name ) )
+			&& 'spectra/container' !== $block_name
+		) {
 			return $block_content;
 		}
 
-		// Apply WordPress default layout rendering for all other blocks.
+		// Apply WordPress default layout rendering (spectra/container + core + other blocks).
 		return wp_render_layout_support_flag( $block_content, $block );
 	}
 
@@ -912,8 +999,22 @@ class ResponsiveControls {
 		}
 
 		// Remove conflicting individual attributes that are in the responsive_keys list.
+		//
+		// `spectra/container` is the exception: its Layout panel exposes
+		// `layout.flexWrap`, `layout.justifyContent`, `layout.verticalAlignment`
+		// but the plugin never emits CSS for them itself — WP core's
+		// `wp_render_layout_support_flag` does, and it reads directly from
+		// `$block['attrs']['layout']`. If we strip `layout` here (this method
+		// fires on `render_block_data`, before `render_block`), the layout
+		// support filter sees `attrs.layout` missing and falls back to the
+		// block.json `supports.layout.default` — which is why E2E tests that
+		// set `flexWrap: 'wrap'` still saw `flex-wrap: nowrap` on the frontend.
+		// Keep `layout` intact for container so the filter has the real config.
 		foreach ( $this->core_attributes as $attribute ) {
 			if ( in_array( $attribute, $this->responsive_keys, true ) ) {
+				if ( 'layout' === $attribute && 'spectra/container' === $block_name ) {
+					continue;
+				}
 				unset( $attrs[ $attribute ] );
 			}
 		}
@@ -949,7 +1050,7 @@ class ResponsiveControls {
 	/**
 	 * Retrieve or generate cached responsive CSS for a block instance.
 	 *
-	 * Uses a stable cache key (`spectra_responsive_css_{$spectra_id}`) and stores
+	 * Uses a stable cache key (`spectra_blocks_responsive_css_{$spectra_id}`) and stores
 	 * a hash fingerprint of `responsive_controls` alongside the CSS. If the hash
 	 * matches, the cached CSS is returned. Otherwise, new CSS is generated and cached.
 	 *
@@ -973,8 +1074,11 @@ class ResponsiveControls {
 		// Cross-plugin extension points — spectra_ prefix is intentional; spectra-blocks-pro hooks into these filters.
 		$enable_cache = apply_filters( 'spectra_blocks_enable_css_cache', true );
 
-		// Generate cache key.
-		$cache_key = 'spectra_blocks_responsive_css_' . $spectra_id . '_' . SPECTRA_BLOCKS_VER;
+		// Generate cache key. Uses the `spectra_blocks_` option prefix (from
+		// dev) and includes the generator fingerprint so code changes
+		// invalidate cached output (the plugin version alone does not rotate
+		// between dev builds).
+		$cache_key = 'spectra_blocks_responsive_css_' . $spectra_id . '_' . SPECTRA_BLOCKS_VER . '_g' . self::CSS_GENERATOR_VERSION;
 
 		// Generate hash fingerprint including block name for proper cache invalidation.
 		$cache_data    = array(
@@ -1039,8 +1143,8 @@ class ResponsiveControls {
 			$block_class = '.wp-block-' . str_replace( '/', '-', $block_name );
 		}
 
-		// This creates specificity of 0-2-1 (2 classes + 1 attribute).
-		$selector = "{$block_class}{$block_class}[data-spectra-id='{$spectra_id}']";
+		// Triple class: specificity 0,4,0 — beats the container child rule at 0,3,0.
+		$selector = "{$block_class}{$block_class}{$block_class}[data-spectra-id='{$spectra_id}']";
 
 		/**
 		 * Filter to modify the responsive CSS selector for a block.
@@ -1049,8 +1153,8 @@ class ResponsiveControls {
 		 * responsive styling of Spectra blocks. The selector is used to target
 		 * the specific block instance for CSS rules generation.
 		 *
-		 * The default selector has specificity 0-2-1 (2 classes + 1 attribute):
-		 * `.wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='spectra-123']`
+		 * The default selector has specificity 0,4,0 (3 classes + 1 attribute):
+		 * `.wp-block-spectra-container.wp-block-spectra-container.wp-block-spectra-container[data-spectra-id='spectra-123']`
 		 *
 		 * Example usage:
 		 * ```php
@@ -1079,23 +1183,10 @@ class ResponsiveControls {
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
 		$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
 
-		// Detect if we're in pattern preview context by checking if we're being called from the pattern preview function.
-		$is_pattern_preview = false;
-
-		// Detect pattern preview context using backtrace.
-		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Required to detect rendering context for proper CSS selector generation in pattern previews vs. frontend rendering.
-		$backtrace = debug_backtrace( DEBUG_BACKTRACE_IGNORE_ARGS, 15 );
-		foreach ( $backtrace as $trace ) {
-			if ( isset( $trace['function'] ) &&
-				( 'spectra_blocks_get_v3_blocks_css_for_preview' === $trace['function'] ||
-				'spectra_get_comprehensive_responsive_css_for_post' === $trace['function'] ||
-				'spectra_blocks_process_blocks_for_comprehensive_css' === $trace['function'] ||
-				'spectra_get_static_css_for_pro_v2_blocks' === $trace['function'] ||
-				'spectra_process_blocks_for_responsive_css' === $trace['function'] ) ) {
-				$is_pattern_preview = true;
-				break;
-			}
-		}
+		// Pattern preview context is signalled by the static flag, set by preview
+		// functions before they enter the render pipeline. This avoids a costly
+		// debug_backtrace() call on every block render.
+		$is_pattern_preview = self::$is_pattern_preview;
 
 		// Use appropriate base selector based on context.
 		$base_selector = $is_pattern_preview ? '.st-block-container' : 'body';
@@ -1138,17 +1229,34 @@ class ResponsiveControls {
 				$child_reset_selector        = $counter_main_preview . ', ' . $counter_content_preview;
 			}
 		} else {
-			// Use lower specificity 0-1-1 selector for layout CSS to allow Global Styles to override.
+			// Layout CSS must out-rank the theme/core generic flex-layout defaults
+			// — notably core's block-gap `:root :where(.is-layout-flex) { gap }` at
+			// (0,1,0) — otherwise a block's own `gap` (and other layout props) are
+			// silently clamped to the theme default. Keep `{$block_class}` OUTSIDE
+			// `:where()` so it contributes a real class, and wrap only the
+			// `[data-spectra-id]` (page-scope, no specificity). Result: (0,1,1) —
+			// above the (0,1,0) core/theme defaults, still below the block-attribute
+			// CSS at (0,4,0) so a block's own attribute CSS keeps winning.
+			//
+			// Trade-off: single-class utility atomics (Global Styles / Tailwind) at
+			// (0,1,0) no longer override per-block layout; a utility that must win
+			// should be authored at higher specificity.
+			//
+			// @since 1.0.0.
 			$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}'])";
 
 			// Special handling for slider-child: target the inner .slide-content div for layout CSS.
 			if ( 'spectra/slider-child' === $block_name ) {
-				$layout_specificity_selector = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}']) .slide-content";
+				$layout_specificity_selector = "{$base_selector} :where({$block_class}[data-spectra-id='{$spectra_id}']) .slide-content";
 			}
 
 			// Special handling for counter: target both main block and content wrapper for layout CSS.
 			if ( 'spectra/counter' === $block_name ) {
-				// Target both the main block container and the content wrapper.
+				// Target both the main block container and the content wrapper. Keep
+				// `{$block_class}` OUTSIDE `:where()` for (0,1,1) — matching the main
+				// layout selector above — so the counter's alignment (justifyContent)
+				// and font-size out-rank the theme/core generic defaults instead of
+				// being clamped at (0,0,1).
 				$counter_main_selector       = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}'])";
 				$counter_content_selector    = "{$base_selector} {$block_class}:where([data-spectra-id='{$spectra_id}']) .spectra-counter-content-wrapper";
 				$layout_specificity_selector = $counter_main_selector . ', ' . $counter_content_selector;
@@ -1174,13 +1282,58 @@ class ResponsiveControls {
 			}
 		}
 
+		// SaaS opt-out marker: when the top-level layout attr is explicitly { type: 'default' },
+		// the author wants className-driven layout (Tailwind) and no plugin-emitted layout CSS.
+		// Skipping the layout CSS pass prevents WP core's wp_get_layout_style() from injecting
+		// `> * { margin-block-start: <block-gap> }` rules on every direct child, which otherwise
+		// pushes sibling buttons/blocks down by ~1em and breaks intended Tailwind spacing.
+		// Block-UI users set layout.type to 'flex'/'grid'/'constrained' — never 'default' — so
+		// this short-circuit is a no-op for them.
+		//
+		// `attrs.layout` is stripped earlier by remove_conflicting_core_attributes(), so the
+		// marker actually arrives via responsiveControls.lg.layout (preserved in
+		// process_responsive_attributes()). We check both locations defensively.
+		$top_level_layout  = $attrs['layout'] ?? ( $responsive_controls['lg']['layout'] ?? array() );
+		$is_default_layout = is_array( $top_level_layout ) && isset( $top_level_layout['type'] ) && 'default' === $top_level_layout['type'];
+
+		// A full/wide-aligned container's horizontal position is owned by the
+		// theme's alignment break-out (e.g. Astra's `.entry-content > .alignfull`
+		// negative margins). Our per-block CSS carries a high-specificity selector,
+		// so emitting a horizontal `margin` here (even the authored 0) overrides
+		// that break-out and the section stops bleeding to the edges — it shifts in
+		// and overflows. Drop only the LEFT/RIGHT margins for aligned containers so
+		// the theme handles horizontal alignment; vertical margins are unaffected.
+		// Specificity is left untouched, so Global Styles compatibility is intact.
+		$block_align    = $attrs['align'] ?? '';
+		$strip_x_margin = 'spectra/container' === $block_name && in_array( $block_align, array( 'full', 'wide' ), true );
+
 		// Generate CSS for each device breakpoint (mobile, tablet, desktop).
 		foreach ( $this->media_queries as $device => $media ) {
 			// Get compiled styles for this device with proper fallback.
 			$device_styles = $this->get_device_styles( $responsive_controls, $device, $block_name );
 
+			if ( $strip_x_margin && isset( $device_styles['spacing']['margin'] ) ) {
+				$margin = $device_styles['spacing']['margin'];
+				if ( is_array( $margin ) ) {
+					unset( $margin['left'], $margin['right'] );
+					if ( empty( $margin ) ) {
+						unset( $device_styles['spacing']['margin'] );
+					} else {
+						$device_styles['spacing']['margin'] = $margin;
+					}
+				} else {
+					// Shorthand string applies to all sides — keep only top/bottom.
+					$device_styles['spacing']['margin'] = array(
+						'top'    => $margin,
+						'bottom' => $margin,
+					);
+				}
+			}
+
 			// Generate layout-specific CSS for this device.
-			$layout_css = $this->generate_layout_css( $responsive_controls, $device, $layout_specificity_selector, $child_reset_selector );
+			$layout_css = $is_default_layout
+				? ''
+				: $this->generate_layout_css( $responsive_controls, $device, $layout_specificity_selector, $child_reset_selector );
 
 			// Generate style-layout-specific CSS for this device.
 			$style_layout_css = $this->generate_style_layout_css( $responsive_controls, $device, $layout_specificity_selector );
@@ -1808,7 +1961,8 @@ class ResponsiveControls {
 					}
 				}
 			} elseif ( 'color' === $property && is_string( $value ) ) {
-				// Handle general color property with preset color conversion.
+				// Handle general properties (width, style, color, radius).
+				// Handle preset color conversion.
 				if ( strpos( $value, 'var:preset|color|' ) === 0 ) {
 					$color_slug                         = str_replace( 'var:preset|color|', '', $value );
 					$compiled_styles['border']['color'] = "var(--wp--preset--color--{$color_slug})";
@@ -1823,10 +1977,12 @@ class ResponsiveControls {
 					$radius_parts[] = isset( $value[ $corner ] ) && '' !== $value[ $corner ] ? $value[ $corner ] : '0';
 				}
 				$compiled_styles['border']['radius'] = implode( ' ', $radius_parts );
-			} elseif ( in_array( $property, array( 'width', 'style' ), true ) && is_array( $value ) ) {
-				// Skip invalid array format for width and style properties.
-				continue;
 			} else {
+				// For other properties (width, style), only accept string values, not arrays.
+				if ( in_array( $property, array( 'width', 'style' ), true ) && is_array( $value ) ) {
+					// Skip invalid array format for width and style.
+					continue;
+				}
 				$compiled_styles['border'][ $property ] = $value;
 			}
 		}
@@ -2607,11 +2763,11 @@ class ResponsiveControls {
 	 * the figure element and img elements.
 	 *
 	 * @since 3.0.0
-	 * @param string $block_content        The block's HTML content.
-	 * @param array  $_responsive_controls The responsive controls data (reserved, intentionally unused).
+	 * @param string $block_content The block's HTML content.
+	 * @param array  $responsive_controls The responsive controls data (unused but kept for signature).
 	 * @return string Modified HTML content with inline styles removed.
 	 */
-	private function remove_core_image_inline_styles( $block_content, $_responsive_controls ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	private function remove_core_image_inline_styles( $block_content, $responsive_controls ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 		// Use WordPress HTML Tag Processor to safely modify elements.
 		$processor = new WP_HTML_Tag_Processor( $block_content );
 
@@ -2701,24 +2857,6 @@ class ResponsiveControls {
 		}
 
 		return $styles;
-	}
-
-	/**
-	 * Sanitize a CSS string for safe output via wp_add_inline_style().
-	 *
-	 * Strips HTML markup to prevent injection outside the style context and
-	 * removes CSS expression syntax to guard against legacy injection vectors.
-	 * CSS passed here is programmatically generated from block attributes that
-	 * are validated by the block editor schema — this is the final output gate.
-	 *
-	 * @since x.x.x
-	 * @param string $css Raw generated CSS string.
-	 * @return string Sanitized CSS safe for inline output.
-	 */
-	private function sanitize_inline_css( $css ) {
-		$css = wp_strip_all_tags( $css );
-		$css = str_ireplace( 'expression(', '', $css );
-		return $css;
 	}
 
 	/**

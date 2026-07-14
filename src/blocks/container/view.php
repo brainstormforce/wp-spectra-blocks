@@ -7,13 +7,23 @@
  * @package Spectra\Blocks\Button
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\Renderer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 require_once __DIR__ . '/shapes.php';
-use function Spectra\Blocks\Container\get_shape_svg;
+use function SpectraBlocks\Blocks\Container\get_shape_svg;
 
+$void_tags   = array( 'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr' );
+$is_void_tag = in_array( $html_tag, $void_tags, true );
+
+if ( $is_void_tag ) {
+	printf(
+		'<%1$s %2$s />',
+		esc_attr( $html_tag ),
+		wp_kses_data( $wrapper_attributes )
+	);
+	return;
+}
 ?>
 <<?php echo esc_attr( $html_tag ); ?>
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>

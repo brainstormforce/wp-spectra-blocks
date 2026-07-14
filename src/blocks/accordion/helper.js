@@ -78,7 +78,7 @@ const duplicateAndCleanAccordionItem = ( sourceBlock ) => {
 /**
  * Function to insert a new accordion item by duplicating an existing one.
  *
- * @param {string} clientId The current block's ID.
+ * @param {string}      clientId        The current block's ID.
  * @param {string|null} duplicateItemId Optional specific item ID to duplicate. If not provided, duplicates the last item or creates new if none exist.
  * @since x.x.x
  */

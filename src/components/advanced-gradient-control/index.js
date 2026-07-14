@@ -51,11 +51,11 @@ import { useEnhancedGradient } from '@spectra-helpers/use-enhanced-gradient';
  *
  * Displays a button that opens a color picker dropdown with theme color palette support.
  *
- * @param {Object} props Component props
- * @param {string} props.color Current color value (hex, rgb, or CSS variable)
+ * @param {Object}   props               Component props
+ * @param {string}   props.color         Current color value (hex, rgb, or CSS variable)
  * @param {Function} props.onColorChange Callback when color changes
- * @param {string} props.colorLabel Label for the color button
- * @param {Array} props.colorGroups Array of color groups from WordPress (theme, default, custom)
+ * @param {string}   props.colorLabel    Label for the color button
+ * @param {Array}    props.colorGroups   Array of color groups from WordPress (theme, default, custom)
  * @return {Element} ColorButton component
  * @since x.x.x
  */
@@ -78,9 +78,9 @@ const ColorButton = memo( ( { color, onColorChange, colorLabel, colorGroups } ) 
 	/**
 	 * Computes the actual color value from a CSS variable using the DOM.
 	 *
-	 * @param {string} cssVar - CSS variable like "var(--ast-global-color-0)"
+	 * @param {string}   cssVar    - CSS variable like "var(--ast-global-color-0)"
 	 * @param {Document} targetDoc - Document to use for computation
-	 * @param {Window} targetWin - Window to use for getComputedStyle
+	 * @param {Window}   targetWin - Window to use for getComputedStyle
 	 * @return {string|null} Resolved hex color or null if resolution fails
 	 */
 	const computeColorFromDOM = ( cssVar, targetDoc, targetWin ) => {
@@ -268,7 +268,7 @@ const ColorButton = memo( ( { color, onColorChange, colorLabel, colorGroups } ) 
 											let matchedColor = null;
 											for ( const group of colorGroups ) {
 												matchedColor = group?.colors?.find( ( tc ) => tc.color === newColor );
-												if ( matchedColor ) break;
+												if ( matchedColor ) {break;}
 											}
 
 											if ( matchedColor ) {
@@ -296,24 +296,40 @@ const ColorButton = memo( ( { color, onColorChange, colorLabel, colorGroups } ) 
  * Renders a dropdown with advanced gradient controls including color pickers,
  * gradient type selector (linear/radial), location sliders, and angle control.
  *
- * @param {Object} props Component props
- * @param {string} props.label Label for the dropdown
- * @param {string} props.value Current gradient value
- * @param {Function} props.onChange Callback when gradient value changes
- * @param {Object} props.hook Enhanced gradient hook with parsed gradient data
- * @param {boolean} props.enableAdvBg Whether advanced mode is enabled
- * @param {Function} props.onToggleAdvBg Callback when advanced mode toggles
- * @param {Array} props.colorGroups Array of color groups (theme, default, custom)
- * @param {Object} props.popoverProps Props for popover positioning
- * @param {boolean} props.showToggle Whether to show the "Use Advanced Gradient" toggle (default: true)
- * @param {string} props.dropdownId Unique ID for controlled dropdown state
- * @param {string|null} props.openDropdown Currently open dropdown ID
- * @param {Function} props.setOpenDropdown Function to set open dropdown ID
+ * @param {Object}      props                 Component props
+ * @param {string}      props.label           Label for the dropdown
+ * @param {string}      props.value           Current gradient value
+ * @param {Function}    props.onChange        Callback when gradient value changes
+ * @param {Object}      props.hook            Enhanced gradient hook with parsed gradient data
+ * @param {boolean}     props.enableAdvBg     Whether advanced mode is enabled
+ * @param {Function}    props.onToggleAdvBg   Callback when advanced mode toggles
+ * @param {Array}       props.colorGroups     Array of color groups (theme, default, custom)
+ * @param {Object}      props.popoverProps    Props for popover positioning
+ * @param {boolean}     props.showToggle      Whether to show the "Use Advanced Gradient" toggle (default: true)
+ * @param {string}      props.dropdownId      Unique ID for controlled dropdown state
+ * @param {string|null} props.openDropdown    Currently open dropdown ID
+ * @param {Function}    props.setOpenDropdown Function to set open dropdown ID
  * @return {Element} GradientDropdown component
  * @since x.x.x
  */
 const GradientDropdown = memo(
-	( { label, value, onChange, hook, enableAdvBg, onToggleAdvBg, colorGroups, popoverProps, showToggle = true } ) => {
+	( {
+		label,
+		value,
+		onChange,
+		hook,
+		enableAdvBg,
+		onToggleAdvBg,
+		colorGroups,
+		popoverProps,
+		showToggle = true,
+		angleValue,
+		onAngleChange,
+		location1Value,
+		onLocation1Change,
+		location2Value,
+		onLocation2Change,
+	} ) => {
 		const dropdownButtonRef = useRef();
 
 		// Handle advanced mode toggle
@@ -428,33 +444,75 @@ const GradientDropdown = memo(
 												label={ __( 'Radial', 'spectra-blocks' ) }
 											/>
 										</ToggleGroupControl>
-										<RangeControl
-											label={ __( 'Location 1', 'spectra-blocks' ) }
-											value={ hook.parsed?.colors?.[ 0 ]?.position ?? 0 }
-											onChange={ ( position ) => hook.setPositionAtIndex( 0, position ) }
-											min={ -100 }
-											max={ 100 }
-											__next40pxDefaultSize
-											__nextHasNoMarginBottom
-										/>
-										<RangeControl
-											label={ __( 'Location 2', 'spectra-blocks' ) }
-											value={ hook.parsed?.colors?.[ 1 ]?.position ?? 100 }
-											onChange={ ( position ) => hook.setPositionAtIndex( 1, position ) }
-											min={ -100 }
-											max={ 100 }
-											__next40pxDefaultSize
-											__nextHasNoMarginBottom
-										/>
-										{ ( hook.parsed?.type === 'linear' || ! hook.parsed ) && (
+										<div
+											className={ clsx( {
+												'spectra-gradient-responsive-control': !! onLocation1Change,
+											} ) }
+										>
 											<RangeControl
-												label={ __( 'Angle', 'spectra-blocks' ) }
-												value={ hook.parsed?.angle ?? 0 }
-												onChange={ hook.setAngle }
-												min={ 0 }
-												max={ 360 }
-												step={ 1 }
+												label={ __( 'Location 1', 'spectra-blocks' ) }
+												value={
+													location1Value !== undefined
+														? location1Value
+														: ( hook.parsed?.colors?.[ 0 ]?.position ?? 0 )
+												}
+												onChange={ ( position ) =>
+													onLocation1Change
+														? onLocation1Change( position )
+														: hook.setPositionAtIndex( 0, position )
+												}
+												min={ -100 }
+												max={ 100 }
+												__next40pxDefaultSize
+												__nextHasNoMarginBottom
 											/>
+										</div>
+										<div
+											className={ clsx( {
+												'spectra-gradient-responsive-control': !! onLocation2Change,
+											} ) }
+										>
+											<RangeControl
+												label={ __( 'Location 2', 'spectra-blocks' ) }
+												value={
+													location2Value !== undefined
+														? location2Value
+														: ( hook.parsed?.colors?.[ 1 ]?.position ?? 100 )
+												}
+												onChange={ ( position ) =>
+													onLocation2Change
+														? onLocation2Change( position )
+														: hook.setPositionAtIndex( 1, position )
+												}
+												min={ -100 }
+												max={ 100 }
+												__next40pxDefaultSize
+												__nextHasNoMarginBottom
+											/>
+										</div>
+										{ ( hook.parsed?.type === 'linear' || ! hook.parsed ) && (
+											<div
+												className={ clsx( {
+													'spectra-gradient-responsive-control': !! onAngleChange,
+												} ) }
+											>
+												<RangeControl
+													label={ __( 'Angle', 'spectra-blocks' ) }
+													value={
+														angleValue !== undefined
+															? angleValue
+															: ( hook.parsed?.angle ?? 0 )
+													}
+													onChange={ ( newAngle ) =>
+														onAngleChange
+															? onAngleChange( newAngle )
+															: hook.setAngle( newAngle )
+													}
+													min={ 0 }
+													max={ 360 }
+													step={ 1 }
+												/>
+											</div>
 										) }
 									</>
 								) }
@@ -473,19 +531,19 @@ const GradientDropdown = memo(
  * Wraps a GradientDropdown in a ToolsPanelItem for integration with WordPress block settings.
  * This component is typically used internally by AdvancedGradientControlsGroup.
  *
- * @param {Object} props Component props
- * @param {string} props.label Label for the control
- * @param {string} props.gradientValue Current gradient value
- * @param {Function} props.onGradientChange Callback when gradient changes
- * @param {boolean} props.enableAdvBg Whether advanced mode is enabled
- * @param {Function} props.onToggleAdvBg Callback when advanced mode toggles
- * @param {Object} props.toolsPanelProps Additional props for ToolsPanelItem
- * @param {string} props.clientId Block client ID
- * @param {boolean} props.showTopBorder Whether to show top border (for first item)
- * @param {boolean} props.showToggle Whether to show "Use Advanced Gradient" toggle inside dropdown
- * @param {string} props.dropdownId Unique ID for controlled dropdown state
- * @param {string|null} props.openDropdown Currently open dropdown ID
- * @param {Function} props.setOpenDropdown Function to set open dropdown ID
+ * @param {Object}      props                  Component props
+ * @param {string}      props.label            Label for the control
+ * @param {string}      props.gradientValue    Current gradient value
+ * @param {Function}    props.onGradientChange Callback when gradient changes
+ * @param {boolean}     props.enableAdvBg      Whether advanced mode is enabled
+ * @param {Function}    props.onToggleAdvBg    Callback when advanced mode toggles
+ * @param {Object}      props.toolsPanelProps  Additional props for ToolsPanelItem
+ * @param {string}      props.clientId         Block client ID
+ * @param {boolean}     props.showTopBorder    Whether to show top border (for first item)
+ * @param {boolean}     props.showToggle       Whether to show "Use Advanced Gradient" toggle inside dropdown
+ * @param {string}      props.dropdownId       Unique ID for controlled dropdown state
+ * @param {string|null} props.openDropdown     Currently open dropdown ID
+ * @param {Function}    props.setOpenDropdown  Function to set open dropdown ID
  * @return {Element} AdvancedGradientControl component
  * @since x.x.x
  */
@@ -502,6 +560,12 @@ export const AdvancedGradientControl = memo(
 		enableAdvGradients = false,
 		showToggle = true,
 		shouldShowContent = true,
+		angleValue,
+		onAngleChange,
+		location1Value,
+		onLocation1Change,
+		location2Value,
+		onLocation2Change,
 	} ) => {
 		const colorGradientSettings = useMultipleOriginColorsAndGradients();
 		// Get the colors array - it's already grouped by origin (theme, default, custom)
@@ -569,6 +633,12 @@ export const AdvancedGradientControl = memo(
 						colorGroups={ colorGroups }
 						popoverProps={ popoverProps }
 						showToggle={ showToggle }
+						angleValue={ angleValue }
+						onAngleChange={ onAngleChange }
+						location1Value={ location1Value }
+						onLocation1Change={ onLocation1Change }
+						location2Value={ location2Value }
+						onLocation2Change={ onLocation2Change }
 					/>
 				) }
 			</ToolsPanelItem>
@@ -582,15 +652,15 @@ export const AdvancedGradientControl = memo(
  * Manages multiple gradient controls with shared dropdown state to prevent overlapping dropdowns.
  * This is the recommended way to add gradient controls to any Spectra block.
  *
- * @param {Object} props Component props
- * @param {string} props.clientId Block client ID
- * @param {Function} props.setAttributes Function to set block attributes
- * @param {Object} props.attributes Block attributes object
- * @param {Array<Object>} props.gradients Array of gradient configuration objects
- * @param {string} props.enableAttr Attribute name for global enable toggle (e.g., 'enableAdvGradients')
- * @param {string} props.enableLabel Label for the enable toggle (optional, default: 'Enable Advanced Gradients')
- * @param {boolean} props.showGlobalToggle Whether to show global toggle (default: true)
- * @param {boolean} props.hideIndividualToggles Whether to hide individual "Use Advanced Gradient" toggles (default: false)
+ * @param    {Object}        props                       Component props
+ * @param    {string}        props.clientId              Block client ID
+ * @param    {Function}      props.setAttributes         Function to set block attributes
+ * @param    {Object}        props.attributes            Block attributes object
+ * @param    {Array<Object>} props.gradients             Array of gradient configuration objects
+ * @param    {string}        props.enableAttr            Attribute name for global enable toggle (e.g., 'enableAdvGradients')
+ * @param    {string}        props.enableLabel           Label for the enable toggle (optional, default: 'Enable Advanced Gradients')
+ * @param    {boolean}       props.showGlobalToggle      Whether to show global toggle (default: true)
+ * @param    {boolean}       props.hideIndividualToggles Whether to hide individual "Use Advanced Gradient" toggles (default: false)
  *
  * @example
  * ```jsx
@@ -636,10 +706,10 @@ export const AdvancedGradientControl = memo(
  * ```
  *
  * Each gradient config object should contain:
- * @property {string} label - Label for the gradient control (e.g., 'Background', 'Border')
- * @property {string} valueAttr - Attribute name for gradient value (e.g., 'advBgGradient')
- * @property {string} [useAdvancedAttr] - Attribute name for useAdvanced flag (e.g., 'enableAdvBgGradient') - only needed when hideIndividualToggles is false
- * @property {boolean} [showTopBorder] - Whether to show top border (optional, default: false)
+ * @property {string}        label                       - Label for the gradient control (e.g., 'Background', 'Border')
+ * @property {string}        valueAttr                   - Attribute name for gradient value (e.g., 'advBgGradient')
+ * @property {string}        [useAdvancedAttr]           - Attribute name for useAdvanced flag (e.g., 'enableAdvBgGradient') - only needed when hideIndividualToggles is false
+ * @property {boolean}       [showTopBorder]             - Whether to show top border (optional, default: false)
  *
  * @return {Element} Group of gradient controls
  * @since x.x.x
@@ -713,7 +783,15 @@ const AdvancedGradientControlsGroup = memo(
 					</ToolsPanelItem>
 				) }
 				{ gradients.map( ( config ) => {
-					const { label, valueAttr, useAdvancedAttr, showTopBorder = false } = config;
+					const {
+						label,
+						valueAttr,
+						useAdvancedAttr,
+						showTopBorder = false,
+						angleAttr,
+						location1Attr,
+						location2Attr,
+					} = config;
 					const gradientValue = attributes[ valueAttr ];
 					const enableAdvBg = hideIndividualToggles ? true : attributes[ useAdvancedAttr ];
 
@@ -742,6 +820,18 @@ const AdvancedGradientControlsGroup = memo(
 							enableAdvGradients={ enableAdvGradients }
 							showToggle={ ! hideIndividualToggles }
 							shouldShowContent={ shouldShowContent }
+							{ ...( angleAttr && {
+								angleValue: attributes[ angleAttr ],
+								onAngleChange: ( v ) => setAttributes( { [ angleAttr ]: v } ),
+							} ) }
+							{ ...( location1Attr && {
+								location1Value: attributes[ location1Attr ],
+								onLocation1Change: ( v ) => setAttributes( { [ location1Attr ]: v } ),
+							} ) }
+							{ ...( location2Attr && {
+								location2Value: attributes[ location2Attr ],
+								onLocation2Change: ( v ) => setAttributes( { [ location2Attr ]: v } ),
+							} ) }
 						/>
 					);
 				} ) }

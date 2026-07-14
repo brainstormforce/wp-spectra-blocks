@@ -15,7 +15,7 @@ import blockIcons from '@spectra-helpers/block-icons';
 /**
  * Register the Tabs Wrapper block.
  */
-registerBlockType( metadata.name, {
+registerBlockType( metadata, {
 	icon: blockIcons.tabsChildren.wrapper(),
 	edit,
 	save,

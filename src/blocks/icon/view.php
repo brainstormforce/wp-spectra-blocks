@@ -7,14 +7,13 @@
  * @package Spectra\Blocks\Icon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
 <<?php echo esc_attr( $tag_name ); ?>
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>
 >
-	<?php if ( ! empty( $icon ) ) : ?>
+	<?php if ( isset( $icon ) && '' !== $icon ) : // empty() treats "0" as empty; use explicit check instead. ?>
 		<?php Renderer::svg_html( $icon, $attributes['flipForRTL'] ?? false, $icon_props ); ?>
 	<?php endif; ?>
 </<?php echo esc_attr( $tag_name ); ?>>

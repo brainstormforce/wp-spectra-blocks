@@ -31,9 +31,9 @@ class CountdownTimerManager {
 	 * Subscribe a countdown instance to the global timer.
 	 *
 	 * @since x.x.x
-	 * @param {string} id - Unique identifier for the countdown instance.
+	 * @param {string}   id       - Unique identifier for the countdown instance.
 	 * @param {Function} callback - Function to call on each tick.
-	 * @param {Object} config - Configuration for the countdown.
+	 * @param {Object}   config   - Configuration for the countdown.
 	 * @return {Function} Unsubscribe function.
 	 */
 	subscribe( id, callback, config = {} ) {
@@ -122,7 +122,7 @@ class CountdownTimerManager {
 	 * @since x.x.x
 	 */
 	start() {
-		if ( this.intervalId ) return;
+		if ( this.intervalId ) {return;}
 
 		// Execute immediately for all subscribers.
 		this.tick();
@@ -150,7 +150,7 @@ class CountdownTimerManager {
 	 */
 	tick() {
 		// Early exit if no subscribers
-		if ( this.subscribers.size === 0 ) return;
+		if ( this.subscribers.size === 0 ) {return;}
 
 		// Use requestAnimationFrame to batch DOM updates.
 		requestAnimationFrame( () => {

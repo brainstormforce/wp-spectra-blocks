@@ -9,10 +9,10 @@ import { isObjectNotEmpty } from '@Utils/Helpers';
  * @async
  * @function
  *
- * @param {Object} params - The parameters object.
- * @param {string} params.url - The URL to send the data.
+ * @param {Object} params        - The parameters object.
+ * @param {string} params.url    - The URL to send the data.
  * @param {string} params.action - The action to take with the data.
- * @param {Object} params.data - The data to send.
+ * @param {Object} params.data   - The data to send.
  *
  * @return {Promise} Returns a Promise that resolves to an object containing the API response.
  */

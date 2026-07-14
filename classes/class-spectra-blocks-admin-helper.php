@@ -77,7 +77,7 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 * receives the sentinel must interpret it as "user did not re-enter the
 		 * secret" and skip the write.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 */
 		const SECRET_MASK = '****';
 
@@ -91,7 +91,7 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 *
 		 * @param mixed $raw The raw value read from storage.
 		 * @return string Sentinel or empty string.
-		 * @since x.x.x
+		 * @since 1.0.0
 		 */
 		public static function mask_secret_value( $raw ) {
 			return ( is_string( $raw ) && '' !== $raw ) ? self::SECRET_MASK : '';
@@ -122,6 +122,11 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 		 * @return array
 		 */
 		public static function get_admin_settings_shareable_data() {
+			$zip_ai_modules = array();
+			if ( class_exists( '\ZipAI\Classes\Module' ) ) {
+				$zip_ai_modules = \ZipAI\Classes\Module::get_all_modules();
+			}
+
 			return array(
 				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
 				'spectra_blocks_enable_animations_extension' => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
@@ -131,10 +136,9 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 				'spectra_blocks_load_select_font_globally' => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
 				'spectra_blocks_load_gfonts_locally'       => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
 				'spectra_blocks_preload_local_fonts'       => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
-				'spectra_blocks_container_global_padding'  => self::get_admin_settings_option( 'spectra_blocks_container_global_padding', 'default' ),
-				'spectra_blocks_container_global_elements_gap' => self::get_admin_settings_option( 'spectra_blocks_container_global_elements_gap', 20 ),
-				'spectra_blocks_btn_inherit_from_theme'    => self::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
+				'spectra_blocks_analytics_optin'           => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
 				'wp_is_block_theme'                        => self::is_block_theme(),
+				'zip_ai_modules'                           => $zip_ai_modules,
 			);
 		}
 

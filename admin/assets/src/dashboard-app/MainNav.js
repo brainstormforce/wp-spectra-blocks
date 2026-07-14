@@ -14,7 +14,7 @@ const Navigation = () => {
 		{
 			name: __( 'Popup Builder', 'spectra-blocks' ),
 			slug: spectra_blocks_react.home_slug,
-			path: 'spectra-popup',
+			path: 'spectra-blocks-popup',
 		},
 		{
 			name: __( 'Learn', 'spectra-blocks' ),
@@ -37,9 +37,10 @@ const Navigation = () => {
 		} );
 	}
 
-	// Only add the AI Features tab before settings if Zip AI data was successfully localized.
-	if ( spectra_blocks_react?.zip_ai_admin_nonce ) {
-		menus.splice( 3, 0, {
+	// Insert the AI Features tab right after Welcome so the dashboard toolbar order
+	// matches the WP admin sidebar order (Dashboard → AI Features → Popup Builder → Learn → Settings).
+	if ( spectra_blocks_react?.install_zip_ai_nonce ) {
+		menus.splice( 1, 0, {
 			name: __( 'AI Features', 'spectra-blocks' ),
 			slug: spectra_blocks_react.home_slug,
 			path: 'ai-features',
@@ -63,10 +64,10 @@ const Navigation = () => {
 			{ filteredMenu.map( ( menu, key ) => (
 				<Fragment key={key}>
 				{
-						menu.path === 'spectra-popup' ? (
+						menu.path === 'spectra-blocks-popup' ? (
 						<a
 							index={key}
-							href={`${spectra_blocks_react.admin_base_url}edit.php?post_type=spectra-popup`}
+							href={`${spectra_blocks_react.admin_base_url}edit.php?post_type=spectra-blocks-popup`}
 							target="_self"
 							className={'content-center no-underline relative h-full py-0 px-1 m-0 bg-transparent outline-none shadow-none border-0 focus:outline-none text-[#4B5563] text-sm font-medium cursor-pointer'}
 						>

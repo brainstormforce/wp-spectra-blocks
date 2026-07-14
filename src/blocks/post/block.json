@@ -1,0 +1,246 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/post",
+	"version": "3.0.0",
+	"title": "Post",
+	"category": "spectra-blocks",
+	"description": "Display posts in Grid, Masonry, or Carousel layouts",
+	"textdomain": "spectra-blocks",
+	"keywords": [
+		"post",
+		"grid",
+		"masonry",
+		"carousel",
+		"blog",
+		"posts",
+		"query",
+		"loop",
+		"spectra",
+		"uag"
+	],
+	"supports": {
+		"interactivity": true,
+		"anchor": true,
+		"html": false,
+		"align": [ "wide", "full" ],
+		"layout": {
+			"default": {
+				"type": "flex",
+				"orientation": "vertical",
+				"justifyContent": "stretch"
+			},
+			"allowSizingOnChildren": true,
+			"allowSwitching": true
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true,
+			"blockGap": true
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"providesContext": {
+"spectra/post/layoutType": "layoutType",
+		"spectra/post/queryId": "queryId",
+		"spectra/post/pageKey": "pageKey",
+		"spectra/post/query": "query",
+		"spectra/post/responsiveControls": "responsiveControls",
+		"spectra/post/postsToShow": "postsToShow",
+		"spectra/post/slidesPerView": "slidesPerView",
+		"spectra/post/spaceBetween": "spaceBetween",
+		"spectra/post/loop": "loop",
+		"spectra/post/speed": "speed",
+		"spectra/post/autoplay": "autoplay",
+		"spectra/post/autoplaySpeed": "autoplaySpeed",
+		"spectra/post/autoplayPauseOnHover": "autoplayPauseOnHover",
+		"spectra/post/navigation": "navigation",
+		"spectra/post/pagination": "pagination",
+		"spectra/post/equalHeight": "equalHeight",
+		"spectra/post/columns": "columns",
+		"spectra/post/columnGap": "columnGap",
+		"spectra/post/rowGap": "rowGap"
+	},
+	"attributes": {
+		"layout": {
+			"type": "object",
+			"default": {
+				"type": "flex",
+				"orientation": "vertical",
+				"justifyContent": "stretch"
+			}
+		},
+		"layoutType": {
+			"type": "string",
+			"default": "grid"
+		},
+		"variationSelected": {
+			"type": "boolean",
+			"default": false
+		},
+		"queryId": {
+			"type": "string"
+		},
+		"pageKey": {
+			"type": "string"
+		},
+		"query": {
+			"type": "object",
+			"default": {
+				"perPage": 6,
+				"postType": "post",
+				"order": "desc",
+				"orderBy": "date",
+				"author": [],
+				"search": "",
+				"exclude": [],
+				"sticky": "",
+				"inherit": false,
+				"excludeCurrentPost": false,
+				"taxQuery": null
+			}
+		},
+		"align": {
+			"type": "string",
+			"default": "wide"
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		},
+		"postsToShow": {
+			"type": "number",
+			"default": 6
+		},
+		"columns": {
+			"type": "number"
+		},
+		"columnGap": {
+			"type": "string"
+		},
+		"rowGap": {
+			"type": "string"
+		},
+		"paginationType": {
+			"type": "string",
+			"default": "none"
+		},
+		"paginationPrevLabel": {
+			"type": "string",
+			"default": "« Previous"
+		},
+		"paginationNextLabel": {
+			"type": "string",
+			"default": "Next »"
+		},
+		"paginationButtonText": {
+			"type": "string",
+			"default": "Load More"
+		},
+		"paginationLoadingText": {
+			"type": "string",
+			"default": "Loading..."
+		},
+		"paginationAlignment": {
+			"type": "string",
+			"default": "center"
+		},
+		"paginationLayout": {
+			"type": "string",
+			"default": "filled"
+		},
+		"paginationEventType": {
+			"type": "string",
+			"default": "button"
+		},
+		"slidesPerView": {
+			"type": "number"
+		},
+		"spaceBetween": {
+			"type": "number"
+		},
+		"loop": {
+			"type": "boolean",
+			"default": true
+		},
+		"speed": {
+			"type": "number",
+			"default": 500
+		},
+		"autoplay": {
+			"type": "boolean",
+			"default": true
+		},
+		"autoplaySpeed": {
+			"type": "number",
+			"default": 2000
+		},
+		"autoplayPauseOnHover": {
+			"type": "boolean",
+			"default": true
+		},
+		"equalHeight": {
+			"type": "boolean",
+			"default": true
+		},
+		"navigation": {
+			"type": "boolean",
+			"default": true
+		},
+		"pagination": {
+			"type": "boolean",
+			"default": true
+		},
+		"arrowColor": {
+			"type": "string"
+		},
+		"arrowBackgroundColor": {
+			"type": "string"
+		},
+		"arrowSize": {
+			"type": "string"
+		},
+		"arrowDistance": {
+			"type": "string"
+		},
+		"paginationTopMargin": {
+			"type": "string"
+		},
+		"dotColor": {
+			"type": "string"
+		},
+		"paginationColor": {
+			"type": "string"
+		},
+		"paginationBackgroundColor": {
+			"type": "string"
+		},
+		"paginationHoverColor": {
+			"type": "string"
+		},
+		"paginationBackgroundHoverColor": {
+			"type": "string"
+		},
+		"paginationActiveColor": {
+			"type": "string"
+		},
+		"paginationBackgroundActiveColor": {
+			"type": "string"
+		},
+		"responsiveControls": {
+			"type": "object"
+		}
+	},
+	"render": "file:./controller.php",
+	"editorScript": "file:./index.js",
+	"viewScriptModule": "file:./view.js",
+	"style": [
+		"file:./style-index.css",
+		"spectra-blocks-common",
+		"spectra-blocks-swiper-style"
+	]
+}

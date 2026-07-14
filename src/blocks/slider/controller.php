@@ -7,15 +7,14 @@
  * @package Spectra\Blocks\Slider
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // Generate unique ID.
 $slider_id = 'spectra-slider-' . wp_unique_id();
 
 // Check if Spectra Pro is active (same pattern as modal).
-$is_pro_activated = is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' );
+$is_pro_activated = ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) || is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) );
 
 /**
  * Get effective slides per view with Pro fallback logic.
@@ -111,6 +110,7 @@ $slider_height = $attributes['sliderHeight'] ?? '';
 
 $text_color       = $attributes['textColor'] ?? 'inherit';
 $navigation       = $attributes['navigation'] ?? true;
+$display_arrows   = $attributes['displayArrows'] ?? true;
 $pagination       = $attributes['pagination'] ?? true;
 $autoplay         = $attributes['autoplay'] ?? false;
 $autoplay_speed   = $attributes['autoplaySpeed'] ?? 3000;
@@ -140,6 +140,13 @@ $has_responsive_image   = false;
 $responsive_controls    = $attributes['responsiveControls'] ?? array();
 $video_background       = null;
 $has_responsive_overlay = false;
+
+// The responsive-controls extension strips root-level 'background' from attrs and moves it
+// to responsiveControls.lg. Fall back to lg so downstream logic (background type, classes) still works.
+if ( null === $background ) {
+	$background = $responsive_controls['lg']['background'] ?? null;
+}
+
 foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
 		if ( 'video' === $responsive_controls[ $device ]['background']['type'] ) {
@@ -169,7 +176,7 @@ $background_type = $background['type'] ?? '';
 $has_image_background = 'image' === $background_type;
 $has_border_radius    = ! empty( $attributes['style']['border']['radius'] );
 
-$dim_ratio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 100 );
+$dim_ratio = ( isset( $attributes['dimRatio'] ) ? ( $attributes['dimRatio'] / 100 ) : 1 );
 
 // Get custom navigation and pagination colors.
 $navigation_size      = $attributes['navigationSize'] ?? '40px';

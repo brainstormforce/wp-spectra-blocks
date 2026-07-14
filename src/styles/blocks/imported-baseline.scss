@@ -1,0 +1,271 @@
+// IMPORTED-CONTENT BASELINE CONTRACT
+// Baseline for imported (zip-built) pages: imported content gets NO stack styling
+// unless the page asks. One clause per measured interference family; row IDs map to
+// render-interference-inventory-2026-07-02.md (add a row + fixture before a clause).
+// No `!important`, ever.
+// SCOPE  body.spectra-page-zip-builder (importer `_zipai_imported` meta, via
+//        AssetLoader::is_zip_built_page). Non-imported pages are untouched.
+// TIER   `body.spectra-page-zip-builder :where(.entry-content) :where(X)` = (0,1,1) —
+//        the converter payload-reset tier. `:where()` keeps every clause below the
+//        marker tier (0,2,1) and gs tier (0,3,0), so authored styling always wins.
+//        Element-tier clauses wrap the scope in :where() → (0,0,1).
+// ORDER  Registered as a block style dep on `global-styles`, so it prints after it
+//        (AssetLoader::enqueue_common_style_assets) — precedence by declaration.
+// EDITOR Inert in the canvas for now (iframe body lacks the page class) — tracked.
+// CHROME Template-part clauses are permitted on the same key (imported pages match the
+//        source exactly); match_site cross-page chrome variance is accepted.
+
+// A12/A15/A16 — WP core + user global-styles give image figures a bottom margin, border,
+// and radius the source never asked for. Imported pages opt out; authored figure/img
+// styling rides its gs class (0,3,0) and wins.
+body.spectra-page-zip-builder
+:where(.entry-content)
+:where(figure.wp-block-image) {
+	border: 0;
+	border-radius: 0;
+	margin: 0;
+}
+
+body.spectra-page-zip-builder
+:where(.entry-content)
+:where(.wp-block-image img) {
+	border-radius: 0;
+}
+
+// Attr width/height give the intrinsic ratio (CLS guard); CSS keeps final say on the box.
+body.spectra-page-zip-builder
+:where(.entry-content)
+:where(.wp-block-image img[width]) {
+	height: auto;
+}
+
+// A17 — theme.json sizes h1–h6 via element rules (size/weight/family/line-height); a source
+// relying on the UA baseline gets theme typography it never declared. Element tier (0,0,1),
+// printed after the payload so it beats bare `h4 {}` sources. `revert` returns each axis to
+// inheritance/UA; authored headings ride gs classes (0,3,0) and win regardless.
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h1,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h2,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h3,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h4,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h5,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h6 {
+	font-family: revert;
+	font-size: revert;
+	font-weight: revert;
+	line-height: revert;
+	margin: revert;
+}
+
+// CHROME structural family (template-part clauses on the body-class key). The standalone
+// sibling `header.zipai-imported-header { display: contents }` stays in common.scss
+// (editor-load-bearing) — one family, two files, SSOT noted here.
+
+// FSE template-part wrappers are layout-invisible on imported pages — the authored chrome is
+// the header/footer element the importer wrote, not the theme's wrapper box.
+:where(body.spectra-page-zip-builder) header.wp-block-template-part,
+:where(body.spectra-page-zip-builder) footer.wp-block-template-part,
+:where(body.spectra-page-zip-builder)
+.wp-block-template-part > .wp-block-group {
+	display: contents;
+}
+
+// Transparent overlay header needs a real full-width box — overrides the passthrough above.
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header {
+	display: block;
+	width: 100%;
+	max-width: none;
+}
+
+// See-through band: the wrapper group + the header bar itself go transparent.
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header > .wp-block-group,
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header > .wp-block-group > [class*="-hdr"] {
+	background: transparent;
+	border-color: transparent;
+}
+
+// Overlay nav/wordmark contrast — deliberately beats authored gs colors ((0,3,3) > (0,3,0)):
+// an overlay header sits on the hero media, so its labels take the page background token.
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header
+[class*="-hdr"]
+a:not([class*="btn"]),
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header
+[class*="-wordmark"],
+:where(body.spectra-page-zip-builder)
+header.wp-block-template-part.swt-transparent-header
+[class*="-nav"]
+a:not([class*="btn"]) {
+	color: var(--background, #fff);
+}
+
+// A13 — WP layout supports add a blockGap `margin-block-start` the source never declared.
+// The h4–h6 carve-out is LOAD-BEARING: that channel also carries minor headings' UA margins
+// the source relies on (footer h4 lost ~24px). Authored child margins ride gs (0,3,0). (0,1,1)
+body.spectra-page-zip-builder
+:where(.is-layout-flow, .is-layout-constrained) > :where(:not(h4, h5, h6)) {
+	margin-block-start: 0;
+	margin-block-end: 0;
+}
+
+// A13 — the post-content wrapper's own top gap; the imported page owns its first offset. (0,2,1)
+:where(body.spectra-page-zip-builder) .entry-content.wp-block-post-content {
+	margin-top: 0;
+}
+
+// A13 — core/group default inline padding the source never asked for. (0,0,1)
+:where(body.spectra-page-zip-builder) :where(.wp-block-group) {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+// A23 — theme.json core/navigation typography (size/weight/letter-spacing/line-height) the
+// source never authored; imported nav measured taller with stray letter-spacing. First CHROME
+// clause. `revert` restores inheritance; source/gs (0,3,0) win. (0,1,1)
+body.spectra-page-zip-builder
+:where(.wp-block-template-part, .entry-content)
+:where(.wp-block-navigation) {
+	font-size: revert;
+	font-weight: revert;
+	line-height: revert;
+	letter-spacing: revert;
+}
+
+// A19 — SureForms field skin vs the source's UA reality. The per-form overlay (payload) carries
+// every DECLARED source value at a higher tier; these clauses give the UNDECLARED axes honest UA
+// values (system colors, no guessed hexes) instead of the skin's derived gray. Container-level
+// vars (0,1,1) out-cascade the skin's container-id inline vars; the overlay's element vars win.
+body.spectra-page-zip-builder :where(.srfm-form-container) {
+	--srfm-color-input-background: Field;
+	--srfm-color-input-text: FieldText;
+	--spectra-input-bg: Field;
+	--spectra-input-text: FieldText;
+
+	// Dropdown MENU surfaces (TomSelect chrome): the skin's hsl(from …) formulas collapse when
+	// the styling meta is empty (near-black menu, unreadable options). System colors keep it legible.
+	--srfm-expandable-menu-background: Field;
+	--srfm-dropdown-option-text-color: FieldText;
+	--srfm-dropdown-option-selected-text: FieldText;
+	--srfm-dropdown-placeholder-color: GrayText;
+	--srfm-dropdown-icon-color: GrayText;
+	--srfm-dropdown-menu-border-color: color-mix(in srgb, FieldText 18%, Field);
+	--srfm-dropdown-option-background-hover: color-mix(in srgb, FieldText 8%, Field);
+	--srfm-dropdown-option-background-selected: color-mix(in srgb, FieldText 12%, Field);
+	--srfm-dropdown-option-selected-icon: FieldText;
+
+	// FOCUS ring — the pro skin paints its own !important a11y ring reading these tokens (read
+	// currentColor as a "doubled border"). Re-pin to the UA declaration so the rule draws the
+	// native ring instead — focus stays visible, source-exact.
+	--spectra-focus-ring-style: auto;
+	--spectra-focus-ring-width: 1px;
+	--spectra-focus-ring-color: -webkit-focus-ring-color;
+	--spectra-focus-ring-offset: 0;
+
+	// FOCUS glow — SureForms paints a box-shadow halo on checkbox/GDPR/multi-choice/number/richtext
+	// wraps; no silent source renders one (UA reality is the outline ring above).
+	--srfm-color-input-border-focus-glow: transparent;
+
+	// Selected/checked surface + label/prefix text. Labels live on the PAGE surface → currentColor;
+	// prefix/suffix sit in the Field box → GrayText. scheme-primary consumers stay SureForms-default.
+	--srfm-color-input-selected: color-mix(in srgb, FieldText 12%, Field);
+	--srfm-color-input-label: currentcolor;
+	--srfm-color-input-prefix: GrayText;
+}
+
+// SureForms required asterisk: the source (novalidate) renders none. Required-ness stays
+// announced via the control's own required/aria attributes.
+body.spectra-page-zip-builder
+:where(.srfm-form-container)
+:where(.srfm-required) {
+	display: none;
+}
+
+// A26 — spectra/content forces overflow-wrap/word-break (0,1,0) the source never asked for (a
+// decorative single-word watermark lost its min-content floor and wrapped into a letter column).
+// `revert` restores the UA default; authored wrapping rides gs (0,3,0).
+body.spectra-page-zip-builder
+:where(.entry-content, .wp-block-template-part)
+:where(.wp-block-spectra-content) {
+	overflow-wrap: revert;
+	word-break: revert;
+}
+
+// A16 — theme.json elements.button decoration (border/radius/bg/hover-bg/line-height) at (0,1,0):
+// purple outline imported buttons never had + severed inherited line-height. Authored buttons
+// declare bg + font-size + :hover bg at gs (0,3,0) and win. HOVER ARM required — theme hover is
+// (0,2,0). `line-height: revert` governs only UNMARKED buttons (NO_LINE_HEIGHT marker rides above).
+body.spectra-page-zip-builder
+:where(.entry-content, .wp-block-template-part)
+:where(.wp-element-button, .wp-block-button__link) {
+	background-color: revert;
+	border: revert;
+	border-radius: revert;
+	line-height: revert;
+}
+
+body.spectra-page-zip-builder
+:where(.entry-content, .wp-block-template-part)
+:where(.wp-element-button, .wp-block-button__link):hover {
+	background-color: revert;
+	border: revert;
+}
+
+// A27 — the icon block hardcodes display:flex; justify-content:center (0,1,0), so an authored
+// left-aligned icon renders centered in its track. Restore flow order (0,1,1); authored/gs
+// alignment ((0,3,0)+) and the block's own is-content-justification-* classes ((0,2,0)) win.
+body.spectra-page-zip-builder
+:where(.entry-content, .wp-block-template-part)
+:where(.wp-block-spectra-icon:not([class*="is-content-justification"])) {
+	justify-content: flex-start;
+}
+
+// A28 — widget runtimes (counter/countdown) inject spans the author never saw, so an authored
+// blanket `.x span { color }` recolours the widget's digits. Make widget text INHERIT from the
+// widget root (0,2,1) so the authored wrapper colour flows down; page blanket rules stop at the boundary.
+body.spectra-page-zip-builder
+.wp-block-spectra-counter
+:where(
+	.spectra-counter-value,
+	.spectra-counter-number,
+	.spectra-counter-prefix,
+	.spectra-counter-suffix
+),
+body.spectra-page-zip-builder .wp-block-spectra-countdown :where(span) {
+	color: inherit;
+}
+
+// A29 — counter-child-wrapper's block.json layout (vertical + justifyContent:center) makes WP
+// core layout.php emit `align-items:center` (0,1,0), shrink-wrapping the label/icon children so
+// authored `text-align` at gs (0,3,0) CANNOT reposition them — specificity is the wrong lever
+// for a shrink-wrapped flex item. Restore the CSS-initial `stretch` (0,1,1): children fill the
+// wrapper and inherited/authored text-align governs — left stays left, centered still centers
+// (the number already escapes via the counter's own width:100%).
+body.spectra-page-zip-builder
+:where(.entry-content, .wp-block-template-part)
+:where(.wp-block-spectra-counter-child-wrapper) {
+	align-items: stretch;
+}
+
+// A30 — countdown parent hardcodes `text-transform:uppercase` (0,1,0); labels are verbatim
+// source text and token-extract captures only DECLARED props (no `text-transform:none`
+// synthesis), so a source that left the axis silent renders "Days" as "DAYS" (corpus:
+// pre-order.html). Revert on the PARENT (0,2,1); child-label's `text-transform:inherit` stays
+// untouched so an authored (0,3,0) parent gs uppercase still cascades to labels.
+body.spectra-page-zip-builder .wp-block-spectra-countdown {
+	text-transform: revert;
+}

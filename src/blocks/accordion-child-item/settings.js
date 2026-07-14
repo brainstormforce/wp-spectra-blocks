@@ -14,7 +14,7 @@ import {
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { AccordionItemBlockControls } from '@spectra/accordion/helper';
+import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
 
 /**
  * Element Sub-settings: General settings.

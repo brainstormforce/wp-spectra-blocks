@@ -5,7 +5,7 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\GetAnalyticsSummary;
+use SpectraBlocks\Abilities\GetAnalyticsSummary;
 
 /**
  * Analytics abilities test case.
@@ -81,7 +81,7 @@ class AnalyticsAbilitiesTest extends WP_UnitTestCase {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'block_usage_stats', $result );
 		$this->assertArrayHasKey( 'top_used_blocks', $result );
-		$this->assertArrayHasKey( 'site_activity', $result );
+		$this->assertArrayHasKey( 'extension_usage_stats', $result );
 	}
 
 	/**

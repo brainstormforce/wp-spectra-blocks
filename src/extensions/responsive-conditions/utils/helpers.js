@@ -36,8 +36,8 @@ export const isAllowedBlock = ( block ) => {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {Array} excludedBlocks - Array of block names to exclude.
-	 * @param {string} blockName - The current block name being checked.
+	 * @param {Array}  excludedBlocks - Array of block names to exclude.
+	 * @param {string} blockName      - The current block name being checked.
 	 * @return {Array} Modified array of excluded block names.
 	 */
 	const excludedBlocks = applyFilters( 'spectra.excludedResponsiveConditionsBlocks', EXCLUDED_BLOCKS, blockName );
@@ -53,8 +53,8 @@ export const isAllowedBlock = ( block ) => {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {Array} supportedBlocks - Array of block names that support responsive conditions.
-	 * @param {string} blockName - The current block name being checked.
+	 * @param {Array}  supportedBlocks - Array of block names that support responsive conditions.
+	 * @param {string} blockName       - The current block name being checked.
 	 * @return {Array} Modified array of supported block names.
 	 */
 	const supportedBlocks = applyFilters( 'spectra.supportedResponsiveConditionsBlocks', SUPPORTED_BLOCKS, blockName );
@@ -70,8 +70,8 @@ export const isAllowedBlock = ( block ) => {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {Array} allowedPrefixes - Array of block name prefixes to allow.
-	 * @param {string} blockName - The current block name being checked.
+	 * @param {Array}  allowedPrefixes - Array of block name prefixes to allow.
+	 * @param {string} blockName       - The current block name being checked.
 	 * @return {Array} Modified array of allowed prefixes.
 	 */
 	const allowedPrefixes = applyFilters( 'spectra.allowedResponsiveConditionsPrefixes', ALLOWED_PREFIXES, blockName );

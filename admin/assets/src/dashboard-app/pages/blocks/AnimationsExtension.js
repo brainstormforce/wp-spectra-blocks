@@ -54,9 +54,9 @@ const AnimationsExtension = ( { trigger, searchTerm, status } ) => {
 		}
 	}, [ trigger ] );
 
-	if ( searchTerm.length > 0 && ! block.title.toLowerCase().includes( searchTerm.toLowerCase() ) ) return null;
+	if ( searchTerm.length > 0 && ! block.title.toLowerCase().includes( searchTerm.toLowerCase() ) ) {return null;}
 
-	if ( status !== animationExtensionStatus && status !== null ) return null;
+	if ( status !== animationExtensionStatus && status !== null ) {return null;}
 
 	return (
 		<Container.Item

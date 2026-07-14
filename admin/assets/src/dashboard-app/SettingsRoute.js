@@ -47,7 +47,7 @@ function SettingsRoute() {
 					break;
 				case 'ai-features':
 					// Only render the AI Features page if Zip AI data was successfully localized.
-					routePage = spectra_blocks_react?.zip_ai_admin_nonce ? <AiFeatures /> : <Welcome/>;
+					routePage = spectra_blocks_react?.install_zip_ai_nonce ? <AiFeatures /> : <Welcome/>;
 					break;
 				case 'free-vs-pro':
 					routePage = <FreeVPro />;

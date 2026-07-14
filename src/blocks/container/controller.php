@@ -7,10 +7,9 @@
  * @package Spectra\Blocks\Container
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
-use Spectra\Helpers\Shadow;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Helpers\Shadow;
 
 // Retrieve block attributes.
 $anchor              = $attributes['anchor'] ?? '';
@@ -49,7 +48,7 @@ $bottom_invert              = $attributes['bottomInvert'] ?? false;
 $bottom_content_above_shape = $attributes['bottomContentAboveShape'] ?? false;
 
 // Get background attributes.
-$background                = $attributes['background'] ?? array();
+$background                = $attributes['background'] ?? null;
 $enable_adv_gradients      = $attributes['enableAdvGradients'] ?? false;
 $enable_adv_bg_gradient    = $attributes['enableAdvBgGradient'] ?? false;
 $enable_adv_bg_grad_hover  = $attributes['enableAdvBgGradientHover'] ?? false;
@@ -72,6 +71,7 @@ $has_responsive_image   = false;
 $responsive_controls    = $attributes['responsiveControls'] ?? array();
 $video_background       = null;
 $has_responsive_overlay = false;
+
 // Check for video and image backgrounds in responsive controls.
 $responsive_overlay_data = null;
 foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
@@ -82,7 +82,7 @@ foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
 			if ( null === $video_background ) {
 				$video_background = $responsive_controls[ $device ]['background'];
 			}
-		} elseif ( 'image' === $responsive_controls[ $device ]['background']['type'] && ! empty( $background['media']['url'] ) ) {
+		} elseif ( 'image' === $responsive_controls[ $device ]['background']['type'] ) {
 			$has_responsive_image = true;
 		}
 	}
@@ -157,27 +157,72 @@ if ( $has_link ) {
 	$link_attributes = Core::concatenate_array( $attributes_list );
 }
 
+// WP core emits a block-type-level rule
+// `.wp-block-spectra-container.wp-block-spectra-container-is-layout-flex
+// { flex-wrap: nowrap; }` derived from `supports.layout.default.flexWrap`
+// in block.json. When the user sets `layout.flexWrap` to `wrap`, WP's
+// `wp_get_layout_style()` treats `wrap` as its own global default and
+// skips emitting an instance-level override — so the block-type-level
+// `nowrap` wins and the frontend never honors the user's choice. We emit
+// the value inline to force the correct render — but ONLY when the user
+// has not configured per-breakpoint `layout.flexWrap` overrides via the
+// responsive controls. An inline style beats media-query CSS by
+// specificity, so if we emit unconditionally, a user who set
+// desktop-wrap + tablet-nowrap would see wrap on tablet too. Skip the
+// inline emit whenever ANY breakpoint override is present and let the
+// responsive controls extension's per-breakpoint CSS take over.
+$flex_wrap_inline_value = $layout['flexWrap'] ?? null;
+if ( null !== $flex_wrap_inline_value ) {
+	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+		if ( isset( $responsive_controls[ $device ]['layout']['flexWrap'] ) ) {
+			$flex_wrap_inline_value = null;
+			break;
+		}
+	}
+}
+
 // Style and class configurations.
-$config = array(
-	array(
+//
+// Only emit inline `overflow` when the value differs from the block.json default
+// ('visible'). The default emits as `style="overflow: visible"` on every container,
+// which beats className-driven utilities like `overflow-x-hidden` /
+// `overflow-hidden` (specificity zero vs inline). UI users who pick a non-default
+// overflow value via the block panel still get inline emission as before.
+//
+// @since 1.0.0.
+$config = array();
+if ( 'visible' !== $overflow ) {
+	$config[] = array(
 		'key'        => 'overflow',
 		'css_var'    => 'overflow',
 		'class_name' => null,
 		'value'      => $overflow,
-	),
-	array( 'key' => 'textColor' ),
-	array( 'key' => 'textColorHover' ),
-	array( 'key' => 'backgroundColorHover' ),
-	array(
-		'key'   => 'backgroundGradientHover',
-		'value' => $background_gradient_hover,
-	),
-	array( 'key' => 'backgroundColor' ),
-	array(
+	);
+}
+$config[] = array(
+	'key'        => 'flexWrap',
+	'css_var'    => 'flex-wrap',
+	'class_name' => null,
+	'value'      => $flex_wrap_inline_value,
+);
+$config[] = array( 'key' => 'textColor' );
+$config[] = array( 'key' => 'textColorHover' );
+$config[] = array( 'key' => 'backgroundColorHover' );
+$config[] = array( 'key' => 'backgroundColor' );
+
+if ( ! empty( $background_gradient ) ) {
+	$config[] = array(
 		'key'   => 'backgroundGradient',
 		'value' => $background_gradient,
-	),
-);
+	);
+}
+
+if ( ! empty( $background_gradient_hover ) ) {
+	$config[] = array(
+		'key'   => 'backgroundGradientHover',
+		'value' => $background_gradient_hover,
+	);
+}
 
 // Only add dimRatio to config if it has a valid numeric value.
 if ( null !== $dim_ratio ) {
@@ -247,7 +292,7 @@ $custom_classes = array(
 	// Video background class is required for proper positioning (from common.scss).
 	( 'video' === $background_type || $has_video_background ) ? 'spectra-background-video' : '',
 	// These classes are used for overflow handling with border-radius.
-	$has_video_background ? 'has-video-background' : '',
+	( $has_video_background || 'video' === $background_type ) ? 'has-video-background' : '',
 	( $has_image_background || $has_responsive_image ) ? 'has-image-background' : '',
 	// Add overlay class when overlay is used.
 	$has_responsive_overlay ? 'spectra-background-overlay' : '',
@@ -287,6 +332,12 @@ if ( 'flex' === $layout_type ) {
 	// Only add orientation classes if orientation reverse is enabled somewhere.
 	$orientation_classes = array();
 	if ( $has_orientation_reverse ) {
+		// Editor parity: render.js emits `spectra-orientation-reverse` whenever
+		// orientationReverse is truthy. The responsive-controls extension strips
+		// the top-level attribute at render time, so we key off the aggregate
+		// `$has_orientation_reverse` (which also considers per-device values).
+		$orientation_classes[] = 'spectra-orientation-reverse';
+
 		// Collect orientation data for each device from responsive controls.
 		$orientation_devices = array();
 		$default_orientation = $layout['orientation'] ?? 'horizontal';
@@ -312,8 +363,8 @@ if ( 'flex' === $layout_type ) {
 			} else {
 				$orientation_classes[] = 'is-horizontal-tablet';
 			}
-			// Tablet uses desktop value if no tablet-specific value.
 		} elseif ( 'vertical' === $desktop_orientation ) {
+			// Tablet uses desktop value if no tablet-specific value.
 			$orientation_classes[] = 'is-vertical-tablet-from-desktop';
 		} else {
 			$orientation_classes[] = 'is-horizontal-tablet-from-desktop';
@@ -333,8 +384,8 @@ if ( 'flex' === $layout_type ) {
 			} else {
 				$orientation_classes[] = 'is-horizontal-mobile-from-tablet';
 			}
-			// Mobile uses desktop value if no mobile or tablet values.
 		} elseif ( 'vertical' === $desktop_orientation ) {
+			// Mobile uses desktop value if no mobile or tablet values.
 			$orientation_classes[] = 'is-vertical-mobile-from-desktop';
 		} else {
 			$orientation_classes[] = 'is-horizontal-mobile-from-desktop';

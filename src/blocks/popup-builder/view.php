@@ -8,8 +8,8 @@
  * @package Spectra\Blocks\PopupBuilder
  */
 
-use Spectra\Helpers\HtmlSanitizer;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\Renderer;
 // Bail out if this file is called directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,7 +36,7 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 			: sprintf(
 				/* translators: %s: The name of the SVG icon. */
 				__( 'An icon named %s', 'spectra-blocks' ),
-				Renderer::get_icon_name( $close_icon )
+				Renderer::get_icon_name( $icon )
 			);
 		break;
 	case 'image':
@@ -48,7 +48,7 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 			: sprintf(
 				/* translators: %s: The name of the SVG image. */
 				__( 'An image named %s', 'spectra-blocks' ),
-				Renderer::get_icon_name( $close_icon )
+				Renderer::get_icon_name( $icon )
 			);
 		break;
 	default:
@@ -125,7 +125,7 @@ $close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['
 	</div>
 
 </div>
-<?php wp_print_inline_script_tag( $js ); ?>
+<script><?php echo $js; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JavaScript output is controlled and generated in controller.php ?></script>
 <?php
 // Clean up global context.
 unset( $GLOBALS['spectra_v3_popup_context'] );

@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 use WP_Query;
@@ -17,14 +17,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * ListPopups ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class ListPopups extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -35,7 +35,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -46,7 +46,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -57,7 +57,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -68,7 +68,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -83,7 +83,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -114,7 +114,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -149,7 +149,7 @@ class ListPopups extends AbstractAbility {
 	 *
 	 * Requires manage_options since popup CPT requires it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -168,7 +168,7 @@ class ListPopups extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array List of popups.
@@ -184,7 +184,7 @@ class ListPopups extends AbstractAbility {
 		}
 
 		$query_args = array(
-			'post_type'      => 'spectra-popup',
+			'post_type'      => 'spectra-blocks-popup',
 			'post_status'    => 'publish',
 			'posts_per_page' => $per_page,
 			'paged'          => $page,
@@ -195,7 +195,7 @@ class ListPopups extends AbstractAbility {
 		if ( 'all' !== $status ) {
 			$query_args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				array(
-					'key'     => 'spectra-popup-enabled',
+					'key'     => 'spectra-blocks-popup-enabled',
 					'value'   => 'enabled' === $status ? '1' : '0',
 					'compare' => '=',
 				),
@@ -206,13 +206,12 @@ class ListPopups extends AbstractAbility {
 		$popups = array();
 
 		foreach ( $query->posts as $post ) {
-			$popup_type = get_post_meta( $post->ID, 'spectra-popup-type', true );
-			$popups[]   = array(
+			$popups[] = array(
 				'id'         => $post->ID,
 				'title'      => $post->post_title,
-				'type'       => $popup_type ? $popup_type : 'unset',
-				'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-popup-enabled', true ),
-				'repetition' => (float) get_post_meta( $post->ID, 'spectra-popup-repetition', true ),
+				'type'       => get_post_meta( $post->ID, 'spectra-blocks-popup-type', true ) ? get_post_meta( $post->ID, 'spectra-blocks-popup-type', true ) : 'unset',
+				'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-blocks-popup-enabled', true ),
+				'repetition' => (float) get_post_meta( $post->ID, 'spectra-blocks-popup-repetition', true ),
 				'date'       => $post->post_date,
 				'modified'   => $post->post_modified,
 			);

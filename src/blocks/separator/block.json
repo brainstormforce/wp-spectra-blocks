@@ -20,7 +20,8 @@
 		"content divider",
 		"page break",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"supports": {
 		"anchor": true,

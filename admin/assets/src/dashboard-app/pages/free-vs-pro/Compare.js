@@ -14,7 +14,7 @@ const Compare = () => {
 
 	useEffect( () => {
 		const currentButtonText = sprintf(
-			/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
+			/* translators: abbreviation for units */ __( '%s', 'spectra-blocks' ),
 			getSpectraProTitle()
 		);
 
@@ -82,20 +82,18 @@ const Compare = () => {
 
 	const renderItems = ( items ) =>
 		items.map( ( item ) => (
-			<>
-				<div
-					key={item.id}
-					className="flex fle-row p-3 items-center justify-between gap-4 border-0 border-b-0.5 border-solid border-b-border-subtle"
-				>
-					<p className="m-0 text-sm text-text-secondary font-normal grow">{item.content}</p>
-					<p className="m-0 min-w-[18%] w-min text-center text-xxs sm:text-sm">
-						{getLabel( item, 'pro' )}
-					</p>
-					<p className="m-0 min-w-[18%] w-min text-center text-xxs sm:text-sm">
-						{getLabel( item, 'free' )}
-					</p>
-				</div>
-			</>
+			<div
+				key={ item.id }
+				className="flex fle-row p-3 items-center justify-between gap-4 border-0 border-b-0.5 border-solid border-b-border-subtle"
+			>
+				<p className="m-0 text-sm text-text-secondary font-normal grow">{ item.content }</p>
+				<p className="m-0 min-w-[18%] w-min text-center text-xxs sm:text-sm">
+					{ getLabel( item, 'pro' ) }
+				</p>
+				<p className="m-0 min-w-[18%] w-min text-center text-xxs sm:text-sm">
+					{ getLabel( item, 'free' ) }
+				</p>
+			</div>
 		) );
 
 	return (
@@ -110,7 +108,7 @@ const Compare = () => {
 				<div className="flex flex-col sm:flex-row custom:flex-col sm:items-center items-start custom:items-start justify-between sm:gap-0 gap-5 pb-6">
 						<div className="flex flex-col gap-1">
 							<div className="m-0 text-xl font-semibold custom:pt-0 pt-0 text-text-primary">
-						{ __( 'Spectra Free VS Pro', 'spectra-blocks' ) }
+						{ __( 'Spectra Blocks Free VS Pro', 'spectra-blocks' ) }
 					</div>
 							<p className="m-0 text-sm font-normal text-text-secondary">
 						{ __(

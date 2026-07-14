@@ -16,7 +16,7 @@ import { getAdvancedGradientValue } from '@spectra-helpers/get-advanced-gradient
 /**
  * The render component for the slider-child block.
  *
- * @param {Object} props  Block props.
+ * @param {Object} props Block props.
  * @return {JSX.Element} The rendered component.
  */
 const Render = memo( ( props ) => {

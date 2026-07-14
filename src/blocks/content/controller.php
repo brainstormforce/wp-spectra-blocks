@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Content
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the text content from attributes with empty string fallback.
 $text = $attributes['text'] ?? '';
@@ -18,7 +17,77 @@ if ( empty( $text ) ) {
 	return '';
 }
 
-$valid_tag_names = array( 'p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
+$valid_tag_names = array(
+	// Core text containers.
+	'p',
+	'span',
+	'div',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	// Semantic text elements.
+	'blockquote',
+	'address',
+	'cite',
+	'time',
+	'label',
+	'figcaption',
+	'caption',
+	'legend',
+	'dt',
+	'dd',
+	// Inline semantic elements.
+	'strong',
+	'em',
+	'small',
+	'mark',
+	'del',
+	'ins',
+	'sub',
+	'sup',
+	'abbr',
+	'code',
+	'pre',
+	'kbd',
+	'samp',
+	'var',
+	'output',
+	'q',
+	's',
+	'dfn',
+	'bdi',
+	'bdo',
+	'summary',
+	'li',
+	// Table cells — text-only cells with no nested elements should
+	// render through content (RichText editor) instead of being
+	// silently demoted to <p> and breaking the table structure.
+	'td',
+	'th',
+	// List/table containers — render the DECLARED tag (2026-07-02).
+	// Demoting these to <p> destroyed native HTML semantics: the browser
+	// hoisted <li> children out of the invalid <p> parent (unmarked,
+	// unindented stacked text — measured live), and table display/colspan
+	// semantics died the same way. `wp_kses_post( $text )` already admits
+	// li/tr/td/th markup, and the view template is tag-generic, so the
+	// whitelist was the only blocker. Importers can now emit real,
+	// editable content blocks for lists/tables instead of raw-HTML leaves.
+	'ul',
+	'ol',
+	'table',
+	// Text anchors — render the DECLARED tag (2026-07-03). The importer's
+	// pure-text `<a>` leaves (no button class, zero block anatomy) ride
+	// content with tagName 'a'; the link payload (href/target/rel) reaches
+	// the wrapper via the htmlAttributes pipe (class-block-attributes.php),
+	// which already forwards every non-event attribute. Demoting to <p>
+	// killed the link outright. core/html leaves are banned (the editor
+	// renders them as sandboxed preview iframes — white boxes breaking the
+	// canvas), so content is the only valid carrier.
+	'a',
+);
 $tag_name        = ( ! empty( $attributes['tagName'] ) && in_array( $attributes['tagName'], $valid_tag_names, true ) ) ? $attributes['tagName'] : 'p';
 
 $anchor        = $attributes['anchor'] ?? '';
@@ -54,18 +123,20 @@ if ( $link_hover_color ) {
 	$link_hover_color = $styles['declarations']['color'] ?? $link_hover_color;
 }
 
-// Generate text shadow value.
-$enable_text_shadow = $attributes['enableTextShadow'] ?? false;
-$text_shadow_color  = $attributes['textShadowColor'] ?? '';
-$text_shadow_blur   = $attributes['textShadowBlur'] ?? 2;
-$text_shadow_x      = $attributes['textShadowOffsetX'] ?? 1;
-$text_shadow_y      = $attributes['textShadowOffsetY'] ?? 1;
-$text_shadow_value  = '';
-if ( $enable_text_shadow && $text_shadow_color ) {
-	$text_shadow_value = sprintf( '%dpx %dpx %dpx %s', $text_shadow_x, $text_shadow_y, $text_shadow_blur, $text_shadow_color );
-}
-
 // Style and class configurations.
+//
+// Normal-state `textColor` / `backgroundColor` / `backgroundGradient` ARE
+// listed here: WP core `supports.color` only paints values that are real
+// palette slugs (via its `has-<slug>-color` / `has-<slug>-background-color`
+// rules). Saved/imported content routinely stores a CUSTOM value (hex, rgb,
+// etc.) in these attributes — e.g. `"textColor":"#ffffff"` — which core turns
+// into a bogus class like `has-ffffff-color` that no rule backs, so the colour
+// silently drops. The Spectra CSS-var helper (`spectra-text-color` +
+// `--spectra-text-color`) paints those custom values; for real palette slugs
+// the resolved value is not a valid CSS colour and is simply ignored, letting
+// core's `has-<slug>-color` win — so both cases render correctly. The
+// `should_emit_helper_class()` gate (GIT-106) still suppresses the helper when
+// a GBS utility token already owns the axis, so there is no duplication.
 $config = array(
 	array( 'key' => 'textColor' ),
 	array( 'key' => 'textColorHover' ),
@@ -73,10 +144,6 @@ $config = array(
 	array( 'key' => 'backgroundColorHover' ),
 	array( 'key' => 'backgroundGradient' ),
 	array( 'key' => 'backgroundGradientHover' ),
-	array(
-		'key'   => 'textShadow',
-		'value' => $text_shadow_value,
-	),
 
 	// Link hover color as a custom variable for fixing core bug with focus.
 	array(
@@ -94,7 +161,6 @@ $additional_classes = array(
 	$has_background_color ? 'has-background' : '',
 	$has_text_color ? 'has-text-color' : '',
 	$has_link_color ? 'has-link-color' : '',
-	$text_shadow_color ? 'has-text-shadow' : '',
 );
 
 // Get the block wrapper attributes, and extend the styles and classes.

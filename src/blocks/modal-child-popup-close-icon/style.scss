@@ -1,10 +1,6 @@
 // Static styles - specificity (0,1,0) for default block CSS that should be overridable by Global Styles.
 .wp-block-spectra-modal-child-popup-close-icon {
 	// Default CSS for this block.
-	// Button reset for semantic <button> element.
-	border: none;
-	background: none;
-	padding: 0;
 	opacity: 1;
 	display: flex;
 	align-items: center;
@@ -41,6 +37,7 @@
 
 	// Dynamic styles - specificity (0,2,0) and higher for block settings that should NOT be overridden by Global Styles.
 	&[class*="wp-block"] {
+
 		// Variable based CSS - Text Color.
 		&.spectra-text-color {
 			fill: var(--spectra-text-color);

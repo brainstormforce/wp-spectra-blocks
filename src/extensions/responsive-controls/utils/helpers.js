@@ -47,7 +47,7 @@ import { getResetInProgress } from '..';
  */
 export const deepClone = ( obj ) => {
 	// Return primitives as is.
-	if ( typeof obj !== 'object' || obj === null ) return obj;
+	if ( typeof obj !== 'object' || obj === null ) {return obj;}
 
 	// Use native structuredClone if available (modern browsers)
 	if ( typeof structuredClone === 'function' ) {
@@ -69,13 +69,13 @@ export const deepClone = ( obj ) => {
  * @return {boolean} True if values are deeply equal, false otherwise.
  */
 const isEqual = ( a, b ) => {
-	if ( a === b ) return true;
+	if ( a === b ) {return true;}
 
 	if ( a === null || a === undefined || b === null || b === undefined ) {
 		return a === b;
 	}
 
-	if ( typeof a !== typeof b ) return false;
+	if ( typeof a !== typeof b ) {return false;}
 
 	// Add Date comparison.
 	if ( a instanceof Date && b instanceof Date ) {
@@ -83,7 +83,7 @@ const isEqual = ( a, b ) => {
 	}
 
 	if ( Array.isArray( a ) && Array.isArray( b ) ) {
-		if ( a.length !== b.length ) return false;
+		if ( a.length !== b.length ) {return false;}
 		return a.every( ( val, i ) => isEqual( val, b[ i ] ) );
 	}
 
@@ -91,7 +91,7 @@ const isEqual = ( a, b ) => {
 		const keysA = Object.keys( a );
 		const keysB = Object.keys( b );
 
-		if ( keysA.length !== keysB.length ) return false;
+		if ( keysA.length !== keysB.length ) {return false;}
 
 		return keysA.every( ( key ) => keysB.includes( key ) && isEqual( a[ key ], b[ key ] ) );
 	}
@@ -105,13 +105,13 @@ const isEqual = ( a, b ) => {
  *
  * @since x.x.x
  *
- * @param {Object} obj - The object to retrieve the value from.
- * @param {string} path - The dot-notation path to the value.
- * @param {*} defaultValue - The default value to return if path is not found.
+ * @param {Object} obj          - The object to retrieve the value from.
+ * @param {string} path         - The dot-notation path to the value.
+ * @param {*}      defaultValue - The default value to return if path is not found.
  * @return {*} The value at the specified path or defaultValue if not found.
  */
 export const getNested = ( obj, path, defaultValue ) => {
-	if ( ! obj || typeof path !== 'string' ) return defaultValue;
+	if ( ! obj || typeof path !== 'string' ) {return defaultValue;}
 
 	const result = path.split( '.' ).reduce( ( current, key ) => {
 		return current && typeof current === 'object' ? current[ key ] : undefined;
@@ -126,13 +126,13 @@ export const getNested = ( obj, path, defaultValue ) => {
  *
  * @since x.x.x
  *
- * @param {Object} obj - The object to modify.
- * @param {string} path - The dot-notation path where to set the value.
- * @param {*} value - The value to set.
+ * @param {Object} obj   - The object to modify.
+ * @param {string} path  - The dot-notation path where to set the value.
+ * @param {*}      value - The value to set.
  * @return {void}
  */
 export const setNested = ( obj, path, value ) => {
-	if ( ! obj || typeof path !== 'string' ) return;
+	if ( ! obj || typeof path !== 'string' ) {return;}
 
 	const keys = path.split( '.' );
 	const lastKey = keys.pop();
@@ -153,12 +153,12 @@ export const setNested = ( obj, path, value ) => {
  *
  * @since x.x.x
  *
- * @param {Object} obj - The object to modify.
+ * @param {Object} obj  - The object to modify.
  * @param {string} path - The dot-notation path to the key to delete.
  * @return {boolean} True if the property was deleted, false otherwise.
  */
 export const deleteNested = ( obj, path ) => {
-	if ( ! obj || typeof path !== 'string' ) return false;
+	if ( ! obj || typeof path !== 'string' ) {return false;}
 
 	const keys = path.split( '.' );
 	const lastKey = keys.pop();
@@ -180,12 +180,12 @@ export const deleteNested = ( obj, path ) => {
  *
  * @since x.x.x
  *
- * @param {Object} obj - The object to check.
+ * @param {Object} obj  - The object to check.
  * @param {string} path - The dot-notation path to check.
  * @return {boolean} True if the property exists, false otherwise.
  */
 const has = ( obj, path ) => {
-	if ( ! obj || typeof path !== 'string' ) return false;
+	if ( ! obj || typeof path !== 'string' ) {return false;}
 
 	const keys = path.split( '.' );
 	let current = obj;
@@ -336,7 +336,7 @@ const deepMerge = ( target, source ) => {
  */
 const shouldUpdateData = ( current, updated ) => {
 	// Fast reference check first.
-	if ( current === updated ) return false;
+	if ( current === updated ) {return false;}
 
 	// Performance hack: Direct comparison without creating intermediate objects.
 	// Iterate through keys once and compare directly.
@@ -344,7 +344,7 @@ const shouldUpdateData = ( current, updated ) => {
 	const updatedKeys = Object.keys( updated );
 
 	// Quick length check first.
-	if ( currentKeys.length !== updatedKeys.length ) return true;
+	if ( currentKeys.length !== updatedKeys.length ) {return true;}
 
 	// Check all current keys exist in updated and values are equal.
 	for ( const key of currentKeys ) {
@@ -356,10 +356,10 @@ const shouldUpdateData = ( current, updated ) => {
 		const updatedHasValue = ! isFunction( updatedVal ) && ! isUndefined( updatedVal );
 
 		// If value presence differs, objects are different.
-		if ( currentHasValue !== updatedHasValue ) return true;
+		if ( currentHasValue !== updatedHasValue ) {return true;}
 
 		// If both have values, compare them.
-		if ( currentHasValue && ! isEqual( currentVal, updatedVal ) ) return true;
+		if ( currentHasValue && ! isEqual( currentVal, updatedVal ) ) {return true;}
 	}
 
 	return false;
@@ -395,8 +395,8 @@ const isBreakpointDataEmpty = ( breakpointData ) => {
  *
  * @since x.x.x
  *
- * @param {string} from - The device type to transition from.
- * @param {string} to - The device type to transition to.
+ * @param {string} from     - The device type to transition from.
+ * @param {string} to       - The device type to transition to.
  * @param {Object} controls - The responsive controls object.
  * @return {boolean} True if the device update should be skipped, false otherwise.
  */
@@ -406,16 +406,16 @@ function shouldSkipDeviceUpdate( from, to, controls ) {
 	const sm = controls?.sm;
 
 	// Desktop → Tablet when md is empty.
-	if ( from === DESKTOP && to === TABLET && isBreakpointDataEmpty( md ) ) return true;
+	if ( from === DESKTOP && to === TABLET && isBreakpointDataEmpty( md ) ) {return true;}
 
 	// Tablet → Mobile when sm is empty.
-	if ( from === TABLET && to === MOBILE && isBreakpointDataEmpty( sm ) ) return true;
+	if ( from === TABLET && to === MOBILE && isBreakpointDataEmpty( sm ) ) {return true;}
 
 	// Tablet → Desktop when both lg and md are empty.
-	if ( from === TABLET && to === DESKTOP && isBreakpointDataEmpty( lg ) && isBreakpointDataEmpty( md ) ) return true;
+	if ( from === TABLET && to === DESKTOP && isBreakpointDataEmpty( lg ) && isBreakpointDataEmpty( md ) ) {return true;}
 
 	// Mobile → Tablet when both sm and md are empty.
-	if ( from === MOBILE && to === TABLET && isBreakpointDataEmpty( sm ) && isBreakpointDataEmpty( md ) ) return true;
+	if ( from === MOBILE && to === TABLET && isBreakpointDataEmpty( sm ) && isBreakpointDataEmpty( md ) ) {return true;}
 
 	return false;
 }
@@ -432,7 +432,7 @@ function shouldSkipDeviceUpdate( from, to, controls ) {
  */
 const shouldUpdateResponsiveData = ( a, b ) => {
 	// Fast reference check.
-	if ( a === b ) return false;
+	if ( a === b ) {return false;}
 
 	// If one is object and the other is not, they are different.
 	if ( typeof a !== 'object' || typeof b !== 'object' || a === null || b === null ) {
@@ -446,7 +446,7 @@ const shouldUpdateResponsiveData = ( a, b ) => {
 	const cleanKeysA = keysA.filter( ( key ) => ! isUndefined( a[ key ] ) && ! isFunction( a[ key ] ) );
 	const cleanKeysB = keysB.filter( ( key ) => ! isUndefined( b[ key ] ) && ! isFunction( b[ key ] ) );
 
-	if ( cleanKeysA.length !== cleanKeysB.length ) return true;
+	if ( cleanKeysA.length !== cleanKeysB.length ) {return true;}
 
 	// Check key-value pairs.
 	for ( const key of cleanKeysA ) {
@@ -472,7 +472,7 @@ const hasMixedRadiusInAnyBreakpoint = ( responsiveControls ) => {
 
 	return breakpoints.some( ( bp ) => {
 		const breakpointData = responsiveControls[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) return false;
+		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return false;}
 
 		return (
 			has( breakpointData, 'style.border.radius.topLeft' ) ||
@@ -521,7 +521,7 @@ const normalizeRadiusFormat = ( responsiveControls ) => {
 
 	breakpoints.forEach( ( bp ) => {
 		const breakpointData = normalized[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) return;
+		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return;}
 
 		// Check if this breakpoint has single radius
 		if ( has( breakpointData, 'style.border.radius' ) && typeof breakpointData.style.border.radius !== 'object' ) {
@@ -553,7 +553,7 @@ const hasIndividualBorderInAnyBreakpoint = ( responsiveControls ) => {
 
 	return breakpoints.some( ( bp ) => {
 		const breakpointData = responsiveControls[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) return false;
+		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return false;}
 
 		return (
 			has( breakpointData, 'style.border.top' ) ||
@@ -569,7 +569,7 @@ const hasIndividualBorderInAnyBreakpoint = ( responsiveControls ) => {
  *
  * @since x.x.x
  *
- * @param {Object} shorthandBorder - The shorthand border object with width, style, color.
+ * @param {Object} shorthandBorder   - The shorthand border object with width, style, color.
  * @param {string} borderColorPreset - Optional borderColor preset value.
  * @return {Object} Individual border object with top, right, bottom, left properties.
  */
@@ -629,7 +629,7 @@ const normalizeBorderFormat = ( responsiveControls ) => {
 
 	breakpoints.forEach( ( bp ) => {
 		const breakpointData = normalized[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) return;
+		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return;}
 
 		// Check if this breakpoint has shorthand border properties
 		const hasShorthandBorder =
@@ -687,7 +687,7 @@ const normalizeBorderFormat = ( responsiveControls ) => {
  *
  * @param {Object} target - The target object to modify.
  * @param {Object} source - The source object containing new values.
- * @param {Array} pairs - Array of mutually exclusive attribute pairs [presetKey, customPath].
+ * @param {Array}  pairs  - Array of mutually exclusive attribute pairs [presetKey, customPath].
  */
 const resolveMutualExclusivity = ( target, source, pairs ) => {
 	pairs.forEach( ( [ presetKey, customPath ] ) => {
@@ -786,8 +786,8 @@ const resolveMutualExclusivity = ( target, source, pairs ) => {
  * @since x.x.x
  *
  * @param {string} basePath - The base path like 'style.spacing'
- * @param {Object} obj - The object to traverse
- * @param {Array} paths - Array to collect paths
+ * @param {Object} obj      - The object to traverse
+ * @param {Array}  paths    - Array to collect paths
  * @param {number} maxDepth - Maximum depth to traverse
  */
 const generateNestedPaths = ( basePath, obj, paths = [], maxDepth = 3 ) => {
@@ -817,8 +817,8 @@ const generateNestedPaths = ( basePath, obj, paths = [], maxDepth = 3 ) => {
  *
  * @since x.x.x
  *
- * @param {Object} result       - The original attributes object.
- * @param {Object} valuesToApply - The object containing values to be applied.
+ * @param {Object}        result        - The original attributes object.
+ * @param {Object}        valuesToApply - The object containing values to be applied.
  * @param {Array<string>} keysToCleanup - Flat dot-notation paths to clean.
  */
 const cleanupStaleNestedKeys = ( result, valuesToApply, keysToCleanup ) => {
@@ -860,12 +860,12 @@ const cleanupStaleNestedKeys = ( result, valuesToApply, keysToCleanup ) => {
  */
 export const hasValue = ( value ) => {
 	// Check for null/undefined/empty string.
-	if ( isNil( value ) || value === '' ) return false;
+	if ( isNil( value ) || value === '' ) {return false;}
 
 	// Handle objects and arrays.
 	if ( isObject( value ) ) {
 		// For arrays, check if they have any elements.
-		if ( isArray( value ) ) return value.length > 0;
+		if ( isArray( value ) ) {return value.length > 0;}
 		// For objects, check if any property has a value.
 		return Object.keys( value ).length > 0 && Object.values( value ).some( ( v ) => hasValue( v ) );
 	}
@@ -943,7 +943,7 @@ export const extractResponsiveAttributes = ( attributes, blockName ) => {
  */
 export const isAllowedBlock = ( block ) => {
 	// Fast path: return false for invalid blocks.
-	if ( ! block?.name ) return false;
+	if ( ! block?.name ) {return false;}
 
 	// Check if block is excluded first.
 	if ( EXCLUDED_BLOCKS.includes( block.name ) ) {
@@ -1004,10 +1004,10 @@ const cleanupGlobalDeviceListener = () => {
  * @since x.x.x
  */
 const initGlobalDeviceListener = () => {
-	if ( globalDeviceListener ) return; // Already initialized.
+	if ( globalDeviceListener ) {return;} // Already initialized.
 
 	// Use imported WordPress data functions.
-	if ( ! dataSubscribe || ! dataSelect ) return;
+	if ( ! dataSubscribe || ! dataSelect ) {return;}
 
 	let previousDevice = dataSelect( 'core/editor' )?.getDeviceType?.() || DESKTOP;
 
@@ -1084,13 +1084,13 @@ wp.domReady( () => {
  *
  * @since x.x.x
  *
- * @param {string} blockName - The name of the block.
+ * @param {string}  blockName      - The name of the block.
  * @param {boolean} onlyBlockAttrs - Whether to return only block-specific responsive keys.
  * @return {Array} Array of responsive keys for the specific block type.
  */
 export const getBlockResponsiveKeys = ( blockName, onlyBlockAttrs = false ) => {
 	// If no blockName provided, return default keys or empty array.
-	if ( ! blockName ) return onlyBlockAttrs ? [] : RESPONSIVE_KEYS;
+	if ( ! blockName ) {return onlyBlockAttrs ? [] : RESPONSIVE_KEYS;}
 
 	// Get block-specific responsive keys from the mapping.
 	let blockSpecificKeys = BLOCK_RESPONSIVE_KEYS[ blockName ] || [];
@@ -1104,7 +1104,7 @@ export const getBlockResponsiveKeys = ( blockName, onlyBlockAttrs = false ) => {
 	 * @since x.x.x
 	 *
 	 * @param {Array<string>} blockSpecificKeys Array of responsive attribute keys for this block type.
-	 * @param {string} blockName The block name (e.g., 'spectra/advanced-heading').
+	 * @param {string}        blockName         The block name (e.g., 'spectra/advanced-heading').
 	 *
 	 * @return {Array<string>} Modified array of responsive keys including Pro block attributes.
 	 */
@@ -1147,7 +1147,7 @@ export const getBlockResponsiveKeys = ( blockName, onlyBlockAttrs = false ) => {
  */
 export const extendBlockAttributes = ( settings, name ) => {
 	// Skip blocks that shouldn't have responsive controls.
-	if ( ! isAllowedBlock( { name } ) ) return settings;
+	if ( ! isAllowedBlock( { name } ) ) {return settings;}
 
 	// Add the responsiveControls attribute to the block.
 	return {
@@ -1208,10 +1208,10 @@ const getBreakpointType = ( deviceType ) => BREAKPOINT_TYPE_MAP[ deviceType ] ||
  *
  * @since x.x.x
  *
- * @param {Object} baseResponsiveAttrs       - The baseResponsiveAttrs attributes to merge into.
- * @param {Object} responsive - The responsive attributes to merge from.
- * @param {string} deviceType - The device type to get the responsive attributes for.
- * @param {string} blockName  - The name of the block.
+ * @param {Object} baseResponsiveAttrs - The baseResponsiveAttrs attributes to merge into.
+ * @param {Object} responsive          - The responsive attributes to merge from.
+ * @param {string} deviceType          - The device type to get the responsive attributes for.
+ * @param {string} blockName           - The name of the block.
  *
  * @return {Object} The merged attributes with properly handled responsive values.
  */
@@ -1366,7 +1366,7 @@ export const deepMergeAttributes = ( baseResponsiveAttrs, responsive, deviceType
 	} );
 
 	blockKeys.forEach( ( key ) => {
-		if ( ! keysToCleanup.includes( key ) ) keysToCleanup.push( key );
+		if ( ! keysToCleanup.includes( key ) ) {keysToCleanup.push( key );}
 
 		// If it's the background key, also add inner properties for cleanup.
 		if ( key === 'background' && supportsBackground ) {
@@ -1454,7 +1454,7 @@ export const deepMergeAttributes = ( baseResponsiveAttrs, responsive, deviceType
 
 		if ( allColorsAreSame ) {
 			// All sides have same color - ADD shorthand (keep individual for settings)
-			if ( ! result.style.border ) result.style.border = {};
+			if ( ! result.style.border ) {result.style.border = {};}
 			result.style.border.color = topColor;
 
 			// Keep individual colors for settings controls
@@ -1616,7 +1616,7 @@ const GlobalDeviceUpdateManager = {
 	/**
 	 * Register a block for device update processing.
 	 *
-	 * @param {string} clientId - Unique WordPress block identifier.
+	 * @param {string}   clientId - Unique WordPress block identifier.
 	 * @param {Function} updateFn - Block-specific device update function.
 	 * @since x.x.x
 	 */
@@ -1686,7 +1686,7 @@ const GlobalDeviceUpdateManager = {
 		}
 
 		// Prevent duplicate processing of same device
-		if ( this.currentDevice === newDevice ) return;
+		if ( this.currentDevice === newDevice ) {return;}
 
 		// CLEAN SLATE: Clear everything before starting batch processing
 		this.cancelPendingProcessing();

@@ -5,10 +5,11 @@
  * @package SpectraBlocks
  */
 
-use Spectra\AssetLoader;
-use Spectra\BlockManager;
-use Spectra\ExtensionManager;
-use Spectra\AbilitiesManager;
+use SpectraBlocks\AssetLoader;
+use SpectraBlocks\BlockManager;
+use SpectraBlocks\ExtensionManager;
+use SpectraBlocks\AnalyticsManager;
+use SpectraBlocks\AbilitiesManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,6 +40,7 @@ function spectra_blocks_init() {
 	( BlockManager::instance() )->init();
 	( AssetLoader::instance() )->init();
 	( ExtensionManager::instance() )->init();
+	( AnalyticsManager::instance() )->init();
 	( AbilitiesManager::instance() )->init();
 }
 

@@ -7,13 +7,15 @@
  * @package Spectra\Blocks\CounterChildNumber
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get context from parent counter block.
-// Support reverse counting: allow start > end for decrement animation.
-$start_number         = $block->context['spectra/counter/startNumber'] ?? 0;
-$end_number           = $block->context['spectra/counter/endNumber'] ?? 100;
+$raw_start_number = $block->context['spectra/counter/startNumber'] ?? 0;
+$raw_end_number   = $block->context['spectra/counter/endNumber'] ?? 100;
+
+// Validation: If start > end, use default values (0 to 100).
+$start_number         = $raw_start_number > $raw_end_number ? 0 : $raw_start_number;
+$end_number           = $raw_start_number > $raw_end_number ? 100 : $raw_end_number;
 $prefix               = $block->context['spectra/counter/prefix'] ?? '';
 $suffix               = $block->context['spectra/counter/suffix'] ?? '';
 $thousand_separator   = $block->context['spectra/counter/thousandSeparator'] ?? '';

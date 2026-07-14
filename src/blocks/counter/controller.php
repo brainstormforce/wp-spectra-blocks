@@ -7,8 +7,11 @@
  * @package Spectra\Blocks\Counter
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
+
+// Set the attributes with fallback if required.
+$anchor = $attributes['anchor'] ?? '';
 
 // Get counter-specific attributes.
 $counter_style             = $attributes['counterStyle'] ?? 'simple';
@@ -28,6 +31,8 @@ $bar_height                = $attributes['barHeight'] ?? '';
 $bar_border_radius         = isset( $attributes['barBorderRadius'] ) ? $attributes['barBorderRadius'] . 'px' : null;
 $prefix_color              = $attributes['prefixColor'] ?? '';
 $suffix_color              = $attributes['suffixColor'] ?? '';
+$prefix_right_margin       = $attributes['prefixRightMargin'] ?? '';
+$suffix_left_margin        = $attributes['suffixLeftMargin'] ?? '';
 
 // Extract WordPress core colors to use in Spectra system (like content block).
 $wp_text_color       = $attributes['style']['color']['text'] ?? '';

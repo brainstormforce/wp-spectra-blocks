@@ -140,12 +140,12 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 	};
 
 	const translatedName = sprintf(
-		/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
+		/* translators: abbreviation for units */ __( '%s', 'spectra-blocks' ),
 		name
 	)
 
 	const translatedDesc = sprintf(
-		/* translators: abbreviation for units */ __( ' %s', 'spectra-blocks' ),
+		/* translators: abbreviation for units */ __( '%s', 'spectra-blocks' ),
 		desc
 	)
 

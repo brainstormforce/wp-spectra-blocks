@@ -1,13 +1,13 @@
 /**
  * SVG Security utilities for sanitizing and validating SVG content.
- * 
+ *
  * @since x.x.x
  */
 
 /**
  * Basic SVG sanitization function to remove potentially dangerous elements and attributes.
  * This is a client-side safety measure - proper server-side sanitization should also be implemented.
- * 
+ *
  * @param {string} svgContent - Raw SVG content to sanitize
  * @return {string|null} Sanitized SVG content or null if invalid
  */
@@ -145,9 +145,9 @@ export const processSpectraSVG = async ( svgContent ) => {
 
 /**
  * Validate SVG file size and basic structure.
- * 
+ *
  * @param {string} svgContent - SVG content to validate
- * @param {Object} options - Validation options
+ * @param {Object} options    - Validation options
  * @return {boolean} Whether the SVG passes validation
  */
 export const validateSVGStructure = ( svgContent, options = {} ) => {
@@ -195,7 +195,7 @@ export const validateSVGStructure = ( svgContent, options = {} ) => {
 /**
  * Check if WordPress allows SVG uploads by checking mime types.
  * This is a client-side check - server-side validation is still required.
- * 
+ *
  * @return {boolean} Whether SVG uploads appear to be enabled
  */
 export const isSVGUploadEnabled = () => {

@@ -15,14 +15,14 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Learn_Actions' ) ) {
 	/**
 	 * Class Spectra_Blocks_Admin_Learn_Actions
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 */
 	class Spectra_Blocks_Admin_Learn_Actions {
 
 		/**
 		 * Initialize the class.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public static function init() {
@@ -34,7 +34,7 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Learn_Actions' ) ) {
 		 *
 		 * Shows tooltips on Global Styles admin pages when navigated from the Learn tab.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.0
 		 * @return void
 		 */
 		public static function enqueue_admin_learn_actions_script() {

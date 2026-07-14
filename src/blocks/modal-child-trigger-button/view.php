@@ -7,16 +7,17 @@
  * @package Spectra\Blocks\ModalChildTriggerButton
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
 
-<button
+<div
 <?php
 	echo wp_kses_data( $wrapper_attributes );
 ?>
 	data-wp-on--click="spectra/modal::actions.toggle"
+	role="button"
+	tabindex="0"
 <?php if ( ! empty( $aria_label ) ) : ?>
 	aria-label="<?php echo esc_attr( $aria_label ); ?>"
 <?php endif; ?>
@@ -27,11 +28,11 @@ if ( isset( $icon ) && 'before' === $icon_position ) {
 }
 
 if ( $show_text ) {
-	echo '<span class="spectra-button__link">' . wp_kses_post( $text ) . '</span>';
+	echo '<div class="spectra-button__link">' . wp_kses_post( $text ) . '</div>';
 }
 
 if ( isset( $icon ) && 'after' === $icon_position ) {
 	Renderer::svg_html( $icon, $flip_for_rtl, $icon_props );
 }
 ?>
-</button>
+</div>

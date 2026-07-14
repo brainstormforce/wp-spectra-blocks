@@ -22,7 +22,7 @@
 		// Use tabular numerals for consistent digit width (works with any font)
 		font-variant-numeric: tabular-nums;
 		font-feature-settings: "tnum"; // Ensure consistent character width without changing font family.
-		white-space: nowrap;// Stable width during animation.
+		white-space: nowrap; // Stable width during animation.
 		// min-width: 1ch; // At least one character width.
 		text-align: center;
 		transform: none !important;
@@ -45,8 +45,14 @@
 	}
 }
 
+// Apply explicit text color when block has spectra-text-color class.
+.wp-block-spectra-counter-child-number[class*="wp-block"].spectra-text-color {
+	color: var(--spectra-text-color);
+}
+
 // Higher specificity rules to override container text color inheritance
-.wp-block-spectra-container[class*="wp-block"] .wp-block-spectra-counter-child-number {
+.wp-block-spectra-container[class*="wp-block"]
+.wp-block-spectra-counter-child-number {
 
 	.spectra-counter-prefix {
 		color: var(--spectra-prefix-color, currentColor);
@@ -58,7 +64,8 @@
 }
 
 // Higher specificity rules to override counter text color inheritance.
-.wp-block-spectra-counter[class*="wp-block"].spectra-text-color .wp-block-spectra-counter-child-number {
+.wp-block-spectra-counter[class*="wp-block"].spectra-text-color
+.wp-block-spectra-counter-child-number {
 
 	.spectra-counter-prefix {
 		color: var(--spectra-prefix-color, currentColor) !important;

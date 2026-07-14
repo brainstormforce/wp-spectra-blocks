@@ -7,7 +7,6 @@
  * @package Spectra\Blocks\CountdownChildNumber
  */
 
-defined( 'ABSPATH' ) || exit;
 ?>
 <div
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>

@@ -6,14 +6,14 @@ import { RangeControl } from '@wordpress/components';
 
 /**
  * Debounced RangeControl Component
- * 
+ *
  * Wraps the WordPress RangeControl to only trigger onChange when user stops sliding.
  * This prevents excessive re-renders and improves editor performance.
  *
- * @param {Object}   props                The component props.
- * @param {number}   props.value          The current value.
- * @param {Function} props.onChange       Callback when value changes (debounced).
- * @param {boolean}  props.enableDebounce Enable/disable debouncing (default: true).
+ * @param {Object}   props                 The component props.
+ * @param {number}   props.value           The current value.
+ * @param {Function} props.onChange        Callback when value changes (debounced).
+ * @param {boolean}  props.enableDebounce  Enable/disable debouncing (default: true).
  * @param {boolean}  props.showLivePreview Show live preview during sliding (default: true).
  * @since x.x.x
  * @return {Element} The debounced RangeControl component.
@@ -48,11 +48,11 @@ const DebouncedRangeControl = ( props ) => {
 	// Optimized ref-based solution to detect and handle empty input field
 	useEffect( () => {
 		const rangeControl = rangeControlRef.current;
-		if ( ! rangeControl ) return;
+		if ( ! rangeControl ) {return;}
 
 		// Find the input field within the RangeControl
 		const inputField = rangeControl.querySelector( 'input[type="number"]' );
-		if ( ! inputField ) return;
+		if ( ! inputField ) {return;}
 
 		// Memoized handlers to prevent recreation on every render
 		const handleInputChange = ( event ) => {
@@ -64,7 +64,7 @@ const DebouncedRangeControl = ( props ) => {
 
 		const handleKeyDown = ( event ) => {
 			// Only process backspace events
-			if ( event.key !== 'Backspace' || ! onChange ) return;
+			if ( event.key !== 'Backspace' || ! onChange ) {return;}
 			
 			const target = event.target;
 			const { value: inputValue, selectionStart, selectionEnd } = target;

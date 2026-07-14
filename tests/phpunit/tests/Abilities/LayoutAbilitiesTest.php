@@ -5,10 +5,10 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\CreateContainer;
-use Spectra\Abilities\CreateModal;
-use Spectra\Abilities\CreateSlider;
-use Spectra\Abilities\GeneratePageLayout;
+use SpectraBlocks\Abilities\CreateContainer;
+use SpectraBlocks\Abilities\CreateModal;
+use SpectraBlocks\Abilities\CreateSlider;
+use SpectraBlocks\Abilities\GeneratePageLayout;
 
 /**
  * Layout abilities test case.

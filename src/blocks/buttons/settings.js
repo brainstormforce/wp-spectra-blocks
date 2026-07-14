@@ -11,7 +11,7 @@ import InspectorColor from '@spectra-components/inspector-color';
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

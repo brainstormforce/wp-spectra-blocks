@@ -17,6 +17,7 @@ import blockIcons from '@spectra-helpers/block-icons';
  * @since x.x.x
  */
 registerBlockType( metadata.name, {
+	...metadata,
 	icon: blockIcons.counterChildWrapper(),
 	edit,
 	save,

@@ -7,8 +7,7 @@ import {
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	ToggleControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+	SelectControl,
 	__experimentalVStack as VStack,
 	ColorPalette,
 } from '@wordpress/components';
@@ -20,7 +19,10 @@ import { __, isRTL } from '@wordpress/i18n';
  */
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
-import { helperIcons } from '@spectra-helpers/block-icons';
+import { TAG_CONFIG, DEFAULT_TAG_NAME } from './render';
+
+// Derive SelectControl options from TAG_CONFIG (SSOT).
+const TAG_OPTIONS = Object.entries( TAG_CONFIG ).map( ( [ value, { label } ] ) => ( { value, label } ) );
 
 /**
  * Element Sub-settings: General settings.
@@ -40,7 +42,8 @@ const BlockSettings = memo( ( props ) => {
 		}
 	} = props;
 
-	const defaultTagName = 'p';
+	const defaultTagName = DEFAULT_TAG_NAME;
+
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
@@ -52,93 +55,23 @@ const BlockSettings = memo( ( props ) => {
 				} }
 				panelId={ clientId }
 			>
-				{/* This tool panel item will require reset when any of these conditions are met:
-				- The tagName attribute is set. Default: undefined.
-				- The tagName is set to something other than the defaultTagName.
-				--- Note that this control should always show the selected value as the default tag - even when reset. This is for easier user understandability.
-				*/}
 				<ToolsPanelItem
 					hasValue={ () => !! tagName && defaultTagName !== tagName }
 					label={ __( 'Tag', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { tagName: defaultTagName } ) }
-					resetAllFilter={ () => ( {
-						tagName: defaultTagName,
-					} ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
-					<ToggleGroupControl
+					<SelectControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={ __( 'HTML Tag', 'spectra-blocks' ) }
 						value={ tagName || defaultTagName }
+						variant="default"
+						options={ TAG_OPTIONS }
 						onChange={ ( value ) => setAttributes( { tagName: value } ) }
-						isBlock
-					>
-						<ToggleGroupControlOption
-							value="h1"
-							label={ __( 'H1', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h1( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="h2"
-							label={ __( 'H2', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h2( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="h3"
-							label={ __( 'H3', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h3( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="h4"
-							label={ __( 'H4', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h4( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="h5"
-							label={ __( 'H5', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h5( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="h6"
-							label={ __( 'H6', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.h6( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="p"
-							label={ __( 'P', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.p( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="div"
-							label={ __( 'D', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.div( false ) }
-						</ToggleGroupControlOption>
-						<ToggleGroupControlOption
-							value="span"
-							label={ __( 'S', 'spectra-blocks' ) }
-							showTooltip
-						>
-							{ helperIcons.content.span( false ) }
-						</ToggleGroupControlOption>
-					</ToggleGroupControl>
+						help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'spectra-blocks' ) }
+					/>
 				</ToolsPanelItem>
 			</ToolsPanel>
 		</InspectorControls>
@@ -244,9 +177,6 @@ const TypographySettings = memo( ( props ) => {
 						aria-label={ __( 'Drop cap', 'spectra-blocks' ) }
 						isShownByDefault={ isDropCapControlEnabledByDefault }
 						onDeselect={ () => setAttributes( { dropCap: undefined } ) }
-						resetAllFilter={ () => ( {
-							dropCap: undefined,
-						} ) }
 						panelId={ clientId }
 					>
 						<ToggleControl

@@ -27,7 +27,8 @@
 		"table of contents",
 		"toc",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"allowedBlocks": ["spectra/list-child-item", "spectra/list"],
 	"providesContext": {
@@ -96,6 +97,9 @@
 	"editorStyle": "file:./index.css",
 	"style": "file:./style-index.css",
 	"attributes": {
+		"anchor": {
+			"type": "string"
+		},
 		"isPreview": {
 			"type": "boolean",
 			"default": false

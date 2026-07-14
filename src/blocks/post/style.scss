@@ -1,0 +1,597 @@
+/**
+ * Frontend Styles
+ */
+
+.wp-block-spectra-post {
+
+	/* Grid Layout */
+	&.spectra-post-layout-grid {
+
+		.spectra-post-loop-wrapper {
+			display: grid;
+			grid-template-columns: repeat(var(--spectra-post-columns, 3), 1fr);
+			gap: var(--spectra-post-row-gap, 20px) var(--spectra-post-column-gap, 20px);
+			list-style: none; /* Reset list style */
+			margin: 0; /* Reset default margin */
+			padding: 0; /* Reset default padding */
+
+			.spectra-post-item {
+				min-width: 0; /* Fix for grid/flex overflow */
+				word-break: break-word; /* Ensure long words don't overflow */
+				overflow-wrap: break-word;
+			}
+		}
+	}
+
+	/* Masonry Layout */
+	&.spectra-post-layout-masonry {
+
+		.spectra-post-loop-wrapper {
+			display: block;
+			column-count: var(--spectra-post-columns, 3);
+			column-gap: var(--spectra-post-column-gap, 20px);
+			list-style: none; /* Reset list style */
+			margin: 0; /* Reset default margin */
+			padding: 0; /* Reset default padding */
+
+			.spectra-post-item {
+				break-inside: avoid;
+				margin-bottom: var(--spectra-post-row-gap, 20px);
+				min-width: 0; /* Fix for grid/flex overflow */
+				word-break: break-word; /* Ensure long words don't overflow */
+				overflow-wrap: break-word;
+			}
+		}
+	}
+
+	/* Carousel Layout */
+	&.spectra-post-layout-carousel,
+	& .spectra-post-layout-carousel {
+		position: relative; /* Allow absolute positioning of arrows */
+
+		/* Fix for editor carousel-in-flex blowup — the Post block in
+		 * `carousel` layoutType explodes to the browser's ~16.7M px max
+		 * width when placed inside a flex container (default Spectra
+		 * Container layout), taking the entire viewport hostage.
+		 *
+		 * Root cause chain (identified from source):
+		 *
+		 *   a. spectra/post/block.json declares supports.layout as
+		 *      flex-column. WordPress core injects an inline `<style>` at
+		 *      page-init setting `.spectra-post-inner-blocks.is-layout-flex
+		 *      { display: flex; flex-direction: column; align-items: stretch }`.
+		 *
+		 *   b. In editor cold-load, that inline core rule is parsed and
+		 *      applied BEFORE our external block stylesheet (this file)
+		 *      loads. During that window, the post block is inside a
+		 *      flex-column context — width is the CROSS axis.
+		 *
+		 *   c. In flex-column with `align-items: stretch`, a child's cross
+		 *      size = parent's cross size *unless* the child's `min-content`
+		 *      exceeds it, in which case the child OVERFLOWS to fit
+		 *      min-content. `min-width: 0` DOES NOT rescue this — `min-width`
+		 *      only overrides the main-axis min-content resolution, and
+		 *      main-axis here is height, not width.
+		 *
+		 *   d. The post-template wrapper has inline `width: 100%` (set by
+		 *      post-template/render.js in useBlockProps). Its content
+		 *      includes `.swiper-wrapper { display: flex; flex-wrap: nowrap }`
+		 *      chaining N slides — intrinsic min-content = sum of slides,
+		 *      driving the flex-column child's min-content to ~16.7M px.
+		 *
+		 *   e. Swiper's useRefEffect fires during React commit while (b)'s
+		 *      layout is still in effect. It reads
+		 *      `element.getBoundingClientRect().width === 16777216`, caches
+		 *      that, and writes `width: ~5.6M px` inline on every slide.
+		 *      Those inline styles then keep the ancestor tree at 16.7M
+		 *      even after our external CSS loads and would otherwise
+		 *      collapse it.
+		 *
+		 * Fix — clamp the wrapper cross-axis so descendant min-content can
+		 * no longer push the ancestor tree wider than the outer container:
+		 *
+		 *   - `max-width: 100%` on the outer post block prevents it from
+		 *     exceeding its available cross-axis width regardless of what
+		 *     min-content the descendants demand. Verified empirically
+		 *     that this alone (combined with `display: block` on the
+		 *     inner-blocks wrapper below) lets the flex-column parent's
+		 *     `align-items: stretch` win over descendant intrinsic
+		 *     min-content, layout resolves to the parent's cross size,
+		 *     and Swiper measures correctly at init.
+		 *   - Keep `min-width: 0` for the flex-ROW outer-container case
+		 *     (where width IS the main axis).
+		 *   - `display: block` override on the inner-blocks wrapper
+		 *     replaces the core-injected `is-layout-flex` with plain
+		 *     block flow. Do NOT add `overflow: hidden` here — it would
+		 *     clip the prev/next nav arrows (positioned at ±20px outside
+		 *     the swiper via `--spectra-carousel-arrow-distance`). */
+		min-width: 0;
+		max-width: 100%;
+
+		.spectra-post-inner-blocks {
+			display: block;
+			max-width: 100%;
+		}
+
+		/* Pre-Swiper init: stable layout before JS */
+		.swiper:not(.swiper-initialized) {
+			display: block; /* prevents shrink-to-fit in some editor wrappers */
+			width: 100% !important; /* beat editor/layout CSS */
+			min-width: 0;
+			overflow: hidden;
+
+			.swiper-wrapper {
+				display: flex;
+				flex-wrap: nowrap;
+				width: 100% !important; /* ensure 100% context is real */
+				min-width: 0;
+				gap: var(--spectra-carousel-gap, 30px);
+			}
+
+			.swiper-slide {
+
+				/* use flex-basis sizing (more reliable than width in flex layouts) */
+				flex:
+					0 0
+					calc(( 100% - ( ( var(--spectra-carousel-slides, 3) - 1 ) * var(--spectra-carousel-gap, 30px) ) ) / var(--spectra-carousel-slides, 3)) !important;
+
+				min-width: 0;
+			}
+
+			& ~ .swiper-button-prev,
+			& ~ .swiper-button-next {
+				opacity: var(--spectra-arrow-opacity, 0);
+			}
+		}
+
+		/* Target the inner swiper container (which comes from post-template) */
+		.swiper {
+
+			.swiper-wrapper {
+				height: auto;
+				align-items: flex-start;
+			}
+
+			.swiper-slide {
+				height: auto;
+				box-sizing: border-box;
+
+				&.spectra-post-item {
+					width: auto;
+				}
+			}
+		}
+
+		/* Carousel Equal Height */
+		&.spectra-post-equal-height {
+
+			.swiper {
+
+				.swiper-wrapper {
+					align-items: stretch;
+				}
+			}
+		}
+
+		/* Navigation buttons - copied from slider block */
+		.swiper-button-prev,
+		.swiper-button-next {
+			position: absolute;
+			top: 50%;
+			z-index: 20;
+			transform: translateY(-50%);
+
+			.editor-styles-wrapper & {
+				transform: none;
+			}
+
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.3s ease;
+			border: 0;
+
+			&::after {
+				display: none;
+			}
+
+			svg {
+				overflow: visible;
+				transition: fill 0.3s ease;
+			}
+
+			&:hover,
+			&:focus {
+				outline: none;
+			}
+
+			&:focus-visible {
+				outline: 2px solid currentcolor;
+				outline-offset: 2px;
+			}
+
+			&.swiper-button-disabled {
+				opacity: 0.35;
+				cursor: auto;
+				pointer-events: none;
+			}
+		}
+
+		.swiper-button-prev {
+			left: var(--spectra-carousel-arrow-distance, -20px);
+		}
+
+		.swiper-button-next {
+			right: var(--spectra-carousel-arrow-distance, -20px);
+		}
+
+		/* Pagination - from slider block */
+		.swiper-pagination,
+		.swiper-horizontal > .swiper-pagination-bullets,
+		.swiper-pagination-bullets.swiper-pagination-horizontal,
+		.swiper-pagination-custom,
+		.swiper-pagination-fraction {
+			position: absolute;
+			z-index: 19;
+			width: 100%;
+			left: 0;
+			right: 0;
+			bottom: var(--spectra-carousel-pagination-margin-top, -15px);
+
+			&.swiper-pagination-bullets {
+				pointer-events: none;
+			}
+
+			.swiper-pagination-bullet {
+				pointer-events: all;
+				opacity: 0.7;
+				transition: all 0.3s ease;
+
+				&:hover,
+				&:focus {
+					opacity: 0.9;
+					outline: none;
+				}
+
+				&:focus-visible {
+					outline-offset: 2px;
+				}
+
+				&.swiper-pagination-bullet-active,
+				&-active {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	/* Dynamic styles for carousel - specificity boost */
+	&[class*="wp-block"].spectra-post-layout-carousel,
+	&[class*="wp-block"] .spectra-post-layout-carousel {
+
+		/* Responsive CSS Variables for Pre-Init Layout */
+		--spectra-carousel-slides: var(--spectra-carousel-slides-lg, 3);
+		--spectra-carousel-gap: var(--spectra-carousel-gap-lg, 30px);
+		--spectra-arrow-opacity: var(--spectra-arrow-opacity-lg, 0);
+
+		@media ( max-width: 1024px ) {
+			--spectra-carousel-slides: var(--spectra-carousel-slides-md, 2);
+			--spectra-carousel-gap: var(--spectra-carousel-gap-md, 20px);
+			--spectra-arrow-opacity: var(--spectra-arrow-opacity-md, 0);
+		}
+
+		@media ( max-width: 768px ) {
+			--spectra-carousel-slides: var(--spectra-carousel-slides-sm, 1);
+			--spectra-carousel-gap: var(--spectra-carousel-gap-sm, 10px);
+			--spectra-arrow-opacity: var(--spectra-arrow-opacity-sm, 0);
+		}
+
+		/* Dynamic arrow styles */
+		.swiper-button-prev,
+		.swiper-button-next {
+			color: var(--spectra-carousel-arrow-color, #fff);
+			background-color: var(--spectra-carousel-arrow-bg-color, rgba(0, 0, 0, 0.5));
+			width: calc(var(--spectra-carousel-arrow-size, 18px) * 1.8);
+			height: calc(var(--spectra-carousel-arrow-size, 18px) * 1.8);
+
+			svg {
+				width: var(--spectra-carousel-arrow-size, 18px);
+				height: var(--spectra-carousel-arrow-size, 18px);
+
+				&:not(.spectra-custom-svg) {
+					fill: var(--spectra-carousel-arrow-color, currentcolor);
+				}
+
+				&.spectra-custom-svg {
+					color: var(--spectra-carousel-arrow-color, currentcolor);
+				}
+			}
+		}
+
+		/* Dynamic pagination styles */
+		.swiper-pagination {
+
+			.swiper-pagination-bullet {
+				background-color: var(--spectra-carousel-dot-color, #aeacac);
+				width: var(--spectra-carousel-dot-size, 8px);
+				height: var(--spectra-carousel-dot-size, 8px);
+				margin: 0 var(--spectra-carousel-dot-spacing, 4px);
+				opacity: 0.7;
+
+				&:hover,
+				&:focus {
+					opacity: 0.9;
+				}
+
+				&.swiper-pagination-bullet-active,
+				&-active {
+					opacity: 1;
+					transform: scale(1.2);
+				}
+			}
+		}
+	}
+
+	/* Loading State */
+	&.spectra-post-loading {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	/* Infinite Scroll Loader */
+	.spectra-post-inf-loader {
+		margin: 0 auto;
+		min-height: 3.625rem;
+		width: 10rem;
+		text-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+
+		div {
+			width: var(--spectra-pagination-loader-size, 1.125rem);
+			height: var(--spectra-pagination-loader-size, 1.125rem);
+			background-color: var(--spectra-pagination-color, #0073aa);
+			border-radius: 100%;
+			display: inline-block;
+			animation: spectra-bounce-loader 1.4s infinite ease-in-out both;
+		}
+
+		.spectra-post-loader-1 {
+			animation-delay: -0.32s;
+		}
+
+		.spectra-post-loader-2 {
+			animation-delay: -0.16s;
+		}
+
+		&[hidden] {
+			display: none;
+		}
+	}
+
+	@keyframes spectra-bounce-loader {
+
+		0%,
+		80%,
+		100% {
+			transform: scale(0);
+		}
+
+		40% {
+			transform: scale(1);
+		}
+	}
+
+	/* Pagination Styling */
+	.spectra-post-pagination {
+		margin-top: 0;
+		display: flex;
+
+		/* Alignment */
+		&.spectra-pagination-align-left {
+			justify-content: flex-start;
+
+			.spectra-load-more-wrapper {
+				justify-content: flex-start;
+			}
+		}
+
+		&.spectra-pagination-align-center {
+			justify-content: center;
+
+			.spectra-load-more-wrapper {
+				justify-content: center;
+			}
+		}
+
+		&.spectra-pagination-align-right {
+			justify-content: flex-end;
+
+			.spectra-load-more-wrapper {
+				justify-content: flex-end;
+			}
+		}
+
+		/* Pagination Numbers Container */
+		.spectra-post-pagination-numbers {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+			flex-wrap: wrap;
+
+			/* Base styles for all pagination items */
+			a {
+				min-width: 2.75rem;
+				height: 2.75rem;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 0.75rem;
+				text-decoration: none;
+				border-radius: var(--spectra-pagination-border-radius, 0.25rem);
+				transition: all 0.2s ease;
+				font-weight: 500;
+				font-size: var(--spectra-pagination-font-size, 1rem);
+				box-sizing: border-box;
+				line-height: 1;
+				margin: 0;
+				cursor: pointer;
+
+				&:focus {
+					outline: none;
+				}
+
+				&:focus-visible {
+					outline: 2px solid currentcolor;
+					outline-offset: 2px;
+				}
+			}
+
+			/* Dots */
+			.dots {
+				border: none !important;
+				background: none !important;
+				cursor: default;
+				pointer-events: none;
+			}
+		}
+	}
+
+	/* Dynamic pagination styles - specificity boost */
+	&[class*="wp-block"] {
+
+		/* Filled Layout */
+		&.spectra-pagination-layout-filled {
+
+			.spectra-post-pagination-numbers {
+
+				a {
+
+					/* Base state */
+					background: var(--spectra-pagination-bg-color, #0073aa);
+					color: var(--spectra-pagination-color, #fff);
+					border:
+						var(--spectra-pagination-border-size, 0.125rem) solid
+						var(--spectra-pagination-bg-color, #0073aa);
+
+					/* Active state (current page) */
+					&.current {
+						background: var(--spectra-pagination-bg-color-active, var(--spectra-pagination-bg-color, #005a87));
+						color: var(--spectra-pagination-color-active, var(--spectra-pagination-color, #fff));
+						border-color: var(--spectra-pagination-bg-color-active, var(--spectra-pagination-bg-color, #005a87));
+					}
+
+					/* Hover and focus states */
+					&:focus,
+					&:hover {
+						background: var(--spectra-pagination-bg-color-hover, var(--spectra-pagination-bg-color, #005a87)) !important;
+						color: var(--spectra-pagination-color-hover, var(--spectra-pagination-color, #fff)) !important;
+						border-color: var(--spectra-pagination-bg-color-hover, var(--spectra-pagination-bg-color, #005a87)) !important;
+					}
+				}
+
+				.dots {
+					background: transparent !important;
+					border: none !important;
+				}
+			}
+		}
+
+		/* Border Layout */
+		&.spectra-pagination-layout-border {
+
+			.spectra-post-pagination-numbers {
+
+				a {
+
+					/* Base state */
+					background: transparent;
+					color: var(--spectra-pagination-color, #0073aa);
+					border:
+						var(--spectra-pagination-border-size, 0.125rem) solid
+						var(--spectra-pagination-color, #0073aa);
+
+					/* Active state (current page) */
+					&.current {
+						background: var(--spectra-pagination-bg-color-active, var(--spectra-pagination-color, #0073aa));
+						color: var(--spectra-pagination-color-active, #fff);
+						border-color: var(--spectra-pagination-bg-color-active, var(--spectra-pagination-color, #0073aa));
+					}
+
+					/* Hover and focus states */
+					&:focus,
+					&:hover {
+						background: var(--spectra-pagination-bg-color-hover, var(--spectra-pagination-color, #0073aa)) !important;
+						color: var(--spectra-pagination-color-hover, #fff) !important;
+						border-color: var(--spectra-pagination-bg-color-hover, var(--spectra-pagination-color, #0073aa)) !important;
+					}
+				}
+
+				.dots {
+					background: transparent !important;
+					border: none !important;
+				}
+			}
+		}
+
+		/* Load More Button */
+		.spectra-load-more-wrapper {
+			display: flex;
+			justify-content: center; /* Default alignment, overridden by parent class */
+			width: 100%;
+
+			.spectra-load-more-button {
+				padding-top: var(--spectra-pagination-button-padding-top, 0.875rem);
+				padding-right: var(--spectra-pagination-button-padding-right, 2rem);
+				padding-bottom: var(--spectra-pagination-button-padding-bottom, 0.875rem);
+				padding-left: var(--spectra-pagination-button-padding-left, 2rem);
+				background: var(--spectra-pagination-bg-color, #0073aa);
+				color: var(--spectra-pagination-color, #fff);
+				border:
+					var(--spectra-pagination-border-size, 0.125rem) solid
+					var(--spectra-pagination-border-color, transparent);
+				border-radius: var(--spectra-pagination-border-radius, 0.25rem);
+				font-size: var(--spectra-pagination-font-size, 1rem);
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				box-sizing: border-box;
+				line-height: 1;
+				margin: 0;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 2.75rem;
+
+				&:focus:not(:disabled),
+				&:hover:not(:disabled) {
+					background: var(--spectra-pagination-bg-color-hover, var(--spectra-pagination-bg-color, #005a87));
+					color: var(--spectra-pagination-color-hover, var(--spectra-pagination-color, #fff));
+					border-color: var(--spectra-pagination-border-color-hover, transparent);
+				}
+
+				&:focus-visible {
+					outline: 2px solid currentcolor;
+					outline-offset: 2px;
+				}
+
+				&:disabled {
+					opacity: 0.6;
+					cursor: not-allowed;
+				}
+
+				&[hidden] {
+					display: none;
+				}
+			}
+		}
+	}
+
+	/* Swiper watchOverflow/Lock State */
+	.swiper-button-lock {
+		display: none !important;
+	}
+}

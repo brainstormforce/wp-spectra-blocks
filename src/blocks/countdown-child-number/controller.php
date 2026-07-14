@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildNumber
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Define the ARIA role for accessibility, indicating this is a timer region.
 $label_role = 'timer';

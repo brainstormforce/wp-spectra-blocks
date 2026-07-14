@@ -8,22 +8,22 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\CreateContainer;
-use Spectra\Abilities\CreateButtons;
-use Spectra\Abilities\CreateSeparator;
-use Spectra\Abilities\GetPostContent;
-use Spectra\Abilities\UpdateBlockAttributes;
-use Spectra\Abilities\RemoveBlock;
-use Spectra\Abilities\MoveBlock;
-use Spectra\Abilities\DuplicateBlock;
-use Spectra\Abilities\SearchPostsByBlock;
-use Spectra\Abilities\SearchPostContent;
-use Spectra\Abilities\ApplyAnimation;
-use Spectra\Abilities\RemoveAnimation;
-use Spectra\Abilities\ApplySticky;
-use Spectra\Abilities\ApplyZIndex;
-use Spectra\Abilities\ApplyResponsiveConditions;
-use Spectra\Abilities\RemoveResponsiveConditions;
+use SpectraBlocks\Abilities\CreateContainer;
+use SpectraBlocks\Abilities\CreateButtons;
+use SpectraBlocks\Abilities\CreateSeparator;
+use SpectraBlocks\Abilities\GetPostContent;
+use SpectraBlocks\Abilities\UpdateBlockAttributes;
+use SpectraBlocks\Abilities\RemoveBlock;
+use SpectraBlocks\Abilities\MoveBlock;
+use SpectraBlocks\Abilities\DuplicateBlock;
+use SpectraBlocks\Abilities\SearchPostsByBlock;
+use SpectraBlocks\Abilities\SearchPostContent;
+use SpectraBlocks\Abilities\ApplyAnimation;
+use SpectraBlocks\Abilities\RemoveAnimation;
+use SpectraBlocks\Abilities\ApplySticky;
+use SpectraBlocks\Abilities\ApplyZIndex;
+use SpectraBlocks\Abilities\ApplyResponsiveConditions;
+use SpectraBlocks\Abilities\RemoveResponsiveConditions;
 
 /**
  * Integration abilities test case.

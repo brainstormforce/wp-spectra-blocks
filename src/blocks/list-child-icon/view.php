@@ -7,14 +7,13 @@
  * @package Spectra\Blocks\ListChildIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
-<span <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<?php if ( 'ordered' === $list_type ) : ?>
 		<span class="spectra-list-counter"><?php echo esc_html( $formatted_number ); ?></span>
 	<?php else : ?>
 		<?php Renderer::svg_html( $icon, $flip_for_rtl, $icon_props ); ?>
 	<?php endif; ?>
-</span>
+</div>

@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useBlockProps, getTypographyClassesAndStyles } from '@wordpress/block-editor';
-import { memo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -188,4 +187,4 @@ const Render = ( props ) => {
 	return null;
 };
 
-export default memo( Render );
+export default Render;

@@ -2,7 +2,6 @@
  * External dependencies.
  */
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
@@ -91,7 +90,7 @@ const GeneralSettings = memo( ( props ) => {
 	const handleDateTimeChange = useCallback(
 		( newDate ) => {
 			// Ensure we have a valid date.
-			if ( ! newDate ) return;
+			if ( ! newDate ) {return;}
 
 			// Format the date as a string if it's a Date object.
 			const formattedDate = typeof newDate === 'string' ? newDate : formatDateForPicker( newDate );
@@ -152,8 +151,7 @@ const GeneralSettings = memo( ( props ) => {
 					<ToolsPanelItem
 						hasValue={ () => !! endDateTime }
 						label={ __( 'Timer End Date & Time', 'spectra-blocks' ) }
-						onDeselect={ () => setAttributes( { endDateTime: undefined, displayEndDateTime: undefined } ) }
-						resetAllFilter={ () => ( { endDateTime: undefined, displayEndDateTime: undefined } ) }
+						onDeselect={ () => setAttributes( { endDateTime: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -185,7 +183,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => ! showDays }
 					label={ __( 'Show Days', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showDays: true } ) ) }
-					resetAllFilter={ () => ( { showDays: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -204,7 +201,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => ! showHours }
 					label={ __( 'Show Hours', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showHours: true } ) ) }
-					resetAllFilter={ () => ( { showHours: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -224,7 +220,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => ! showMinutes }
 					label={ __( 'Show Minutes', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showMinutes: true } ) ) }
-					resetAllFilter={ () => ( { showMinutes: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -244,7 +239,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => ! showSeconds }
 					label={ __( 'Show Seconds', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( validateUnits( { showSeconds: true } ) ) }
-					resetAllFilter={ () => ( { showSeconds: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -264,7 +258,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => ariaLiveType !== 'off' }
 					label={ __( 'ARIA Live Type', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { ariaLiveType: 'off' } ) }
-					resetAllFilter={ () => ( { ariaLiveType: 'off' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -301,7 +294,6 @@ const GeneralSettings = memo( ( props ) => {
 					hasValue={ () => overflow !== 'visible' }
 					label={ __( 'Overflow', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { overflow: 'visible' } ) }
-					resetAllFilter={ () => ( { overflow: 'visible' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -388,7 +380,6 @@ const LabelSettings = memo( ( props ) => {
 					hasValue={ () => ! showLabels }
 					label={ __( 'Show Labels', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { showLabels: true } ) }
-					resetAllFilter={ () => ( { showLabels: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -408,7 +399,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { daysLabel: __( 'Days', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { daysLabel: __( 'Days', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -425,7 +415,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { dayLabel: __( 'Day', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { dayLabel: __( 'Day', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -442,7 +431,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { hoursLabel: __( 'Hours', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { hoursLabel: __( 'Hours', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -459,7 +447,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { hourLabel: __( 'Hour', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { hourLabel: __( 'Hour', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -476,7 +463,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { minutesLabel: __( 'Minutes', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { minutesLabel: __( 'Minutes', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -493,7 +479,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { minuteLabel: __( 'Minute', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { minuteLabel: __( 'Minute', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -510,7 +495,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { secondsLabel: __( 'Seconds', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { secondsLabel: __( 'Seconds', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -527,7 +511,6 @@ const LabelSettings = memo( ( props ) => {
 							onDeselect={ () =>
 								setAttributes( { secondLabel: __( 'Second', 'spectra-blocks' ) } )
 							}
-							resetAllFilter={ () => ( { secondLabel: __( 'Second', 'spectra-blocks' ) } ) }
 							isShownByDefault
 							panelId={ clientId }
 						>
@@ -588,7 +571,6 @@ const SeparatorSettings = memo( ( props ) => {
 					hasValue={ () => ! showSeparator }
 					label={ __( 'Show Separator', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { showSeparator: true } ) }
-					resetAllFilter={ () => ( { showSeparator: true } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -611,7 +593,6 @@ const SeparatorSettings = memo( ( props ) => {
 						hasValue={ () => separatorType !== ':' }
 						label={ __( 'Separator Type', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorType: ':' } ) }
-						resetAllFilter={ () => ( { separatorType: ':' } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -865,11 +846,6 @@ const Settings = ( props ) => {
 			<LabelSettings { ...{ ...props } } />
 			<ColorSettings { ...{ ...props } } />
 			<DimensionSettings { ...{ ...props } } />
-			{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-				<InspectorControls group="settings">
-					<UpgradeComponent control={ { campaign: 'countdown' } } />
-				</InspectorControls>
-			) }
 		</>
 	);
 };

@@ -1,8 +1,7 @@
 /* CSS file that store all common CSS that can be loaded into blocks if required. */
 
-// WordPress core button compatibility - default border-radius for button blocks.
-// These rules are set to zero specificity to keep the default styles for buttons.
-// They are needed for backwards compatibility with WordPress core button blocks.
+// WP core button compatibility: zero-specificity default border-radius so it
+// stays overridable.
 :where(.wp-block-button__link) {
 	// 100% causes an oval, but any explicit but really high value retains the pill shape.
 	border-radius: 9999px;
@@ -11,6 +10,16 @@
 // Styles for the Spectra video background type.
 .spectra-background-video {
 	position: relative;
+
+	// Break CSS custom-property inheritance from ancestor blocks.
+	// Without this, a parent's background vars leak into this block's overlay
+	// (::after on the video wrapper) in both normal and hover states.
+	// Inline styles set by the block's own overlay settings have higher specificity
+	// (1,0,0,0) and override these resets when an overlay IS configured.
+	--spectra-background-gradient: initial;
+	--spectra-background-color: transparent;
+	--spectra-background-gradient-hover: initial;
+	--spectra-background-color-hover: transparent;
 
 	// The video background wrapper.
 	&__wrapper {
@@ -41,13 +50,134 @@
 		}
 	}
 
+	// Overlay rendered inside the video wrapper so it sits above the video
+	// but below the block's content (which is a sibling of the wrapper).
+	// Use > (direct child) so this only targets the block's OWN video wrapper,
+	// not wrappers inside nested inner blocks.
+	> .spectra-background-video__wrapper--overlay::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: var(--spectra-background-gradient, var(--spectra-background-color));
+		opacity: var(--spectra-overlay-opacity, 1);
+		pointer-events: none;
+	}
+
 	// When the block is hovered.
 	&:hover {
-
-		// Update the overlay.
-		.spectra-background-video__wrapper--overlay::after {
+		// Update the overlay. Use > to avoid affecting nested inner blocks.
+		> .spectra-background-video__wrapper--overlay::after {
 			background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
 			opacity: var(--spectra-overlay-opacity); // Default opacity if not set.
 		}
 	}
+}
+
+// Imported-content width compatibility. Loads in frontend + editor; scoped to
+// the container's OWN classes (not the body class) so it survives in the editor
+// and in reused imported header/footer parts.
+
+// Imported `gs-*` containers declare their own width — relax `width:100%` to
+// `auto` only for them. (0,2,1): above the container default (0,2,0), below the
+// gs-* tier (0,3,0) so source widths win (`[class*=gs-]` demoted to `:where()`).
+body .wp-block-spectra-container:not(.alignfull):where([class*="gs-"]) {
+	width: auto;
+}
+
+// Root-container align widths, keyed on the container's OWN align (not WP core's
+// `.is-layout-constrained`) so they work in frontend/editor/reused parts. (0,2,1):
+// above core's clamp, below gs-* (0,3,0). Don't add a 3rd class — it'd tie gs-*.
+
+// Full: edge-to-edge.
+body .spectra-is-root-container.alignfull {
+	max-width: none;
+}
+
+// Wide: wide width, centered.
+body .spectra-is-root-container.alignwide {
+	max-width: var(--wp--style--global--wide-size, 1164px);
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+// Keep wide-aligned children within the wide-size bound too.
+body .spectra-is-root-container.alignwide > * {
+	max-width: var(--wp--style--global--wide-size, 1164px);
+}
+
+// Default — neither wide nor full: content width, centered. `:where(:not(...))`
+// keeps the no-align selector at the same (0,2,1) tier instead of rising to
+// (0,3,1).
+body
+.wp-block-spectra-container.spectra-is-root-container:where(
+	:not(.alignwide):not(.alignfull)
+) {
+	max-width: var(--wp--style--global--content-size);
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+// Imported post-content wrapper provides its own width context; don't cap it so
+// the source/align widths inside can render at their intended size.
+body .entry-content {
+	max-width: unset;
+}
+
+// Converter "neutralize-on-silence" markers: blocks whose source declared no
+// padding/width/line-height get these `spectra-no-*` classes (NOT gs-* prefixed —
+// that'd join the width:auto cascade above). (0,2,1): above defaults, below gs-*
+// (0,3,0) and per-block attrs (0,4,0) so both still win. No `!important`.
+body .wp-block-spectra-container.spectra-no-padding {
+	padding: 0;
+}
+
+body .wp-block-spectra-container.spectra-no-width {
+	width: auto;
+}
+
+// NO_LINE_HEIGHT marker rule: RETIRED 2026-07-03 (contract T4 amendment).
+// The imported-baseline A16 clause reverts the theme's elements.button
+// line-height at (0,1,1) for ALL imported buttons — `revert` rolls back to
+// the inherited value, the exact semantic the marker's `line-height: inherit`
+// produced for silent-source buttons. Declared source line-heights ride gs
+// (0,3,0) and win over both, unchanged. Converter emission deleted the same
+// day; verified corpus-wide byte-identical buttons across the sweep.
+
+// Block-gap neutralizer. A container with no authored block-gap inherits the
+// plugin default (~18px) as `margin-block-start` (flow) AND `gap` (flex/grid) —
+// spacing the source never had. Zero both at (0,2,1) so a source gs-* gap wins.
+// The counter wrapper is a native flex column with the same 18px blockGap the
+// imported source never had (its number/label stack in plain block flow) — zero
+// its gap too; its children carry no margins, so the margin-reset below is skipped.
+body .wp-block-spectra-container.spectra-no-block-gap,
+body .wp-block-spectra-counter-child-wrapper.spectra-no-block-gap {
+	row-gap: 0;
+	column-gap: 0;
+}
+
+// `:where(:not(h4,h5,h6))` keeps the selector at (0,2,1) while EXCLUDING the
+// minor headings: the blockGap channel this rule zeroes is the SAME channel
+// as their UA margins, and imported sources rely on those (measured live
+// 2026-07-02: an unclassed footer <h4> lost its ~24px UA margin-top — the
+// footer −23.9px defect). The converter's own reset carries the identical
+// carve-out (`.is-layout-flow > :where(:not(h4,h5,h6))`); a payload-side
+// counter-rule CANNOT fix this instead — this sheet prints after the GBS
+// payload, so the payload loses the (0,2,1) tie by order.
+body .wp-block-spectra-container.spectra-no-block-gap > :where(:not(h4, h5, h6)) {
+	margin-block-start: 0;
+}
+
+// `hidden` is a STATE, not styling — it must never render. `!important` is
+// needed because an imported element's GBS `display` class (0,3,0) outranks the
+// UA `[hidden]` rule, so a hidden tab-panel/accordion body would otherwise show.
+[hidden] {
+	display: none !important;
+}
+
+// An imported `position:sticky` header is wrapped in a `<header>` template-part
+// box that becomes its sticky containing block, un-sticking it on scroll.
+// `display:contents` drops the wrapper box (and the duplicate landmark). Scoped
+// to the importer's tag so it never touches a theme's own header parts.
+header.zipai-imported-header {
+	display: contents;
 }

@@ -7,7 +7,6 @@
  * @package Spectra\Blocks\Content
  */
 
-defined( 'ABSPATH' ) || exit;
 ?>
 <?php if ( $needs_span_wrapper ) : ?>
 	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>

@@ -1,5 +1,4 @@
 import { useBlockProps, InnerBlocks } from '@wordpress/block-editor';
-import { memo } from '@wordpress/element';
 import { getBlockTypes } from '@wordpress/blocks';
 import { excludeBlocks } from './modal-config.js';
 import {
@@ -109,4 +108,4 @@ const Render = ( props ) => {
 	);
 };
 
-export default memo( Render );
+export default Render;

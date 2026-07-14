@@ -5,12 +5,12 @@ import { createBlock } from '@wordpress/blocks';
 
 /**
  * Transforms for the Content block.
- * 
+ *
  * Note: The following properties are NOT transferred to core blocks as they don't support them natively:
  * - Text Shadow properties (textShadowColor, textShadowBlur, etc.)
  * - Box Shadow properties (border.shadow)
  * - Hover properties (textColorHover, backgroundColorHover, etc.)
- * 
+ *
  * Animation properties ARE transferred as they are supported via the Spectra Animation Extension.
  * Typography and border properties are also transferred as they are supported by core blocks.
  * These properties are preserved when transforming FROM core blocks TO Spectra Content blocks.
@@ -41,11 +41,11 @@ const transforms = {
 			} ) => {
 				// Build typography object conditionally to avoid overwriting existing values with undefined.
 				const typographyFromAttributes = {};
-				if ( align !== undefined ) typographyFromAttributes.textAlign = align;
-				if ( fontSize !== undefined ) typographyFromAttributes.fontSize = fontSize;
-				if ( fontFamily !== undefined ) typographyFromAttributes.fontFamily = fontFamily;
-				if ( fontWeight !== undefined ) typographyFromAttributes.fontWeight = fontWeight;
-				if ( fontStyle !== undefined ) typographyFromAttributes.fontStyle = fontStyle;
+				if ( align !== undefined ) {typographyFromAttributes.textAlign = align;}
+				if ( fontSize !== undefined ) {typographyFromAttributes.fontSize = fontSize;}
+				if ( fontFamily !== undefined ) {typographyFromAttributes.fontFamily = fontFamily;}
+				if ( fontWeight !== undefined ) {typographyFromAttributes.fontWeight = fontWeight;}
+				if ( fontStyle !== undefined ) {typographyFromAttributes.fontStyle = fontStyle;}
 
 				// Preserve all attributes that are compatible
 				const transformedAttributes = {
@@ -113,11 +113,11 @@ const transforms = {
 			} ) => {
 				// Build typography object conditionally to avoid overwriting existing values with undefined.
 				const typographyFromAttributes = {};
-				if ( align !== undefined ) typographyFromAttributes.textAlign = align;
-				if ( fontSize !== undefined ) typographyFromAttributes.fontSize = fontSize;
-				if ( fontFamily !== undefined ) typographyFromAttributes.fontFamily = fontFamily;
-				if ( fontWeight !== undefined ) typographyFromAttributes.fontWeight = fontWeight;
-				if ( fontStyle !== undefined ) typographyFromAttributes.fontStyle = fontStyle;
+				if ( align !== undefined ) {typographyFromAttributes.textAlign = align;}
+				if ( fontSize !== undefined ) {typographyFromAttributes.fontSize = fontSize;}
+				if ( fontFamily !== undefined ) {typographyFromAttributes.fontFamily = fontFamily;}
+				if ( fontWeight !== undefined ) {typographyFromAttributes.fontWeight = fontWeight;}
+				if ( fontStyle !== undefined ) {typographyFromAttributes.fontStyle = fontStyle;}
 
 				// Preserve all attributes that are compatible.
 				const transformedAttributes = {

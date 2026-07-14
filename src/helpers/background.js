@@ -4,7 +4,7 @@
 import { spectraClassNames } from '@spectra-helpers';
 
 /**
- * 
+ *
  * Generate Background Styles.
  *
  * @since x.x.x

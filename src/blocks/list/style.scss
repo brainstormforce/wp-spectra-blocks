@@ -28,12 +28,15 @@
 
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
-
 		// WordPress core color support - when list has inline color style
 		&.has-text-color {
 			// Only apply to child items that don't have their own text color
-			.wp-block-spectra-list-child-item:not(.spectra-text-color):not(.has-text-color),
-			.wp-block-spectra-list-child-icon:not(.spectra-text-color):not(.has-text-color),
+			.wp-block-spectra-list-child-item:not(.spectra-text-color):not(
+			.has-text-color
+		),
+			.wp-block-spectra-list-child-icon:not(.spectra-text-color):not(
+			.has-text-color
+		),
 			h1,
 			h2,
 			h3,
@@ -46,7 +49,6 @@
 
 		// Variable based CSS - Text Color.
 		&.spectra-text-color {
-
 			// Only apply to child items that don't have their own text color
 			.wp-block-spectra-list-child-item:not(.spectra-text-color),
 			.wp-block-spectra-list-child-icon:not(.spectra-text-color),
@@ -63,15 +65,25 @@
 		// The hover and focus within state for this block.
 		&:hover,
 		&:focus-within {
-
 			// Variable based CSS - Text Color on Hover.
 			&.spectra-text-color-hover {
 				color: var(--spectra-text-color-hover) !important;
 
-				// Only apply hover color to child items that don't have their own text or hover color
-				.wp-block-spectra-list-child-item:not(.spectra-text-color):not(.spectra-text-color-hover):not(:hover),
-				.wp-block-spectra-list-child-icon:not(.spectra-text-color):not(.spectra-text-color-hover):not(:hover) {
+				// Only apply hover color to child items that don't have their own text or hover color.
+				// Exclude nested button blocks so list hover color doesn't bleed into button text.
+				.wp-block-spectra-list-child-item:not(.spectra-text-color):not(
+				.spectra-text-color-hover
+			):not(:hover),
+				.wp-block-spectra-list-child-icon:not(.spectra-text-color):not(
+				.spectra-text-color-hover
+			):not(:hover) {
 					color: inherit;
+				}
+
+				// Prevent hover color from bleeding into nested button blocks.
+				.wp-block-spectra-buttons,
+				.wp-block-button {
+					color: revert;
 				}
 			}
 
