@@ -25,7 +25,7 @@ import { memo } from '@wordpress/element';
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { TabBlockControls } from '@spectra/tabs/helpers';
+import { TabBlockControls } from '@spectra-blocks/tabs/helpers';
 import { helperIcons } from '@spectra-helpers/block-icons';
 
 /**
@@ -167,7 +167,7 @@ const GeneralSettings = memo( ( props ) => {
 							overflow: 'visible',
 						} )
 					}
-					resetAllFilter={ () => ( {
+					resetAll={ () => ( {
 						overflow: 'visible',
 					} ) }
 					isShownByDefault
@@ -220,7 +220,7 @@ const GeneralSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -432,4 +432,4 @@ const Settings = ( props ) => {
 	);
 };
 
-export default memo( Settings );
+export default Settings;

@@ -23,7 +23,8 @@
 		"alert popup",
 		"popup widget",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"attributes": {
 		"setCookiesOn": {
@@ -517,6 +518,7 @@
 			"padding": true,
 			"blockGap": false
 		},
+		"__experimentalLayout": false,
 		"align": [ "wide", "full" ],
 		"color": {
 			"gradients": false,
@@ -540,7 +542,7 @@
 	"editorStyle": "file:./index.css",
 	"style": [
 		"file:./style-index.css",
-		"spectra-components-variation-picker"
+		"spectra-blocks-components-variation-picker"
 	],
 	"render": "file:./view.php"
 }

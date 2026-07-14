@@ -121,6 +121,9 @@
 		},
 		"placeholder": {
 			"type": "string"
+		},
+		"style": {
+			"type": "object"
 		}
 	}
 }

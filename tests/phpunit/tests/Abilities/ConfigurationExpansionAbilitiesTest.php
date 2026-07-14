@@ -5,10 +5,10 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\UpdatePluginSetting;
-use Spectra\Abilities\AddGoogleFont;
-use Spectra\Abilities\RemoveGoogleFont;
-use Spectra\Abilities\UpdatePopup;
+use SpectraBlocks\Abilities\UpdatePluginSetting;
+use SpectraBlocks\Abilities\AddGoogleFont;
+use SpectraBlocks\Abilities\RemoveGoogleFont;
+use SpectraBlocks\Abilities\UpdatePopup;
 
 /**
  * Configuration expansion abilities test case.
@@ -24,9 +24,9 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		wp_set_current_user( $user_id );
 
 		// Register the spectra-popup CPT if not already registered.
-		if ( ! post_type_exists( 'spectra-popup' ) ) {
+		if ( ! post_type_exists( 'spectra-blocks-popup' ) ) {
 			register_post_type(
-				'spectra-popup',
+				'spectra-blocks-popup',
 				array(
 					'public' => false,
 					'label'  => 'Spectra Popups',
@@ -309,12 +309,12 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 	public function test_update_popup_execute_title() {
 		$popup_id = self::factory()->post->create(
 			array(
-				'post_type'   => 'spectra-popup',
+				'post_type'   => 'spectra-blocks-popup',
 				'post_title'  => 'Original Title',
 				'post_status' => 'publish',
 			)
 		);
-		update_post_meta( $popup_id, 'spectra-popup-type', 'banner' );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', 'banner' );
 
 		$result = UpdatePopup::instance()->execute(
 			array(
@@ -337,12 +337,12 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 	public function test_update_popup_execute_meta() {
 		$popup_id = self::factory()->post->create(
 			array(
-				'post_type'   => 'spectra-popup',
+				'post_type'   => 'spectra-blocks-popup',
 				'post_title'  => 'Meta Test',
 				'post_status' => 'publish',
 			)
 		);
-		update_post_meta( $popup_id, 'spectra-popup-type', 'banner' );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', 'banner' );
 
 		$result = UpdatePopup::instance()->execute(
 			array(
@@ -359,9 +359,9 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		$this->assertContains( 'enabled', $result['updated'] );
 		$this->assertContains( 'repetition', $result['updated'] );
 
-		$this->assertSame( 'popup', get_post_meta( $popup_id, 'spectra-popup-type', true ) );
-		$this->assertSame( '1', get_post_meta( $popup_id, 'spectra-popup-enabled', true ) );
-		$this->assertEquals( 5, get_post_meta( $popup_id, 'spectra-popup-repetition', true ) );
+		$this->assertSame( 'popup', get_post_meta( $popup_id, 'spectra-blocks-popup-type', true ) );
+		$this->assertSame( '1', get_post_meta( $popup_id, 'spectra-blocks-popup-enabled', true ) );
+		$this->assertEquals( 5, get_post_meta( $popup_id, 'spectra-blocks-popup-repetition', true ) );
 	}
 
 	/**
@@ -412,12 +412,12 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 	public function test_update_popup_no_fields() {
 		$popup_id = self::factory()->post->create(
 			array(
-				'post_type'   => 'spectra-popup',
+				'post_type'   => 'spectra-blocks-popup',
 				'post_title'  => 'No Fields Test',
 				'post_status' => 'publish',
 			)
 		);
-		update_post_meta( $popup_id, 'spectra-popup-type', 'banner' );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', 'banner' );
 
 		$result = UpdatePopup::instance()->execute(
 			array( 'popup_id' => $popup_id )
@@ -650,13 +650,13 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 	public function test_update_popup_execute_content() {
 		$popup_id = self::factory()->post->create(
 			array(
-				'post_type'    => 'spectra-popup',
+				'post_type'    => 'spectra-blocks-popup',
 				'post_title'   => 'Content Test',
 				'post_content' => '<p>Old content</p>',
 				'post_status'  => 'publish',
 			)
 		);
-		update_post_meta( $popup_id, 'spectra-popup-type', 'banner' );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', 'banner' );
 
 		$new_content = '<!-- wp:paragraph --><p>New content</p><!-- /wp:paragraph -->';
 		$result      = UpdatePopup::instance()->execute(
@@ -699,7 +699,7 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 		AddGoogleFont::instance()->execute( array( 'family' => 'Raleway' ) );
 
 		// List and verify present.
-		$list = \Spectra\Abilities\ListSelectedFonts::instance()->execute( array() );
+		$list = \SpectraBlocks\Abilities\ListSelectedFonts::instance()->execute( array() );
 		// Font may not appear in ListSelectedFonts because that queries FontManager cache,
 		// but the option should reflect it.
 		$saved  = get_option( 'spectra_blocks_global_fonts', array() );
@@ -725,13 +725,13 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 
 		UpdatePluginSetting::instance()->execute(
 			array(
-				'key'   => 'spectra_blocks_copy_paste',
+				'key'   => 'spectra_blocks_load_gfonts_locally',
 				'value' => 'disabled',
 			)
 		);
 
-		$settings = \Spectra\Abilities\GetPluginSettings::instance()->execute( array() );
-		$this->assertSame( 'disabled', $settings['settings']['spectra_blocks_copy_paste'] ?? null );
+		$settings = \SpectraBlocks\Abilities\GetPluginSettings::instance()->execute( array() );
+		$this->assertSame( 'disabled', $settings['settings']['spectra_blocks_load_gfonts_locally'] ?? null );
 	}
 
 	/**
@@ -740,12 +740,12 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 	public function test_popup_update_then_get() {
 		$popup_id = self::factory()->post->create(
 			array(
-				'post_type'   => 'spectra-popup',
+				'post_type'   => 'spectra-blocks-popup',
 				'post_title'  => 'Roundtrip Test',
 				'post_status' => 'publish',
 			)
 		);
-		update_post_meta( $popup_id, 'spectra-popup-type', 'banner' );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-type', 'banner' );
 
 		UpdatePopup::instance()->execute(
 			array(
@@ -756,7 +756,7 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 			)
 		);
 
-		$get_result = \Spectra\Abilities\GetPopup::instance()->execute(
+		$get_result = \SpectraBlocks\Abilities\GetPopup::instance()->execute(
 			array( 'popup_id' => $popup_id )
 		);
 

@@ -5,24 +5,26 @@
  * @package Spectra\Traits
  */
 
-namespace Spectra\Traits;
+namespace SpectraBlocks\Traits;
 
 defined( 'ABSPATH' ) || exit;
 
-
 /**
  * Singleton trait.
+ *
+ * Stores instances in an array keyed by the late-static-bound class name so
+ * that subclasses each get their own instance. Using a single static $instance
+ * with static::$instance works for direct users of the trait but breaks the
+ * moment a class extends another that uses the trait — both classes would
+ * share the parent's static property and overwrite each other.
  */
 trait Singleton {
 	/**
-	 * Instances indexed by class name.
-	 *
-	 * Using an array keyed by class name prevents child classes that share a
-	 * common parent (e.g. AbstractAbility) from overwriting each other's instance.
+	 * Class instances keyed by called-class name.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @var array<string, object>
+	 * @var array<string,object>
 	 */
 	protected static $instances = array();
 
@@ -36,18 +38,20 @@ trait Singleton {
 	protected function __construct() {}
 
 	/**
-	 * Get class instance.
+	 * Get class instance for the late-static-bound calling class.
 	 *
 	 * @since 3.0.0
 	 *
-	 * @return static Instance.
+	 * @return object Instance.
 	 */
 	final public static function instance() {
 		$class = static::class;
-		if ( ! isset( static::$instances[ $class ] ) ) {
-			static::$instances[ $class ] = new static();
+
+		if ( ! isset( self::$instances[ $class ] ) ) {
+			self::$instances[ $class ] = new static();
 		}
-		return static::$instances[ $class ];
+
+		return self::$instances[ $class ];
 	}
 
 	/**

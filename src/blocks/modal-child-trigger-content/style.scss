@@ -2,12 +2,14 @@
 .wp-block-spectra-modal-child-content {
 	cursor: pointer;
 
+	&:where(.is-hidden) {
+		display: none !important;
+	}
+
 	// Dynamic styles - specificity (0,2,0) and higher for block settings that should NOT be overridden by Global Styles.
 	&[class*="wp-block"] {
-
 		// The hover state for this block.
 		&:hover {
-
 			// Variable based CSS - Text Hover Color.
 			&.spectra-text-color-hover {
 				color: var(--spectra-text-color-hover) !important;

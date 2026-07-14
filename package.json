@@ -1,6 +1,6 @@
 {
 	"name": "spectra-blocks",
-	"version": "0.0.9",
+	"version": "1.0.0",
 	"description": "Spectra Blocks - A fresh Gutenberg block plugin",
 	"author": "The WordPress Contributors",
 	"license": "GPL-2.0-or-later",
@@ -8,15 +8,18 @@
 	"scripts": {
 		"build": "wp-scripts build --experimental-modules --webpack-copy-php",
 		"build:fresh": "del-cli build/* && wp-scripts build --experimental-modules --webpack-copy-php",
+		"build:all": "npm run build:fresh && npm run build --prefix admin",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
+		"test:contract": "node tests/contract/imported-baseline-contract.mjs",
 		"packages-update": "wp-scripts packages-update",
 		"synctextdomains": "grunt synctextdomains",
 		"i18n": "grunt i18n",
 		"makepot": "grunt i18n && wp i18n make-pot . languages/spectra-blocks.pot --skip-audit --exclude=node_modules,vendor,lib,build,admin/assets/build,admin/assets/src,bin",
 		"update-icons": "node bin/generate-icons.js",
 		"zip": "grunt zip",
+		"release": "grunt release",
 		"start": "wp-scripts start --experimental-modules --webpack-copy-php",
 		"start:fresh": "del-cli build/* && wp-scripts start --experimental-modules --webpack-copy-php"
 	},
@@ -30,6 +33,7 @@
 		"@wordpress/keycodes": "^4.17.0",
 		"countup.js": "^2.9.0",
 		"html-react-parser": "^5.2.5",
+		"react-select": "^5.10.1",
 		"react-virtualized": "^9.22.6",
 		"swiper": "^12.1.2"
 	},
@@ -37,12 +41,20 @@
 		"@wordpress/scripts": "^31.5.0",
 		"del-cli": "^7.0.0",
 		"grunt": "^1.6.1",
-		"grunt-text-replace": "^0.4.0"
+		"grunt-text-replace": "^0.4.0",
+		"grunt-wp-readme-to-markdown": "^2.1.0"
 	},
 	"overrides": {
-		"minimatch": ">=10.2.1",
-		"ajv": ">=8.18.0",
 		"@babel/runtime": ">=7.26.10",
-		"webpack-dev-server": ">=5.2.1"
+		"webpack-dev-server": ">=5.2.1",
+		"grunt": {
+			"minimatch": "^3.1.5"
+		},
+		"markdownlint-cli": {
+			"minimatch": "^3.1.5"
+		},
+		"@typescript-eslint/typescript-estree": {
+			"minimatch": "^9.0.9"
+		}
 	}
 }

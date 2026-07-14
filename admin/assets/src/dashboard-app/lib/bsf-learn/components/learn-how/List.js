@@ -5,7 +5,8 @@ import { Text } from '@bsf/force-ui';
  *
  * Renders a bulleted list of items.
  *
- * @param {Array} items - Array of list items (strings)
+ * @param         items.items
+ * @param {Array} items       - Array of list items (strings)
  */
 const List = ( { items } ) => {
 	return (

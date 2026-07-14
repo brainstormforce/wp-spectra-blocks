@@ -5,10 +5,16 @@ $default-border-color: #d2d2d2;
 $default-border-radius: 2px;
 $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 
-// Static styles - specificity (0,1,0) and higher.
-.wp-block-spectra-tabs-child-tabpanel {
+// Default border — wrapped in :where() so template utility classes
+// (e.g. `border-0`, `border-t`, or no border class at all) can override it
+// by source order without fighting specificity.
+:where(.wp-block-spectra-tabs-child-tabpanel) {
 	border: $default-border-width $default-border-style $default-border-color;
 	border-radius: $default-border-radius;
+}
+
+// Static styles - specificity (0,1,0) and higher.
+.wp-block-spectra-tabs-child-tabpanel {
 	overflow: hidden;
 	box-sizing: border-box;
 	padding: $default-padding;
@@ -44,7 +50,6 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 		// The hover and focus within state for this block.
 		&:hover,
 		&:focus-within {
-
 			// Variable based CSS - Text Color on Hover.
 			&.spectra-text-color-hover {
 				color: var(--spectra-text-color-hover) !important;

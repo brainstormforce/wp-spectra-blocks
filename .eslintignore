@@ -1,19 +1,8 @@
-# Build output
-build/
-admin/assets/build/
-
-# Node modules
-node_modules/
-
-# Bundled libraries (linted in their own repos)
 lib/
-
-# Composer vendor
+build/
 vendor/
-
-# Minified assets
-assets/js/*.min.js
-assets/css/
-
-# Test fixtures
-tests/
+node_modules/
+admin/assets/build/
+admin/assets/src/utils/whats-new-library/
+**/*.min.js
+Gruntfile.js

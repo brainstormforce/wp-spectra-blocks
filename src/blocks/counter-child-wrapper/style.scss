@@ -6,6 +6,8 @@
 
 // This wrapper inherits layout from block supports
 // No additional styles needed - layout controls handle everything
+// (NOTE: this block ships no built stylesheet — its width:100% lives in the
+// counter block's style.scss, which IS enqueued.)
 
 .wp-block-spectra-counter-child-wrapper {
 

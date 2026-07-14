@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\GoogleMap
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the attributes with default values.
 $address          = $attributes['address'] ?? 'Brainstorm Force';

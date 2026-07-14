@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Tabs
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // If a variation is not selected or there is no content, abandon this render on the front-end.
 if ( empty( $attributes['variationSelected'] ) || empty( trim( $content ) ) ) {

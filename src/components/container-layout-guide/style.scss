@@ -13,7 +13,7 @@
 	}
 
 	.components-button:hover svg {
-		fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) !important;
+		fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #2563eb)) !important;
 	}
 
 	// Featured image area styles
@@ -59,7 +59,7 @@
 
 		.dashicon,
 		svg {
-			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #2563eb));
 		}
 	}
 
@@ -70,7 +70,7 @@
 		padding: 1rem;
 		background: #f0f6ff;
 		border-radius: 6px;
-		border-left: 4px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+		border-left: 4px solid var(--wp-components-color-accent, var(--wp-admin-theme-color, #2563eb));
 
 		strong {
 			display: block;

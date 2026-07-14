@@ -11,7 +11,7 @@
  * phpcs:disable Generic.Files.OneObjectStructurePerFile.MultipleFound
  */
 
-namespace Spectra;
+namespace SpectraBlocks;
 
 defined( 'ABSPATH' ) || exit;
 

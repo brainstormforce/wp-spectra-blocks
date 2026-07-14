@@ -5,12 +5,9 @@
  * @package Spectra\Extensions
  */
 
-namespace Spectra\Extensions;
+namespace SpectraBlocks\Extensions;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**
@@ -128,8 +125,8 @@ class ZIndex {
 		// Add z-index CSS custom property.
 		$z_index_style = "--spectra-z-index: {$z_index};";
 
-		// Combine with existing styles.
-		$new_style = $existing_style ? $existing_style . ' ' . $z_index_style : $z_index_style;
+		// Combine with existing styles. rtrim handles WP stripping the trailing semicolon in get_block_wrapper_attributes.
+		$new_style = $existing_style ? rtrim( trim( $existing_style ), ';' ) . '; ' . $z_index_style : $z_index_style;
 
 		$processor->set_attribute( 'style', $new_style );
 
@@ -154,6 +151,12 @@ class ZIndex {
 	private function is_allowed_block( $block_name ) {
 		// Excluded blocks that shouldn't have z-index.
 		$excluded_blocks = array(
+			// Legacy Blocks.
+			'uagb/cf7-styler',
+			'uagb/wp-search',
+			'uagb/gf-styler',
+			'uagb/columns',
+			'uagb/section',
 			'spectra/popup-builder',
 			// Child blocks that inherit from parent.
 			'spectra/accordion-child-details',

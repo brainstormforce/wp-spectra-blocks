@@ -1,10 +1,10 @@
 /**
  * Flexible Shadow Control Component
- * 
+ *
  * A highly reusable shadow control component that can be easily integrated into any block.
  * Follows the same pattern as the Background component for consistency and flexibility.
  * Features a color picker, position sliders, blur/spread controls, inset/outset toggle, and preset options.
- * 
+ *
  * @since x.x.x
  */
 
@@ -33,19 +33,19 @@ import { parseShadowString, generateShadowString } from '@spectra-helpers/shadow
 
 /**
  * Flexible Shadow Control Component
- * 
- * @param {Object} props Component props.
- * @param {string} props.clientId Block client ID.
- * @param {Function} props.setAttributes Block setAttributes function.
- * @param {Object} props.shadow Shadow configuration object with label and value.
- * @param {string} props.shadow.label Attribute name for the shadow.
- * @param {string} props.shadow.value Current shadow CSS string value.
- * @param {Object} props.shadowHover Shadow hover configuration object (optional).
- * @param {string} props.shadowHover.label Attribute name for the hover shadow.
- * @param {string} props.shadowHover.value Current hover shadow CSS string value.
- * @param {string} props.label Custom label for the shadow control.
- * @param {string} props.group Inspector controls group (default: 'styles').
- * @param {boolean} props.showHoverState Whether to show hover state toggle (default: false).
+ *
+ * @param {Object}   props                   Component props.
+ * @param {string}   props.clientId          Block client ID.
+ * @param {Function} props.setAttributes     Block setAttributes function.
+ * @param {Object}   props.shadow            Shadow configuration object with label and value.
+ * @param {string}   props.shadow.label      Attribute name for the shadow.
+ * @param {string}   props.shadow.value      Current shadow CSS string value.
+ * @param {Object}   props.shadowHover       Shadow hover configuration object (optional).
+ * @param {string}   props.shadowHover.label Attribute name for the hover shadow.
+ * @param {string}   props.shadowHover.value Current hover shadow CSS string value.
+ * @param {string}   props.label             Custom label for the shadow control.
+ * @param {string}   props.group             Inspector controls group (default: 'styles').
+ * @param {boolean}  props.showHoverState    Whether to show hover state toggle (default: false).
  * @return {Element} The ShadowControl component.
  */
 const ShadowControl = memo( ( {

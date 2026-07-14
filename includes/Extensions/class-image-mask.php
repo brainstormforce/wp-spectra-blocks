@@ -5,12 +5,9 @@
  * @package Spectra\Extensions
  */
 
-namespace Spectra\Extensions;
+namespace SpectraBlocks\Extensions;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 
 /**
  * ImageMask class.

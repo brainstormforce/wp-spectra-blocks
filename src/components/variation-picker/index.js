@@ -95,11 +95,16 @@ export const RenderBlockVariation = ( props ) => {
 		pluginName = 'spectra',
 	} = props;
 
+	// Resolve the plugin URL — spectra_blocks_pro_info is a conflict-safe unique global
+	// that spectra-blocks-pro sets and spectra-pro (classic) cannot overwrite.
+	const spectraProUrl = window?.spectra_blocks_pro_info?.plugin_url
+		|| window?.spectra_pro_blocks_info?.plugin_url;
+
 	// If the url for the current block's assets isn't available, abandon ship.
 	if (
 		! [ 'spectra', 'spectra-pro' ].includes( pluginName )
 		|| ( 'spectra' === pluginName && ! window?.spectra_blocks_info?.plugin_url )
-		|| ( 'spectra-pro' === pluginName && ! window?.spectra_blocks_pro_info?.spectra_pro_url )
+		|| ( 'spectra-pro' === pluginName && ! spectraProUrl )
 	) {
 		return null;
 	}
@@ -116,7 +121,7 @@ export const RenderBlockVariation = ( props ) => {
 			imagePath = `${ window.spectra_blocks_info.plugin_url }`;
 			break;
 		case 'spectra-pro':
-			imagePath = `${ window.spectra_blocks_pro_info.spectra_pro_url }`;
+			imagePath = spectraProUrl;
 			break;
 	}
 

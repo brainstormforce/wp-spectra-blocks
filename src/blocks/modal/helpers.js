@@ -24,7 +24,7 @@ export const toggleVisibilityByClientId = ( clientId ) => {
 	const { getBlock } = select( 'core/block-editor' );
 	const block = getBlock( clientId );
 
-	if ( ! block ) return;
+	if ( ! block ) {return;}
 
 	const isVisible = block.attributes?.isVisible || false;
 

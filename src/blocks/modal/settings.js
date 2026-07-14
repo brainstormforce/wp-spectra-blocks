@@ -7,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	InspectorControls,
 } from '@wordpress/block-editor';
-import UpgradeComponent from '@spectra-components/upgrade-to-pro-cta';
 import {
 	__experimentalToolsPanelItem as ToolsPanelItem,
     __experimentalToolsPanel as ToolsPanel,
@@ -18,11 +17,11 @@ import {
 /**
  * Internal dependencies.
  */
-import { TabBlockControls } from '@spectra/modal/helpers';
+import { TabBlockControls } from '@spectra-blocks/modal/helpers';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -45,7 +44,7 @@ const BlockSettings = memo( ( props ) => {
 		clientId
 	} = props;
 
-	const isProActivated = 'active' === spectra_blocks_info.spectra_pro_status? true : false;
+	const isProActivated = 'active' === window?.spectra_blocks_info?.spectra_pro_status;
 
 	// Options from Free and Pro 
 	const freeAndProOptions = [
@@ -79,7 +78,7 @@ const BlockSettings = memo( ( props ) => {
 	] );
 	
 	useEffect( () => {
-		if ( true !== isProActivated ) return;
+		if ( true !== isProActivated ) {return;}
 	
 		const updatedProps = { ...props, openModalAs, modalPosition };
 	
@@ -231,11 +230,6 @@ const Settings = ( props ) => (
 	<>
 		<BlockSettings { ...{ ...props } } />
 		<TabBlockControls { ...{ ...props } } />
-		{ 'not-installed' === spectra_blocks_info.spectra_pro_status && (
-			<InspectorControls group="settings">
-				<UpgradeComponent control={ { campaign: 'modal' } } />
-			</InspectorControls>
-		) }
 	</>
 );
 

@@ -5,7 +5,10 @@
 	box-sizing: border-box;
 	position: relative;
 
-	// Reset CSS variables for nested containers to prevent inheritance
+	// Reset shape-divider and overlay-opacity inheritance for all nested containers.
+	// Color vars (--spectra-background-color / --spectra-background-gradient) are NOT
+	// reset here because doing so breaks solid-color backgrounds on any container that
+	// is itself nested. Those two vars are reset only on .has-video-background below.
 	.wp-block-spectra-container {
 		--spectra-overlay-opacity: initial;
 		--spectra-shape-divider-top-width: initial;
@@ -14,7 +17,17 @@
 		--spectra-shape-divider-bottom-height: initial;
 	}
 
-	> *:not(.spectra-container__shape):not(.spectra-background-video__wrapper) {
+
+	// Wrap the child default in `:where()` so it stays at specificity
+	// (0,0,0) and doesn't override authored Tailwind utility classes
+	// such as `-z-10` on decorative children. Without this wrap the
+	// selector resolves at (0,3,0) — three classes including the two
+	// `:not()` filters — and would beat any utility-class z-index the
+	// converter passes through (e.g. `:root .-z-10` at (0,2,0)),
+	// trapping decorative behind-image circles in front of their image.
+	> :where(
+	*:not(.spectra-container__shape):not(.spectra-background-video__wrapper)
+) {
 		z-index: 2;
 		position: relative;
 	}
@@ -38,10 +51,19 @@
 		overflow: clip; // Modern standard for proper border-radius clipping
 	}
 
-	// Default flex-wrap overriding for flex layout.
-	&.wp-block-spectra-container-is-layout-flex {
-		flex-wrap: nowrap;
-	}
+	// NOTE: no static `flex-wrap` rule here. `flex-wrap` is fully owned by
+	// two authoritative sources so a blanket rule is both redundant and
+	// harmful:
+	//   1. Non-responsive containers — controller.php emits an inline
+	//      `flex-wrap` (all viewports) from the block's `layout.flexWrap`.
+	//   2. Responsive containers — the responsive-controls extension emits a
+	//      per-breakpoint `flex-wrap` per instance.
+	// A static `.is-nowrap { flex-wrap: nowrap }` here (0,3,0) out-ranks the
+	// per-instance rule (0,1,1) and, because the `is-nowrap` class is derived
+	// from the BASE `layout.flexWrap` (which can differ from the saved desktop
+	// `responsiveControls.lg` value), it silently pinned nowrap on containers
+	// the author had set to wrap. Leaving flex-wrap to (1)/(2) keeps the
+	// per-breakpoint choice authoritative.
 
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
@@ -68,10 +90,11 @@
 			}
 		}
 
-		// Variable based CSS - Simple Background Color (only when no background image).
-		&.spectra-background-color:not(.spectra-background-image) {
-			// Create isolation to prevent opacity from affecting children
-			isolation: isolate;
+		// Variable based CSS - Simple Background Color (only when no background image, not video).
+		// For video backgrounds the overlay is rendered via .spectra-background-video__wrapper--overlay::after.
+		&.spectra-background-color:not(.spectra-background-image):not(
+		.has-video-background
+	) {
 
 			&::before {
 				content: "";
@@ -86,10 +109,11 @@
 			}
 		}
 
-		// Variable based CSS - Simple Background Gradient (only when no background image).
-		&.spectra-background-gradient:not(.spectra-background-image) {
-			// Create isolation to prevent opacity from affecting children
-			isolation: isolate;
+		// Variable based CSS - Simple Background Gradient (only when no background image, not video).
+		// For video backgrounds the overlay is rendered via .spectra-background-video__wrapper--overlay::after.
+		&.spectra-background-gradient:not(.spectra-background-image):not(
+		.has-video-background
+	) {
 
 			&::before {
 				content: "";
@@ -200,12 +224,9 @@
 		}
 
 		&.spectra-background-gradient:not(.has-video-background) {
-			// Create isolation to prevent opacity from affecting children
-			isolation: isolate;
 
 			&::before {
-				background:
- var(--spectra-background-gradient, var(--spectra-background-color));
+				background: var(--spectra-background-gradient, var(--spectra-background-color));
 				content: "";
 				inset: 0;
 				opacity: var(--spectra-overlay-opacity);
@@ -252,6 +273,7 @@
 
 		// Video background specific styles
 		&.has-video-background {
+			isolation: isolate;
 
 			.spectra-background-video__wrapper {
 				position: absolute;
@@ -260,6 +282,7 @@
 				width: 100%;
 				height: 100%;
 				z-index: -1;
+				overflow: hidden;
 				pointer-events: none;
 				border-radius: inherit;
 
@@ -271,12 +294,12 @@
 				}
 			}
 
-			// Ensure content is above video (exclude video wrapper and shape dividers)
+			// Content must be above the video wrapper (z-index: -1) and its overlay (::after).
 			> *:not(.spectra-background-video__wrapper):not(
 			.spectra-container__shape
 		) {
 				position: relative;
-				z-index: 1;
+				z-index: 2;
 			}
 		}
 
@@ -288,8 +311,7 @@
 		// Variable based CSS - Box Shadow Hover.
 		// If hover shadow is set, use it; otherwise fall back to normal shadow
 		&.spectra-box-shadow:hover {
-			box-shadow:
- var(--spectra-box-shadow-hover, var(--spectra-box-shadow)) !important;
+			box-shadow: var(--spectra-box-shadow-hover, var(--spectra-box-shadow)) !important;
 		}
 
 		// Override for when hover shadow is explicitly set

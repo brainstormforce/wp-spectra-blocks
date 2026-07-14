@@ -15,7 +15,7 @@ import metadata from './block.json';
 /**
  * Register the tabpanel block.
  */
-registerBlockType( metadata.name, {
+registerBlockType( metadata, {
 	icon: blockIcons.tabsChildren.tabpanel(),
 	edit,
 	save,

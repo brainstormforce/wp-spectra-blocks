@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\ModalChildPopupCloseIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // Set the attributes with fallback if required.
 $anchor              = $attributes['anchor'] ?? '';

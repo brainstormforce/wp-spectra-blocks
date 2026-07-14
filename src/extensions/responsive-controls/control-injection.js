@@ -18,6 +18,7 @@
 
 import { __, sprintf } from '@wordpress/i18n';
 import { select, dispatch, subscribe } from '@wordpress/data';
+import { applyFilters } from '@wordpress/hooks';
 import { MOBILE, TABLET, DESKTOP } from './utils/constants';
 import { isAllowedBlock } from './utils/helpers';
 
@@ -76,6 +77,7 @@ const RESPONSIVE_CONTROLS_PANELS = Object.freeze( [
 	'Content',
 	'Overlay Settings',
 	'Flex Direction',
+	'Grid & Masonry',
 	'Shape Dividers',
 	'Separator',
 ] );
@@ -89,8 +91,9 @@ const RESPONSIVE_CONTROLS_PANELS = Object.freeze( [
  * @type {Object}
  */
 const BLOCK_PANEL_INCLUSIONS = Object.freeze( {
-	'spectra/slider': Object.freeze( [ 'general' ] ),
+	'spectra/slider': Object.freeze( [ 'General' ] ),
 	'core/image': Object.freeze( [ 'Settings' ] ),
+	'spectra/post': Object.freeze( [ 'Carousel' ] ),
 } );
 
 /**
@@ -126,6 +129,7 @@ class ControlInjectionManager {
 		this.tabSwitchTimeout = null; // Track tab switch injection timeout to prevent duplicate calls
 		this.buttonStateTimeout = null; // Track button state update timeout for cleanup
 		this.isDestroyed = false; // Flag to track if instance has been destroyed
+		this.responsivePanels = null; // Extended panel list, computed after all plugin filters are registered.
 
 		// Cache frequently used selectors for better performance.
 		this.selectors = Object.freeze( {
@@ -170,7 +174,7 @@ class ControlInjectionManager {
 	 * @since x.x.x
 	 *
 	 * @param {Function} func - Function to debounce
-	 * @param {number} wait - Wait time in milliseconds
+	 * @param {number}   wait - Wait time in milliseconds
 	 * @return {Function} Debounced function
 	 */
 	debounce( func, wait ) {
@@ -206,6 +210,11 @@ class ControlInjectionManager {
 		this.waitForEditor()
 			.then( () => {
 				try {
+					// Compute the panel list after all plugin scripts have run and registered their filters.
+					this.responsivePanels = Object.freeze(
+						applyFilters( 'spectra.responsive-controls.injection-panels', [ ...RESPONSIVE_CONTROLS_PANELS ] )
+					);
+
 					// Setup listeners first for maximum responsiveness.
 					this.setupDeviceListener();
 					this.setupTabObserver();
@@ -316,7 +325,7 @@ class ControlInjectionManager {
 	 * @return {boolean} True if the panel is visible, false otherwise.
 	 */
 	isPanelVisible( panel ) {
-		if ( ! panel ) return false;
+		if ( ! panel ) {return false;}
 
 		// Fast path: if panel is clearly visible, return immediately
 		if ( panel.offsetHeight > 0 && panel.offsetParent !== null ) {
@@ -394,7 +403,7 @@ class ControlInjectionManager {
 					}
 				}
 
-				if ( shouldReinject ) break;
+				if ( shouldReinject ) {break;}
 			}
 
 			// Clear the batch to prevent memory leak
@@ -480,7 +489,7 @@ class ControlInjectionManager {
 	instantInjectPanels() {
 		// Get scrollable container immediately.
 		const container = this.getScrollableContainer();
-		if ( ! container ) return;
+		if ( ! container ) {return;}
 
 		// Get all panels in one query.
 		const panels = container.querySelectorAll( `${ this.selectors.toolsPanel }, ${ this.selectors.panelBody }` );
@@ -848,8 +857,8 @@ class ControlInjectionManager {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {HTMLElement} control - The control element to check.
-	 * @param {Object} selectedBlock - Optional cached selected block to avoid repeated selectors.
+	 * @param {HTMLElement} control       - The control element to check.
+	 * @param {Object}      selectedBlock - Optional cached selected block to avoid repeated selectors.
 	 * @return {boolean} True if control should have enhanced/excluded classes.
 	 */
 	shouldApplyControlClasses( control, selectedBlock = null ) {
@@ -876,8 +885,8 @@ class ControlInjectionManager {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {HTMLElement} control - The control element to check.
-	 * @param {Object} selectedBlock - Optional cached selected block to avoid repeated selectors.
+	 * @param {HTMLElement} control       - The control element to check.
+	 * @param {Object}      selectedBlock - Optional cached selected block to avoid repeated selectors.
 	 * @return {boolean} True if control should have device buttons.
 	 */
 	isResponsiveControl( control, selectedBlock = null ) {
@@ -911,23 +920,23 @@ class ControlInjectionManager {
 
 		// Get aria-label.
 		const ariaLabel = control.getAttribute( 'aria-label' );
-		if ( ariaLabel ) texts.push( ariaLabel.toLowerCase() );
+		if ( ariaLabel ) {texts.push( ariaLabel.toLowerCase() );}
 
 		// Get legend text.
 		const legend = control.querySelector( 'legend' );
-		if ( legend?.textContent ) texts.push( legend.textContent.toLowerCase() );
+		if ( legend?.textContent ) {texts.push( legend.textContent.toLowerCase() );}
 
 		// Get label texts.
 		const labels = control.querySelectorAll(
 			'label, .components-base-control__label, .components-toggle-control__label'
 		);
 		for ( const label of labels ) {
-			if ( label.textContent ) texts.push( label.textContent.toLowerCase() );
+			if ( label.textContent ) {texts.push( label.textContent.toLowerCase() );}
 		}
 
 		// Get help text.
 		const help = control.querySelector( '.components-base-control__help' );
-		if ( help?.textContent ) texts.push( help.textContent.toLowerCase() );
+		if ( help?.textContent ) {texts.push( help.textContent.toLowerCase() );}
 
 		const allTexts = texts.join( ' ' );
 		const panelTitle = this.getPanelTitle( panel );
@@ -948,6 +957,23 @@ class ControlInjectionManager {
 					const translated = __( includedControl, domain ).toLowerCase();
 					return allTexts.includes( translated );
 				} );
+			} );
+			this.domCache.set( control, isIncluded );
+			return isIncluded;
+		}
+
+		// Special handling for post Carousel panel - only include specific controls (translation-aware).
+		if ( currentBlock.name === 'spectra/post' && this.isPanelTitleMatch( panelTitle, 'Carousel' ) ) {
+			const carouselInclusions = [ 'Slides Per View', 'Space Between' ];
+			const isIncluded = carouselInclusions.some( ( includedControl ) => {
+				// Check English version
+				if ( allTexts.includes( includedControl.toLowerCase() ) ) {
+					return true;
+				}
+				// Check translated version
+				// eslint-disable-next-line @wordpress/i18n-no-variables
+				const translated = __( includedControl, 'spectra-blocks' ).toLowerCase();
+				return allTexts.includes( translated );
 			} );
 			this.domCache.set( control, isIncluded );
 			return isIncluded;
@@ -1064,7 +1090,7 @@ class ControlInjectionManager {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {string} panelTitle - The actual panel title from DOM (lowercased).
+	 * @param {string} panelTitle  - The actual panel title from DOM (lowercased).
 	 * @param {string} englishName - The English panel name to check against.
 	 * @return {boolean} True if the panel title matches.
 	 */
@@ -1092,29 +1118,34 @@ class ControlInjectionManager {
 	 *
 	 * @since x.x.x
 	 *
-	 * @param {HTMLElement} panel - The panel element to check.
-	 * @param {Object} selectedBlock - Optional cached selected block to avoid repeated selectors.
+	 * @param {HTMLElement} panel         - The panel element to check.
+	 * @param {Object}      selectedBlock - Optional cached selected block to avoid repeated selectors.
 	 * @return {boolean} True if panel should have responsive controls.
 	 */
 	panelHasResponsiveControls( panel, selectedBlock = null ) {
 		const panelTitle = this.getPanelTitle( panel );
 
 		// Check standard responsive panels - match both English and translated names.
-		const isPanelMatch = RESPONSIVE_CONTROLS_PANELS.some( ( panelName ) => {
+		// Use the lazily-computed list which includes any panels registered via filter (e.g. 'Position' from pro plugin).
+		const panelList = this.responsivePanels || RESPONSIVE_CONTROLS_PANELS;
+		const isPanelMatch = panelList.some( ( panelName ) => {
 			const lowerPanelName = panelName.toLowerCase();
 			// Check exact English match first (fastest).
 			if ( panelTitle === lowerPanelName ) {
 				return true;
 			}
 			// Check translated version (for non-English languages).
-			// Try both WordPress core and Spectra textdomains to handle:
+			// Try WordPress core, Spectra free, and Spectra Pro textdomains to handle:
 			// 1. WordPress core panels (Spacing, Typography, Layout, etc.)
 			// 2. Spectra custom panels translated via Loco Translate (Background, Overlay Settings, etc.)
+			// 3. Spectra Pro panels (Position, Z-Index, etc.)
 			// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
 			const coreTranslation = __( panelName, 'default' ).toLowerCase();
 			// eslint-disable-next-line @wordpress/i18n-no-variables
 			const spectraTranslation = __( panelName, 'spectra-blocks' ).toLowerCase();
-			return panelTitle === coreTranslation || panelTitle === spectraTranslation;
+			// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
+			const spectraProTranslation = __( panelName, 'spectra-blocks-pro' ).toLowerCase();
+			return panelTitle === coreTranslation || panelTitle === spectraTranslation || panelTitle === spectraProTranslation;
 		} );
 
 		if ( isPanelMatch ) {
@@ -1211,7 +1242,7 @@ class ControlInjectionManager {
 			);
 		}
 
-		if ( ! helpText ) return '';
+		if ( ! helpText ) {return '';}
 
 		// Use WordPress core notice structure
 		return `
@@ -1236,7 +1267,7 @@ class ControlInjectionManager {
 	 */
 	addDeviceButtonsToPanel( panel ) {
 		const heading = panel.querySelector( '.components-tools-panel-header h2' );
-		if ( ! heading ) return;
+		if ( ! heading ) {return;}
 
 		// Check if buttons already exist to prevent duplicates.
 		if ( heading.querySelector( '.spectra-responsive-icons' ) ) {
@@ -1289,7 +1320,7 @@ class ControlInjectionManager {
 		}
 
 		const titleButton = panel.querySelector( '.components-panel__body-title button' );
-		if ( ! titleButton ) return;
+		if ( ! titleButton ) {return;}
 
 		// Check if buttons already exist to prevent duplicates.
 		if ( titleButton.querySelector( '.spectra-responsive-icons' ) ) {
@@ -1325,7 +1356,7 @@ class ControlInjectionManager {
 			e.stopImmediatePropagation();
 
 			const button = e.target.closest( '.spectra-responsive-icon' );
-			if ( ! button ) return;
+			if ( ! button ) {return;}
 
 			// Track exact scroll position for restoration.
 			this.trackExactScrollPosition();
@@ -1538,7 +1569,7 @@ class ControlInjectionManager {
 
 	updateHelpText() {
 		const scrollContainer = this.getScrollableContainer();
-		if ( ! scrollContainer ) return;
+		if ( ! scrollContainer ) {return;}
 
 		const helpTextHTML = this.createHelpTextHTML();
 		const panels = document.querySelectorAll( '.spectra-enhanced-panel' );
@@ -1569,7 +1600,7 @@ class ControlInjectionManager {
 	 * @return {Object|null} The stored tab state or null.
 	 */
 	getTabStateFromStorage() {
-		if ( ! window.localStorage ) return null;
+		if ( ! window.localStorage ) {return null;}
 
 		try {
 			const storedState = localStorage.getItem( 'spectraV3TabState' );
@@ -1588,10 +1619,10 @@ class ControlInjectionManager {
 	 * @return {void}
 	 */
 	saveTabStateToStorage( tabType ) {
-		if ( ! window.localStorage ) return;
+		if ( ! window.localStorage ) {return;}
 
 		const selectedBlock = select( 'core/block-editor' )?.getSelectedBlock?.();
-		if ( ! selectedBlock ) return;
+		if ( ! selectedBlock ) {return;}
 
 		const state = this.tabState || {};
 		state[ selectedBlock.name ] = {
@@ -1672,7 +1703,7 @@ class ControlInjectionManager {
 
 		// Use requestAnimationFrame for better performance.
 		const attemptRestore = ( attempts = 0 ) => {
-			if ( attempts > 10 ) return;
+			if ( attempts > 10 ) {return;}
 
 			// Double-check stabilization state before attempting restoration
 			const currentBlock = select( 'core/block-editor' )?.getSelectedBlock?.();
@@ -1720,7 +1751,7 @@ class ControlInjectionManager {
 	setupPanelClickHandler() {
 		this.boundHandlePanelClick = ( e ) => {
 			const toggle = e.target.closest( '.components-panel__body-toggle' );
-			if ( ! toggle ) return;
+			if ( ! toggle ) {return;}
 			const panel = toggle.closest( '.components-panel__body' );
 			if ( panel && this.panelHasResponsiveControls( panel ) ) {
 				panel.classList.add( 'spectra-enhanced-panel' );
@@ -1746,7 +1777,7 @@ class ControlInjectionManager {
 	 */
 	trackExactScrollPosition() {
 		const container = this.getScrollableContainer();
-		if ( ! container ) return;
+		if ( ! container ) {return;}
 
 		this.lastClickedPosition = {
 			scrollTop: container.scrollTop,
@@ -1767,13 +1798,13 @@ class ControlInjectionManager {
 	 * @return {void}
 	 */
 	restoreScrollPosition() {
-		if ( ! this.lastClickedPosition ) return;
+		if ( ! this.lastClickedPosition ) {return;}
 
 		const container = this.lastClickedPosition.containerElement?.isConnected
 			? this.lastClickedPosition.containerElement
 			: this.getScrollableContainer();
 
-		if ( ! container ) return;
+		if ( ! container ) {return;}
 
 		setTimeout( () => {
 			const scrollTop = this.lastClickedPosition.scrollPercentage * Math.max( 1, container.scrollHeight );

@@ -54,6 +54,21 @@
 
 	&.spectra-popup-popup {
 		min-height: 100vh !important;
+		// Ensure the popup variant centers inside the editor viewport even
+		// when the block wrapper's flex centering is overridden by the
+		// theme/block editor. Frontend uses `.spectra-popup-builder--popup`
+		// for the same rule; the editor markup uses `.spectra-popup-popup`.
+		justify-content: center !important;
+		align-items: center !important;
+
+		.spectra-popup-builder__wrapper--popup {
+			width: var(--spectra-popup-width, auto);
+			max-width: 100%;
+			box-sizing: border-box;
+			// Fallback centering for cases where the parent is not a flex
+			// container (e.g. some block-theme template contexts).
+			margin-inline: auto;
+		}
 	}
 
 	// The z-index is lowered in the editor to avoid overlapping the Block Controls.
@@ -243,8 +258,7 @@
 			content: "";
 			position: absolute;
 			inset: 0;
-			background:
- var(--spectra-background-gradient, var(--spectra-background-color));
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
 			opacity: var(--spectra-overlay-opacity);
 		}
 
@@ -294,8 +308,7 @@
 			content: "";
 			position: absolute;
 			inset: 0;
-			background:
- var(--spectra-background-gradient, var(--spectra-background-color));
+			background: var(--spectra-background-gradient, var(--spectra-background-color));
 			opacity: var(--spectra-overlay-opacity);
 		}
 
@@ -322,8 +335,7 @@
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background:
- repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.05) 10px, rgba(0, 0, 0, 0.05) 20px);
+			background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, 0.05) 10px, rgba(0, 0, 0, 0.05) 20px);
 		}
 	}
 
@@ -411,8 +423,7 @@
 		&:hover {
 
 			.spectra-background-video__wrapper::after {
-				background:
- var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+				background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
 				opacity: var(--spectra-overlay-opacity);
 			}
 		}
@@ -461,8 +472,7 @@
 		&:hover {
 			// Update the overlay
 			.spectra-background-video__wrapper--overlay::after {
-				background:
- var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
+				background: var(--spectra-background-gradient-hover, var(--spectra-background-color-hover, var(--spectra-background-gradient, var(--spectra-background-color))));
 				opacity: var(--spectra-overlay-opacity, 1);
 			}
 		}

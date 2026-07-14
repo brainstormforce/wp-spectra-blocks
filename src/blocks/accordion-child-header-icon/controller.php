@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildHeaderIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Set the icon requirements, with fallback from the root accordion, or the default.
 $collapsed_icon = $attributes['icon'] ?? $block->context['spectra/accordion/icon'] ?? 'plus';
@@ -20,7 +19,6 @@ $icon_props = array(
 	'focusable'   => 'false',
 	'aria-hidden' => 'true',
 	'style'       => array(
-		'fill'      => 'currentColor',
 		'transform' => ! empty( $rotation ) ? 'rotate(' . $rotation . 'deg)' : '',
 	),
 );

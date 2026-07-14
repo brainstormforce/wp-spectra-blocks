@@ -49,6 +49,22 @@
 		font-size: inherit;
 	}
 
+	// Author-set border support.
+	// WordPress defaults an authored border to `border-style: solid` via
+	// `html :where(.has-border-color)` (specificity 0,0,1) so a block-level
+	// Border (width/color) renders. But the active theme's global-styles
+	// button baseline emits `:root :where(.wp-element-button,
+	// .wp-block-button__link){ border-style: none }` at (0,1,0), which beats
+	// that default and hides the border (a width with `border-style: none`
+	// paints nothing). Re-assert `solid` at (0,2,0) whenever the author sets a
+	// border width/color but no explicit style. An explicit inline
+	// `border-style` (Border control's style dropdown) still wins over this.
+	&.has-border-color,
+	&[style*="border-width"],
+	&[style*="border-color"] {
+		border-style: solid;
+	}
+
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
 		// Variable based CSS - Background Color.

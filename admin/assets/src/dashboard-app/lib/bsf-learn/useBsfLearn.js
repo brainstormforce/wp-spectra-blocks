@@ -6,10 +6,10 @@ import { __ } from '@wordpress/i18n';
 /**
  * Custom hook for managing Learn chapters and steps
  *
- * @param {Object} config - Configuration object
- * @param {Array} config.initialChapters - Array of chapter objects with steps
- * @param {string} config.saveEndpoint - API endpoint to save progress (optional)
- * @returns {Object} - Object containing chapters state and utility functions
+ * @param {Object} config                 - Configuration object
+ * @param {Array}  config.initialChapters - Array of chapter objects with steps
+ * @param {string} config.saveEndpoint    - API endpoint to save progress (optional)
+ * @return {Object} - Object containing chapters state and utility functions
  */
 const useBsfLearn = ( {
 	initialChapters = [],
@@ -29,8 +29,8 @@ const useBsfLearn = ( {
 	/**
 	 * Update completion status of a specific step
 	 *
-	 * @param {string} chapterId - ID of the chapter containing the step
-	 * @param {string} stepId - ID of the step to update
+	 * @param {string}  chapterId - ID of the chapter containing the step
+	 * @param {string}  stepId    - ID of the step to update
 	 * @param {boolean} completed - New completion status
 	 */
 	const updateStepCompletion = useCallback(
@@ -89,7 +89,7 @@ const useBsfLearn = ( {
 	 * Mark a step as completed
 	 *
 	 * @param {string} chapterId - ID of the chapter containing the step
-	 * @param {string} stepId - ID of the step to mark as completed
+	 * @param {string} stepId    - ID of the step to mark as completed
 	 */
 	const markStepCompleted = useCallback(
 		( chapterId, stepId ) => {
@@ -102,7 +102,7 @@ const useBsfLearn = ( {
 	 * Mark a step as incomplete
 	 *
 	 * @param {string} chapterId - ID of the chapter containing the step
-	 * @param {string} stepId - ID of the step to mark as incomplete
+	 * @param {string} stepId    - ID of the step to mark as incomplete
 	 */
 	const markStepIncomplete = useCallback(
 		( chapterId, stepId ) => {
@@ -162,7 +162,7 @@ const useBsfLearn = ( {
 	 * Get chapter-specific statistics
 	 *
 	 * @param {string} chapterId - ID of the chapter
-	 * @returns {Object} - Chapter statistics
+	 * @return {Object} - Chapter statistics
 	 */
 	const getChapterStats = useCallback(
 		( chapterId ) => {

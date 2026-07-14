@@ -32,7 +32,7 @@ class FrontendCountdownTimerManager {
 	 * Register a countdown instance.
 	 *
 	 * @since x.x.x
-	 * @param {string} id - Unique identifier for the countdown instance.
+	 * @param {string} id     - Unique identifier for the countdown instance.
 	 * @param {Object} config - Configuration for the countdown.
 	 * @return {Function} Unregister function.
 	 */
@@ -124,7 +124,7 @@ class FrontendCountdownTimerManager {
 	 * @since x.x.x
 	 */
 	start() {
-		if ( this.intervalId ) return;
+		if ( this.intervalId ) {return;}
 
 		// Execute immediately for all countdowns.
 		this.tick();
@@ -204,7 +204,7 @@ class FrontendCountdownTimerManager {
 	 *
 	 * @since x.x.x
 	 * @param {number} distance - Time distance in milliseconds.
-	 * @param {Object} config - Countdown configuration.
+	 * @param {Object} config   - Countdown configuration.
 	 * @return {Object} Time values.
 	 */
 	calculateTime( distance, config ) {
@@ -244,7 +244,7 @@ class FrontendCountdownTimerManager {
 	 * @return {boolean} Whether values changed.
 	 */
 	hasValuesChanged( oldValues, newValues ) {
-		if ( ! oldValues ) return true;
+		if ( ! oldValues ) {return true;}
 
 		return (
 			oldValues.days !== newValues.days ||
@@ -259,7 +259,7 @@ class FrontendCountdownTimerManager {
 	 *
 	 * @since x.x.x
 	 * @param {Object} countdown - Countdown configuration.
-	 * @param {Object} time - Time values.
+	 * @param {Object} time      - Time values.
 	 */
 	updateCountdownDOM( countdown, time ) {
 		const { element, labels } = countdown;
@@ -282,7 +282,7 @@ class FrontendCountdownTimerManager {
 		timeUnits.forEach( ( unit ) => {
 			const unitSelector = `.wp-block-spectra-countdown-child-${ unit.type }`;
 			const unitElement = element.querySelector( unitSelector );
-			if ( ! unitElement ) return;
+			if ( ! unitElement ) {return;}
 
 			const formattedNumber = String( unit.value ).padStart( 2, '0' );
 

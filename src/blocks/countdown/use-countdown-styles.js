@@ -1,9 +1,9 @@
 /**
  * Optimized styles hook for countdown blocks.
- * 
+ *
  * This hook provides memoized style calculations with better caching
  * to reduce the performance impact when multiple countdown blocks are present.
- * 
+ *
  * @since x.x.x
  */
 
@@ -15,7 +15,7 @@ const styleConfigCache = new WeakMap();
 
 /**
  * Get or create a cached style configuration.
- * 
+ *
  * @since x.x.x
  * @param {Array} config - The style configuration array.
  * @return {Array} The cached configuration.
@@ -33,11 +33,11 @@ const getCachedConfig = ( config ) => {
 
 /**
  * Optimized countdown styles hook.
- * 
+ *
  * @since x.x.x
- * @param {Object} attributes - Block attributes.
- * @param {Array} config - Style configuration.
- * @param {Array} additionalClasses - Additional CSS classes.
+ * @param {Object} attributes        - Block attributes.
+ * @param {Array}  config            - Style configuration.
+ * @param {Array}  additionalClasses - Additional CSS classes.
  * @return {Object} Style and class names.
  */
 export const useCountdownStyles = ( attributes, config, additionalClasses = [] ) => {

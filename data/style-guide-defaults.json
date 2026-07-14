@@ -1,0 +1,59 @@
+{
+	"version": 1,
+	"chromatics": {
+		"1": {
+			"hex": "#6431f6",
+			"name": "Primary",
+			"isMain": true
+		},
+		"2": {
+			"hex": "#7345f7",
+			"name": "Secondary",
+			"isMain": false
+		},
+		"3": {
+			"hex": "#f59e0b",
+			"name": "Accent",
+			"isMain": false
+		},
+		"4": {
+			"hex": "#10b981",
+			"name": "Success",
+			"isMain": false
+		},
+		"5": {
+			"hex": "#ef4444",
+			"name": "Error",
+			"isMain": false
+		},
+		"6": {
+			"hex": "#8b5cf6",
+			"name": "Info",
+			"isMain": false
+		},
+		"7": {
+			"hex": "#d97706",
+			"name": "Warning",
+			"isMain": false
+		}
+	},
+	"neutral": {
+		"tintIndex": 1,
+		"tintStrength": 0.05
+	},
+	"presets": {
+		"buttonStyle": "solid",
+		"inputStyle": "boxed",
+		"cardStyle": "flat",
+		"roundness": "default",
+		"shadowDepth": "subtle",
+		"spacingDensity": "default",
+		"typographyPair": "inter-inter",
+		"activeStyleDNA": null,
+		"badgeStyle": "subtle",
+		"imageTreatment": "natural",
+		"hoverIntensity": "subtle",
+		"backgroundFeel": "clean",
+		"motionStyle": "subtle"
+	}
+}

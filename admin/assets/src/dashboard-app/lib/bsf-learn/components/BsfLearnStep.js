@@ -6,13 +6,13 @@ import { ArrowUpRight, Check, Info, Video } from 'lucide-react';
 /**
  * Component for rendering a single learn step within a chapter
  *
- * @param {Object} props - Component props
- * @param {Object} props.step - Step data object
- * @param {string} props.chapterId - ID of the parent chapter
- * @param {boolean} props.isLast - Whether this is the last step in the chapter
+ * @param {Object}   props                    - Component props
+ * @param {Object}   props.step               - Step data object
+ * @param {string}   props.chapterId          - ID of the parent chapter
+ * @param {boolean}  props.isLast             - Whether this is the last step in the chapter
  * @param {Function} props.onCompletionChange - Callback when step completion status changes
- * @param {Function} props.onLearnHowClick - Callback to open learn how dialog
- * @returns {JSX.Element|null} - Rendered step component
+ * @param {Function} props.onLearnHowClick    - Callback to open learn how dialog
+ * @return {JSX.Element|null} - Rendered step component
  */
 const BsfLearnStep = ( { step, chapterId, isLast = false, onCompletionChange, onLearnHowClick } ) => {
 	const {

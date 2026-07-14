@@ -21,7 +21,7 @@ const LicenseKey = () => {
 			: __( 'Paste your license key here', 'spectra-blocks' );
 		const licenseMessage = licenseStatus
 			? __( 'License successfully validated!', 'spectra-blocks' )
-			: __( 'Please enter your valid license key below to activate Spectra Pro!', 'spectra-blocks' );
+			: __( 'Please enter your valid license key below to activate Spectra Blocks Pro!', 'spectra-blocks' );
 	
 		const activateHandler = () => {
 			if ( ! licenseKey ) {
@@ -59,12 +59,22 @@ const LicenseKey = () => {
 					dispatch( {
 						type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 						payload: {
-							message: responseData?.data?.message,
+							message: responseData?.data?.message || __( 'License activation failed. Please try again.', 'spectra-blocks' ),
 							messageType: 'error',
 						},
 					} );
 					setlicenseKey( '' );
 				}
+				setRegenerateAssetsState( false );
+			} ).catch( () => {
+				dispatch( {
+					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
+					payload: {
+						message: __( 'License activation failed. Please try again.', 'spectra-blocks' ),
+						messageType: 'error',
+					},
+				} );
+				setlicenseKey( '' );
 				setRegenerateAssetsState( false );
 			} );
 		};
@@ -92,11 +102,20 @@ const LicenseKey = () => {
 					dispatch( {
 						type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
 						payload: {
-							message: responseData?.data?.message,
+							message: responseData?.data?.message || __( 'License deactivation failed. Please try again.', 'spectra-blocks' ),
 							messageType: 'error',
 						},
 					} );
 				}
+				setRegenerateAssetsState( false );
+			} ).catch( () => {
+				dispatch( {
+					type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION',
+					payload: {
+						message: __( 'License deactivation failed. Please try again.', 'spectra-blocks' ),
+						messageType: 'error',
+					},
+				} );
 				setRegenerateAssetsState( false );
 			} );
 		};
@@ -124,7 +143,7 @@ const LicenseKey = () => {
 									sprintf(
 										// translators: %1$s: first anchor tag start, %2$s: first anchor tag end, %3$s second anchor tag start, %4$s second anchor tag end.
 										__(
-											"Activate %1$sSpectra Pro%2$s to get professional support and automatic updates from your WordPress dashboard. If you don't have a license, you can %3$sget it here »%4$s",
+											"Activate %1$sSpectra Blocks Pro%2$s to get professional support and automatic updates from your WordPress dashboard. If you don't have a license, you can %3$sget it here »%4$s",
 											'spectra-blocks'
 										),
 										'<a href="https://wpspectra.com/pricing" class="text-spectra focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover" target="_blank" rel="noreferrer">',
@@ -140,7 +159,7 @@ const LicenseKey = () => {
 								{licenseStatus ? (
 									<span className="font-medium">
 										{' '}
-										{'Spectra Pro'}
+										{'Spectra Blocks Pro'}
 									</span>
 								) : (
 									''
@@ -155,7 +174,7 @@ const LicenseKey = () => {
 								sprintf(
 																									/* translators: %s: product name */
 								__( 'You are using %s.', 'spectra-blocks' ),
-									`<b>Spectra Pro</b>`
+									`<b>Spectra Blocks Pro</b>`
 								)
 							)}
 						</Text>

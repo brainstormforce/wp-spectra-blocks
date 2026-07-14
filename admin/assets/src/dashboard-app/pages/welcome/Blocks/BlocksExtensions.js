@@ -1,7 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { Container } from '@bsf/force-ui';
+import Spectra_Block_Icons from '@Common/block-icons';
 import BlockItem from '@Common/components/BlockItem';
+import UnlockProItem from './UnlockProItem';
 
 const BlocksExtensions = () => {
 	const [ allBlocksData, setAllBlocksData ] = useState( null ); // Initialize state.
@@ -19,7 +21,7 @@ const BlocksExtensions = () => {
 			is_pro: false,
 			is_extension: true,
 			is_active: true,
-			link: 'animations-2'
+			link: 'animations-spectra-blocks'
 		},
 		{
 			title: __( 'Image Masking', 'spectra-blocks' ),
@@ -28,7 +30,25 @@ const BlocksExtensions = () => {
 			is_pro: false,
 			is_extension: true,
 			is_active: true,
-			link: 'image-mask-extension-v3-2'
+			link: 'image-mask-extension-spectra-blocks'
+		},
+		{
+			title: __( 'Motion Effects', 'spectra-blocks' ),
+			slug: 'motion-effects',
+			icon: React.cloneElement( Spectra_Block_Icons[ 'motion-effects' ], { width: 24, height: 24 } ),
+			is_pro: true,
+			is_extension: true,
+			is_active: false,
+			link: 'motion-effects-spectra-blocks'
+		},
+		{
+			title: __( 'Block Positioning', 'spectra-blocks' ),
+			slug: 'block-positioning',
+			icon: React.cloneElement( Spectra_Block_Icons[ 'block-positioning' ], { width: 24, height: 24 } ),
+			is_pro: true,
+			is_extension: true,
+			is_active: false,
+			link: 'block-positioning-spectra-blocks'
 		},
 	];
 
@@ -78,7 +98,10 @@ const BlocksExtensions = () => {
 							alignSelf="auto"
 							className="text-wrap card-border rounded-md bg-background-primary p-2 hover:border-border-subtle block-item hover:shadow-sm "
 						>
-							<BlockItem block={block} is_extension={true} key={ block.id } updateCounter={ 0 } />
+							{ block.is_pro
+						? <UnlockProItem blockInfo={ block } />
+						: <BlockItem block={ block } is_extension={ true } key={ block.id } updateCounter={ 0 } />
+					}
 						</Container.Item>
 					) ) }
 				</Container>

@@ -1,0 +1,768 @@
+/**
+ * Component Token CSS — Styles patterns using Style Guide tokens.
+ *
+ * Two delivery mechanisms:
+ * 1. CSS classes (sg-card, sg-badge, sg-section-dark) — pattern team adds manually
+ * 2. Global overrides (buttons, links, images, inputs) — automatic, no class needed
+ *
+ * Works WITH Spectra's existing CSS variable rendering:
+ * - Containers use --spectra-background-color via ::before
+ * - Buttons use --spectra-background-color + --spectra-text-color
+ *
+ * @package SpectraBlocksPro\StyleGuide
+ * @since   3.2.0
+ */
+
+/* ================================================================
+   CARDS
+   sg-card → applied to spectra/container blocks that serve as cards
+   ================================================================ */
+
+:where(.sg-card) {
+	border-width: var(--spectra-card-border-width);
+	border-style: var(--spectra-card-border-style);
+	border-color: var(--spectra-card-border-color);
+	border-radius: var(--spectra-radius-card);
+	box-shadow: var(--spectra-card-shadow);
+	overflow: hidden;
+}
+
+/*
+ * Card transition channel — authored Tailwind utilities like
+ * `transition-colors duration-500` set the `transition` shorthand at
+ * specificity (0,1,0) and would otherwise FULLY REPLACE the card's
+ * lift/shadow transition list, leaving translate + box-shadow snapping
+ * instantly on hover (the "glitchy abrupt" hover state). Bumping to
+ * the doubled-class selector resolves at (0,2,0) so the card's own
+ * transition channel wins for the properties it cares about, while
+ * authored color transitions still apply via their own cascade. This
+ * is one of the few cases where we knowingly out-specify author intent
+ * — the lift is the card's identity.
+ *
+ * Tailwind v4 emits `hover:-translate-y-N` via the `translate` longhand
+ * (not the `transform` shorthand), so `translate` must be in the
+ * transition list for authored hover translates to animate.
+ */
+.sg-card.sg-card {
+	transition:
+		box-shadow var(--spectra-transition-normal, 250ms) ease,
+		transform var(--spectra-transition-normal, 250ms) ease,
+		translate var(--spectra-transition-normal, 250ms) ease;
+}
+
+/* Override Spectra container's ::before background when card class is present. */
+.sg-card.spectra-background-color::before {
+	background: var(--spectra-card-bg) !important;
+	border-radius: inherit;
+}
+
+/* Ensure card border-radius applies to inner content. */
+.sg-card > .spectra-container-inner_wrap {
+	border-radius: inherit;
+}
+
+/* Card hover states. */
+
+/*
+ * Use the `translate` longhand (NOT `transform: translateY(...)`) so
+ * Tailwind v4's `hover:-translate-y-N` utility — which writes the same
+ * `translate` property and resolves at `:root .hover\:-translate-y-N…`
+ * specificity (0,5,1) — wins via specificity over this `:where()`
+ * default (specificity 0,1,1). When the LLM authors hover, the
+ * authored value applies (no doubling). When the LLM doesn't, this
+ * default lift fires.
+ */
+:where(.sg-card):hover {
+	box-shadow: var(--spectra-card-hover-shadow);
+	translate: 0 var(--spectra-card-hover-translate-y);
+}
+
+/* ================================================================
+   GLOBAL BUTTON OVERRIDE
+   Targets ALL buttons — no sg-btn-primary class needed on patterns.
+   Primary: default .wp-element-button
+   Secondary: .is-style-outline .wp-element-button
+   ================================================================ */
+
+/*
+ * Primary button: background-color and color use NO !important so that
+ * inline styles (e.g. background-color:#ffffff00 for ghost/link buttons)
+ * take precedence. Structural properties (border, radius, shadow) keep
+ * !important to ensure consistent design system styling.
+ */
+
+/*
+ * Defaults wrapped in :where() for zero specificity. Any className utility
+ * (e.g. `.bg-[#6366f1]`, `.text-white`) on a .wp-element-button / __link
+ * wins by source order. Structural tokens drop !important; patterns needing
+ * a custom border-radius/shadow can add the matching utility class.
+ */
+:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button),
+:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link) {
+	background-color: var(--spectra-btn-bg);
+	color: var(--spectra-btn-text);
+	border-width: var(--spectra-btn-border-width);
+	border-style: var(--spectra-btn-border-style);
+	border-color: var(--spectra-btn-border-color);
+	border-radius: var(--spectra-radius-interactive);
+	box-shadow: var(--spectra-btn-shadow);
+	transition:
+		background-color var(--spectra-transition-normal, 250ms) ease,
+		box-shadow var(--spectra-transition-normal, 250ms) ease,
+		transform var(--spectra-transition-normal, 250ms) ease;
+}
+
+:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button:hover),
+:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link:hover) {
+	background-color: var(--spectra-btn-hover-bg);
+	color: var(--spectra-btn-hover-text);
+	box-shadow: var(--spectra-btn-hover-shadow);
+	transform: translateY(var(--spectra-btn-hover-translate-y));
+}
+
+:where(.wp-block-spectra-buttons.is-style-outline .wp-element-button),
+:where(.wp-block-spectra-buttons.is-style-outline .wp-block-button__link) {
+	background-color: var(--spectra-btn-secondary-bg);
+	color: var(--spectra-btn-secondary-text);
+	border-width: var(--spectra-btn-secondary-border-width);
+	border-style: var(--spectra-btn-secondary-border-style);
+	border-color: var(--spectra-btn-secondary-border-color);
+	border-radius: var(--spectra-radius-interactive);
+	transition:
+		background-color var(--spectra-transition-normal, 250ms) ease,
+		box-shadow var(--spectra-transition-normal, 250ms) ease,
+		transform var(--spectra-transition-normal, 250ms) ease;
+}
+
+.wp-block-spectra-buttons.is-style-outline .wp-element-button:hover,
+.wp-block-spectra-buttons.is-style-outline .wp-block-button__link:hover {
+	transform: translateY(var(--spectra-btn-hover-translate-y));
+}
+
+/* Button radius: beat the theme's `:where(.wp-block-button__link) { border-radius }`
+   default. Both that and the primary/secondary rules above are (0,0,0)
+   (`:where()`), so the winner flips between the editor and the front end
+   (whichever stylesheet loads last). One real class here lifts this to
+   (0,1,0) so the Spectra token wins consistently in BOTH contexts, while a
+   per-button radius control (inline) or a `rounded-*` utility still
+   overrides it. */
+.wp-block-spectra-buttons :where(.wp-element-button, .wp-block-button__link) {
+	border-radius: var(--spectra-radius-interactive);
+}
+
+/* Spectra button blocks (spectra/buttons-child). */
+.spectra-button__link {
+	transition:
+		background-color var(--spectra-transition-normal, 250ms) ease,
+		box-shadow var(--spectra-transition-normal, 250ms) ease,
+		transform var(--spectra-transition-normal, 250ms) ease;
+}
+
+.spectra-button__link:hover {
+	transform: translateY(var(--spectra-btn-hover-translate-y));
+}
+
+/*
+ * Back-compat for sg-btn-primary / sg-btn-secondary. Selectors use plain
+ * class chaining (specificity 0,2,0) so these defaults beat WP core's
+ * `:root :where(.wp-element-button, .wp-block-button__link)` (0,1,0)
+ * which otherwise forces bg to --wp--preset--color--primary and hides
+ * the secondary button's transparent-bg intent. JIT utility classes
+ * compile to (0,6,0) selectors, so any `bg-*`/`text-*`/`border-*`
+ * utility the author adds still wins cleanly.
+ */
+.sg-btn-primary .wp-block-button__link,
+.sg-btn-primary.wp-block-button__link {
+	background-color: var(--spectra-btn-bg);
+	color: var(--spectra-btn-text);
+	border-width: var(--spectra-btn-border-width);
+	border-style: var(--spectra-btn-border-style);
+	border-color: var(--spectra-btn-border-color);
+	border-radius: var(--spectra-radius-interactive);
+	box-shadow: var(--spectra-btn-shadow);
+}
+
+.sg-btn-secondary .wp-block-button__link,
+.sg-btn-secondary.wp-block-button__link {
+	background-color: var(--spectra-btn-secondary-bg);
+	color: var(--spectra-btn-secondary-text);
+	border-width: var(--spectra-btn-secondary-border-width);
+	border-style: var(--spectra-btn-secondary-border-style);
+	border-color: var(--spectra-btn-secondary-border-color);
+	border-radius: var(--spectra-radius-interactive);
+}
+
+/* ================================================================
+   SECTIONS
+   sg-section → section wrappers with token-based padding
+
+   Uses the `.sg-section.sg-section` double-class trick (specificity
+   0,2,0) instead of a `:where()` wrapper (specificity 0,0,0) so the
+   rule wins over `.wp-block-spectra-container { padding: 10px }`
+   (specificity 0,1,0) in the cascade. With `:where()` the padding
+   computed to zero on container-backed section roots — the Style-Guide
+   padding-y token resolved but was outranked.
+   ================================================================ */
+
+.sg-section.sg-section {
+	padding-top: var(--spectra-section-padding-y);
+	padding-bottom: var(--spectra-section-padding-y);
+}
+
+/* ================================================================
+   GLOBAL FORM INPUT OVERRIDE
+   Targets all form elements — no class needed on patterns.
+   ================================================================ */
+
+:where(
+.entry-content
+input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
+	[type="checkbox"]
+):not([type="radio"]):not([type="hidden"])
+),
+:where(.entry-content textarea),
+:where(.entry-content select),
+:where(.wp-block-search__input) {
+	background-color: var(--spectra-input-bg);
+	color: var(--spectra-input-text);
+	border-color: var(--spectra-input-border-color);
+	border-width: var(--spectra-input-border-width);
+	border-style: var(--spectra-input-border-style);
+	border-radius: var(--spectra-radius-input);
+	transition:
+		border-color var(--spectra-transition-normal, 250ms) ease,
+		box-shadow var(--spectra-transition-normal, 250ms) ease;
+}
+
+:where(
+.entry-content
+input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
+	[type="checkbox"]
+):not([type="radio"]):not([type="hidden"])::placeholder
+),
+:where(.entry-content textarea::placeholder),
+:where(.wp-block-search__input::placeholder) {
+	color: var(--spectra-input-placeholder);
+}
+
+:where(
+.entry-content
+input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
+	[type="checkbox"]
+):not([type="radio"]):not([type="hidden"])
+):focus,
+:where(.entry-content textarea):focus,
+:where(.entry-content select):focus,
+:where(.wp-block-search__input):focus {
+	border-color: var(--spectra-input-focus-border);
+	box-shadow: var(--spectra-input-focus-shadow);
+	outline: none;
+}
+
+/* ================================================================
+   BADGES / TAGS
+   sg-badge → applied to eyebrow labels by pattern team
+   ================================================================ */
+
+/* ================================================================
+   GRADIENT TEXT (sg-text-gradient)
+   Clips a background gradient to text glyphs. Static stylesheet means
+   wp_kses_post cannot strip the webkit properties (inline would lose them).
+   Use with any `bg-[linear-gradient(...)]` utility to set the gradient.
+   ================================================================ */
+
+.sg-text-gradient {
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+}
+
+/*
+ * Badge structural defaults use the `.sg-badge.sg-badge` double-class trick
+ * (specificity 0,2,0) so structure wins over `.wp-block-spectra-container`
+ * (0,1,0) and per-instance JIT padding selectors (0,1,0). With `:where()`
+ * (0,0,0) the badge rendered as a flex item with padding 0, stretching to
+ * full parent width inside `flex-col`/`align-items: stretch` cards.
+ *
+ * Color tokens stay in a separate `:where()` rule (0,0,0) so any `.bg-*` /
+ * `.text-*` / `.border-*` utility on the badge still wins on source order.
+ *
+ * @since x.x.x
+ */
+.sg-badge.sg-badge {
+	display: inline-block;
+	width: fit-content;
+	border-width: var(--spectra-badge-border-width);
+	border-style: solid;
+	border-radius: var(--spectra-radius-badge);
+	font-size: var(--spectra-badge-font-size);
+	font-weight: var(--spectra-badge-font-weight);
+	letter-spacing: var(--spectra-badge-letter-spacing);
+	text-transform: var(--spectra-badge-text-transform);
+	padding: var(--spectra-badge-padding-y) var(--spectra-badge-padding-x);
+	line-height: 1.4;
+}
+
+/*
+ * When the badge also carries a `flex` / `inline-flex` utility (common when
+ * the badge composes an icon + label), keep it inline-flex so it sizes to
+ * its content rather than stretching to the cross-axis of a flex parent.
+ *
+ * @since x.x.x
+ */
+.sg-badge.sg-badge.flex,
+.sg-badge.sg-badge.inline-flex {
+	display: inline-flex;
+}
+
+/* Color tokens stay zero-specificity so utilities still win on source order. */
+:where(.sg-badge) {
+	background: var(--spectra-badge-bg);
+	color: var(--spectra-badge-text);
+	border-color: var(--spectra-badge-border-color);
+}
+
+/* ================================================================
+   FIT-CONTENT BUTTON WRAPPER (sg-button-fit)
+
+   Opt-in fit-content button wrapper. Adds `align-self: start`
+   so a button inside a `flex flex-col` card aligns to the cross-axis start
+   instead of inheriting `stretch` and (visually) re-stretching despite the
+   width override. Additive primitive; defaults for non-opt-in buttons
+   unchanged.
+
+   Patterns:
+     <div class="wp-block-button sg-button-fit">...</div>
+     <div class="sg-button-fit"><div class="wp-block-button">...</div></div>
+
+   @since x.x.x
+   ================================================================ */
+
+.sg-button-fit.wp-block-button,
+.sg-button-fit > .wp-block-button,
+.sg-button-fit.wp-block-spectra-buttons,
+.sg-button-fit > .wp-block-spectra-buttons {
+	align-self: start;
+	width: fit-content;
+}
+
+.sg-button-fit .wp-block-button__link,
+.sg-button-fit .wp-element-button,
+.sg-button-fit .spectra-button__link,
+.sg-button-fit .wp-block-spectra-button {
+	width: fit-content;
+}
+
+/* ================================================================
+   GLOBAL IMAGE OVERRIDE
+   Targets all block images — no class needed on patterns.
+   Applies shadow, border, overlay, and filter.
+
+   border-radius is set ONLY on the figure parent (which carries
+   `overflow: hidden`), never on the inner <img>. Two reasons:
+     1. The figure's overflow:hidden + border-radius already clips
+        the inner image to rounded corners for Block-UI users — no
+        img-level radius needed.
+     2. WP core/image block validation rejects className attributes
+        on the inner <img> (`save()` only emits class on the figure).
+        So a Tailwind `rounded-*` utility CAN'T live on the img.
+        Keeping img-level radius makes it impossible for SaaS to
+        opt out of image rounding without breaking block validation.
+   ================================================================ */
+
+:where(.entry-content .wp-block-image img) {
+	filter: var(--spectra-image-filter);
+}
+
+.entry-content .wp-block-image {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--spectra-radius-image);
+}
+
+/* Image shadow and border from image treatment tokens. */
+.entry-content .wp-block-image figure,
+.entry-content figure.wp-block-image {
+	border-radius: var(--spectra-radius-image);
+	box-shadow: var(--spectra-shadow-sm);
+	border: var(--spectra-image-border);
+	overflow: hidden;
+}
+
+/* Image overlay via ::after pseudo-element. */
+.entry-content .wp-block-image::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: var(--spectra-image-overlay);
+	pointer-events: none;
+	border-radius: inherit;
+}
+
+/* Spectra image blocks also get treatment. */
+:where(.entry-content .wp-block-spectra-image img) {
+	border-radius: var(--spectra-radius-image);
+	box-shadow: var(--spectra-shadow-sm);
+	border: var(--spectra-image-border);
+	filter: var(--spectra-image-filter);
+}
+
+/* Object-fit propagation for core/image figures.
+
+   WP `core/image` save() emits `attrs.className` on the wrapping
+   <figure>, NOT on the inner <img> (same constraint called out
+   above for img-level border-radius). When an author writes
+   `<img class="object-cover">` (or the Block UI applies it via
+   className), Tailwind's `object-cover` utility lands on the
+   figure where it has no effect — replaced-element fitting is
+   only honoured on <img>/<video>.
+
+   Forward the intent to the inner img: when the figure carries
+   `object-cover` / `object-contain`, fill the figure box and
+   crop/letterbox accordingly. Scoped narrowly to the two
+   object-fit utilities so this never silently distorts an image
+   whose author only wanted the figure sized. `display: block`
+   removes the inline-image baseline gap so the image aligns
+   exactly with the figure's bottom edge.
+
+   Selectors paired: `.entry-content` (frontend post body) and
+   `.spectra-is-root-container` (rendered in BOTH frontend and
+   editor canvas by Spectra). The editor wraps content in
+   `.block-editor-block-list__layout`, not `.entry-content`, so
+   without the `.spectra-is-root-container` mirror the inner <img>
+   stays at intrinsic size in the editor while filling its figure
+   on frontend — a visible parity break. The dual-selector form
+   keeps frontend behaviour unchanged (matches via either ancestor)
+   and adds editor coverage. */
+.entry-content .wp-block-image.object-cover > img,
+.entry-content .wp-block-image.object-contain > img,
+.spectra-is-root-container .wp-block-image.object-cover > img,
+.spectra-is-root-container .wp-block-image.object-contain > img {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.entry-content .wp-block-image.object-cover > img,
+.spectra-is-root-container .wp-block-image.object-cover > img {
+	object-fit: cover;
+}
+
+.entry-content .wp-block-image.object-contain > img,
+.spectra-is-root-container .wp-block-image.object-contain > img {
+	object-fit: contain;
+}
+
+/* ================================================================
+   DARK SECTIONS
+   sg-section-dark → applied to sections with dark backgrounds.
+   Inverts card/button styles automatically.
+   ================================================================ */
+
+:where(.sg-section-dark .sg-card) {
+	border-color: var(--spectra-dark-card-border-color);
+	box-shadow: var(--spectra-dark-card-shadow);
+}
+
+.sg-section-dark .sg-card.spectra-background-color::before {
+	background: var(--spectra-dark-card-bg) !important;
+}
+
+/* Dark section primary buttons — :where() wrapped so className utilities win. */
+:where(
+.sg-section-dark .wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button
+),
+:where(
+.sg-section-dark
+.wp-block-spectra-buttons:not(.is-style-outline)
+.wp-block-button__link
+) {
+	background-color: var(--spectra-dark-btn-bg);
+	color: var(--spectra-dark-btn-text);
+}
+
+/* Dark section secondary/outline buttons — :where() wrapped. */
+:where(.sg-section-dark .wp-block-spectra-buttons.is-style-outline .wp-element-button),
+:where(
+	.sg-section-dark .wp-block-spectra-buttons.is-style-outline .wp-block-button__link
+) {
+	background-color: var(--spectra-dark-btn-secondary-bg);
+	color: var(--spectra-dark-btn-secondary-text);
+	border-color: var(--spectra-dark-btn-secondary-border-color);
+}
+
+/* Dark section links. */
+.sg-section-dark a:not(.wp-element-button):not(.wp-block-button__link) {
+	color: var(--spectra-white);
+}
+
+/*
+ * Dark section typography auto-inversion.
+ * Wrapped in :where() so any explicit `text-*` utility on the element still
+ * wins (LLM-authored text color always beats this fallback). Covers headings
+ * and paragraphs that would otherwise inherit the light-theme default and
+ * render near-black (invisible) on a dark gradient.
+ */
+.sg-section-dark :where(h1, h2, h3, h4, h5, h6, p, li) {
+	color: var(--spectra-white);
+}
+
+/* Dark section badges — :where() wrapped; drops !important so utility
+   classes (e.g. `bg-[rgba(99,102,241,0.1)]`) override default tokens. */
+:where(.sg-section-dark .sg-badge) {
+	background: color-mix(in srgb, var(--spectra-white) 15%, transparent);
+	color: var(--spectra-white);
+	border-color: transparent;
+}
+
+/* ================================================================
+   PHASE 3 — PROFESSIONAL POLISH
+   ================================================================ */
+
+/* ================================================================
+   OVERLAYS
+   sg-overlay → applied to sections/images with overlays
+   ================================================================ */
+
+.sg-overlay {
+	position: relative;
+}
+
+.sg-overlay::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 0;
+}
+
+.sg-overlay-dark::after {
+	background: var(--spectra-overlay-dark);
+}
+
+.sg-overlay-light::after {
+	background: var(--spectra-overlay-light);
+}
+
+.sg-overlay-brand::after {
+	background: var(--spectra-overlay-brand);
+}
+
+.sg-overlay-gradient::after {
+	background: var(--spectra-overlay-gradient);
+}
+
+.sg-overlay > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* ================================================================
+   GLOBAL DIVIDER / SEPARATOR OVERRIDE
+   Targets all hr and separator blocks — no class needed.
+   ================================================================ */
+
+:where(.entry-content hr),
+:where(.entry-content .wp-block-separator) {
+	border-color: var(--spectra-divider-color);
+	border-width: var(--spectra-divider-width);
+	border-style: var(--spectra-divider-style);
+	opacity: 1;
+}
+
+/* ================================================================
+   GLOBAL NAVIGATION OVERRIDE
+   Targets navigation blocks and header areas.
+   ================================================================ */
+
+.wp-block-navigation {
+	--spectra-nav-link-color: var(--spectra-nav-text);
+}
+
+:where(.wp-block-navigation a) {
+	color: var(--spectra-nav-text);
+	transition: color var(--spectra-transition-normal, 250ms) ease;
+}
+
+:where(.wp-block-navigation a):hover {
+	color: var(--spectra-nav-link-hover);
+}
+
+/* ================================================================
+   GLOBAL ICON OVERRIDE
+   Targets Spectra icon blocks.
+   ================================================================ */
+
+:where(.wp-block-spectra-list .spectra-list-icon svg) {
+	width: var(--spectra-icon-size);
+	height: var(--spectra-icon-size);
+}
+
+/* Icon-container wrapper (sg-icon-contained).
+   Works with both the icon-list child (.spectra-list-icon) and the
+   standalone Spectra icon block (.wp-block-spectra-icon / .spectra-icon).
+   The wrapper is a square flex centerer; the inner icon shrinks to ~50%
+   via --spectra-icon-default-size so there's visible padding around it.
+   Author sizes the wrapper with any height/width utility (e.g. size-14). */
+:where(.sg-icon-contained) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 1 / 1;
+	border-radius: var(--spectra-icon-container-radius);
+	--spectra-icon-default-size: 50%;
+}
+
+/* Back-compat: tinted background + sizing for the icon-list-child pattern. */
+:where(.sg-icon-contained .spectra-list-icon) {
+	background: var(--spectra-icon-container-bg);
+	border-radius: var(--spectra-icon-container-radius);
+	width: var(--spectra-icon-container-size);
+	height: var(--spectra-icon-container-size);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+/* ================================================================
+   ACCORDION ITEM BOX-SIZING
+   Item box-sizing defaults to content-box in
+   accordion-child-item/style.scss — override to border-box so padding
+   and borders don't push item width past the parent.
+   ================================================================ */
+
+.wp-block-spectra-accordion-child-item {
+	box-sizing: border-box;
+	width: 100%;
+}
+
+/* ================================================================
+   SG-ACCORDION — header layout override
+
+   Scoped behind `.sg-accordion` so standalone Spectra accordions keep
+   their `justify-content: flex-start` default. Without these rules, the
+   per-block JIT selector
+     body .wp-block-spectra-accordion-child-header:where([data-spectra-id="…"])
+   (specificity 0,1,1) sets `justify-content: flex-start` and the content
+   span defaults to `flex: 0 1 auto`, leaving title + chevron clustered on
+   the left with empty whitespace on the right.
+
+   Double-class selectors (0,2,0 / 0,3,0) beat the JIT deterministically
+   without !important, across all breakpoints.
+   ================================================================ */
+
+.sg-accordion
+.wp-block-spectra-accordion-child-header.wp-block-spectra-accordion-child-header {
+	justify-content: space-between;
+}
+
+.sg-accordion
+.wp-block-spectra-accordion-child-header-content.wp-block-spectra-accordion-child-header-content {
+	flex: 1 1 auto;
+}
+
+/* Chevron right-gap: the icon block has no default padding, so once the
+   header uses `justify-content: space-between` above, the icon sits flush
+   against the button's right edge. Mirror the content span's conventional
+   p-6 (1.5rem) left padding so title and chevron are equidistant from
+   the item edges. */
+.sg-accordion
+.wp-block-spectra-accordion-child-header-icon.wp-block-spectra-accordion-child-header-icon {
+	padding-right: 1.5rem;
+}
+
+/* Details top-padding: the ERA converter strips `border-t`/`border-b`/
+   `divide-*` separators from details wrappers (no divider between title
+   and body). Once there's no separator, the header-content's p-6 (24px
+   bottom padding) + details' p-6 (24px top padding) produce a 48px gap
+   between header text and body text — visually disconnected from the
+   item's own border radius. Zeroing padding-top halves that to 24px,
+   keeping header and body visually attached. */
+.sg-accordion
+.wp-block-spectra-accordion-child-details.wp-block-spectra-accordion-child-details {
+	padding-top: 0;
+}
+
+/* ================================================================
+   PHASE 4 — BEAT COMPETITION
+   ================================================================ */
+
+/* ================================================================
+   MICRO-INTERACTIONS
+   :active press scale on buttons.
+   ================================================================ */
+
+.wp-element-button:active,
+.wp-block-button__link:active,
+.spectra-button__link:active {
+	transform: scale(var(--spectra-btn-press-scale)) !important;
+}
+
+/* ================================================================
+   ACCESSIBILITY
+   :focus-visible ring on all interactive elements.
+   ================================================================ */
+
+.wp-element-button:focus-visible,
+.wp-block-button__link:focus-visible,
+.spectra-button__link:focus-visible,
+.sg-card a:focus-visible,
+.entry-content a:focus-visible {
+	outline:
+		var(--spectra-focus-ring-width) var(--spectra-focus-ring-style)
+		var(--spectra-focus-ring-color) !important;
+	outline-offset: var(--spectra-focus-ring-offset) !important;
+}
+
+.entry-content input:focus-visible,
+.entry-content textarea:focus-visible,
+.entry-content select:focus-visible {
+	outline:
+		var(--spectra-focus-ring-width) var(--spectra-focus-ring-style)
+		var(--spectra-focus-ring-color) !important;
+	outline-offset: var(--spectra-focus-ring-offset) !important;
+}
+
+/* Editor-only: suppress focus-visible outline on buttons/links while editing.
+   The Gutenberg iframe body carries .editor-styles-wrapper so this only
+   fires inside the block editor canvas, not on the frontend. */
+.editor-styles-wrapper .wp-element-button:focus-visible,
+.editor-styles-wrapper .wp-block-button__link:focus-visible,
+.editor-styles-wrapper .spectra-button__link:focus-visible,
+.editor-styles-wrapper .sg-card a:focus-visible,
+.editor-styles-wrapper .entry-content a:focus-visible {
+	outline: none !important;
+	outline-offset: 0 !important;
+}
+
+/* ================================================================
+   REDUCED MOTION
+   Respects prefers-reduced-motion — disables all transitions,
+   transforms, and animations when user prefers reduced motion.
+   ================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+	.sg-card,
+	.wp-element-button,
+	.wp-block-button__link,
+	.spectra-button__link,
+	.entry-content a,
+	.entry-content input,
+	.entry-content textarea,
+	.entry-content select,
+	.wp-block-navigation a {
+		transition-duration: 0ms !important;
+		animation-duration: 0ms !important;
+	}
+
+	.sg-card:hover,
+	.wp-element-button:hover,
+	.wp-block-button__link:hover,
+	.spectra-button__link:hover,
+	.wp-element-button:active,
+	.wp-block-button__link:active {
+		transform: none !important;
+	}
+}

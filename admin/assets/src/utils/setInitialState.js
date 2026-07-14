@@ -21,18 +21,18 @@ const setInitialState = ( store ) => {
 			secretKeyV2: data.recaptcha_secret_key_v2,
 			siteKeyV3: data.recaptcha_site_key_v3,
 			secretKeyV3: data.recaptcha_secret_key_v3,
-			containerGlobalPadding: data.spectra_blocks_container_global_padding,
-			containerGlobalElementsGap: data.spectra_blocks_container_global_elements_gap,
 			disableCSSCache: data.spectra_blocks_disable_css_cache,
-			social: data.social,
             coreBlocks: data.spectra_core_blocks,
             enableAnimationsExtension: data.spectra_blocks_enable_animations_extension,
             spectraFSEFonts: data.spectra_global_fse_fonts,
             spectraIsBlockTheme: data.wp_is_block_theme,
             themeFonts: data.theme_fonts,
-            btnInheritFromTheme: data.spectra_blocks_btn_inherit_from_theme,
 	        enableGBSExtension: data.spectra_blocks_enable_gbs_extension,
             zipAiModules: data.zip_ai_modules,
+			enableBSFAnalyticsOption: data.enable_bsf_analytics_option,
+            enableAbilities: data.enable_abilities,
+            enableEditAbilities: data.enable_edit_abilities,
+            enableMcpServer: data.enable_mcp_server,
         };
 
         store.dispatch( {type: 'UPDATE_INITIAL_STATE', payload: initialState} );

@@ -136,7 +136,7 @@ const ResponsiveControlsClickHandler = {
 		 * @type {Element|null}
 		 */
 		const dropdownMenu = e.target.closest( DROPDOWN_MENU_SELECTOR );
-		if ( ! dropdownMenu ) return;
+		if ( ! dropdownMenu ) {return;}
 
 		/**
 		 * Verify the dropdown is for a responsive control panel
@@ -151,7 +151,7 @@ const ResponsiveControlsClickHandler = {
 			panelName = groupLabel.textContent;
 		}
 
-		if ( ! panelName ) return;
+		if ( ! panelName ) {return;}
 
 		/*
 		 * Check if the panel is a responsive control panel.
@@ -182,7 +182,7 @@ const ResponsiveControlsClickHandler = {
 			return normalizedPanelName === spectraTranslation;
 		} );
 
-		if ( ! isResponsivePanel ) return;
+		if ( ! isResponsivePanel ) {return;}
 
 		/**
 		 * Determine if the click represents a reset action through multiple checks:
@@ -221,7 +221,7 @@ const ResponsiveControlsClickHandler = {
 			isResetButton = isResetText( nextText ); // Translation-aware legacy check
 		}
 
-		if ( ! isResetButton ) return;
+		if ( ! isResetButton ) {return;}
 
 		/**
 		 * Detect the type of reset (individual reset vs reset all).
@@ -251,7 +251,7 @@ const ResponsiveControlsClickHandler = {
 		const { getSelectedBlock } = select( 'core/block-editor' );
 		const blockBeforeReset = getSelectedBlock();
 
-		if ( ! blockBeforeReset || ! isAllowedBlock( blockBeforeReset ) ) return;
+		if ( ! blockBeforeReset || ! isAllowedBlock( blockBeforeReset ) ) {return;}
 
 		// Set flag to disable withResponsiveControls during reset.
 		isResetInProgress = true;
@@ -267,7 +267,7 @@ const ResponsiveControlsClickHandler = {
 			const block = getSelectedBlock();
 
 			// Validate we have an allowed block with responsive attributes
-			if ( ! block || ! isAllowedBlock( block ) ) return;
+			if ( ! block || ! isAllowedBlock( block ) ) {return;}
 
 			const { attributes, name, clientId } = block;
 			const { responsiveControls = {} } = attributes || {};
@@ -302,7 +302,7 @@ const ResponsiveControlsClickHandler = {
 							resetProperties.push( currentPath );
 							// Also add all nested paths that existed before
 							const addNestedPaths = ( obj, pathPrefix ) => {
-								if ( ! isObject( obj ) ) return;
+								if ( ! isObject( obj ) ) {return;}
 								Object.keys( obj ).forEach( ( nestedKey ) => {
 									const nestedPath = `${ pathPrefix }.${ nestedKey }`;
 									resetProperties.push( nestedPath );
@@ -361,7 +361,7 @@ const ResponsiveControlsClickHandler = {
 			// Phase 2: Apply merged attributes for current device only
 			requestAnimationFrame( () => {
 				const updatedBlock = getSelectedBlock();
-				if ( ! updatedBlock || ! isAllowedBlock( updatedBlock ) ) return;
+				if ( ! updatedBlock || ! isAllowedBlock( updatedBlock ) ) {return;}
 
 				// Only update if we're on the device that was reset - don't force inheritance updates
 				if ( select( 'core/editor' )?.getDeviceType?.() !== deviceType ) {

@@ -64,11 +64,11 @@ const Render = ( props ) => {
 				svg={ icon || 'star' }
 				needsRTL={ flipForRTL }
 				extraProps={ {
-					width: size || '48px',
-					height: size || '48px',
+					width: size || 'var(--spectra-icon-default-size, 48px)',
+					height: size || 'var(--spectra-icon-default-size, 48px)',
 					style: {
-						width: size || '48px',
-						height: size || '48px',
+						width: size || 'var(--spectra-icon-default-size, 48px)',
+						height: size || 'var(--spectra-icon-default-size, 48px)',
 						transform: rotation ? `rotate(${ rotation }deg)` : '',
 					},
 				} }

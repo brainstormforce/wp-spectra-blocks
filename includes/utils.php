@@ -5,9 +5,9 @@
  * @package Spectra
  */
 
-// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- this file intentionally contains both utility functions and a helper class
-
 defined( 'ABSPATH' ) || exit;
+
+// phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed -- utility file intentionally combines helper functions with the CSS generator class they support
 
 /**
  * Get complete CSS content for post preview from both Spectra v3 and Pro v2 blocks.
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  * @param int $post_id Post ID to generate CSS for.
  * @return string Complete CSS content for pattern block preview.
  */
-function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
+function spectra_get_v3_blocks_css_for_preview( $post_id ) {
 	if ( ! $post_id ) {
 		return '';
 	}
@@ -32,9 +32,13 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
 		return '';
 	}
 
-	$css_generator = new Spectra_Blocks_CSS_Generator();
+	$css_generator = new Spectra_CSS_Generator();
 
-	return $css_generator->generate_preview_css( $post_id, $blocks );
+	\SpectraBlocks\Extensions\ResponsiveControls::$is_pattern_preview = true;
+	$css = $css_generator->generate_preview_css( $post_id, $blocks );
+	\SpectraBlocks\Extensions\ResponsiveControls::$is_pattern_preview = false;
+
+	return $css;
 }
 
 /**
@@ -43,7 +47,7 @@ function spectra_blocks_get_v3_blocks_css_for_preview( $post_id ) {
  *
  * @since 3.0.0
  */
-class Spectra_Blocks_CSS_Generator {
+class Spectra_CSS_Generator {
 
 	/**
 	 * Registered plugin handlers for CSS generation.
@@ -76,7 +80,7 @@ class Spectra_Blocks_CSS_Generator {
 			$this->generate_extensions_css( $blocks ),
 			$this->generate_layout_css( $blocks ),
 			$this->generate_responsive_css_from_blocks( $blocks ),
-			spectra_blocks_process_blocks_for_attribute_css( $blocks ),
+			spectra_process_blocks_for_attribute_css( $blocks ),
 		);
 
 		return implode( "\n", array_filter( $css_parts ) );
@@ -106,11 +110,11 @@ class Spectra_Blocks_CSS_Generator {
 	private function register_default_handlers() {
 		// Spectra v3 handler.
 		$this->register_plugin_handler(
-			'spectra-v3',
+			'spectra-blocks',
 			array(
 				'namespace'        => 'spectra/',
 				'blocks_dir'       => SPECTRA_BLOCKS_DIR . 'build/blocks/',
-				'responsive_class' => '\Spectra\Extensions\ResponsiveControls',
+				'responsive_class' => '\SpectraBlocks\Extensions\ResponsiveControls',
 				'enabled'          => true,
 			)
 		);
@@ -129,7 +133,7 @@ class Spectra_Blocks_CSS_Generator {
 		}
 
 		// Allow other plugins to register their handlers.
-		do_action( 'spectra_blocks_css_generator_register_handlers', $this );
+		do_action( 'spectra_css_generator_register_handlers', $this );
 	}
 
 	/**
@@ -350,7 +354,7 @@ class Spectra_Blocks_CSS_Generator {
 		 * @param array  $blocks The parsed blocks being processed.
 		 * @return string Filtered CSS content.
 		 */
-		$css_content = apply_filters( 'spectra_blocks_extensions_css', $css_content, $blocks );
+		$css_content = apply_filters( 'spectra_extensions_css', $css_content, $blocks );
 
 		return $css_content;
 	}
@@ -515,8 +519,8 @@ class Spectra_Blocks_CSS_Generator {
 		$v3_responsive  = null;
 		$pro_responsive = null;
 
-		if ( class_exists( '\Spectra\Extensions\ResponsiveControls' ) ) {
-			$v3_responsive = \Spectra\Extensions\ResponsiveControls::instance();
+		if ( class_exists( '\SpectraBlocks\Extensions\ResponsiveControls' ) ) {
+			$v3_responsive = \SpectraBlocks\Extensions\ResponsiveControls::instance();
 		}
 
 		if ( class_exists( '\SpectraPro\Extensions\ResponsiveControls' ) ) {
@@ -555,7 +559,10 @@ class Spectra_Blocks_CSS_Generator {
 
 			$attrs      = $block['attrs'] ?? array();
 			$block_name = $block['blockName'];
-			$spectra_id = $attrs['spectraId'] ?? 'spectra-preview-' . wp_generate_uuid4();
+			$spectra_id = \SpectraBlocks\Helpers\Core::sanitize_spectra_id( $attrs['spectraId'] ?? '' );
+			if ( empty( $spectra_id ) ) {
+				$spectra_id = 'spectra-preview-' . wp_generate_uuid4();
+			}
 
 			// Determine which ResponsiveControls instance to use.
 			// This checks for Spectra blocks, Pro blocks, AND any core blocks that have responsive control support.
@@ -678,8 +685,8 @@ class Spectra_Blocks_CSS_Generator {
 		}
 
 		// Add block-specific responsive attributes using ResponsiveAttributeCSS.
-		if ( ! empty( $block_name ) && class_exists( '\Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
-			$block_responsive_attrs = \Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
+		if ( ! empty( $block_name ) && class_exists( '\SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
+			$block_responsive_attrs = \SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
 
 			foreach ( $block_responsive_attrs as $attr ) {
 				if ( isset( $attrs[ $attr ] ) && null !== $attrs[ $attr ] && '' !== $attrs[ $attr ] ) {
@@ -742,7 +749,7 @@ class Spectra_Blocks_CSS_Generator {
  * @since 3.0.0
  * @return array Results of the regeneration process.
  */
-function spectra_blocks_regenerate_pattern_css() {
+function spectra_regenerate_pattern_css() {
 	$results = array(
 		'success'            => false,
 		'patterns_processed' => 0,
@@ -782,7 +789,7 @@ function spectra_blocks_regenerate_pattern_css() {
 			delete_post_meta( $post->ID, '_spectra_css_cache' );
 
 			// Trigger fresh CSS generation.
-			$new_css = spectra_blocks_get_v3_blocks_css_for_preview( $post->ID );
+			$new_css = spectra_get_v3_blocks_css_for_preview( $post->ID );
 
 			if ( ! empty( $new_css ) ) {
 				// Store the regenerated CSS if needed.
@@ -809,7 +816,7 @@ function spectra_blocks_regenerate_pattern_css() {
  * @param object $pro_responsive_controls The Spectra Pro v2 ResponsiveControls instance (optional).
  * @return string Generated CSS for all blocks.
  */
-function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsive_controls, $pro_responsive_controls = null ) {
+function spectra_process_blocks_for_comprehensive_css( $blocks, $responsive_controls, $pro_responsive_controls = null ) {
 	static $core_layout_css_added = false;
 	$css_content                  = '';
 
@@ -821,9 +828,9 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
 		$attrs      = $block['attrs'] ?? array();
 		$block_name = $block['blockName'];
 
-		// Generate CSS for Spectra blocks and Pro v2.
+		// Generate CSS for Spectra blocks (v3 and Pro v2).
 		if ( strpos( $block_name, 'spectra/' ) === 0 || strpos( $block_name, 'spectra-pro/' ) === 0 ) {
-			$spectra_id = $attrs['spectraId'] ?? '';
+			$spectra_id = \SpectraBlocks\Helpers\Core::sanitize_spectra_id( $attrs['spectraId'] ?? '' );
 
 			// Ensure block has a spectraId for CSS generation.
 			if ( empty( $spectra_id ) ) {
@@ -835,10 +842,10 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
 			$responsive_controls_data = $attrs['responsiveControls'] ?? array();
 
 			// Convert all block attributes to comprehensive responsive controls.
-			$comprehensive_responsive_data = spectra_blocks_convert_all_attrs_to_responsive_controls( $attrs, $block_name );
+			$comprehensive_responsive_data = spectra_convert_all_attrs_to_responsive_controls( $attrs, $block_name );
 
 			// Merge existing with comprehensive data (comprehensive takes precedence for missing properties).
-			$final_responsive_data = spectra_blocks_merge_responsive_controls_comprehensive( $responsive_controls_data, $comprehensive_responsive_data );
+			$final_responsive_data = spectra_merge_responsive_controls_comprehensive( $responsive_controls_data, $comprehensive_responsive_data );
 
 			// Skip if no responsive data to process.
 			if ( empty( $final_responsive_data ) ) {
@@ -865,17 +872,17 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
 
 		// Generate CSS for WordPress core blocks.
 		if ( strpos( $block_name, 'core/' ) === 0 ) {
-			$css_content .= spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, $core_layout_css_added );
+			$css_content .= spectra_generate_wordpress_core_css( $block_name, $attrs, $core_layout_css_added );
 		}
 
 		// Generate layout CSS for Spectra blocks that use WordPress core layout support.
 		if ( strpos( $block_name, 'spectra/' ) === 0 || strpos( $block_name, 'spectra-pro/' ) === 0 ) {
-			$css_content .= spectra_blocks_generate_spectra_layout_css( $attrs, $block_name );
+			$css_content .= spectra_generate_spectra_layout_css( $attrs, $block_name );
 		}
 
 		// Process inner blocks recursively.
 		if ( ! empty( $block['innerBlocks'] ) ) {
-			$css_content .= spectra_blocks_process_blocks_for_comprehensive_css( $block['innerBlocks'], $responsive_controls, $pro_responsive_controls );
+			$css_content .= spectra_process_blocks_for_comprehensive_css( $block['innerBlocks'], $responsive_controls, $pro_responsive_controls );
 		}
 	}
 
@@ -892,7 +899,7 @@ function spectra_blocks_process_blocks_for_comprehensive_css( $blocks, $responsi
  * @param array $comprehensive_responsive Comprehensive responsive controls from all attributes.
  * @return array Merged responsive controls.
  */
-function spectra_blocks_merge_responsive_controls_comprehensive( $existing_responsive, $comprehensive_responsive ) {
+function spectra_merge_responsive_controls_comprehensive( $existing_responsive, $comprehensive_responsive ) {
 	if ( empty( $existing_responsive ) ) {
 		return $comprehensive_responsive;
 	}
@@ -939,11 +946,11 @@ function spectra_blocks_merge_responsive_controls_comprehensive( $existing_respo
  * @param array $blocks The blocks to process.
  * @return string Generated attribute CSS for all blocks.
  */
-function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
+function spectra_process_blocks_for_attribute_css( $blocks ) {
 	$css_content = '';
 
 	// Check if ResponsiveAttributeCSS class exists.
-	if ( ! class_exists( '\Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
+	if ( ! class_exists( '\SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
 		return '';
 	}
 
@@ -951,13 +958,13 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 		if ( empty( $block['blockName'] ) || strpos( $block['blockName'], 'spectra/' ) !== 0 ) {
 			// Still process inner blocks.
 			if ( ! empty( $block['innerBlocks'] ) ) {
-				$css_content .= spectra_blocks_process_blocks_for_attribute_css( $block['innerBlocks'] );
+				$css_content .= spectra_process_blocks_for_attribute_css( $block['innerBlocks'] );
 			}
 			continue;
 		}
 
 		$attrs      = $block['attrs'] ?? array();
-		$spectra_id = $attrs['spectraId'] ?? '';
+		$spectra_id = \SpectraBlocks\Helpers\Core::sanitize_spectra_id( $attrs['spectraId'] ?? '' );
 		$block_name = $block['blockName'];
 
 		if ( empty( $spectra_id ) ) {
@@ -971,10 +978,10 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 		$low_specificity_selector  = "{$block_class}:where([data-spectra-id='{$spectra_id}'])";
 
 		// Get device-specific attributes with fallback (simulating lg device).
-		$device_attrs = spectra_blocks_get_preview_device_attributes( $block_name, $attrs );
+		$device_attrs = spectra_get_preview_device_attributes( $block_name, $attrs );
 
 		// Generate block-specific attribute CSS.
-		$attr_css = \Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS::generate_css(
+		$attr_css = \SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS::generate_css(
 			$block_name,
 			$device_attrs,
 			$high_specificity_selector,
@@ -988,7 +995,7 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
 
 		// Process inner blocks recursively.
 		if ( ! empty( $block['innerBlocks'] ) ) {
-			$css_content .= spectra_blocks_process_blocks_for_attribute_css( $block['innerBlocks'] );
+			$css_content .= spectra_process_blocks_for_attribute_css( $block['innerBlocks'] );
 		}
 	}
 
@@ -1003,7 +1010,7 @@ function spectra_blocks_process_blocks_for_attribute_css( $blocks ) {
  * @param array  $attrs Block attributes.
  * @return array Device-specific attributes.
  */
-function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
+function spectra_get_preview_device_attributes( $block_name, $attrs ) {
 	$device_attrs = array();
 
 	// Use responsive controls if available.
@@ -1012,8 +1019,8 @@ function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
 	}
 
 	// Get block-specific responsive attributes from ResponsiveAttributeCSS.
-	if ( ! empty( $block_name ) && class_exists( '\Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
-		$block_responsive_attrs = \Spectra\Extensions\ResponsiveControls\ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
+	if ( ! empty( $block_name ) && class_exists( '\SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS' ) ) {
+		$block_responsive_attrs = \SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
 
 		// Add all block-specific responsive attributes from root level if not in device_attrs.
 		foreach ( $block_responsive_attrs as $attr ) {
@@ -1046,7 +1053,7 @@ function spectra_blocks_get_preview_device_attributes( $block_name, $attrs ) {
  * @param bool  &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS for the group block.
  */
-function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
+function spectra_generate_core_group_css( $attrs, &$base_css_added ) {
 	$css_content = '';
 
 	$layout = $attrs['layout'] ?? array();
@@ -1175,34 +1182,34 @@ function spectra_blocks_generate_core_group_css( $attrs, &$base_css_added ) {
  * @param bool   &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS for the core block.
  */
-function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base_css_added ) {
+function spectra_generate_wordpress_core_css( $block_name, $attrs, &$base_css_added ) {
 	$css_content = '';
 
 	switch ( $block_name ) {
 		case 'core/group':
-			$css_content .= spectra_blocks_generate_core_group_css( $attrs, $base_css_added );
+			$css_content .= spectra_generate_core_group_css( $attrs, $base_css_added );
 			break;
 
 		case 'core/columns':
-			$css_content .= spectra_blocks_generate_core_columns_css( $attrs, $base_css_added );
+			$css_content .= spectra_generate_core_columns_css( $attrs, $base_css_added );
 			break;
 
 		case 'core/column':
-			$css_content .= spectra_blocks_generate_core_column_css( $attrs );
+			$css_content .= spectra_generate_core_column_css( $attrs );
 			break;
 
 		case 'core/image':
-			$css_content .= spectra_blocks_generate_core_image_css( $attrs );
+			$css_content .= spectra_generate_core_image_css( $attrs );
 			break;
 
 		case 'core/gallery':
-			$css_content .= spectra_blocks_generate_core_gallery_css( $attrs );
+			$css_content .= spectra_generate_core_gallery_css( $attrs );
 			break;
 
 		default:
 			// Handle any other core block with layout support.
 			if ( isset( $attrs['layout'] ) ) {
-				$css_content .= spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, $base_css_added );
+				$css_content .= spectra_generate_generic_core_layout_css( $block_name, $attrs, $base_css_added );
 			}
 			break;
 	}
@@ -1218,7 +1225,7 @@ function spectra_blocks_generate_wordpress_core_css( $block_name, $attrs, &$base
  * @param bool  &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_core_columns_css( $attrs, &$base_css_added ) {
+function spectra_generate_core_columns_css( $attrs, &$base_css_added ) {
 	$css_content = '';
 
 	// Add base columns CSS only once.
@@ -1247,7 +1254,7 @@ function spectra_blocks_generate_core_columns_css( $attrs, &$base_css_added ) {
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_core_column_css( $attrs ) {
+function spectra_generate_core_column_css( $attrs ) {
 	$css_content = '';
 
 	// Handle column width.
@@ -1269,7 +1276,7 @@ function spectra_blocks_generate_core_column_css( $attrs ) {
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_core_image_css( $attrs ) {
+function spectra_generate_core_image_css( $attrs ) {
 	$css_content = '';
 
 	// Handle image alignment.
@@ -1312,7 +1319,7 @@ function spectra_blocks_generate_core_image_css( $attrs ) {
  * @param array $attrs Block attributes.
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_core_gallery_css( $attrs ) {
+function spectra_generate_core_gallery_css( $attrs ) {
 	$css_content = '';
 
 	// Handle gallery columns.
@@ -1330,12 +1337,12 @@ function spectra_blocks_generate_core_gallery_css( $attrs ) {
  * Generate generic layout CSS for any core block with layout support.
  *
  * @since 3.0.0
- * @param string $block_name       Block name.
- * @param array  $attrs            Block attributes.
- * @param bool   &$_base_css_added Reference to track if base CSS was added (reserved, intentionally unused).
+ * @param string $block_name Block name.
+ * @param array  $attrs Block attributes.
+ * @param bool   &$base_css_added Reference to track if base CSS was added.
  * @return string Generated CSS.
  */
-function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &$_base_css_added ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+function spectra_generate_generic_core_layout_css( $block_name, $attrs, &$base_css_added ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 	$css_content = '';
 	$layout      = $attrs['layout'] ?? array();
 	$block_class = '.wp-block-' . str_replace( 'core/', '', $block_name );
@@ -1365,7 +1372,7 @@ function spectra_blocks_generate_generic_core_layout_css( $block_name, $attrs, &
  * @param string $block_name Block name.
  * @return string Generated layout CSS for Spectra blocks.
  */
-function spectra_blocks_generate_spectra_layout_css( $attrs, $block_name ) {
+function spectra_generate_spectra_layout_css( $attrs, $block_name ) {
 	static $spectra_base_css_added = false;
 	$css_content                   = '';
 

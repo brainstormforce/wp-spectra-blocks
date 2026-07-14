@@ -24,7 +24,8 @@
 		"interactive modal",
 		"content modal",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"supports": {
 		"interactivity": true,

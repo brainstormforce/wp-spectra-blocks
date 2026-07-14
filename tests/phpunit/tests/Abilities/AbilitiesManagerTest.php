@@ -5,7 +5,7 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\AbilitiesManager;
+use SpectraBlocks\AbilitiesManager;
 
 /**
  * AbilitiesManager test case.
@@ -96,26 +96,32 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/remove-responsive-conditions',
 			'spectra-blocks/apply-zindex',
 			'spectra-blocks/apply-image-mask',
+			'spectra-blocks/apply-display-conditions',
+			'spectra-blocks/remove-display-conditions',
+			// Content abilities.
+			'spectra-blocks/create-post',
 		);
 	}
 
 	/**
 	 * Ensure categories and abilities are registered.
 	 *
-	 * On WP 6.9+ they are registered during plugin boot via hooks.
+	 * On WP 6.9+ they are registered during plugin boot via hooks (bootstrap.php enables the option).
 	 * On older WP they use stubs; we call the manager directly.
 	 */
 	private function ensure_registered(): void {
-		if ( ! $this->has_real_abilities_api() ) {
-			global $_spectra_test_registered_abilities, $_spectra_test_registered_ability_categories;
-			$_spectra_test_registered_abilities          = array();
-			$_spectra_test_registered_ability_categories = array();
-
-			$manager = AbilitiesManager::instance();
-			$manager->register_categories();
-			$manager->register_abilities();
+		if ( $this->has_real_abilities_api() ) {
+			// Plugin boot registered abilities via wp_abilities_api_init — nothing to do here.
+			return;
 		}
-		// On real API: plugin already registered via wp_abilities_api_init hook during bootstrap.
+
+		global $_spectra_test_registered_abilities, $_spectra_test_registered_ability_categories;
+		$_spectra_test_registered_abilities          = array();
+		$_spectra_test_registered_ability_categories = array();
+
+		$manager = AbilitiesManager::instance();
+		$manager->register_categories();
+		$manager->register_abilities();
 	}
 
 	/**
@@ -135,7 +141,7 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test that all 46 abilities are registered.
+	 * Test that all 49 abilities are registered.
 	 */
 	public function test_register_abilities() {
 		$this->ensure_registered();
@@ -248,6 +254,7 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/list-available-google-fonts',
 			'spectra-blocks/list-popups',
 			'spectra-blocks/get-popup',
+			'spectra-blocks/get-global-styles-config',
 		);
 	}
 
@@ -286,6 +293,9 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/remove-responsive-conditions',
 			'spectra-blocks/apply-zindex',
 			'spectra-blocks/apply-image-mask',
+			'spectra-blocks/apply-display-conditions',
+			'spectra-blocks/remove-display-conditions',
+			'spectra-blocks/update-global-styles',
 		);
 	}
 

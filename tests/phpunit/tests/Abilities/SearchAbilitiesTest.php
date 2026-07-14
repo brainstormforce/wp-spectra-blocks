@@ -5,8 +5,8 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\SearchPostsByBlock;
-use Spectra\Abilities\SearchPostContent;
+use SpectraBlocks\Abilities\SearchPostsByBlock;
+use SpectraBlocks\Abilities\SearchPostContent;
 
 /**
  * Search abilities test case.

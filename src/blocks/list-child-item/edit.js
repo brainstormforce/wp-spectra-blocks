@@ -23,7 +23,7 @@ import './editor.scss';
  * @return {JSX.Element} Block edit component.
  */
 const Edit = ( props ) => {
-  const { clientId, isSelected } = props;
+  const { clientId } = props;
   
   const { replaceBlocks } = useDispatch( blockEditorStore );
   
@@ -101,7 +101,7 @@ const Edit = ( props ) => {
     const { insertBlock, removeBlock } = wp.data.dispatch( blockEditorStore );
 
     const parentListId = blockEditor.getBlockRootClientId( clientId );
-    if ( !parentListId ) return;
+    if ( !parentListId ) {return;}
 
     const parentBlock = blockEditor.getBlock( parentListId );
 
@@ -109,7 +109,7 @@ const Edit = ( props ) => {
       const currentBlock = blockEditor.getBlock( clientId );
 
       const grandParentId = blockEditor.getBlockRootClientId( parentListId );
-      if ( !grandParentId ) return;
+      if ( !grandParentId ) {return;}
 
       const parentIndex = blockEditor.getBlockIndex( parentListId );
 
@@ -133,11 +133,11 @@ const Edit = ( props ) => {
     }
   }, [ clientId, canOutdent ] );
 
-  const isRTL = '1' === spectra_blocks_info.is_rtl ? true : false;
-
+  const isRTL = '1' === window?.spectra_blocks_info?.is_rtl;
+  
   return (
     <>
-      { isSelected && <Settings { ...props } /> }
+      <Settings { ...props } />
       <BlockControls>
         <ToolbarButton
           icon={ isRTL ? helperIcons.list.indentRTL( canIndent ) : helperIcons.list.indent( canIndent ) }

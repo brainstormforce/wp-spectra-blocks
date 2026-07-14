@@ -19,8 +19,6 @@ const initialState = {
 	secretKeyV2: '',
 	secretKeyV3: '',
 	settingsSavedNotification: '',
-	containerGlobalPadding: '',
-	containerGlobalElementsGap: 20,
 	coreBlocks: [
 		'container',
 		'advanced-heading',
@@ -37,6 +35,7 @@ const initialState = {
 	spectraIsBlockTheme: false,
 	enableGBSExtension: '',
 	zipAiModules: [],
+	enableBSFAnalyticsOption: 'no',
 };
 
 const globalDataStore = createStore(

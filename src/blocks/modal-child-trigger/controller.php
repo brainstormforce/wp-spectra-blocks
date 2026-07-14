@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\ModalChildTrigger
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get modalTrigger from context.
 $modal_trigger = $block->context['spectra/modal/modalTrigger'] ?? '';
@@ -35,7 +34,7 @@ if ( $should_hide ) {
 	$custom_classes[] = 'is-hidden';
 }
 
-// Add inline style if should hide.
+// Inline style fallback to guarantee hiding regardless of CSS specificity.
 $inline_styles = $should_hide ? array( 'display' => 'none' ) : array();
 
 // Get the block wrapper attributes.

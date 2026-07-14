@@ -31,7 +31,8 @@
 		"advanced slider",
 		"responsive slider",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"allowedBlocks": [ "spectra/slider-child" ],
 	"supports": {
@@ -120,7 +121,8 @@
 			"type": "number"
 		},
 		"displayArrows": {
-			"type": "boolean"
+			"type": "boolean",
+			"default": true
 		},
 		"displayDots": {
 			"type": "boolean"
@@ -203,7 +205,7 @@
 			"type": "string"
 		}
 	},
-	"editorScript": "file:./index.js",
+	"editorScript": [ "spectra-blocks-swiper-script", "file:./index.js" ],
 	"editorStyle": [ "spectra-blocks-swiper-style", "file:./index.css" ],
 	"style": [ "file:./style-index.css", "spectra-blocks-common", "spectra-blocks-components-icon-picker" ],
 	"render": "file:./view.php",

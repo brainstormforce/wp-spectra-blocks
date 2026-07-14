@@ -7,8 +7,13 @@
  * @package Spectra\Blocks\Icons
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
+
+// Get attributes.
+$background_color          = $attributes['backgroundColor'] ?? '';
+$background_color_hover    = $attributes['backgroundColorHover'] ?? '';
+$background_gradient       = $attributes['backgroundGradient'] ?? '';
+$background_gradient_hover = $attributes['backgroundGradientHover'] ?? '';
 
 // Style and class configurations.
 $config = array(

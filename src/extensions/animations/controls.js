@@ -19,6 +19,34 @@ import { __ } from '@wordpress/i18n';
 import { ANIMATION_LIST } from './utils/constants';
 import { isAllowedBlock } from './utils/helpers';
 
+// Maps each AOS animation type to its CSS start state (matching aos.min.css).
+// `opacity: null` means the animation does not change opacity (slide/flip groups).
+const AOS_START_STATES = {
+	'fade':           { opacity: '0', transform: 'none' },
+	'fade-up':        { opacity: '0', transform: 'translate3d(0,100px,0)' },
+	'fade-down':      { opacity: '0', transform: 'translate3d(0,-100px,0)' },
+	'fade-right':     { opacity: '0', transform: 'translate3d(-100px,0,0)' },
+	'fade-left':      { opacity: '0', transform: 'translate3d(100px,0,0)' },
+	'slide-up':       { opacity: null, transform: 'translate3d(0,100%,0)' },
+	'slide-down':     { opacity: null, transform: 'translate3d(0,-100%,0)' },
+	'slide-right':    { opacity: null, transform: 'translate3d(-100%,0,0)' },
+	'slide-left':     { opacity: null, transform: 'translate3d(100%,0,0)' },
+	'zoom-in':        { opacity: '0', transform: 'scale(0.6)' },
+	'zoom-in-up':     { opacity: '0', transform: 'translate3d(0,100px,0) scale(0.6)' },
+	'zoom-in-down':   { opacity: '0', transform: 'translate3d(0,-100px,0) scale(0.6)' },
+	'zoom-in-right':  { opacity: '0', transform: 'translate3d(-100px,0,0) scale(0.6)' },
+	'zoom-in-left':   { opacity: '0', transform: 'translate3d(100px,0,0) scale(0.6)' },
+	'zoom-out':       { opacity: '0', transform: 'scale(1.2)' },
+	'zoom-out-up':    { opacity: '0', transform: 'translate3d(0,100px,0) scale(1.2)' },
+	'zoom-out-down':  { opacity: '0', transform: 'translate3d(0,-100px,0) scale(1.2)' },
+	'zoom-out-right': { opacity: '0', transform: 'translate3d(-100px,0,0) scale(1.2)' },
+	'zoom-out-left':  { opacity: '0', transform: 'translate3d(100px,0,0) scale(1.2)' },
+	'flip-left':      { opacity: null, transform: 'perspective(2500px) rotateY(-100deg)' },
+	'flip-right':     { opacity: null, transform: 'perspective(2500px) rotateY(100deg)' },
+	'flip-up':        { opacity: null, transform: 'perspective(2500px) rotateX(-100deg)' },
+	'flip-down':      { opacity: null, transform: 'perspective(2500px) rotateX(100deg)' },
+};
+
 /**
  * Animation Options Panel.
  *
@@ -47,49 +75,59 @@ const AnimationOptions = ( props ) => {
 	/**
 	 * Triggers a block animation preview in the block editor.
 	 *
+	 * Uses direct inline style manipulation instead of AOS data attributes so the
+	 * preview works inside the editor, where AOS CSS is not loaded and the editor
+	 * reset stylesheet forces `[data-aos]{opacity:1!important;transform:none!important;}`.
+	 *
 	 * @param {string} [animationType=spectraAnimationType] - Animation type to preview.
 	 */
 	const playAnimation = useCallback(
 		( animationType = spectraAnimationType ) => {
-			// Only perform expensive DOM operations when block is selected
-			if ( ! props.isSelected ) return;
+			if ( ! props.isSelected ) { return; }
 
 			const editorIframe = document.querySelector( 'iframe[name="editor-canvas"]' );
-			const innerDoc = editorIframe?.contentDocument || editorIframe?.contentWindow?.document;
-
-			// Handle both iframe and non-iframe.
+			const innerDoc     = editorIframe?.contentDocument || editorIframe?.contentWindow?.document;
 			const animatedBlock = innerDoc
 				? innerDoc.getElementById( `block-${ clientId }` )
 				: document.getElementById( `block-${ clientId }` );
 
-			if ( ! animatedBlock ) return;
+			if ( ! animatedBlock ) { return; }
 
-			// Clear previous timeouts.
 			clearTimeout( animationTimeouts.current?.start );
 			clearTimeout( animationTimeouts.current?.end );
 
-			// Reset animation.
-			animatedBlock.removeAttribute( 'data-aos' );
-			animatedBlock.classList.remove( 'aos-animate' );
+			const startState      = AOS_START_STATES[ animationType ] || { opacity: '0', transform: 'none' };
+			const dur             = `${ spectraAnimationTime / 1000 }s`;
+			const animatesOpacity = startState.opacity !== null;
 
-			// Set animation properties.
-			animatedBlock.style.transitionDuration = '0s';
-			animatedBlock.setAttribute( 'data-aos', animationType );
-			animatedBlock.style.transitionTimingFunction = spectraAnimationEasing;
+			// Apply start state with !important to beat the editor reset CSS.
+			animatedBlock.style.setProperty( 'transition', 'none', 'important' );
+			animatedBlock.style.setProperty( 'transform', startState.transform, 'important' );
+			if ( animatesOpacity ) {
+				animatedBlock.style.setProperty( 'opacity', startState.opacity, 'important' );
+			}
 
-			// Delay the animation start.
+			// Force reflow so the browser commits the start state before the transition.
+			void animatedBlock.offsetHeight;
+
+			// Animate to the final state after the configured delay.
 			animationTimeouts.current.start = setTimeout( () => {
-				animatedBlock.style.transitionDuration = `${ spectraAnimationTime / 1000 }s`;
-				animatedBlock.classList.add( 'aos-animate' );
+				const transitionValue = animatesOpacity
+					? `opacity ${ dur } ${ spectraAnimationEasing }, transform ${ dur } ${ spectraAnimationEasing }`
+					: `transform ${ dur } ${ spectraAnimationEasing }`;
+				animatedBlock.style.setProperty( 'transition', transitionValue, 'important' );
+				animatedBlock.style.setProperty( 'transform', 'none', 'important' );
+				if ( animatesOpacity ) {
+					animatedBlock.style.setProperty( 'opacity', '1', 'important' );
+				}
 			}, spectraAnimationDelay );
 
-			// Reset animation after completion.
+			// Remove inline overrides after the animation completes.
 			animationTimeouts.current.end = setTimeout( () => {
-				animatedBlock.removeAttribute( 'data-aos' );
-				animatedBlock.classList.remove( 'aos-animate' );
-				animatedBlock.style.transitionDuration = '';
-				animatedBlock.style.transitionTimingFunction = '';
-			}, spectraAnimationDelay + spectraAnimationTime );
+				animatedBlock.style.removeProperty( 'transition' );
+				animatedBlock.style.removeProperty( 'transform' );
+				animatedBlock.style.removeProperty( 'opacity' );
+			}, spectraAnimationDelay + spectraAnimationTime + 50 );
 		},
 		[ props.isSelected, clientId, spectraAnimationType, spectraAnimationTime, spectraAnimationDelay, spectraAnimationEasing ]
 	);

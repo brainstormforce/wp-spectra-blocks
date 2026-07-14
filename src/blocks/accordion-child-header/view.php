@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildHeader
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <<?php echo esc_html( $header_element ); ?>
@@ -27,6 +26,9 @@ use Spectra\Helpers\HtmlSanitizer;
 		data-wp-watch="spectra/accordion::callbacks.updateHeaderTabIndex"
 	<?php else : ?>
 		data-wp-bind--disabled="spectra/accordion::context.isDisabled"
+		<?php if ( 'button' === $header_element ) : ?>
+			type="button"
+		<?php endif; ?>
 	<?php endif; ?>
 >
 	<?php HtmlSanitizer::render( $content ); ?>

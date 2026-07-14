@@ -6,7 +6,7 @@ import { classNames as classnames } from '../../helpers';
  *
  * Renders text as either a paragraph or heading.
  *
- * @param {string} text - Text content to display
+ * @param {string}  text      - Text content to display
  * @param {boolean} isHeading - If true, renders as h3 with heading styles
  */
 const Paragraph = ( { text, isHeading = false } ) => (

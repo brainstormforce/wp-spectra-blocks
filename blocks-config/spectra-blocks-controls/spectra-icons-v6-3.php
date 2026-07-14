@@ -1,11 +1,4 @@
 <?php
-/**
- * Spectra Blocks icon data (part 3).
- *
- * @package Spectra_Blocks
- * @generated
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

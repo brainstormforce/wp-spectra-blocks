@@ -66,8 +66,6 @@ module.exports = function ( grunt ) {
 			// Sync lib JS text domains → spectra-blocks.
 			lib_js_textdomain: {
 				src: [
-					'lib/zip-ai/admin/dashboard-app/build/*.js',
-					'lib/zip-ai/sidebar/build/*.js',
 					'lib/nps-survey/dist/*.js',
 					'lib/zipwp-images/dist/*.js',
 					'lib/gutenberg-templates/dist/*.js',
@@ -75,7 +73,6 @@ module.exports = function ( grunt ) {
 				],
 				overwrite: true,
 				replacements: [
-					{ from: /,"zip-ai"/gi, to: ',"spectra-blocks"' },
 					{ from: /,"nps-survey"/gi, to: ',"spectra-blocks"' },
 					{ from: /,"zipwp-images"/gi, to: ',"spectra-blocks"' },
 					{ from: /,"ast-block-templates"/gi, to: ',"spectra-blocks"' },
@@ -102,7 +99,6 @@ module.exports = function ( grunt ) {
 					{ from: ", 'nps-survey' )", to: ", 'spectra-blocks' )" },
 					{ from: ", 'astra-sites' )", to: ", 'spectra-blocks' )" },
 					{ from: ", 'astra-notices' )", to: ", 'spectra-blocks' )" },
-					{ from: ", 'zip-ai' )", to: ", 'spectra-blocks' )" },
 					{ from: ", 'gutenberg-templates' )", to: ", 'spectra-blocks' )" },
 					// load_textdomain first arg.
 					{ from: "load_textdomain( 'ast-block-templates'", to: "load_textdomain( 'spectra-blocks'" },
@@ -146,15 +142,23 @@ module.exports = function ( grunt ) {
 					},
 					{
 						// Move translators comment from above sprintf() to above __().
-						from: "/* translators: %s product name */\n\t\t\t\t$notice_string = sprintf(\n\t\t\t\t\t__(",
-						to: "$notice_string = sprintf(\n\t\t\t\t\t/* translators: %s product name */\n\t\t\t\t\t__(",
+						from: '/* translators: %s product name */\n\t\t\t\t$notice_string = sprintf(\n\t\t\t\t\t__(',
+						to: '$notice_string = sprintf(\n\t\t\t\t\t/* translators: %s product name */\n\t\t\t\t\t__(',
 					},
 				],
+			},
+		},
+		wp_readme_to_markdown: {
+			readme: {
+				files: {
+					'README.md': 'readme.txt',
+				},
 			},
 		},
 	} );
 
 	grunt.loadNpmTasks( 'grunt-text-replace' );
+	grunt.loadNpmTasks( 'grunt-wp-readme-to-markdown' );
 
 	// ── Custom tasks ────────────────────────────────────────────────────
 
@@ -241,20 +245,42 @@ module.exports = function ( grunt ) {
 	] );
 
 
+	// POT file generation: grunt i18n
+	grunt.registerTask( 'makepot-cmd', 'Generate POT file via WP-CLI', function () {
+		run( 'wp i18n make-pot . languages/spectra-blocks.pot --skip-audit --exclude=node_modules,vendor,lib,build,admin/assets/build,admin/assets/src,bin' );
+	} );
+
+	grunt.registerTask( 'i18n', [ 'synctextdomains', 'makepot-cmd' ] );
+
+	// README.md generation: grunt readme
+	grunt.registerTask( 'readme', [ 'wp_readme_to_markdown' ] );
+
 	// Version bump: grunt bump-version --ver=<version>
 	grunt.registerTask( 'bump-version', function () {
 		const newVersion = grunt.option( 'ver' );
-		if ( newVersion ) {
-			grunt.config.set( 'pkg.version', newVersion );
-			grunt.task.run( [
-				'replace:stable_tag',
-				'replace:plugin_const',
-				'replace:plugin_main',
-				'replace-since',
-			] );
-		} else {
+		if ( ! newVersion ) {
 			grunt.fail.fatal( 'Usage: grunt bump-version --ver=1.0.0' );
+			return;
 		}
+
+		// Write new version to package.json on disk.
+		const pkgPath = path.join( PLUGIN_ROOT, 'package.json' );
+		const pkg = JSON.parse( fs.readFileSync( pkgPath, 'utf8' ) );
+		pkg.version = newVersion;
+		fs.writeFileSync( pkgPath, JSON.stringify( pkg, null, '\t' ) + '\n', 'utf8' );
+		grunt.log.ok( 'Updated package.json → ' + newVersion );
+
+		// Update package-lock.json to match.
+		run( 'npm install --package-lock-only --ignore-scripts --silent' );
+		grunt.log.ok( 'Updated package-lock.json → ' + newVersion );
+
+		grunt.config.set( 'pkg.version', newVersion );
+		grunt.task.run( [
+			'replace:stable_tag',
+			'replace:plugin_const',
+			'replace:plugin_main',
+			'replace-since',
+		] );
 	} );
 
 	// ── Zip pipeline ─────────────────────────────────────────────────────
@@ -306,13 +332,18 @@ module.exports = function ( grunt ) {
 			.filter( ( l ) => l && ! l.startsWith( '#' ) );
 
 		// Convert each .distignore entry to glob ignore patterns.
-		// rsync exclude rules: patterns WITHOUT a mid-slash match at any depth,
-		// patterns WITH a mid-slash are anchored to the root.
-		// e.g. ".git/" → match anywhere → "**/.git" + "**/.git/**"
-		// e.g. "lib/*/phpstan.neon" → anchored → "lib/*/phpstan.neon"
+		// Supports gitignore/rsync conventions:
+		// - Leading slash (/src/) → root-anchored (only matches at repo root)
+		// - Internal slash (lib/foo) → root-anchored
+		// - No slash (*.log, node_modules) → matches at any depth
 		const ignorePatterns = distignoreLines.flatMap( ( entry ) => {
 			const clean = entry.replace( /\/$/, '' ); // strip trailing slash
-			// A pattern is "anchored" if it contains a slash that is NOT at the end.
+			// Leading slash means root-anchored (gitignore convention).
+			if ( clean.startsWith( '/' ) ) {
+				const anchored = clean.slice( 1 );
+				return [ anchored, anchored + '/**' ];
+			}
+			// A pattern is "anchored" if it contains an internal slash.
 			const hasInternalSlash = clean.includes( '/' );
 			if ( hasInternalSlash ) {
 				// Anchored pattern — match relative to root only.
@@ -406,5 +437,8 @@ module.exports = function ( grunt ) {
 		'zip-package',
 		'zip-restore',
 	] );
+
+	// Alias matching UAGB convention: grunt release === grunt zip.
+	grunt.registerTask( 'release', [ 'zip' ] );
 };
 

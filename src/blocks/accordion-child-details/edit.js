@@ -3,7 +3,7 @@
  */
 import Render from './render';
 import RenderBlockPreview from '@spectra-components/render-block-preview';
-import { AccordionItemBlockControls } from '@spectra/accordion/helper';
+import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
 
 /**
  * The edit function describes the structure of your block in the context of the

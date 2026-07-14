@@ -56,7 +56,7 @@ const Render = ( props ) => {
 
 	// Convert shadow hover object to CSS string.
 	const getShadowHoverValue = () => {
-		if ( !shadowHover ) return undefined;
+		if ( !shadowHover ) {return undefined;}
 		const { x = 0, y = 4, blur = 8, spread = 0, color = '' } = shadowHover;
 		
 		// Only return shadow if color is actually set.
@@ -69,18 +69,18 @@ const Render = ( props ) => {
 
 	/**
 	 * Get border hover color value.
-	 * 
+	 *
 	 * Note: We only extract the color from borderHover, not width or style.
 	 * The border width and style are handled by WordPress core's border settings
 	 * and remain unchanged on hover. Only the border-color changes on hover,
 	 * which is applied via CSS: `border-color: var(--spectra-border-hover-color)`.
-	 * 
+	 *
 	 * This approach ensures responsive border width/style from core is preserved.
-	 * 
+	 *
 	 * @return {string|undefined} The border hover color value or undefined if not set.
 	 */
 	const getBorderHoverColor = () => {
-		if ( !borderHover?.color ) return undefined;
+		if ( !borderHover?.color ) {return undefined;}
 		return borderHover.color;
 	};
 
@@ -90,19 +90,18 @@ const Render = ( props ) => {
 	const config = [
 		{ key: 'textColor' },
 		{ key: 'textColorHover' },
+		{ key: 'iconColor' },
+		{ key: 'iconColorHover' },
 		{ key: 'backgroundColor' },
 		{ key: 'backgroundColorHover' },
 		{ key: 'backgroundGradient' },
 		{ key: 'backgroundGradientHover' },
-		{ key: 'iconColor', cssVar: '--spectra-icon-color', className: null },
-		{ key: 'iconColorHover', cssVar: '--spectra-icon-color-hover', className: null },
-		{
-			key: 'shadowHover',
-			cssVar: '--spectra-shadow-hover',
+		{ 
+			key: 'shadowHover', 
+			cssVar: '--spectra-shadow-hover', 
 			className: 'spectra-shadow-hover',
 			value: getShadowHoverValue(),
 		},
-		{ key: 'gap', cssVar: '--spectra-icon-gap', className: null },
 		/**
 		 * Border hover color configuration.
 		 *
@@ -111,13 +110,14 @@ const Render = ( props ) => {
 		 * preserving the border width/style from WordPress core's responsive settings.
 		 */
 		...( borderHoverColor ? [
-			{
-				key: 'borderHoverColor',
-				cssVar: '--spectra-border-hover-color',
+			{ 
+				key: 'borderHoverColor', 
+				cssVar: '--spectra-border-hover-color', 
 				className: 'spectra-border-hover',
 				value: borderHoverColor,
 			}
 		] : [] ),
+		{ key: 'gap', cssVar: '--spectra-icon-gap', className: null },
 	];
 
 	const customClassNames = [ 

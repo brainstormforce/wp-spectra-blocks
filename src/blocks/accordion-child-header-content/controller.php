@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildHeaderContent
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Style and class configurations.
 $config = array(
@@ -26,10 +25,8 @@ $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $con
 // Add the text if it exists, else make the placeholder as the text.
 $text = ! empty( $attributes['text'] ) ? $attributes['text'] : __( 'Accordion Title', 'spectra-blocks' );
 
-// Get the tagName attribute, defaulting to 'span', and validate against allowlist.
-$allowed_tag_names = array( 'span', 'div', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' );
-$raw_tag_name      = $attributes['tagName'] ?? 'span';
-$tag_name          = in_array( $raw_tag_name, $allowed_tag_names, true ) ? $raw_tag_name : 'span';
+// Get the tagName attribute, defaulting to 'span'.
+$tag_name = $attributes['tagName'] ?? 'span';
 
 // Check if parent header element is button - if so, force span for valid HTML.
 $parent_header_element = $block->context['spectra/accordion-child-header/headerElement'] ?? 'button';

@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Modal
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Set the attributes with fallback if required.
 $background_color         = $attributes['backgroundColor'] ?? '';

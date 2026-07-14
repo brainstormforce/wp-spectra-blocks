@@ -22,7 +22,7 @@ import metadata from './block.json';
  * Register the Popup Builder block.
  * Only register if we're on the spectra-popup post type.
  */
-if ( 'spectra-popup' === window.typenow ) {
+if ( 'spectra-blocks-popup' === window.typenow || 'spectra-popup' === window.typenow ) {
 	registerBlockType( metadata.name, {
 		icon: blockIcons.modal(),
 		edit,

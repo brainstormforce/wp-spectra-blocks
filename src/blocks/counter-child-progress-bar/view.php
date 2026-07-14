@@ -7,7 +7,6 @@
  * @package Spectra\Blocks\CounterChildProgressBar
  */
 
-defined( 'ABSPATH' ) || exit;
 // Only render progress bar for circular and bar styles.
 if ( 'simple' === $counter_style ) {
 	return;

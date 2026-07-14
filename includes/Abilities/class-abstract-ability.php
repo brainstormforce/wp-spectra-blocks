@@ -5,9 +5,9 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * Every concrete ability extends this class and implements the abstract methods.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 abstract class AbstractAbility {
 
@@ -26,7 +26,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the unique ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string Ability name (e.g. 'spectra-blocks/create-buttons').
 	 */
@@ -35,7 +35,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the human-readable label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string Translated label.
 	 */
@@ -44,7 +44,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string Translated description.
 	 */
@@ -53,7 +53,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the ability category slug.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string Category slug (e.g. 'spectra-blocks-content').
 	 */
@@ -62,7 +62,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the JSON Schema for input parameters.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array JSON Schema array.
 	 */
@@ -71,7 +71,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the JSON Schema for the output.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array JSON Schema array.
 	 */
@@ -80,7 +80,7 @@ abstract class AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Validated input parameters.
 	 * @return array|WP_Error Result array or error.
@@ -96,14 +96,17 @@ abstract class AbstractAbility {
 	 * - destructive: true → DELETE
 	 * - All others → POST
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array { readonly: bool, destructive: bool, idempotent: bool }
 	 */
 	public function get_annotations(): array {
+		$schema             = $this->get_input_schema();
+		$is_replace_default = isset( $schema['properties']['mode']['default'] )
+			&& 'replace' === $schema['properties']['mode']['default'];
 		return array(
 			'readonly'    => false,
-			'destructive' => false,
+			'destructive' => $is_replace_default,
 			'idempotent'  => false,
 		);
 	}
@@ -111,7 +114,7 @@ abstract class AbstractAbility {
 	/**
 	 * Register this ability with the WordPress Abilities API.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
@@ -142,7 +145,7 @@ abstract class AbstractAbility {
 	/**
 	 * Check if the current user has permission to execute this ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error True if allowed, WP_Error otherwise.
 	 */
@@ -164,7 +167,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the blocks build directory path.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string Absolute path to the blocks build directory.
 	 */
@@ -173,9 +176,55 @@ abstract class AbstractAbility {
 	}
 
 	/**
+	 * Neutralize --> sequences inside block-comment JSON attribute payloads.
+	 *
+	 * A --> sequence inside a serialized block comment would close the HTML
+	 * comment delimiter early, silently corrupting the block tree.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $markup Serialized block markup.
+	 * @return string Sanitized markup.
+	 */
+	protected function sanitize_block_markup( string $markup ): string {
+		$result = preg_replace_callback(
+			'/<!--\s+wp:[\w\/\-]+\s+(\{[^<]*\})\s+-->/U',
+			static function ( $m ) {
+				$json = $m[1];
+				$safe = str_replace( '-->', '-- >', $json );
+				return str_replace( $json, $safe, $m[0] );
+			},
+			$markup
+		);
+		return null !== $result ? $result : $markup;
+	}
+
+	/**
+	 * Returns the build/blocks/ directory for spectra-blocks-pro, or empty string if not active.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string
+	 */
+	protected function get_pro_blocks_dir(): string {
+		return defined( 'SPECTRA_BLOCKS_PRO_DIR' ) ? SPECTRA_BLOCKS_PRO_DIR . 'build/blocks/' : '';
+	}
+
+	/**
+	 * Whether spectra-blocks-pro is active.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return bool
+	 */
+	protected function is_pro_active(): bool {
+		return defined( 'SPECTRA_BLOCKS_PRO_DIR' );
+	}
+
+	/**
 	 * Validate and retrieve a post object from a post_id parameter.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param int $post_id The post ID to validate.
 	 * @return \WP_Post|WP_Error The post object or an error.
@@ -183,7 +232,7 @@ abstract class AbstractAbility {
 	protected function get_validated_post( int $post_id ) {
 		$post = get_post( $post_id );
 
-		if ( ! $post ) {
+		if ( ! $post instanceof \WP_Post ) {
 			return new WP_Error(
 				'spectra_blocks_invalid_post',
 				__( 'The specified post does not exist.', 'spectra-blocks' ),
@@ -199,13 +248,29 @@ abstract class AbstractAbility {
 			);
 		}
 
+		if ( ! post_type_supports( $post->post_type, 'editor' ) ) {
+			return new WP_Error(
+				'spectra_blocks_invalid_post_type',
+				__( 'This post type does not support the block editor.', 'spectra-blocks' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		if ( 'trash' === $post->post_status ) {
+			return new WP_Error(
+				'spectra_blocks_trashed_post',
+				__( 'Cannot modify a trashed post.', 'spectra-blocks' ),
+				array( 'status' => 400 )
+			);
+		}
+
 		return $post;
 	}
 
 	/**
 	 * Insert block markup into an existing post.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param int    $post_id      The post ID.
 	 * @param string $block_markup The serialized block markup to insert.
@@ -213,6 +278,8 @@ abstract class AbstractAbility {
 	 * @return array|WP_Error Result with post_id and updated content, or WP_Error.
 	 */
 	protected function insert_into_post( int $post_id, string $block_markup, string $mode = 'append' ) {
+		global $wpdb;
+
 		$post = $this->get_validated_post( $post_id );
 
 		if ( is_wp_error( $post ) ) {
@@ -224,7 +291,8 @@ abstract class AbstractAbility {
 			$mode = 'append';
 		}
 
-		$existing_content = $post->post_content;
+		$snapshot_modified = $post->post_modified;
+		$existing_content  = $post->post_content;
 
 		switch ( $mode ) {
 			case 'replace':
@@ -241,17 +309,39 @@ abstract class AbstractAbility {
 				break;
 		}
 
-		$result = wp_update_post(
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Optimistic concurrency: WHERE post_modified matches snapshot; wp_update_post() does not support conditional WHERE.
+		$updated = $wpdb->update(
+			$wpdb->posts,
 			array(
-				'ID'           => $post_id,
-				'post_content' => wp_slash( $new_content ),
+				'post_content'      => $new_content,
+				'post_modified'     => current_time( 'mysql' ),
+				'post_modified_gmt' => current_time( 'mysql', true ),
 			),
-			true
+			array(
+				'ID'            => $post_id,
+				'post_modified' => $snapshot_modified,
+			),
+			array( '%s', '%s', '%s' ),
+			array( '%d', '%s' )
 		);
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+		if ( false === $updated ) {
+			return new WP_Error(
+				'spectra_blocks_db_error',
+				__( 'Failed to update post content.', 'spectra-blocks' ),
+				array( 'status' => 500 )
+			);
 		}
+
+		if ( 0 === $updated ) {
+			return new WP_Error(
+				'spectra_blocks_concurrent_modification',
+				__( 'Post was modified concurrently. Please retry.', 'spectra-blocks' ),
+				array( 'status' => 409 )
+			);
+		}
+
+		clean_post_cache( $post_id );
 
 		return array(
 			'post_id'      => $post_id,
@@ -262,7 +352,7 @@ abstract class AbstractAbility {
 	/**
 	 * Build the common output schema for abilities that produce block markup.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array JSON Schema for block markup output.
 	 */
@@ -289,18 +379,28 @@ abstract class AbstractAbility {
 	/**
 	 * Build the result array, optionally inserting into a post.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param string $block_markup The serialized block markup.
 	 * @param array  $params       The ability parameters (may contain post_id and mode).
 	 * @return array|WP_Error Result array or WP_Error.
 	 */
 	protected function maybe_insert_and_return( string $block_markup, array $params ) {
-		$result = array( 'block_markup' => $block_markup );
+		$block_markup = $this->sanitize_block_markup( $block_markup );
+		$result       = array( 'block_markup' => $block_markup );
 
 		if ( ! empty( $params['post_id'] ) ) {
 			$post_id = absint( $params['post_id'] );
-			$mode    = ! empty( $params['mode'] ) ? sanitize_text_field( $params['mode'] ) : 'append';
+
+			if ( $post_id <= 0 ) {
+				return new WP_Error(
+					'spectra_blocks_invalid_post_id',
+					__( 'The post_id must be a positive integer.', 'spectra-blocks' ),
+					array( 'status' => 400 )
+				);
+			}
+
+			$mode = ! empty( $params['mode'] ) ? sanitize_text_field( $params['mode'] ) : 'append';
 
 			$insert_result = $this->insert_into_post( $post_id, $block_markup, $mode );
 
@@ -318,7 +418,7 @@ abstract class AbstractAbility {
 	/**
 	 * Get the common post_id and mode schema properties for input schemas.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array Schema properties for post_id and mode.
 	 */
@@ -342,7 +442,7 @@ abstract class AbstractAbility {
 	 *
 	 * Returns an indexed array of meaningful blocks (non-null blockName).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param int $post_id The post ID.
 	 * @return array|\WP_Post|WP_Error Array with 'post' and 'blocks' keys, or WP_Error.
@@ -384,7 +484,7 @@ abstract class AbstractAbility {
 	/**
 	 * Update post content by serializing a blocks array back to the post.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param int   $post_id The post ID.
 	 * @param array $blocks  The full parsed blocks array (including empty blocks).
@@ -411,7 +511,7 @@ abstract class AbstractAbility {
 	/**
 	 * Find the raw index of a block by its flat index (skipping empty blocks).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $all_blocks The full parsed blocks array from parse_blocks().
 	 * @param int   $index      The flat index (0-based, skipping empty blocks).

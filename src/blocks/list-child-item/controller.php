@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\ListChildItem
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Set the attributes with fallback if required.
 $anchor = $attributes['anchor'] ?? '';

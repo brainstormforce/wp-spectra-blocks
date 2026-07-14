@@ -23,7 +23,7 @@ function requestToExternal( request ) {
 
 function requestToHandle( request ) {
 	if ( SWIPER_REQUESTS.has( request ) ) {
-		return 'swiper-script';
+		return 'spectra-blocks-swiper-script';
 	}
 }
 
@@ -78,6 +78,7 @@ class AbsPathGuardPlugin {
 // Define common aliases used in Spectra Blocks.
 const commonAliases = {
 	'@spectra': path.resolve( __dirname, 'src/blocks/' ),
+	'@spectra-blocks': path.resolve( __dirname, 'src/blocks/' ),
 	'@spectra-components': path.resolve( __dirname, 'src/components/' ),
 	'@spectra-helpers': path.resolve( __dirname, 'src/helpers/' ),
 	'@spectra-hooks': path.resolve( __dirname, 'src/hooks/' ),
@@ -85,11 +86,15 @@ const commonAliases = {
 	'@spectra-config': path.resolve( __dirname, 'src/helpers/plugin-config.js' ),
 };
 
-// Swiper CSS imports are handled by the registered 'swiper-style' handle — ignore them in webpack.
+// Swiper CSS imports are handled by the registered 'spectra-blocks-swiper-style' handle — ignore them in webpack.
+// Value must be the literal string 'null' (not ''): an empty-string external makes
+// webpack 5 emit `const __WEBPACK_NAMESPACE_OBJECT__ = ;` when these imports are pulled
+// into a block's editor module-concatenation chain (e.g. post-template/render.js), failing
+// the build with `Unexpected token`. 'null' emits valid JS and the runtime value is unused.
 const swiperCssExternals = {
-	'swiper/css': '',
-	'swiper/css/navigation': '',
-	'swiper/css/pagination': '',
+	'swiper/css': 'null',
+	'swiper/css/navigation': 'null',
+	'swiper/css/pagination': 'null',
 };
 
 module.exports = [
@@ -105,10 +110,15 @@ module.exports = [
 			...swiperCssExternals,
 		},
 		resolve: {
+			...defaultConfig[ 0 ].resolve,
 			alias: {
 				...defaultConfig[ 0 ].resolve.alias,
 				...commonAliases,
 			},
+			modules: [
+				...( defaultConfig[ 0 ].resolve.modules || [] ),
+				'node_modules',
+			],
 		},
 		plugins: [
 			...withSwiperExternals( defaultConfig[ 0 ].plugins ),
@@ -127,14 +137,14 @@ module.exports = [
 
 			// For each file, just get the directory and file name, and add it to the entries.
 			styleFiles.forEach( ( file ) => {
-				const name = file.replace( './src/styles/', '' ).replace( '.scss', '' );
+				const name = file.replace( /^(?:\.\/)?src\/styles\//, '' ).replace( '.scss', '' );
 				entries[ `styles/${ name }` ] = path.resolve( __dirname, file );
 			} );
 
 			// Add extension files
 			extensionFiles.forEach( ( file ) => {
 				const name = file
-					.replace( './src/extensions/', '' )
+					.replace( /^(?:\.\/)?src\/extensions\//, '' )
 					.replace( /\.(js|scss)$/, '' );
 				entries[ `extensions/${ name }` ] = path.resolve(
 					__dirname,
@@ -155,10 +165,15 @@ module.exports = [
 			...swiperCssExternals,
 		},
 		resolve: {
+			...defaultConfig[ 1 ].resolve,
 			alias: {
 				...defaultConfig[ 1 ].resolve.alias,
 				...commonAliases,
 			},
+			modules: [
+				...( defaultConfig[ 1 ].resolve.modules || [] ),
+				'node_modules',
+			],
 		},
 		plugins: [
 			...withSwiperExternals( defaultConfig[ 1 ].plugins ),

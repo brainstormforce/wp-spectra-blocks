@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\Button
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
 <a 

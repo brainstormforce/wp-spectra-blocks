@@ -1,0 +1,4210 @@
+/**
+		* GBS Editor — modal shell styles.
+		*
+		* Design language: clean white surface with a fine border grid, blue
+		* active states aligned with the WP admin palette, and typography that
+		* matches the Gutenberg editor chrome. All selectors are scoped under
+		* `.spectra-gbs-*` to avoid collisions with editor or theme CSS.
+		*
+		* @since x.x.x
+		*/
+
+// ─── Design tokens ────────────────────────────────────────────────────────────
+
+$gbs-bg: #fff;
+$gbs-bg-sidebar: #f6f7f7;
+$gbs-bg-sidebar-row: #ebebeb;
+$gbs-border: #e0e0e0;
+$gbs-border-light: #ececec;
+$gbs-text: #1e1e1e;
+$gbs-text-muted: #757575;
+$gbs-text-faint: #a0a0a0;
+$gbs-blue: #6005ff; // button-primary (Spectra brand)
+$gbs-blue-hover: #5104d6; // button-primary-hover
+$gbs-blue-tint: #f3f0ff; // background-brand-light
+$gbs-blue-tint-hover: #e9e3ff;
+$gbs-pro-amber: #c98700;
+
+// Warning / contrast surfaces.
+$gbs-warning-text: #8a6100;
+$gbs-warning-bg: #fcf3e3;
+$gbs-warning-border: #f1d99a;
+
+// Spacing scale — migrate hardcoded paddings/gaps to these.
+$gbs-space-1: 4px;
+$gbs-space-2: 8px;
+$gbs-space-3: 12px;
+$gbs-space-4: 16px;
+$gbs-space-5: 20px;
+$gbs-space-6: 24px;
+
+// Font-size scale.
+$gbs-fs-micro: 10px;
+$gbs-fs-small: 11.5px;
+$gbs-fs-label: 12.5px;
+$gbs-fs-body: 13px;
+$gbs-fs-title: 14px;
+
+$gbs-radius-modal: 10px;
+$gbs-radius-small: 5px;
+$gbs-radius-pill: 3px;
+$gbs-shadow-modal:
+	0 24px 80px rgba(0, 0, 0, 0.22),
+	0 4px 16px rgba(0, 0, 0, 0.1);
+$gbs-font: -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans,
+	ubuntu, cantarell, "Helvetica Neue", sans-serif;
+
+$gbs-sidebar-width: 264px;
+$gbs-header-height: 96px; // top row (48px) + tab strip (48px)
+$gbs-z-backdrop: 100000;
+$gbs-z-modal: 100001;
+
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
+
+.spectra-gbs-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: $gbs-z-backdrop;
+	background: rgba(0, 0, 0, 0.45);
+	display: flex;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 0;
+	cursor: default;
+}
+
+// ─── Modal container ──────────────────────────────────────────────────────────
+
+.spectra-gbs-modal {
+	position: fixed;
+	// Offset: 32px WP admin bar + 8px breathing room
+	top: 40px;
+	left: 16px;
+	right: 16px;
+	bottom: 16px;
+	z-index: $gbs-z-modal;
+	background: $gbs-bg;
+	border-radius: $gbs-radius-modal;
+	box-shadow: $gbs-shadow-modal;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	cursor: default;
+
+	// Respect WP admin bar when it shifts to fixed.
+	.admin-bar & {
+		top: 72px;
+	}
+}
+
+// ─── Header ───────────────────────────────────────────────────────────────────
+
+.spectra-gbs-header {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 16px;
+	height: 50px;
+	border-bottom: 1px solid $gbs-border;
+	background: $gbs-bg;
+}
+
+.spectra-gbs-header__brand {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.spectra-gbs-header__logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: $gbs-blue;
+	border-radius: 6px;
+	color: #fff;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-header__title {
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: $gbs-text;
+	line-height: 1;
+}
+
+.spectra-gbs-header__actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+// Override WP Button styles for the save button.
+.spectra-gbs-header__save-btn.components-button {
+	height: 30px;
+	padding: 0 14px;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: $gbs-radius-small;
+	background: $gbs-blue !important;
+	color: #fff !important;
+	border: none !important;
+	box-shadow: none !important;
+
+	&:hover,
+	&:focus {
+		background: $gbs-blue-hover !important;
+		color: #fff !important;
+		box-shadow: none !important;
+	}
+}
+
+// Override WP Button close button.
+.spectra-gbs-header__close-btn.components-button {
+	color: $gbs-text-muted;
+	border-radius: $gbs-radius-small;
+	padding: 4px;
+
+	&:hover {
+		color: $gbs-text;
+		background: $gbs-bg-sidebar-row;
+	}
+
+	svg {
+		fill: currentcolor;
+	}
+}
+
+// ─── Left nav ─────────────────────────────────────────────────────────────────
+
+$gbs-nav-width: 200px;
+
+.spectra-gbs-nav {
+	width: $gbs-nav-width;
+	flex-shrink: 0;
+	border-right: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	overflow-y: auto;
+	padding: 12px 0 24px;
+}
+
+.spectra-gbs-nav__group {
+	margin-bottom: 4px;
+}
+
+.spectra-gbs-nav__group-label {
+	margin: 0;
+	padding: 14px 16px 4px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: $gbs-text-faint;
+	line-height: 1;
+}
+
+.spectra-gbs-nav__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.spectra-gbs-nav__item {
+	margin: 0;
+}
+
+.spectra-gbs-nav__btn {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	width: 100%;
+	padding: 7px 16px;
+	background: none;
+	border: none;
+	text-align: left;
+	font-size: 13px;
+	font-weight: 400;
+	font-family: $gbs-font;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	border-radius: 0;
+	transition:
+		color 0.1s,
+		background 0.1s;
+	line-height: 1.4;
+
+	&:hover {
+		color: $gbs-text;
+		background: rgba(0, 0, 0, 0.04);
+	}
+
+	&.is-active {
+		color: $gbs-blue;
+		font-weight: 500;
+		background: $gbs-blue-tint;
+
+		&:hover {
+			background: $gbs-blue-tint-hover;
+		}
+	}
+}
+
+.spectra-gbs-nav__icon {
+	flex-shrink: 0;
+	color: $gbs-text-faint;
+	fill: currentcolor;
+
+	.spectra-gbs-nav__btn:hover & {
+		color: $gbs-text-muted;
+	}
+
+	.spectra-gbs-nav__btn.is-active & {
+		color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-nav__label {
+	flex: 1;
+	min-width: 0;
+}
+
+// ─── Body (sidebar + main panel) ──────────────────────────────────────────────
+
+.spectra-gbs-body {
+	display: flex;
+	flex: 1;
+	overflow: hidden;
+}
+
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+
+.spectra-gbs-sidebar {
+	width: $gbs-sidebar-width;
+	flex-shrink: 0;
+	border-right: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+// Section list.
+.spectra-gbs-sidebar__list {
+	flex: 1;
+	overflow-y: auto;
+	list-style: none;
+	margin: 0;
+	padding: 4px 0 12px;
+}
+
+.spectra-gbs-sidebar__item {
+	margin: 0;
+	padding: 0;
+}
+
+.spectra-gbs-sidebar__row {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	gap: 4px;
+	padding: 7px 14px 7px 10px;
+	background: none;
+	border: none;
+	text-align: left;
+	font-family: $gbs-font;
+	font-size: 13px;
+	color: $gbs-text;
+	cursor: pointer;
+	border-radius: 0;
+	transition: background 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+	}
+
+	&.is-active {
+		background: $gbs-blue-tint;
+		color: $gbs-blue;
+	}
+
+	&.is-pro .spectra-gbs-sidebar__row-label {
+		color: $gbs-text-muted;
+	}
+}
+
+.spectra-gbs-sidebar__row-chevron {
+	color: $gbs-text-faint;
+	font-size: 15px;
+	line-height: 1;
+	flex-shrink: 0;
+	margin-right: 2px;
+
+	.is-active & {
+		color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-sidebar__row-label {
+	flex: 1;
+	font-size: 13px;
+	line-height: 1.3;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-sidebar__row-end {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-sidebar__row-count {
+	font-size: 11px;
+	font-weight: 500;
+	color: $gbs-text-faint;
+	background: $gbs-bg-sidebar-row;
+	border-radius: 10px;
+	padding: 1px 7px;
+	line-height: 16px;
+
+	.is-active & {
+		background: rgba($gbs-blue, 0.12);
+		color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-sidebar__pro-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 1px 6px 1px 5px;
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: $gbs-pro-amber;
+	background: rgba($gbs-pro-amber, 0.12);
+	border-radius: 3px;
+	text-transform: uppercase;
+	line-height: 1.4;
+}
+
+// ─── Main panel ───────────────────────────────────────────────────────────────
+
+.spectra-gbs-panel {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: $gbs-bg;
+}
+
+// Panel top bar — shows active selector / section name.
+.spectra-gbs-panel__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 0 20px;
+	height: 48px;
+	border-bottom: 1px solid $gbs-border;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-panel__selector-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px 4px 8px;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: 12.5px;
+	font-weight: 500;
+	color: $gbs-text;
+	font-family:
+		"SF Mono",
+		"Fira Code",
+		"Fira Mono",
+		"Roboto Mono",
+		Menlo,
+		Courier,
+		monospace;
+}
+
+// Breadcrumb — replaces the single selector badge in the panel header.
+.spectra-gbs-panel__breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	line-height: 1;
+}
+
+.spectra-gbs-panel__breadcrumb-parent {
+	color: $gbs-text-faint;
+}
+
+.spectra-gbs-panel__breadcrumb-sep {
+	color: $gbs-text-faint;
+	font-size: 14px;
+}
+
+.spectra-gbs-panel__breadcrumb-current {
+	color: $gbs-text;
+	font-weight: 500;
+}
+
+.spectra-gbs-panel__selector-icon {
+	color: $gbs-blue;
+	font-size: 14px;
+	font-family: inherit;
+}
+
+// Placeholder — shown until individual panel controls are wired up.
+.spectra-gbs-panel__placeholder {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	color: $gbs-text-faint;
+	padding: 40px 24px;
+	text-align: center;
+}
+
+.spectra-gbs-panel__placeholder-heading {
+	font-size: 14px;
+	font-weight: 600;
+	color: $gbs-text-muted;
+	margin: 0;
+}
+
+.spectra-gbs-panel__placeholder-text {
+	font-size: 12.5px;
+	color: $gbs-text-faint;
+	margin: 0;
+}
+
+// Custom CSS variant — full-width layout.
+.spectra-gbs-panel--custom-css {
+
+	.spectra-gbs-panel__header {
+		background: $gbs-bg;
+	}
+}
+
+// ─── Colors panel ─────────────────────────────────────────────────────────────
+
+.spectra-gbs-panel__body {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	overflow: hidden;
+}
+
+.spectra-gbs-panel__content {
+	flex: 1;
+	overflow-y: auto;
+	padding: 0;
+}
+
+// Save bar at the bottom of a self-saving panel. Matches the shared
+// modal footer (.spectra-gbs-footer) so every panel's primary action
+// sits in a consistent bar.
+.spectra-gbs-panel__footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: $gbs-space-3;
+	padding: $gbs-space-3 $gbs-space-5;
+	border-top: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-panel__preview-indicator {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: $gbs-text-muted;
+}
+
+// ─── Button family ──────────────────────────────────────────────────────────
+// One shared button. Variants: --primary (save/confirm), --secondary
+// (cancel/add), --ghost (tertiary/inline). Replaces the old per-panel
+// save-btn rule and the inline #888 cancel hack.
+
+%spectra-gbs-btn-base {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: $gbs-space-2;
+	height: 32px;
+	padding: 0 $gbs-space-4;
+	border-radius: $gbs-radius-small;
+	font-size: $gbs-fs-body;
+	font-weight: 500;
+	font-family: $gbs-font;
+	line-height: 1;
+	cursor: pointer;
+	transition:
+		background 0.12s,
+		border-color 0.12s,
+		color 0.12s;
+
+	&:disabled {
+		opacity: 0.55;
+		cursor: default;
+	}
+}
+
+.spectra-gbs-btn--primary {
+
+	@extend %spectra-gbs-btn-base;
+	background: $gbs-blue;
+	color: #fff;
+	border: 1px solid $gbs-blue;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: $gbs-blue-hover;
+		border-color: $gbs-blue-hover;
+		color: #fff;
+	}
+}
+
+.spectra-gbs-btn--secondary {
+
+	@extend %spectra-gbs-btn-base;
+	background: $gbs-bg;
+	color: $gbs-text;
+	border: 1px solid $gbs-border;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: $gbs-bg-sidebar;
+		border-color: $gbs-text-faint;
+	}
+}
+
+.spectra-gbs-btn--ghost {
+
+	@extend %spectra-gbs-btn-base;
+	background: none;
+	color: $gbs-text-muted;
+	border: 1px solid transparent;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		color: $gbs-text;
+		background: rgba(0, 0, 0, 0.04);
+	}
+}
+
+.spectra-gbs-btn--danger {
+
+	@extend %spectra-gbs-btn-base;
+	background: transparent;
+	color: #cc1818;
+	border: 1px solid #f5c6c6;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: #fff0f0;
+		border-color: #cc1818;
+	}
+}
+
+// ─── Shared modal footer (single save action) ──────────────────────────────────
+
+.spectra-gbs-footer {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 20px;
+	height: 56px;
+	border-top: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+}
+
+.spectra-gbs-footer__note {
+	flex: 1;
+	font-size: 11.5px;
+	color: $gbs-text-faint;
+	line-height: 1.4;
+}
+
+.spectra-gbs-footer__status {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-footer__cancel.components-button {
+	height: 32px;
+	padding: 0 12px;
+	font-size: 13px;
+	color: $gbs-text-muted;
+
+	&:hover:not(:disabled) {
+		color: $gbs-text;
+	}
+}
+
+@keyframes gbs-toast-in {
+
+	from {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.spectra-gbs-toast {
+	position: fixed;
+	// 40px modal top + 50px header + 12px gap
+	top: 102px;
+	right: $gbs-space-6;
+	z-index: $gbs-z-modal + 1;
+
+	.admin-bar & {
+		// 72px modal top (with WP admin bar) + 50px header + 12px gap
+		top: 134px;
+	}
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	padding: $gbs-space-3 $gbs-space-4;
+	background: $gbs-bg;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-modal;
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.1),
+		0 1px 3px rgba(0, 0, 0, 0.06);
+	font-family: inherit;
+	font-size: $gbs-fs-body;
+	font-weight: 500;
+	color: $gbs-text;
+	pointer-events: none;
+	animation: gbs-toast-in 0.18s ease-out;
+
+	&__icon {
+		display: flex;
+		align-items: center;
+		color: #16a34a;
+
+		svg {
+			fill: currentcolor;
+		}
+	}
+
+	&__message {
+		white-space: nowrap;
+	}
+}
+
+.spectra-gbs-footer__save.components-button {
+	height: 32px;
+	padding: 0 16px;
+	font-size: 13px;
+	font-weight: 500;
+	border-radius: $gbs-radius-small;
+	background: $gbs-blue !important;
+	color: #fff !important;
+	border: none !important;
+	box-shadow: none !important;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: $gbs-blue-hover !important;
+		color: #fff !important;
+		box-shadow: none !important;
+	}
+
+	&:disabled {
+		opacity: 0.55;
+		cursor: default;
+	}
+}
+
+// ─── Generic section layout ───────────────────────────────────────────────────
+
+.spectra-gbs-section {
+	padding: $gbs-space-5;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.spectra-gbs-section__field {
+	margin-bottom: $gbs-space-5;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.spectra-gbs-section__label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: $gbs-fs-label;
+	font-weight: 500;
+	// Sentence case — uppercase is reserved for nav group headers only.
+	text-transform: none;
+	letter-spacing: 0;
+	color: $gbs-text;
+	margin-bottom: $gbs-space-2;
+}
+
+.spectra-gbs-section__label-meta {
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	color: $gbs-text-faint;
+}
+
+// Contrast warning shown beneath a colour input.
+.spectra-gbs-section__warning {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-1;
+	margin: $gbs-space-2 0 0;
+	padding: 6px 10px;
+	font-size: $gbs-fs-small;
+	line-height: 1.4;
+	color: $gbs-warning-text;
+	background: $gbs-warning-bg;
+	border: 1px solid $gbs-warning-border;
+	border-radius: $gbs-radius-small;
+
+	&::before {
+		content: "⚠";
+		font-size: 12px;
+		line-height: 1;
+	}
+}
+
+.spectra-gbs-section__hint {
+	margin: 5px 0 0;
+	font-size: 11.5px;
+	color: $gbs-text-faint;
+	line-height: 1.4;
+}
+
+.spectra-gbs-section__intro {
+	margin: 0 0 16px;
+	font-size: 12.5px;
+	color: $gbs-text-muted;
+	line-height: 1.5;
+}
+
+.spectra-gbs-section__empty {
+	font-size: 12.5px;
+	color: $gbs-text-faint;
+	padding: 24px 0;
+	text-align: center;
+}
+
+.spectra-gbs-section__divider {
+	border: none;
+	border-top: 1px solid $gbs-border-light;
+	margin: 4px 0 20px;
+}
+
+.spectra-gbs-palette__extended-heading {
+	padding: 0 $gbs-space-5;
+}
+
+.spectra-gbs-section__text-input {
+	width: 100%;
+
+	// Override WP component margin.
+	.components-text-control__input {
+		font-size: 13px;
+		border-radius: $gbs-radius-small;
+	}
+}
+
+// Loading / error states.
+.spectra-gbs-panel__loading,
+.spectra-gbs-panel__error {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	flex: 1;
+	font-size: 13px;
+	color: $gbs-text-muted;
+	padding: 40px;
+}
+
+// ─── HexColorInput ────────────────────────────────────────────────────────────
+
+.spectra-gbs-hex-input {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 0;
+	height: 34px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+	background: $gbs-bg;
+	max-width: 200px;
+
+	&.is-disabled {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+}
+
+.spectra-gbs-hex-input__swatch {
+	width: 32px;
+	height: 100%;
+	border: none;
+	cursor: pointer;
+	flex-shrink: 0;
+	border-right: 1px solid $gbs-border;
+	transition: opacity 0.1s;
+
+	&:hover {
+		opacity: 0.85;
+	}
+}
+
+.spectra-gbs-hex-input__text {
+	flex: 1;
+	border: none;
+	padding: 0 8px;
+	font-size: 12.5px;
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	color: $gbs-text;
+	background: transparent;
+	outline: none;
+	min-width: 0;
+}
+
+// Hide the native colour picker visually but keep it functional.
+.spectra-gbs-hex-input__native {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.spectra-gbs-hex-input__picker-btn {
+	width: 30px;
+	height: 100%;
+	border: none;
+	border-left: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	transition:
+		background 0.1s,
+		color 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+}
+
+// ─── ShadeStrip ───────────────────────────────────────────────────────────────
+
+.spectra-gbs-shade-strip {
+	display: flex;
+	gap: 4px;
+	flex-wrap: wrap;
+}
+
+.spectra-gbs-shade-strip__swatch {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3px;
+	cursor: default;
+}
+
+.spectra-gbs-shade-strip__color {
+	width: 36px;
+	height: 36px;
+	border-radius: $gbs-radius-small;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.1s;
+
+	.spectra-gbs-shade-strip__swatch:hover & {
+		transform: scale(1.08);
+	}
+
+	.spectra-gbs-shade-strip__swatch.is-base & {
+		box-shadow: 0 0 0 2px $gbs-blue;
+	}
+}
+
+.spectra-gbs-shade-strip__base-mark {
+	font-size: 10px;
+	line-height: 1;
+}
+
+.spectra-gbs-shade-strip__index {
+	font-size: 10px;
+	color: $gbs-text-faint;
+	line-height: 1;
+}
+
+.spectra-gbs-shade-strip__tooltip {
+	position: absolute;
+	bottom: calc(100% + 4px);
+	left: 50%;
+	transform: translateX(-50%);
+	background: $gbs-text;
+	color: #fff;
+	font-size: 11px;
+	padding: 3px 6px;
+	border-radius: 4px;
+	white-space: nowrap;
+	pointer-events: none;
+	z-index: 10;
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 4px solid transparent;
+		border-top-color: $gbs-text;
+	}
+}
+
+// ─── Neutral section ──────────────────────────────────────────────────────────
+
+.spectra-gbs-neutral__tint-source {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	max-width: 280px;
+}
+
+.spectra-gbs-neutral__tint-swatch {
+	width: 18px;
+	height: 18px;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	flex-shrink: 0;
+	display: inline-block;
+}
+
+.spectra-gbs-neutral__tint-name {
+	flex: 1;
+	font-size: 13px;
+	color: $gbs-text;
+}
+
+// Shared inline Pro pill — mirrors .spectra-gbs-sidebar__pro-badge.
+// Used as an inline marker on a gated row/item.
+.spectra-gbs-pro-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 1px 6px 1px 5px;
+	font-size: $gbs-fs-micro;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: $gbs-pro-amber;
+	background: rgba($gbs-pro-amber, 0.12);
+	border-radius: $gbs-radius-pill;
+	text-transform: uppercase;
+	line-height: 1.4;
+}
+
+.spectra-gbs-neutral__strength-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	max-width: 280px;
+}
+
+.spectra-gbs-neutral__strength-slider {
+	flex: 1;
+	accent-color: $gbs-blue;
+
+	&:disabled {
+		opacity: 0.45;
+	}
+}
+
+.spectra-gbs-neutral__strength-value {
+	font-size: 12.5px;
+	font-family: "SF Mono", Menlo, monospace;
+	color: $gbs-text-muted;
+	min-width: 36px;
+}
+
+// ─── Semantic map table ───────────────────────────────────────────────────────
+
+.spectra-gbs-semantic__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12.5px;
+}
+
+.spectra-gbs-semantic__thead th {
+	text-align: left;
+	font-size: 11px;
+	font-weight: 600;
+	color: $gbs-text-faint;
+	padding: 4px 8px 6px;
+	border-bottom: 1px solid $gbs-border;
+}
+
+.spectra-gbs-semantic__row {
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.spectra-gbs-semantic__col-swatch {
+	width: 28px;
+	padding: 6px 8px;
+}
+
+.spectra-gbs-semantic__swatch {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	vertical-align: middle;
+
+	&--missing {
+		background: repeating-linear-gradient(45deg, #ddd 0, #ddd 2px, transparent 2px, transparent 6px);
+	}
+}
+
+.spectra-gbs-semantic__col-label {
+	padding: 6px 8px;
+}
+
+.spectra-gbs-semantic__label {
+	display: block;
+	font-weight: 500;
+	color: $gbs-text;
+}
+
+.spectra-gbs-semantic__slug {
+	display: block;
+	font-size: 11px;
+	color: $gbs-text-faint;
+	font-family: "SF Mono", Menlo, monospace;
+}
+
+.spectra-gbs-semantic__col-ref,
+.spectra-gbs-semantic__col-hex {
+	padding: 6px 8px;
+}
+
+.spectra-gbs-semantic__shade-ref,
+.spectra-gbs-semantic__hex {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 11.5px;
+	color: $gbs-text-muted;
+	background: $gbs-bg-sidebar;
+	padding: 1px 5px;
+	border-radius: 3px;
+
+	&--missing {
+		color: $gbs-text-faint;
+		background: none;
+	}
+}
+
+// ─── Schemes section ──────────────────────────────────────────────────────────
+
+.spectra-gbs-scheme-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.spectra-gbs-scheme-card {
+	width: 88px;
+	height: 72px;
+	border-radius: $gbs-radius-small;
+	border: 1px solid rgba(0, 0, 0, 0.06);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+	padding: 8px;
+	overflow: hidden;
+	transition:
+		transform 0.1s,
+		box-shadow 0.1s;
+	cursor: default;
+
+	&:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+	}
+}
+
+.spectra-gbs-scheme-card__sample-text {
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1;
+	letter-spacing: -0.02em;
+}
+
+.spectra-gbs-scheme-card__meta {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: 100%;
+}
+
+.spectra-gbs-scheme-card__key {
+	font-size: 9px;
+	font-family: "SF Mono", Menlo, monospace;
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-scheme-card__dark-badge {
+	font-size: 8.5px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	border: 1px solid;
+	border-radius: 2px;
+	padding: 1px 3px;
+	align-self: flex-start;
+}
+
+// ─── Extended section (Pro gate) ──────────────────────────────────────────────
+
+.spectra-gbs-upgrade-lock {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 10px;
+	padding: 40px 24px;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-upgrade-lock__heading {
+	font-size: 14px;
+	font-weight: 600;
+	color: $gbs-text;
+	margin: 0;
+}
+
+.spectra-gbs-upgrade-lock__body {
+	font-size: 12.5px;
+	color: $gbs-text-muted;
+	margin: 0;
+	max-width: 280px;
+	line-height: 1.5;
+}
+
+// ─── Extended section (Pro) ───────────────────────────────────────────────────
+
+.spectra-gbs-section--extended {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding: 0;
+}
+
+.spectra-gbs-chromatic-card {
+	padding: 16px 20px;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.spectra-gbs-chromatic-card__header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 14px;
+}
+
+.spectra-gbs-chromatic-card__swatch {
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	flex-shrink: 0;
+}
+
+.spectra-gbs-chromatic-card__name {
+	flex: 1;
+	font-size: 13px;
+	font-weight: 600;
+	color: $gbs-text;
+}
+
+.spectra-gbs-chromatic-card__index {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	background: $gbs-bg-sidebar-row;
+	padding: 1px 6px;
+	border-radius: 10px;
+}
+
+// ─── Typography panel ─────────────────────────────────────────────────────────
+
+// Current font badge — large text preview strip.
+.spectra-gbs-typography__current-font {
+	font-size: 22px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: $gbs-text;
+	padding: 14px 16px;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	line-height: 1.2;
+}
+
+// Pro-only tag inline with section label.
+.spectra-gbs-typography__pro-tag {
+	font-size: 9.5px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: $gbs-pro-amber;
+	padding: 2px 5px;
+	border: 1px solid currentcolor;
+	border-radius: 3px;
+}
+
+// Generic token row grid (spacing / link settings).
+.spectra-gbs-typography__token-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-typography__token-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border-bottom: 1px solid $gbs-border-light;
+	gap: 12px;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.spectra-gbs-typography__token-name {
+	font-size: 12.5px;
+	color: $gbs-text-muted;
+	flex: 1;
+}
+
+.spectra-gbs-typography__token-value {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 11.5px;
+	color: $gbs-text;
+	background: $gbs-bg-sidebar;
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+
+// Save notice for font changes.
+.spectra-gbs-typography__save-notice {
+	margin: $gbs-space-3 $gbs-space-5 0;
+	padding: 7px $gbs-space-3;
+	font-size: $gbs-fs-small;
+	color: $gbs-warning-text;
+	background: $gbs-warning-bg;
+	border: 1px solid $gbs-warning-border;
+	border-radius: $gbs-radius-small;
+}
+
+// ─── Font picker grid ─────────────────────────────────────────────────────────
+
+.spectra-gbs-font-picker {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.spectra-gbs-font-picker__group {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.spectra-gbs-font-picker__group-label {
+	font-size: 10.5px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: $gbs-text-faint;
+}
+
+.spectra-gbs-font-picker__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	gap: 6px;
+}
+
+// Individual font card.
+.spectra-gbs-font-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+	padding: 12px 8px 10px;
+	background: $gbs-bg;
+	border: 1.5px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	cursor: pointer;
+	text-align: center;
+	transition:
+		border-color 0.1s,
+		box-shadow 0.1s,
+		background 0.1s;
+
+	&:hover {
+		border-color: #bdbdbd;
+		background: $gbs-bg-sidebar;
+	}
+
+	&.is-active {
+		border-color: $gbs-blue;
+		background: $gbs-blue-tint;
+		box-shadow: 0 0 0 1px $gbs-blue;
+	}
+}
+
+// "Aa" preview rendered in the target typeface.
+.spectra-gbs-font-card__preview {
+	display: block;
+	font-size: 22px;
+	font-weight: 700;
+	line-height: 1;
+	color: $gbs-text;
+	letter-spacing: -0.01em;
+}
+
+.spectra-gbs-font-card__name {
+	display: block;
+	font-size: 10.5px;
+	font-weight: 500;
+	color: $gbs-text-muted;
+	line-height: 1.3;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+
+	.is-active & {
+		color: $gbs-blue;
+		font-weight: 600;
+	}
+}
+
+.spectra-gbs-font-card__check {
+	position: absolute;
+	top: 4px;
+	right: 5px;
+	font-size: 10px;
+	color: $gbs-blue;
+	font-weight: 700;
+	line-height: 1;
+}
+
+// ─── Heading scale table ──────────────────────────────────────────────────────
+
+.spectra-gbs-heading-scale {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+// ─── Shared token row ─────────────────────────────────────────────────────────
+// One row layout shared by heading sizes, body text scale, and spacing steps.
+// Structure: __tag (scale marker) | __sample (preview/bar) | __control (size input).
+
+.spectra-gbs-token-row {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	padding: $gbs-space-2 $gbs-space-3;
+	border-bottom: 1px solid $gbs-border;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background: $gbs-bg-sidebar;
+	}
+}
+
+.spectra-gbs-token-row__tag {
+	// Short uppercase scale marker (H1, XS, MD…) — uppercase is intentional.
+	font-size: $gbs-fs-micro;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: $gbs-text-muted;
+	min-width: 32px;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-token-row__sample {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	color: $gbs-text;
+	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.spectra-gbs-token-row__control {
+	flex-shrink: 0;
+}
+
+// ─── Text scale table ─────────────────────────────────────────────────────────
+// Shares the row layout above; this is just the bordered container wrapper.
+
+.spectra-gbs-text-scale {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+// ─── Mono preview ─────────────────────────────────────────────────────────────
+
+.spectra-gbs-mono__preview {
+	padding: 14px 16px;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: 12.5px;
+	color: $gbs-text;
+	line-height: 1.6;
+	margin: 0;
+	white-space: pre;
+	overflow-x: auto;
+}
+
+// ─── Presets panel ────────────────────────────────────────────────────────────
+
+.spectra-gbs-preset-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-preset-chip {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: $gbs-space-1;
+	min-width: 100px;
+	padding: $gbs-space-3 $gbs-space-4;
+	background: $gbs-bg;
+	border: 1.5px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	cursor: pointer;
+	text-align: left;
+	font-family: $gbs-font;
+	transition:
+		border-color 0.12s,
+		background 0.12s,
+		box-shadow 0.12s;
+
+	&:hover {
+		border-color: $gbs-text-faint;
+		background: $gbs-bg-sidebar;
+	}
+
+	&.is-active {
+		border-color: $gbs-blue;
+		background: $gbs-blue-tint;
+		box-shadow: 0 0 0 1px $gbs-blue;
+	}
+}
+
+.spectra-gbs-preset-chip__label {
+	font-size: $gbs-fs-body;
+	font-weight: 600;
+	// Sentence case — no uppercase transform on full-word chip labels.
+	text-transform: none;
+	letter-spacing: 0;
+	color: $gbs-text;
+
+	.is-active & {
+		color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-preset-chip__desc {
+	// Full-word descriptors stay sentence case; multipliers (1×, 1.5×) have
+	// no letters, so they read identically with no transform.
+	font-size: $gbs-fs-small;
+	text-transform: none;
+	letter-spacing: 0;
+	color: $gbs-text-faint;
+
+	.is-active & {
+		color: rgba($gbs-blue, 0.7);
+	}
+}
+
+// Computed token preview below chips.
+.spectra-gbs-preset__token-preview {
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-preset__token-preview-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: $gbs-space-2 $gbs-space-3 5px;
+	background: $gbs-bg-sidebar;
+	border-bottom: 1px solid $gbs-border;
+}
+
+.spectra-gbs-preset__token-preview-label {
+	display: block;
+	font-size: $gbs-fs-micro;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: $gbs-text-faint;
+}
+
+.spectra-gbs-preset__token-copy {
+	font-size: 11px;
+	font-weight: 500;
+	color: $gbs-blue;
+	background: transparent;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	white-space: nowrap;
+	font-family: inherit;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+.spectra-gbs-preset__token-row {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-3;
+	padding: $gbs-space-2 $gbs-space-3;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.spectra-gbs-preset__token-name {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: $gbs-fs-small;
+	color: $gbs-text-muted;
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-preset__token-value {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: $gbs-fs-small;
+	color: $gbs-text-faint;
+	background: $gbs-bg-sidebar;
+	padding: 1px 5px;
+	border-radius: $gbs-radius-pill;
+	max-width: 240px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-preset__preview-loading {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	font-size: $gbs-fs-small;
+	color: $gbs-text-faint;
+}
+
+// ─── Variables panel ──────────────────────────────────────────────────────────
+
+.spectra-gbs-var__toolbar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.spectra-gbs-var__heading {
+	font-size: 13px;
+	font-weight: 600;
+	color: $gbs-text;
+	margin: 0;
+	flex: 1;
+}
+
+.spectra-gbs-var__count {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	background: $gbs-bg-sidebar-row;
+	padding: 2px 7px;
+	border-radius: 10px;
+}
+
+.spectra-gbs-var__search {
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: 4px 8px;
+	font-size: 12.5px;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+	width: 160px;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+}
+
+.spectra-gbs-var__list {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-var__row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background: $gbs-bg-sidebar;
+	}
+}
+
+.spectra-gbs-var__color-dot {
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	flex-shrink: 0;
+	display: inline-block;
+}
+
+.spectra-gbs-var__name {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 11.5px;
+	color: $gbs-text-muted;
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-var__value {
+	font-size: 11.5px;
+	color: $gbs-text-faint;
+	max-width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-family: "SF Mono", Menlo, monospace;
+}
+
+.spectra-gbs-var__copy {
+	width: 22px;
+	height: 22px;
+	border: none;
+	background: none;
+	color: $gbs-text-faint;
+	cursor: pointer;
+	border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 13px;
+	flex-shrink: 0;
+	opacity: 0;
+	transition:
+		opacity 0.1s,
+		background 0.1s;
+
+	.spectra-gbs-var__row:hover & {
+		opacity: 1;
+	}
+
+	&:hover,
+	&.is-copied {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+
+	&.is-copied {
+		color: #22c55e;
+	}
+}
+
+// ─── Custom CSS panel ─────────────────────────────────────────────────────────
+
+.spectra-gbs-custom-css__info {
+	background: $gbs-blue-tint;
+	border: 1px solid rgba($gbs-blue, 0.2);
+	border-radius: $gbs-radius-small;
+	padding: 10px 14px;
+	margin-bottom: 16px;
+}
+
+.spectra-gbs-custom-css__info-text {
+	font-size: 12.5px;
+	color: $gbs-blue;
+	margin: 0;
+	line-height: 1.5;
+}
+
+.spectra-gbs-custom-css__editor-wrap {
+	position: relative;
+	flex: 1;
+}
+
+.spectra-gbs-custom-css__editor {
+	width: 100%;
+	min-height: 320px;
+	resize: vertical;
+	padding: 14px 16px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	font-family:
+		"SF Mono",
+		"Fira Code",
+		"Fira Mono",
+		"Roboto Mono",
+		Menlo,
+		Courier,
+		monospace;
+	font-size: 12.5px;
+	line-height: 1.65;
+	color: $gbs-text;
+	outline: none;
+	box-sizing: border-box;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+.spectra-gbs-custom-css__meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 6px;
+}
+
+.spectra-gbs-custom-css__char-count {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	font-family: "SF Mono", Menlo, monospace;
+}
+
+.spectra-gbs-custom-css__unsaved {
+	font-size: 11px;
+	color: $gbs-pro-amber;
+	font-weight: 600;
+}
+
+// Quick-reference token hints.
+.spectra-gbs-custom-css__hint {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin-top: 14px;
+}
+
+.spectra-gbs-custom-css__hint-label {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	font-weight: 600;
+}
+
+.spectra-gbs-custom-css__hint-var {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 10.5px;
+	color: $gbs-text-muted;
+	background: $gbs-bg-sidebar-row;
+	padding: 2px 6px;
+	border-radius: 3px;
+	cursor: default;
+}
+
+// ─── Custom Classes panel ─────────────────────────────────────────────────────
+
+.spectra-gbs-class-list {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-class-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	background: $gbs-bg;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&.is-editing {
+		display: block;
+		padding: 0;
+	}
+}
+
+.spectra-gbs-class-row__name {
+	flex: 1;
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 12.5px;
+	color: $gbs-blue;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-class-row__count {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-class-row__actions {
+	display: flex;
+	gap: 4px;
+	flex-shrink: 0;
+}
+
+.spectra-gbs-class-row__btn {
+	padding: 3px 8px;
+	font-size: 11px;
+	font-family: $gbs-font;
+	border: 1px solid $gbs-border;
+	border-radius: 4px;
+	background: $gbs-bg;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	transition:
+		background 0.1s,
+		color 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+
+	&.is-danger {
+		color: #c0392b;
+		border-color: #c0392b;
+	}
+
+	&.is-danger:hover {
+		background: #fdf0f0;
+	}
+}
+
+// Class editor (inline expanded state).
+.spectra-gbs-class-editor {
+	padding: 14px 16px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.spectra-gbs-class-editor__name {
+
+	code {
+		font-family: "SF Mono", Menlo, monospace;
+		font-size: 13px;
+		font-weight: 600;
+		color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-class-editor__bucket {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+
+	.spectra-gbs-section__label {
+		margin-bottom: 0;
+	}
+}
+
+.spectra-gbs-class-editor__textarea {
+	width: 100%;
+	resize: vertical;
+	min-height: 60px;
+	padding: 8px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 12px;
+	line-height: 1.6;
+	color: $gbs-text;
+	outline: none;
+	box-sizing: border-box;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+.spectra-gbs-class-editor__actions {
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+// State selector toolbar.
+.spectra-gbs-class-editor__toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.spectra-gbs-class-editor__toolbar-label {
+	font-size: 12px;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-class-editor__state-select {
+	height: 30px;
+	padding: 0 8px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg;
+	font-size: 12px;
+	color: $gbs-text;
+	cursor: pointer;
+
+	&:focus {
+		border-color: $gbs-blue;
+		outline: none;
+	}
+}
+
+// Code + live preview side by side.
+.spectra-gbs-class-editor__split {
+	display: grid;
+	grid-template-columns: 1.35fr 1fr;
+	gap: 12px;
+	align-items: stretch;
+
+	@media (max-width: 720px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.spectra-gbs-class-editor__code {
+	display: flex;
+	min-width: 0;
+
+	// Let the textarea fill the (grid-stretched) cell so the code column
+	// matches the preview pane's height exactly.
+	.spectra-css-ac {
+		flex: 1;
+		display: flex;
+		min-width: 0;
+	}
+
+	.spectra-gbs-class-editor__textarea {
+		flex: 1;
+		width: 100%;
+		height: 100%;
+		min-height: 180px;
+		resize: vertical;
+	}
+}
+
+.spectra-gbs-class-editor__preview-pane {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-class-editor__preview-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 10px;
+	border-bottom: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	font-size: 11px;
+	font-weight: 500;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-class-editor__preview-state {
+	font-size: 10px;
+	color: $gbs-blue;
+	background: $gbs-blue-tint;
+	padding: 1px 8px;
+	border-radius: 999px;
+}
+
+.spectra-gbs-class-editor__preview-body {
+	// Fill the pane (which the grid stretches to match the code column) and
+	// scroll large user values instead of overflowing/overlapping.
+	flex: 1;
+	display: flex;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 16px;
+	min-height: 0;
+	overflow: auto;
+	background: $gbs-bg-sidebar;
+}
+
+.spectra-gbs-class-editor__preview-sample {
+	max-width: 100%;
+	padding: 12px 16px;
+	background: $gbs-bg;
+	border: 1px solid $gbs-border-light;
+	border-radius: $gbs-radius-small;
+	font-size: 14px;
+	line-height: 1.3;
+	color: $gbs-text;
+	// Keep oversized / unbreakable values from blowing the layout apart.
+	overflow-wrap: anywhere;
+}
+
+// New class creation row.
+.spectra-gbs-class-toolbar {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-3;
+}
+
+.spectra-gbs-class-new {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+}
+
+.spectra-gbs-class-new__prefix {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 12.5px;
+	color: $gbs-text-muted;
+	flex-shrink: 0;
+	padding: 6px 4px;
+}
+
+.spectra-gbs-class-new__input {
+	flex: 1;
+
+	.components-text-control__input {
+		font-family: "SF Mono", Menlo, monospace;
+		font-size: 12.5px;
+	}
+}
+
+.spectra-gbs-class-new__error {
+	font-size: 12px;
+	color: #c0392b;
+	margin: 4px 0 0;
+}
+
+.spectra-gbs-class-new .components-button.is-primary {
+	background: $gbs-blue !important;
+	border-color: $gbs-blue !important;
+	color: #fff !important;
+	box-shadow: none !important;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: $gbs-blue-hover !important;
+		border-color: $gbs-blue-hover !important;
+		color: #fff !important;
+		box-shadow: none !important;
+	}
+
+	&:disabled,
+	&.is-disabled {
+		opacity: 0.3 !important;
+		cursor: not-allowed !important;
+	}
+}
+
+.spectra-gbs-class-search {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg;
+	flex: 1;
+}
+
+.spectra-gbs-class-search__icon {
+	color: $gbs-text-faint;
+	flex-shrink: 0;
+	display: flex;
+}
+
+.spectra-gbs-class-search__input {
+	flex: 1;
+	border: none;
+	background: none;
+	font-size: 12.5px;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	outline: none;
+	min-width: 0;
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+}
+
+.spectra-gbs-class-search__count {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	flex-shrink: 0;
+}
+
+// ─── Editor header toolbar button ─────────────────────────────────────────────
+
+.spectra-gbs-header-slot {
+	display: flex;
+	align-items: center;
+}
+
+.spectra-gbs-header-btn.components-button {
+	width: 36px;
+	height: 36px;
+	border-radius: 4px;
+	color: #1e1e1e;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	svg {
+		flex-shrink: 0;
+	}
+
+	&:hover {
+		background: rgba(0, 0, 0, 0.07);
+		color: #1e1e1e;
+	}
+
+	&:focus {
+		box-shadow: inset 0 0 0 1.5px var(--wp-admin-theme-color, #6005ff);
+		outline: none;
+	}
+}
+
+// ─── Size input (font-size + spacing overrides) ───────────────────────────────
+
+.spectra-gbs-size-input {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	height: 30px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+	background: $gbs-bg;
+	flex-shrink: 0;
+
+	&--sm {
+		height: 26px;
+	}
+}
+
+.spectra-gbs-size-input__number {
+	width: 52px;
+	height: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	border: none;
+	padding: 0 6px;
+	font-size: 12px;
+	line-height: normal;
+	font-family: "SF Mono", Menlo, monospace;
+	color: $gbs-text;
+	background: transparent;
+	outline: none;
+	text-align: right;
+	-moz-appearance: textfield;
+
+	&::-webkit-inner-spin-button,
+	&::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+	}
+}
+
+.spectra-gbs-size-input__unit {
+	border: none;
+	border-left: 1px solid $gbs-border;
+	padding: 0 4px;
+	font-size: 11px;
+	font-family: $gbs-font;
+	color: $gbs-text-muted;
+	background: $gbs-bg-sidebar;
+	outline: none;
+	cursor: pointer;
+	height: 100%;
+}
+
+.spectra-gbs-size-input__reset {
+	border: none;
+	border-left: 1px solid $gbs-border;
+	padding: 0 6px;
+	font-size: 13px;
+	color: $gbs-text-faint;
+	background: $gbs-bg-sidebar;
+	cursor: pointer;
+	height: 100%;
+	line-height: 1;
+	transition:
+		color 0.1s,
+		background 0.1s;
+
+	&:hover {
+		color: $gbs-blue;
+		background: $gbs-blue-tint;
+	}
+}
+
+// ─── Spacing table ────────────────────────────────────────────────────────────
+// The spacing step container and the spacing-specific decoration that lives
+// inside the shared .spectra-gbs-token-row (proportional bar + computed value).
+
+.spectra-gbs-spacing-table {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+
+	// Spacing tags carry a wrapping description line, so they need more room.
+	.spectra-gbs-token-row__tag {
+		min-width: 44px;
+	}
+}
+
+// Secondary description line shown under the scale tag in spacing rows.
+.spectra-gbs-token-row__desc {
+	display: block;
+	margin-top: 1px;
+	font-size: $gbs-fs-micro;
+	font-weight: 400;
+	text-transform: none;
+	letter-spacing: 0;
+	color: $gbs-text-faint;
+	line-height: 1.2;
+	white-space: normal;
+}
+
+.spectra-gbs-token-row__bar {
+	height: 8px;
+	border-radius: $gbs-radius-pill;
+	background: $gbs-blue-tint;
+	border: 1px solid rgba($gbs-blue, 0.2);
+	flex-shrink: 0;
+	transition: width 0.2s;
+
+	&.is-changed {
+		background: rgba($gbs-blue, 0.25);
+		border-color: rgba($gbs-blue, 0.5);
+	}
+}
+
+.spectra-gbs-token-row__computed {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: $gbs-fs-micro;
+	color: $gbs-text-faint;
+	white-space: nowrap;
+}
+
+// ─── Custom vars panel ────────────────────────────────────────────────────────
+
+.spectra-gbs-var-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+}
+
+.spectra-gbs-var-entry {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background: $gbs-bg-sidebar;
+	}
+}
+
+.spectra-gbs-var-entry__name {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 11.5px;
+	color: $gbs-blue;
+	width: 180px;
+	flex-shrink: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-gbs-var-entry__value {
+	flex: 1;
+	border: 1px solid $gbs-border;
+	border-radius: 4px;
+	padding: 3px 8px;
+	font-size: 12.5px;
+	font-family: "SF Mono", Menlo, monospace;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-var-add {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.spectra-gbs-var-bulk-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 6px;
+
+	.spectra-gbs-section__label {
+		margin-bottom: 0;
+	}
+}
+
+.spectra-gbs-var-bulk-textarea {
+	width: 100%;
+	padding: 8px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: 12.5px;
+	font-family: "SF Mono", Menlo, monospace;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+	resize: vertical;
+	box-sizing: border-box;
+	line-height: 1.7;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+.spectra-gbs-var-value-input {
+	flex: 1;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: 6px 10px;
+	font-size: 12.5px;
+	font-family: "SF Mono", Menlo, monospace;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+	min-width: 0;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+// ─── Class editor preview ─────────────────────────────────────────────────────
+
+.spectra-gbs-class-editor__preview-wrap {
+	border-top: 1px solid $gbs-border-light;
+	padding-top: 12px;
+}
+
+.spectra-gbs-class-editor__preview {
+	padding: 16px 20px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	font-size: 14px;
+	min-height: 48px;
+	display: flex;
+	align-items: center;
+	transition: all 0.2s;
+}
+
+// ─── Cheat Sheet panel ────────────────────────────────────────────────────────
+
+.spectra-gbs-panel--cheat-sheet {
+	padding: 0;
+	overflow: hidden;
+}
+
+.spectra-cs {
+	display: flex;
+	height: 100%;
+	overflow: hidden;
+	font-family: $gbs-font;
+
+	&--empty {
+		align-items: center;
+		justify-content: center;
+		padding: 40px;
+	}
+}
+
+.spectra-cs__empty-msg {
+	font-size: 13px;
+	color: $gbs-text-muted;
+	text-align: center;
+}
+
+// Right column — scrollable card list (main content).
+.spectra-cs__list-col {
+	flex: 1;
+	overflow-y: auto;
+	padding: $gbs-space-4 $gbs-space-5;
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-1;
+	min-width: 0;
+}
+
+.spectra-cs__filters-strip {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 8px;
+}
+
+.spectra-cs__filter-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 3px 10px;
+	background: $gbs-blue-tint;
+	color: $gbs-blue;
+	border: 1px solid #c7d3fb;
+	border-radius: 100px;
+	font-size: 12px;
+	font-family: $gbs-font;
+	cursor: pointer;
+	line-height: 1.4;
+
+	&:hover {
+		background: #e4eafe;
+	}
+}
+
+.spectra-cs__count {
+	font-size: 11px;
+	color: $gbs-text-faint;
+	margin: 0 0 8px;
+}
+
+.spectra-cs__cards {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.spectra-cs__no-results {
+	font-size: 13px;
+	color: $gbs-text-muted;
+	padding: 24px 0;
+	text-align: center;
+}
+
+// Individual entry card.
+.spectra-cs-card {
+	padding: 12px 0;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.spectra-cs-card__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 6px;
+}
+
+.spectra-cs-card__left {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	flex: 1;
+}
+
+.spectra-cs-card__name {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: $gbs-blue;
+	background: $gbs-blue-tint;
+	padding: 2px 8px;
+	border-radius: 4px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 360px;
+}
+
+.spectra-cs-card__badge {
+	flex-shrink: 0;
+	padding: 2px 8px;
+	border-radius: $gbs-radius-pill;
+	font-size: $gbs-fs-small;
+	font-weight: 600;
+	white-space: nowrap;
+	// Colour + tinted background are supplied inline per category.
+}
+
+.spectra-cs-card__copy {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	transition:
+		background 0.1s,
+		color 0.1s,
+		border-color 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+
+	&.is-copied {
+		color: #22c55e;
+		border-color: #22c55e;
+		background: #f0fdf4;
+	}
+}
+
+.spectra-cs-card__title {
+	font-size: 12.5px;
+	font-weight: 500;
+	color: $gbs-text;
+	margin: 0 0 2px;
+}
+
+.spectra-cs-card__desc {
+	font-size: 12px;
+	color: $gbs-text-muted;
+	font-style: italic;
+	margin: 0 0 6px;
+}
+
+.spectra-cs-card__tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.spectra-cs-card__tag {
+	padding: 2px 8px;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: 4px;
+	font-size: 11px;
+	font-family: $gbs-font;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	transition:
+		background 0.1s,
+		color 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+}
+
+// Pagination.
+.spectra-cs__pagination {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	justify-content: center;
+	padding: 16px 0 8px;
+}
+
+.spectra-cs__page-btn {
+	padding: 4px 14px;
+	font-size: 12.5px;
+	font-family: $gbs-font;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg;
+	color: $gbs-text;
+	cursor: pointer;
+	transition: background 0.1s;
+
+	&:hover:not(:disabled) {
+		background: $gbs-bg-sidebar-row;
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+}
+
+.spectra-cs__page-info {
+	font-size: 12px;
+	color: $gbs-text-muted;
+	min-width: 50px;
+	text-align: center;
+}
+
+// Left column — search + category filters (sidebar rail, matches GBSSidebar).
+.spectra-cs__filter-col {
+	width: 240px;
+	flex-shrink: 0;
+	padding: $gbs-space-4 $gbs-space-3;
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-4;
+	overflow-y: auto;
+	border-right: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+}
+
+.spectra-cs__search-wrap {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	width: 100%;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: $gbs-space-2 $gbs-space-3;
+	background: $gbs-bg;
+	box-sizing: border-box;
+
+	&:focus-within {
+		border-color: $gbs-blue;
+	}
+}
+
+.spectra-cs__search-icon {
+	color: $gbs-text-faint;
+	flex-shrink: 0;
+	display: flex;
+}
+
+.spectra-cs__search {
+	flex: 1;
+	border: none;
+	background: none;
+	font-size: 12.5px;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	outline: none;
+	min-width: 0;
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+
+	&::-webkit-search-cancel-button {
+		-webkit-appearance: none;
+	}
+}
+
+.spectra-cs__categories {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.spectra-cs__cat-label {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: $gbs-text-faint;
+	margin: 0 0 6px;
+}
+
+.spectra-cs__cat-btn {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	padding: 7px 10px;
+	background: none;
+	border: none;
+	border-radius: $gbs-radius-small;
+	font-size: 13px;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	cursor: pointer;
+	text-align: left;
+	transition:
+		background 0.1s,
+		color 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+	}
+
+	&.is-active {
+		background: $gbs-blue-tint;
+		color: $gbs-blue;
+	}
+}
+
+.spectra-cs__cat-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.spectra-cs__cat-clear {
+	margin-top: 6px;
+	padding: 4px 10px;
+	font-size: 12px;
+	font-family: $gbs-font;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	text-align: center;
+
+	&:hover {
+		color: $gbs-text;
+		background: $gbs-bg-sidebar-row;
+	}
+}
+
+// ─── Classes & CSS panel ──────────────────────────────────────────────────────
+
+.spectra-gbs-panel--classes-css {
+	padding: 0;
+	overflow: hidden;
+
+	.spectra-gbs-colors-panel {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		min-height: 0;
+	}
+
+	.spectra-gbs-colors-panel__content {
+		flex: 1;
+		overflow-y: auto;
+		min-height: 0;
+	}
+}
+
+.spectra-classes-panel {
+	display: flex;
+	height: 100%;
+	overflow: hidden;
+	font-family: $gbs-font;
+}
+
+// Left: class list column.
+.spectra-classes-panel__list {
+	width: 220px;
+	flex-shrink: 0;
+	border-right: 1px solid $gbs-border;
+	background: $gbs-bg-sidebar;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.spectra-classes-panel__new {
+	padding: 10px 12px;
+	border-bottom: 1px solid $gbs-border;
+	flex-shrink: 0;
+}
+
+.spectra-classes-panel__new-row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.spectra-classes-panel__new-prefix {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 12px;
+	color: $gbs-text-muted;
+	flex-shrink: 0;
+}
+
+.spectra-classes-panel__new-input {
+	flex: 1;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: 4px 7px;
+	font-size: 12.5px;
+	font-family: $gbs-font;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+	min-width: 0;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+.spectra-classes-panel__new-btn {
+	flex-shrink: 0;
+	width: 26px;
+	height: 26px;
+	border: 1px solid $gbs-blue;
+	border-radius: $gbs-radius-small;
+	background: $gbs-blue;
+	color: #fff;
+	font-size: 18px;
+	line-height: 1;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.1s;
+
+	&:hover {
+		background: $gbs-blue-hover;
+	}
+}
+
+.spectra-classes-panel__name-error {
+	font-size: 11px;
+	color: #c0392b;
+	margin: 4px 0 0;
+}
+
+.spectra-classes-panel__items {
+	list-style: none;
+	margin: 0;
+	padding: 4px 0;
+	overflow-y: auto;
+	flex: 1;
+}
+
+.spectra-classes-panel__empty {
+	padding: 10px 14px;
+	font-size: 12px;
+	color: $gbs-text-faint;
+	font-style: italic;
+}
+
+.spectra-classes-panel__item {
+	margin: 0;
+	padding: 0;
+}
+
+.spectra-classes-panel__item-btn {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	padding: 7px 12px;
+	background: none;
+	border: none;
+	text-align: left;
+	cursor: pointer;
+	font-family: $gbs-font;
+	gap: 4px;
+	transition: background 0.1s;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+	}
+
+	&.is-active {
+		background: $gbs-blue-tint;
+
+		.spectra-classes-panel__item-name {
+			color: $gbs-blue;
+		}
+	}
+
+	&--global .spectra-classes-panel__item-name {
+		color: $gbs-text-muted;
+	}
+}
+
+.spectra-classes-panel__item-name {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 12px;
+	color: $gbs-text;
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.spectra-classes-panel__item-del {
+	flex-shrink: 0;
+	opacity: 0;
+	border: none;
+	background: none;
+	color: $gbs-text-muted;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+	padding: 0 2px;
+	border-radius: 3px;
+	transition:
+		opacity 0.1s,
+		color 0.1s;
+
+	.spectra-classes-panel__item-btn:hover & {
+		opacity: 1;
+	}
+
+	&:hover {
+		color: #c0392b;
+	}
+}
+
+.spectra-classes-panel__item-confirm {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	background: #fdf0f0;
+	font-size: 12px;
+	color: #c0392b;
+
+	span {
+		flex: 1;
+		font-style: italic;
+	}
+}
+
+.spectra-classes-panel__item-del-yes,
+.spectra-classes-panel__item-del-no {
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	font-family: $gbs-font;
+	cursor: pointer;
+	border: 1px solid currentcolor;
+	background: none;
+}
+
+.spectra-classes-panel__item-del-yes {
+	color: #c0392b;
+
+	&:hover {
+		background: #c0392b;
+		color: #fff;
+	}
+}
+
+.spectra-classes-panel__item-del-no {
+	color: $gbs-text-muted;
+
+	&:hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+}
+
+.spectra-classes-panel__separator {
+	height: 1px;
+	background: $gbs-border;
+	margin: 4px 0;
+	flex-shrink: 0;
+}
+
+.spectra-classes-panel__placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	font-size: 13px;
+	color: $gbs-text-faint;
+	text-align: center;
+	padding: 24px;
+}
+
+// Right: CSS editor column.
+.spectra-classes-panel__editor {
+	flex: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.spectra-classes-editor {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	padding: 20px 24px;
+	flex: 1;
+}
+
+.spectra-classes-editor__header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.spectra-classes-editor__name {
+	font-family: "SF Mono", Menlo, monospace;
+	font-size: 14px;
+	font-weight: 600;
+	color: $gbs-blue;
+	background: $gbs-blue-tint;
+	padding: 3px 10px;
+	border-radius: 5px;
+}
+
+.spectra-classes-editor__unsaved {
+	font-size: 11.5px;
+	color: $gbs-pro-amber;
+	font-style: italic;
+}
+
+.spectra-classes-editor__hint {
+	font-size: 12.5px;
+	color: $gbs-text-muted;
+	margin: 0;
+}
+
+.spectra-classes-editor__textarea {
+	flex: 1;
+	min-height: 300px;
+	resize: vertical;
+	padding: 12px 14px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: 12.5px;
+	line-height: 1.7;
+	color: $gbs-text;
+	outline: none;
+	box-sizing: border-box;
+	width: 100%;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&::placeholder {
+		color: $gbs-text-faint;
+	}
+}
+
+.spectra-classes-editor__actions {
+	display: flex;
+	gap: $gbs-space-2;
+	justify-content: flex-end;
+}
+
+// Discard sits at the far left of the action row.
+.spectra-classes-editor__discard {
+	margin-right: auto;
+}
+
+// ─── Spacing panel ────────────────────────────────────────────────────────────
+
+.spectra-gbs-spacing__row {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	padding: $gbs-space-2 $gbs-space-3;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background: $gbs-bg-sidebar;
+	}
+}
+
+.spectra-gbs-spacing__label {
+	width: 36px;
+	flex-shrink: 0;
+	font-size: $gbs-fs-small;
+	font-weight: 600;
+	color: $gbs-text-muted;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.spectra-gbs-spacing__input {
+	width: 64px;
+	flex-shrink: 0;
+	padding: 5px 8px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: $gbs-fs-body;
+	color: $gbs-text;
+	background: $gbs-bg;
+	outline: none;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+
+	&:disabled {
+		opacity: 0.6;
+	}
+}
+
+.spectra-gbs-spacing__unit {
+	flex-shrink: 0;
+	padding: 5px 6px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: $gbs-fs-label;
+	color: $gbs-text;
+	background: $gbs-bg;
+	cursor: pointer;
+	outline: none;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+}
+
+// Inline proportional bar — fills the spare width of each row.
+.spectra-gbs-spacing__bar-track {
+	flex: 1;
+	min-width: 60px;
+	height: 8px;
+	background: $gbs-border-light;
+	border-radius: $gbs-radius-pill;
+	overflow: hidden;
+}
+
+.spectra-gbs-spacing__bar {
+	height: 100%;
+	border-radius: $gbs-radius-pill;
+	background: rgba($gbs-blue, 0.45);
+	transition: width 0.2s;
+
+	&.is-changed {
+		background: $gbs-blue;
+	}
+}
+
+.spectra-gbs-spacing__reset-btn {
+	width: 60px;
+	flex-shrink: 0;
+	padding: 4px 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: none;
+	font-size: $gbs-fs-label;
+	color: $gbs-text-muted;
+	cursor: pointer;
+
+	&:hover {
+		color: $gbs-text;
+		border-color: $gbs-text-muted;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+// Keeps rows aligned when a token has no Reset button.
+.spectra-gbs-spacing__reset-spacer {
+	width: 60px;
+	flex-shrink: 0;
+}
+
+// ─── Font size panel ──────────────────────────────────────────────────────────
+
+.spectra-gbs-font-size-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+	overflow-y: auto;
+}
+
+.spectra-gbs-font-size-panel__mode-toggle {
+	display: flex;
+	gap: 0;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+	width: fit-content;
+}
+
+.spectra-gbs-font-size-panel__mode-btn {
+	padding: 6px 16px;
+	background: none;
+	border: none;
+	font-size: 13px;
+	font-weight: 500;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	transition:
+		background 0.1s,
+		color 0.1s;
+
+	&:not(:last-child) {
+		border-right: 1px solid $gbs-border;
+	}
+
+	&.is-active {
+		background: $gbs-blue;
+		color: #fff;
+	}
+
+	&:not(.is-active):hover {
+		background: $gbs-bg-sidebar-row;
+		color: $gbs-text;
+	}
+}
+
+.spectra-gbs-font-size-panel__scale-pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.spectra-gbs-font-size-panel__pill {
+	padding: 5px 12px;
+	border: 1px solid $gbs-border;
+	border-radius: 20px;
+	background: none;
+	font-size: 12px;
+	font-weight: 500;
+	color: $gbs-text-muted;
+	cursor: pointer;
+	transition:
+		background 0.1s,
+		color 0.1s,
+		border-color 0.1s;
+
+	&:hover {
+		border-color: $gbs-blue;
+		color: $gbs-blue;
+	}
+
+	&.is-active {
+		background: $gbs-blue;
+		border-color: $gbs-blue;
+		color: #fff;
+	}
+}
+
+.spectra-gbs-font-size-panel__editor {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.spectra-gbs-font-size-panel__editor-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: $gbs-text-muted;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.spectra-gbs-font-size-panel__editor-controls {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.spectra-gbs-font-size-panel__number-input {
+	width: 80px;
+	padding: 6px 8px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: 13px;
+	color: $gbs-text;
+	outline: none;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-font-size-panel__unit-select {
+	padding: 6px 8px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: 13px;
+	color: $gbs-text;
+	background: $gbs-bg;
+	cursor: pointer;
+	outline: none;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-font-size-panel__reset-btn {
+	padding: 6px 12px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: none;
+	font-size: 12px;
+	color: $gbs-text-muted;
+	cursor: pointer;
+
+	&:hover {
+		color: $gbs-text;
+		border-color: $gbs-text-muted;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+.spectra-gbs-font-size-panel__preview {
+	padding: 16px;
+	background: $gbs-bg-sidebar;
+	border-radius: $gbs-radius-small;
+	border: 1px solid $gbs-border-light;
+}
+
+.spectra-gbs-font-size-panel__preview-heading {
+	margin: 0 0 12px;
+	font-size: 11px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	color: $gbs-text-faint;
+}
+
+.spectra-gbs-font-size-panel__preview-row {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	padding: 4px 0;
+	border-bottom: 1px solid $gbs-border-light;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&.is-active {
+
+		.spectra-gbs-font-size-panel__preview-label {
+			color: $gbs-blue;
+			font-weight: 700;
+		}
+	}
+}
+
+.spectra-gbs-font-size-panel__preview-label {
+	width: 36px;
+	flex-shrink: 0;
+	font-size: 11px;
+	font-weight: 500;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-font-size-panel__preview-text {
+	color: $gbs-text;
+	line-height: 1.3;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// ─── Block defaults panel ─────────────────────────────────────────────────────
+
+.spectra-gbs-block-defaults {
+	padding: $gbs-space-5;
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-5;
+
+	&--unavailable {
+		padding: $gbs-space-6;
+	}
+}
+
+.spectra-gbs-block-defaults__field {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-block-defaults__label {
+	font-size: $gbs-fs-label;
+	font-weight: 500;
+	color: $gbs-text;
+	// Sentence case — full-word UI label.
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+.spectra-gbs-block-defaults__select {
+	padding: 7px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	font-size: $gbs-fs-body;
+	color: $gbs-text;
+	background: $gbs-bg;
+	cursor: pointer;
+	outline: none;
+	max-width: 320px;
+
+	&:focus {
+		border-color: $gbs-blue;
+	}
+}
+
+.spectra-gbs-block-defaults__preview-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-block-defaults__preview-label {
+	font-size: $gbs-fs-label;
+	font-weight: 500;
+	color: $gbs-text;
+	// Sentence case — full-word UI label.
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+.spectra-gbs-block-defaults__preview {
+	padding: $gbs-space-5;
+	border: 1px dashed $gbs-border;
+	border-radius: $gbs-radius-small;
+	background: $gbs-bg-sidebar;
+	color: $gbs-text-muted;
+	min-height: 64px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition:
+		background 0.15s,
+		color 0.15s;
+}
+
+.spectra-gbs-block-defaults__preview-text {
+	font-size: $gbs-fs-title;
+	// Inherit from the wrapper so applied GS classes (color, etc.) are visible.
+	color: inherit;
+}
+
+.spectra-gbs-block-defaults__preview-classes {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: $gbs-fs-small;
+	color: $gbs-blue;
+	background: $gbs-blue-tint;
+	padding: 2px 6px;
+	border-radius: $gbs-radius-pill;
+	display: block;
+	word-break: break-all;
+}
+
+.spectra-gbs-block-defaults__chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-block-defaults__chip {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	padding: 5px 10px;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-pill;
+	cursor: pointer;
+	font-size: $gbs-fs-label;
+	color: $gbs-text-muted;
+	transition:
+		background 0.1s,
+		border-color 0.1s,
+		color 0.1s;
+
+	&:hover {
+		border-color: $gbs-blue;
+		color: $gbs-blue;
+	}
+
+	&.is-active {
+		background: $gbs-blue;
+		border-color: $gbs-blue;
+		color: #fff;
+	}
+}
+
+.spectra-gbs-block-defaults__chip-input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+.spectra-gbs-block-defaults__chip-label {
+	font-family: "SF Mono", "Fira Code", Menlo, monospace;
+	font-size: $gbs-fs-small;
+}
+
+.spectra-gbs-block-defaults__empty {
+	font-size: $gbs-fs-body;
+	color: $gbs-text-muted;
+	font-style: italic;
+}
+
+.spectra-gbs-block-defaults__error {
+	font-size: $gbs-fs-body;
+	color: #cc1818;
+	padding: $gbs-space-2 $gbs-space-3;
+	background: #fff0f0;
+	border-radius: $gbs-radius-small;
+	border: 1px solid #f5c6c6;
+}
+
+.spectra-gbs-block-defaults__success {
+	font-size: $gbs-fs-body;
+	color: #176317;
+	padding: $gbs-space-2 $gbs-space-3;
+	background: #f0fff0;
+	border-radius: $gbs-radius-small;
+	border: 1px solid #b8e6b8;
+}
+
+.spectra-gbs-block-defaults__actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+// ── Enabled toggle row ─────────────────────────────────────────────────────────
+
+.spectra-gbs-block-defaults__toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $gbs-space-3;
+}
+
+.spectra-gbs-block-defaults__toggle-label {
+	font-size: $gbs-fs-body;
+	font-weight: 500;
+	color: $gbs-text;
+}
+
+.spectra-gbs-block-defaults__toggle {
+	position: relative;
+	width: 36px;
+	height: 20px;
+	border-radius: 10px;
+	border: none;
+	background: $gbs-border;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: background 0.15s;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		background: #fff;
+		transition: transform 0.15s;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+	}
+
+	&.is-on {
+		background: $gbs-blue;
+
+		&::after {
+			transform: translateX(16px);
+		}
+	}
+
+	&.is-busy {
+		opacity: 0.6;
+		cursor: wait;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+}
+
+.spectra-gbs-block-defaults__disabled-note {
+	font-size: $gbs-fs-body;
+	color: $gbs-text-muted;
+	font-style: italic;
+	background: $gbs-bg-sidebar;
+	border: 1px dashed $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: $gbs-space-3 $gbs-space-4;
+}
+
+// ── Keyframe animation settings ───────────────────────────────────────────────
+
+.spectra-gbs-keyframe-settings {
+	display: flex;
+	flex-wrap: wrap;
+	gap: $gbs-space-3;
+	margin-top: $gbs-space-2;
+}
+
+.spectra-gbs-keyframe-settings__field {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-1;
+	min-width: 0;
+}
+
+.spectra-gbs-keyframe-settings__label {
+	font-size: $gbs-fs-body;
+	color: $gbs-text-muted;
+	white-space: nowrap;
+}
+
+.spectra-gbs-keyframe-settings__select {
+	font-size: $gbs-fs-body;
+	color: $gbs-text;
+	background: $gbs-bg;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: $gbs-space-1 $gbs-space-2;
+	cursor: pointer;
+	min-width: 100px;
+
+	&:focus {
+		outline: none;
+		border-color: $gbs-blue;
+	}
+}
+
+// ── Keyframe usage hint ───────────────────────────────────────────────────────
+
+.spectra-gbs-keyframe-usage {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+	margin-top: $gbs-space-2;
+}
+
+.spectra-gbs-keyframe-usage__code {
+	flex: 1;
+	font-size: $gbs-fs-body;
+	font-family: monospace;
+	color: $gbs-text;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	padding: $gbs-space-2 $gbs-space-3;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+.spectra-gbs-keyframe-usage__copy {
+	flex-shrink: 0;
+}
+
+.spectra-gbs-keyframe-create-footer {
+	margin-top: $gbs-space-3;
+}
+
+// ── Block Defaults Panel ──────────────────────────────────────────────────────
+
+.spectra-gbs-bd {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-4;
+	padding: $gbs-space-4;
+}
+
+.spectra-gbs-bd__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: $gbs-space-3;
+}
+
+.spectra-gbs-bd__heading {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.spectra-gbs-bd__title {
+	font-size: $gbs-fs-title;
+	font-weight: 600;
+	color: $gbs-text;
+}
+
+.spectra-gbs-bd__subtitle {
+	font-size: $gbs-fs-small;
+	color: $gbs-text-faint;
+}
+
+// Footer: destructive action + status pushed left, save/clear on the right.
+.spectra-gbs-bd__footer-left {
+	margin-right: auto;
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-3;
+	min-width: 0;
+}
+
+.spectra-gbs-bd__status {
+	font-size: $gbs-fs-small;
+
+	&.is-success {
+		color: #176317;
+	}
+
+	&.is-error {
+		color: #c0392b;
+	}
+}
+
+.spectra-gbs-bd__toggle-row {
+	display: flex;
+	align-items: center;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-bd__toggle-label {
+	font-size: $gbs-fs-small;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-toggle {
+	position: relative;
+	display: inline-block;
+	width: 36px;
+	height: 20px;
+	border: none;
+	background: $gbs-border;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 0.2s;
+	padding: 0;
+	flex-shrink: 0;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 3px;
+		left: 3px;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		background: #fff;
+		transition: left 0.2s;
+	}
+
+	&.is-on {
+		background: $gbs-blue;
+
+		&::after {
+			left: 19px;
+		}
+	}
+
+	&.is-busy {
+		opacity: 0.6;
+		cursor: wait;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}
+
+.spectra-gbs-bd__disabled {
+	padding: $gbs-space-4;
+	background: $gbs-bg-sidebar;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+}
+
+.spectra-gbs-bd__disabled-text {
+	margin: 0;
+	font-size: $gbs-fs-body;
+	color: $gbs-text-muted;
+	text-align: center;
+}
+
+.spectra-gbs-bd__body {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: $gbs-space-4;
+	align-items: start;
+
+	@media (max-width: 800px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.spectra-gbs-bd__controls {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-3;
+}
+
+.spectra-gbs-bd__actions {
+	display: flex;
+	gap: $gbs-space-2;
+	flex-wrap: wrap;
+}
+
+.spectra-gbs-bd__preview {
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-2;
+}
+
+.spectra-gbs-bd__iframe-wrap {
+	position: relative;
+	border: 1px solid $gbs-border;
+	border-radius: $gbs-radius-small;
+	overflow: hidden;
+	min-height: 400px;
+	background: $gbs-bg-sidebar;
+}
+
+.spectra-gbs-bd__iframe-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: $gbs-fs-body;
+	color: $gbs-text-muted;
+}
+
+.spectra-gbs-btn--sm {
+	font-size: $gbs-fs-small;
+	padding: $gbs-space-1 $gbs-space-2;
+	height: auto;
+}
+
+// ── Confirmation dialog (separate from .spectra-gbs-modal which is the main editor shell) ─────
+
+.spectra-gbs-confirm-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 100002;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.spectra-gbs-confirm {
+	background: $gbs-bg;
+	border-radius: $gbs-radius-modal;
+	box-shadow: $gbs-shadow-modal;
+	width: 420px;
+	max-width: 90vw;
+	overflow: hidden;
+}
+
+.spectra-gbs-confirm__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: $gbs-space-4;
+	border-bottom: 1px solid $gbs-border;
+	font-size: $gbs-fs-title;
+}
+
+.spectra-gbs-confirm__close {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: $gbs-fs-title;
+	color: $gbs-text-muted;
+	padding: 0;
+	line-height: 1;
+
+	&:hover {
+		color: $gbs-text;
+	}
+}
+
+.spectra-gbs-confirm__body {
+	padding: $gbs-space-4;
+
+	p {
+		margin: 0;
+		font-size: $gbs-fs-body;
+		color: $gbs-text-muted;
+		line-height: 1.5;
+	}
+}
+
+.spectra-gbs-confirm__footer {
+	display: flex;
+	justify-content: flex-end;
+	gap: $gbs-space-2;
+	padding: $gbs-space-3 $gbs-space-4;
+	border-top: 1px solid $gbs-border;
+}
+
+// ─── Inspector "Global Classes" panel ─────────────────────────────────────────
+
+.spectra-manage-classes-inspector {
+	padding: 12px 16px;
+	border-top: 1px solid #e0e0e0;
+}
+
+.spectra-manage-classes-inspector__label {
+	display: block;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: #757575;
+	margin-bottom: 6px;
+}
+
+.spectra-manage-classes-inspector__hint {
+	font-size: 12px;
+	color: #757575;
+	line-height: 1.5;
+	margin: 0 0 10px;
+}
+
+.spectra-manage-classes-inspector__btn {
+	display: block;
+	width: 100%;
+	padding: 7px 12px;
+	background: #f0f3ff;
+	border: 1px solid #b8c8ff;
+	border-radius: 4px;
+	font-size: 13px;
+	font-weight: 500;
+	color: #6005ff;
+	cursor: pointer;
+	text-align: center;
+	transition:
+		background 0.1s,
+		border-color 0.1s;
+
+	&:hover {
+		background: #e4e9ff;
+		border-color: #6005ff;
+	}
+}
+
+// ─── CSSAutocomplete ──────────────────────────────────────────────────────────
+
+.spectra-css-ac {
+	position: relative;
+	display: block;
+	width: 100%;
+
+	// The inner textarea inherits its own class-based styles unchanged.
+	> textarea {
+		display: block;
+		width: 100%;
+	}
+}
+
+// Ghost-text mirror — absolutely overlays the textarea (rendered after it in
+// DOM so it stacks on top). Text metrics are copied from the textarea via
+// getComputedStyle in the component, so the transparent spacer spans align
+// exactly with the textarea text and the ghost suffix starts at the cursor.
+.spectra-css-ac__mirror {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	// Structural text properties are applied inline via JS (getComputedStyle).
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	overflow: hidden;
+	pointer-events: none;
+	// All text is transparent by default; only .spectra-css-ac__ghost-text has colour.
+	color: transparent;
+	background: transparent;
+	// Transparent border preserves the same box model as the textarea's border.
+	border-color: transparent;
+	border-style: solid;
+	box-sizing: border-box;
+}
+
+.spectra-css-ac__ghost-text {
+	// Muted colour signals this is a suggestion, not committed text.
+	color: rgba(0, 0, 0, 0.38);
+}

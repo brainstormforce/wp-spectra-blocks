@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * GetPopup ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class GetPopup extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -82,7 +82,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -102,7 +102,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -129,7 +129,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Check if the current user has permission.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -148,7 +148,7 @@ class GetPopup extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Popup details or error.
@@ -165,7 +165,7 @@ class GetPopup extends AbstractAbility {
 		$popup_id = absint( $params['popup_id'] );
 		$post     = get_post( $popup_id );
 
-		if ( ! $post || 'spectra-popup' !== $post->post_type ) {
+		if ( ! $post || 'spectra-blocks-popup' !== $post->post_type ) {
 			return new WP_Error(
 				'spectra_blocks_not_found',
 				__( 'The specified popup does not exist.', 'spectra-blocks' ),
@@ -173,14 +173,13 @@ class GetPopup extends AbstractAbility {
 			);
 		}
 
-		$popup_type = get_post_meta( $post->ID, 'spectra-popup-type', true );
 		return array(
 			'id'         => $post->ID,
 			'title'      => $post->post_title,
 			'content'    => $post->post_content,
-			'type'       => $popup_type ? $popup_type : 'unset',
-			'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-popup-enabled', true ),
-			'repetition' => (float) get_post_meta( $post->ID, 'spectra-popup-repetition', true ),
+			'type'       => get_post_meta( $post->ID, 'spectra-blocks-popup-type', true ) ? get_post_meta( $post->ID, 'spectra-blocks-popup-type', true ) : 'unset',
+			'enabled'    => (bool) get_post_meta( $post->ID, 'spectra-blocks-popup-enabled', true ),
+			'repetition' => (float) get_post_meta( $post->ID, 'spectra-blocks-popup-repetition', true ),
 			'status'     => $post->post_status,
 			'date'       => $post->post_date,
 			'modified'   => $post->post_modified,

@@ -43,9 +43,7 @@ store( 'spectra/tabs', {
 			const nextTabElement = ref.parentNode.querySelector(
 				`#${ blockId }-tab-${ nextTab }`
 			);
-			if ( nextTabElement ) {
-				nextTabElement.focus();
-			}
+			nextTabElement.focus();
 			context.activeTab = nextTab;
 		},
 	},

@@ -1,9 +1,9 @@
 /**
  * Shadow Helper Functions
- * 
+ *
  * Utility functions for handling box shadow styles in Spectra blocks.
  * Provides parsing, generation, and style application for shadow attributes.
- * 
+ *
  * @since 3.0.0
  */
 
@@ -79,7 +79,7 @@ export const parseShadowString = ( shadowString ) => {
 
 /**
  * Generate CSS shadow string from shadow object
- * 
+ *
  * @param {Object} shadowObj Shadow object
  * @return {string} CSS shadow string
  */
@@ -98,8 +98,8 @@ export const generateShadowString = ( shadowObj ) => {
 
 /**
  * Get shadow styles for CSS application
- * 
- * @param {Object} attributes Block attributes
+ *
+ * @param {Object} attributes      Block attributes
  * @param {string} shadowAttribute Name of the shadow attribute (default: 'boxShadow')
  * @return {Object} CSS styles object
  */
@@ -118,11 +118,11 @@ export const getShadowStyles = ( attributes, shadowAttribute = 'boxShadow' ) => 
 /**
  * Get multiple shadow styles for different states (normal, hover, etc.)
  * This function returns configuration for useSpectraStyles hook
- * 
- * @param {Object} attributes Block attributes
- * @param {Object} config Shadow configuration object
+ *
+ * @param {Object} attributes    Block attributes
+ * @param {Object} config        Shadow configuration object
  * @param {string} config.normal Normal state shadow attribute name
- * @param {string} config.hover Hover state shadow attribute name
+ * @param {string} config.hover  Hover state shadow attribute name
  * @return {Array} Configuration array for useSpectraStyles hook
  */
 export const getMultiStateShadowStyles = ( attributes, config = {} ) => {
@@ -195,7 +195,7 @@ export const DEFAULT_SHADOW_PRESETS = [
 
 /**
  * Check if shadow value has content
- * 
+ *
  * @param {string} shadowValue Shadow CSS string
  * @return {boolean} Whether shadow has content
  */

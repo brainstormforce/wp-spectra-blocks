@@ -7,6 +7,26 @@
 .wp-block-spectra-counter {
 	position: relative;
 
+	// Honour the `inline-flex` display utility when present. The counter's
+	// block.json `supports.layout.default` makes WP emit
+	// `body :where(.wp-block-spectra-counter[data-spectra-id]){display:flex}` at
+	// specificity (0,0,1) — block-level, so a counter inlined next to sibling
+	// text (e.g. an imported "₹2,104" + "cr" suffix, where the converter tags
+	// the counter `inline-flex`) breaks onto its own line. This (0,2,0) rule lets
+	// the utility win so the counter flows inline. Internal flex layout unchanged.
+	&.inline-flex {
+		display: inline-flex;
+	}
+
+	// The counter centers its child wrapper via the flex layout (align-items),
+	// shrink-wrapping it to content width. Force the wrapper — and so the
+	// full-width number inside it — to fill the counter, so the number honours
+	// its INHERITED source/container text-align instead of being centered.
+	// (counter-child-wrapper ships no enqueued stylesheet, so this lives here.)
+	.wp-block-spectra-counter-child-wrapper {
+		width: 100%;
+	}
+
 	&[data-spectra-id] > * {
 		margin: 0;
 	}
@@ -133,6 +153,10 @@
 	&.spectra-counter--bar {
 
 		.wp-block-spectra-counter-child-number {
+			// Force tight leading on the large number (matches the circular variant)
+			// so it does not inherit the theme/container line-height and gain extra
+			// vertical spacing. An imported counter's explicit line-height still wins
+			// via its inline/JIT rule.
 			line-height: 1;
 		}
 

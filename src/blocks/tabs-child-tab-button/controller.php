@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\TabsChildTabButton
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // Ensure attributes exist.
 $current_tab   = $attributes['currentTab'] ?? 0;
@@ -161,9 +160,6 @@ $config = array(
 	array(
 		'key'   => 'borderColorActiveHover',
 		'value' => $border_color_active_hover,
-	),
-	array(
-		'key' => 'gap',
 	),
 );
 

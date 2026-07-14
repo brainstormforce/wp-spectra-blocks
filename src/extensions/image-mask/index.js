@@ -11,7 +11,7 @@ import Edit from './edit';
 import { spectraClassNames } from '@spectra-helpers';
 
 // Get the plugin URL from the localized data and convert to relative path.
-const pluginUrl = window?.spectraBlocksExtensions?.pluginUrl || '';
+const pluginUrl = window?.spectraExtensions?.pluginUrl || '';
 
 // Extract relative path from full URL for portability (handles subdirectory installs).
 const getRelativePath = ( url ) => {
@@ -33,7 +33,7 @@ const relativePluginPath = getRelativePath( pluginUrl );
  * Add mask class to block in the editor.
  *
  * @param {Object} extraProps - Extra props.
- * @param {Object} blockType - Block type.
+ * @param {Object} blockType  - Block type.
  * @param {Object} attributes - Attributes.
  * @return {Object} Extra props.
  */
@@ -61,9 +61,9 @@ const addMaskClass = ( extraProps, blockType, attributes ) => {
 /**
  * Add mask class to block in the editor.
  *
- * @param {Object} props - Props.
+ * @param {Object} props            - Props.
  * @param {Object} props.attributes - Attributes.
- * @param {string} props.name - Name.
+ * @param {string} props.name       - Name.
  * @return {Object} React element.
  */
 const withImageMask = createHigherOrderComponent( ( BlockEdit ) => {

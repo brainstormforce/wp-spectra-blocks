@@ -15,7 +15,7 @@ import './style.scss';
 /**
  * Block Registration.
  */
-registerBlockType( metadata.name, {
+registerBlockType( metadata, {
 	icon: blockIcons.tabsChildren.button(),
 	edit,
 	save,

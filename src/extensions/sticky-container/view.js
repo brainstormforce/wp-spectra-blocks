@@ -50,7 +50,7 @@
 		 * Convert CSS value with unit to pixels.
 		 *
 		 * @param {string} value - CSS value (e.g., '10px', '50%', '2em', '5vh').
-		 * @param {string} axis - 'horizontal' or 'vertical' for percentage calculations.
+		 * @param {string} axis  - 'horizontal' or 'vertical' for percentage calculations.
 		 * @return {number} Value in pixels.
 		 */
 		convertToPixels( value, axis = 'vertical' ) {

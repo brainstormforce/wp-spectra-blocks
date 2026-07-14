@@ -13,8 +13,9 @@ import { useSpectraStyles } from '@spectra-hooks';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
 import { getMultiStateShadowStyles } from '@spectra-helpers/shadow';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
-import { useHtmlTagToolbar, DEFAULT_TAG_NAME } from './toolbar';
+import { useHtmlTagToolbar, DEFAULT_TAG_NAME, VOID_TAGS } from './toolbar';
 import { getAdvancedGradientValue } from '@spectra-helpers/get-advanced-gradient-value';
+import { buildGradientString } from '@spectra-helpers/use-enhanced-gradient';
 import shapes from './shapes';
 
 /**
@@ -43,6 +44,12 @@ const Render = ( props ) => {
 		enableAdvBgGradientHover,
 		advBgGradient,
 		advBgGradientHover,
+		advBgGradientAngle,
+		advBgGradientLocation1,
+		advBgGradientLocation2,
+		advBgGradientHoverAngle,
+		advBgGradientHoverLocation1,
+		advBgGradientHoverLocation2,
 		enableAdvGradients,
 		dimRatio,
 		isBlockRootParent,
@@ -94,21 +101,34 @@ const Render = ( props ) => {
 	const hasVideoBackground = background?.type === 'video';
 	const hasImageBackground = background?.type === 'image';
 
-	const finalBackgroundGradient = getAdvancedGradientValue( enableAdvBgGradient, advBgGradient, backgroundGradient, enableAdvGradients );
-	const finalBackgroundGradientHover = getAdvancedGradientValue( enableAdvBgGradientHover, advBgGradientHover, backgroundGradientHover, enableAdvGradients );
+	const finalBackgroundGradient = useMemo( () => {
+		const base = getAdvancedGradientValue( enableAdvBgGradient, advBgGradient, backgroundGradient, enableAdvGradients );
+		const hasOverride = advBgGradientAngle !== undefined || advBgGradientLocation1 !== undefined || advBgGradientLocation2 !== undefined;
+		return hasOverride
+			? buildGradientString( base, { angle: advBgGradientAngle, location1: advBgGradientLocation1, location2: advBgGradientLocation2 } )
+			: base;
+	}, [ enableAdvBgGradient, advBgGradient, backgroundGradient, enableAdvGradients, advBgGradientAngle, advBgGradientLocation1, advBgGradientLocation2 ] );
+
+	const finalBackgroundGradientHover = useMemo( () => {
+		const base = getAdvancedGradientValue( enableAdvBgGradientHover, advBgGradientHover, backgroundGradientHover, enableAdvGradients );
+		const hasOverride = advBgGradientHoverAngle !== undefined || advBgGradientHoverLocation1 !== undefined || advBgGradientHoverLocation2 !== undefined;
+		return hasOverride
+			? buildGradientString( base, { angle: advBgGradientHoverAngle, location1: advBgGradientHoverLocation1, location2: advBgGradientHoverLocation2 } )
+			: base;
+	}, [ enableAdvBgGradientHover, advBgGradientHover, backgroundGradientHover, enableAdvGradients, advBgGradientHoverAngle, advBgGradientHoverLocation1, advBgGradientHoverLocation2 ] );
 
 	/**
 	 * Get border hover color value.
-	 * 
+	 *
 	 * Note: We only extract the color from borderHover, not width or style.
 	 * This is because WordPress core handles the responsive border width/style,
 	 * and remain unchanged on hover. Only the border-color changes on hover,
 	 * which is applied via CSS: `border-color: var(--spectra-border-hover-color)`.
-	 * 
+	 *
 	 * @return {string|undefined} The border hover color value or undefined if not set.
 	 */
 	const getBorderHoverColor = () => {
-		if ( !borderHover?.color ) return undefined;
+		if ( !borderHover?.color ) {return undefined;}
 		return borderHover.color;
 	};
 
@@ -125,7 +145,7 @@ const Render = ( props ) => {
 		...shadowConfig, // Spread shadow configuration
 		/**
 		 * Border hover color configuration.
-		 * 
+		 *
 		 * Sets --spectra-border-hover-color CSS variable with just the color value.
 		 * The CSS uses `border-color: var(--spectra-border-hover-color)` on hover,
 		 * while width and style remain from the normal state WordPress core settings.
@@ -231,21 +251,33 @@ const Render = ( props ) => {
 		}
 
 		return styles;
-	}, [ generatedStyle, background, backgroundGradient, backgroundGradientHover, enableAdvBgGradient, enableAdvBgGradientHover, advBgGradient, advBgGradientHover, enableAdvGradients, overlayType, overlayImage, overlayPosition, overlayPositionMode, overlayPositionCentered, overlayPositionX, overlayPositionY, overlayAttachment, overlayRepeat, overlaySize, overlayCustomWidth, overlayBlendMode, overlayOpacity, hasImageBackground, topType, topColor, topWidth, topHeight, bottomType, bottomColor, bottomWidth, bottomHeight ] );
+	}, [ generatedStyle, background, finalBackgroundGradient, finalBackgroundGradientHover, overlayType, overlayImage, overlayPosition, overlayPositionMode, overlayPositionCentered, overlayPositionX, overlayPositionY, overlayAttachment, overlayRepeat, overlaySize, overlayCustomWidth, overlayBlendMode, overlayOpacity, hasImageBackground, topType, topColor, topWidth, topHeight, bottomType, bottomColor, bottomWidth, bottomHeight ] );
 
 	// Parent block properties.
+	//
+	// Inline `style` is intentionally minimal: we only emit values that differ
+	// from the block.json defaults (or are user-set sizing). Default values
+	// like `position: relative`, `overflow: visible`, and `height: auto` were
+	// previously emitted on every container and silently overrode authored
+	// utility classes (e.g. `absolute inset-0`, `overflow-hidden`, `min-h-*`)
+	// because inline beats className specificity. The frontend `controller.php`
+	// already filters defaults the same way; this mirrors that behavior in the
+	// editor render. The default `position: relative` is provided by
+	// `.wp-block-spectra-container { position: relative }` in `style.scss`,
+	// which is loaded in both frontend and editor via block.json `"style"`.
+	//
+	// @since x.x.x
 	const blockProps = useBlockProps( {
 		'className': spectraClassNames( classNames ),
 		'data-orientation': layout?.orientation || 'vertical',
 		'style': {
-			...( ( !align || align === 'none' ) && { width } ), // Only apply width if no alignment is set
-			height,
-			minWidth,
-			minHeight,
-			maxWidth,
-			maxHeight,
-			position: 'relative', // Ensure overlay positions correctly.
-			overflow,
+			...( ( !align || align === 'none' ) && width ? { width } : {} ),
+			...( height && height !== 'auto' ? { height } : {} ),
+			...( minWidth ? { minWidth } : {} ),
+			...( minHeight ? { minHeight } : {} ),
+			...( maxWidth ? { maxWidth } : {} ),
+			...( maxHeight ? { maxHeight } : {} ),
+			...( overflow && overflow !== 'visible' ? { overflow } : {} ),
 			...( typeof dimRatio === 'number' && ! isNaN( dimRatio ) ? { '--spectra-overlay-opacity': ( dimRatio / 100 ) } : {} ),
 			...getBackgroundStyles,
 		},
@@ -263,6 +295,7 @@ const Render = ( props ) => {
 	const toolbarControls = useHtmlTagToolbar( currentTag, handleTagChange );
 
 	const CustomTag = htmlTag === 'a' ? 'div' : htmlTag;
+	const isVoidTag = VOID_TAGS.has( htmlTag );
 
 	// Shape divider HTML
 	const topDividerHtml = topType && topType !== 'none' && (
@@ -292,6 +325,15 @@ const Render = ( props ) => {
 			{ shapes[ bottomType ] }
 		</div>
 	);
+
+	if ( isVoidTag ) {
+		return (
+			<>
+				{ toolbarControls }
+				<CustomTag { ...blockProps } />
+			</>
+		);
+	}
 
 	return (
 		<>

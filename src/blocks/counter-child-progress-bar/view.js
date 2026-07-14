@@ -1,7 +1,7 @@
 /**
  * Frontend script for Counter Progress Bar block animations
  * Integrates with the main counter animation system
- * 
+ *
  * @since x.x.x
  */
 
@@ -199,10 +199,9 @@ document.addEventListener( 'DOMContentLoaded', function() {
 	 */
 	function initCounterProgressBars() {
 		const progressBars = document.querySelectorAll( '.wp-block-spectra-counter-child-progress-bar.spectra-counter-progress-bar--bar' );
-
+		
 		progressBars.forEach( ( element ) => {
-			if ( element.spectraCounterProgressBar ) return;
-			element.spectraCounterProgressBar = new SpectraCounterProgressBar( element );
+			new SpectraCounterProgressBar( element );
 		} );
 	}
 	

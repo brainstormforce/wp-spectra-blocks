@@ -278,9 +278,9 @@ const BlocksSection = () => {
 	useEffect( () => {
 		let currentCount = 0;
 
-		if ( filterState.status ) currentCount++;
-		if ( filterState.category ) currentCount++;
-		if ( filterState.type ) currentCount++;
+		if ( filterState.status ) {currentCount++;}
+		if ( filterState.category ) {currentCount++;}
+		if ( filterState.type ) {currentCount++;}
 
 		setFilterCount( currentCount );
 	}, [ searchInput, filterState ] );

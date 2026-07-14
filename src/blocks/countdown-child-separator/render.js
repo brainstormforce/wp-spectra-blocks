@@ -67,7 +67,7 @@ const Render = ( props ) => {
 	const shouldShowSeparator = useMemo( () => {
 		const { innerBlocks, currentIndex } = blockStructure;
 
-		if ( ! innerBlocks.length ) return false;
+		if ( ! innerBlocks.length ) {return false;}
 
 		// Find if this block is a separator and locate its index in the list.
 		const isSeparator = ( block ) => block.name === 'spectra/countdown-child-separator';
@@ -76,7 +76,7 @@ const Render = ( props ) => {
 		);
 
 		// If not found, this is not a valid separator.
-		if ( separatorIndex === -1 ) return false;
+		if ( separatorIndex === -1 ) {return false;}
 
 		// Look backward to find the last visible time unit before this separator.
 		let lastVisibleUnitBefore = null;
@@ -100,7 +100,7 @@ const Render = ( props ) => {
 
 		// Determines whether this is the first separator between the two visible units.
 		const isFirstSeparatorBetweenUnits = () => {
-			if ( ! lastVisibleUnitBefore || ! nextVisibleUnitAfter ) return false;
+			if ( ! lastVisibleUnitBefore || ! nextVisibleUnitAfter ) {return false;}
 
 			// Check if there's another separator between them
 			const lastUnitIndex = innerBlocks.findIndex( ( b ) => b.clientId === lastVisibleUnitBefore.clientId );

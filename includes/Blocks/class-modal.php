@@ -5,12 +5,9 @@
  * @package Spectra\Extensions
  */
 
-namespace Spectra\Blocks;
+namespace SpectraBlocks\Blocks;
 
-defined( 'ABSPATH' ) || exit;
-
-
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
 
 /**

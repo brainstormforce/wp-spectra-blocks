@@ -17,11 +17,11 @@ import {
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
-import { AccordionItemBlockControls } from '@spectra/accordion/helper';
+import { AccordionItemBlockControls } from '@spectra-blocks/accordion/helper';
 
 /**
  * Get description for HTML element types.
- * 
+ *
  * @param {string} element The HTML element type.
  * @since x.x.x
  * @return {string} The element description.
@@ -39,7 +39,7 @@ const getElementDescription = ( element ) => {
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -73,7 +73,6 @@ const BlockSettings = memo( ( props ) => {
 					hasValue={ () => headerElement && headerElement !== 'button' }
 					label={ __( 'HTML Element', 'spectra-blocks' ) }
 					onDeselect={ () => setAttributes( { headerElement: 'button' } ) }
-					resetAllFilter={ () => ( { headerElement: 'button' } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -117,7 +116,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

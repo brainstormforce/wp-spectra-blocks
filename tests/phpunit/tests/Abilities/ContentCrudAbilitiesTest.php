@@ -5,11 +5,11 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\GetPostContent;
-use Spectra\Abilities\UpdateBlockAttributes;
-use Spectra\Abilities\RemoveBlock;
-use Spectra\Abilities\MoveBlock;
-use Spectra\Abilities\DuplicateBlock;
+use SpectraBlocks\Abilities\GetPostContent;
+use SpectraBlocks\Abilities\UpdateBlockAttributes;
+use SpectraBlocks\Abilities\RemoveBlock;
+use SpectraBlocks\Abilities\MoveBlock;
+use SpectraBlocks\Abilities\DuplicateBlock;
 
 /**
  * Content CRUD abilities test case.

@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\AccordionChildHeaderIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Core;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
 <span

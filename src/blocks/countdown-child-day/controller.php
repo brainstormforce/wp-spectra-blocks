@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildDay
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the 'show' attribute to determine whether this child block should be visible.
 // Defaults to true if not explicitly set.

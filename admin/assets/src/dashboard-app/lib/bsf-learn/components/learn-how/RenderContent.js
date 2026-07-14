@@ -12,7 +12,8 @@ import Video from './Video';
  * Dynamically renders different content types based on item type.
  * Supports: video, image, link, heading, paragraph/text, list, checklist, button.
  *
- * @param {Array} items - Array of content items to render
+ * @param          items.items
+ * @param {Array}  items        - Array of content items to render
  * @param {string} items[].type - Content type (video|image|link|heading|paragraph|text|list|checklist|button)
  * @param {Object} items[].data - Data object for the content type
  * @param {string} items[].text - Text content for paragraph/heading types

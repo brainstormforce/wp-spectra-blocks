@@ -6,8 +6,8 @@ import { Text } from '@bsf/force-ui';
  * Renders a link with optional prefix text.
  *
  * @param {string} prefix - Optional prefix text before the link
- * @param {string} text - Link text (defaults to url if not provided)
- * @param {string} url - Link URL
+ * @param {string} text   - Link text (defaults to url if not provided)
+ * @param {string} url    - Link URL
  * @param {string} target - Link target (defaults to '_blank')
  */
 const Link = ( { prefix, text, url, target = '_blank' } ) => (

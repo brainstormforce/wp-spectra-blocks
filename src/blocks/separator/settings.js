@@ -24,7 +24,7 @@ import InspectorColor from '@spectra-components/inspector-color';
 
 /**
  * Element Sub-settings: General settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -58,9 +58,6 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => !! separatorStyle }
 						label={ __( 'Style', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorStyle: undefined } ) }
-						resetAllFilter={ () => ( {
-							separatorStyle: undefined,
-						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -109,9 +106,6 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => !! separatorAlign }
 						label={ __( 'Alignment', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorAlign: undefined } ) }
-						resetAllFilter={ () => ( {
-							separatorAlign: undefined,
-						} ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -137,7 +131,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -232,7 +226,7 @@ const DimensionSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

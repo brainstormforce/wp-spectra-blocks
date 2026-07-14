@@ -7,7 +7,6 @@ import { createElement as el } from '@wordpress/element';
 const iconColor = '#5733FF';
 
 const Spectra_Block_Icons = {
-
 	// -----------------------------.
 	// Spectra Blocks and Extensions.
 	// -----------------------------.
@@ -19,7 +18,7 @@ const Spectra_Block_Icons = {
 			d: 'M21 15V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19L3 15M21 15L3 15M21 15V9M3 15L3 9M21 9V5C21 3.89543 20.1046 3 19 3L5 3C3.89543 3 3 3.89543 3 5L3 9M21 9L3 9',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'buttons': el(
 		'svg',
@@ -29,7 +28,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'advanced-heading': el(
 		'svg',
@@ -39,7 +38,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'google-map': el(
 		'svg',
@@ -48,7 +47,7 @@ const Spectra_Block_Icons = {
 			d: 'M9 3.00002L4.10557 5.44723C3.428 5.78601 3 6.47854 3 7.23608V20.382C3 21.1254 3.78231 21.6089 4.44721 21.2764L9 19M9 3.00002L15 5.00002M9 3.00002V19M9 19L15 21M15 5.00002L19.5528 2.72362C20.2177 2.39117 21 2.87467 21 3.61805V16.7639C21 17.5215 20.572 18.214 19.8944 18.5528L15 21M15 5.00002V21',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'info-box': el(
 		'svg',
@@ -58,7 +57,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'post-carousel': el(
 		'svg',
@@ -73,7 +72,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'post-masonry': el(
 		'svg',
@@ -97,7 +96,7 @@ const Spectra_Block_Icons = {
 			d: 'M3 3C3 1.89543 3.89543 1 5 1H8C9.10457 1 10 1.89543 10 3V6C10 7.10457 9.10457 8 8 8H5C3.89543 8 3 7.10457 3 6V3Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'post-grid': el(
 		'svg',
@@ -121,7 +120,7 @@ const Spectra_Block_Icons = {
 			d: 'M14 5C14 3.89543 14.8954 3 16 3H19C20.1046 3 21 3.89543 21 5V8C21 9.10457 20.1046 10 19 10H16C14.8954 10 14 9.10457 14 8V5Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'testimonial': el(
 		'svg',
@@ -132,7 +131,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'cf7-styler': el(
 		'svg',
@@ -141,7 +140,7 @@ const Spectra_Block_Icons = {
 			d: 'M4.51555 17C6.13007 19.412 8.87958 21 12 21C15.1204 21 17.8699 19.412 19.4845 17M4.51555 17C3.55827 15.5699 3 13.8501 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 13.8501 20.4417 15.5699 19.4845 17M4.51555 17C5.75777 17 7.12889 15 8.43944 13M19.4845 17C18.2422 17 16.8711 15 15.5606 13M8.43944 13C9.75 11 11 9 12 9C13 9 14.25 11 15.5606 13M8.43944 13L9.09522 14.2607C9.47211 14.9852 10.5116 14.9769 10.8768 14.2464L11.3795 13.241C11.6848 12.6305 12.4984 12.4984 12.9811 12.9811L13.4309 13.4309C13.7632 13.7632 14.282 13.8193 14.6776 13.5658L15.5606 13',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'gf-styler': el(
 		'svg',
@@ -150,7 +149,7 @@ const Spectra_Block_Icons = {
 			d: 'M17 12V15H7L6.99998 12.9996C6.99998 10.7905 8.79083 9.00001 10.9999 9.00001H17.5M3.33984 8.71466V15.2854C3.33984 16.0317 3.75541 16.7159 4.41768 17.0601L11.0779 20.5208C11.656 20.8212 12.3442 20.8212 12.9223 20.5208L19.5825 17.0601C20.2448 16.7159 20.6604 16.0317 20.6604 15.2854V8.71466C20.6604 7.96832 20.2448 7.28407 19.5825 6.93995L12.9223 3.47918C12.3442 3.1788 11.656 3.1788 11.0779 3.47918L4.41768 6.93995C3.75541 7.28407 3.33984 7.96832 3.33984 8.71466Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'content-timeline': el(
 		'svg',
@@ -160,7 +159,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'call-to-action': el(
 		'svg',
@@ -171,7 +170,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'post-timeline': el(
 		'svg',
@@ -181,7 +180,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'icon-list': el(
 		'svg',
@@ -209,7 +208,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'team': el(
 		'svg',
@@ -220,7 +219,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'tabs': el(
 		'svg',
@@ -229,7 +228,7 @@ const Spectra_Block_Icons = {
 			d: 'M10 3V6C10 7.10457 10.8954 8 12 8H15.5M15.5 8H21M15.5 8V3M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'social-share': el(
 		'svg',
@@ -253,7 +252,7 @@ const Spectra_Block_Icons = {
 			d: 'M9 10.5L15 7M9 13.5L15 17',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'restaurant-menu': el(
 		'svg',
@@ -281,7 +280,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'blockquote': el(
 		'svg',
@@ -292,7 +291,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'columns': el(
 		'svg',
@@ -301,7 +300,7 @@ const Spectra_Block_Icons = {
 			d: 'M15 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21H15M15 3V21M15 3H9M15 21H9M9 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H9M9 3V21',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'marketing-button': el(
 		'svg',
@@ -317,7 +316,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'table-of-contents': el(
 		'svg',
@@ -327,7 +326,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'faq': el(
 		'svg',
@@ -338,7 +337,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'forms': el(
 		'svg',
@@ -348,7 +347,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'how-to': el(
 		'svg',
@@ -359,7 +358,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'inline-notice': el(
 		'svg',
@@ -369,7 +368,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'wp-search': el(
 		'svg',
@@ -380,7 +379,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'taxonomy-list': el(
 		'svg',
@@ -390,7 +389,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'review': el(
 		'svg',
@@ -401,7 +400,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'lottie': el(
 		'svg',
@@ -411,7 +410,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'star-rating': el(
 		'svg',
@@ -426,7 +425,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'display-conditions': el(
 		'svg',
@@ -444,7 +443,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'masonry-gallery': el(
 		'svg',
@@ -454,7 +453,7 @@ const Spectra_Block_Icons = {
 			stroke: iconColor,
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
-		} ),
+		} )
 	),
 	'responsive-conditions': el(
 		'svg',
@@ -471,7 +470,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'container': el(
 		'svg',
@@ -490,7 +489,7 @@ const Spectra_Block_Icons = {
 			d: 'M3 5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V8C21 9.10457 20.1046 10 19 10H5C3.89543 10 3 9.10457 3 8V5Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'image': el(
 		'svg',
@@ -499,7 +498,7 @@ const Spectra_Block_Icons = {
 			d: 'M3 17L7.41995 12.58C8.26284 11.7372 9.65125 11.8141 10.3959 12.7449L11.789 14.4863C12.4639 15.3298 13.6866 15.4851 14.5508 14.8369L15.6123 14.0408C16.4086 13.4436 17.5228 13.5228 18.2265 14.2265L21 17M17 8C17 8.55228 16.5523 9 16 9C15.4477 9 15 8.55228 15 8C15 7.44772 15.4477 7 16 7C16.5523 7 17 7.44772 17 8ZM5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'counter': el(
 		'svg',
@@ -510,7 +509,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'image-gallery': el(
 		'svg',
@@ -519,7 +518,7 @@ const Spectra_Block_Icons = {
 			d: 'M3 8.5V5C3 3.89543 3.89543 3 5 3H8.5C9.60457 3 10.5 3.89543 10.5 5V8.5M3 8.5C3 9.60457 3.89543 10.5 5 10.5H8.5C9.60457 10.5 10.5 9.60457 10.5 8.5M3 8.5L4.94679 6.87767C5.58153 6.34873 6.47618 6.26455 7.19844 6.6658L10.5 8.5M13.5 8.5V5C13.5 3.89543 14.3954 3 15.5 3H19C20.1046 3 21 3.89543 21 5V8.5M13.5 8.5C13.5 9.60457 14.3954 10.5 15.5 10.5H19C20.1046 10.5 21 9.60457 21 8.5M13.5 8.5L15.4468 6.87767C16.0815 6.34873 16.9762 6.26455 17.6984 6.6658L21 8.5M3 19V15.5C3 14.3954 3.89543 13.5 5 13.5H8.5C9.60457 13.5 10.5 14.3954 10.5 15.5V19M3 19C3 20.1046 3.89543 21 5 21H8.5C9.60457 21 10.5 20.1046 10.5 19M3 19L4.94679 17.3777C5.58153 16.8487 6.47618 16.7645 7.19844 17.1658L10.5 19M13.5 19V15.5C13.5 14.3954 14.3954 13.5 15.5 13.5H19C20.1046 13.5 21 14.3954 21 15.5V19M13.5 19C13.5 20.1046 14.3954 21 15.5 21H19C20.1046 21 21 20.1046 21 19M13.5 19L15.4468 17.3777C16.0815 16.8487 16.9762 16.7645 17.6984 17.1658L21 19',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'countdown': el(
 		'svg',
@@ -530,7 +529,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'modal': el(
 		'svg',
@@ -566,7 +565,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'slider': el(
 		'svg',
@@ -616,7 +615,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'icon': el(
 		'svg',
@@ -634,19 +633,19 @@ const Spectra_Block_Icons = {
 			fill: 'none',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'separator': el(
-        'svg',
-        { width: 40, height: 40, viewBox: '0 0 24 24', fill: 'none' },
-        el( 'path', {
+		'svg',
+		{ width: 40, height: 40, viewBox: '0 0 24 24', fill: 'none' },
+		el( 'path', {
 			d: 'M4 12H20M14 17L12 19L10 17M14 7L12 5L10 7',
-            strokeWidth: 1.4,
-            strokeLinecap: 'round',
-            strokeLinejoin: 'round',
-            stroke: iconColor,
-        } ),
-    ),
+			strokeWidth: 1.4,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+			stroke: iconColor,
+		} )
+	),
 
 	// ---------------------------------.
 	// Spectra Pro Blocks and Extensions.
@@ -661,7 +660,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'register': el(
 		'svg',
@@ -670,7 +669,7 @@ const Spectra_Block_Icons = {
 			d: 'M11 19H1C1 15.134 4.13401 12 8 12C9.0736 12 10.0907 12.2417 11 12.6736M14 13V16M14 16V19M14 16H11M14 16H17M12 5C12 7.20914 10.2091 9 8 9C5.79086 9 4 7.20914 4 5C4 2.79086 5.79086 1 8 1C10.2091 1 12 2.79086 12 5Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'dynamic-content': el(
 		'svg',
@@ -679,7 +678,7 @@ const Spectra_Block_Icons = {
 			d: 'M4 7V17C4 19.2091 7.58172 21 12 21C16.4183 21 20 19.2091 20 17V7M4 7C4 9.20914 7.58172 11 12 11C16.4183 11 20 9.20914 20 7M4 7C4 4.79086 7.58172 3 12 3C16.4183 3 20 4.79086 20 7M20 12C20 14.2091 16.4183 16 12 16C7.58172 16 4 14.2091 4 12',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'animations-extension': el(
 		'svg',
@@ -693,7 +692,7 @@ const Spectra_Block_Icons = {
 			d: 'M15.7205 21.5269H3.03955C1.93498 21.5269 1.03955 20.6315 1.03955 19.5269V5.86768C1.03955 4.76311 1.93498 3.86768 3.03955 3.86768H18.5795',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-			strokeDasharray: '1.5 1.5'
+			strokeDasharray: '1.5 1.5',
 		} ),
 		el( 'path', {
 			d: 'M7.3607 9.98877L10.0707 12.6987L7.3607 15.4086M9.08789 12.6987L3.16406 12.6987',
@@ -701,7 +700,7 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 			strokeLinecap: 'round',
 			strokeLinejoin: 'round',
-		} ),
+		} )
 	),
 	'loop-builder': el(
 		'svg',
@@ -715,7 +714,7 @@ const Spectra_Block_Icons = {
 			d: 'M22.2987 15.1942C20.5481 16.9411 17.7099 16.9411 15.9593 15.1942L12.7896 12.0313L15.9593 8.86831C17.7099 7.12146 20.5481 7.12146 22.2987 8.86831C24.0493 10.6152 24.0493 13.4474 22.2987 15.1942Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'global-block-styles': el(
 		'svg',
@@ -741,10 +740,10 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 		} ),
 		el( 'path', {
-			d:'M15.9243 12.5455C15.9243 13.2233 15.3776 13.7727 14.7032 13.7727C14.0288 13.7727 13.4821 13.2233 13.4821 12.5455C13.4821 11.8676 14.0288 11.3182 14.7032 11.3182C15.3776 11.3182 15.9243 11.8676 15.9243 12.5455Z',
+			d: 'M15.9243 12.5455C15.9243 13.2233 15.3776 13.7727 14.7032 13.7727C14.0288 13.7727 13.4821 13.2233 13.4821 12.5455C13.4821 11.8676 14.0288 11.3182 14.7032 11.3182C15.3776 11.3182 15.9243 11.8676 15.9243 12.5455Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'crown': el(
 		'svg',
@@ -753,7 +752,7 @@ const Spectra_Block_Icons = {
 			d: 'M3.3335 11.3332H12.6668M1.3335 0.666504L3.3335 8.6665H12.6668L14.6668 0.666504L10.6668 5.33317L8.00016 0.666504L5.3335 5.33317L1.3335 0.666504Z',
 			stroke: iconColor,
 			strokeWidth: 1.4,
-		} ),
+		} )
 	),
 	'popup-builder': el(
 		'svg',
@@ -764,7 +763,46 @@ const Spectra_Block_Icons = {
 			strokeWidth: 1.4,
 		} ),
 	),
+	'post': el(
+		'svg',
+		{ width: 40, height: 40, viewBox: '0 0 20 20', fill: 'none' },
+		el( 'path', { d: 'M11.6667 3.33333H17.5M11.6667 7.5H17.5M11.6667 12.5H17.5M11.6667 16.6667H17.5M3.33333 2.5H7.5C7.96024 2.5 8.33333 2.8731 8.33333 3.33333V7.5C8.33333 7.96024 7.96024 8.33333 7.5 8.33333H3.33333C2.8731 8.33333 2.5 7.96024 2.5 7.5V3.33333C2.5 2.8731 2.8731 2.5 3.33333 2.5ZM3.33333 11.6667H7.5C7.96024 11.6667 8.33333 12.0398 8.33333 12.5V16.6667C8.33333 17.1269 7.96024 17.5 7.5 17.5H3.33333C2.8731 17.5 2.5 17.1269 2.5 16.6667V12.5C2.5 12.0398 2.8731 11.6667 3.33333 11.6667Z', stroke: iconColor, strokeWidth: 1.67, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+	),
+	'svg-animators': el(
+		'svg',
+		{ width: 40, height: 40, viewBox: '0 0 20 20', fill: 'none' },
+		el( 'path', { d: 'M14.7502 18.5388C16.4321 18.7884 17.9979 17.6273 18.2474 15.9454C18.497 14.2635 17.3359 12.6977 15.654 12.4481C13.9721 12.1985 12.4063 13.3597 12.1567 15.0416C11.9072 16.7235 13.0683 18.2893 14.7502 18.5388Z', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M8.63726 11.4067L3.76061 10.6831C3.22195 10.6031 2.72747 10.9279 2.65616 11.4084L2.01058 15.7589C1.93927 16.2395 2.31813 16.6938 2.85679 16.7738L7.73344 17.4974C8.2721 17.5774 8.76658 17.2526 8.83789 16.7721L9.48347 12.4216C9.55478 11.941 9.17592 11.4867 8.63726 11.4067Z', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M6.37229 8.19601C6.22954 8.16168 6.09906 8.08853 5.99529 7.98467C5.89151 7.8808 5.81848 7.75026 5.78427 7.60748C5.75007 7.4647 5.75601 7.31524 5.80145 7.17562C5.84689 7.03601 5.93005 6.91168 6.04174 6.81638L12.0306 1.5788C12.1288 1.483 12.25 1.41418 12.3826 1.37901C12.5151 1.34384 12.6545 1.34352 12.7873 1.37807C12.92 1.41262 13.0415 1.48088 13.1401 1.57622C13.2387 1.67156 13.311 1.79076 13.35 1.92226L15.4474 9.60384C15.4928 9.7418 15.4996 9.88953 15.467 10.0311C15.4344 10.1726 15.3638 10.3025 15.2627 10.4068C15.1616 10.511 15.0339 10.5856 14.8934 10.6225C14.753 10.6594 14.6051 10.6572 14.4658 10.616L6.37229 8.19601Z', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+	),
+	'mega-menu': el(
+		'svg',
+		{ width: 40, height: 40, viewBox: '0 0 20 20', fill: 'none' },
+		el( 'path', { d: 'M10.0618 6.44038H4.77954M12.7029 5.51846L14.0235 6.99353L15.2202 5.42627', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M8.4868 13.2813H3.43152M8.4868 16.875H3.43152M16.5683 13.2813H11.513M16.5683 16.875H11.513', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'rect', { x: 2.39859, y: 2.9877, width: 15.2028, height: 6.629, rx: 1.51677, stroke: iconColor, strokeWidth: 1.39167, strokeLinejoin: 'round' } ),
+	),
+	'motion-effects': el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 24 24', fill: 'none' },
+		el( 'path', { d: 'M17.1875 17.125C20.0525 17.125 22.375 14.8025 22.375 11.9375C22.375 9.07252 20.0525 6.75 17.1875 6.75C14.3225 6.75 12 9.07252 12 11.9375C12 14.8025 14.3225 17.125 17.1875 17.125Z', stroke: iconColor, strokeWidth: 1.67, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M2.89912 8.11511H9.26974M1.625 11.9375H7.35855M4.81031 15.7598H9.26974', stroke: iconColor, strokeWidth: 1.67, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+	),
+	'block-positioning': el(
+		'svg',
+		{ width: 24, height: 24, viewBox: '0 0 20 20', fill: 'none' },
+		el( 'path', {
+			d: 'M14.2598 7.55128L10 9.99945M10 9.99945L5.74024 7.55128M10 9.99945V14.8958M5.59335 8.04092C5.59353 7.86919 5.63886 7.70053 5.7248 7.55185C5.81074 7.40318 5.93427 7.27972 6.08299 7.19385L9.51041 5.23532C9.65928 5.14937 9.82815 5.10413 10 5.10413C10.1719 5.10413 10.3408 5.14937 10.4897 5.23532L13.9171 7.19385C14.0658 7.27972 14.1894 7.40318 14.2753 7.55185C14.3612 7.70053 14.4066 7.86919 14.4067 8.04092V11.958C14.4066 12.1297 14.3612 12.2984 14.2753 12.447C14.1894 12.5957 14.0658 12.7192 13.9171 12.805L10.4897 14.7636C10.3408 14.8495 10.1719 14.8948 10 14.8948C9.82815 14.8948 9.65928 14.8495 9.51041 14.7636L6.08299 12.805C5.93427 12.7192 5.81074 12.5957 5.7248 12.447C5.63886 12.2984 5.59353 12.1297 5.59335 11.958V8.04092Z',
+			stroke: iconColor,
+			strokeWidth: 1.39167,
+			strokeLinecap: 'round',
+			strokeLinejoin: 'round',
+		} ),
+		el( 'path', { d: 'M11.7187 2.96871L9.94784 1.19788L8.177 2.96871', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M8.22909 16.927L9.99992 18.6979L11.7708 16.927', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M2.91659 8.22921L1.14575 10L2.91659 11.7709', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+		el( 'path', { d: 'M17.0312 11.7708L18.802 9.99996L17.0312 8.22913', stroke: iconColor, strokeWidth: 1.39167, strokeLinecap: 'round', strokeLinejoin: 'round' } ),
+	),
 };
-
 
 export default Spectra_Block_Icons;

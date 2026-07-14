@@ -7,13 +7,14 @@
  * @package Spectra\Blocks\ModalChildPopupCloseIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Core;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Helpers\Renderer;
 
 ?>
-<button <?php echo wp_kses_data( $wrapper_attributes ); ?>
+<div <?php echo wp_kses_data( $wrapper_attributes ); ?>
 	data-wp-on--click="spectra/modal::actions.close"
+	role="button"
+	tabindex="0"
 	<?php if ( ! empty( $wrapper_aria_label ) ) : ?>
 		aria-label="<?php echo esc_attr( $wrapper_aria_label ); ?>"
 	<?php endif; ?>
@@ -22,4 +23,4 @@ use Spectra\Helpers\Renderer;
 // After this condition, just render the icon.
 Renderer::svg_html( $icon, $attributes['flipForRTL'], $icon_props );
 ?>
-</button>
+</div>

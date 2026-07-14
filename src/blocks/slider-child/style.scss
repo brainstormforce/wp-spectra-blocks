@@ -5,7 +5,10 @@
 	width: 100%;
 	position: relative;
 	overflow: hidden;
-	transition: color 0.3s ease, background-color 0.3s ease, background-image 0.3s ease;
+	transition:
+		color 0.3s ease,
+		background-color 0.3s ease,
+		background-image 0.3s ease;
 
 	// When parent slider has a specific height set, use that height instead of default
 	.spectra-has-slider-height & {
@@ -67,9 +70,35 @@
 		min-height: var(--spectra-slider-height, 250px);
 	}
 
+	// Video background positioning — spectra-blocks-common is not declared as a style
+	// dependency for slider-child, so these styles replicate the wrapper positioning
+	// from common.scss to prevent the video from stacking vertically in the slide.
+	&.has-video-background {
+		isolation: isolate;
+		overflow: clip !important;
+
+		.spectra-background-video__wrapper {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			z-index: -1;
+			pointer-events: none;
+			border-radius: inherit;
+			overflow: hidden;
+
+			video {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				border-radius: inherit;
+			}
+		}
+	}
+
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
-
 		// Text color of content inside slider child - following container block pattern
 		&.spectra-text-color {
 			color: var(--spectra-text-color);
@@ -84,17 +113,33 @@
 			color: var(--spectra-text-color, inherit);
 		}
 
+		// Background Color — mirrors container block pattern.
+		// For 'none' type: no ::before from dynamic CSS, so create it here with content "".
+		// For image/video type (spectra-background-overlay): dynamic CSS creates ::before, this styles it.
+		&.spectra-background-color:not(.spectra-background-overlay)::before {
+			bottom: 0;
+			content: "";
+			left: 0;
+			opacity: var(--spectra-overlay-opacity, 1);
+			pointer-events: none;
+			position: absolute;
+			right: 0;
+			top: 0;
+			background: var(--spectra-background-color);
+		}
 
-		// Variable based CSS - Simple Background Color.
-		&.spectra-background-color::before {
+		// Video overlay is handled by .spectra-background-video__wrapper::after — exclude here to prevent double overlay.
+		&.spectra-background-color.spectra-background-overlay:not(.has-video-background)::before {
 			background: var(--spectra-background-color);
 			opacity: var(--spectra-overlay-opacity);
 		}
 
-		// Variable based CSS - Simple Background Gradient.
-		&.spectra-background-gradient::before {
-			background: var(--spectra-background-gradient);
-			opacity: var(--spectra-overlay-opacity);
+		// Don't let the overlay inherit a border radius that would clip the
+		// colour overlay or a media background (matches editor.scss).
+		&.spectra-background-color.spectra-background-overlay::before,
+		&.has-video-background.spectra-background-overlay::before,
+		&.has-image-background.spectra-background-overlay::before {
+			border-radius: unset;
 		}
 
 		// Variable based CSS - Text Hover Color - following tabs child pattern

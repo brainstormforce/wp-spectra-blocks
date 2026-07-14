@@ -1,12 +1,6 @@
 // Static styles - specificity (0,1,0) for default block CSS that should be overridable by Global Styles.
 .wp-block-spectra-modal-child-icon {
 	// Default CSS for this block.
-	// Button reset for semantic <button> element.
-	border: none;
-	background: none;
-	padding: 0;
-	font: inherit;
-	color: inherit;
 	display: flex;
 	align-items: center;
 	justify-content: left;
@@ -38,6 +32,7 @@
 
 	// Dynamic styles - specificity (0,2,0) and higher for block settings that should NOT be overridden by Global Styles.
 	&[class*="wp-block"] {
+
 		// Variable based CSS - Text Color.
 		&.spectra-text-color {
 			color: var(--spectra-text-color);
@@ -46,6 +41,7 @@
 		// The hover state for this block, or focus within for the anchor inside.
 		&:hover,
 		&:focus-within {
+
 			// Variable based CSS - Text Color on Hover.
 			&.spectra-text-color-hover {
 				color: var(--spectra-text-color-hover) !important;

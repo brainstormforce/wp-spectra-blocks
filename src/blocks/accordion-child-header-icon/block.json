@@ -28,10 +28,10 @@
 			"padding": true
 		},
 		"color": {
+			"text": false,
 			"gradients": true,
 			"__experimentalDefaultControls": {
-				"background": true,
-				"text": true
+				"background": true
 			}
 		}
 	},
@@ -77,6 +77,9 @@
 		},
 		"rotation": {
 			"type": "number"
+		},
+		"textColor": {
+			"type": "string"
 		},
 		"textColorHover": {
 			"type": "string"

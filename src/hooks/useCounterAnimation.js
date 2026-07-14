@@ -1,6 +1,6 @@
 /**
  * Custom hook for counter animation in the editor
- * 
+ *
  * @since x.x.x
  */
 
@@ -35,12 +35,12 @@ const easingFunctions = {
 
 /**
  * Format number with prefix, suffix, separator, and decimal places.
- * 
- * @param {number} number The number to format
- * @param {string} prefix The prefix to add
- * @param {string} suffix The suffix to add
+ *
+ * @param {number} number    The number to format
+ * @param {string} prefix    The prefix to add
+ * @param {string} suffix    The suffix to add
  * @param {string} separator The thousand separator
- * @param {number} decimals The number of decimal places
+ * @param {number} decimals  The number of decimal places
  * @return {string} The formatted number
  */
 function formatNumber( number, prefix = '', suffix = '', separator = ',', decimals = 0 ) {
@@ -66,7 +66,7 @@ function formatNumber( number, prefix = '', suffix = '', separator = ',', decima
 
 /**
  * Custom hook for counter animation
- * 
+ *
  * @param {Object} options Animation options
  * @return {string} The current animated number display
  */

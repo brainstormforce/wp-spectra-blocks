@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * TogglePopupStatus ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class TogglePopupStatus extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -82,7 +82,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -106,7 +106,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -124,7 +124,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Check if the current user has permission.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -143,7 +143,7 @@ class TogglePopupStatus extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Result or error.
@@ -161,7 +161,7 @@ class TogglePopupStatus extends AbstractAbility {
 		$enabled  = (bool) $params['enabled'];
 		$post     = get_post( $popup_id );
 
-		if ( ! $post || 'spectra-popup' !== $post->post_type ) {
+		if ( ! $post || 'spectra-blocks-popup' !== $post->post_type ) {
 			return new WP_Error(
 				'spectra_blocks_not_found',
 				__( 'The specified popup does not exist.', 'spectra-blocks' ),
@@ -169,7 +169,7 @@ class TogglePopupStatus extends AbstractAbility {
 			);
 		}
 
-		update_post_meta( $popup_id, 'spectra-popup-enabled', $enabled );
+		update_post_meta( $popup_id, 'spectra-blocks-popup-enabled', $enabled );
 
 		return array(
 			'popup_id' => $popup_id,

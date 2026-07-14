@@ -20,6 +20,7 @@ import ContainerLayoutGuide from '@spectra-components/container-layout-guide';
 import { helperIcons } from '@spectra-helpers/block-icons';
 
 // Static tag configuration for container HTML tags.
+// Tags without a dedicated helperIcon fall back to the generic container icon.
 const TAG_CONFIG = {
 	div: {
 		label: __( 'Div', 'spectra-blocks' ),
@@ -61,11 +62,176 @@ const TAG_CONFIG = {
 		label: __( 'Nav', 'spectra-blocks' ),
 		icon: helperIcons.container.nav(),
 	},
+	hgroup: {
+		label: __( 'Hgroup', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	dialog: {
+		label: __( 'Dialog', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
 	a: {
 		label: __( 'Link', 'spectra-blocks' ),
 		icon: helperIcons.container.link(),
 	},
+	// Lists
+	ul: {
+		label: __( 'UL', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	ol: {
+		label: __( 'OL', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	li: {
+		label: __( 'LI', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	dl: {
+		label: __( 'DL', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	dt: {
+		label: __( 'DT', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	dd: {
+		label: __( 'DD', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	// Forms & interactive
+	form: {
+		label: __( 'Form', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	fieldset: {
+		label: __( 'Fieldset', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	details: {
+		label: __( 'Details', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	summary: {
+		label: __( 'Summary', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	address: {
+		label: __( 'Address', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	// Table
+	table: {
+		label: __( 'Table', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	colgroup: {
+		label: __( 'Colgroup', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	thead: {
+		label: __( 'THead', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	tbody: {
+		label: __( 'TBody', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	tfoot: {
+		label: __( 'TFoot', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	tr: {
+		label: __( 'TR', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	td: {
+		label: __( 'TD', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	th: {
+		label: __( 'TH', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	// `hidden: true` keeps a tag available to the renderer/HTML import
+	// but hides it from the author dropdown.
+	img: {
+		label: __( 'Image', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	picture: {
+		label: __( 'Picture', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	video: {
+		label: __( 'Video', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	audio: {
+		label: __( 'Audio', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	source: {
+		label: __( 'Source', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	track: {
+		label: __( 'Track', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	iframe: {
+		label: __( 'Iframe', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	embed: {
+		label: __( 'Embed', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	object: {
+		label: __( 'Object', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	canvas: {
+		label: __( 'Canvas', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	svg: {
+		label: __( 'SVG', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	hr: {
+		label: __( 'HR', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+	},
+	br: {
+		label: __( 'BR', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
+	wbr: {
+		label: __( 'WBR', 'spectra-blocks' ),
+		icon: helperIcons.container.div(),
+		hidden: true,
+	},
 };
+
+// HTML void elements — render self-closing and never carry children.
+// https://html.spec.whatwg.org/multipage/syntax.html#void-elements
+export const VOID_TAGS = new Set( [
+	'area', 'base', 'br', 'col', 'embed', 'hr', 'img',
+	'input', 'link', 'meta', 'source', 'track', 'wbr',
+] );
 
 // Default tag name constant.
 const DEFAULT_TAG_NAME = 'div';
@@ -78,14 +244,17 @@ const DEFAULT_TAG_NAME = 'div';
  * @return {Element} The toolbar controls JSX.
  */
 export const useHtmlTagToolbar = ( currentTag, handleTagChange ) => {
-	// Memoized tag options for toolbar dropdown.
+	// Hidden tags are filtered from the dropdown, but the active tag is
+	// always shown so authors can switch away from it.
 	const tagOptions = useMemo( () => {
-		return Object.entries( TAG_CONFIG ).map( ( [ value, { label, icon } ] ) => ( {
-			title: label,
-			icon,
-			onClick: () => handleTagChange( value ),
-			isActive: currentTag === value,
-		} ) );
+		return Object.entries( TAG_CONFIG )
+			.filter( ( [ value, { hidden } ] ) => ! hidden || value === currentTag )
+			.map( ( [ value, { label, icon } ] ) => ( {
+				title: label,
+				icon,
+				onClick: () => handleTagChange( value ),
+				isActive: currentTag === value,
+			} ) );
 	}, [ currentTag, handleTagChange ] );
 
 	// Optimized current tag icon - O(1) lookup with fallback.
@@ -109,19 +278,19 @@ export const useHtmlTagToolbar = ( currentTag, handleTagChange ) => {
 
 /**
  * Container Block Toolbar Component
- * 
+ *
  * Consolidates all toolbar-related functionality for the Container block:
  * - Block alignment controls (for root containers)
  * - Variation/layout picker button
  * - Layout help button with NUX guide
- * 
- * @param {Object}   props                    The component props.
- * @param {Object}   props.attributes         The block attributes.
- * @param {Function} props.setAttributes      Function to update block attributes.
- * @param {string}   props.clientId           The block client ID.
- * @param {boolean}  props.isSelected         Whether the block is selected.
+ *
+ * @param {Object}   props                       The component props.
+ * @param {Object}   props.attributes            The block attributes.
+ * @param {Function} props.setAttributes         Function to update block attributes.
+ * @param {string}   props.clientId              The block client ID.
+ * @param {boolean}  props.isSelected            Whether the block is selected.
  * @param {Function} props.onShowVariationPicker Function to show variation picker.
- * @param {Function} props.onTagChange        Function to handle HTML tag changes.
+ * @param {Function} props.onTagChange           Function to handle HTML tag changes.
  * @since x.x.x
  * @return {Element} The rendered toolbar controls.
  */

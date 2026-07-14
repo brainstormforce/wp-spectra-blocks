@@ -45,7 +45,7 @@
 	},
 	"editorScript": "file:./index.js",
 	"style": [
-		"spectra-components-block-appender"
+		"spectra-blocks-components-block-appender"
 	],
 	"render": "file:./view.php",
 	"usesContext": [

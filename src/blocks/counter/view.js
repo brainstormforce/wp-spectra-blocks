@@ -5,10 +5,10 @@ import { CountUp } from 'countup.js';
 
 /**
  * Counter Animation Manager
- * 
+ *
  * Handles animated counting and progress visualization for counter blocks.
  * Uses CountUp.js for smooth, reliable animations.
- * 
+ *
  * @since x.x.x
  */
 
@@ -368,9 +368,9 @@ class SpectraCounter {
 
 /**
  * Initialize a single counter
- * 
+ *
  * @param {HTMLElement} element The counter element
- * @param {Object} options Animation options
+ * @param {Object}      options Animation options
  */
 function initCounter( element, options ) {
 	// Store counter instance on element for cleanup
@@ -390,7 +390,7 @@ function initCounter( element, options ) {
 function initCounterAnimations() {
 	const counters = document.querySelectorAll( '.wp-block-spectra-counter:not(.spectra-counter-content-wrapper)' );
 	
-	if ( ! counters.length ) return;
+	if ( ! counters.length ) {return;}
 
 	// Create intersection observer
 	const observer = new IntersectionObserver( ( entries ) => {

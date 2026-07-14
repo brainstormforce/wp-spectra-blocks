@@ -27,7 +27,8 @@
 		"total",
 		"sum",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"allowedBlocks": [
 		"spectra/icons",
@@ -62,17 +63,6 @@
 		"anchor": true,
 		"align": ["wide", "full"],
 		"html": false,
-		"__experimentalBorder": {
-			"width": true,
-			"color": true,
-			"radius": true,
-			"style": true,
-			"__experimentalDefaultControls": {
-				"width": true,
-				"color": true,
-				"radius": true
-			}
-		},
 		"spacing": {
 			"margin": true,
 			"padding": true,

@@ -9,9 +9,8 @@
  * @package Spectra\Blocks\PopupBuilder
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // Set the attributes with v2 compatibility and responsive support.
 $block_id           = $attributes['block_id'] ?? wp_unique_id( 'spectra-popup-' );
@@ -124,7 +123,7 @@ if ( $will_push_content && 'banner' === $variant_type ) {
 
 if ( $has_fixed_height ) {
 	$popup_classes[] = 'spectra-has-fixed-height';
-} else {
+} elseif ( ! isset( $has_fixed_height ) ) {
 	$popup_classes[] = 'spectra-has-auto-height';
 }
 
@@ -182,13 +181,13 @@ $style_configs = array(
 		'key'        => 'closeIconColor',
 		'css_var'    => '--spectra-close-icon-color',
 		'class_name' => 'spectra-close-icon-color',
-		'value'      => $attributes['closeIconColor'] ?? '',
+		'value'      => $attributes['closeIconColor'],
 	),
 	array(
 		'key'        => 'closeIconColorHover',
 		'css_var'    => '--spectra-close-icon-color-hover',
 		'class_name' => 'spectra-close-icon-color-hover',
-		'value'      => $attributes['closeIconColorHover'] ?? '',
+		'value'      => $attributes['closeIconColorHover'],
 	),
 	array(
 		'key'        => 'closeIconSize',
@@ -222,15 +221,17 @@ if ( ! function_exists( 'spectra_get_popup_id' ) ) {
 	 * Detect the actual popup post ID using multiple methods.
 	 *
 	 * @param array $attributes Block attributes.
-	 * @param array $_block     Block data (reserved for future use, intentionally unused).
+	 * @param array $block Block data (optional).
 	 * @return int The popup post ID.
 	 */
-	function spectra_get_popup_id( $attributes = array(), $_block = array() ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	function spectra_get_popup_id( $attributes = array(), $block = array() ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		// Method 1: Check if we have popup ID in attributes (for shortcode/explicit rendering).
 		if ( ! empty( $attributes['popupId'] ) ) {
-			$popup_id = (int) preg_replace( '/\D/', '', $attributes['popupId'] ); // \D matches any non-digit.
-			if ( 'spectra-popup' === get_post_type( $popup_id ) ) {
+			$popup_id        = (int) preg_replace( '/\D/', '', $attributes['popupId'] ); // \D matches any non-digit.
+			$popup_post_type = get_post_type( $popup_id );
+			// Accept both spectra-blocks-popup and spectra-popup (UAGB) to allow coexistence.
+			if ( in_array( $popup_post_type, array( 'spectra-blocks-popup', 'spectra-popup' ), true ) ) {
 				return $popup_id;
 			}
 		}
@@ -248,7 +249,7 @@ $GLOBALS['spectra_current_popup_id'] = $popup_id;
 
 
 // Get repetition meta values using the correct popup ID.
-$repetition_meta = intval( get_post_meta( $popup_id, 'spectra-popup-repetition', true ) );
+$repetition_meta = intval( get_post_meta( $popup_id, 'spectra-blocks-popup-repetition', true ) );
 // Validate and sanitize repetition meta value.
 $repetition_value = 1; // Default value.
 if ( ! empty( $repetition_meta ) || 0 === $repetition_meta || '0' === $repetition_meta ) {
@@ -354,7 +355,17 @@ ob_start();
 			// Or if this popup has an updated repetition number, reset the localStorage.
 		?>
 		let popupSesh = JSON.parse( localStorage.getItem( 'spectraPopup<?php echo esc_attr( strval( $popup_id ) ); ?>' ) );
-		const repetition = <?php echo intval( get_post_meta( $popup_id, 'spectra-popup-repetition', true ) ); ?>;
+		<?php
+		// Use the already-sanitized `$repetition_value` (defaults to 1, honors
+		// -1 for infinite) instead of re-reading the raw meta. The raw read
+		// returns empty (→ intval 0) when the popup's repetition meta is not
+		// explicitly set — the JS below then treats popupSesh[0]===0 as
+		// "already shown enough" and calls blockScope.remove(), silently
+		// deleting the popup wrapper from the DOM. This mirrors what every
+		// other consumer of the value (data-repetition attribute, popup_context
+		// JS config, $repeat_infinitely flag) already does.
+		?>
+		const repetition = <?php echo intval( $repetition_value ); ?>;
 		if ( null === popupSesh || repetition !== popupSesh[1] ) {
 			<?php // [0] is the updating repetition number, [1] is the original repetition number. ?>		
 			const repetitionArray = [

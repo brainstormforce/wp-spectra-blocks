@@ -17,7 +17,7 @@ import { processSpectraSVG } from '@spectra-helpers';
  */
 const RenderSVG = ( props ) => {
     // If the required localization asset isn't available, abandon ship.
-    if ( ! window?.spectra_blocks_info?.spectra_blocks_svg_icons ) { 
+    if ( ! window?.spectra_blocks_info?.uagb_svg_icons ) { 
         return null;
     }
 
@@ -172,11 +172,11 @@ const RenderSVGWithHooks = ( props ) => {
 /**
  * Component to render raw SVG content with security sanitization.
  *
- * @param {Object} root0 - The component props.
- * @param {string} root0.svgContent - The SVG content to render.
- * @param {boolean} root0.needsRTL - Whether RTL transformation is needed.
- * @param {Object} root0.extraProps - Additional props to apply.
- * @param {string} root0.className - CSS class name.
+ * @param {Object}  root0            - The component props.
+ * @param {string}  root0.svgContent - The SVG content to render.
+ * @param {boolean} root0.needsRTL   - Whether RTL transformation is needed.
+ * @param {Object}  root0.extraProps - Additional props to apply.
+ * @param {string}  root0.className  - CSS class name.
  */
 const RenderRawSVG = ( { svgContent, needsRTL, extraProps = {}, className = '' } ) => {
     const [sanitizedContent, setSanitizedContent] = useState( null );
@@ -312,11 +312,11 @@ const RenderRawSVG = ( { svgContent, needsRTL, extraProps = {}, className = '' }
 /**
  * Component to render Font Awesome icons from the icon library.
  *
- * @param {Object} root0 - The component props.
- * @param {string} root0.svg - The SVG icon name or content.
- * @param {boolean} root0.needsRTL - Whether RTL transformation is needed.
- * @param {Object} root0.extraProps - Additional props to apply.
- * @param {string} root0.className - CSS class name.
+ * @param {Object}  root0            - The component props.
+ * @param {string}  root0.svg        - The SVG icon name or content.
+ * @param {boolean} root0.needsRTL   - Whether RTL transformation is needed.
+ * @param {Object}  root0.extraProps - Additional props to apply.
+ * @param {string}  root0.className  - CSS class name.
  */
 const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => {
     // Legacy check - if this is raw SVG that shouldn't be here, handle gracefully
@@ -324,28 +324,27 @@ const RenderIconSVG = ( { svg, needsRTL, extraProps = {}, className = '' } ) => 
         return <RenderRawSVG svgContent={svg} needsRTL={needsRTL} extraProps={extraProps} className={className} />;
     }
 
-    // New FA object format: { name, svg: { width, height, path } }
-    // The svg.svg field is the already-resolved flat SVG variant — use it directly.
-    let fontAwesomeSvg;
-    if ( svg && typeof svg === 'object' && svg.name && svg.svg ) {
-        fontAwesomeSvg = svg.svg.path ? svg.svg : ( svg.svg.brands ?? svg.svg.solid ?? svg.svg.regular ?? null );
-    } else {
-        // Legacy string format — look up from the icon library.
-        const fontAwesomeElement = window.spectra_blocks_info?.spectra_blocks_svg_icons?.[ svg ];
+    // For icon names (not uploaded SVGs), proceed with original logic
+    let fontAwesomeElement;
+    // Load Polyfiller Array if needed.
+    if ( 0 !== window.spectra_blocks_info?.font_awesome_5_polyfill?.length ) {
+        fontAwesomeElement = window.spectra_blocks_info.uagb_svg_icons[ svg ];
         if ( ! fontAwesomeElement ) {
-            return null;
+            fontAwesomeElement = window.spectra_blocks_info.uagb_svg_icons[ window.spectra_blocks_info.font_awesome_5_polyfill?.[ svg ] ];
         }
-        fontAwesomeSvg = fontAwesomeElement.svg?.brands ? fontAwesomeElement.svg.brands : fontAwesomeElement.svg.solid;
     }
-    
-    // If no SVG data found, abandon ship.
-    if ( ! fontAwesomeSvg ) {
+
+    // If this SVG is not set, abandon ship.
+    if ( ! fontAwesomeElement ) {
         return null;
     }
 
+    // Get the required variant of the SVG.
+    const fontAwesomeSvg = fontAwesomeElement.svg?.brands ? fontAwesomeElement.svg.brands : fontAwesomeElement.svg.solid;
+    
     // Create a copy of extraProps to avoid mutating the original
     const processedExtraProps = { ...extraProps };
-
+    
     // If RTL inversion is required, mirror the SVG.
     if ( window?.spectra_blocks_info?.is_rtl && needsRTL ) {
         const rtlTransform = 'scaleX(-1)';

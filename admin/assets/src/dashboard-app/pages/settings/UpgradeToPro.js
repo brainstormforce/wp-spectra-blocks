@@ -40,7 +40,7 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 
 			// Wait for the API call to complete, update the state to show a notification, and reload the page
 			getApiFetchData.then( () => {
-				dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: 'Spectra Pro Activated!' } );
+				dispatch( { type: 'UPDATE_SETTINGS_SAVED_NOTIFICATION', payload: 'Spectra Blocks Pro Activated!' } );
 				setTimeout( () => {
 					window.location.reload();
 				}, 500 );
@@ -58,21 +58,21 @@ const UpgradeNotices = ( { title, description, upgradeText, upgradeBold, modalDa
 
 	const translatedSpectraProTitle = sprintf(
 		/* translators: abbreviation for units */
-		__( ' %s', 'spectra-blocks' ),
+		__( '%s', 'spectra-blocks' ),
 		getSpectraProTitle()
 	);
 
 	const translatedDesc = sprintf(
 		/* translators: abbreviation for units */
 		__( 'You are using %1$s version, %2$s', 'spectra-blocks' ),
-		'<span class="text-text-primary font-medium">Spectra Free</span>',
+		'<span class="text-text-primary font-medium">Spectra Blocks Free</span>',
 		description
 	);
 
 	const allPlansData = {
-		'Spectra Pro': modalData,
+		'Spectra Blocks Pro': modalData,
 		'Essential Toolkit': { ...modalData, features: [
-			__( 'Spectra Pro', 'spectra-blocks' ),
+			__( 'Spectra Blocks Pro', 'spectra-blocks' ),
 			__( 'Astra Pro', 'spectra-blocks' ),
 			__( 'Premium Starter Templates', 'spectra-blocks' ),
 			__( 'Ultimate Addons for Elementor', 'spectra-blocks' ),

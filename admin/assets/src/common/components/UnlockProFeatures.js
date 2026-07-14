@@ -1,5 +1,11 @@
 import { __ } from '@wordpress/i18n';
-import { Container, Title, Button, DropdownMenu, Skeleton } from '@bsf/force-ui';
+import {
+	Container,
+	Title,
+	Button,
+	DropdownMenu,
+	Skeleton,
+} from '@bsf/force-ui';
 import { Zap, Check, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from '@wordpress/element';
@@ -13,29 +19,41 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 		// Fetch pricing data from the API
 		const fetchPricingData = async () => {
 			try {
-				const response = await fetch( 'https://store.brainstormforce.com/wp-json/pse/v1/pricing', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify( {} ),
-				} );
+				const response = await fetch(
+					'https://store.brainstormforce.com/wp-json/pse/v1/pricing',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify( {} ),
+					}
+				);
 				const data = await response.json();
 
 				// Filter products based on required names
-				const filteredData = Object.entries( data.data ).reduce( ( acc, [ key, value ] ) => {
-					if (
-						( value.product.includes( 'Spectra Pro - Annual Subscription' ) &&
-							value.variant.includes( '1 Site' ) ) ||
-						( value.product.includes( 'Essential Toolkit for Spectra - Annual Subscription' ) &&
-							value.variant.includes( '1 Site' ) ) ||
-						( value.product.includes( 'Business Toolkit - Annual Subscription' ) &&
-							value.variant.includes( '1 Site' ) )
-					) {
-						acc[ key ] = value;
-					}
-					return acc;
-				}, {} );
+				const filteredData = Object.entries( data.data ).reduce(
+					( acc, [ key, value ] ) => {
+						if (
+							( value.product.includes(
+								'Spectra Pro - Annual Subscription'
+							) &&
+								value.variant.includes( '1 Site' ) ) ||
+							( value.product.includes(
+								'Essential Toolkit for Spectra - Annual Subscription'
+							) &&
+								value.variant.includes( '1 Site' ) ) ||
+							( value.product.includes(
+								'Business Toolkit - Annual Subscription'
+							) &&
+								value.variant.includes( '1 Site' ) )
+						) {
+							acc[ key ] = value;
+						}
+						return acc;
+					},
+					{}
+				);
 
 				// Set filtered pricing data
 				setProductsList( filteredData );
@@ -54,9 +72,10 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 	}, [] );
 
 	// Define UTM parameters
-	const utmParams = '&utm_medium=spectra-dashboard&utm_campaign=upsell-free-vs-pro-buy-now';
+	const utmParams =
+		'&utm_medium=spectra-dashboard&utm_campaign=upsell-free-vs-pro-buy-now';
 
-	if ( loading && freeVPro && smallCol )
+	if ( loading && freeVPro && smallCol ) {
 		return (
 			<>
 				<Skeleton className="w-48 h-10 rounded-md mb-6" />
@@ -64,8 +83,9 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				<Skeleton className="w-48 h-10 rounded-md mb-6" />
 			</>
 		);
+	}
 
-	if ( smallCol )
+	if ( smallCol ) {
 		return (
 			<Container className="bg-white p-4 shadow-sm rounded-lg border border-solid border-border-subtle flex items-center gap-8 flex-col-reverse unlock-pro-features">
 				<Container.Item className="flex flex-1 flex-col gap-2">
@@ -78,7 +98,11 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					</div>
 
 					<div>
-						<Title className="text-text-primary" tag="h1" title="Limitless Design With Spectra Pro!" />
+						<Title
+							className="text-text-primary"
+							tag="h1"
+							title="Limitless Design With Spectra Pro!"
+						/>
 						<p className="text-sm text-text-secondary m-0">
 							{ __(
 								'Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
@@ -90,45 +114,94 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<div className="grid grid-cols-2 gap-3">
 						<ul className="list-none pl-0 space-y-2">
 							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
+								<Check
+									className="text-brand-primary-600"
+									size={ 14 }
+								/>
+								<span>
+									{ __(
+										'Dynamic Content',
+										'spectra-blocks'
+									) }
+								</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Popup Builder', 'spectra-blocks' ) }</span>
+								<Check
+									className="text-brand-primary-600"
+									size={ 14 }
+								/>
+								<span>
+									{ __( 'Popup Builder', 'spectra-blocks' ) }
+								</span>
 							</li>
 						</ul>
 
 						<ul className="list-none pl-0 space-y-2">
 							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Global Block Styles', 'spectra-blocks' ) }</span>
+								<Check
+									className="text-brand-primary-600"
+									size={ 14 }
+								/>
+								<span>
+									{ __(
+										'Global Block Styles',
+										'spectra-blocks'
+									) }
+								</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'Loop Builder', 'spectra-blocks' ) }</span>
+								<Check
+									className="text-brand-primary-600"
+									size={ 14 }
+								/>
+								<span>
+									{ __( 'Loop Builder', 'spectra-blocks' ) }
+								</span>
 							</li>
 							<li className="flex items-center space-x-2 text-field-label text-sm">
-								<Check className="text-brand-primary-600" size={ 14 } />
-								<span>{ __( 'And More…', 'spectra-blocks' ) }</span>
+								<Check
+									className="text-brand-primary-600"
+									size={ 14 }
+								/>
+								<span>
+									{ __( 'And More…', 'spectra-blocks' ) }
+								</span>
 							</li>
 						</ul>
 					</div>
 
 					{ freeVPro ? (
 						<div className="flex justify-between items-center mt-4">
-							<div style={ { width: '45%' } } className="dropdown-container">
-								<DropdownMenu placement="bottom-start" style={ { width: '100%' } }>
-									<DropdownMenu.Trigger style={ { width: '100%' } }>
+							<div
+								style={ { width: '45%' } }
+								className="dropdown-container"
+							>
+								<DropdownMenu
+									placement="bottom-start"
+									style={ { width: '100%' } }
+								>
+									<DropdownMenu.Trigger
+										style={ { width: '100%' } }
+									>
 										<div
 											className="p-2 cursor-pointer rounded-lg outline-none shadow-none w-full flex justify-center items-center border-border-subtle font-semibold text-text-primary"
-											style={ { border: '1px solid #E5E7EB', width: '100%' } }
+											style={ {
+												border: '1px solid #E5E7EB',
+												width: '100%',
+											} }
 										>
 											<div className="text-sm text-text-primary flex items-center justify-between w-full">
-												{ productsList[ selectedProduct ]?.product &&
-													productsList[ selectedProduct ]?.product
+												{ productsList[
+													selectedProduct
+												]?.product &&
+													productsList[
+														selectedProduct
+													]?.product
 														?.split( ' - ' )[ 0 ]
-														?.replace( ' for Spectra', '' ) }
+														?.replace(
+															' for Spectra',
+															''
+														) }
 												<span>
 													<ChevronDown size={ 14 } />
 												</span>
@@ -136,27 +209,55 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 										</div>
 									</DropdownMenu.Trigger>
 									<DropdownMenu.ContentWrapper>
-									<DropdownMenu.Content className="w-60" style={ { zIndex: '99999999' } }>
-										<DropdownMenu.List className="dropdown-list">
-											{ Object.entries( productsList ).map( ( [ key, value ] ) => (
-												<DropdownMenu.Item
-													key={ value.product + value.variant }
-													onClick={ () => setSelectedProduct( key ) }
-												>
-													{ value.product.split( ' - ' )[ 0 ].replace( ' for Spectra', '' ) }
-												</DropdownMenu.Item>
-											) ) }
-										</DropdownMenu.List>
-									</DropdownMenu.Content>
+										<DropdownMenu.Content
+											className="w-60"
+											style={ { zIndex: '99999999' } }
+										>
+											<DropdownMenu.List className="dropdown-list">
+												{ Object.entries(
+													productsList
+												).map( ( [ key, value ] ) => (
+													<DropdownMenu.Item
+														key={
+															value.product +
+															value.variant
+														}
+														onClick={ () =>
+															setSelectedProduct(
+																key
+															)
+														}
+													>
+														{ value.product
+															.split( ' - ' )[ 0 ]
+															.replace(
+																' for Spectra',
+																''
+															) }
+													</DropdownMenu.Item>
+												) ) }
+											</DropdownMenu.List>
+										</DropdownMenu.Content>
 									</DropdownMenu.ContentWrapper>
 								</DropdownMenu>
 							</div>
 
 							<div className="flex items-center justify-between gap-3">
 								<Button variant="ghost" size="md">
-									{'$' + productsList[selectedProduct]?.price?.[contryCode]?.discounted }
-									{ productsList[ selectedProduct ]?.variant?.includes( 'Annual Subscription' ) ||
-									productsList[ selectedProduct ]?.product?.includes( 'Annual Subscription' ) ? (
+									{ '$' +
+										productsList[ selectedProduct ]
+											?.price?.[ contryCode ]
+											?.discounted }
+									{ productsList[
+										selectedProduct
+									]?.variant?.includes(
+										'Annual Subscription'
+									) ||
+									productsList[
+										selectedProduct
+									]?.product?.includes(
+										'Annual Subscription'
+									) ? (
 										<span className="text-text-tertiary">
 											{ __( '/year', 'spectra-blocks' ) }
 										</span>
@@ -164,12 +265,21 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 								</Button>
 
 								<a
-									href={ productsList[ selectedProduct ]?.checkout_url + utmParams }
+									href={
+										productsList[ selectedProduct ]
+											?.checkout_url + utmParams
+									}
 									target="_blank"
 									rel="noreferrer"
 									className="no-underline text-text-on-color"
 								>
-									<Button className="" size="sm" tag="button" type="button" variant="primary">
+									<Button
+										className=""
+										size="sm"
+										tag="button"
+										type="button"
+										variant="primary"
+									>
 										{ __( 'Buy Now', 'spectra-blocks' ) }
 									</Button>
 								</a>
@@ -179,11 +289,17 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 						<div className="flex gap-3 mt-2">
 							<a
 								className="no-underline"
-									href={spectra_blocks_admin_react.spectra_website?.uagDashboard}
+								href={
+									spectra_blocks_admin_react.spectra_website
+										?.uagDashboard
+								}
 								target="_blank"
 								rel="noreferrer"
 							>
-								<Button variant="secondary" className="spectra-blocks-remove-ring">
+								<Button
+									variant="secondary"
+									className="spectra-blocks-remove-ring"
+								>
 									{ __( 'Upgrade Now', 'spectra-blocks' ) }
 								</Button>
 							</a>
@@ -195,7 +311,10 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 									search: '?page=spectra-blocks&path=free-vs-pro',
 								} }
 							>
-								<Button variant="ghost" className="spectra-blocks-remove-ring">
+								<Button
+									variant="ghost"
+									className="spectra-blocks-remove-ring"
+								>
 									{ __( 'Free VS Pro', 'spectra-blocks' ) }
 								</Button>
 							</Link>
@@ -204,7 +323,10 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 					{ freeVPro && (
 						<a
-							href={spectra_blocks_admin_react.spectra_website?.uagDashboard + '-view-plan'}
+							href={
+								spectra_blocks_admin_react.spectra_website
+									?.uagDashboard + '-view-plan'
+							}
 							target="_blank"
 							rel="noreferrer"
 							className="text-xxs text-brand-primary-600 w-full flex justify-end md:pr-[10px] pr-2 -mt-2"
@@ -219,8 +341,9 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				</Container.Item>
 			</Container>
 		);
+	}
 
-	if ( loading && freeVPro )
+	if ( loading && freeVPro ) {
 		return (
 			<>
 				<Skeleton className="w-96 h-10 rounded-md mb-6" />
@@ -228,6 +351,7 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				<Skeleton className="w-96 h-10 rounded-md mb-6" />
 			</>
 		);
+	}
 
 	return (
 		<Container className="bg-white p-6 shadow-sm rounded-lg border border-solid border-border-subtle flex items-center gap-8 md:flex-row flex-col-reverse unlock-pro-features">
@@ -241,7 +365,11 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				</div>
 
 				<div>
-					<Title className="text-text-primary mb-1" tag="h1" title="Limitless Design With Spectra Pro!" />
+					<Title
+						className="text-text-primary mb-1"
+						tag="h1"
+						title="Limitless Design With Spectra Pro!"
+					/>
 					<p className="text-sm text-text-secondary m-0">
 						{ __(
 							'Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
@@ -253,26 +381,52 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 				<div className="grid grid-cols-2 gap-3">
 					<ul className="list-none pl-0 space-y-2">
 						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Dynamic Content', 'spectra-blocks' ) }</span>
+							<Check
+								size={ 14 }
+								className="text-brand-primary-600"
+							/>
+							<span>
+								{ __( 'Dynamic Content', 'spectra-blocks' ) }
+							</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Popup Builder', 'spectra-blocks' ) }</span>
+							<Check
+								size={ 14 }
+								className="text-brand-primary-600"
+							/>
+							<span>
+								{ __( 'Popup Builder', 'spectra-blocks' ) }
+							</span>
 						</li>
 					</ul>
 
 					<ul className="list-none pl-0 space-y-2">
 						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Global Block Styles', 'spectra-blocks' ) }</span>
+							<Check
+								size={ 14 }
+								className="text-brand-primary-600"
+							/>
+							<span>
+								{ __(
+									'Global Block Styles',
+									'spectra-blocks'
+								) }
+							</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
-							<span>{ __( 'Loop Builder', 'spectra-blocks' ) }</span>
+							<Check
+								size={ 14 }
+								className="text-brand-primary-600"
+							/>
+							<span>
+								{ __( 'Loop Builder', 'spectra-blocks' ) }
+							</span>
 						</li>
 						<li className="flex items-center space-x-2 text-field-label text-sm">
-							<Check size={ 14 } className="text-brand-primary-600" />
+							<Check
+								size={ 14 }
+								className="text-brand-primary-600"
+							/>
 							<span>{ __( 'And More…', 'spectra-blocks' ) }</span>
 						</li>
 					</ul>
@@ -280,34 +434,68 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 				{ freeVPro ? (
 					<div className="flex justify-between items-center mt-4 unlock-pro-features-dropdown-container">
-						<div style={ { width: '45%' } } className="dropdown-container">
-							<DropdownMenu placement="bottom-start" className="w-60">
-								<DropdownMenu.Trigger style={ { width: '100%' } }>
+						<div
+							style={ { width: '45%' } }
+							className="dropdown-container"
+						>
+							<DropdownMenu
+								placement="bottom-start"
+								className="w-60"
+							>
+								<DropdownMenu.Trigger
+									style={ { width: '100%' } }
+								>
 									<div
 										className="p-2 cursor-pointer rounded-lg outline-none shadow-none w-full flex justify-center items-center border-border-subtle font-semibold text-text-primary"
-										style={ { border: '1px solid #E5E7EB', width: '100%' } }
+										style={ {
+											border: '1px solid #E5E7EB',
+											width: '100%',
+										} }
 									>
 										<div className="text-sm text-text-primary flex items-center justify-between w-full">
-											{ productsList[ selectedProduct ]?.product &&
-												productsList[ selectedProduct ]?.product
+											{ productsList[ selectedProduct ]
+												?.product &&
+												productsList[
+													selectedProduct
+												]?.product
 													?.split( ' - ' )[ 0 ]
-													?.replace( ' for Spectra', '' ) }
+													?.replace(
+														' for Spectra',
+														''
+													) }
 											<span>
 												<ChevronDown size={ 14 } />
 											</span>
 										</div>
 									</div>
 								</DropdownMenu.Trigger>
-								<DropdownMenu.Content className="w-60" style={ { zIndex: '99999999' } }>
+								<DropdownMenu.Content
+									className="w-60"
+									style={ { zIndex: '99999999' } }
+								>
 									<DropdownMenu.List className="dropdown-list">
-										{ Object.entries( productsList ).map( ( [ key, value ] ) => (
-											<DropdownMenu.Item
-												key={ value.product + value.variant }
-												onClick={ () => setSelectedProduct( key ) }
-											>
-												{ value.product?.split( ' - ' )[ 0 ]?.replace( ' for Spectra', '' ) }
-											</DropdownMenu.Item>
-										) ) }
+										{ Object.entries( productsList ).map(
+											( [ key, value ] ) => (
+												<DropdownMenu.Item
+													key={
+														value.product +
+														value.variant
+													}
+													onClick={ () =>
+														setSelectedProduct(
+															key
+														)
+													}
+												>
+													{ value.product
+														?.split( ' - ' )[ 0 ]
+														?.replace(
+															' for Spectra',
+															''
+														) }
+												</DropdownMenu.Item>
+											)
+										) }
 									</DropdownMenu.List>
 								</DropdownMenu.Content>
 							</DropdownMenu>
@@ -315,9 +503,18 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 						<div className="flex items-center justify-between gap-3">
 							<Button variant="ghost" size="md">
-								{'$' + productsList[selectedProduct]?.price?.[contryCode]?.discounted }
-								{ productsList[ selectedProduct ]?.variant?.includes( 'Annual Subscription' ) ||
-								productsList[ selectedProduct ]?.product?.includes( 'Annual Subscription' ) ? (
+								{ '$' +
+									productsList[ selectedProduct ]?.price?.[
+										contryCode
+									]?.discounted }
+								{ productsList[
+									selectedProduct
+								]?.variant?.includes( 'Annual Subscription' ) ||
+								productsList[
+									selectedProduct
+								]?.product?.includes(
+									'Annual Subscription'
+								) ? (
 									<span className="text-text-tertiary">
 										{ __( '/year', 'spectra-blocks' ) }
 									</span>
@@ -325,12 +522,21 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 							</Button>
 
 							<a
-								href={ productsList[ selectedProduct ]?.checkout_url + utmParams }
+								href={
+									productsList[ selectedProduct ]
+										?.checkout_url + utmParams
+								}
 								target="_blank"
 								rel="noreferrer"
 								className="no-underline text-text-on-color"
 							>
-								<Button className="" size="sm" tag="button" type="button" variant="primary">
+								<Button
+									className=""
+									size="sm"
+									tag="button"
+									type="button"
+									variant="primary"
+								>
 									{ __( 'Buy Now', 'spectra-blocks' ) }
 								</Button>
 							</a>
@@ -340,11 +546,17 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 					<div className="flex gap-3 my-2">
 						<a
 							className="no-underline"
-							href={spectra_blocks_admin_react.spectra_website?.uagDashboard}
+							href={
+								spectra_blocks_admin_react.spectra_website
+									?.uagDashboard
+							}
 							target="_blank"
 							rel="noreferrer"
 						>
-							<Button variant="secondary" className="spectra-blocks-remove-ring">
+							<Button
+								variant="secondary"
+								className="spectra-blocks-remove-ring"
+							>
 								{ __( 'Upgrade Now', 'spectra-blocks' ) }
 							</Button>
 						</a>
@@ -356,7 +568,10 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 								search: '?page=spectra-blocks&path=free-vs-pro',
 							} }
 						>
-							<Button variant="ghost" className="spectra-blocks-remove-ring">
+							<Button
+								variant="ghost"
+								className="spectra-blocks-remove-ring"
+							>
 								{ __( 'Free VS Pro', 'spectra-blocks' ) }
 							</Button>
 						</Link>
@@ -365,7 +580,10 @@ const UnlockProFeatures = ( { freeVPro = false, smallCol = false } ) => {
 
 				{ freeVPro && (
 					<a
-						href={spectra_blocks_admin_react.spectra_website?.freeVsPro}
+						href={
+							spectra_blocks_admin_react.spectra_website
+								?.freeVsPro
+						}
 						target="_blank"
 						rel="noreferrer"
 						className="text-xxs text-brand-primary-600 w-full flex justify-end md:pr-[10px] pr-2 -mt-2"
@@ -460,7 +678,10 @@ const Image = () => {
 				d="M225.101 159.314H152.294C151.757 159.314 151.219 158.853 151.219 158.238C151.219 157.624 151.68 157.163 152.294 157.163H225.101C225.638 157.163 226.176 157.624 226.176 158.238C226.176 158.853 225.638 159.314 225.101 159.314Z"
 				fill="#000111"
 			/>
-			<path d="M217.574 74.0656H134.861V117.458H217.574V74.0656Z" fill="url(#paint4_linear_9521_92667)" />
+			<path
+				d="M217.574 74.0656H134.861V117.458H217.574V74.0656Z"
+				fill="url(#paint4_linear_9521_92667)"
+			/>
 			<path
 				d="M160.742 74.0656C172.322 74.0656 181.709 64.6786 181.709 53.0992C181.709 41.5198 172.322 32.1328 160.742 32.1328C149.163 32.1328 139.776 41.5198 139.776 53.0992C139.776 64.6786 149.163 74.0656 160.742 74.0656Z"
 				fill="#FED490"

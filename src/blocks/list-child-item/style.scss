@@ -3,7 +3,10 @@
 	display: flex;
 	margin-bottom: 10px;
 	list-style-type: none; /* Hide the default marker */
-	align-items: flex-start;
+	// Vertically center the icon with the text. The icon renders as a small
+	// bullet/glyph shorter than the text line box, so `flex-start` pins it to
+	// the top and leaves it visibly above the text; centering aligns them.
+	align-items: center;
 
 	// Indentation levels for frontend
 	&.spectra-list-item-level-0 {

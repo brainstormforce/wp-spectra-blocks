@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildSeparator
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the 'showSeparator' context from the parent countdown block.
 // This determines whether separators (like colons) should be displayed. Defaults to true.

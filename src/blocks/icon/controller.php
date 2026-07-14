@@ -7,10 +7,9 @@
  * @package Spectra\Blocks\Icon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
-use Spectra\Helpers\Renderer;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Helpers\Renderer;
 
 
 // Set the attributes with fallback if required.
@@ -21,7 +20,6 @@ $icon   = $attributes['icon'] ?? 'star';
 $icon_props = array(
 	'focusable' => 'false',
 	'style'     => array(
-		'fill'      => 'currentColor',
 		'transform' => ! empty( $attributes['rotation'] ) ? 'rotate(' . $attributes['rotation'] . 'deg)' : '',
 	),
 );

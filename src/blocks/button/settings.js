@@ -32,7 +32,7 @@ import BlockControlLink from '@spectra-components/block-control-link';
 
 /**
  * Element Sub-settings: Border & Shadow settings.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -190,7 +190,7 @@ const BorderSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: General settings, but based on the parent block.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -328,7 +328,7 @@ const BlockSettings = memo( ( props ) => {
 									checked={ flipForRTL }
 									label={ __( 'Flip Icon for Right-To-Left', 'spectra-blocks' ) }
 									onChange={ () => setAttributes( { flipForRTL: ! flipForRTL } ) }
-									help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
+									help={ __( 'Enable this for your RTL visitors if you are using a direction-specific icon. Like "Arrow Right", "Chart Line", etc.', 'spectra-blocks' ) }
 								/>
 							) }
 						</VStack>
@@ -484,7 +484,7 @@ const BlockSettings = memo( ( props ) => {
 								checked={ hoverIconFlipForRTL }
 								label={ __( 'Flip Hover Icon for Right-To-Left', 'spectra-blocks' ) }
 								onChange={ () => setAttributes( { hoverIconFlipForRTL: ! hoverIconFlipForRTL } ) }
-								help={ __( 'Enable this for your RTL visitors if you are using a direction-specific hover icon. Like \'Arrow Right\', \'Chart Line\', etc. ', 'spectra-blocks' ) }
+								help={ __( 'Enable this for your RTL visitors if you are using a direction-specific hover icon. Like "Arrow Right", "Chart Line", etc.', 'spectra-blocks' ) }
 							/>
 						</ToolsPanelItem>
 					) }
@@ -514,7 +514,7 @@ const BlockSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Color panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.
@@ -601,7 +601,7 @@ const ColorSettings = memo( ( props ) => {
 
 /**
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
- * 
+ *
  * @param {Object} props The element props.
  * @since x.x.x
  * @return {Element} The rendered block settings.

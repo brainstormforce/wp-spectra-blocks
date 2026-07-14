@@ -1,0 +1,14 @@
+# Minified vendor files — must never be reformatted (breaks their runtime).
+**/*.min.js
+**/*.min.css
+
+# Generated / third-party — not ours to format.
+build/
+lib/
+vendor/
+node_modules/
+admin/assets/build/
+admin/assets/src/utils/whats-new-library/
+
+# SCSS files use tab indentation (per stylelint config); prettier must not reformat them.
+**/*.scss

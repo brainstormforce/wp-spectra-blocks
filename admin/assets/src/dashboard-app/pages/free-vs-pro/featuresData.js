@@ -133,14 +133,32 @@ export const sections = [
 			{
 				id: 1,
 				content: __(
-					'Site-wide Uniform Styling',
+					'Block-level styling via the WordPress editor sidebar',
+					'spectra-blocks'
+				),
+				iconFree: true,
+				iconPro: true,
+			},
+			{
+				id: 2,
+				content: __(
+					'Standard WordPress theme.json integration',
+					'spectra-blocks'
+				),
+				iconFree: true,
+				iconPro: true,
+			},
+			{
+				id: 3,
+				content: __(
+					'Site-wide uniform styling with Spectra blocks',
 					'spectra-blocks'
 				),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
-				id: 1,
+				id: 4,
 				content: __(
 					'Create and manage multiple styles for different block contexts',
 					'spectra-blocks'
@@ -149,7 +167,7 @@ export const sections = [
 				iconPro: true,
 			},
 			{
-				id: 1,
+				id: 5,
 				content: __(
 					'Add block default styling for consistent design',
 					'spectra-blocks'
@@ -158,20 +176,20 @@ export const sections = [
 				iconPro: true,
 			},
 			{
-				id: 1,
-				content: __( 'Manage colors, spacing & font-sizes in the Spectra admin dashboard', 'spectra-blocks' ),
+				id: 6,
+				content: __( 'Manage colors, spacing & font-sizes in the Spectra Blocks admin dashboard', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
-				id: 1,
+				id: 7,
 				content: __( 'Sync color shades with your selected theme', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
-				id: 1,
-				content: __( 'Use predefined Global Style classes to fine - tune blocks', 'spectra-blocks' ),
+				id: 8,
+				content: __( 'Use predefined Global Style classes to fine-tune blocks', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
@@ -193,7 +211,6 @@ export const sections = [
 				iconPro: true,
 			},
 			{
-
 				id: 3,
 				content: __( 'Add multiple dynamic content to a single block', 'spectra-blocks' ),
 				iconFree: false,
@@ -218,14 +235,12 @@ export const sections = [
 				iconPro: true,
 			},
 			{
-
 				id: 7,
 				content: __( 'Advanced Text Formatting (Character Limits & Prefix/Suffix)', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
 			{
-
 				id: 8,
 				content: __( 'Content Fallback Strategy (A Safety Net for any Missing Data)', 'spectra-blocks' ),
 				iconFree: false,
@@ -251,6 +266,140 @@ export const sections = [
 			{
 				id: 3,
 				content: __( 'Scroll-based Repeat Animations', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+		],
+	},
+	{
+		title: __( 'Spectra Blocks Header', 'spectra-blocks' ),
+		items: [
+			{
+				id: 1,
+				content: __( 'Add a dropdown menu to any navigation item', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 2,
+				content: __( 'Build full-width mega menus with any Spectra block inside', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 3,
+				content: __( 'Multi-column layouts with images, icons & buttons', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 4,
+				content: __( 'Responsive controls for desktop, tablet & mobile', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 5,
+				content: __( 'Hover or click dropdown triggers', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 6,
+				content: __( 'Mobile off-canvas / collapsible menu', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+		],
+	},
+	{
+		title: __( 'SVG Animator', 'spectra-blocks' ),
+		items: [
+			{
+				id: 1,
+				content: __( 'Animate SVG paths – draw, fade, float, rotate', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 2,
+				content: __( 'Control duration, delay, easing & loop', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 3,
+				content: __( 'Trigger on scroll, hover or page load', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 4,
+				content: __( 'Multi-path sequencing & stagger', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 5,
+				content: __( 'Interactive hover states', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+		],
+	},
+	{
+		title: __( 'Motion Effects', 'spectra-blocks' ),
+		items: [
+			{
+				id: 1,
+				content: __( 'Scroll-based motion – parallax & transform on scroll', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 2,
+				content: __( 'Mouse-move / hover motion effects', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 3,
+				content: __( 'Sticky & transform effects tied to scroll position', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 4,
+				content: __( 'Per-device motion controls', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 5,
+				content: __( 'Fine-tune speed, viewport offset & direction', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+		],
+	},
+	{
+		title: __( 'Block Positioning', 'spectra-blocks' ),
+		items: [
+			{
+				id: 1,
+				content: __( 'Position blocks – absolute, fixed', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 2,
+				content: __( 'Offset controls (top / right / bottom / left)', 'spectra-blocks' ),
+				iconFree: false,
+				iconPro: true,
+			},
+			{
+				id: 3,
+				content: __( 'Responsive position settings per device', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},
@@ -333,7 +482,7 @@ export const sections = [
 			{
 				id: 3,
 				content: __( 'Slide-per-view option', 'spectra-blocks' ),
-				iconFree: false,
+				iconFree: true,
 				iconPro: true,
 			},
 			{

@@ -5,15 +5,19 @@
  * @package Spectra
  */
 
-namespace Spectra;
+namespace SpectraBlocks;
 
-use Spectra\Extensions\Animations;
-use Spectra\Extensions\ImageMask;
-use Spectra\Extensions\ResponsiveConditions;
-use Spectra\Extensions\ResponsiveControls;
-use Spectra\Extensions\StickyContainer;
-use Spectra\Extensions\ZIndex;
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Extensions\Animations;
+use SpectraBlocks\Extensions\BlockJsCompiler;
+use SpectraBlocks\Extensions\DisplayConditions;
+use SpectraBlocks\Extensions\ImageMask;
+use SpectraBlocks\Extensions\ResponsiveConditions;
+use SpectraBlocks\Extensions\ResponsiveControls;
+use SpectraBlocks\Extensions\StickyContainer;
+use SpectraBlocks\Extensions\ZIndex;
+use SpectraBlocks\GlobalStyles\Engine as GlobalStylesEngine;
+use SpectraBlocks\StyleGuide\Engine as StyleGuideEngine;
+use SpectraBlocks\Traits\Singleton;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -49,12 +53,33 @@ class ExtensionManager {
 	 * @return void
 	 */
 	public function init_extensions() {
-		( Animations::instance() )->init();
+		$animations_enabled         = 'disabled' !== \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' );
+		$responsive_enabled         = 'disabled' !== \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' );
+		$display_conditions_enabled = 'disabled' !== \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_display_conditions', 'enabled' );
+
+		if ( $animations_enabled ) {
+			( Animations::instance() )->init();
+		}
+
+		if ( $display_conditions_enabled ) {
+			( DisplayConditions::instance() )->init();
+		}
+
 		( ImageMask::instance() )->init();
-		( ResponsiveControls::instance() )->init();
+
+		// Render per-block `spectraCustomJS` in wp_footer. Lives in free so
+		// imported/authored block JS runs without Spectra Pro.
+		( BlockJsCompiler::instance() )->init();
+
+		if ( $responsive_enabled ) {
+			( ResponsiveControls::instance() )->init();
+			( ResponsiveConditions::instance() )->init();
+		}
+
 		( StickyContainer::instance() )->init();
 		( ZIndex::instance() )->init();
-		( ResponsiveConditions::instance() )->init();
+		StyleGuideEngine::init();
+		GlobalStylesEngine::init();
 	}
 
 	/**
@@ -134,6 +159,37 @@ class ExtensionManager {
 			true
 		);
 		wp_set_script_translations( $handle, 'spectra-blocks', SPECTRA_BLOCKS_DIR . 'languages' );
+
+		// Enqueue extracted CSS stylesheets (if any) produced by webpack for this extension.
+		$is_rtl      = is_rtl();
+		$css_pattern = $is_rtl ? 'style-*-rtl.css' : 'style-*.css';
+		$css_files   = glob( $extension_dir . '/' . $css_pattern );
+
+		if ( ! empty( $css_files ) ) {
+			// Filter out RTL files when not RTL (glob may match both).
+			if ( ! $is_rtl ) {
+				$css_files = array_filter(
+					$css_files,
+					function ( $file ) {
+						return ! str_ends_with( $file, '-rtl.css' );
+					}
+				);
+			}
+
+			foreach ( $css_files as $css_file ) {
+				$css_basename = basename( $css_file, '.css' );
+				$css_handle   = "spectra-3-extension-{$folder_name}-{$css_basename}";
+				$css_url      = SPECTRA_BLOCKS_URL . "build/extensions/{$folder_name}/" . basename( $css_file );
+				// Version by the stylesheet's own mtime, not the JS asset hash —
+				// otherwise CSS-only rebuilds (e.g. SCSS changes) reuse the old
+				// ?ver= and browsers keep serving the stale stylesheet.
+				$version = file_exists( $css_file )
+					? filemtime( $css_file )
+					: ( isset( $asset_file['version'] ) ? $asset_file['version'] : '1.0.0' );
+
+				wp_enqueue_style( $css_handle, $css_url, array(), $version );
+			}
+		}
 		// Localize script data for the image mask extension.
 		if ( 'image-mask' === $folder_name ) {
 			wp_localize_script(

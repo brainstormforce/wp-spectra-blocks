@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\ModalChildTriggerIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // Set the attributes with fallback if required.
 $anchor                    = $attributes['anchor'] ?? '';
@@ -27,7 +26,6 @@ $modal_trigger             = ! empty( $attributes['modalTrigger'] ) ? $attribute
 $icon_props = array(
 	'focusable' => 'false',
 	'style'     => array(
-		'fill'      => 'currentColor',
 		'transform' => ! empty( $attributes['rotation'] ) ? 'rotate(' . ( is_rtl() ? '-' : '' ) . $attributes['rotation'] . 'deg)' : '',
 	),
 );

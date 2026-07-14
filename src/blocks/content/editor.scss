@@ -23,3 +23,19 @@
 		text-shadow: var(--spectra-text-shadow);
 	}
 }
+
+// Editor-only: neutralise RichText soft line breaks.
+// A soft break (Shift+Enter) is stored as a newline in the block's text
+// value. On the front end `view.php` prints that value in normal
+// `white-space` flow, so the newline collapses to whitespace and — inside a
+// flex/grid content block — is dropped as an inter-item whitespace text node.
+// The front end therefore never renders these as line breaks.
+// In the editor, RichText materialises each newline as a real
+// `<br data-rich-text-line-break="true">` node. Inside a flex/grid content
+// block (e.g. a `gs-*` styled feature list) that `<br>` becomes its own flex
+// item and adds a full line-box of empty space between rows — a large
+// editor-only gap that doesn't exist on the front end. Hiding the break node
+// keeps the canvas consistent with the rendered output.
+.wp-block-spectra-content br[data-rich-text-line-break="true"] {
+	display: none;
+}

@@ -10,7 +10,7 @@ export const spectraClassNames = ( classes ) => classes.filter( Boolean ).join( 
 /**
  * Function to parse a ratio string into its floating point value.
  *
- * @param {string} ratio contains the sting in the format 'x/y'.
+ * @param {string}  ratio     contains the sting in the format 'x/y'.
  * @param {boolean} calculate determines if the processed ratio value should be returned or just the numbers.
  * @since x.x.x
  * @return {number | Array | false} The floating point prosessed value, the ratio values in an array, or specifically false.

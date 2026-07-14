@@ -138,7 +138,7 @@ const Render = ( props ) => {
 	
 	// Function to format the number based on list style
 	const formatNumber = ( num ) => {
-		if ( !num ) return '';
+		if ( !num ) {return '';}
 		
 		// Get total items - use context first, then calculated, ensure at least 1
 		const totalItemsFromContext = parseInt( contextTotalItems ) || 0;

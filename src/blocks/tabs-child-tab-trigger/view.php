@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\TabsChildTabTrigger
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\Renderer;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\Renderer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div

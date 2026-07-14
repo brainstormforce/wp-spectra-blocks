@@ -7,7 +7,6 @@
  * @package Spectra\Blocks\AccordionChildHeaderContent
  */
 
-defined( 'ABSPATH' ) || exit;
 ?>
 <<?php echo esc_html( $tag_name ); ?> <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<?php echo wp_kses_post( $text ); ?>

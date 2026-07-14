@@ -7,7 +7,7 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\CreateSeparator;
+use SpectraBlocks\Abilities\CreateSeparator;
 
 /**
  * AbstractAbility test case.

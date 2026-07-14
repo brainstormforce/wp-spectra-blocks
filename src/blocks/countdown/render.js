@@ -79,7 +79,7 @@ const Render = ( props ) => {
 
 	// Set a default countdown time if endDateTime is not already set.
 	useEffect( () => {
-		if ( endDateTime ) return;
+		if ( endDateTime ) {return;}
 
 		// Get the current actual time (UTC).
 		const actualTime = new Date();
@@ -141,8 +141,8 @@ const Render = ( props ) => {
 		 * Allows modification of the countdown time object in the Pro version or other extensions.
 		 * The filter receives the calculated time object, block attributes, and the calculateRemainingTime function.
 		 *
-		 * @param {Object} calculatedTime The calculated time object { days, hours, minutes, seconds, isExpired }.
-		 * @param {Object} attributes The block attributes.
+		 * @param {Object}   calculatedTime         The calculated time object { days, hours, minutes, seconds, isExpired }.
+		 * @param {Object}   attributes             The block attributes.
 		 * @param {Function} calculateRemainingTime The function to calculate remaining time.
 		 * @return {Object} The modified time object.
 		 */
@@ -169,7 +169,7 @@ const Render = ( props ) => {
 
 	// Setup subscription to global timer manager
 	useEffect( () => {
-		if ( ! endDateTime ) return;
+		if ( ! endDateTime ) {return;}
 
 		// Subscribe to the global timer manager
 		const unsubscribe = timerManager.subscribe( blockIdRef.current, timerCallback, {
@@ -265,7 +265,6 @@ const Render = ( props ) => {
 
 	// Configuration for the useSpectraStyles hook.
 	const config = [
-		{ key: 'overflow', cssVar: 'overflow', className: null },
 		{ key: 'textColor' },
 		{ key: 'textColorHover' },
 		{ key: 'backgroundColor' },

@@ -12,14 +12,14 @@ import LearnHowDialog from './LearnHowDialog';
  * This is a complete wrapper component that handles all the logic internally.
  * Just pass your chapters data OR API endpoints to fetch and save the data.
  *
- * @param {Object} props - Component props
- * @param {Array} props.chapters - Array of chapter objects with steps (optional if endpoints provided)
- * @param {Object} props.endpoints - API endpoints object (optional if chapters provided)
- * @param {string} props.endpoints.get - API endpoint to fetch chapters from
- * @param {string} props.endpoints.set - API endpoint to save progress to
- * @param {string} props.className - Optional className for wrapper
+ * @param {Object}   props                  - Component props
+ * @param {Array}    props.chapters         - Array of chapter objects with steps (optional if endpoints provided)
+ * @param {Object}   props.endpoints        - API endpoints object (optional if chapters provided)
+ * @param {string}   props.endpoints.get    - API endpoint to fetch chapters from
+ * @param {string}   props.endpoints.set    - API endpoint to save progress to
+ * @param {string}   props.className        - Optional className for wrapper
  * @param {Function} props.onProgressChange - Optional callback when progress changes
- * @returns {JSX.Element} - Rendered learn component
+ * @return {JSX.Element} - Rendered learn component
  *
  * @example
  * // With direct data

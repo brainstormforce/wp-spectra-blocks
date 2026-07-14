@@ -26,7 +26,8 @@
 		"toggle tabs",
 		"switchable content",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"allowedBlocks": [ "spectra/tabs-child-tab-wrapper", "spectra/tabs-child-tabpanel" ],
 	"supports": {
@@ -92,7 +93,7 @@
 	"editorStyle": "file:./index.css",
 	"style": [
 		"file:./style-index.css",
-		"spectra-components-variation-picker"
+		"spectra-blocks-components-variation-picker"
 	],
 	"viewScriptModule": "file:./view.js",
 	"providesContext": {

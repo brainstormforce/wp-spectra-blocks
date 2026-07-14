@@ -45,12 +45,12 @@ const Render = ( props ) => {
 		className: spectraClassNames( classNames ),
 	} );
 
-	if ( ! showLabels || ! text ) return null;
+	if ( ! showLabels || ! text ) {return null;}
 
 	// Prioritize context label, fallback to attribute text
 	const finalText = label !== undefined ? label : text || '';
 
-	if ( ! finalText ) return null;
+	if ( ! finalText ) {return null;}
 
 	return <div { ...blockProps }>{ finalText }</div>;
 };

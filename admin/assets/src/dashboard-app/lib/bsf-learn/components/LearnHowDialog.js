@@ -7,24 +7,24 @@ import RenderContent from './learn-how/RenderContent';
  * A dialog component for displaying educational content with various content types
  * (video, images, links, paragraphs, lists, checklists, buttons).
  *
- * @param {boolean} open - Controls dialog visibility
- * @param {Function} setOpen - Callback to update dialog open state
- * @param {Object} item - Content item with title and content array
- * @param {string} item.title - Dialog title
- * @param {Array} item.learn - Array of content items to render
+ * @param {boolean}  open       - Controls dialog visibility
+ * @param {Function} setOpen    - Callback to update dialog open state
+ * @param {Object}   item       - Content item with title and content array
+ * @param {string}   item.title - Dialog title
+ * @param {Array}    item.learn - Array of content items to render
  *
- * Usage:
- * const [isOpen, setIsOpen] = useState(false);
- * const contentItem = {
- *   title: 'Learn How',
- *   description: 'Description of the content',
- *   learn: [
- *     { type: 'link', content: { ... } }
- *     { type: 'dialog', content: { text: '...' } },
- *   ]
- * };
+ *                              Usage:
+ *                              const [isOpen, setIsOpen] = useState(false);
+ *                              const contentItem = {
+ *                              title: 'Learn How',
+ *                              description: 'Description of the content',
+ *                              learn: [
+ *                              { type: 'link', content: { ... } }
+ *                              { type: 'dialog', content: { text: '...' } },
+ *                              ]
+ *                              };
  *
- * <LearnHowDialog open={isOpen} setOpen={setIsOpen} item={contentItem} />
+ *                              <LearnHowDialog open={isOpen} setOpen={setIsOpen} item={contentItem} />
  */
 const LearnHowDialog = ( { open = false, setOpen, item } ) => {
 	const handleDialogClose = () => {

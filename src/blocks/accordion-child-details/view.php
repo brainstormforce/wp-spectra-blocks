@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\AccordionChildDetails
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 // If there's no innerblock, abandon ship.
 if ( empty( $content ) ) {

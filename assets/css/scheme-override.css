@@ -1,0 +1,294 @@
+/**
+ * Scheme Override CSS — Static ruleset for section-level theming.
+ *
+ * Maps the 5 --spectra-scheme-* CSS variables to all Spectra block elements.
+ * This file never changes at runtime — only the variable values change.
+ *
+ * @package SpectraPro\StyleGuide
+ * @since   3.1.0
+ */
+
+/* ==========================================================================
+   1. SECTION BASE
+   ========================================================================== */
+
+[data-spectra-scheme] {
+	background-color: var(--spectra-scheme-background);
+	color: var(--spectra-scheme-text);
+
+	/* Override Spectra's ::before background mechanism so scheme colors show through. */
+	--spectra-background-color: var(--spectra-scheme-background);
+}
+
+[data-spectra-scheme].spectra-background-color::before {
+	background: var(--spectra-scheme-background) !important;
+}
+
+/* ==========================================================================
+   2. TYPOGRAPHY
+   ========================================================================== */
+
+[data-spectra-scheme] h1,
+[data-spectra-scheme] h2,
+[data-spectra-scheme] h3,
+[data-spectra-scheme] h4,
+[data-spectra-scheme] h5,
+[data-spectra-scheme] h6 {
+	color: var(--spectra-scheme-text);
+}
+
+[data-spectra-scheme] p,
+[data-spectra-scheme] li,
+[data-spectra-scheme] span,
+[data-spectra-scheme] blockquote,
+[data-spectra-scheme] figcaption {
+	color: var(--spectra-scheme-text);
+}
+
+[data-spectra-scheme] a:not(.wp-element-button):not(.wp-block-button__link) {
+	color: var(--spectra-scheme-accent);
+}
+
+/* ==========================================================================
+   3. BUTTONS — PRIMARY
+   ========================================================================== */
+
+[data-spectra-scheme] .wp-element-button,
+[data-spectra-scheme] .wp-block-button__link,
+[data-spectra-scheme] .uagb-buttons-repeater a {
+	background-color: var(--spectra-scheme-accent);
+	color: var(--spectra-scheme-background);
+	border-color: var(--spectra-scheme-accent);
+}
+
+/* ==========================================================================
+   4. BUTTONS — SECONDARY / OUTLINE
+   ========================================================================== */
+
+[data-spectra-scheme] .is-style-outline .wp-block-button__link,
+[data-spectra-scheme] .wp-block-button.is-style-outline .wp-element-button,
+[data-spectra-scheme] .uagb-button--secondary {
+	background-color: transparent;
+	color: var(--spectra-scheme-text);
+	border: 1px solid var(--spectra-scheme-border);
+}
+
+/* ==========================================================================
+   5. BORDERS & DIVIDERS
+   ========================================================================== */
+
+[data-spectra-scheme] hr,
+[data-spectra-scheme] .wp-block-separator,
+[data-spectra-scheme] .uagb-separator {
+	border-color: var(--spectra-scheme-border);
+}
+
+[data-spectra-scheme] .wp-block-column,
+[data-spectra-scheme] .wp-block-group {
+	border-color: var(--spectra-scheme-border);
+}
+
+/* ==========================================================================
+   6. ICONS
+   ========================================================================== */
+
+[data-spectra-scheme] .uagb-icon-wrap svg,
+[data-spectra-scheme] .wp-block-image figcaption {
+	fill: currentcolor;
+	color: var(--spectra-scheme-text);
+}
+
+/* ==========================================================================
+   7. CARDS / FOREGROUND SURFACES
+   ========================================================================== */
+
+[data-spectra-scheme] .uagb-infobox__outer-wrap,
+[data-spectra-scheme] .uagb-team__outer-wrap,
+[data-spectra-scheme] .uagb-post__inner-wrap {
+	color: var(--spectra-scheme-text);
+}
+
+/* ==========================================================================
+   8. FORM INPUTS — LIGHT BACKGROUND (default track)
+   ========================================================================== */
+
+[data-spectra-scheme] input:not([type="submit"]):not([type="button"]):not([type="reset"]),
+[data-spectra-scheme] textarea,
+[data-spectra-scheme] select,
+[data-spectra-scheme] .uagb-forms-input,
+[data-spectra-scheme] .uagb-forms-textarea {
+	border-color: var(--spectra-opacity-dark-15);
+	color: var(--spectra-neutral-7);
+	background-color: transparent;
+}
+
+[data-spectra-scheme] input:not([type="submit"])::placeholder,
+[data-spectra-scheme] textarea::placeholder,
+[data-spectra-scheme] .uagb-forms-input::placeholder,
+[data-spectra-scheme] .uagb-forms-textarea::placeholder {
+	color: var(--spectra-opacity-dark-60);
+}
+
+[data-spectra-scheme] input:not([type="submit"]):focus,
+[data-spectra-scheme] textarea:focus,
+[data-spectra-scheme] select:focus,
+[data-spectra-scheme] .uagb-forms-input:focus,
+[data-spectra-scheme] .uagb-forms-textarea:focus {
+	border-color: var(--spectra-neutral-7);
+	outline: none;
+}
+
+/* ==========================================================================
+   9. FORM INPUTS — DARK BACKGROUND (.spectra-dark-scheme track)
+   ========================================================================== */
+
+[data-spectra-scheme].spectra-dark-scheme input:not([type="submit"]):not([type="button"]):not([type="reset"]),
+[data-spectra-scheme].spectra-dark-scheme textarea,
+[data-spectra-scheme].spectra-dark-scheme select,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-input,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-textarea {
+	border-color: var(--spectra-opacity-light-15);
+	color: var(--spectra-white);
+	background-color: transparent;
+}
+
+[data-spectra-scheme].spectra-dark-scheme input:not([type="submit"])::placeholder,
+[data-spectra-scheme].spectra-dark-scheme textarea::placeholder,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-input::placeholder,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-textarea::placeholder {
+	color: var(--spectra-opacity-light-60);
+}
+
+[data-spectra-scheme].spectra-dark-scheme input:not([type="submit"]):focus,
+[data-spectra-scheme].spectra-dark-scheme textarea:focus,
+[data-spectra-scheme].spectra-dark-scheme select:focus,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-input:focus,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-textarea:focus {
+	border-color: var(--spectra-white);
+	outline: none;
+}
+
+/* ==========================================================================
+   10. CHECKBOXES & RADIO — LIGHT BACKGROUND
+   ========================================================================== */
+
+[data-spectra-scheme] input[type="checkbox"],
+[data-spectra-scheme] input[type="radio"],
+[data-spectra-scheme] .uagb-forms-checkbox,
+[data-spectra-scheme] .uagb-forms-radio {
+	border-color: var(--spectra-opacity-dark-15);
+}
+
+[data-spectra-scheme] input[type="checkbox"]:checked,
+[data-spectra-scheme] input[type="radio"]:checked {
+	border-color: var(--spectra-neutral-7);
+	background-color: var(--spectra-neutral-7);
+	color: var(--spectra-white);
+}
+
+/* ==========================================================================
+   11. CHECKBOXES & RADIO — DARK BACKGROUND
+   ========================================================================== */
+
+[data-spectra-scheme].spectra-dark-scheme input[type="checkbox"],
+[data-spectra-scheme].spectra-dark-scheme input[type="radio"],
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-checkbox,
+[data-spectra-scheme].spectra-dark-scheme .uagb-forms-radio {
+	border-color: var(--spectra-opacity-light-15);
+}
+
+[data-spectra-scheme].spectra-dark-scheme input[type="checkbox"]:checked,
+[data-spectra-scheme].spectra-dark-scheme input[type="radio"]:checked {
+	border-color: var(--spectra-white);
+	background-color: var(--spectra-white);
+	color: var(--spectra-neutral-7);
+}
+
+/* ==========================================================================
+   12. TAGS / BADGES — LIGHT BACKGROUND
+   ========================================================================== */
+
+[data-spectra-scheme] .uagb-taxonomy-wrap a,
+[data-spectra-scheme] .wp-block-tag-cloud a {
+	background-color: var(--spectra-opacity-dark-5);
+	color: var(--spectra-scheme-text);
+	border: 1px solid var(--spectra-opacity-dark-5);
+}
+
+/* ==========================================================================
+   13. TAGS / BADGES — DARK BACKGROUND
+   ========================================================================== */
+
+[data-spectra-scheme].spectra-dark-scheme .uagb-taxonomy-wrap a,
+[data-spectra-scheme].spectra-dark-scheme .wp-block-tag-cloud a {
+	background-color: var(--spectra-opacity-light-5);
+	color: var(--spectra-scheme-text);
+	border: 1px solid var(--spectra-opacity-light-5);
+}
+
+/* ==========================================================================
+   14. SLIDER / CAROUSEL ARROWS
+   ========================================================================== */
+
+[data-spectra-scheme] .uagb-slick-prev,
+[data-spectra-scheme] .uagb-slick-next,
+[data-spectra-scheme] .swiper-button-prev,
+[data-spectra-scheme] .swiper-button-next {
+	color: var(--spectra-scheme-text);
+}
+
+/* ==========================================================================
+   15. NAVIGATION & FOOTER
+   ========================================================================== */
+
+[data-spectra-scheme] .wp-block-navigation a,
+[data-spectra-scheme] .wp-block-navigation .wp-block-navigation-item__content {
+	color: var(--spectra-scheme-text);
+}
+
+[data-spectra-scheme] .wp-block-navigation .wp-block-navigation__submenu-container {
+	border-color: var(--spectra-scheme-border);
+}
+
+/* ==========================================================================
+   16. TABLES
+   ========================================================================== */
+
+[data-spectra-scheme] table,
+[data-spectra-scheme] th,
+[data-spectra-scheme] td {
+	border-color: var(--spectra-scheme-border);
+	color: var(--spectra-scheme-text);
+}
+
+/* ==========================================================================
+   17. BLOCKQUOTE
+   ========================================================================== */
+
+[data-spectra-scheme] blockquote {
+	border-left-color: var(--spectra-scheme-accent);
+	color: var(--spectra-scheme-text);
+}
+
+[data-spectra-scheme] .wp-block-quote cite {
+	color: var(--spectra-scheme-text);
+}
+
+/* ==========================================================================
+   18. SEARCH INPUT
+   ========================================================================== */
+
+[data-spectra-scheme] .wp-block-search__input {
+	border-color: var(--spectra-scheme-border);
+	color: var(--spectra-scheme-text);
+}
+
+[data-spectra-scheme].spectra-dark-scheme .wp-block-search__input {
+	border-color: var(--spectra-opacity-light-15);
+	color: var(--spectra-white);
+}
+
+[data-spectra-scheme] .wp-block-search__button {
+	background-color: var(--spectra-scheme-accent);
+	color: var(--spectra-scheme-background);
+}

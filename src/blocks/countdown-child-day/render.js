@@ -68,7 +68,7 @@ const Render = ( props ) => {
 	);
 
 	// If not showing days or expired mode, return null.
-	if ( editorInnerBlocksPreview || ! showDays ) return null;
+	if ( editorInnerBlocksPreview || ! showDays ) {return null;}
 
 	return (
 		<BlockContextProvider value={ blockContext }>

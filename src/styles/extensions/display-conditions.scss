@@ -1,0 +1,13 @@
+/**
+ * Display Conditions Extension - Editor Styles
+ *
+ * Provides visual feedback in the editor for blocks with display conditions.
+ * Striped pattern indicates blocks hidden from certain users.
+ *
+ * @since x.x.x
+ */
+
+.spectra-display-condition-active {
+	background: repeating-linear-gradient(125deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.05) 1px, transparent 2px, transparent 9px);
+	opacity: 0.4;
+}

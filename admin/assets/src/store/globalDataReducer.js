@@ -94,21 +94,6 @@ const globalDataReducer = ( state = {}, action ) => {
                 ...state,
                 disableCSSCache: action.payload,
             };
-		case 'UPDATE_CONTAINER_GLOBAL_PADDING':
-			return {
-				...state,
-				containerGlobalPadding: action.payload,
-				};
-		case 'UPDATE_CONTAINER_GLOBAL_ELEMENTS_GAP':
-			return {
-				...state,
-				containerGlobalElementsGap: action.payload,
-				};
-        case 'UPDATE_BTN_INHERIT_FROM_THEME':
-            return {
-                ...state,
-                btnInheritFromTheme: action.payload,
-                };
         case 'UPDATE_GBS_EXTENSION':
             return {
                 ...state,
@@ -128,6 +113,26 @@ const globalDataReducer = ( state = {}, action ) => {
 				enableDynamicContentExtension: enableAll,
 				enableResponsiveConditions: enableAll
 			}; 
+		case 'UPDATE_ENABLE_BSF_ANALYTICS_OPTION':
+			return {
+				...state,
+				enableBSFAnalyticsOption: action.payload,
+			};
+		case 'UPDATE_ENABLE_ABILITIES':
+			return {
+				...state,
+				enableAbilities: action.payload,
+			};
+		case 'UPDATE_ENABLE_EDIT_ABILITIES':
+			return {
+				...state,
+				enableEditAbilities: action.payload,
+			};
+		case 'UPDATE_ENABLE_MCP_SERVER':
+			return {
+				...state,
+				enableMcpServer: action.payload,
+			};
         default:
             return state;
     }

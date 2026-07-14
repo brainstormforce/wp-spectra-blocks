@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import RenderSVG from '@spectra-helpers/render-svg';
 
 const HeaderContainer = ( props ) => {
-	const { searchIconInputValue, onClickRemoveSearch, searchIcon } = props;
+	const { searchIconInputValue, onClickRemoveSearch, searchIcon, inputElement } = props;
 
 	const removeTextIcon = () => ( '' === searchIconInputValue ? (
 			<RenderSVG svg='sistrix'/>
@@ -20,18 +20,17 @@ const HeaderContainer = ( props ) => {
 
 	// Search input container.
 	return (
-		<section className="spectra-blocks-ip-header">
+		<section className="uagb-ip-header">
 			<h2>{ __( 'Icon Library', 'spectra-blocks' ) }</h2>
-			<div className="spectra-blocks-ip-search-container">
-				<div className="spectra-blocks-ip-search-bar">
+			<div className="uagb-ip-search-container">
+				<div className="uagb-ip-search-bar">
 					{ removeTextIcon() }
-					{ /* eslint-disable-next-line jsx-a11y/no-autofocus */ }
 					<input
 						type="text"
 						placeholder={ __( 'Search', 'spectra-blocks' ) }
 						value={ searchIconInputValue }
 						onChange={ searchIcon }
-						autoFocus
+						ref={ inputElement }
 					/>
 				</div>
 			</div>

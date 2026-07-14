@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * UpdatePluginSetting ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class UpdatePluginSetting extends AbstractAbility {
 
 	/**
 	 * Allowed setting keys that can be updated.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @var string[]
 	 */
@@ -42,18 +42,16 @@ class UpdatePluginSetting extends AbstractAbility {
 		'spectra_blocks_copy_paste',
 		'spectra_blocks_preload_local_fonts',
 		'spectra_blocks_visibility_mode',
-		'spectra_blocks_container_global_padding',
-		'spectra_blocks_container_global_elements_gap',
-		'spectra_blocks_btn_inherit_from_theme',
 		'spectra_blocks_blocks_editor_spacing',
 		'spectra_blocks_load_font_awesome_5',
 		'spectra_blocks_auto_block_recovery',
+		'spectra_blocks_analytics_optin',
 	);
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -64,7 +62,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -75,7 +73,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -86,7 +84,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -97,7 +95,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -112,7 +110,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -136,7 +134,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -154,7 +152,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Check if the current user has permission.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return bool|WP_Error
 	 */
@@ -173,7 +171,7 @@ class UpdatePluginSetting extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Result or error.

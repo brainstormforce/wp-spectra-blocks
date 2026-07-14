@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CountdownChildHour
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\HtmlSanitizer;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div

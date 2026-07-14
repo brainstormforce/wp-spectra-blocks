@@ -3,10 +3,6 @@ $default-text-icon-gap: 10px;
 
 // Static styles - specificity (0,1,0) and higher.
 .wp-block-spectra-modal-child-button:where(div, button) {
-	// Button reset for semantic <button> element.
-	border: none;
-	font: inherit;
-	color: inherit;
 	display: inline-flex;
 	align-items: center;
 	width: auto;
@@ -60,6 +56,7 @@ $default-text-icon-gap: 10px;
 
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {
+
 		// Variable based CSS - Text Color.
 		&.spectra-text-color {
 			color: var(--spectra-text-color, inherit);
@@ -78,14 +75,8 @@ $default-text-icon-gap: 10px;
 		}
 
 		// When icon color is set but NO icon hover color, FontAwesome icons should inherit text hover
-		&:hover
-		.spectra-button__icon.spectra-icon-color:not(
-			.spectra-icon-color-hover
-		):not(.spectra-custom-svg),
-		&:focus
-		.spectra-button__icon.spectra-icon-color:not(
-			.spectra-icon-color-hover
-		):not(.spectra-custom-svg) {
+		&:hover .spectra-button__icon.spectra-icon-color:not(.spectra-icon-color-hover):not(.spectra-custom-svg),
+		&:focus .spectra-button__icon.spectra-icon-color:not(.spectra-icon-color-hover):not(.spectra-custom-svg) {
 			fill: var(--spectra-text-color-hover, var(--spectra-icon-color));
 		}
 
@@ -112,6 +103,7 @@ $default-text-icon-gap: 10px;
 		// The focus styling for this button.
 		&:focus,
 		&:hover {
+
 			// Variable based CSS - Background Color on Focus.
 			&.spectra-background-color-hover {
 				background: var(--spectra-background-color-hover) !important;
@@ -134,22 +126,19 @@ $default-text-icon-gap: 10px;
 
 			// Variable based CSS - Icon Color on Focus.
 			.spectra-button__icon.spectra-icon-color-hover:not(.spectra-custom-svg) {
-				fill:
- var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+				fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
 			}
 
 			// Variable based CSS - Icon Color on Focus - Generic fallback.
 			.spectra-icon-color-hover:not(.spectra-custom-svg) {
-				fill:
- var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor)) !important;
+				fill: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor)) !important;
 			}
 
 			// Variable based CSS - Icon Color on Hover for custom SVGs.
 			&.spectra-icon-color-hover {
 
 				svg.spectra-custom-svg {
-					color:
- var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
+					color: var(--spectra-icon-color-hover, var(--spectra-text-color-hover, currentColor));
 				}
 			}
 		}

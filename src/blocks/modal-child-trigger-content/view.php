@@ -7,7 +7,6 @@
  * @package Spectra\Blocks\ModalChildTriggerContent
  */
 
-defined( 'ABSPATH' ) || exit;
 ?>
 <<?php echo esc_attr( $tag_name ); ?>
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>

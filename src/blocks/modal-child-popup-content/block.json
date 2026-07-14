@@ -12,7 +12,8 @@
 		"modal",
 		"popup",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"supports": {
 		"interactivity": true,
@@ -68,7 +69,7 @@
 	"style": [
 		"file:./style-index.css",
 		"spectra-blocks-common",
-		"spectra-components-block-appender"
+		"spectra-blocks-components-block-appender"
 	],
 	"usesContext": [
 		"spectra/modal/modalPosition",

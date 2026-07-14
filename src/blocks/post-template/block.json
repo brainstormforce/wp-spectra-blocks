@@ -1,0 +1,93 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "spectra/post-template",
+	"version": "3.0.0",
+	"title": "Template",
+	"category": "spectra",
+	"ancestor": [ "spectra/post" ],
+	"description": "Template for post items",
+	"textdomain": "spectra-blocks",
+	"supports": {
+		"interactivity": true,
+		"html": false,
+		"reusable": false,
+		"align": [ "wide", "full" ],
+		"shadow": true,
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"__experimentalBorder": {
+			"width": true,
+			"color": true,
+			"radius": true,
+			"style": true,
+			"shadow": true,
+			"__experimentalDefaultControls": {
+				"width": true,
+				"color": true,
+				"radius": true,
+				"style": true,
+				"shadow": true
+			}
+		}
+	},
+	"example": {
+		"attributes": {
+			"isPreview": true
+		}
+	},
+	"usesContext": [
+		"spectra/post/layoutType",
+		"spectra/post/query",
+		"spectra/post/queryId",
+		"spectra/post/pageKey",
+		"spectra/post/responsiveControls",
+		"spectra/post/postsToShow",
+		"spectra/post/slidesPerView",
+		"spectra/post/spaceBetween",
+		"spectra/post/loop",
+		"spectra/post/speed",
+		"spectra/post/autoplay",
+		"spectra/post/autoplaySpeed",
+		"spectra/post/autoplayPauseOnHover",
+		"spectra/post/navigation",
+		"spectra/post/pagination",
+		"spectra/post/equalHeight",
+		"spectra/post/columns",
+		"spectra/post/columnGap",
+		"spectra/post/rowGap",
+		"postId",
+		"postType"
+	],
+	"attributes": {
+		"variationId": {
+			"type": "string"
+		},
+		"variationSelected": {
+			"type": "boolean",
+			"default": false
+		},
+		"isPreview": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css",
+	"editorStyle": "file:./index.css"
+}

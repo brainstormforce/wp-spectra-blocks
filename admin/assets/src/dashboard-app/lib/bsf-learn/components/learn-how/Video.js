@@ -3,7 +3,7 @@
  *
  * Renders an embedded video iframe with responsive aspect ratio.
  *
- * @param {string} url - Video embed URL
+ * @param {string} url   - Video embed URL
  * @param {string} title - Video title for accessibility
  */
 const Video = ( { url, title } ) => (

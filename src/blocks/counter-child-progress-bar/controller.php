@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\CounterChildProgressBar
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get context from parent counter block.
 $counter_style                     = $block->context['spectra/counter/counterStyle'] ?? 'simple';
@@ -31,6 +30,7 @@ $child_progress_color            = $attributes['progressColor'] ?? '';
 $child_progress_background_color = $attributes['progressBackgroundColor'] ?? '';
 $child_prefix_color              = $attributes['prefixColor'] ?? '';
 $child_suffix_color              = $attributes['suffixColor'] ?? '';
+$text_color                      = $attributes['textColor'] ?? '';
 $bar_height                      = $attributes['barHeight'] ?? '32px';
 $bar_border_radius               = $attributes['barBorderRadius'] ?? 4;
 
@@ -45,6 +45,9 @@ $suffix_color = $child_suffix_color ? $child_suffix_color : $context_suffix_colo
 // Ensure values are numbers to prevent NaN issues.
 $start_number = is_numeric( $raw_start_number ) ? floatval( $raw_start_number ) : 0;
 $end_number   = is_numeric( $raw_end_number ) ? floatval( $raw_end_number ) : 100;
+
+// Format the initial number display.
+$formatted_number = number_format( $start_number, $decimal_places, '.', $thousand_separator );
 
 // Additional classes.
 $custom_classes = array(

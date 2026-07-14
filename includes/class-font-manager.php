@@ -5,10 +5,10 @@
  * @package Spectra
  */
 
-namespace Spectra;
+namespace SpectraBlocks;
 
 use Exception;
-use Spectra\Traits\Singleton;
+use SpectraBlocks\Traits\Singleton;
 use WP_Error;
 use WP_Font_Collection;
 use WP_Font_Library;
@@ -45,7 +45,90 @@ class FontManager {
 	 */
 	public function init() {
 		add_filter( 'wp_theme_json_data_user', array( $this, 'filter_theme_json' ) );
+		// Run AFTER any other filter that adds fontFace entries so we can
+		// normalize every font src URL — including ones already stored in
+		// the user's wp_global_styles post under a different scheme — to
+		// match the current request. Without this, font files saved with
+		// `https://...` srcs fail to load inside the editor's `blob:`
+		// iframe canvas when the admin request is `http://...` (and vice
+		// versa) because the cross-scheme fetch is blocked.
+		add_filter( 'wp_theme_json_data_user', array( $this, 'normalize_font_face_urls' ), 99 );
+		add_filter( 'wp_theme_json_data_theme', array( $this, 'normalize_font_face_urls' ), 99 );
+		add_filter( 'wp_theme_json_data_default', array( $this, 'normalize_font_face_urls' ), 99 );
 		add_action( 'updated_option', array( $this, 'handle_option_update' ), 10, 3 );
+	}
+
+	/**
+	 * Normalize the URL scheme of every font-face `src` entry in the
+	 * theme.json data so it matches the current request. Handles the
+	 * common dev / staging gotcha where font URLs were saved under one
+	 * scheme (e.g. `https://`) but the runtime serves another (`http://`).
+	 *
+	 * Walks `settings.typography.fontFamilies.custom[].fontFace[].src`
+	 * (which can be a string or an array per the theme.json schema)
+	 * and rewrites the scheme via `set_url_scheme()`. Same-origin URLs
+	 * only — external font URLs (Google Fonts CDN etc.) are left
+	 * untouched.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_Theme_JSON_Data $theme_json Theme JSON data container.
+	 * @return \WP_Theme_JSON_Data
+	 */
+	public function normalize_font_face_urls( $theme_json ) {
+		if ( ! is_object( $theme_json ) || ! method_exists( $theme_json, 'get_data' ) || ! method_exists( $theme_json, 'update_with' ) ) {
+			return $theme_json;
+		}
+
+		$data = $theme_json->get_data();
+		if ( empty( $data['settings']['typography']['fontFamilies'] ) ) {
+			return $theme_json;
+		}
+
+		$site_host = wp_parse_url( site_url(), PHP_URL_HOST );
+		$changed   = false;
+
+		foreach ( $data['settings']['typography']['fontFamilies'] as $bucket => $families ) {
+			if ( ! is_array( $families ) ) {
+				continue;
+			}
+			foreach ( $families as $i => $family ) {
+				if ( empty( $family['fontFace'] ) || ! is_array( $family['fontFace'] ) ) {
+					continue;
+				}
+				foreach ( $family['fontFace'] as $j => $face ) {
+					if ( empty( $face['src'] ) ) {
+						continue;
+					}
+					$srcs = is_array( $face['src'] ) ? $face['src'] : array( $face['src'] );
+					$new  = array();
+					foreach ( $srcs as $src ) {
+						if ( ! is_string( $src ) ) {
+							$new[] = $src;
+							continue;
+						}
+						$src_host = wp_parse_url( $src, PHP_URL_HOST );
+						// Only normalize same-origin URLs.
+						if ( $src_host && $site_host && $src_host === $site_host ) {
+							$normalized = set_url_scheme( $src );
+							if ( $normalized !== $src ) {
+								$src     = $normalized;
+								$changed = true;
+							}
+						}
+						$new[] = $src;
+					}
+					$data['settings']['typography']['fontFamilies'][ $bucket ][ $i ]['fontFace'][ $j ]['src'] =
+						is_array( $face['src'] ) ? $new : $new[0];
+				}
+			}
+		}
+
+		if ( $changed ) {
+			$theme_json->update_with( $data );
+		}
+
+		return $theme_json;
 	}
 
 	/**
@@ -61,7 +144,7 @@ class FontManager {
 
 		// Get the current theme.json and fontFamilies defined (if any).
 		$theme_json_path = get_stylesheet_directory() . '/theme.json';
-		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local theme.json file.
+		// phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading local theme.json file.
 		$theme_json_raw = file_exists( $theme_json_path ) ? json_decode( file_get_contents( $theme_json_path ), true ) : array();
 		$font_data      = isset( $theme_json_raw['settings']['typography']['fontFamilies'] ) ? $theme_json_raw['settings']['typography']['fontFamilies'] : array();
 		if ( empty( $fonts_to_add ) ) {
@@ -154,7 +237,7 @@ class FontManager {
 	public function handle_option_update( $option, $old_value, $new_value ) {
 		wp_raise_memory_limit();
 
-		if ( 'spectra_blocks_load_fonts_locally' === $option ) {
+		if ( 'spectra_blocks_load_gfonts_locally' === $option ) {
 			$fonts = self::get_spectra_selected_font_names();
 
 			if ( 'disabled' === $new_value ) {
@@ -166,7 +249,7 @@ class FontManager {
 			set_transient( self::FONT_CACHE_KEY, $updated_fonts );
 		}
 
-		if ( 'spectra_blocks_global_fonts' !== $option ) {
+		if ( 'spectra_blocks_select_font_globally' !== $option ) {
 			return;
 		}
 
@@ -489,7 +572,7 @@ class FontManager {
 	 * @return array Array containing uploaded file attributes on success, or error on failure.
 	 */
 	private function handle_font_file_upload( $file ) {
-		add_filter( 'upload_mimes', array( 'WP_Font_Utils', 'get_allowed_font_mime_types' ) );
+		add_filter( 'upload_mimes', array( 'WP_Font_Utils', 'get_allowed_font_mime_types' ) ); // phpcs:ignore
 		$font_dir       = wp_get_font_dir();
 		$set_upload_dir = function () use ( $font_dir ) {
 			return $font_dir;
@@ -605,11 +688,11 @@ class FontManager {
 	public static function get_spectra_selected_font_names() {
 		// Check if the setting to load Google fonts globally is enabled.
 		// If not, return an empty array.
-		if ( 'enabled' !== get_option( 'spectra_blocks_load_select_font_globally', 'disabled' ) ) {
+		if ( 'enabled' !== \Spectra_Blocks_Settings::get( 'load_select_font_globally', 'disabled' ) ) {
 			return array();
 		}
 
-		$selected_fonts = get_option( 'spectra_blocks_global_fonts', array() );
+		$selected_fonts = \Spectra_Blocks_Settings::get( 'select_font_globally', array() );
 
 		if ( ! is_array( $selected_fonts ) ) {
 			return array();
@@ -626,7 +709,7 @@ class FontManager {
 	 * @return bool True if the setting is enabled, false otherwise.
 	 */
 	public static function is_enabled_load_locally() {
-		return 'enabled' === get_option( 'spectra_blocks_load_fonts_locally', 'disabled' );
+		return 'enabled' === \Spectra_Blocks_Settings::get( 'load_gfonts_locally', 'disabled' );
 	}
 
 	/**
@@ -673,7 +756,7 @@ class FontManager {
 						'fontStretch' => 'normal',
 						'fontStyle'   => 'normal',
 						'fontWeight'  => '300 900',
-						'src'         => array( SPECTRA_BLOCKS_URL . '/assets/fonts/Inter-VariableFont-slnt-wght.woff2' ),
+						'src'         => array( SPECTRA_BLOCKS_URL . '/assets/fonts/Inter-VariableFont_slnt,wght.woff2' ),
 					),
 				),
 			),

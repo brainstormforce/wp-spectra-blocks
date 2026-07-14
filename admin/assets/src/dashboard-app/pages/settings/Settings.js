@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { applyFilters } from '@wordpress/hooks';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { Container, Title, Badge } from '@bsf/force-ui';
+import { Container, Title } from '@bsf/force-ui';
 import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
 import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
@@ -13,13 +13,12 @@ import DisableCSSCache from '@DashboardApp/pages/settings/DisableCSSCache';
 import ClearV3Cache from '@DashboardApp/pages/settings/ClearV3Cache';
 import SettingsSkeleton from '@DashboardApp/pages/settings/SettingsSkeleton';
 import BlockSettings from '@DashboardApp/pages/settings/BlockSettings';
-import ContainerGlobalPadding from '@DashboardApp/pages/settings/ContainerGlobalPadding';
-import ContainerGlobalElementsGap from '@DashboardApp/pages/settings/ContainerGlobalElementsGap';
 import MyAccount from '@DashboardApp/pages/settings/MyAccount';
 import MyAccountUpgradeToPro from '@DashboardApp/pages/settings/MyAccountUpgradeToPro';
-import InheritFromTheme from '@DashboardApp/pages/settings/InheritFromTheme';
 import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
 import ProActiveStatus from '@DashboardApp/pages/settings/ProActiveStatus';
+import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
+import Mcp from '@DashboardApp/pages/settings/Mcp';
 
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
@@ -81,6 +80,16 @@ const Settings = () => {
 				},
 			],
 		},
+		{
+			name: 'AI',
+			children: [
+				{
+					name: __( 'MCP Server', 'spectra-blocks' ),
+					slug: 'mcp',
+					icon: SettingsIcons.mcp,
+				},
+			],
+		},
 	];
 
 	const tabTitles = {
@@ -89,15 +98,15 @@ const Settings = () => {
 		'fse-support': __( 'Theme Fonts', 'spectra-blocks' ),
 		'block-settings': __( 'Integrations', 'spectra-blocks' ),
 		'license': __( 'My Account', 'spectra-blocks' ),
+		'mcp': __( 'MCP Server', 'spectra-blocks' ),
 	};
-
 
 	if ( spectraIsBlockTheme ) {
 		navigation[ 3 ].children.unshift( {
 			name: __( 'Theme Fonts', 'spectra-blocks' ),
 			slug: 'fse-support',
 			icon: SettingsIcons.font,
-		} )
+		} );
 	}
 
 	useEffect( () => {
@@ -122,7 +131,6 @@ const Settings = () => {
 	if ( ! initialStateSetFlag ) {
 		return <SettingsSkeleton />;
 	}
-
 
 	const accountModalData = {
 		title: __( 'Unlock Pro Features', 'spectra-blocks' ),
@@ -177,10 +185,8 @@ const Settings = () => {
 					>
 						{ 'global-settings' === currentTab && (
 							<>
-								<InheritFromTheme />
-								<ContainerGlobalPadding />
-								<ContainerGlobalElementsGap />
 								<TemplatesButton />
+								<BSFAnalyticsOption />
 							</>
 						) }
 						{ 'fonts-performance' === currentTab && (
@@ -193,6 +199,7 @@ const Settings = () => {
 							</>
 						) }
 						{ 'fse-support' === currentTab && spectraIsBlockTheme && <FSEFontFamilies /> }
+						{ 'mcp' === currentTab && <Mcp /> }
 						{ 'license' === currentTab && (
 							<>
 								{ 'Activated' !== spectra_blocks_react.pro_plugin_status && (
@@ -221,9 +228,7 @@ const Settings = () => {
 								default:
 									return null;
 							}
-						} ) () }
-						
-						
+						} )() }
 					</Container>
 						{ ( 'license' === currentTab && 'Activated' !== spectra_blocks_react.pro_plugin_status ) && (
 								<Container
@@ -244,7 +249,7 @@ const Settings = () => {
 											columnView
 										/>
 									</>
-								</Container >
+								</Container>
 						) }
 				</Container>
 			) }

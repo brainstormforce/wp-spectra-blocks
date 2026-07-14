@@ -7,9 +7,8 @@
  * @package Spectra\Blocks\Button
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
-use Spectra\Helpers\Core;
+use SpectraBlocks\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\Core;
 
 // The main attributes that need to exist.
 $text = $attributes['text'] ?? '';
@@ -138,6 +137,19 @@ $hover_icon_props = array(
 	'style'     => $hover_icon_style,
 );
 
+// Detect whether WP core `supports.color` values are set. Mirrors the
+// content block's pattern (controller.php:52-54): the slug path
+// (`attributes.textColor` / `.backgroundColor`) covers palette selections,
+// and the nested `attributes.style.color.*` path covers custom hex picks.
+// Either form is enough to add the WP core helper class so the global
+// stylesheet rule (`.has-background`, `.has-text-color`) wires up.
+$has_text_color       = ! empty( $attributes['textColor'] ?? '' )
+	|| ! empty( $attributes['style']['color']['text'] ?? '' );
+$has_background_color = ! empty( $attributes['backgroundColor'] ?? '' )
+	|| ! empty( $attributes['style']['color']['background'] ?? '' )
+	|| ! empty( $attributes['gradient'] ?? '' )
+	|| ! empty( $attributes['style']['color']['gradient'] ?? '' );
+
 // Style and class configurations.
 $config = array(
 	array( 'key' => 'textColor' ),
@@ -173,6 +185,16 @@ $config = array_merge( $config, $border_hover_config );
 
 // Base classes.
 $custom_classes = array( 'wp-block-button__link wp-element-button' );
+
+// WP core color helper classes — paired with `has-<slug>-color` (palette)
+// or with the inline `style="color:#..."` (custom hex) that WP core's
+// `get_block_wrapper_attributes()` emits inside BlockAttributes helper.
+if ( $has_text_color ) {
+	$custom_classes[] = 'has-text-color';
+}
+if ( $has_background_color ) {
+	$custom_classes[] = 'has-background';
+}
 
 // Add hover icon class if enabled.
 if ( $show_icon_on_hover && ! empty( $hover_icon ) ) {

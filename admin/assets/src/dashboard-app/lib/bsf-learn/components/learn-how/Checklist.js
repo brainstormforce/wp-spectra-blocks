@@ -6,7 +6,8 @@ import { __, sprintf } from '@wordpress/i18n';
  *
  * Renders a numbered checklist of items with step labels.
  *
- * @param {Array} items - Array of checklist items
+ * @param          items.items
+ * @param {Array}  items        - Array of checklist items
  * @param {string} items[].text - Item text
  */
 const Checklist = ( { items } ) => {

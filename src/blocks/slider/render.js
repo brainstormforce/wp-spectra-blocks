@@ -28,6 +28,7 @@ const Render = memo( ( props ) => {
 	const { clientId, attributes, isSelected } = props;
 	const {
 		navigation = true,
+		displayArrows = true,
 		pagination = true,
 		slidesPerView = '1',
 		spaceBetween = 30,
@@ -46,7 +47,7 @@ const Render = memo( ( props ) => {
 	} = attributes;
 
 	// Pro status detection for frontend fallback.
-	const isProActivated = 'active' === spectra_blocks_info.spectra_pro_status? true : false;
+	const isProActivated = 'active' === window?.spectra_blocks_info?.spectra_pro_status;
 	
 	// Calculate effective slides per view for frontend.
 	const getEffectiveSlidesPerView = () => {
@@ -182,11 +183,10 @@ const Render = memo( ( props ) => {
 			};
 
 			// Initialize the slider based on the breakpoints.
-			const initSwiper = async () => {
-				// Swiper is externalized to the global provided by swiper-bundle.min.js.
-				// All standard modules are pre-registered in the bundle.
-				const SwiperModule = await import( 'swiper' );
-				const Swiper = SwiperModule.default || SwiperModule;
+			const initSwiper = () => {
+				// Swiper is exposed on window via an inline script registered
+				// against the swiper-script handle (see AssetLoader::register_block_assets).
+				const Swiper = window.Swiper;
 
 		// Use correct document context for navigation and pagination selectors.
 		const targetDoc = getEditorDocument();
@@ -216,7 +216,7 @@ const Render = memo( ( props ) => {
 					loop: false, // Disabled in editor.
 					autoplay: false, // Disabled in editor.
 				initialSlide: getInitialSlide(), // Start at the selected slide based on DOM state.
-			navigation: navigation
+			navigation: navigation && displayArrows
 				? {
 						nextEl: targetDoc.querySelector( `.block-${ clientId } .swiper-button-next` ),
 						prevEl: targetDoc.querySelector( `.block-${ clientId } .swiper-button-prev` ),
@@ -260,18 +260,15 @@ const Render = memo( ( props ) => {
 		return slider;
 			};
 
-			// PERFORMANCE FIX: Initialize refs with current state (synchronous, no slider needed).
+			// Save the slider instance.
+			const slider = initSwiper();
+
+		// PERFORMANCE FIX: Initialize refs with current state
 		slideOrderRef.current = select( blockEditorStore ).getBlockOrder( clientId );
 		currentSelectedBlockRef.current = select( blockEditorStore ).getSelectedBlock();
-
-		// Mutable reference for the async slider instance used in cleanup.
-		let slider = null;
-
-		// initSwiper is async — store the instance once resolved.
-		initSwiper().then( ( instance ) => {
-			slider = instance;
-			sliderInstanceRef.current = instance;
-		} );
+		
+		// Store slider instance in ref for access outside useRefEffect
+		sliderInstanceRef.current = slider;
 
 		return () => {
 			// PERFORMANCE FIX: Clean shutdown without subscribe listeners
@@ -280,47 +277,55 @@ const Render = memo( ( props ) => {
 				clearTimeout( navigationTimeoutRef.current );
 				navigationTimeoutRef.current = null;
 			}
-
-			// Guard: Swiper may not have resolved yet if block was removed very quickly.
-			if ( slider && typeof slider.destroy === 'function' ) {
-				slider.updateProgress();
+			
+				slider.updateProgress();	
 				slider.update();
 				slider.updateSlides();
-
-				// Clean up pagination element and navigation buttons before destroying
+				
+				// If the slider exists and the destroy method exists, destroy the slider.
+				if ( slider && typeof slider.destroy === 'function' ) {
+					// Clean up pagination element and navigation buttons before destroying
 				const paginationEl = element.querySelector( '.swiper-pagination' );
 				if ( paginationEl ) {
 					paginationEl.innerHTML = '';
-					paginationEl.removeAttribute( 'style' );
+						paginationEl.removeAttribute( 'style' );
+					}
+
+					// Clean up navigation buttons  
+					const prevButton = element.querySelector( '.swiper-button-prev' );
+					const nextButton = element.querySelector( '.swiper-button-next' );
+					if ( prevButton ) {prevButton.removeAttribute( 'style' );}
+					if ( nextButton ) {nextButton.removeAttribute( 'style' );}
+					
+					// Preserve the spectra-slider-child elements.
+					if ( slider.slides && slider.slides.length > 0 ) {
+						// Process each slide to preserve the spectra-slider-child elements
+						Array.from( slider.slides ).forEach( slide => {
+							// Find the spectra-slider-child element in this slide.
+							const spectraSliderChild = slide.querySelector( '.spectra-slider-child' );
+							
+							if ( spectraSliderChild ) {
+								// Ensure the spectra-slider-child keeps its class.
+								spectraSliderChild.className = 'spectra-slider-child swiper-slide';
+								
+								// Reset any inline styles that might affect layout.
+								spectraSliderChild.style.width = '';
+								spectraSliderChild.style.transform = '';
+								spectraSliderChild.style.transition = '';
+							}
+							
+							// Reset the slide itself.
+							slide.style.width = '';
+							slide.style.transform = '';
+						} );
+					}
+					
+					// Destroy the Swiper instance but keep the DOM elements.
+					slider.destroy( true, false );
 				}
-
-				// Clean up navigation buttons
-				const prevButton = element.querySelector( '.swiper-button-prev' );
-				const nextButton = element.querySelector( '.swiper-button-next' );
-				if ( prevButton ) prevButton.removeAttribute( 'style' );
-				if ( nextButton ) nextButton.removeAttribute( 'style' );
-
-				// Preserve the spectra-slider-child elements.
-				if ( slider.slides && slider.slides.length > 0 ) {
-					Array.from( slider.slides ).forEach( slide => {
-						const spectraSliderChild = slide.querySelector( '.spectra-slider-child' );
-						if ( spectraSliderChild ) {
-							spectraSliderChild.className = 'spectra-slider-child swiper-slide';
-							spectraSliderChild.style.width = '';
-							spectraSliderChild.style.transform = '';
-							spectraSliderChild.style.transition = '';
-						}
-						slide.style.width = '';
-						slide.style.transform = '';
-					} );
-				}
-
-				// Destroy the Swiper instance but keep the DOM elements.
-				slider.destroy( true, false );
-			}
-		};
+			};
 		},
-		[ navigation, pagination, slidesPerView, spaceBetween, breakpoints ]
+		[ navigation, displayArrows, pagination, slidesPerView, spaceBetween, breakpoints ]
 	);
 
 	// HYBRID: useSelect for slide order (performance), subscribe for block selection (accuracy)
@@ -339,20 +344,20 @@ const Render = memo( ( props ) => {
 	// SUBSCRIBE: Use subscribe for block selection to ensure accurate timing (this was working!).
 	useEffect( () => {
 		const slider = sliderInstanceRef.current;
-		if ( !slider ) return;
+		if ( !slider ) {return;}
 
 		// Subscribe to block selection changes for this specific slider.
 		const unsubscribe = subscribe( () => {
-			if ( !slider || slider.destroyed || isNavigatingRef.current ) return;
+			if ( !slider || slider.destroyed || isNavigatingRef.current ) {return;}
 
 			const selectedBlock = select( blockEditorStore ).getSelectedBlock();
-			if ( !selectedBlock ) return;
+			if ( !selectedBlock ) {return;}
 
 			// Only handle relevant block types.
 			const isRelevantBlock = selectedBlock.name === 'spectra/slider-child' || 
 			                       selectedBlock.name?.startsWith?.( 'spectra/' );
 			
-			if ( !isRelevantBlock ) return;
+			if ( !isRelevantBlock ) {return;}
 
 			let targetSlideIndex = -1;
 			
@@ -392,7 +397,7 @@ const Render = memo( ( props ) => {
 	// PERFORMANCE FIX: Handle slide order changes with detailed operation detection
 	useEffect( () => {
 		const slider = sliderInstanceRef.current;
-		if ( !slider ) return;
+		if ( !slider ) {return;}
 		
 		const previousOrder = slideOrderRef.current;
 		const hasOrderChanged = currentSlideOrder.toString() !== previousOrder.toString();
@@ -544,13 +549,13 @@ const Render = memo( ( props ) => {
 	/**
 	 * Updates the slider with minimal DOM manipulation.
 	 *
-	 * @param {Object} swiperInstance The Swiper instance.
-	 * @param {string} activeSlideId   The active slide ID.
+	 * @param {Object}  swiperInstance The Swiper instance.
+	 * @param {string}  activeSlideId  The active slide ID.
 	 * @param {boolean} isNewSlider    Whether this is a newly initialized slider.
 	 * @param {Element} swiperEl       The swiper element.
 	 */
 	const updateSliderWithAnimation = ( swiperInstance, activeSlideId, isNewSlider, swiperEl ) => {
-		if ( ! swiperInstance || swiperInstance.destroyed ) return;
+		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		
 		// First update the slider.
 		swiperInstance.updateSize();
@@ -564,7 +569,7 @@ const Render = memo( ( props ) => {
 		}
 		
 		// Now fix the active index immediately.
-		if ( ! swiperInstance || swiperInstance.destroyed ) return;
+		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		
 		// Special handling for new sliders.
 		if ( isNewSlider ) {
@@ -630,7 +635,7 @@ const Render = memo( ( props ) => {
 		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
 		const swiperInstance = swiperEl?.__swiper;
 		
-		if ( ! swiperInstance || swiperInstance.destroyed ) return;
+		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		
 		// Get current active slide and total slides before updating.
 		const activeSlide = swiperInstance.slides ? swiperInstance.slides[ swiperInstance.activeIndex ] : null;
@@ -658,14 +663,14 @@ const Render = memo( ( props ) => {
 		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
 		const swiperInstance = swiperEl?.__swiper;
 		
-		if ( !swiperInstance || swiperInstance.destroyed ) return;
+		if ( !swiperInstance || swiperInstance.destroyed ) {return;}
 		
 		// Update spaceBetween without destroying the slider.
 		swiperInstance.params.spaceBetween = getSpaceBetween();
 		
 		// Update the slider with minimal DOM manipulation.
 		window.requestAnimationFrame( () => {
-			if ( !swiperInstance || swiperInstance.destroyed ) return;
+			if ( !swiperInstance || swiperInstance.destroyed ) {return;}
 			
 			// Update sizes and positions without recreating slides.
 			swiperInstance.updateSize();
@@ -686,7 +691,7 @@ const Render = memo( ( props ) => {
 		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
 		const swiperInstance = swiperEl?.__swiper;
 		
-		if ( ! swiperInstance || swiperInstance.destroyed ) return;
+		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		
 		// Detect iframe context for proper element targeting
 		const getEditorIframe = () => document.querySelector( 'iframe[name="editor-canvas"]' );
@@ -761,7 +766,7 @@ const Render = memo( ( props ) => {
 					>
 						<div { ...innerBlocksProps } />
 					</div>
-					{ navigation && (
+					{ navigation && displayArrows && (
 						<>
 							<div className="swiper-button-prev">
 								<RenderSVG svg={ navigationPrevIcon || 'arrow-left' } />

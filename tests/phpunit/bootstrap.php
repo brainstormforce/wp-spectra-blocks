@@ -11,6 +11,12 @@ if ( ! $_tests_dir ) {
 	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib'; // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
 }
 
+// Load PHPUnit Polyfills if path is provided (required by WP test suite with PHPUnit 10+).
+$_phpunit_polyfills_path = getenv( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+if ( false !== $_phpunit_polyfills_path ) {
+	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $_phpunit_polyfills_path ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- PHPUnit bootstrap convention
+}
+
 if ( ! file_exists( "$_tests_dir/includes/functions.php" ) ) {
 	echo "Could not find $_tests_dir/includes/functions.php\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- test output
 	exit( 1 );
@@ -24,8 +30,11 @@ require_once "$_tests_dir/includes/functions.php";
 
 // Stub WordPress Abilities API functions when running on WP < 6.8.
 // Check if the WP test installation provides the Abilities API file to avoid redeclaration.
-$_wp_test_dir          = getenv( 'WP_PHPUNIT__DIR' ) ?: ( getenv( 'WP_DEVELOP_DIR' ) ? getenv( 'WP_DEVELOP_DIR' ) . '/src' : '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound, Universal.Operators.DisallowShortTernary.Found -- PHPUnit bootstrap convention
-$_wp_install_dir       = getenv( 'WP_TESTS_INSTALLATION' ) ?: ( rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound, Universal.Operators.DisallowShortTernary.Found -- PHPUnit bootstrap convention
+$_wp_phpunit_dir       = getenv( 'WP_PHPUNIT__DIR' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+$_wp_develop_dir       = getenv( 'WP_DEVELOP_DIR' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+$_wp_test_dir          = $_wp_phpunit_dir ? $_wp_phpunit_dir : ( $_wp_develop_dir ? $_wp_develop_dir . '/src' : '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+$_wp_tests_install     = getenv( 'WP_TESTS_INSTALLATION' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+$_wp_install_dir       = $_wp_tests_install ? $_wp_tests_install : ( rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
 $_wp_has_abilities_api = file_exists( "$_wp_install_dir/wp-includes/abilities-api.php" ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
 
 if ( ! $_wp_has_abilities_api && ! function_exists( 'wp_register_ability' ) ) {
@@ -60,7 +69,23 @@ if ( ! $_wp_has_abilities_api && ! function_exists( 'wp_register_ability_categor
 	}
 }
 
-unset( $_wp_test_dir, $_wp_install_dir, $_wp_has_abilities_api );
+unset( $_wp_phpunit_dir, $_wp_develop_dir, $_wp_test_dir, $_wp_tests_install, $_wp_install_dir, $_wp_has_abilities_api );
+
+// Enable the Abilities API for testing so AbilitiesManager hooks into wp_abilities_api_init.
+// Use pre_option_ so the filter fires before the DB lookup — the option won't exist in the
+// test DB, so option_ would never trigger and the toggle guard would block registration.
+tests_add_filter(
+	'muplugins_loaded',
+	function () {
+		add_filter(
+			'pre_option_spectra_blocks_enable_abilities',
+			function () {
+				return 'enabled';
+			}
+		);
+	},
+	9
+);
 
 // Load plugin.
 /**

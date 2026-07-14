@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import { useBlockProps } from '@wordpress/block-editor';
-import { memo } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -91,4 +90,4 @@ const Render = ( props ) => {
 	);
 };
 
-export default memo( Render );
+export default Render;

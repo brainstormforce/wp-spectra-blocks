@@ -40,8 +40,8 @@ const Render = ( props ) => {
 
 	// Helper function to get justify content value
 	const getJustifyContent = () => {
-		if ( separatorAlign === 'left' ) return 'flex-start';
-		if ( separatorAlign === 'right' ) return 'flex-end';
+		if ( separatorAlign === 'left' ) {return 'flex-start';}
+		if ( separatorAlign === 'right' ) {return 'flex-end';}
 		return 'center';
 	};
 

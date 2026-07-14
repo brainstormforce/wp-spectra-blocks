@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 import React, { useState, useEffect } from 'react';
 import { Container } from '@bsf/force-ui';
 import UnlockProItem from './UnlockProItem';
+import Spectra_Block_Icons from '@Common/block-icons';
 
 const ProBlocks = () => {
 	const [ allBlocksData, setAllBlocksData ] = useState( null ); // Initialize state.
@@ -13,12 +14,28 @@ const ProBlocks = () => {
 
 	const blocks = [
 		{
+			title: __( 'SVG Animator', 'spectra-blocks' ),
+			slug: 'svg-animators',
+			icon: React.cloneElement( Spectra_Block_Icons[ 'svg-animators' ], { width: 24, height: 24 } ),
+			is_pro: true,
+			is_active: false,
+			link: 'svg-animator-spectra-blocks'
+		},
+		{
+			title: __( 'Mega Menu', 'spectra-blocks' ),
+			slug: 'mega-menu',
+			icon: React.cloneElement( Spectra_Block_Icons[ 'mega-menu' ], { width: 24, height: 24 } ),
+			is_pro: true,
+			is_active: false,
+			link: 'header-spectra-blocks'
+		},
+		{
 			title: __( 'Loop Builder', 'spectra-blocks' ),
 			slug: 'loop-builder',
 			icon: 'loop',
 			is_pro: true,
 			is_active: false,
-			link: 'loop-builder-v3'
+			link: 'loop-builder-spectra-blocks'
 		},
 		{
 			title: __( 'Dynamic Content', 'spectra-blocks' ),
@@ -26,7 +43,7 @@ const ProBlocks = () => {
 			icon: 'dynamic-content',
 			is_pro: true,
 			is_active: false,
-			link: 'dynamic-content-extension-v3'
+			link: 'dynamic-content-extension-spectra-blocks'
 		},
 		{
 			title: __( 'Login', 'spectra-blocks' ),
@@ -34,7 +51,7 @@ const ProBlocks = () => {
 			icon: 'login',
 			is_pro: true,
 			is_active: false,
-			link: 'login-v3'
+			link: 'login-spectra-blocks'
 		},
 		{
 			title: __( 'Register', 'spectra-blocks' ),
@@ -42,7 +59,7 @@ const ProBlocks = () => {
 			icon: 'register',
 			is_pro: true,
 			is_active: false,
-			link: 'register-v3'
+			link: 'register-spectra-blocks'
 		},
 	];
 

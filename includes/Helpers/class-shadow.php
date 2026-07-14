@@ -5,7 +5,7 @@
  * @package Spectra\Helpers
  */
 
-namespace Spectra\Helpers;
+namespace SpectraBlocks\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 

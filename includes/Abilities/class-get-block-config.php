@@ -7,7 +7,7 @@
  * @package Spectra\Abilities
  */
 
-namespace Spectra\Abilities;
+namespace SpectraBlocks\Abilities;
 
 use WP_Error;
 
@@ -16,14 +16,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * GetBlockConfig ability class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class GetBlockConfig extends AbstractAbility {
 
 	/**
 	 * Get the ability name.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -34,7 +34,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get the ability label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -45,7 +45,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get the ability description.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -56,7 +56,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get the ability category.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return string
 	 */
@@ -67,7 +67,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get ability annotations for REST discovery.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -82,7 +82,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get the input schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -93,7 +93,7 @@ class GetBlockConfig extends AbstractAbility {
 			'properties' => array(
 				'block_name' => array(
 					'type'        => 'string',
-					'description' => __( 'The block name (e.g. "spectra/container").', 'spectra-blocks' ),
+					'description' => __( 'The block name, e.g. "spectra/container" or "spectra-pro/mega-menu". The spectra/ prefix is added automatically if no namespace is given.', 'spectra-blocks' ),
 				),
 			),
 		);
@@ -102,7 +102,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Get the output schema.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return array
 	 */
@@ -122,7 +122,7 @@ class GetBlockConfig extends AbstractAbility {
 	/**
 	 * Execute the ability.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @param array $params Input parameters.
 	 * @return array|WP_Error Block config or error.
@@ -138,16 +138,28 @@ class GetBlockConfig extends AbstractAbility {
 
 		$block_name = sanitize_text_field( $params['block_name'] );
 
-		// Ensure the block name has the spectra/ prefix.
-		if ( strpos( $block_name, 'spectra/' ) !== 0 ) {
+		// Auto-add spectra/ prefix when no namespace is given.
+		if ( strpos( $block_name, '/' ) === false ) {
 			$block_name = 'spectra/' . $block_name;
 		}
 
-		// Try to find the block.json file.
-		$slug       = str_replace( 'spectra/', '', $block_name );
-		$block_json = $this->get_blocks_dir() . $slug . '/block.json';
+		// Resolve the block.json path based on namespace.
+		if ( strpos( $block_name, 'spectra-pro/' ) === 0 ) {
+			$pro_dir    = $this->get_pro_blocks_dir();
+			$slug       = str_replace( 'spectra-pro/', '', $block_name );
+			$block_json = $pro_dir ? $pro_dir . $slug . '/block.json' : '';
+		} elseif ( strpos( $block_name, 'spectra/' ) === 0 ) {
+			$slug       = str_replace( 'spectra/', '', $block_name );
+			$block_json = $this->get_blocks_dir() . $slug . '/block.json';
+		} else {
+			return new WP_Error(
+				'spectra_blocks_invalid_block',
+				__( 'Block name must use the spectra/ or spectra-pro/ namespace.', 'spectra-blocks' ),
+				array( 'status' => 400 )
+			);
+		}
 
-		if ( ! file_exists( $block_json ) ) {
+		if ( ! $block_json || ! file_exists( $block_json ) ) {
 			return new WP_Error(
 				'spectra_blocks_not_found',
 				/* translators: %s: block name */

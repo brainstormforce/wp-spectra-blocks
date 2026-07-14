@@ -5,8 +5,8 @@
  * @package SpectraBlocks\Tests\Abilities
  */
 
-use Spectra\Abilities\ListAvailableBlocks;
-use Spectra\Abilities\GetBlockConfig;
+use SpectraBlocks\Abilities\ListAvailableBlocks;
+use SpectraBlocks\Abilities\GetBlockConfig;
 
 /**
  * Discovery abilities test case.

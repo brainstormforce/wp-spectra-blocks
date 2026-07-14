@@ -7,8 +7,7 @@
  * @package Spectra\Blocks\ListChildIcon
  */
 
-defined( 'ABSPATH' ) || exit;
-use Spectra\Helpers\BlockAttributes;
+use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get context from parent blocks.
 $list_type    = $block->context['spectra/list/listType'] ?? 'unordered';
@@ -143,7 +142,6 @@ $icon = 'ordered' === $list_type ? null : $icon_name;
 $icon_props = array(
 	'focusable' => 'false',
 	'style'     => array(
-		'fill'      => 'currentColor',
 		'transform' => ! empty( $rotation ) ? 'rotate(' . $rotation . 'deg)' : '',
 	),
 );

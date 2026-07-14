@@ -26,7 +26,8 @@
 		"discount",
 		"deal",
 		"spectra",
-		"spectra-blocks"
+		"uag",
+		"uagb"
 	],
 	"providesContext": {
 		"spectra/countdown/showDays": "showDays",

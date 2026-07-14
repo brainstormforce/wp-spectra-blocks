@@ -2,8 +2,8 @@
  * External dependencies.
  */
 import {
+	InnerBlocks,
 	useBlockProps,
-	useInnerBlocksProps,
 } from '@wordpress/block-editor';
 import { memo } from '@wordpress/element';
 
@@ -44,13 +44,17 @@ const Render = ( props ) => {
 		style
 	} );
 
-	const innerBlocksProps = useInnerBlocksProps( blockProps, {
-		allowedBlocks: [ 'spectra/icon' ],
-		template: [ [ 'spectra/icon' ] ],
-	} );
-
 	// Render the icons
-	return <div { ...innerBlocksProps } />;
+	return (
+		<div
+			{ ...blockProps }
+		>
+			<InnerBlocks
+				allowedBlocks={['spectra/icon']}
+				template={[['spectra/icon']]}
+			/>
+		</div>
+	);
 };
 
 export default memo( Render );

@@ -4,66 +4,70 @@
  *
  * Registers ability categories and concrete abilities with the WordPress Abilities API.
  *
- * @package Spectra
+ * @package SpectraBlocks
  */
 
-namespace Spectra;
+namespace SpectraBlocks;
 
-defined( 'ABSPATH' ) || exit;
-
-use Spectra\Traits\Singleton;
-use Spectra\Abilities\ListAvailableBlocks;
-use Spectra\Abilities\GetBlockConfig;
-use Spectra\Abilities\GeneratePageLayout;
-use Spectra\Abilities\CreateAccordion;
-use Spectra\Abilities\CreateButtons;
-use Spectra\Abilities\CreateContainer;
-use Spectra\Abilities\CreateCountdown;
-use Spectra\Abilities\CreateCounter;
-use Spectra\Abilities\CreateGoogleMap;
-use Spectra\Abilities\CreateIcons;
-use Spectra\Abilities\CreateList;
-use Spectra\Abilities\CreateModal;
-use Spectra\Abilities\CreateSeparator;
-use Spectra\Abilities\CreateSlider;
-use Spectra\Abilities\CreateTabs;
-use Spectra\Abilities\ToggleBlockActivation;
-use Spectra\Abilities\ListPopups;
-use Spectra\Abilities\GetPopup;
-use Spectra\Abilities\TogglePopupStatus;
-use Spectra\Abilities\DeletePopup;
-use Spectra\Abilities\ListSelectedFonts;
-use Spectra\Abilities\ListAvailableGoogleFonts;
-use Spectra\Abilities\CreateContent;
-use Spectra\Abilities\CreatePopup;
-use Spectra\Abilities\GetPluginSettings;
-use Spectra\Abilities\GetBlockActivationStatus;
-use Spectra\Abilities\GetPostContent;
-use Spectra\Abilities\UpdateBlockAttributes;
-use Spectra\Abilities\RemoveBlock;
-use Spectra\Abilities\UpdatePluginSetting;
-use Spectra\Abilities\ApplyAnimation;
-use Spectra\Abilities\RemoveAnimation;
-use Spectra\Abilities\ApplySticky;
-use Spectra\Abilities\RemoveSticky;
-use Spectra\Abilities\ApplyResponsiveConditions;
-use Spectra\Abilities\RemoveResponsiveConditions;
-use Spectra\Abilities\SearchPostsByBlock;
-use Spectra\Abilities\SearchPostContent;
-use Spectra\Abilities\AddGoogleFont;
-use Spectra\Abilities\RemoveGoogleFont;
-use Spectra\Abilities\MoveBlock;
-use Spectra\Abilities\DuplicateBlock;
-use Spectra\Abilities\ApplyZIndex;
-use Spectra\Abilities\ApplyImageMask;
-use Spectra\Abilities\UpdatePopup;
+use SpectraBlocks\Traits\Singleton;
+use SpectraBlocks\Abilities\ListAvailableBlocks;
+use SpectraBlocks\Abilities\GetBlockConfig;
+use SpectraBlocks\Abilities\GeneratePageLayout;
+use SpectraBlocks\Abilities\CreateAccordion;
+use SpectraBlocks\Abilities\CreateButtons;
+use SpectraBlocks\Abilities\CreateContainer;
+use SpectraBlocks\Abilities\CreateCountdown;
+use SpectraBlocks\Abilities\CreateCounter;
+use SpectraBlocks\Abilities\CreateGoogleMap;
+use SpectraBlocks\Abilities\CreateIcons;
+use SpectraBlocks\Abilities\CreateList;
+use SpectraBlocks\Abilities\CreateModal;
+use SpectraBlocks\Abilities\CreateSeparator;
+use SpectraBlocks\Abilities\CreateSlider;
+use SpectraBlocks\Abilities\CreateTabs;
+use SpectraBlocks\Abilities\GetAnalyticsSummary;
+use SpectraBlocks\Abilities\ToggleBlockActivation;
+use SpectraBlocks\Abilities\ListPopups;
+use SpectraBlocks\Abilities\GetPopup;
+use SpectraBlocks\Abilities\TogglePopupStatus;
+use SpectraBlocks\Abilities\DeletePopup;
+use SpectraBlocks\Abilities\ListSelectedFonts;
+use SpectraBlocks\Abilities\ListAvailableGoogleFonts;
+use SpectraBlocks\Abilities\CreateContent;
+use SpectraBlocks\Abilities\CreatePopup;
+use SpectraBlocks\Abilities\GetPluginSettings;
+use SpectraBlocks\Abilities\GetBlockActivationStatus;
+use SpectraBlocks\Abilities\GetPostContent;
+use SpectraBlocks\Abilities\UpdateBlockAttributes;
+use SpectraBlocks\Abilities\RemoveBlock;
+use SpectraBlocks\Abilities\UpdatePluginSetting;
+use SpectraBlocks\Abilities\ApplyAnimation;
+use SpectraBlocks\Abilities\RemoveAnimation;
+use SpectraBlocks\Abilities\ApplySticky;
+use SpectraBlocks\Abilities\RemoveSticky;
+use SpectraBlocks\Abilities\ApplyResponsiveConditions;
+use SpectraBlocks\Abilities\RemoveResponsiveConditions;
+use SpectraBlocks\Abilities\SearchPostsByBlock;
+use SpectraBlocks\Abilities\SearchPostContent;
+use SpectraBlocks\Abilities\AddGoogleFont;
+use SpectraBlocks\Abilities\RemoveGoogleFont;
+use SpectraBlocks\Abilities\MoveBlock;
+use SpectraBlocks\Abilities\DuplicateBlock;
+use SpectraBlocks\Abilities\ApplyZIndex;
+use SpectraBlocks\Abilities\ApplyImageMask;
+use SpectraBlocks\Abilities\UpdatePopup;
+use SpectraBlocks\Abilities\CreatePost;
+use SpectraBlocks\Abilities\ApplyDisplayConditions;
+use SpectraBlocks\Abilities\RemoveDisplayConditions;
+use SpectraBlocks\Abilities\GetGlobalStylesConfig;
+use SpectraBlocks\Abilities\UpdateGlobalStyles;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Abilities Manager class.
  *
- * @since x.x.x
+ * @since 1.0.0
  */
 class AbilitiesManager {
 
@@ -72,12 +76,16 @@ class AbilitiesManager {
 	/**
 	 * Initialize the abilities manager.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
 	public function init(): void {
 		if ( ! function_exists( 'wp_register_ability' ) ) {
+			return;
+		}
+
+		if ( 'enabled' !== \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_abilities', 'disabled' ) ) {
 			return;
 		}
 
@@ -88,7 +96,7 @@ class AbilitiesManager {
 	/**
 	 * Register ability categories.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
@@ -100,7 +108,7 @@ class AbilitiesManager {
 		$categories = array(
 			'spectra-blocks-discovery'     => array(
 				'label'       => __( 'Spectra Blocks — Discovery', 'spectra-blocks' ),
-				'description' => __( 'Discover available blocks, read post content, and search for blocks across the site.', 'spectra-blocks' ),
+				'description' => __( 'Discover available blocks, read post content, search for blocks across the site, and view analytics.', 'spectra-blocks' ),
 			),
 			'spectra-blocks-content'       => array(
 				'label'       => __( 'Spectra Blocks — Content', 'spectra-blocks' ),
@@ -128,7 +136,7 @@ class AbilitiesManager {
 	/**
 	 * Register all concrete abilities.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
@@ -158,10 +166,14 @@ class AbilitiesManager {
 			CreateContent::class,
 			CreateSeparator::class,
 			CreateTabs::class,
+			CreatePost::class,
 			UpdateBlockAttributes::class,
 			RemoveBlock::class,
 			MoveBlock::class,
 			DuplicateBlock::class,
+
+			// Analytics.
+			GetAnalyticsSummary::class,
 
 			// Configuration.
 			GetPluginSettings::class,
@@ -172,6 +184,8 @@ class AbilitiesManager {
 			ListAvailableGoogleFonts::class,
 			AddGoogleFont::class,
 			RemoveGoogleFont::class,
+			GetGlobalStylesConfig::class,
+			UpdateGlobalStyles::class,
 
 			// Popup Management.
 			CreatePopup::class,
@@ -190,6 +204,8 @@ class AbilitiesManager {
 			RemoveResponsiveConditions::class,
 			ApplyZIndex::class,
 			ApplyImageMask::class,
+			ApplyDisplayConditions::class,
+			RemoveDisplayConditions::class,
 		);
 
 		foreach ( $abilities as $ability_class ) {
