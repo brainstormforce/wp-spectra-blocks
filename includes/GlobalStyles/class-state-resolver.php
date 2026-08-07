@@ -7,7 +7,8 @@
  *   - a named pseudo (`hover`, `before`, …)   → selector suffix only
  *   - a responsive breakpoint (`md`, `lg`, …) → `@media` wrapper, no suffix
  *   - a breakpoint + pseudo (`md_hover`)      → `@media` wrapper + suffix
- *   - an already-formatted / attribute state (`:x`, `[open]`) → verbatim suffix
+ *   - an already-formatted state (`:x`, `[open]`, `.is-active`) → verbatim
+ *     suffix (shape-validated — see {@see StateResolver::suffix})
  *
  * Both class renderers resolve states through this class — the site-wide
  * option renderer ({@see Engine::render_user_classes}) and the per-page /
@@ -108,8 +109,25 @@ final class StateResolver {
 
 	/**
 	 * Named / raw state → selector suffix. A known pseudo maps to its token; an
-	 * already-formatted pseudo (`:x`) or attribute selector (`[open]`) rides
-	 * verbatim; anything else is dropped ('') rather than emitted as a garbage tail.
+	 * already-formatted state — pseudo (`:x`), attribute (`[open]`), or class
+	 * tail (`.is-active`, incl. combinations like `.is-active:hover`) — rides
+	 * verbatim; anything else is dropped ('') rather than emitted as a garbage
+	 * tail. Class tails are how imported compound selectors keep their authored
+	 * cascade: `.tab-panel.is-active` must render on the SAME lane (and with the
+	 * same specificity lift) as its `.tab-panel` base — split across lanes, the
+	 * base's lift inverts the source cascade and state UIs (tabs/sliders/
+	 * accordions) render their hidden state (E2E 2026-07-10).
+	 *
+	 * Verbatim tails are shape-validated (class/pseudo/attr segments only; no
+	 * braces, angle brackets, or stray tokens) so a stored state key can never
+	 * break out of the selector position in the emitted stylesheet. `/` and `*`
+	 * are excluded too — a segment body that allowed them could smuggle a raw
+	 * CSS comment delimiter (slash-star / star-slash), which the tokenizer
+	 * honors anywhere in the sheet regardless of selector context, letting one
+	 * stored state key open a comment a second one closes elsewhere on the
+	 * page. This also
+	 * closes the pre-existing hole where any `:`/`[`-prefixed key rode verbatim
+	 * unvalidated.
 	 *
 	 * @since 1.0.0
 	 *
@@ -121,16 +139,28 @@ final class StateResolver {
 			return self::PSEUDO[ $state ];
 		}
 		$first = $state[0] ?? '';
-		if ( ':' === $first || '[' === $first ) {
-			return $state;
+		if ( ':' === $first || '[' === $first || '.' === $first ) {
+			return 1 === preg_match(
+				'/^(?:\.[A-Za-z0-9_-]+|:{1,2}[a-zA-Z-]+(?:\([^()<>{}\/*]*\))?|\[[^\]<>{}\/*]*\])+$/',
+				$state
+			) ? $state : '';
 		}
 		return '';
 	}
 
 	/**
-	 * Ascending sort key for a media condition: its `min-width` px, or `PHP_INT_MAX`
-	 * for a condition without a `min-width` (max-width / custom) so it emits LAST,
-	 * after the mobile-first min-width ladder.
+	 * Ascending sort key for a media condition.
+	 *
+	 * Three bands, in emission order:
+	 *   1. `min-width` — the mobile-first ladder, ascending by px.
+	 *   2. `max-width` — desktop-first overrides, DESCENDING by px, so the
+	 *      narrower breakpoint emits later and wins the equal-specificity tie.
+	 *   3. everything else (`prefers-color-scheme`, custom) — last.
+	 *
+	 * Band 2 used to collapse into `PHP_INT_MAX` alongside band 3, so two
+	 * `max-width` breakpoints tied and fell back to stored key order: written in
+	 * the wrong order, the narrower one lost. That is the same source-order bug
+	 * this class exists to fix, one breakpoint deeper.
 	 *
 	 * @since 1.0.0
 	 *
@@ -138,6 +168,16 @@ final class StateResolver {
 	 * @return int Sort key.
 	 */
 	public static function media_order( string $media ): int {
-		return preg_match( '/min-width:\s*(\d+)/', $media, $m ) ? (int) $m[1] : PHP_INT_MAX;
+		if ( preg_match( '/min-width:\s*(\d+)/', $media, $m ) ) {
+			return (int) $m[1];
+		}
+
+		if ( preg_match( '/max-width:\s*(\d+)/', $media, $m ) ) {
+			// Descending within the band, and offset so the whole band still sorts
+			// after every min-width: a wider max-width is a weaker override.
+			return PHP_INT_MAX - 1 - (int) $m[1];
+		}
+
+		return PHP_INT_MAX;
 	}
 }

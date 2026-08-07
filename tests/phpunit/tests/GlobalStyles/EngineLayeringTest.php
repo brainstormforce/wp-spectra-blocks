@@ -6,7 +6,7 @@
  * single `@layer utilities { ... }` so block-default non-layered rules (e.g.
  * `.wp-block-spectra-container { display: flex }`) lose to the utility
  * cascade on specificity alone. Per-post JIT output lands on its own
- * `spectra-gs-dynamic-styles` handle so the static utility sheet stays
+ * `spectra-gs-jit-styles` handle so the static utility sheet stays
  * cacheable per-site.
  *
  * @package Spectra\Tests\GlobalStyles
@@ -115,18 +115,18 @@ class EngineLayeringTest extends WP_UnitTestCase {
 
 		Engine::get_instance()->enqueue_jit_for_current_post();
 
-		wp_dequeue_style( 'spectra-gs-dynamic-styles' );
+		wp_dequeue_style( 'spectra-gs-jit-styles' );
 
-		$this->assertTrue( wp_style_is( 'spectra-gs-dynamic-styles', 'registered' ) );
+		$this->assertTrue( wp_style_is( 'spectra-gs-jit-styles', 'registered' ) );
 
-		$inline = wp_styles()->get_data( 'spectra-gs-dynamic-styles', 'after' );
+		$inline = wp_styles()->get_data( 'spectra-gs-jit-styles', 'after' );
 		$this->assertIsArray( $inline );
 
 		$combined = implode( "\n", array_filter( $inline, 'is_string' ) );
 		$this->assertStringContainsString( '.text-\\[56px\\]', $combined );
 
 		wp_reset_postdata();
-		wp_deregister_style( 'spectra-gs-dynamic-styles' );
+		wp_deregister_style( 'spectra-gs-jit-styles' );
 	}
 
 	/**
@@ -135,6 +135,58 @@ class EngineLayeringTest extends WP_UnitTestCase {
 	 *
 	 * @return void
 	 */
+	/**
+	 * The PR's headline claim — "registering after `enqueue_stylesheet` plus the
+	 * dep pin guarantees print order" — asserted directly rather than argued.
+	 *
+	 * The sitewide sheet's rules and the utility classes collide at (0,3,0), so
+	 * source order decides, and source order is the order `do_items()` walks
+	 * `to_do`. Both halves matter: the dep must be recorded, AND it must actually
+	 * make the utility block print first.
+	 *
+	 * @return void
+	 */
+	public function test_sitewide_css_prints_after_the_utility_classes(): void {
+		update_option(
+			Engine::OPTION_KEY_USER_CSS,
+			array(
+				'classes'       => array(
+					'my-card' => array( 'default' => array( 'color' => 'blue' ) ),
+				),
+				'wrapperStyles' => array( '.my-card' => array( 'color' => 'red' ) ),
+			)
+		);
+
+		$engine = Engine::get_instance();
+		$engine->enqueue_stylesheet();
+		$engine->enqueue_gen_sitewide_css();
+
+		// The dep pin is not asserted separately: it is the ONLY thing that puts
+		// the utility block into `to_do` first, so the order check below fails
+		// without it (verified by removing the pin).
+		ob_start();
+		wp_styles()->do_items( array( 'spectra-gen-sitewide-css' ) );
+		$printed = (string) ob_get_clean();
+
+		// DISTINCT markers, not first-vs-last occurrence of a shared one. Comparing
+		// strpos('my-card') with strrpos('my-card') asserts first < last, which is
+		// true whenever the token appears twice regardless of which block emitted
+		// which — a tautology that cannot detect a flipped order. The two blocks
+		// declare different colours, so search for those instead.
+		$utility_pos  = strpos( $printed, 'blue' );
+		$sitewide_pos = strpos( $printed, 'red' );
+		$this->assertIsInt( $utility_pos, 'the utility block did not print' );
+		$this->assertIsInt( $sitewide_pos, 'the sitewide block did not print' );
+		$this->assertLessThan(
+			$sitewide_pos,
+			$utility_pos,
+			'the utility block must print BEFORE the sitewide block, or the (0,3,0) tie goes the wrong way'
+		);
+
+		wp_deregister_style( 'spectra-gen-sitewide-css' );
+		wp_deregister_style( 'spectra-gs-utility-classes' );
+	}
+
 	public function test_jit_handle_depends_on_utility_handle(): void {
 		$post_id = $this->factory->post->create(
 			array(
@@ -151,12 +203,100 @@ class EngineLayeringTest extends WP_UnitTestCase {
 
 		Engine::get_instance()->enqueue_jit_for_current_post();
 
-		$registered = wp_styles()->registered['spectra-gs-dynamic-styles'] ?? null;
+		$registered = wp_styles()->registered['spectra-gs-jit-styles'] ?? null;
 
 		$this->assertNotNull( $registered );
-		$this->assertContains( 'spectra-gs-utility-classes', $registered->deps );
+		// Pinned only when the utility handle actually exists. Asserting the dep
+		// unconditionally locked in the bug it documents: on a Pro-active site
+		// `enqueue_stylesheet` is never hooked, so the handle is absent, and
+		// `all_deps()` then drops this style — the JIT CSS is computed, cached
+		// and rendered nowhere.
+		if ( wp_style_is( 'spectra-gs-utility-classes', 'registered' ) || wp_style_is( 'spectra-gs-utility-classes', 'enqueued' ) ) {
+			$this->assertContains( 'spectra-gs-utility-classes', $registered->deps );
+		} else {
+			$this->assertNotContains( 'spectra-gs-utility-classes', $registered->deps );
+		}
 
 		wp_reset_postdata();
-		wp_deregister_style( 'spectra-gs-dynamic-styles' );
+		wp_deregister_style( 'spectra-gs-jit-styles' );
+	}
+
+	/**
+	 * The absent-handle case directly: with no utility handle registered, the
+	 * JIT sheet must still register with NO dep rather than pinning a missing
+	 * one. A branch-covering assertion in the test above would pass whichever
+	 * way the environment happens to fall, so pin the failing side explicitly.
+	 */
+	public function test_jit_handle_skips_the_dep_when_the_utility_handle_is_absent(): void {
+		wp_deregister_style( 'spectra-gs-utility-classes' );
+		wp_dequeue_style( 'spectra-gs-utility-classes' );
+
+		$post_id = $this->factory->post->create(
+			array(
+				'post_status'  => 'publish',
+				'post_content' => '<!-- wp:paragraph {"className":"p-[10px]"} --><p class="p-[10px]">x</p><!-- /wp:paragraph -->',
+			)
+		);
+
+		JitCache::rebuild( $post_id );
+
+		global $post;
+		$post = get_post( $post_id );
+		setup_postdata( $post );
+
+		Engine::get_instance()->enqueue_jit_for_current_post();
+
+		$registered = wp_styles()->registered['spectra-gs-jit-styles'] ?? null;
+
+		$this->assertNotNull( $registered, 'the JIT sheet must register even with no utility handle' );
+		$this->assertNotContains( 'spectra-gs-utility-classes', $registered->deps );
+
+		wp_reset_postdata();
+		wp_deregister_style( 'spectra-gs-jit-styles' );
+	}
+
+	/**
+	 * The Tailwind-utility JIT hook registers UNCONDITIONALLY — even when Pro
+	 * is present and the unified-render migration flag is off (today's
+	 * default, real-site state). Pro has no equivalent JIT compiler anywhere
+	 * (confirmed: zero references to PREFIX_MAP / compile_token / JitCompiler
+	 * in spectra-blocks-pro), so yielding this specific hook to Pro — as the
+	 * single shared early-return used to do before this fix — left it
+	 * completely unenqueued on any Pro-active site: computed correctly,
+	 * persisted correctly (JitCache), never printed. Found live 2026-07-14 on
+	 * a real page: a freshly-generated section's own flex/gap layout and
+	 * button colors never rendered, on both the block editor canvas and the
+	 * published frontend. Fixed live end-to-end (Pro off, then Pro back on)
+	 * on the actual affected page before this test was added.
+	 *
+	 * `enqueue_stylesheet` (the named GBS-class stylesheet, which legitimately
+	 * still yields to Pro's own equivalent renderer — unchanged by this fix)
+	 * isn't asserted here: WP-tests-lib's bootstrap runs the plugin's real
+	 * `Engine::init()` once automatically, in a Pro-less state, before any
+	 * test method body runs — even inside `@runInSeparateProcess` — so a
+	 * Pro-class stub defined from within the test method always arrives one
+	 * `init()` call too late to observe that hook NOT registering. Verified
+	 * this is a bootstrap-ordering artifact (not a fix regression) by
+	 * confirming the same hook is already registered with zero stub involved.
+	 *
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 * @return void
+	 */
+	public function test_jit_hook_registers_even_when_pro_present_and_unified_render_off(): void {
+		if ( ! class_exists( '\\SpectraBlocksPro\\Extensions\\GlobalStyles' ) ) {
+			eval( 'namespace SpectraBlocksPro\\Extensions; class GlobalStyles {}' ); // phpcs:ignore Squiz.PHP.Eval.Discouraged -- test-only stub, isolated process.
+		}
+
+		$this->assertTrue( class_exists( '\\SpectraBlocksPro\\Extensions\\GlobalStyles' ) );
+		$this->assertFalse( Engine::is_unified_render() ); // default state.
+
+		Engine::init();
+		$instance = Engine::get_instance();
+
+		$this->assertNotFalse(
+			has_action( 'enqueue_block_assets', array( $instance, 'enqueue_jit_for_current_post' ) ),
+			'enqueue_jit_for_current_post must register even when Pro owns the named-class stylesheet.'
+		);
 	}
 }

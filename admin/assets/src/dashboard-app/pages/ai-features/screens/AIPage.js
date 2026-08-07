@@ -27,7 +27,7 @@ const AI_FEATURES = [
 		icon: <LayoutGridIcon size={ 26 } />,
 		title: __( 'Build a Fresh Website', 'spectra-blocks' ),
 		description: __(
-			'Describe your business and ZipAI builds a complete site with pages, copy, images, and headers, all as editable Spectra Blocks.',
+			'Describe your business and ZIP AI builds a complete site with pages, copy, images, and headers, all as editable Spectra Blocks.',
 			'spectra-blocks'
 		),
 	},
@@ -51,13 +51,13 @@ const AI_FEATURES = [
 		icon: <ActivityIcon size={ 26 } />,
 		title: __( 'Run a Site Health Check', 'spectra-blocks' ),
 		description: __(
-			'ZipAI scans your site for issues and suggests fixes automatically. Stay fast, secure, and up to date.',
+			'ZIP AI scans your site for issues and suggests fixes automatically. Stay fast, secure, and up to date.',
 			'spectra-blocks'
 		),
 	},
 	{
 		icon: <BroomIcon size={ 26 } />,
-		title: __( 'Clean Up My Website', 'spectra-blocks' ),
+		title: __( 'Clean Up Your Website', 'spectra-blocks' ),
 		description: __(
 			'Remove clutter, unused assets, and stale content in one request. Keep your site lean without manual audits.',
 			'spectra-blocks'
@@ -211,7 +211,7 @@ const AIPage = () => {
 							<div className="flex items-center gap-1.5 text-brand-primary-600">
 								<SparklesIcon size={ 20 } />
 								<span className="text-[15px] font-semibold">
-									{ __( 'Welcome to ZipAI', 'spectra-blocks' ) }
+									{ __( 'Welcome to ZIP AI', 'spectra-blocks' ) }
 								</span>
 							</div>
 							<h2 className="text-4xl font-semibold text-text-primary m-0 leading-snug">
@@ -219,7 +219,7 @@ const AIPage = () => {
 							</h2>
 							<p className="text-base text-text-secondary m-0 mb-7">
 								{ __(
-									'ZipAI is powered by ZipWP, our AI platform, and builds with Spectra Blocks. Everything it generates lands in your editor as real, fully editable blocks.',
+									'ZIP AI is powered by ZipWP, our AI platform, and builds with Spectra Blocks. Everything it generates lands in your editor as real, fully editable blocks.',
 									'spectra-blocks'
 								) }
 							</p>
@@ -231,7 +231,7 @@ const AIPage = () => {
 										disabled={ isSidebarOpen }
 										onClick={ openZipAI }
 									>
-										{ __( 'Launch ZIP-AI', 'spectra-blocks' ) }
+										{ __( 'Launch ZIP AI', 'spectra-blocks' ) }
 									</Button>
 								) : (
 									<Button
@@ -295,7 +295,7 @@ const AIPage = () => {
 							</div>
 							<p className="text-[15px] text-text-secondary m-0">
 								{ __(
-									'ZipAI runs on your free ZipWP account. Connect once inside the ZIP-AI panel to unlock AI site building, page generation, and credits.',
+									'ZIP AI runs on your free ZipWP account. Connect once inside the ZIP AI panel to unlock AI site building, page generation, and credits.',
 									'spectra-blocks'
 								) }
 							</p>

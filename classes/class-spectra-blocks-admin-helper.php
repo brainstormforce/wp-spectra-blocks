@@ -128,17 +128,13 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			}
 
 			return array(
-				'spectra_blocks_enable_templates_button'   => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
+				'spectra_blocks_enable_templates_button' => self::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ),
 				'spectra_blocks_enable_animations_extension' => self::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
-				'spectra_blocks_enable_gbs_extension'      => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
-				'spectra_blocks_enable_block_responsive'   => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
-				'spectra_blocks_select_font_globally'      => self::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
-				'spectra_blocks_load_select_font_globally' => self::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
-				'spectra_blocks_load_gfonts_locally'       => self::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
-				'spectra_blocks_preload_local_fonts'       => self::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
-				'spectra_blocks_analytics_optin'           => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
-				'wp_is_block_theme'                        => self::is_block_theme(),
-				'zip_ai_modules'                           => $zip_ai_modules,
+				'spectra_blocks_enable_gbs_extension'    => self::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
+				'spectra_blocks_enable_block_responsive' => self::get_admin_settings_option( 'spectra_blocks_enable_block_responsive', 'enabled' ),
+				'spectra_blocks_analytics_optin'         => self::get_admin_settings_option( 'spectra_blocks_analytics_optin', 'no' ),
+				'wp_is_block_theme'                      => self::is_block_theme(),
+				'zip_ai_modules'                         => $zip_ai_modules,
 			);
 		}
 
@@ -229,6 +225,101 @@ if ( ! class_exists( 'Spectra_Blocks_Admin_Helper' ) ) {
 			}
 
 			return 'US';
+		}
+
+		/**
+		 * Fetch previous stable plugin versions from wp.org (cached for one week).
+		 *
+		 * @since 1.0.1
+		 * @return array
+		 */
+		public static function get_rollback_versions() {
+			$rollback_versions = get_transient( 'spectra_blocks_rollback_versions_' . SPECTRA_BLOCKS_VER );
+
+			if ( ! empty( $rollback_versions ) ) {
+				return $rollback_versions;
+			}
+
+			$max_versions = 10;
+
+			$response = wp_remote_get(
+				add_query_arg(
+					array(
+						'action'                    => 'plugin_information',
+						'request[slug]'             => 'spectra-blocks',
+						'request[fields][versions]' => '1',
+					),
+					'https://api.wordpress.org/plugins/info/1.2/'
+				),
+				array( 'timeout' => 15 )
+			);
+
+			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+				return array();
+			}
+
+			$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( empty( $body['versions'] ) || ! is_array( $body['versions'] ) ) {
+				return array();
+			}
+
+			$versions = $body['versions'];
+			krsort( $versions );
+
+			$rollback_versions = array();
+
+			foreach ( $versions as $version => $download_link ) {
+				if ( preg_match( '/(trunk|beta|rc|dev)/i', strtolower( $version ) ) ) {
+					continue;
+				}
+				if ( version_compare( $version, SPECTRA_BLOCKS_VER, '>=' ) ) {
+					continue;
+				}
+				$rollback_versions[] = $version;
+			}
+
+			usort( $rollback_versions, array( __CLASS__, 'sort_rollback_versions' ) );
+			$rollback_versions = array_slice( $rollback_versions, 0, $max_versions, true );
+
+			if ( ! empty( $rollback_versions ) ) {
+				set_transient( 'spectra_blocks_rollback_versions_' . SPECTRA_BLOCKS_VER, $rollback_versions, WEEK_IN_SECONDS );
+			}
+
+			return $rollback_versions;
+		}
+
+		/**
+		 * Sort rollback versions descending.
+		 *
+		 * @since 1.0.1
+		 * @param string $prev Previous version.
+		 * @param string $next Next version.
+		 * @return int
+		 */
+		public static function sort_rollback_versions( $prev, $next ) {
+			if ( version_compare( $prev, $next, '==' ) ) {
+				return 0;
+			}
+			return version_compare( $prev, $next, '>' ) ? -1 : 1;
+		}
+
+		/**
+		 * Return rollback versions as label/value pairs for JS consumption.
+		 *
+		 * @since 1.0.1
+		 * @return array
+		 */
+		public static function get_rollback_versions_options() {
+			$versions = self::get_rollback_versions();
+			$options  = array();
+			foreach ( $versions as $version ) {
+				$options[] = array(
+					'label' => $version,
+					'value' => $version,
+				);
+			}
+			return $options;
 		}
 	}
 }

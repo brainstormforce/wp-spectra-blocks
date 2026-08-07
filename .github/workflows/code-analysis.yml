@@ -1,0 +1,103 @@
+name: Code Analysis
+
+on:
+  pull_request:
+    paths:
+      - '**.php'
+      - '**.js'
+      - '**.jsx'
+      - '**.scss'
+      - '**.css'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'phpcs.xml'
+      - '**.neon'
+      - 'package.json'
+      - '.eslintrc.js'
+      - '.stylelintrc.json'
+      - '.github/workflows/code-analysis.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  phpcs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Set Composer Token
+        run: composer config github-oauth.github.com ${{ secrets.BSF_PRODUCTS_REPO_TOKEN }}
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Check PHPCS
+        run: composer run lint
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint JS
+        run: npm run lint:js
+
+  lint-css:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint CSS
+        run: npm run lint:css
+
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Set Composer Token
+        run: composer config github-oauth.github.com ${{ secrets.BSF_PRODUCTS_REPO_TOKEN }}
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+      - name: Run PHPStan
+        run: composer run phpstan
+
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR Title Check
+        uses: naveenk1223/action-pr-title@master
+        with:
+          # Accept either a tracker ref (GIT-###: / SPEC-###:) OR a
+          # Conventional Commit prefix (feat:, fix(scope):, chore:, …).
+          regex: '^((GIT|SPEC)-\d+|(feat|fix|chore|refactor|docs|test|perf|ci|build|style|revert)(\(.+\))?):\s.+'

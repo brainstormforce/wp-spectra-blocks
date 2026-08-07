@@ -41,9 +41,9 @@ const DisableCSSCache = () => {
 	return (
 		<>
 			<SettingsItem
-				title={ __( 'Disable Cached Styles', 'spectra-blocks' ) }
+				title={ __( 'Regenerate Styles on Every Page Load', 'spectra-blocks' ) }
 				settingText={ __(
-					'Not recommended for production sites as it may affect performance. Enable only during development or if you\'re experiencing issues with styles not loading or caching conflicts. When active, styles regenerate on every page load instead of using cached versions.',
+					'Styles are rebuilt on every request instead of being cached. Use this only while developing, or if styles are not loading correctly. Not recommended on live sites.',
 					'spectra-blocks'
 				) }
 			>

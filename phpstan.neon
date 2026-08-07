@@ -15,5 +15,14 @@ parameters:
 	ignoreErrors:
 		-
 			identifier: missingType.generics
+		-
+			message: '#^Function astra_(get_option|update_option|clear_all_assets_cache) not found\.$#'
+			path: includes/StyleGuide/Sync/Astra/class-astra-palette-adapter.php
+		-
+			message: '#^Call to function method_exists\(\) with .*Astra_Dynamic_CSS.* will always evaluate to false\.$#'
+			path: includes/StyleGuide/Sync/Astra/class-astra-palette-adapter.php
+		-
+			message: '#(class Astra_Global_Palette|Astra_Global_Palette::)#'
+			path: includes/StyleGuide/Sync/Astra/class-astra-palette-adapter.php
 	reportUnmatchedIgnoredErrors: false
 	excludePaths:

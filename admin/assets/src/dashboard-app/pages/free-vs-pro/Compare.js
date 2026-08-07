@@ -32,7 +32,7 @@ const Compare = () => {
 	const getSpectraProTitle = () => {
 		return 'Installed' === spectra_blocks_react.pro_plugin_status
 			? __( 'Activate Now', 'spectra-blocks' )
-			: __( 'Get Spectra Pro Now', 'spectra-blocks' );
+			: __( 'Get Spectra Blocks Pro Now', 'spectra-blocks' );
 	};
 
 	const activatePro = () => {

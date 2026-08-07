@@ -12,6 +12,34 @@ import {
 // Non-reactive (plain JS Set) so modifications don't trigger watchers.
 const initiallyOpenItems = new Set();
 
+/**
+ * Compute the collapsed and expanded max-height bounds for an accordion item.
+ *
+ * The item uses `box-sizing: border-box`, so `max-height` includes the item's
+ * own vertical padding and border. The collapsed bound must therefore be the
+ * header height PLUS the item's padding + border (not the header height alone),
+ * and the expanded bound must add the item's border to `scrollHeight` (which
+ * already covers content + padding but not border). Otherwise the animation
+ * over- or under-shoots the item's true resting height and jolts at the edges.
+ *
+ * @param {HTMLElement} item   The accordion child item element.
+ * @param {HTMLElement} header The accordion child header element.
+ * @return {{collapsedHeight: number, expandedHeight: number}} The animation bounds in px.
+ */
+const getAnimationBounds = ( item, header ) => {
+	// eslint-disable-next-line no-undef
+	const styles = window.getComputedStyle( item );
+	const verticalBorder =
+		parseFloat( styles.borderTopWidth ) + parseFloat( styles.borderBottomWidth );
+	const verticalPadding =
+		parseFloat( styles.paddingTop ) + parseFloat( styles.paddingBottom );
+
+	return {
+		collapsedHeight: header.offsetHeight + verticalPadding + verticalBorder,
+		expandedHeight: item.scrollHeight + verticalBorder,
+	};
+};
+
 // Create the Accordion store.
 store( 'spectra/accordion', {
 	actions: {
@@ -161,16 +189,19 @@ store( 'spectra/accordion', {
 				// Use a single rAF to batch all DOM measurements
 				// eslint-disable-next-line no-undef
 				requestAnimationFrame( () => {
-					const accordionItemHeight = ref.scrollHeight; // Use scrollHeight instead of getBoundingClientRect for better performance
-					const accordionHeaderHeight = accordionHeader.offsetHeight; // Use offsetHeight instead of getBoundingClientRect
+					// The item uses box-sizing: border-box, so max-height must include
+					// the item's own vertical padding + border. Basing the collapsed
+					// height on the header alone would undershoot the item's true
+					// resting height and cause a visible jolt at the animation edge.
+					const { collapsedHeight, expandedHeight } = getAnimationBounds( ref, accordionHeader );
 
 					// Set initial state
-					ref.style.maxHeight = `${ accordionHeaderHeight }px`;
+					ref.style.maxHeight = `${ collapsedHeight }px`;
 
 					// Animate to full height in next frame
 					// eslint-disable-next-line no-undef
 					requestAnimationFrame( () => {
-						ref.style.maxHeight = `${ accordionItemHeight }px`;
+						ref.style.maxHeight = `${ expandedHeight }px`;
 
 						// Clean up after animation
 						const cleanup = () => {
@@ -188,16 +219,17 @@ store( 'spectra/accordion', {
 				// Batch DOM reads for collapse animation
 				// eslint-disable-next-line no-undef
 				requestAnimationFrame( () => {
-					const accordionItemHeight = ref.scrollHeight;
-					const accordionHeaderHeight = accordionHeader.offsetHeight;
+					// Include the item's own padding + border so the collapse settles
+					// at the item's true resting height (box-sizing: border-box).
+					const { collapsedHeight, expandedHeight } = getAnimationBounds( ref, accordionHeader );
 
 					// Set initial full height
-					ref.style.maxHeight = `${ accordionItemHeight }px`;
+					ref.style.maxHeight = `${ expandedHeight }px`;
 
 					// Animate to header height in next frame
 					// eslint-disable-next-line no-undef
 					requestAnimationFrame( () => {
-						ref.style.maxHeight = `${ accordionHeaderHeight }px`;
+						ref.style.maxHeight = `${ collapsedHeight }px`;
 
 						// Clean up after animation
 						const cleanup = () => {

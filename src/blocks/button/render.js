@@ -2,14 +2,13 @@
  * External dependencies.
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
-import { memo, useCallback, useMemo, useState } from '@wordpress/element';
-import { select } from '@wordpress/data';
+import { memo, useCallback, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies.
  */
-import { spectraClassNames } from '@spectra-helpers';
+import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
 
@@ -37,22 +36,6 @@ const Render = ( props ) => {
 		hoverIconFlipForRTL,
 		hoverIconAriaLabel,
 	} = attributes;
-
-	/**
-	 * Dynamically retrieve all registered RichText format types from the
-	 * WordPress rich-text store and exclude the 'core/link' format.
-	 *
-	 * This ensures that all other formatting options (like bold, italic, etc.)
-	 * remain available in the RichText toolbar, while preventing users from
-	 * inserting or editing links.
-	 */
-	const allowedFormats = useMemo( () => {
-		const allFormats = select( 'core/rich-text' ).getFormatTypes() || [];
-	
-		return allFormats
-			.map( ( format ) => format.name )
-			.filter( ( name ) => name !== 'core/link' && name !== 'core/footnote' );
-	}, [] );
 
 	// Convert shadow hover object to CSS string.
 	const getShadowHoverValue = () => {
@@ -241,11 +224,11 @@ const Render = ( props ) => {
 				placeholder={ __( 'Add text…', 'spectra-blocks' ) }
 				value={ text }
 				tagName="div"
-				onChange={ ( value ) => setAttributes( { text: value } ) }
+				onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 				className="spectra-button__link"
 				rel={ htmlTagLink?.noFollow ? 'nofollow noopener' : 'follow noopener' }
 				keepPlaceholderOnFocus
-				allowedFormats={ allowedFormats }
+				withoutInteractiveFormatting
 			/>
 		);
 	}, [ showText, text, setAttributes, htmlTagLink ] );

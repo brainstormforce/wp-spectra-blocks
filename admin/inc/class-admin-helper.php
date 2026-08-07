@@ -40,6 +40,8 @@ class Admin_Helper {
 	 */
 	public static function get_common_settings() {
 
+		$sb_versions = \Spectra_Blocks_Admin_Helper::get_rollback_versions_options();
+
 		$theme_data          = \WP_Theme_JSON_Resolver::get_theme_data();
 		$theme_settings      = $theme_data->get_settings();
 		$theme_font_families = isset( $theme_settings['typography']['fontFamilies']['theme'] ) && is_array( $theme_settings['typography']['fontFamilies']['theme'] ) ? $theme_settings['typography']['fontFamilies']['theme'] : array();
@@ -59,11 +61,7 @@ class Admin_Helper {
 			'enable_dynamic_content'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_dynamic_content', 'enabled' ),
 			'enable_animations_extension'        => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_animations_extension', 'enabled' ),
 			'enable_gbs_extension'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_gbs_extension', 'enabled' ),
-			'select_font_globally'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_select_font_globally', array() ),
-			'load_select_font_globally'          => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_select_font_globally', 'disabled' ),
 			'load_fse_font_globally'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_fse_font_globally', 'disabled' ),
-			'load_gfonts_locally'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_load_gfonts_locally', 'disabled' ),
-			'preload_local_fonts'                => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_preload_local_fonts', 'disabled' ),
 			'btn_inherit_from_theme'             => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_btn_inherit_from_theme', 'disabled' ),
 			'social'                             => self::get_social_settings_with_masked_secret(),
 			'dynamic_content_mode'               => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_dynamic_content_mode', 'popup' ),
@@ -81,6 +79,8 @@ class Admin_Helper {
 			'enable_abilities'                   => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_abilities', 'disabled' ),
 			'enable_edit_abilities'              => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_edit_abilities', 'enabled' ),
 			'enable_mcp_server'                  => \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_mcp_server', 'disabled' ),
+			'rollback_to_previous_version'       => isset( $sb_versions[0]['value'] ) ? $sb_versions[0]['value'] : '',
+			'spectra_blocks_previous_versions'   => $sb_versions,
 		);
 
 		return $options;

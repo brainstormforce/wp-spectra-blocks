@@ -5,10 +5,7 @@ import { applyFilters } from '@wordpress/hooks';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { Container, Title } from '@bsf/force-ui';
-import SelectedFontFamilies from '@DashboardApp/pages/settings/SelectedFontFamilies';
 import FSEFontFamilies from '@DashboardApp/pages/settings/FSEFontFamilies';
-import LoadFontsLocally from '@DashboardApp/pages/settings/LoadFontsLocally';
-import PreloadLocalFonts from '@DashboardApp/pages/settings/PreloadLocalFonts';
 import DisableCSSCache from '@DashboardApp/pages/settings/DisableCSSCache';
 import ClearV3Cache from '@DashboardApp/pages/settings/ClearV3Cache';
 import SettingsSkeleton from '@DashboardApp/pages/settings/SettingsSkeleton';
@@ -19,6 +16,8 @@ import UpgradeNotices from '@DashboardApp/pages/settings/UpgradeToPro';
 import ProActiveStatus from '@DashboardApp/pages/settings/ProActiveStatus';
 import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption';
 import Mcp from '@DashboardApp/pages/settings/Mcp';
+import RollBack from '@DashboardApp/pages/settings/RollBack';
+import Visibility from '@DashboardApp/pages/settings/Visibility';
 
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
@@ -51,7 +50,7 @@ const Settings = () => {
 			],
 		},
 		{
-			name: 'Editor',
+			name: __( 'Editor', 'spectra-blocks' ),
 			children: [
 				{
 					name: __( 'Editor Options', 'spectra-blocks' ),
@@ -61,27 +60,37 @@ const Settings = () => {
 			],
 		},
 		{
-			name: 'Utilities',
+			name: __( 'Utilities', 'spectra-blocks' ),
 			children: [
 				{
 					name: __( 'Performance', 'spectra-blocks' ),
 					slug: 'fonts-performance',
 					icon: SettingsIcons[ 'fonts-performance' ],
 				},
+				{
+					name: __( 'Version Control', 'spectra-blocks' ),
+					slug: 'version-control',
+					icon: SettingsIcons[ 'version-control' ],
+				},
 			],
 		},
 		{
-			name: 'Preferences',
+			name: __( 'Preferences', 'spectra-blocks' ),
 			children: [
 				{
 					name: __( 'Integrations', 'spectra-blocks' ),
 					slug: 'block-settings',
 					icon: SettingsIcons[ 'block-settings' ],
 				},
+				{
+					name: __( 'Site Visibility', 'spectra-blocks' ),
+					slug: 'visibility',
+					icon: SettingsIcons.visibility || SettingsIcons[ 'global-settings' ],
+				},
 			],
 		},
 		{
-			name: 'AI',
+			name: __( 'AI', 'spectra-blocks' ),
 			children: [
 				{
 					name: __( 'MCP Server', 'spectra-blocks' ),
@@ -99,6 +108,8 @@ const Settings = () => {
 		'block-settings': __( 'Integrations', 'spectra-blocks' ),
 		'license': __( 'My Account', 'spectra-blocks' ),
 		'mcp': __( 'MCP Server', 'spectra-blocks' ),
+		'visibility': __( 'Site Visibility', 'spectra-blocks' ),
+		'version-control': __( 'Version Control', 'spectra-blocks' ),
 	};
 
 	if ( spectraIsBlockTheme ) {
@@ -135,7 +146,7 @@ const Settings = () => {
 	const accountModalData = {
 		title: __( 'Unlock Pro Features', 'spectra-blocks' ),
 		Image: AccountModalImage,
-		header: __( 'Limitless Design with Spectra Pro!', 'spectra-blocks' ),
+		header: __( 'Limitless Design with Spectra Blocks Pro', 'spectra-blocks' ),
 		description: __(
 			'Experience design freedom with Spectra Pro. Utilize advanced blocks, extensions, and premium features to create a websites that stands out!',
 			'spectra-blocks'
@@ -193,13 +204,12 @@ const Settings = () => {
 							<>
 								<DisableCSSCache />
 								<ClearV3Cache />
-								<LoadFontsLocally />
-								<PreloadLocalFonts />
-								<SelectedFontFamilies />
 							</>
 						) }
 						{ 'fse-support' === currentTab && spectraIsBlockTheme && <FSEFontFamilies /> }
 						{ 'mcp' === currentTab && <Mcp /> }
+						{ 'visibility' === currentTab && <Visibility /> }
+						{ 'version-control' === currentTab && spectra_blocks_react.global_data.spectra_blocks_previous_versions?.length > 0 && <RollBack /> }
 						{ 'license' === currentTab && (
 							<>
 								{ 'Activated' !== spectra_blocks_react.pro_plugin_status && (

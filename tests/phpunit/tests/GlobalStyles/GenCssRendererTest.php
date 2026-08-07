@@ -125,6 +125,34 @@ class GenCssRendererTest extends WP_UnitTestCase {
 	}
 
 	/** @return void */
+	public function test_rem_base_renders_on_real_root_frontend_only() {
+		// `remBase` = the SOURCE's document-root font-size (html/:root authored,
+		// e.g. the 62.5% trick) — it must land on the real `:root` so the
+		// source's rem lengths keep their meaning.
+		$payload            = $this->payload();
+		$payload['remBase'] = '62.5%';
+
+		$frontend = GenCssRenderer::render( $payload, 234, false );
+		$this->assertStringContainsString( ':root { font-size: 62.5%; }', $frontend );
+
+		$editor = GenCssRenderer::render( $payload, 234, true );
+		$this->assertStringNotContainsString( ':root { font-size:', $editor );
+	}
+
+	/** @return void */
+	public function test_body_font_size_in_root_styles_never_reaches_the_document_root() {
+		// A body-authored font-size is INHERITANCE intent. Hoisting it to
+		// `:root` moved the rem base to the site's preset value and rescaled
+		// every rem token ×1.25 (measured live 2026-07-13, ERA build on Astra).
+		$payload                            = $this->payload();
+		$payload['rootStyles']['font-size'] = 'var(--wp--preset--font-size--medium, 18px)';
+
+		$css = GenCssRenderer::render( $payload, 234, false );
+		$this->assertStringContainsString( 'font-size: var(--wp--preset--font-size--medium, 18px)', $css );
+		$this->assertStringNotContainsString( ':root { font-size:', $css );
+	}
+
+	/** @return void */
 	public function test_media_query_wraps_its_rules() {
 		$css = GenCssRenderer::render( $this->payload(), 234, false );
 		$this->assertMatchesRegularExpression(

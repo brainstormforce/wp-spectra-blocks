@@ -139,7 +139,7 @@ class Renderer {
 						if ( 'style' === $item ) {
 							$rendered_styles = Core::concatenate_array( $details, 'style' );
 							echo ' style="' . esc_attr( $rendered_styles ) . '"';
-						} elseif ( ! empty( $details ) ) {
+						} elseif ( '' !== (string) $details ) { // '' !== guards against empty("0") === true for aria-label.
 							// Else if there are details, then structure this attribute.
 							echo ' ' . esc_attr( $item ) . '="' . esc_attr( $details ) . '"';
 						}
@@ -319,7 +319,7 @@ class Renderer {
 		// Add additional attributes if provided.
 		if ( ! empty( $additional_props ) ) {
 			foreach ( $additional_props as $attr => $value ) {
-				if ( ! empty( $value ) && 'class' !== $attr ) { // class already handled above.
+				if ( ( '' !== (string) $value ) && 'class' !== $attr ) { // class already handled above; '' !== cast guards against "0".
 					// For uploaded SVGs, avoid overriding fill attribute to preserve original colors.
 					if ( 'fill' === $attr && 'currentColor' === $value ) {
 						// Check if SVG already has fill/stroke attributes - if so, don't override.

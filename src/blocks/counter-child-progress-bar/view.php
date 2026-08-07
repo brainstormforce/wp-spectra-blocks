@@ -72,11 +72,12 @@ elseif ( 'bar' === $counter_style ) :
 				style="width: <?php echo esc_attr( $initial_width ); ?>%;"
 			>
 				<div class="spectra-counter-progress-label">
-					<?php if ( ! empty( $prefix ) ) : ?>
+					<?php // Strict compare, matching counter-child-number: empty('0') is true, so a "0" prefix/suffix was dropped. ?>
+					<?php if ( isset( $prefix ) && '' !== $prefix ) : ?>
 						<span class="spectra-counter-prefix"><?php echo esc_html( $prefix ); ?></span>
 					<?php endif; ?>
 					<span class="spectra-counter-value"><?php echo esc_html( $formatted_start ); ?></span>
-					<?php if ( ! empty( $suffix ) ) : ?>
+					<?php if ( isset( $suffix ) && '' !== $suffix ) : ?>
 						<span class="spectra-counter-suffix"><?php echo esc_html( $suffix ); ?></span>
 					<?php endif; ?>
 				</div>

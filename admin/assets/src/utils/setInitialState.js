@@ -10,11 +10,7 @@ const setInitialState = ( store ) => {
 			settingsSavedNotification: '',
             blocksStatuses : data.blocks_activation_and_deactivation,
             enableTemplates : data.enable_templates_button,
-            enableSelectedFontFamilies : data.load_select_font_globally,
-            selectedFontFamilies :  data.select_font_globally,
             enableFSEFontFamilies : data.load_fse_font_globally,
-            enableLoadFontsLocally : data.load_gfonts_locally,
-            enablePreloadLocalFonts : data.preload_local_fonts,
             enableDynamicContentExtension: data.enable_dynamic_content,
 			enableResponsiveConditions: data.enable_block_responsive,
 			siteKeyV2: data.recaptcha_site_key_v2,
@@ -33,6 +29,8 @@ const setInitialState = ( store ) => {
             enableAbilities: data.enable_abilities,
             enableEditAbilities: data.enable_edit_abilities,
             enableMcpServer: data.enable_mcp_server,
+            visibilityMode: data.visibility_mode,
+            visibilityPage: data.visibility_page,
         };
 
         store.dispatch( {type: 'UPDATE_INITIAL_STATE', payload: initialState} );

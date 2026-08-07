@@ -11,6 +11,8 @@
 
 namespace SpectraBlocks\StyleGuide;
 
+use SpectraBlocks\Helpers\Core;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -25,34 +27,36 @@ class GlobalStylesBridge {
 	/**
 	 * Mapping from Astra global color indices to Spectra shade token keys.
 	 *
-	 * Used to emit --ast-global-color-{N} CSS aliases that point to our
-	 * --spectra-{shade_key} custom properties, so Astra-based patterns and
-	 * imported content render correctly on any FSE theme without content changes.
+	 * Used for the editor-side surfaces only: the --ast-global-color-{N} CSS
+	 * aliases (imported Astra content on FSE themes) and the block-editor swatch
+	 * alignment. Kept in sync with AstraPaletteAdapter's semantic → token map so
+	 * the editor swatches match what the adapter actually pushes to Astra.
 	 *
-	 * Astra default index semantics:
-	 *   0 = Primary (brand accent)
-	 *   1 = Secondary (link hover / accent variant)
-	 *   2 = Heading text
-	 *   3 = Body text
-	 *   4 = Light background (section bg / surface)
-	 *   5 = White / page background
-	 *   6 = Border / outline
-	 *   7 = Dark background (footer, dark sections)
-	 *   8 = Extra (varies)
+	 * NOTE: this static map assumes Astra's REORGANIZED (4.8.9+) slot ordering.
+	 * The authoritative push (AstraPaletteAdapter::resolve_patch) resolves the
+	 * background indices from the live compatibility flag; this const does not.
+	 *
+	 * Astra slot semantics (reorganized ordering):
+	 *   0 = Brand              5 = Secondary Background
+	 *   1 = Alternate Brand    6 = Alternate Background
+	 *   2 = Headings           7 = Subtle Background
+	 *   3 = Text               8 = Other Supporting
+	 *   4 = Primary Background
 	 *
 	 * @since 1.0.0
 	 * @var array<int, string>
 	 */
 	const ASTRA_SHADE_MAP = array(
-		0 => 'chromatic1-7',
-		1 => 'chromatic1-5',
+		0 => 'primary',
+		1 => 'secondary',
 		2 => 'neutral-7',
 		3 => 'neutral-5',
-		4 => 'neutral-1',
-		5 => 'neutral-0',
-		6 => 'neutral-7',
-		7 => 'neutral-2',
-		8 => 'neutral-7',
+		4 => 'neutral-0',
+		5 => 'neutral-1',
+		6 => 'neutral-2',
+		// Slots 7 (Subtle Background) and 8 (Other Supporting) are unmanaged —
+		// their old tokens (the interpolated neutral-3/neutral-6) are no longer
+		// generated. Astra keeps its own values for them.
 	);
 
 	/**
@@ -84,17 +88,6 @@ class GlobalStylesBridge {
 		// Inject palette into the theme layer so it merges with (not replaces) theme colors.
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'inject_palette' ), 20 );
 
-		// Theme typography override (opt-in; ALL themes, incl. Astra/Spectra One —
-		// typography has no dedicated per-theme path): remap the theme's own
-		// font-family presets to the Style Guide fonts, and force heading elements onto
-		// the Style Guide heading font. Priority 21 (after inject_palette).
-		add_filter( 'wp_theme_json_data_theme', array( $this, 'override_theme_typography' ), 21 );
-
-		// Theme spacing + shadow override (opt-in; ALL themes). Remap the theme's
-		// spacing scale onto the Style Guide scale, and register the Style Guide shadow
-		// presets. Priority 22 (Phase C).
-		add_filter( 'wp_theme_json_data_theme', array( $this, 'override_theme_spacing_shadow' ), 22 );
-
 		// Normalize sg-* palette names in the user layer (saved global styles).
 		// User-layer names take precedence over theme-layer, so stale "Sg-*" names
 		// stored in wp_global_styles must be fixed here.
@@ -105,24 +98,54 @@ class GlobalStylesBridge {
 		// without leaving any slug undefined. Runs after normalize (21 > 20).
 		add_filter( 'wp_theme_json_data_user', array( $this, 'maybe_override_managed_user_palette' ), 21 );
 
+		// The block editor merges the theme and USER global-styles REST entities
+		// CLIENT-SIDE, and the user entity is served from the raw post content —
+		// wp_theme_json_data_user never applies to it. Overlay the same managed
+		// palette there so the editor picker matches the server-rendered palette.
+		//
+		// Hook `rest_request_after_callbacks`, NOT `rest_post_dispatch`: the editor
+		// PRELOADS global styles via `rest_do_request()` (see rest_preload_api_request),
+		// which runs inside dispatch() and never fires `rest_post_dispatch` — so an
+		// overlay hooked there is skipped for the preloaded data the editor actually
+		// boots with, and the picker showed no Style Guide colours until a manual
+		// save. `rest_request_after_callbacks` fires for BOTH the preload and live
+		// serve_request paths, so the overlay reaches the data the editor really uses.
+		add_filter( 'rest_request_after_callbacks', array( $this, 'overlay_rest_user_global_styles' ), 10, 3 );
+
+		// sg-* alias slugs are render-compat only, never pickable swatches — strip
+		// them from the picker's data sources (11 = after the overlay above). The
+		// render path keeps them: core still derives .has-sg-*-color rules from
+		// the server-side theme.json palette. Same filter as the overlay so it also
+		// covers the editor's preloaded request.
+		add_filter( 'rest_request_after_callbacks', array( $this, 'strip_sg_alias_swatches_from_rest' ), 11, 3 );
+
+		// Theme color sync (both directions, all supported theme classes) is owned
+		// by the SyncOrchestrator: it resolves the active theme's role->slug mapping
+		// and routes through the FSE / Astra store adapters, so sync works for any
+		// curated or auto-derivable theme rather than only Spectra One + Astra.
+		( new Sync\SyncOrchestrator( $this->engine ) )->register();
+
+		// LEGACY one-time migration: strip Spectra colours that OLDER builds persisted
+		// into `wp_global_styles`. The push no longer writes there, so this only heals
+		// pre-existing data, once. Safe to delete this line together with
+		// class-palette-cleanup.php once every site has upgraded past this build.
+		( new Sync\PaletteCleanup( $this->engine ) )->register();
+
 		// Enqueue the CSS variables on the frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_css' ), 5 );
 
+		// LAST in <head>, deliberately. See print_page_palette().
+		add_action( 'wp_head', array( $this, 'print_page_palette' ), 100 );
+
 		// Enqueue in the block editor.
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_css' ) );
-
-		// A5: self-heal the wp_global_styles REST entity the editor loads. The entity
-		// is returned raw (bypassing the wp_theme_json_data_* filters), so a stale /
-		// imported palette or font pin stored there would shadow the Style Guide values
-		// in the editor. Strip the managed presets so the theme-layer Style Guide wins.
-		add_filter( 'rest_request_after_callbacks', array( $this, 'heal_global_styles_entity' ), 10, 3 );
 
 		// Inject Astra compat CSS directly into the editor iframe via block_editor_settings_all.
 		// enqueue_block_editor_assets only reaches the admin <head>, not the iframe canvas.
 		add_filter( 'block_editor_settings_all', array( $this, 'inject_astra_compat_editor_styles' ) );
 
-		// Inject scheme variable mapping CSS into the editor iframe.
-		add_filter( 'block_editor_settings_all', array( $this, 'inject_scheme_editor_styles' ) );
+		// Inject the Style Guide token CSS into the editor iframe.
+		add_filter( 'block_editor_settings_all', array( $this, 'inject_sg_editor_styles' ) );
 
 		// Inject token CSS variables (including legacy mappings) into the editor iframe.
 		add_filter( 'block_editor_settings_all', array( $this, 'inject_token_editor_styles' ) );
@@ -132,8 +155,18 @@ class GlobalStylesBridge {
 		// palette to rewrite.
 		add_filter( 'block_editor_settings_all', array( $this, 'align_astra_palette_swatches' ), 20 );
 
-		// Auto-add .spectra-dark-scheme class to blocks with dark background schemes.
-		add_filter( 'render_block', array( $this, 'maybe_add_dark_scheme_class' ), 10, 2 );
+		// Surfacing the Style Guide palette in the editor colour picker is a Pro
+		// capability. When Pro is inactive, strip the Style-Guide-managed swatches
+		// from the picker (priority 21, after the align pass) WITHOUT touching the
+		// colour variables — content that already uses a Style Guide colour keeps
+		// rendering because the --wp--preset--color--* vars are still emitted.
+		add_filter( 'block_editor_settings_all', array( $this, 'remove_style_guide_swatches_when_pro_inactive' ), 21 );
+
+		// sg-* alias slugs are render-compat only — also strip them from the
+		// server-built editor settings (widgets/customizer editors and the legacy
+		// flat `colors` list read by older picker components). Priority 22 = after
+		// the Pro-inactive strip, which already removes them when Pro is off.
+		add_filter( 'block_editor_settings_all', array( $this, 'remove_sg_alias_swatches' ), 22 );
 
 		// Font Library ACTIVATION (A21): installed wp_font_family/wp_font_face
 		// CPTs emit no @font-face by themselves — core's resolver only reads
@@ -146,6 +179,16 @@ class GlobalStylesBridge {
 		// family, so a family-save-only sync would capture zero faces.
 		add_action( 'save_post_wp_font_family', array( $this, 'sync_font_library_families' ), 20 );
 		add_action( 'save_post_wp_font_face', array( $this, 'sync_font_library_families' ), 20 );
+
+		// Imported-chrome activation (classic themes): the importer's font
+		// install is idempotent — on re-imports it saves nothing, so the
+		// save_post hooks above never fire and a pre-existing Library never
+		// reaches this theme's user global-styles post (measured live on
+		// Astra: families+faces installed, zero faces printed). The moment
+		// the theme starts rendering imported chrome is exactly when its
+		// fonts must resolve — sync then, idempotently.
+		add_action( 'add_option_zipai_chrome_mode', array( $this, 'sync_font_library_families' ), 20 );
+		add_action( 'update_option_zipai_chrome_mode', array( $this, 'sync_font_library_families' ), 20 );
 	}
 
 	/**
@@ -159,6 +202,24 @@ class GlobalStylesBridge {
 	 * @return \WP_Theme_JSON_Data Modified theme JSON data.
 	 */
 	public function inject_palette( $theme_json ) {
+		// Style Guide palette swatches are a Pro feature. Without Pro the theme's
+		// palette must reach every colour picker (block inspector AND the Site
+		// Editor's Styles → Palette, which reads theme_json directly and never
+		// passes through block_editor_settings_all) untouched. Checked inside the
+		// callback — not at registration — so the answer never depends on whether
+		// Pro's main file loaded before or after ours.
+		if ( ! Core::is_pro_active() ) {
+			return $theme_json;
+		}
+
+		// Only inject the Style Guide's semantic palette once the user has SAVED one.
+		// With nothing saved the engine resolves to inherited/default colours, and
+		// injecting those would override the theme's own slugs (e.g. `primary`,
+		// `heading`) — a site the user never styled must render as its theme intends.
+		if ( ! $this->engine->has_saved_style_guide() ) {
+			return $theme_json;
+		}
+
 		// Ensure tokens are computed — this filter can fire before 'init',
 		// before Engine::maybe_compute() has had a chance to run.
 		$this->engine->maybe_compute();
@@ -169,11 +230,9 @@ class GlobalStylesBridge {
 			return $theme_json;
 		}
 
+		// Raw-token palette entries — intentionally empty since shade tokens are
+		// no longer published as presets; the semantic layer below is the palette.
 		$spectra_palette = $tokens->get_wp_palette();
-
-		if ( empty( $spectra_palette ) ) {
-			return $theme_json;
-		}
 
 		// Get existing theme data.
 		$data = $theme_json->get_data();
@@ -213,25 +272,21 @@ class GlobalStylesBridge {
 				$semantic_slugs[ $slug ] = $hex;
 			}
 
-			// Update existing theme palette entries that match semantic slugs.
-			// This ensures "primary", "heading", "body" etc. get the computed shade value.
+			// Recolour ONLY the theme's existing palette entries that match a semantic
+			// slug (primary/heading/body/…) — re-tint the roles the theme already has.
+			// We deliberately do NOT append semantic slugs the theme lacks (accent,
+			// status, the sg-* aliases, or — on Astra — the whole set): appending
+			// floods the picker with extra swatches AND WP persists the injected theme
+			// palette into wp_global_styles when the user saves Site Editor → Styles →
+			// Palette, bloating the stored post. Recolour-only keeps the theme's own
+			// palette intact.
 			$updated_existing = array();
 			foreach ( $existing_palette as $entry ) {
-				if ( isset( $semantic_slugs[ $entry['slug'] ] ) ) {
+				if ( isset( $entry['slug'], $semantic_slugs[ $entry['slug'] ] ) ) {
 					$entry['color'] = $semantic_slugs[ $entry['slug'] ];
 					$entry['name']  = TokenRegistry::format_slug_label( $entry['slug'] );
-					unset( $semantic_slugs[ $entry['slug'] ] );
 				}
 				$updated_existing[] = $entry;
-			}
-
-			// Add any semantic colors that weren't already in the theme palette.
-			foreach ( $semantic_slugs as $slug => $hex ) {
-				$updated_existing[] = array(
-					'slug'  => $slug,
-					'color' => $hex,
-					'name'  => TokenRegistry::format_slug_label( $slug ),
-				);
 			}
 
 			$existing_palette = $updated_existing;
@@ -293,268 +348,6 @@ class GlobalStylesBridge {
 		);
 
 		return $theme_json->update_with( $new_data );
-	}
-
-	/**
-	 * Override the active theme's typography presets with the Style Guide fonts.
-	 *
-	 * Generic-theme (non-Astra/Spectra-One) opt-in. Two parts:
-	 *   1. Remap the theme's `fontFamilies` preset values → the Style Guide body font
-	 *      (heading-designated slugs → the heading font). Rewriting the theme.json
-	 *      preset makes BOTH the font-family dropdown and `--wp--preset--font-family--*`
-	 *      adopt the Style Guide, since both derive from theme.json.
-	 *   2. Force the theme's heading element(s) onto the Style Guide heading font, so
-	 *      headings use the display face even when the theme ships a single family.
-	 *
-	 * Hooked to wp_theme_json_data_theme at priority 21 (after inject_palette).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \WP_Theme_JSON_Data $theme_json The theme JSON data object.
-	 * @return \WP_Theme_JSON_Data Modified theme JSON data.
-	 */
-	public function override_theme_typography( $theme_json ) {
-		if ( ! ThemeStyleCompat::should_override_typography() ) {
-			return $theme_json;
-		}
-
-		$config = $this->engine->get_config();
-		$data   = $theme_json->get_data();
-
-		// Part 1 — remap the theme's font-family presets.
-		$families = array();
-		if ( isset( $data['settings']['typography']['fontFamilies']['theme'] ) && is_array( $data['settings']['typography']['fontFamilies']['theme'] ) ) {
-			$families = $data['settings']['typography']['fontFamilies']['theme'];
-		}
-
-		$updated_families = $families;
-		if ( ! empty( $families ) ) {
-			$font_slugs = array();
-			foreach ( $families as $entry ) {
-				if ( isset( $entry['slug'] ) ) {
-					$font_slugs[] = $entry['slug'];
-				}
-			}
-
-			$ff_overrides = ThemeStyleCompat::resolve_font_family_overrides( $font_slugs, $config );
-			if ( ! empty( $ff_overrides ) ) {
-				foreach ( $updated_families as &$ff_entry ) {
-					if ( isset( $ff_entry['slug'], $ff_overrides[ $ff_entry['slug'] ] ) ) {
-						$ff_entry['fontFamily'] = $ff_overrides[ $ff_entry['slug'] ];
-					}
-				}
-				unset( $ff_entry );
-			}
-		}
-
-		// Part 2 — force headings onto the Style Guide heading font.
-		$heading_stack = ThemeStyleCompat::get_heading_font_stack( $config );
-
-		$new_data = array(
-			'version'  => 2,
-			'settings' => array(
-				'typography' => array(
-					'fontFamilies' => array(
-						'theme' => $updated_families,
-					),
-				),
-			),
-		);
-
-		if ( '' !== $heading_stack ) {
-			$new_data['styles'] = array(
-				'elements' => array(
-					'heading' => array(
-						'typography' => array(
-							'fontFamily' => $heading_stack,
-						),
-					),
-				),
-			);
-		}
-
-		return $theme_json->update_with( $new_data );
-	}
-
-	/**
-	 * Override the active theme's spacing scale and shadow presets with the Style
-	 * Guide's (Phase C). Opt-in, all themes.
-	 *
-	 *   1. Spacing — remap each theme `spacingSizes` step onto the Style Guide scale
-	 *      (proportional, count/naming-agnostic). Rewriting theme.json makes BOTH the
-	 *      spacing picker and `--wp--preset--spacing--*` adopt the Style Guide.
-	 *   2. Shadow — register the Style Guide shadow presets (adds them to the picker +
-	 *      `--wp--preset--shadow--*`; replaces any the theme defines).
-	 *
-	 * Hooked to wp_theme_json_data_theme at priority 22.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param \WP_Theme_JSON_Data $theme_json The theme JSON data object.
-	 * @return \WP_Theme_JSON_Data Modified theme JSON data.
-	 */
-	public function override_theme_spacing_shadow( $theme_json ) {
-		$do_spacing = ThemeStyleCompat::should_override_spacing();
-		$do_shadow  = ThemeStyleCompat::should_override_shadow();
-
-		if ( ! $do_spacing && ! $do_shadow ) {
-			return $theme_json;
-		}
-
-		$tokens = $this->engine->get_token_registry();
-		if ( null === $tokens ) {
-			return $theme_json;
-		}
-
-		$config       = $this->engine->get_config();
-		$data         = $theme_json->get_data();
-		$new_settings = array();
-
-		// Part 1 — spacing.
-		if ( $do_spacing ) {
-			$sizes = array();
-			if ( isset( $data['settings']['spacing']['spacingSizes']['theme'] ) && is_array( $data['settings']['spacing']['spacingSizes']['theme'] ) ) {
-				$sizes = $data['settings']['spacing']['spacingSizes']['theme'];
-			}
-
-			if ( ! empty( $sizes ) ) {
-				$spacing_slugs = array();
-				foreach ( $sizes as $entry ) {
-					if ( isset( $entry['slug'] ) ) {
-						$spacing_slugs[] = $entry['slug'];
-					}
-				}
-
-				$overrides = ThemeStyleCompat::resolve_spacing_overrides( $spacing_slugs, $tokens );
-				if ( ! empty( $overrides ) ) {
-					foreach ( $sizes as &$size_entry ) {
-						if ( isset( $size_entry['slug'], $overrides[ $size_entry['slug'] ] ) ) {
-							$size_entry['size'] = $overrides[ $size_entry['slug'] ];
-						}
-					}
-					unset( $size_entry );
-
-					$new_settings['spacing'] = array( 'spacingSizes' => array( 'theme' => $sizes ) );
-				}
-			}
-		}
-
-		// Part 2 — shadow.
-		if ( $do_shadow ) {
-			$presets = ThemeStyleCompat::get_shadow_presets( $config );
-			if ( ! empty( $presets ) ) {
-				$new_settings['shadow'] = array( 'presets' => array( 'theme' => $presets ) );
-			}
-		}
-
-		if ( empty( $new_settings ) ) {
-			return $theme_json;
-		}
-
-		return $theme_json->update_with(
-			array(
-				'version'  => 2,
-				'settings' => $new_settings,
-			)
-		);
-	}
-
-	/**
-	 * A5 — self-heal the user global-styles REST entity the block editor loads.
-	 *
-	 * The editor hydrates global styles via `getEntityRecord('root','globalStyles')`
-	 * → `GET /wp/v2/global-styles/{id}`, whose controller returns the stored
-	 * `settings`/`styles` VERBATIM — it never runs the `wp_theme_json_data_*` filters,
-	 * so `maybe_override_managed_user_palette()` (and the theme-layer palette/typography
-	 * overrides) don't reach it. A stale or imported palette / font pin stored in that
-	 * record therefore shadows the Style Guide values in the editor (the post-698 bug).
-	 *
-	 * We strip the managed presets from the RESPONSE (not the stored post), so the
-	 * editor falls back to the theme layer — which the Style Guide already controls.
-	 * Non-destructive and self-healing for future imports; retires the manual scrub.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed                $response The REST response (WP_REST_Response|WP_Error|mixed).
-	 * @param array<string, mixed> $handler  The matched route handler (unused).
-	 * @param \WP_REST_Request     $request  The request.
-	 * @return mixed The (possibly modified) response.
-	 */
-	public function heal_global_styles_entity( $response, $handler, $request ) {
-		unset( $handler );
-
-		if ( ! ( $response instanceof \WP_REST_Response ) || ! ( $request instanceof \WP_REST_Request ) ) {
-			return $response;
-		}
-		if ( 'GET' !== $request->get_method() ) {
-			return $response;
-		}
-		// The USER global-styles entity: /wp/v2/global-styles/{id}. Exclude the theme
-		// defaults route (/global-styles/themes/{stylesheet}).
-		if ( ! preg_match( '#/global-styles/\d+$#', (string) $request->get_route() ) ) {
-			return $response;
-		}
-
-		$data = $response->get_data();
-		if ( ! is_array( $data ) ) {
-			return $response;
-		}
-
-		$changed = false;
-
-		// Colour is owned by the Style Guide (theme layer) on every theme — drop any
-		// stored palette so a stale/imported one can't shadow it in the editor.
-		// Core returns `settings` as an empty stdClass when the record has none
-		// (fresh site / non-user theme.json); guard the type first — isset() on an
-		// object's array-access still fatals in PHP 8.
-		if ( is_array( $data['settings'] ?? null ) && isset( $data['settings']['color']['palette'] ) ) {
-			unset( $data['settings']['color']['palette'] );
-			$changed = true;
-		}
-
-		// Typography: when the override is on, drop stored font-family pins so the
-		// theme-layer Style Guide fonts apply.
-		if ( ThemeStyleCompat::should_override_typography() && is_array( $data['settings'] ?? null ) ) {
-			if ( isset( $data['settings']['typography']['fontFamilies'] ) ) {
-				unset( $data['settings']['typography']['fontFamilies'] );
-				$changed = true;
-			}
-			if ( isset( $data['styles'] ) && is_array( $data['styles'] ) ) {
-				$stripped = $this->strip_font_family_pins( $data['styles'] );
-				if ( $stripped !== $data['styles'] ) {
-					$data['styles'] = $stripped;
-					$changed        = true;
-				}
-			}
-		}
-
-		if ( $changed ) {
-			$response->set_data( $data );
-		}
-
-		return $response;
-	}
-
-	/**
-	 * Recursively remove `fontFamily` keys from a styles tree (typography pins),
-	 * leaving other typography (size/weight/line-height) intact.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array<string, mixed> $styles A styles (sub)tree.
-	 * @return array<string, mixed> The styles tree without fontFamily pins.
-	 */
-	private function strip_font_family_pins( array $styles ): array {
-		foreach ( $styles as $key => $value ) {
-			if ( 'fontFamily' === $key ) {
-				unset( $styles[ $key ] );
-				continue;
-			}
-			if ( is_array( $value ) ) {
-				$styles[ $key ] = $this->strip_font_family_pins( $value );
-			}
-		}
-		return $styles;
 	}
 
 	/**
@@ -659,8 +452,118 @@ class GlobalStylesBridge {
 			? (array) $data['settings']['color']['palette']['theme']
 			: array();
 
-		if ( empty( $palette ) ) {
+		$updated = $this->overlay_managed_palette( $palette );
+		if ( null === $updated ) {
 			return $theme_json;
+		}
+
+		return $theme_json->update_with(
+			array(
+				'version'  => 2,
+				'settings' => array(
+					'color' => array(
+						'palette' => array(
+							'theme' => $updated,
+						),
+					),
+				),
+			)
+		);
+	}
+
+	/**
+	 * The active theme's OWN palette as picker entries (slug/color/name), read from
+	 * the effective colour store — Astra's `astra-settings` slots on Astra, the FSE
+	 * user/theme global-styles palette on a block theme.
+	 *
+	 * Used to seed an empty user-layer palette in {@see overlay_managed_palette} so
+	 * the theme's swatches survive before the Style Guide colours are added. Only
+	 * ever called from that method, i.e. after the Pro + saved-guide gate — Style
+	 * Guide colours are therefore never injected while Pro is inactive.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array<int, array<string, string>> Palette entries (empty when none).
+	 */
+	private function seed_palette_from_theme(): array {
+		// Display names must come from the theme's OWN palette definition — Astra's
+		// "Brand" / "Alternate Brand" / …, a block theme's "Primary" / … — NOT the
+		// slug-derived label (which would render Astra's slots as "Ast Global Color 0").
+		// The resolver carries the correct names (with `var(--…)` colours); the adapter
+		// carries the resolved hex. Combine: name from the resolver, colour from the
+		// adapter, falling back to the slug label only when the theme names none.
+		$names = array();
+		if ( class_exists( '\WP_Theme_JSON_Resolver' ) ) {
+			$settings      = \WP_Theme_JSON_Resolver::get_theme_data()->get_settings();
+			$theme_palette = ( isset( $settings['color']['palette']['theme'] ) && is_array( $settings['color']['palette']['theme'] ) ) ? $settings['color']['palette']['theme'] : array();
+			foreach ( $theme_palette as $entry ) {
+				if ( is_array( $entry ) && isset( $entry['slug'], $entry['name'] ) && is_string( $entry['slug'] ) && is_string( $entry['name'] ) ) {
+					$names[ $entry['slug'] ] = $entry['name'];
+				}
+			}
+		}
+
+		$adapters = array(
+			new Sync\Astra\AstraPaletteAdapter(),
+			new Sync\FseGlobalStylesAdapter(),
+		);
+		foreach ( $adapters as $adapter ) {
+			if ( ! $adapter->is_supported() ) {
+				continue;
+			}
+			$out = array();
+			foreach ( $adapter->read() as $slug => $hex ) {
+				if ( is_string( $slug ) && '' !== $slug && is_string( $hex ) && '' !== $hex ) {
+					$out[] = array(
+						'slug'  => $slug,
+						'color' => $hex,
+						'name'  => $names[ $slug ] ?? TokenRegistry::format_slug_label( $slug ),
+					);
+				}
+			}
+			return $out;
+		}
+		return array();
+	}
+
+	/**
+	 * Overlay the Spectra-managed colours onto a user-layer `theme` palette.
+	 *
+	 * Recolours every managed slug already present to its CURRENT computed value
+	 * and appends managed slugs that are missing, so the user layer stays a
+	 * superset of the managed set (status colours, sg-*, newly added roles).
+	 * Shared by the server-side user-layer filter
+	 * ({@see maybe_override_managed_user_palette}) and the REST response overlay
+	 * ({@see overlay_rest_user_global_styles}) so both render paths agree.
+	 *
+	 * Style Guide colours are added ONLY when Pro is active (the guard below).
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<int, array<string, string>> $palette User-layer `theme` palette entries.
+	 * @return array<int, array<string, string>>|null Updated palette, or null when
+	 *                                                gated off / empty / unchanged.
+	 */
+	private function overlay_managed_palette( array $palette ) {
+		// Rendering the Style Guide palette is a Pro capability, and only once a Style
+		// Guide is saved (an unsaved site keeps its own colours). Gating here Pro-gates
+		// BOTH runtime overlays that call this — the server-side user-layer filter
+		// (maybe_override_managed_user_palette) and the REST picker overlay — so the
+		// Style Guide colours inject at runtime only when Pro is active.
+		if ( ! Core::is_pro_active() || ! $this->engine->has_saved_style_guide() ) {
+			return null;
+		}
+
+		// When nothing has been saved in the Site Editor the user-layer palette is
+		// empty. WP MERGES global styles by REPLACING the theme palette with the user
+		// palette, so injecting the Style Guide colours onto an empty user layer would
+		// wipe the theme's own swatches. Seed from the active theme's resolved palette
+		// first, so the theme's colours survive and the SG colours are ADDED to them.
+		if ( empty( $palette ) ) {
+			$palette = $this->seed_palette_from_theme();
+			if ( empty( $palette ) ) {
+				return null;
+			}
 		}
 
 		// Build slug → current Spectra colour, mirroring inject_palette(): the
@@ -669,7 +572,7 @@ class GlobalStylesBridge {
 		$this->engine->maybe_compute();
 		$tokens = $this->engine->get_token_registry();
 		if ( null === $tokens ) {
-			return $theme_json;
+			return null;
 		}
 
 		$managed = array();
@@ -694,7 +597,7 @@ class GlobalStylesBridge {
 		}
 
 		if ( empty( $managed ) ) {
-			return $theme_json;
+			return null;
 		}
 
 		$changed = false;
@@ -710,7 +613,10 @@ class GlobalStylesBridge {
 		// The user layer shadows the theme layer, so newly introduced roles/shades
 		// (status colours, added chromatics) would never surface if we only recolour
 		// existing entries. Appending keeps the user palette a superset of the managed
-		// set, generically — no per-slug special-casing.
+		// set, generically — no per-slug special-casing. This includes the sg-*
+		// aliases: the SERVER-side merge derives the .has-sg-*-color preset rules
+		// from this palette, so they must stay. The picker never shows them — the
+		// REST and editor-settings strips remove them from every picker surface.
 		$existing_slugs = array();
 		foreach ( $palette as $entry ) {
 			if ( isset( $entry['slug'] ) ) {
@@ -728,22 +634,347 @@ class GlobalStylesBridge {
 			}
 		}
 
-		if ( ! $changed ) {
-			return $theme_json;
+		// Order the theme's OWN palette (in theme.json order) first, then the
+		// Spectra-added colours the theme lacks (accent, status, custom, sg-*). The
+		// recolour/append above leaves the theme's trailing extras (e.g. Spectra
+		// One's tertiary/quaternary) ahead of the appended core roles, scrambling
+		// the Site Editor picker into "tertiary, quaternary, …, primary, secondary".
+		// Reordering restores "theme colours first, Style Guide colours after".
+		$ordered = $this->order_palette_theme_first( $palette );
+		if ( $ordered !== $palette ) {
+			$palette = $ordered;
+			$changed = true;
 		}
 
-		return $theme_json->update_with(
-			array(
-				'version'  => 2,
-				'settings' => array(
-					'color' => array(
-						'palette' => array(
-							'theme' => $palette,
-						),
-					),
-				),
-			)
+		return $changed ? $palette : null;
+	}
+
+	/**
+	 * Reorder a palette so the active theme's own slugs (in theme.json order) come
+	 * first, then every other (Spectra-added) entry in its existing relative order.
+	 *
+	 * A stable sort keyed on each slug's theme.json index; slugs absent from
+	 * theme.json (accent, status colours, custom colours, sg-* aliases) sort last.
+	 * Themes with no readable theme.json palette (e.g. Astra) yield an empty order
+	 * and the palette is returned unchanged.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<int, array<string, string>> $palette Palette entries.
+	 * @return array<int, array<string, string>> Reordered palette.
+	 */
+	private function order_palette_theme_first( array $palette ): array {
+		$order = $this->theme_palette_slug_order();
+		if ( empty( $order ) ) {
+			return $palette;
+		}
+		$rank = array_flip( $order );
+
+		$indexed = array();
+		foreach ( $palette as $i => $entry ) {
+			$slug      = isset( $entry['slug'] ) ? (string) $entry['slug'] : '';
+			$indexed[] = array(
+				'entry' => $entry,
+				'theme' => isset( $rank[ $slug ] ) ? $rank[ $slug ] : PHP_INT_MAX,
+				'orig'  => $i,
+			);
+		}
+
+		usort(
+			$indexed,
+			static function ( $a, $b ) {
+				return ( $a['theme'] !== $b['theme'] ) ? ( $a['theme'] <=> $b['theme'] ) : ( $a['orig'] <=> $b['orig'] );
+			}
 		);
+
+		return array_map(
+			static function ( $x ) {
+				return $x['entry'];
+			},
+			$indexed
+		);
+	}
+
+	/**
+	 * The active theme's palette slugs in theme.json declaration order.
+	 *
+	 * Read from the RAW theme.json files (parent then child; child-only slugs
+	 * appended) rather than the resolver, so the Style Guide's own runtime palette
+	 * filters can't perturb the order. Statically cached per request.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return array<int, string> Ordered slugs (empty when the theme declares none).
+	 */
+	private function theme_palette_slug_order(): array {
+		static $cache = null;
+		if ( null !== $cache ) {
+			return $cache;
+		}
+
+		$order = array();
+		$dirs  = array_unique( array( get_template_directory(), get_stylesheet_directory() ) );
+		foreach ( $dirs as $dir ) {
+			$file = $dir . '/theme.json';
+			if ( ! is_readable( $file ) ) {
+				continue;
+			}
+			$data = wp_json_file_decode( $file, array( 'associative' => true ) );
+			if ( ! is_array( $data ) ) {
+				continue;
+			}
+			$settings = ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) ? $data['settings'] : array();
+			$color    = ( isset( $settings['color'] ) && is_array( $settings['color'] ) ) ? $settings['color'] : array();
+			$palette  = ( isset( $color['palette'] ) && is_array( $color['palette'] ) ) ? $color['palette'] : array();
+			foreach ( $palette as $entry ) {
+				if ( is_array( $entry ) && isset( $entry['slug'] ) && is_string( $entry['slug'] ) && ! in_array( $entry['slug'], $order, true ) ) {
+					$order[] = $entry['slug'];
+				}
+			}
+		}
+
+		$cache = $order;
+		return $cache;
+	}
+
+	/**
+	 * Apply the managed-palette overlay to the REST user global-styles response.
+	 *
+	 * The block editor does NOT use the server-merged theme.json: it fetches the
+	 * theme layer (`/wp/v2/global-styles/themes/{stylesheet}`, which our
+	 * `wp_theme_json_data_theme` filters cover) and the USER entity
+	 * (`/wp/v2/global-styles/{id}`) separately, then merges them CLIENT-SIDE —
+	 * and the user entity is served from the raw post content, so
+	 * `wp_theme_json_data_user` never touches it. A pushed `palette.theme` in the
+	 * user post therefore wholesale-replaces the runtime theme palette in the
+	 * editor's merge: the picker loses the runtime-only swatches (status colours,
+	 * sg-*) and shows stale colours for derived roles (e.g. `foreground`).
+	 *
+	 * WP core applies no `rest_prepare_wp_global_styles` filter (checked on 7.0), so
+	 * this hooks `rest_request_after_callbacks`, which fires inside dispatch() for
+	 * BOTH the editor's preloaded request (`rest_do_request` via
+	 * rest_preload_api_request) and a live REST call — unlike `rest_post_dispatch`,
+	 * which is skipped during preload, leaving the picker empty until a manual save.
+	 * Applies the same overlay the server-side render path gets from
+	 * {@see maybe_override_managed_user_palette}. Runtime only: the stored post is
+	 * untouched.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param \WP_HTTP_Response|\WP_Error $result  Result to send to the client.
+	 * @param array|mixed                 $handler Route handler (unused).
+	 * @param \WP_REST_Request            $request Request used to generate the response.
+	 * @return \WP_HTTP_Response|\WP_Error
+	 */
+	public function overlay_rest_user_global_styles( $result, $handler, $request ) {
+		unset( $handler );
+
+		// Style Guide swatches in the editor pickers are a Pro capability
+		// (mirrors inject_palette). Without Pro this overlay must not run: the
+		// editor's CLIENT-SIDE entity merge bypasses block_editor_settings_all,
+		// so remove_style_guide_swatches_when_pro_inactive() can't strip what
+		// gets appended here — the managed swatches would leak into the picker
+		// (seen on Astra with Pro deactivated).
+		if ( ! Core::is_pro_active() ) {
+			return $result;
+		}
+
+		// Only the single user global-styles entity route (`/wp/v2/global-styles/<id>`);
+		// the `/themes/…` and `/revisions` variants are already covered or read-only.
+		if ( ! $result instanceof \WP_REST_Response || ! preg_match( '#^/wp/v2/global-styles/\d+$#', (string) $request->get_route() ) ) {
+			return $result;
+		}
+
+		$data = $result->get_data();
+		if ( ! is_array( $data ) ) {
+			return $result;
+		}
+
+		// Descend one level at a time with an is_array guard at each step: WP
+		// serializes an EMPTY settings/color/palette as a stdClass (`{}`, not `[]`),
+		// so a chained `$data['settings']['color']…` array access would fatal
+		// ("Cannot use object of type stdClass as array") on a theme whose user
+		// global-styles entity has no saved palette yet (seen on a fresh Astra).
+		$settings = ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) ? $data['settings'] : null;
+		$color    = ( null !== $settings && isset( $settings['color'] ) && is_array( $settings['color'] ) ) ? $settings['color'] : null;
+		$palette  = ( null !== $color && isset( $color['palette'] ) && is_array( $color['palette'] ) ) ? $color['palette'] : null;
+		// A fresh user entity has NO palette node at all (empty envelope). Treat that
+		// as an empty palette rather than bailing, so overlay_managed_palette() still
+		// runs and SEEDS the theme's colours + injects the Style Guide swatches — else
+		// nothing Spectra shows in the picker until the user saves global styles once.
+		$theme = ( null !== $palette && isset( $palette['theme'] ) && is_array( $palette['theme'] ) ) ? $palette['theme'] : array();
+
+		$updated = $this->overlay_managed_palette( $theme );
+		if ( null !== $updated ) {
+			// Rebuild the nested structure as arrays — an empty envelope serialises
+			// settings/color/palette as stdClass (or omits them), so casting preserves
+			// any sibling settings (typography, etc.) while adding the palette.
+			$settings_arr          = isset( $data['settings'] ) ? (array) $data['settings'] : array();
+			$color_arr             = isset( $settings_arr['color'] ) ? (array) $settings_arr['color'] : array();
+			$palette_arr           = isset( $color_arr['palette'] ) ? (array) $color_arr['palette'] : array();
+			$palette_arr['theme']  = $updated;
+			$color_arr['palette']  = $palette_arr;
+			$settings_arr['color'] = $color_arr;
+			$data['settings']      = $settings_arr;
+			$result->set_data( $data );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Strip sg-* alias swatches from the global-styles REST responses.
+	 *
+	 * The sg-* slugs are render-time compat aliases (the Astra
+	 * ast-global-color-N rewrite and legacy Style Guide content), not pickable
+	 * roles: every one duplicates a semantic swatch under a second name, so on
+	 * Astra the picker showed each colour up to three times ("Text" +
+	 * "Body" + "Body (sg-body)"). They must STAY in the server-side theme.json
+	 * palette — core derives the .has-sg-*-color preset rules from it — but the
+	 * editor picker builds its palette from the global-styles REST entities
+	 * merged client-side, so stripping them HERE removes the duplicate swatches
+	 * without touching the render path.
+	 *
+	 * Covers both entities the client merge reads: the theme variant
+	 * (`/wp/v2/global-styles/themes/{stylesheet}`) and the user entity
+	 * (`/wp/v2/global-styles/<id>`). Hooked to `rest_request_after_callbacks` (like
+	 * the overlay) so it also covers the editor's preloaded request, and runs after
+	 * the managed-palette overlay.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param \WP_HTTP_Response|\WP_Error $result  Result to send to the client.
+	 * @param array|mixed                 $handler Route handler (unused).
+	 * @param \WP_REST_Request            $request Request used to generate the response.
+	 * @return \WP_HTTP_Response|\WP_Error
+	 */
+	public function strip_sg_alias_swatches_from_rest( $result, $handler, $request ) {
+		unset( $handler );
+
+		$route = (string) $request->get_route();
+		if ( ! $result instanceof \WP_REST_Response
+			|| ! preg_match( '#^/wp/v2/global-styles/(\d+|themes/[^/]+)$#', $route ) ) {
+			return $result;
+		}
+
+		$data = $result->get_data();
+		if ( ! is_array( $data ) ) {
+			return $result;
+		}
+
+		// stdClass-safe descent (empty nodes serialize as `{}` — see the overlay).
+		$settings = ( isset( $data['settings'] ) && is_array( $data['settings'] ) ) ? $data['settings'] : null;
+		$color    = ( null !== $settings && isset( $settings['color'] ) && is_array( $settings['color'] ) ) ? $settings['color'] : null;
+		$palette  = ( null !== $color && isset( $color['palette'] ) && is_array( $color['palette'] ) ) ? $color['palette'] : null;
+		$theme    = ( null !== $palette && isset( $palette['theme'] ) && is_array( $palette['theme'] ) ) ? $palette['theme'] : null;
+		if ( null === $theme ) {
+			return $result;
+		}
+
+		$stripped = $this->strip_picker_duplicate_entries( $theme );
+
+		if ( null !== $stripped ) {
+			$data['settings']['color']['palette']['theme'] = $stripped;
+			$result->set_data( $data );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Remove non-pickable duplicates from a picker-facing palette list.
+	 *
+	 * Two rules, applied to PICKER surfaces only (the render-path palette is
+	 * never filtered — it is what core derives the preset vars/classes from):
+	 *  1. sg-* alias slugs — render-time compat aliases, never pickable roles;
+	 *     each duplicates a semantic swatch under a second name.
+	 *  2. Same-COLOUR duplicates — when a synced colour appears under BOTH the
+	 *     theme's own slug and a Spectra-injected slug (e.g. Astra's
+	 *     `ast-global-color-0` "Brand" and the Style Guide's `primary`, sharing
+	 *     one hex), the THEME's swatch is kept and the Spectra duplicate is
+	 *     dropped — the mapped colour "merges into" the theme swatch. Names differ
+	 *     ("Brand" vs "Primary"), so a name match can't catch these; the theme slug
+	 *     is identified from theme.json. Colours with no theme-native counterpart
+	 *     (accent, status, foreground, custom vars) are unique and always kept, and
+	 *     non-hex values (`var(--…)`, `transparent`) are never deduped.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<int, mixed> $palette Palette entries (from decoded REST/theme.json data).
+	 * @return array<int, mixed>|null Filtered entries, or null when unchanged.
+	 */
+	private function strip_picker_duplicate_entries( array $palette ) {
+		$theme_native = array();
+		foreach ( $this->theme_palette_slug_order() as $native_slug ) {
+			$theme_native[ $native_slug ] = true;
+		}
+
+		// The colours the theme's OWN palette occupies. A Spectra-injected swatch
+		// sharing one of these is the mapped/synced duplicate (e.g. Astra's
+		// `ast-global-color-0` vs `primary`) and is dropped. Collected up front so a
+		// theme colour that appears LATER in the list still shields an earlier Spectra
+		// entry from it.
+		$theme_colors = array();
+		foreach ( $palette as $entry ) {
+			if ( is_array( $entry ) && isset( $entry['slug'], $entry['color'] ) && is_string( $entry['slug'] ) && isset( $theme_native[ $entry['slug'] ] ) ) {
+				$hex = $this->normalize_hex_key( (string) $entry['color'] );
+				if ( '' !== $hex ) {
+					$theme_colors[ $hex ] = true;
+				}
+			}
+		}
+
+		$kept = array();
+		foreach ( $palette as $entry ) {
+			$slug = ( is_array( $entry ) && isset( $entry['slug'] ) && is_string( $entry['slug'] ) ) ? $entry['slug'] : '';
+
+			// Rule 1: drop sg-* aliases outright.
+			if ( '' !== $slug && 0 === strpos( $slug, 'sg-' ) ) {
+				continue;
+			}
+
+			// Rule 2: NEVER drop the theme's OWN colours. Every theme.json role stays —
+			// including two distinct roles that happen to share a hex (e.g. `heading`
+			// and `foreground` both resolving dark), which the old colour-only dedup
+			// wrongly collapsed into one, losing the second role's swatch.
+			if ( isset( $theme_native[ $slug ] ) ) {
+				$kept[] = $entry;
+				continue;
+			}
+
+			// Rule 3: drop a Spectra-injected swatch ONLY when it duplicates a THEME
+			// colour (the mapped/synced case). Spectra colours the theme has no
+			// counterpart for (accent, status, custom) are unique and always kept;
+			// non-hex values carry no comparable colour and pass through.
+			$hex = ( is_array( $entry ) && isset( $entry['color'] ) ) ? $this->normalize_hex_key( (string) $entry['color'] ) : '';
+			if ( '' !== $hex && isset( $theme_colors[ $hex ] ) ) {
+				continue;
+			}
+
+			$kept[] = $entry;
+		}
+
+		return count( $kept ) !== count( $palette ) ? array_values( $kept ) : null;
+	}
+
+	/**
+	 * Normalise a colour string to a comparable `#rrggbb` key, or '' when it is not
+	 * a plain hex (CSS `var(--…)`, `transparent`, `currentColor`, empty).
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $color Raw colour value.
+	 * @return string Lower-case `#rrggbb`, or '' when not a comparable hex.
+	 */
+	private function normalize_hex_key( string $color ): string {
+		$color = strtolower( trim( $color ) );
+		if ( 1 === preg_match( '/^#([0-9a-f]{6})$/', $color ) ) {
+			return $color;
+		}
+		if ( 1 === preg_match( '/^#([0-9a-f])([0-9a-f])([0-9a-f])$/', $color, $m ) ) {
+			return '#' . $m[1] . $m[1] . $m[2] . $m[2] . $m[3] . $m[3];
+		}
+		return '';
 	}
 
 	/**
@@ -807,43 +1038,10 @@ class GlobalStylesBridge {
 			$css = str_replace( "\n}\n", "\n" . $sg_css . "\n}\n", $css );
 		}
 
-		// Inject shadow / spacing / font-family WP preset vars (bypasses the user
-		// layer the same way, guaranteeing the era-contract vars resolve).
-		$extra_css = $this->get_sg_extra_preset_css();
-		if ( ! empty( $extra_css ) ) {
-			$css = str_replace( "\n}\n", "\n" . $extra_css . "\n}\n", $css );
-		}
-
 		// Register a dummy handle and add inline CSS.
 		wp_register_style( 'spectra-style-guide-tokens', false, array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'spectra-style-guide-tokens' );
 		wp_add_inline_style( 'spectra-style-guide-tokens', $css );
-
-		// Scheme variable mapping CSS — maps each [data-spectra-scheme="key"]
-		// to its 5 CSS custom properties. Must come before scheme-override.css
-		// which consumes these variables.
-		$scheme_css = $tokens->get_scheme_css();
-		if ( ! empty( $scheme_css ) ) {
-			wp_add_inline_style( 'spectra-style-guide-tokens', $scheme_css );
-		}
-
-		// Self-hosted @font-face fallback: ensures selected fonts render on the frontend
-		// even before WordPress generates @font-face CSS from the saved Global Styles entity.
-		$font_face_css = $this->get_font_face_css( $this->get_active_font_slugs() );
-		if ( ! empty( $font_face_css ) ) {
-			wp_add_inline_style( 'spectra-style-guide-tokens', $font_face_css );
-		}
-
-		// Also enqueue the scheme override CSS if it exists.
-		$scheme_css_path = SPECTRA_BLOCKS_DIR . 'assets/css/scheme-override.css';
-		if ( file_exists( $scheme_css_path ) ) {
-			wp_enqueue_style(
-				'spectra-scheme-override',
-				SPECTRA_BLOCKS_URL . 'assets/css/scheme-override.css',
-				array( 'spectra-style-guide-tokens' ),
-				SPECTRA_BLOCKS_VER
-			);
-		}
 
 		// Component token CSS — styles sg-card, sg-btn-primary, etc. using tokens.
 		$component_css_path = SPECTRA_BLOCKS_DIR . 'assets/css/component-tokens.css';
@@ -855,6 +1053,29 @@ class GlobalStylesBridge {
 				SPECTRA_BLOCKS_VER
 			);
 		}
+	}
+
+	/**
+	 * Print the queried page's OWN palette ({@see Engine::page_config()}) as a
+	 * `:root` block overriding the site's preset vars, for this page only.
+	 *
+	 * `wp_head` priority 100, NOT `enqueue_frontend_css`: the two `:root` blocks tie
+	 * on specificity so source order decides, and core prints
+	 * `global-styles-inline-css` AFTER our token stylesheet (measured on a real page
+	 * at byte 41233 vs ours at 27979) — the site won and this did nothing.
+	 *
+	 * @since x.x.x
+	 * @return void
+	 */
+	public function print_page_palette(): void {
+		$css = $this->engine->page_preset_css();
+		if ( '' === $css ) {
+			return;
+		}
+		printf(
+			"<style id='spectra-page-palette'>%s</style>\n",
+			$css // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- slug + hex, sanitized in page_preset_css().
+		);
 	}
 
 	/**
@@ -888,42 +1109,12 @@ class GlobalStylesBridge {
 			$css = str_replace( "\n}\n", "\n" . $sg_css . "\n}\n", $css );
 		}
 
-		// Inject shadow / spacing / font-family WP preset vars.
-		$extra_css = $this->get_sg_extra_preset_css();
-		if ( ! empty( $extra_css ) ) {
-			$css = str_replace( "\n}\n", "\n" . $extra_css . "\n}\n", $css );
-		}
-
 		// Wrap for editor iframe scope.
 		$editor_css = $css;
 
 		wp_register_style( 'spectra-style-guide-tokens-editor', false, array(), SPECTRA_BLOCKS_VER );
 		wp_enqueue_style( 'spectra-style-guide-tokens-editor' );
 		wp_add_inline_style( 'spectra-style-guide-tokens-editor', $editor_css );
-
-		// Scheme variable mapping CSS for editor.
-		$scheme_css = $tokens->get_scheme_css();
-		if ( ! empty( $scheme_css ) ) {
-			wp_add_inline_style( 'spectra-style-guide-tokens-editor', $scheme_css );
-		}
-
-		// Self-hosted @font-face in the editor: ensures selected fonts render in the
-		// block editor even before WordPress regenerates @font-face CSS from Global Styles.
-		$font_face_css = $this->get_font_face_css( $this->get_active_font_slugs() );
-		if ( ! empty( $font_face_css ) ) {
-			wp_add_inline_style( 'spectra-style-guide-tokens-editor', $font_face_css );
-		}
-
-		// Scheme override CSS in editor.
-		$scheme_css_path = SPECTRA_BLOCKS_DIR . 'assets/css/scheme-override.css';
-		if ( file_exists( $scheme_css_path ) ) {
-			wp_enqueue_style(
-				'spectra-scheme-override-editor',
-				SPECTRA_BLOCKS_URL . 'assets/css/scheme-override.css',
-				array( 'spectra-style-guide-tokens-editor' ),
-				SPECTRA_BLOCKS_VER
-			);
-		}
 
 		// Component token CSS in editor.
 		$component_css_path = SPECTRA_BLOCKS_DIR . 'assets/css/component-tokens.css';
@@ -1015,25 +1206,38 @@ class GlobalStylesBridge {
 		$semantic_map = isset( $config['semantic_map'] ) && is_array( $config['semantic_map'] ) ? $config['semantic_map'] : array();
 		$overrides    = $this->get_semantic_overrides();
 
-		// The set of sg-* slugs to emit = every sg-* in the map, plus any sg-*
-		// that only exists as an explicit override (import-pinned, not in the map).
-		$sg_slugs = array();
+		// Which managed slugs to emit as inline `--wp--preset--color--*` vars.
+		//
+		// Always: the sg-* aliases (Spectra-only slugs the theme never defines).
+		//
+		// Additionally, in FREE mode with a saved Style Guide: the full SEMANTIC
+		// palette (primary, secondary, heading, …). Those normally reach the front
+		// end via inject_palette() → theme.json, but that is Pro-gated — so without
+		// Pro the semantic `--wp--preset--color--*` vars were missing and any content
+		// bound to them (e.g. a Spectra block whose Astra slug was rewritten to
+		// `primary`) rendered with no colour. Emitting them here as inline :root vars
+		// is the free fallback: it defines the variables WITHOUT adding any picker
+		// swatch. Gated on a saved guide so an untouched site is never restyled, and
+		// skipped when Pro is active since inject_palette() already covers them.
+		$emit_semantic = ! Core::is_pro_active() && $this->engine->has_saved_style_guide();
+
+		$emit_slugs = array();
 		foreach ( array_keys( $semantic_map ) as $slug ) {
-			if ( 0 === strpos( $slug, 'sg-' ) ) {
-				$sg_slugs[ $slug ] = true;
+			if ( $emit_semantic || 0 === strpos( $slug, 'sg-' ) ) {
+				$emit_slugs[ $slug ] = true;
 			}
 		}
 		foreach ( array_keys( $overrides ) as $slug ) {
-			if ( 0 === strpos( $slug, 'sg-' ) ) {
-				$sg_slugs[ $slug ] = true;
+			if ( $emit_semantic || 0 === strpos( $slug, 'sg-' ) ) {
+				$emit_slugs[ $slug ] = true;
 			}
 		}
 
 		$lines   = array();
 		$lines[] = '';
-		$lines[] = "\t/* sg-* WP preset color aliases */";
+		$lines[] = "\t/* Style Guide WP preset color vars */";
 
-		foreach ( array_keys( $sg_slugs ) as $slug ) {
+		foreach ( array_keys( $emit_slugs ) as $slug ) {
 			// Explicit override wins over the shade-derived value (mirrors
 			// inject_palette); fall back to the semantic_map shade token.
 			$hex = isset( $overrides[ $slug ] )
@@ -1050,144 +1254,6 @@ class GlobalStylesBridge {
 		}
 
 		return count( $lines ) > 2 ? implode( "\n", $lines ) : '';
-	}
-
-	/**
-	 * Emit shadow, spacing (gutter) and font-family WP preset variables on :root.
-	 *
-	 * The Style Guide owns colours in theme.json, but the theme supplies (and the
-	 * user layer shadows) the type / spacing / shadow scales. These era-contract
-	 * vars otherwise have no reliable producer, so we emit them directly on :root —
-	 * the same cascade-wins mechanism used for the sg-* colour aliases.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string CSS custom-property lines, or '' when nothing to emit.
-	 */
-	private function get_sg_extra_preset_css() {
-		$tokens = $this->engine->get_token_registry();
-		if ( null === $tokens ) {
-			return '';
-		}
-
-		$config  = $this->engine->get_config();
-		$presets = isset( $config['presets'] ) && is_array( $config['presets'] ) ? $config['presets'] : array();
-		$lines   = array();
-
-		// Shadow presets (8), driven by shadowDepth.
-		$depth = isset( $presets['shadowDepth'] ) ? (string) $presets['shadowDepth'] : 'subtle';
-		foreach ( TokenRegistry::get_era_shadow_presets( $depth ) as $name => $value ) {
-			$lines[] = sprintf( "\t--wp--preset--shadow--%s: %s;", sanitize_key( $name ), $value );
-		}
-
-		// Spacing: gutter (density-scaled, mirrors the space-sm step).
-		$gutter = $tokens->get( 'space-sm' );
-		if ( null === $gutter || '' === $gutter ) {
-			$gutter = '1.5rem';
-		}
-		$lines[] = sprintf( "\t--wp--preset--spacing--gutter: %s;", (string) $gutter );
-
-		// Spacing scale: only override the theme's tuned scale when the user has
-		// picked a NON-default density, so default sites render unchanged. The base
-		// mirrors the era-contract spacing fallbacks; the density factor scales it.
-		$density = isset( $presets['spacingDensity'] ) ? (string) $presets['spacingDensity'] : 'default';
-		if ( 'default' !== $density ) {
-			// Reuse the SSOT density multipliers so preset spacing can't diverge
-			// from the --spectra-space-* tokens register_ui_tokens() scales.
-			$factor    = TokenRegistry::get_spacing_multiplier( $density );
-			$era_space = array(
-				'xxx-small' => 0.25,
-				'xx-small'  => 0.5,
-				'x-small'   => 1.0,
-				'small'     => 1.5,
-				'medium'    => 2.0,
-				'large'     => 3.0,
-				'x-large'   => 4.0,
-				'xx-large'  => 6.0,
-			);
-			foreach ( $era_space as $slug => $base ) {
-				$lines[] = sprintf( "\t--wp--preset--spacing--%s: %srem;", sanitize_key( $slug ), $this->format_number( $base * $factor ) );
-			}
-		}
-
-		// Font-size scale: only override the theme's tuned scale when the user has
-		// picked a NON-regular type scale (the Style Guide "Size" control writes
-		// typography.typeScale), so default sites render unchanged. Base values
-		// mirror the era-contract font-size fallbacks; the factor multiplies them.
-		$typography = isset( $config['typography'] ) && is_array( $config['typography'] ) ? $config['typography'] : array();
-		$type_scale = ( isset( $typography['typeScale'] ) && is_string( $typography['typeScale'] ) ) ? $typography['typeScale'] : 'regular';
-		if ( 'regular' !== $type_scale && 'default' !== $type_scale ) {
-			$type_factors = array(
-				'small' => 0.85,
-				'large' => 1.2,
-			);
-			$tf           = isset( $type_factors[ $type_scale ] ) ? $type_factors[ $type_scale ] : 1.0;
-			$tf_str       = $this->format_number( $tf );
-			$era_type     = array(
-				'x-small'    => 'clamp(12px, 1.5vw, 14px)',
-				'small'      => 'clamp(14px, 1.6vw, 16px)',
-				'medium'     => 'clamp(16px, 1.8vw, 18px)',
-				'large'      => 'clamp(20px, 2.2vw, 22px)',
-				'x-large'    => 'clamp(24px, 3vw, 28px)',
-				'xx-large'   => 'clamp(28px, 3.6vw, 36px)',
-				'xxx-large'  => 'clamp(32px, 3.6vw, 44px)',
-				'xxxx-large' => 'clamp(40px, 6.6vw, 56px)',
-			);
-			foreach ( $era_type as $slug => $clamp ) {
-				$lines[] = sprintf( "\t--wp--preset--font-size--%s: calc(%s * %s);", sanitize_key( $slug ), $clamp, $tf_str );
-			}
-		}
-
-		// Font families: body + display from the typography pairing ($typography
-		// resolved above).
-		$body_stack = $this->build_font_stack( isset( $typography['body'] ) ? $typography['body'] : array() );
-		$disp_stack = $this->build_font_stack( isset( $typography['heading'] ) ? $typography['heading'] : array() );
-		if ( '' !== $body_stack ) {
-			$lines[] = sprintf( "\t--wp--preset--font-family--body: %s;", $body_stack );
-		}
-		if ( '' !== $disp_stack ) {
-			$lines[] = sprintf( "\t--wp--preset--font-family--display: %s;", $disp_stack );
-		}
-
-		// Note: $lines always has at least the unconditional gutter preset above.
-		array_unshift( $lines, '', "\t/* Style Guide shadow / spacing / font-family presets */" );
-		return implode( "\n", $lines );
-	}
-
-	/**
-	 * Format a float as a compact CSS number (trim trailing zeros and point).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param float $n Number.
-	 * @return string e.g. "1.5", "0.375", "9".
-	 */
-	private function format_number( float $n ): string {
-		return rtrim( rtrim( number_format( $n, 4, '.', '' ), '0' ), '.' );
-	}
-
-	/**
-	 * Build a CSS font-family stack from a typography entry, safely.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param mixed $entry Typography entry ({ name, slug }).
-	 * @return string A sanitized `'Name', generic` stack, or '' when unavailable.
-	 */
-	private function build_font_stack( $entry ) {
-		if ( ! is_array( $entry ) || empty( $entry['name'] ) ) {
-			return '';
-		}
-		// Font names are proper nouns; strip anything that isn't a letter, digit,
-		// space or hyphen to prevent CSS injection through the stored value.
-		$name = trim( (string) preg_replace( '/[^A-Za-z0-9 \-]/', '', (string) $entry['name'] ) );
-		if ( '' === $name ) {
-			return '';
-		}
-		$slug    = isset( $entry['slug'] ) ? sanitize_key( (string) $entry['slug'] ) : '';
-		$serifs  = array( 'playfair-display', 'cormorant-garamond', 'lora', 'dm-serif-display', 'fraunces' );
-		$generic = in_array( $slug, $serifs, true ) ? 'serif' : 'sans-serif';
-		return sprintf( "'%s', %s", $name, $generic );
 	}
 
 	/**
@@ -1292,218 +1358,16 @@ class GlobalStylesBridge {
 	 * @return array<string, mixed> Data for wp_localize_script.
 	 */
 	public function get_editor_data() {
-		$tokens  = $this->engine->get_token_registry();
-		$config  = $this->engine->get_config();
-		$schemes = array();
-
-		if ( null !== $tokens ) {
-			$schemes = $tokens->get_schemes();
-		}
+		$tokens = $this->engine->get_token_registry();
+		$config = $this->engine->get_config();
 
 		return array(
 			'config'   => $config,
 			'tokens'   => null !== $tokens ? $tokens->get_all() : array(),
-			'schemes'  => $schemes,
 			'palette'  => null !== $tokens ? $tokens->get_wp_palette() : array(),
 			'nonce'    => wp_create_nonce( 'spectra_style_guide' ),
 			'rest_url' => rest_url( 'spectra-blocks/v1/style-guide' ),
-			'fontsUrl' => SPECTRA_BLOCKS_URL . 'assets/fonts/',
 		);
-	}
-
-	/**
-	 * Font file map for self-hosted fonts.
-	 *
-	 * Maps font slug to an array of font-face entries.
-	 * Each entry: [ fontFamily, fontStyle, fontWeight, file (relative to assets/fonts/) ]
-	 *
-	 * Mirrors FONT_FACE_DATA in font-face-data.js.
-	 *
-	 * @since 1.0.0
-	 * @var array<string, list<array{string, string, string, string}>>
-	 */
-	const FONT_MAP = array(
-		'inter'              => array(
-			array( 'Inter', 'normal', '400', 'inter/inter-latin-400-normal.woff2' ),
-			array( 'Inter', 'normal', '500', 'inter/inter-latin-500-normal.woff2' ),
-			array( 'Inter', 'normal', '600', 'inter/inter-latin-600-normal.woff2' ),
-			array( 'Inter', 'normal', '700', 'inter/inter-latin-700-normal.woff2' ),
-		),
-		'space-grotesk'      => array(
-			array( 'Space Grotesk', 'normal', '400', 'space-grotesk/space-grotesk-latin-400-normal.woff2' ),
-			array( 'Space Grotesk', 'normal', '500', 'space-grotesk/space-grotesk-latin-500-normal.woff2' ),
-			array( 'Space Grotesk', 'normal', '600', 'space-grotesk/space-grotesk-latin-600-normal.woff2' ),
-			array( 'Space Grotesk', 'normal', '700', 'space-grotesk/space-grotesk-latin-700-normal.woff2' ),
-		),
-		'dm-sans'            => array(
-			array( 'DM Sans', 'normal', '400', 'dm-sans/dm-sans-latin-400-normal.woff2' ),
-			array( 'DM Sans', 'normal', '500', 'dm-sans/dm-sans-latin-500-normal.woff2' ),
-			array( 'DM Sans', 'normal', '600', 'dm-sans/dm-sans-latin-600-normal.woff2' ),
-			array( 'DM Sans', 'normal', '700', 'dm-sans/dm-sans-latin-700-normal.woff2' ),
-		),
-		'manrope'            => array(
-			array( 'Manrope', 'normal', '400', 'manrope/manrope-latin-400-normal.woff2' ),
-			array( 'Manrope', 'normal', '500', 'manrope/manrope-latin-500-normal.woff2' ),
-			array( 'Manrope', 'normal', '600', 'manrope/manrope-latin-600-normal.woff2' ),
-			array( 'Manrope', 'normal', '700', 'manrope/manrope-latin-700-normal.woff2' ),
-			array( 'Manrope', 'normal', '800', 'manrope/manrope-latin-800-normal.woff2' ),
-		),
-		'plus-jakarta-sans'  => array(
-			array( 'Plus Jakarta Sans', 'normal', '400', 'plus-jakarta-sans/plus-jakarta-sans-latin-400-normal.woff2' ),
-			array( 'Plus Jakarta Sans', 'normal', '500', 'plus-jakarta-sans/plus-jakarta-sans-latin-500-normal.woff2' ),
-			array( 'Plus Jakarta Sans', 'normal', '600', 'plus-jakarta-sans/plus-jakarta-sans-latin-600-normal.woff2' ),
-			array( 'Plus Jakarta Sans', 'normal', '700', 'plus-jakarta-sans/plus-jakarta-sans-latin-700-normal.woff2' ),
-			array( 'Plus Jakarta Sans', 'normal', '800', 'plus-jakarta-sans/plus-jakarta-sans-latin-800-normal.woff2' ),
-		),
-		'outfit'             => array(
-			array( 'Outfit', 'normal', '400', 'outfit/outfit-latin-400-normal.woff2' ),
-			array( 'Outfit', 'normal', '500', 'outfit/outfit-latin-500-normal.woff2' ),
-			array( 'Outfit', 'normal', '600', 'outfit/outfit-latin-600-normal.woff2' ),
-			array( 'Outfit', 'normal', '700', 'outfit/outfit-latin-700-normal.woff2' ),
-			array( 'Outfit', 'normal', '800', 'outfit/outfit-latin-800-normal.woff2' ),
-		),
-		'sora'               => array(
-			array( 'Sora', 'normal', '400', 'sora/sora-latin-400-normal.woff2' ),
-			array( 'Sora', 'normal', '500', 'sora/sora-latin-500-normal.woff2' ),
-			array( 'Sora', 'normal', '600', 'sora/sora-latin-600-normal.woff2' ),
-			array( 'Sora', 'normal', '700', 'sora/sora-latin-700-normal.woff2' ),
-		),
-		'playfair-display'   => array(
-			array( 'Playfair Display', 'normal', '400', 'playfair-display/playfair-display-latin-400-normal.woff2' ),
-			array( 'Playfair Display', 'normal', '500', 'playfair-display/playfair-display-latin-500-normal.woff2' ),
-			array( 'Playfair Display', 'normal', '700', 'playfair-display/playfair-display-latin-700-normal.woff2' ),
-		),
-		'cormorant-garamond' => array(
-			array( 'Cormorant Garamond', 'normal', '400', 'cormorant-garamond/cormorant-garamond-latin-400-normal.woff2' ),
-			array( 'Cormorant Garamond', 'normal', '500', 'cormorant-garamond/cormorant-garamond-latin-500-normal.woff2' ),
-			array( 'Cormorant Garamond', 'normal', '600', 'cormorant-garamond/cormorant-garamond-latin-600-normal.woff2' ),
-			array( 'Cormorant Garamond', 'normal', '700', 'cormorant-garamond/cormorant-garamond-latin-700-normal.woff2' ),
-		),
-		'lora'               => array(
-			array( 'Lora', 'normal', '400', 'lora/lora-latin-400-normal.woff2' ),
-			array( 'Lora', 'normal', '500', 'lora/lora-latin-500-normal.woff2' ),
-			array( 'Lora', 'normal', '600', 'lora/lora-latin-600-normal.woff2' ),
-			array( 'Lora', 'normal', '700', 'lora/lora-latin-700-normal.woff2' ),
-		),
-		'dm-serif-display'   => array(
-			array( 'DM Serif Display', 'normal', '400', 'dm-serif-display/dm-serif-display-latin-400-normal.woff2' ),
-		),
-		'fraunces'           => array(
-			array( 'Fraunces', 'normal', '400', 'fraunces/fraunces-latin-400-normal.woff2' ),
-			array( 'Fraunces', 'normal', '500', 'fraunces/fraunces-latin-500-normal.woff2' ),
-			array( 'Fraunces', 'normal', '600', 'fraunces/fraunces-latin-600-normal.woff2' ),
-			array( 'Fraunces', 'normal', '700', 'fraunces/fraunces-latin-700-normal.woff2' ),
-		),
-		'rubik'              => array(
-			array( 'Rubik', 'normal', '400', 'rubik/rubik-latin-400-normal.woff2' ),
-			array( 'Rubik', 'normal', '500', 'rubik/rubik-latin-500-normal.woff2' ),
-			array( 'Rubik', 'normal', '600', 'rubik/rubik-latin-600-normal.woff2' ),
-			array( 'Rubik', 'normal', '700', 'rubik/rubik-latin-700-normal.woff2' ),
-			array( 'Rubik', 'normal', '800', 'rubik/rubik-latin-800-normal.woff2' ),
-		),
-	);
-
-	/**
-	 * Get the font slugs currently active in the saved Global Styles.
-	 *
-	 * Reads the database-persisted Global Styles post to determine which
-	 * font families are in use. Only slugs with bundled woff2 files (present
-	 * in FONT_MAP) are returned.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return string[] Font slugs (e.g. ['space-grotesk', 'dm-sans']).
-	 */
-	private function get_active_font_slugs(): array {
-		$query = new \WP_Query(
-			array(
-				'post_type'              => 'wp_global_styles',
-				'posts_per_page'         => 1,
-				'post_status'            => array( 'publish', 'auto-draft' ),
-				'orderby'                => 'date',
-				'order'                  => 'DESC',
-				'no_found_rows'          => true,
-				'ignore_sticky_posts'    => true,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-				'tax_query'              => array(
-					array(
-						'taxonomy' => 'wp_theme',
-						'field'    => 'name',
-						'terms'    => get_stylesheet(),
-					),
-				),
-			)
-		);
-		$posts = $query->posts;
-
-		if ( empty( $posts ) ) {
-			return array();
-		}
-
-		$content = json_decode( $posts[0]->post_content, true );
-		if ( ! is_array( $content ) ) {
-			return array();
-		}
-
-		$font_families = $content['settings']['typography']['fontFamilies']['theme'] ?? array();
-		$slugs         = array();
-
-		foreach ( $font_families as $family ) {
-			$slug = $family['slug'] ?? '';
-			if ( $slug && isset( self::FONT_MAP[ $slug ] ) ) {
-				$slugs[] = $slug;
-			}
-		}
-
-		return array_unique( $slugs );
-	}
-
-	/**
-	 * Generate @font-face CSS for the given font slugs.
-	 *
-	 * Used as a PHP-side safety net: WordPress auto-generates @font-face CSS
-	 * from fontFace entries in the Global Styles entity, but only after those
-	 * entries are saved. This fallback ensures fonts render on both the
-	 * frontend and in the editor even before a re-save.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string[] $slugs Font slugs to generate @font-face for.
-	 * @return string @font-face CSS block, or empty string.
-	 */
-	private function get_font_face_css( array $slugs ): string {
-		if ( empty( $slugs ) ) {
-			return '';
-		}
-
-		// Normalize the fonts base URL to a protocol-relative URL so fetches
-		// from the block-editor's `blob:` iframe canvas don't fail with a
-		// cross-scheme block when the admin request and the front-end
-		// request use different protocols (a common dev-environment
-		// mismatch — admin under HTTPS, site under HTTP, or vice versa).
-		// Protocol-relative URLs inherit the document's scheme, which
-		// matches the iframe's effective origin and lets the woff2 fetch
-		// proceed under the same-origin policy.
-		$fonts_url = preg_replace( '#^https?:#', '', SPECTRA_BLOCKS_URL ) . 'assets/fonts/';
-		$rules     = array();
-
-		foreach ( $slugs as $slug ) {
-			$faces = self::FONT_MAP[ $slug ] ?? array();
-			foreach ( $faces as $face ) {
-				list( $family, $style, $weight, $file ) = $face;
-				$rules[]                                = sprintf(
-					"@font-face {\n\tfont-family: '%s';\n\tfont-style: %s;\n\tfont-weight: %s;\n\tfont-display: swap;\n\tsrc: url('%s') format('woff2');\n}",
-					esc_attr( $family ),
-					esc_attr( $style ),
-					esc_attr( $weight ),
-					esc_url( $fonts_url . $file )
-				);
-			}
-		}
-
-		return implode( "\n", $rules );
 	}
 
 	/**
@@ -1613,7 +1477,20 @@ class GlobalStylesBridge {
 		$posts = $query->posts;
 
 		if ( empty( $posts ) ) {
-			return;
+			// Classic themes have no user global-styles post until something
+			// creates one (the Site Editor does on block themes, masking
+			// this bail). Use core's get-or-create so Font Library
+			// activation works on ANY theme — measured live on Astra:
+			// families + faces installed, ZERO faces printed, because this
+			// sync silently returned here.
+			$user_post_id = class_exists( '\WP_Theme_JSON_Resolver' )
+				? \WP_Theme_JSON_Resolver::get_user_global_styles_post_id()
+				: 0;
+			$user_post    = $user_post_id ? get_post( $user_post_id ) : null;
+			if ( ! $user_post instanceof \WP_Post ) {
+				return;
+			}
+			$posts = array( $user_post );
 		}
 
 		$post    = $posts[0];
@@ -1660,7 +1537,7 @@ class GlobalStylesBridge {
 	}
 
 	/**
-	 * Inject scheme variable mapping CSS into the editor iframe.
+	 * Inject the Style Guide token CSS into the editor iframe.
 	 *
 	 * The block editor renders blocks inside an iframe canvas.
 	 * enqueue_block_editor_assets only reaches the admin <head>, not the iframe.
@@ -1671,7 +1548,7 @@ class GlobalStylesBridge {
 	 * @param array<string, mixed> $settings Block editor settings.
 	 * @return array<string, mixed> Modified settings.
 	 */
-	public function inject_scheme_editor_styles( $settings ) {
+	public function inject_sg_editor_styles( $settings ) {
 		$tokens = $this->engine->get_token_registry();
 
 		if ( null === $tokens ) {
@@ -1697,12 +1574,6 @@ class GlobalStylesBridge {
 				$token_css = str_replace( "\n}\n", "\n" . $sg_css . "\n}\n", $token_css );
 			}
 			$settings['styles'][] = array( 'css' => $token_css );
-		}
-
-		// Inject scheme variable mapping CSS (data-spectra-scheme vars).
-		$scheme_css = $tokens->get_scheme_css();
-		if ( ! empty( $scheme_css ) ) {
-			$settings['styles'][] = array( 'css' => $scheme_css );
 		}
 
 		return $settings;
@@ -1731,6 +1602,16 @@ class GlobalStylesBridge {
 	 * @return array<string, mixed> Modified settings.
 	 */
 	public function align_astra_palette_swatches( $settings ) {
+		// Previewing Style Guide colours in the editor picker is a Pro capability.
+		// With Pro inactive, leave Astra's own global-colour swatches at the theme's
+		// values so the picker does not surface the Style Guide palette. The colours
+		// are still APPLIED to content (the render-time rewrite + --ast-global-color-*
+		// aliases in get_astra_compat_css() are free), so only the picker preview
+		// differs — mirrors remove_style_guide_swatches_when_pro_inactive().
+		if ( ! defined( 'SPECTRA_BLOCKS_PRO_VER' ) ) {
+			return $settings;
+		}
+
 		$tokens = $this->engine->get_token_registry();
 
 		if ( null === $tokens ) {
@@ -1795,6 +1676,125 @@ class GlobalStylesBridge {
 	}
 
 	/**
+	 * Remove the Style-Guide-managed swatches from the editor colour picker when
+	 * Pro is inactive.
+	 *
+	 * Surfacing the Style Guide palette in the picker is a Pro capability, so with
+	 * Pro deactivated the Style Guide colours must not appear as pickable swatches.
+	 * This ONLY filters the editor picker palette (the `__experimentalFeatures`
+	 * colour settings the block colour UI reads, plus the legacy flat `colors`
+	 * list) — it does NOT touch `inject_palette()` or any `--wp--preset--color--*`
+	 * variable, so a block that already uses a Style Guide colour keeps rendering
+	 * it (the variable still resolves; only its swatch is hidden).
+	 *
+	 * Hooked to block_editor_settings_all at priority 21 (after
+	 * align_astra_palette_swatches at 20). A no-op while Pro is active, or before a
+	 * Style Guide has been saved.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string, mixed> $settings Block editor settings.
+	 * @return array<string, mixed> Filtered settings.
+	 */
+	public function remove_style_guide_swatches_when_pro_inactive( $settings ) {
+		// Pro active — the picker keeps the Style Guide swatches.
+		if ( Core::is_pro_active() ) {
+			return $settings;
+		}
+
+		// Nothing to strip until a Style Guide has been saved.
+		if ( ! $this->engine->has_saved_style_guide() ) {
+			return $settings;
+		}
+
+		$managed = $this->engine->get_managed_color_slugs();
+		if ( empty( $managed ) ) {
+			return $settings;
+		}
+		$managed = array_flip( $managed );
+
+		// Drop managed slugs from every origin the block colour UI reads
+		// (useMultipleOriginColorsAndGradients): theme / default / custom. Each
+		// nesting level is is_array-guarded so the chain is a proven array (not
+		// mixed) when reassigned by origin below.
+		if ( isset( $settings['__experimentalFeatures'] ) && is_array( $settings['__experimentalFeatures'] )
+			&& isset( $settings['__experimentalFeatures']['color'] ) && is_array( $settings['__experimentalFeatures']['color'] )
+			&& isset( $settings['__experimentalFeatures']['color']['palette'] ) && is_array( $settings['__experimentalFeatures']['color']['palette'] ) ) {
+			foreach ( array( 'theme', 'default', 'custom' ) as $origin ) {
+				if ( ! isset( $settings['__experimentalFeatures']['color']['palette'][ $origin ] ) || ! is_array( $settings['__experimentalFeatures']['color']['palette'][ $origin ] ) ) {
+					continue;
+				}
+				$settings['__experimentalFeatures']['color']['palette'][ $origin ] = array_values(
+					array_filter(
+						$settings['__experimentalFeatures']['color']['palette'][ $origin ],
+						static function ( $entry ) use ( $managed ) {
+							return ! ( isset( $entry['slug'] ) && isset( $managed[ $entry['slug'] ] ) );
+						}
+					)
+				);
+			}
+		}
+
+		// Legacy flat palette (settings.colors) used by older/classic colour controls.
+		if ( isset( $settings['colors'] ) && is_array( $settings['colors'] ) ) {
+			$settings['colors'] = array_values(
+				array_filter(
+					$settings['colors'],
+					static function ( $entry ) use ( $managed ) {
+						return ! ( isset( $entry['slug'] ) && isset( $managed[ $entry['slug'] ] ) );
+					}
+				)
+			);
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Strip sg-* alias swatches from the server-built block editor settings.
+	 *
+	 * Companion to {@see strip_sg_alias_swatches_from_rest()} for the picker
+	 * surfaces that read the SERVER-built settings instead of the client-merged
+	 * global-styles entities: the widgets/customizer editors and the legacy flat
+	 * `settings.colors` list. sg-* slugs are render-time compat aliases, not
+	 * pickable roles — each one duplicates a semantic swatch under a second name.
+	 * The render path is untouched: .has-sg-*-color rules and the
+	 * --wp--preset--color--sg-* variables keep being emitted.
+	 *
+	 * Hooked to block_editor_settings_all at priority 22 (after the Pro-inactive
+	 * strip, which already removes every managed swatch when Pro is off).
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string, mixed> $settings Block editor settings.
+	 * @return array<string, mixed>
+	 */
+	public function remove_sg_alias_swatches( $settings ) {
+		if ( isset( $settings['__experimentalFeatures'] ) && is_array( $settings['__experimentalFeatures'] )
+			&& isset( $settings['__experimentalFeatures']['color'] ) && is_array( $settings['__experimentalFeatures']['color'] )
+			&& isset( $settings['__experimentalFeatures']['color']['palette'] ) && is_array( $settings['__experimentalFeatures']['color']['palette'] ) ) {
+			foreach ( array( 'theme', 'default', 'custom' ) as $origin ) {
+				if ( ! isset( $settings['__experimentalFeatures']['color']['palette'][ $origin ] ) || ! is_array( $settings['__experimentalFeatures']['color']['palette'][ $origin ] ) ) {
+					continue;
+				}
+				$filtered = $this->strip_picker_duplicate_entries( $settings['__experimentalFeatures']['color']['palette'][ $origin ] );
+				if ( null !== $filtered ) {
+					$settings['__experimentalFeatures']['color']['palette'][ $origin ] = $filtered;
+				}
+			}
+		}
+
+		if ( isset( $settings['colors'] ) && is_array( $settings['colors'] ) ) {
+			$filtered = $this->strip_picker_duplicate_entries( $settings['colors'] );
+			if ( null !== $filtered ) {
+				$settings['colors'] = $filtered;
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
 	 * Inject Style Guide token CSS variables into the editor iframe.
 	 *
 	 * Component-tokens.css is enqueued via enqueue_block_editor_assets and reaches
@@ -1828,74 +1828,5 @@ class GlobalStylesBridge {
 		$settings['styles'][] = array( 'css' => $css );
 
 		return $settings;
-	}
-
-	/**
-	 * Auto-add .spectra-dark-scheme class to blocks with dark background schemes.
-	 *
-	 * When a block's rendered HTML contains data-spectra-scheme="..." pointing
-	 * to a dark-background scheme, this filter injects the .spectra-dark-scheme
-	 * class so that dark-mode overrides in scheme-override.css activate
-	 * (inverted form inputs, checkboxes, tags, etc.).
-	 *
-	 * NOTE on isDark naming: isDark=true means light bg (dark text).
-	 * isDark=false means dark bg (light text). The get_dark_scheme_keys()
-	 * method handles this inversion internally.
-	 *
-	 * @since 3.2.0
-	 *
-	 * @param string               $block_content Rendered block HTML.
-	 * @param array<string, mixed> $block         Parsed block data.
-	 * @return string Modified HTML with dark scheme class where needed.
-	 */
-	public function maybe_add_dark_scheme_class( $block_content, $block ): string { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
-		// Quick bail — skip regex for the 99% of blocks without scheme attributes.
-		if ( false === strpos( $block_content, 'data-spectra-scheme' ) ) {
-			return $block_content;
-		}
-
-		// Extract scheme key from the attribute.
-		if ( ! preg_match( '/data-spectra-scheme="([^"]+)"/', $block_content, $matches ) ) {
-			return $block_content;
-		}
-
-		$scheme_key = $matches[1];
-
-		// Build dark keys lookup once per request (O(1) after first call).
-		static $dark_keys = null;
-		if ( null === $dark_keys ) {
-			$tokens    = $this->engine->get_token_registry();
-			$dark_keys = ( null !== $tokens ) ? $tokens->get_dark_scheme_keys() : array();
-		}
-
-		// Not a dark scheme — no class needed.
-		if ( ! isset( $dark_keys[ $scheme_key ] ) ) {
-			return $block_content;
-		}
-
-		// Already has the class — skip.
-		if ( false !== strpos( $block_content, 'spectra-dark-scheme' ) ) {
-			return $block_content;
-		}
-
-		// Inject .spectra-dark-scheme into the opening tag that contains the attribute.
-		$block_content = preg_replace_callback(
-			'/(<[^>]*data-spectra-scheme="' . preg_quote( $scheme_key, '/' ) . '"[^>]*>)/',
-			function ( $m ) {
-				$tag = $m[1];
-
-				// Has a class attribute? Append to it.
-				if ( preg_match( '/class="([^"]*)"/', $tag ) ) {
-					return preg_replace( '/class="([^"]*)"/', 'class="$1 spectra-dark-scheme"', $tag, 1 );
-				}
-
-				// No class attribute? Add one before data-spectra-scheme.
-				return str_replace( 'data-spectra-scheme=', 'class="spectra-dark-scheme" data-spectra-scheme=', $tag );
-			},
-			$block_content,
-			1 // Only first occurrence.
-		);
-
-		return $block_content;
 	}
 }

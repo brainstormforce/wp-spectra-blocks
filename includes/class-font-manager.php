@@ -756,7 +756,7 @@ class FontManager {
 						'fontStretch' => 'normal',
 						'fontStyle'   => 'normal',
 						'fontWeight'  => '300 900',
-						'src'         => array( SPECTRA_BLOCKS_URL . '/assets/fonts/Inter-VariableFont_slnt,wght.woff2' ),
+						'src'         => array( SPECTRA_BLOCKS_URL . '/assets/fonts/Inter-VariableFont-slnt-wght.woff2' ),
 					),
 				),
 			),

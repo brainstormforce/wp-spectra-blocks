@@ -297,21 +297,26 @@ class RestController {
 					'callback'            => array( $this, 'update_save' ),
 					'permission_callback' => array( $this, 'check_permission' ),
 					'args'                => array(
-						'scope'   => array(
+						'scope'         => array(
 							'type'     => 'string',
 							'required' => true,
 							'enum'     => array( 'page', 'global' ),
 						),
-						'post_id' => array(
+						'post_id'       => array(
 							'type' => 'integer',
 						),
-						'payload' => array(
+						'payload'       => array(
 							'type'     => array( 'object', 'array' ),
 							'required' => true,
 						),
-						'replace' => array(
+						'replace'       => array(
 							'type'    => 'boolean',
 							'default' => false,
+						),
+						'reset_classes' => array(
+							'type'        => 'boolean',
+							'default'     => false,
+							'description' => __( 'Also drop the stored `classes` bucket. Only applies when `replace` is true; ignored otherwise.', 'spectra-blocks' ),
 						),
 					),
 				),
@@ -628,6 +633,14 @@ class RestController {
 		}
 
 		if ( $post_id > 0 ) {
+			// `check_permission()` only asserts `edit_theme_options`, which says
+			// nothing about THIS post — same gate the Style Guide's page-scoped save
+			// applies, and a larger payload here (arbitrary per-page CSS).
+			$allowed = \SpectraBlocks\StyleGuide\Engine::check_page_scope( $post_id );
+			if ( is_wp_error( $allowed ) ) {
+				return $allowed;
+			}
+
 			// Page-scoped write — update the per-page post meta directly.
 			$read_result  = $this->read_page_payload( $post_id );
 			$page_payload = $read_result ? $read_result : array();
@@ -952,7 +965,7 @@ class RestController {
 	 * option `spectra_blocks_pro_gs_user_css`.
 	 *
 	 * Accepts a schema-v1 payload `{ v, classes?, keyframes?, wrapperStyles?,
-	 * rootStyles?, scopeVars?, presetLock?, imports?, mediaQuery? }` carrying the
+	 * rootStyles?, remBase?, scopeVars?, presetLock?, imports?, mediaQuery? }` carrying the
 	 * header/footer + global/common CSS. `classes`/`keyframes` are sanitized (same
 	 * as `/global-styles/bulk`) and merged per entry (latest import wins on a name
 	 * collision); the non-class buckets are import-owned and replaced wholesale.
@@ -1091,6 +1104,21 @@ class RestController {
 			}
 		}
 
+		// `remBase` scalar (document-root font-size, emitted on `:root` by
+		// GenCssRenderer): string replaces, null deletes. Validated at the store,
+		// not just render — `{`/`}`/`;` break out of the declaration, `/*`/`*/` open
+		// a comment that swallows the sheet. Standalone `/`/`*` OK (calc()).
+		if ( array_key_exists( 'remBase', $payload ) ) {
+			if ( null === $payload['remBase'] ) {
+				unset( $user_css['remBase'] );
+			} elseif ( is_string( $payload['remBase'] ) ) {
+				$rem_base = trim( $payload['remBase'] );
+				if ( '' !== $rem_base && 1 === preg_match( '/^(?!.*(?:\/\*|\*\/))[^{};]+$/', $rem_base ) ) {
+					$user_css['remBase'] = $rem_base;
+				}
+			}
+		}
+
 		// Import-owned non-class buckets (rendered by GenCssRenderer), MERGED per
 		// entry — never-clobber, so a multi-page build / batch accumulates instead
 		// of last-write-wins. A null entry deletes that key; a null whole bucket
@@ -1113,9 +1141,22 @@ class RestController {
 			foreach ( $incoming as $key => $value ) {
 				if ( null === $value ) {
 					unset( $user_css[ $bucket ][ $key ] );
-				} else {
-					$user_css[ $bucket ][ $key ] = $value;
+					continue;
 				}
+				// Kebab-normalize CSS property keys per bucket shape so the store
+				// stays canonically kebab (SSOT) for every writer. scopeVars /
+				// presetLock hold `--`-led custom props only and are left as-is.
+				if ( 'rootStyles' === $bucket && is_string( $key ) ) {
+					// Flat {prop:val}: `$key` IS the property.
+					$key = self::css_property_to_kebab( $key );
+				} elseif ( 'wrapperStyles' === $bucket && is_array( $value ) ) {
+					// {selector:{prop:val}}: normalize the inner decls, keep selector.
+					$value = self::normalize_declaration_keys( $value );
+				} elseif ( 'mediaQuery' === $bucket && is_array( $value ) ) {
+					// {query:{classes,wrapperStyles}}: normalize nested decls.
+					$value = self::normalize_media_query_decls( $value );
+				}
+				$user_css[ $bucket ][ $key ] = $value;
 			}
 		}
 
@@ -1173,17 +1214,22 @@ class RestController {
 			// palette / token overrides — the cross-build "stale presetLock" leak
 			// where a previous build's `body { --wp--preset--color--*: … }` survived
 			// the per-entry merge (an omitted bucket is preserved) and beat the new
-			// build's :root palette. User-authored `classes`, document-global
-			// `keyframes` and `imports` are PRESERVED (an empty-base reset would wipe
-			// them, and the editor + other imports own them). replace=false → plain
-			// merge (match_site siblings / partial writes), unchanged.
+			// build's :root palette. replace=false → plain merge (match_site siblings
+			// / partial writes), unchanged.
+			//
+			// `reset_classes` additionally drops the `classes` bucket. The CALLER
+			// decides: a `replace_site` import IS the new site, so a previous build's
+			// classes are dead weight — measured on a dev site, 4999 classes / 1.4 MB,
+			// 53 of them separate `*btn-primary` variants from templates long gone,
+			// every one a live name-hash the JIT still compiles. Off by default so a
+			// partial write can never wipe the editor's own classes.
 			$replace = (bool) $request->get_param( 'replace' );
+			$keep    = $request->get_param( 'reset_classes' )
+				? array( 'v', 'keyframes', 'imports' )
+				: array( 'v', 'classes', 'keyframes', 'imports' );
 			$base    = $this->get_user_css();
 			if ( $replace ) {
-				$base = array_intersect_key(
-					$base,
-					array_flip( array( 'v', 'classes', 'keyframes', 'imports' ) )
-				);
+				$base = array_intersect_key( $base, array_flip( $keep ) );
 			}
 			$merged = $this->merge_user_css( $base, $payload );
 			$this->save_user_css( $merged );
@@ -1201,6 +1247,19 @@ class RestController {
 		$post_id = (int) $request->get_param( 'post_id' );
 		if ( $post_id <= 0 || ! get_post( $post_id ) ) {
 			return new WP_REST_Response( array( 'error' => 'a valid post_id is required for scope "page".' ), 400 );
+		}
+
+		// `check_permission()` only asserts `edit_theme_options`. Without this, any
+		// holder of that cap could write per-page CSS onto — or, on an empty
+		// payload below, delete it from — someone else's post. Mapped to a response
+		// rather than returned as-is: this method's contract is WP_REST_Response.
+		$allowed = \SpectraBlocks\StyleGuide\Engine::check_page_scope( $post_id );
+		if ( is_wp_error( $allowed ) ) {
+			$error_data = $allowed->get_error_data();
+			$status     = is_array( $error_data ) && isset( $error_data['status'] ) && is_numeric( $error_data['status'] )
+				? (int) $error_data['status']
+				: 403;
+			return new WP_REST_Response( array( 'error' => $allowed->get_error_message() ), $status );
 		}
 
 		// Empty payload clears the per-page CSS (stale styles removed on re-import).
@@ -1384,7 +1443,7 @@ class RestController {
 				if ( ! is_string( $property ) || ! is_string( $value ) ) {
 					continue;
 				}
-				$property = trim( $property );
+				$property = self::css_property_to_kebab( trim( $property ) );
 				$value    = trim( $value );
 				if ( '' === $property || '' === $value ) {
 					continue;
@@ -1393,10 +1452,123 @@ class RestController {
 			}
 
 			if ( ! empty( $clean ) ) {
-				$normalized[ $bucket ] = $clean;
+				$normalized[ self::normalize_state_key( $bucket ) ] = $clean;
 			}
 		}
 
 		return $normalized;
+	}
+
+	/**
+	 * Canonicalize a class STATE key so a JS-toggled state renders. StateResolver
+	 * rides a leading-dot class tail (`.is-open` → `.gs-x.is-open`) verbatim but
+	 * DROPS a bare word, and the authoring side (SaaS/editor) naturally emits the
+	 * bare class it toggles in JS (`overlay.classList.toggle('is-open')` →
+	 * state key `is-open`). The `is-…` / `has-…` state-class convention is
+	 * unambiguous, so prepend the dot here at the write choke point — the store
+	 * stays canonical and the toggle works regardless of whether the author
+	 * remembered the dot. `default`, known pseudos (`hover`/`focus`/…), responsive
+	 * breakpoints, and already-`.`/`:`/`[`-led tails are left untouched — the
+	 * resolver maps those, and a bare non-convention word (a typo / mis-authored
+	 * descendant) is still dropped by design.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $state State key.
+	 * @return string Canonical state key.
+	 */
+	private static function normalize_state_key( string $state ): string {
+		if ( 1 === preg_match( '/^(?:is|has)-[a-z0-9-]+$/', $state ) ) {
+			return '.' . $state;
+		}
+		return $state;
+	}
+
+	/**
+	 * Kebab-case a single CSS declaration PROPERTY key. The GBS store SSOT is
+	 * kebab-case; the SaaS/editor authoring path can emit lowerCamelCase property
+	 * names (`backgroundColor`, `zIndex`, `justifyContent` — the JS/React
+	 * convention). GenCssRenderer prints property keys verbatim, so a camelCase key
+	 * becomes an invalid declaration the browser silently drops. Normalizing at the
+	 * write choke point keeps the store canonically kebab for every writer and
+	 * consumer.
+	 *
+	 * Custom properties and already-kebab vendor prefixes (`--myVar`, `-webkit-…`)
+	 * pass through untouched — hyphenating a case-sensitive custom prop corrupts it.
+	 * A camelCase vendor prefix carries no leading dash, so restore it:
+	 * `WebkitTransform` → `-webkit-transform` (else the invalid `webkit-transform`
+	 * is dropped). A leading-uppercase or `ms`-led key is only ever a vendor prefix.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $property Declaration property key.
+	 * @return string Kebab-case property key.
+	 */
+	private static function css_property_to_kebab( string $property ): string {
+		if ( '' === $property || '-' === $property[0] ) {
+			return $property;
+		}
+		$kebab = preg_replace( '/(?<!^)[A-Z]/', '-$0', $property );
+		if ( ! is_string( $kebab ) ) {
+			return $property;
+		}
+		$kebab = strtolower( $kebab );
+		// Vendor prefix (`Webkit*`/`Moz*`/`O*`/`ms*`) → restore the leading dash.
+		if ( 1 === preg_match( '/^([A-Z]|ms[A-Z])/', $property ) ) {
+			return '-' . $kebab;
+		}
+		return $kebab;
+	}
+
+	/**
+	 * Kebab-normalize the property KEYS of a flat CSS declaration map
+	 * (`{ property => value }`) — used for rootStyles and each wrapperStyles /
+	 * mediaQuery selector body. Only string keys are rewritten; values, and the
+	 * map's own selector/condition key upstream, are never touched. See
+	 * {@see css_property_to_kebab()} for the custom-property carve-out.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string, mixed> $decls Declaration map.
+	 * @return array<string, mixed> Map with kebab-case property keys.
+	 */
+	private static function normalize_declaration_keys( array $decls ): array {
+		$out = array();
+		foreach ( $decls as $property => $value ) {
+			if ( is_string( $property ) ) {
+				$property = self::css_property_to_kebab( $property );
+			}
+			$out[ $property ] = $value;
+		}
+		return $out;
+	}
+
+	/**
+	 * Kebab-normalize declaration property keys inside one mediaQuery entry's
+	 * nested `classes` (`{ name => { state => { prop => val } } }`) and
+	 * `wrapperStyles` (`{ selector => { prop => val } }`) sub-buckets. @media
+	 * conditions, class names, states, and selectors are left intact.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string, mixed> $entry One mediaQuery entry (its sub-buckets).
+	 * @return array<string, mixed> Entry with kebab-case declaration keys.
+	 */
+	private static function normalize_media_query_decls( array $entry ): array {
+		if ( isset( $entry['classes'] ) && is_array( $entry['classes'] ) ) {
+			foreach ( $entry['classes'] as $name => $states ) {
+				if ( is_array( $states ) ) {
+					$entry['classes'][ $name ] = self::normalize_class_styles_to_flat( $states );
+				}
+			}
+		}
+		if ( isset( $entry['wrapperStyles'] ) && is_array( $entry['wrapperStyles'] ) ) {
+			foreach ( $entry['wrapperStyles'] as $selector => $decls ) {
+				if ( is_array( $decls ) ) {
+					$entry['wrapperStyles'][ $selector ] = self::normalize_declaration_keys( $decls );
+				}
+			}
+		}
+		return $entry;
 	}
 }

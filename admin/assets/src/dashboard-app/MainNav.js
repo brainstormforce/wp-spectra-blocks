@@ -103,7 +103,7 @@ const Navigation = () => {
 					target="_blank"
 					rel="noreferrer"
 				>
-					<span>Unlock Pro Features</span>
+					<span>{ __( 'Unlock Pro Features', 'spectra-blocks' ) }</span>
 					<ArrowUpRight className="size-5" strokeWidth="1.5" />
 				</a>
 			) }

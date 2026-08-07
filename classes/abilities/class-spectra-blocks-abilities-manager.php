@@ -95,16 +95,16 @@ if ( ! class_exists( 'Spectra_Blocks_Abilities_Manager' ) ) {
 			wp_register_ability_category(
 				'spectra-layout',
 				array(
-					'label'       => __( 'Spectra - Layout', 'spectra-blocks' ),
-					'description' => __( 'Create and configure Spectra layout blocks like containers.', 'spectra-blocks' ),
+					'label'       => __( 'Spectra Blocks - Layout', 'spectra-blocks' ),
+					'description' => __( 'Create and configure layout blocks like containers.', 'spectra-blocks' ),
 				)
 			);
 
 			wp_register_ability_category(
 				'spectra-content',
 				array(
-					'label'       => __( 'Spectra - Content', 'spectra-blocks' ),
-					'description' => __( 'Create and manage Spectra content blocks like headings and paragraphs.', 'spectra-blocks' ),
+					'label'       => __( 'Spectra Blocks - Content', 'spectra-blocks' ),
+					'description' => __( 'Create and manage content blocks like headings and paragraphs.', 'spectra-blocks' ),
 				)
 			);
 		}

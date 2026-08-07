@@ -14,13 +14,21 @@ const UnlockProItem = ( { blockInfo } ) => {
 				return __( 'Tailored content for individual users based on their preferences and behavior anywhere on your website.', 'spectra-blocks' );
 			case 'Loop Builder':
 				return __( 'Loop Builder allows displaying post types based on different query parameters and visual configurations.', 'spectra-blocks' );
+			case 'Mega Menu':
+				return __( 'Build multi-column dropdown menus that hold images, icons and any block, so visitors reach any page in one click.', 'spectra-blocks' );
+			case 'Block Positioning':
+				return __( 'Place any block exactly where you want it with absolute, fixed or sticky positioning, for overlapping layouts and calls to action that follow the scroll.', 'spectra-blocks' );
+			case 'Motion Effects':
+				return __( 'Animate blocks as visitors scroll, with parallax and transform effects that keep attention moving down a long page.', 'spectra-blocks' );
+			case 'SVG Animator':
+				return __( 'Animate SVG graphics with draw-on, morph and hover effects, without touching code or reaching for an animation tool.', 'spectra-blocks' );
 			case 'Login':
-				return __( 'This block lets you add Login functionality.', 'spectra-blocks' );
+				return __( 'Add a styled login form anywhere on your site, so members sign in without seeing the default WordPress screen.', 'spectra-blocks' );
 			case 'Register':
-				return __( 'This block lets you add Registration functionality.', 'spectra-blocks' );
-			
+				return __( 'Build custom registration forms with the fields you choose, and control who gets an account on your site.', 'spectra-blocks' );
+
 			default:
-				return __( 'This option only available in Spectra Pro.', 'spectra-blocks' );
+				return __( 'This option is only available in Spectra Blocks Pro.', 'spectra-blocks' );
 		}
 	};
 

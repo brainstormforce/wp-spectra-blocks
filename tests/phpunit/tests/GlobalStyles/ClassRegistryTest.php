@@ -644,21 +644,21 @@ class ClassRegistryTest extends WP_UnitTestCase {
 		ClassRegistry::invalidate_cache();
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		// Chromatic 1 → slug 'primary', shade 500 (SG index 6).
-		$this->assertArrayHasKey( 'bg-primary-500', $classes );
-		$this->assertSame( 'background: var(--spectra-chromatic1-6);', $classes['bg-primary-500']['css'] );
+		// Chromatic 1 → slug 'primary', shade 600 (the seed, SG index 7).
+		$this->assertArrayHasKey( 'bg-primary-600', $classes );
+		$this->assertSame( 'background: var(--spectra-primary);', $classes['bg-primary-600']['css'] );
 
-		// Chromatic 1, shade 50 (SG index 1).
-		$this->assertArrayHasKey( 'text-primary-50', $classes );
-		$this->assertSame( 'color: var(--spectra-chromatic1-1); -webkit-text-fill-color: var(--spectra-chromatic1-1);', $classes['text-primary-50']['css'] );
+		$this->assertArrayHasKey( 'text-primary-600', $classes );
+		$this->assertSame( 'color: var(--spectra-primary); -webkit-text-fill-color: var(--spectra-primary);', $classes['text-primary-600']['css'] );
 
-		// Chromatic 2 → slug 'secondary', shade 950 (SG index 11).
-		$this->assertArrayHasKey( 'border-secondary-950', $classes );
-		$this->assertSame( 'border-color: var(--spectra-chromatic2-11);', $classes['border-secondary-950']['css'] );
+		// Chromatic 2 → slug 'secondary', same single seed shade.
+		$this->assertArrayHasKey( 'border-secondary-600', $classes );
+		$this->assertSame( 'border-color: var(--spectra-secondary);', $classes['border-secondary-600']['css'] );
 	}
 
 	/**
-	 * Test shade mapping: all 11 Tailwind shades (50-950) exist per family.
+	 * Test shade mapping: only the seed shade (600 ← chromaticN-7) exists —
+	 * ramps are no longer generated.
 	 */
 	public function test_chromatic_shade_mapping(): void {
 		$mock_config = array(
@@ -672,37 +672,40 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		$expected_shades = array( '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950' );
-		foreach ( $expected_shades as $shade ) {
-			$this->assertArrayHasKey( "bg-primary-{$shade}", $classes, "Missing chromatic shade: bg-primary-{$shade}" );
+		$this->assertArrayHasKey( 'bg-primary-600', $classes );
+
+		// Ramp shades must NOT be emitted (their vars no longer exist).
+		$removed_shades = array( '50', '100', '200', '300', '400', '500', '700', '800', '900', '950' );
+		foreach ( $removed_shades as $shade ) {
+			$this->assertArrayNotHasKey( "bg-primary-{$shade}", $classes, "Removed chromatic shade emitted: bg-primary-{$shade}" );
 		}
 	}
 
 	/**
-	 * Test neutral (base) shade mapping: 8 direct + 3 gap-fills = 11 Tailwind slots.
+	 * Test neutral (base) shade mapping: 6 stored stops + 1 gap-fill = 7 slots.
+	 * The interpolated stops (old base-300/base-800 and the 400/900 gap-fills)
+	 * are no longer generated.
 	 */
 	public function test_neutral_shade_mapping(): void {
 		// Even without chromatics, neutrals should generate.
 		$classes = $this->call_color_classes_with_config( array( 'chromatics' => array() ) );
 
-		// Direct mappings.
-		$direct_shades = array( '50', '100', '200', '300', '500', '600', '800', '950' );
+		// Direct mappings — the six stored neutral roles.
+		$direct_shades = array( '50', '100', '200', '500', '600', '950' );
 		foreach ( $direct_shades as $shade ) {
 			$this->assertArrayHasKey( "bg-base-{$shade}", $classes, "Missing neutral direct shade: bg-base-{$shade}" );
 		}
 
-		// Gap-fills.
-		$gap_shades = array( '400', '700', '900' );
-		foreach ( $gap_shades as $shade ) {
-			$this->assertArrayHasKey( "bg-base-{$shade}", $classes, "Missing neutral gap-fill shade: bg-base-{$shade}" );
+		// Gap-fill: 700 ← neutral-5 (the only remaining fill).
+		$this->assertArrayHasKey( 'bg-base-700', $classes );
+		$this->assertSame( 'background: var(--spectra-neutral-5);', $classes['bg-base-700']['css'] );
+
+		// Removed slots (interpolated neutral-3/neutral-6 based).
+		foreach ( array( '300', '400', '800', '900' ) as $shade ) {
+			$this->assertArrayNotHasKey( "bg-base-{$shade}", $classes, "Removed neutral shade emitted: bg-base-{$shade}" );
 		}
 
-		// Verify gap-fill uses nearest neutral token.
-		$this->assertSame( 'background: var(--spectra-neutral-3);', $classes['bg-base-400']['css'] );
-		$this->assertSame( 'background: var(--spectra-neutral-5);', $classes['bg-base-700']['css'] );
-		$this->assertSame( 'background: var(--spectra-neutral-6);', $classes['bg-base-900']['css'] );
-
-		// Total base bg-* classes: 11 shades.
+		// Total base bg-* classes: 7 slots.
 		$base_bg_count = count(
 			array_filter(
 				array_keys( $classes ),
@@ -711,7 +714,7 @@ class ClassRegistryTest extends WP_UnitTestCase {
 				}
 			)
 		);
-		$this->assertSame( 11, $base_bg_count );
+		$this->assertSame( 7, $base_bg_count );
 	}
 
 	/**
@@ -729,16 +732,16 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		// bg-primary-500/50 should use color-mix at 50%.
-		$this->assertArrayHasKey( 'bg-primary-500/50', $classes );
-		$this->assertStringContainsString( 'color-mix(in srgb,', $classes['bg-primary-500/50']['css'] );
-		$this->assertStringContainsString( '50%', $classes['bg-primary-500/50']['css'] );
-		$this->assertStringContainsString( 'transparent', $classes['bg-primary-500/50']['css'] );
+		// bg-primary-600/50 should use color-mix at 50%.
+		$this->assertArrayHasKey( 'bg-primary-600/50', $classes );
+		$this->assertStringContainsString( 'color-mix(in srgb,', $classes['bg-primary-600/50']['css'] );
+		$this->assertStringContainsString( '50%', $classes['bg-primary-600/50']['css'] );
+		$this->assertStringContainsString( 'transparent', $classes['bg-primary-600/50']['css'] );
 
 		// All 9 opacity steps should exist.
 		$opacity_steps = array( 10, 20, 30, 40, 50, 60, 70, 80, 90 );
 		foreach ( $opacity_steps as $pct ) {
-			$this->assertArrayHasKey( "bg-primary-500/{$pct}", $classes, "Missing opacity class: bg-primary-500/{$pct}" );
+			$this->assertArrayHasKey( "bg-primary-600/{$pct}", $classes, "Missing opacity class: bg-primary-600/{$pct}" );
 		}
 	}
 
@@ -759,8 +762,8 @@ class ClassRegistryTest extends WP_UnitTestCase {
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
 		// Should use classSlug 'brand', not the name-derived 'success'.
-		$this->assertArrayHasKey( 'bg-brand-500', $classes );
-		$this->assertArrayNotHasKey( 'bg-success-500', $classes );
+		$this->assertArrayHasKey( 'bg-brand-600', $classes );
+		$this->assertArrayNotHasKey( 'bg-success-600', $classes );
 	}
 
 	/**
@@ -779,7 +782,7 @@ class ClassRegistryTest extends WP_UnitTestCase {
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
 		// sanitize_title('Warm Accent') = 'warm-accent'.
-		$this->assertArrayHasKey( 'bg-warm-accent-500', $classes );
+		$this->assertArrayHasKey( 'bg-warm-accent-600', $classes );
 	}
 
 	/**
@@ -802,12 +805,12 @@ class ClassRegistryTest extends WP_UnitTestCase {
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
 		// Index 1 always uses 'primary' regardless of name.
-		$this->assertArrayHasKey( 'bg-primary-500', $classes );
-		$this->assertArrayNotHasKey( 'bg-my-main-color-500', $classes );
+		$this->assertArrayHasKey( 'bg-primary-600', $classes );
+		$this->assertArrayNotHasKey( 'bg-my-main-color-600', $classes );
 
 		// Index 2 always uses 'secondary' regardless of name.
-		$this->assertArrayHasKey( 'bg-secondary-500', $classes );
-		$this->assertArrayNotHasKey( 'bg-my-other-color-500', $classes );
+		$this->assertArrayHasKey( 'bg-secondary-600', $classes );
+		$this->assertArrayNotHasKey( 'bg-my-other-color-600', $classes );
 	}
 
 	/**
@@ -825,8 +828,8 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		$this->assertArrayHasKey( 'bg-primary-500', $classes );
-		$this->assertArrayNotHasKey( 'bg-secondary-500', $classes );
+		$this->assertArrayHasKey( 'bg-primary-600', $classes );
+		$this->assertArrayNotHasKey( 'bg-secondary-600', $classes );
 	}
 
 	// ─────────────────────────────────────────────────────────────
@@ -865,9 +868,9 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		$this->assertArrayHasKey( 'from-primary-500', $classes );
-		$css = $classes['from-primary-500']['css'];
-		$this->assertStringContainsString( '--tw-gradient-from: var(--spectra-chromatic1-6);', $css );
+		$this->assertArrayHasKey( 'from-primary-600', $classes );
+		$css = $classes['from-primary-600']['css'];
+		$this->assertStringContainsString( '--tw-gradient-from: var(--spectra-primary);', $css );
 		$this->assertStringContainsString( '--tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent);', $css );
 	}
 
@@ -888,9 +891,9 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		$this->assertArrayHasKey( 'via-primary-500', $classes );
-		$css = $classes['via-primary-500']['css'];
-		$this->assertStringContainsString( '--tw-gradient-via: var(--spectra-chromatic1-6);', $css );
+		$this->assertArrayHasKey( 'via-primary-600', $classes );
+		$css = $classes['via-primary-600']['css'];
+		$this->assertStringContainsString( '--tw-gradient-via: var(--spectra-primary);', $css );
 		$this->assertStringContainsString( 'var(--tw-gradient-from, transparent), var(--tw-gradient-via), var(--tw-gradient-to, transparent)', $css );
 	}
 
@@ -911,9 +914,9 @@ class ClassRegistryTest extends WP_UnitTestCase {
 
 		$classes = $this->call_color_classes_with_config( $mock_config );
 
-		$this->assertArrayHasKey( 'to-primary-500', $classes );
-		$css = $classes['to-primary-500']['css'];
-		$this->assertStringContainsString( '--tw-gradient-to: var(--spectra-chromatic1-6);', $css );
+		$this->assertArrayHasKey( 'to-primary-600', $classes );
+		$css = $classes['to-primary-600']['css'];
+		$this->assertStringContainsString( '--tw-gradient-to: var(--spectra-primary);', $css );
 		$this->assertStringNotContainsString( '--tw-gradient-from', $css );
 		$this->assertStringNotContainsString( '--tw-gradient-stops', $css );
 	}
@@ -947,9 +950,9 @@ class ClassRegistryTest extends WP_UnitTestCase {
 		$this->assertArrayHasKey( 'from-base-50', $classes );
 		$this->assertStringContainsString( '--tw-gradient-from: var(--spectra-neutral-0);', $classes['from-base-50']['css'] );
 
-		$this->assertArrayHasKey( 'to-base-900', $classes );
-		// Base-900 is gap-filled from neutral-6.
-		$this->assertStringContainsString( '--tw-gradient-to: var(--spectra-neutral-6);', $classes['to-base-900']['css'] );
+		$this->assertArrayHasKey( 'to-base-700', $classes );
+		// Base-700 is gap-filled from neutral-5.
+		$this->assertStringContainsString( '--tw-gradient-to: var(--spectra-neutral-5);', $classes['to-base-700']['css'] );
 	}
 
 	/**

@@ -10,7 +10,10 @@ $default-border-radius: 2px;
 	border-radius: $default-border-radius;
 	transition: max-height 250ms;
 	overflow: hidden;
-	box-sizing: content-box;
+	// Border-box so the item's own border + padding stay inside its width
+	// and never push it past the parent. Kept block-level (not a global
+	// token override) so no external stylesheet has to force item geometry.
+	box-sizing: border-box;
 
 	// Dynamic styles - specificity (0,2,0) and higher.
 	&[class*="wp-block"] {

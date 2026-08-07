@@ -1,0 +1,116 @@
+name: Create a release tag
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'spectra-blocks.php'
+
+env:
+  PLUGIN_SLUG: ${{ github.event.repository.name }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  build-artifact:
+    name: Build Release Artifact
+    runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.get_version.outputs.current_version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Cache admin node_modules
+        uses: actions/cache@v4
+        with:
+          path: admin/node_modules
+          key: ${{ runner.os }}-admin-npm-${{ hashFiles('admin/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-admin-npm-
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Build plugin assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build admin dashboard
+        run: |
+          cd admin
+          npm ci
+          npm run build
+
+      - name: Set Composer Token
+        run: composer config github-oauth.github.com ${{ secrets.BSF_PRODUCTS_REPO_TOKEN }}
+
+      - name: Install Composer dependencies (no-dev)
+        run: composer install --prefer-dist --no-progress --no-dev
+
+      - name: Initialize mandatory git config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Compute current version
+        id: get_version
+        run: |
+          CURRENT_VERSION=$(sed -n -e 's/^.*Version: //p' ${{ env.PLUGIN_SLUG }}.php)
+          echo "current_version=${CURRENT_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Build plugin ZIP file
+        run: bash ./bin/build-zip.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_SLUG }}-plugin
+          path: ./artifact/${{ env.PLUGIN_SLUG }}.zip
+
+  create-release:
+    name: Create Release Draft and Attach Asset
+    needs: [build-artifact]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Release Version
+        id: get_release_version
+        env:
+          VERSION: ${{ needs.build-artifact.outputs.current_version }}
+        run: echo "version=$(echo $VERSION | cut -d / -f 3 | sed 's/-rc./ RC/' )" >> $GITHUB_OUTPUT
+
+      - name: Download Plugin Zip Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_SLUG }}-plugin
+
+      - name: Create Release Draft
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: Version ${{ steps.get_release_version.outputs.version }}
+          tag_name: 'v${{ steps.get_release_version.outputs.version }}'
+          target_commitish: master
+          draft: true
+          prerelease: false
+          body: 'Replace changelog here'
+          files: ./${{ env.PLUGIN_SLUG }}.zip

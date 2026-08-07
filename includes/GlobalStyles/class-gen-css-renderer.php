@@ -88,6 +88,8 @@ class GenCssRenderer {
 	 * How each bucket is handled — scope depends on context (frontend vs editor):
 	 *   imports       → `@import url("…");`  (first, verbatim)
 	 *   scopeVars     → `<root> { … }`  (editor uses the WIDE content-size value)
+	 *   remBase       → `:root { font-size: … }`  (frontend only — the source's
+	 *                   own document-root font-size; the rem base, never body's)
 	 *   rootStyles    → `<root> { … }`
 	 *   presetLock    → `<root> { … }`
 	 *   variables     → `<root> { … }`  (user custom CSS vars from `/custom-vars`)
@@ -156,7 +158,20 @@ class GenCssRenderer {
 			$parts[] = $root_scope . ' { ' . self::vars_to_string( $vars ) . ' }';
 		}
 
-		// 2. Source root styling — the `:root`/`body` token graph AND base body
+		// 2a. Rem base — the source authored a font-size on its DOCUMENT root
+		// (`html`/`:root`, e.g. the 62.5% trick), so every rem length it wrote
+		// only means what the source meant if the same base lands on the real
+		// `:root` here (a theme's default 16px root rendered such content 11%
+		// short, measured). The converter routes ONLY document-root font-sizes
+		// into `remBase`; a `body` font-size is inheritance intent and stays in
+		// rootStyles — hoisting it moved the rem base to the site's preset
+		// value and rescaled every rem token ×1.25 (measured 2026-07-13).
+		$rem_base = isset( $payload['remBase'] ) && is_string( $payload['remBase'] ) ? trim( $payload['remBase'] ) : '';
+		if ( '' !== $rem_base && ! $is_editor && preg_match( '/^(?!.*(?:\/\*|\*\/))[^{};]+$/', $rem_base ) ) {
+			$parts[] = ':root { font-size: ' . $rem_base . '; }';
+		}
+
+		// 2b. Source root styling — the `:root`/`body` token graph AND base body
 		// declarations (font, color, background, margin, …) on the root.
 		$root_styles = self::assoc( $payload['rootStyles'] ?? array() );
 		if ( array() !== $root_styles ) {

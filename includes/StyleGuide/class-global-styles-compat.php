@@ -151,45 +151,52 @@ class GlobalStylesCompat {
 	private function get_variable_aliases(): array {
 		$aliases = array();
 
-		// --- Chromatic color pairs (primary → chromatic1, secondary → chromatic2) ---
-		$pairs = array(
-			'primary'   => 1,
-			'secondary' => 2,
-		);
+		// --- Chromatic color pairs (legacy --color--primary/secondary → seed) ---
+		// The seed token is now keyed by its semantic slug (--spectra-primary /
+		// --spectra-secondary), so the alias points straight at it.
+		$pairs = array( 'primary', 'secondary' );
 
-		foreach ( $pairs as $legacy_name => $c_index ) {
-			$prefix = "--spectra-chromatic{$c_index}";
+		foreach ( $pairs as $legacy_name ) {
+			$seed = "--spectra-{$legacy_name}";
 
 			// Main.
 			$aliases[ "--color--{$legacy_name}" ] = "var(--wp--preset--color--{$legacy_name})";
 
-			// Lighter shades.
-			$aliases[ "--color--{$legacy_name}-near-white" ] = "var({$prefix}-1)";
-			$aliases[ "--color--{$legacy_name}-lightest" ]   = "var({$prefix}-1)";
-			$aliases[ "--color--{$legacy_name}-lighter" ]    = "var({$prefix}-3)";
-			$aliases[ "--color--{$legacy_name}-light" ]      = "var({$prefix}-5)";
-
-			// Darker shades — mapped to black-mix indices 8-11.
-			$aliases[ "--color--{$legacy_name}-dark" ]       = "var({$prefix}-8)";
-			$aliases[ "--color--{$legacy_name}-darker" ]     = "var({$prefix}-9)";
-			$aliases[ "--color--{$legacy_name}-darkest" ]    = "var({$prefix}-10)";
-			$aliases[ "--color--{$legacy_name}-near-black" ] = "var({$prefix}-11)";
-
-			// No SG equivalent — graceful fallbacks.
-			$aliases[ "--color--{$legacy_name}-complement" ] = "var({$prefix}-7)";
-			$aliases[ "--color--{$legacy_name}-inverted" ]   = 'var(--spectra-neutral-7)';
+			// Shade variants — ramps are no longer generated, so every legacy
+			// shade alias resolves to the seed. Old content keeps a colour (the
+			// brand tone) instead of dangling on undefined shade variables.
+			$shade_suffixes = array( 'near-white', 'lightest', 'lighter', 'light', 'dark', 'darker', 'darkest', 'near-black', 'complement' );
+			foreach ( $shade_suffixes as $suffix ) {
+				$aliases[ "--color--{$legacy_name}-{$suffix}" ] = "var({$seed})";
+			}
+			$aliases[ "--color--{$legacy_name}-inverted" ] = 'var(--spectra-neutral-7)';
 		}
 
-		// --- Base → neutral scale ---
+		// --- Base → neutral scale (stops 3/6 are gone; nearest surviving stop) ---
 		$aliases['--color--base']            = 'var(--spectra-neutral-4)';
 		$aliases['--color--base-near-white'] = 'var(--spectra-neutral-7)';
 		$aliases['--color--base-lightest']   = 'var(--spectra-neutral-7)';
-		$aliases['--color--base-lighter']    = 'var(--spectra-neutral-6)';
+		$aliases['--color--base-lighter']    = 'var(--spectra-neutral-5)';
 		$aliases['--color--base-light']      = 'var(--spectra-neutral-5)';
-		$aliases['--color--base-dark']       = 'var(--spectra-neutral-3)';
+		$aliases['--color--base-dark']       = 'var(--spectra-neutral-2)';
 		$aliases['--color--base-darker']     = 'var(--spectra-neutral-2)';
 		$aliases['--color--base-darkest']    = 'var(--spectra-neutral-1)';
 		$aliases['--color--base-near-black'] = 'var(--spectra-neutral-0)';
+
+		// --- Remaining Style Guide palette colours + user custom colours ---
+		// Point every other palette slug's legacy `--color--{slug}` var at its WP
+		// preset var, so the `color--{slug}` / `background--{slug}` utility classes
+		// resolve for EVERY Style Guide colour — not just primary/secondary/base.
+		$more_slugs    = array( 'accent', 'heading', 'body', 'background', 'surface', 'outline', 'foreground', 'success', 'error', 'info', 'warning' );
+		$config        = $this->engine->get_config();
+		$custom_colors = ( isset( $config['custom_colors'] ) && is_array( $config['custom_colors'] ) ) ? array_keys( $config['custom_colors'] ) : array();
+		foreach ( array_merge( $more_slugs, $custom_colors ) as $slug ) {
+			$slug = sanitize_key( (string) $slug );
+			if ( '' === $slug || isset( $aliases[ "--color--{$slug}" ] ) ) {
+				continue;
+			}
+			$aliases[ "--color--{$slug}" ] = "var(--wp--preset--color--{$slug})";
+		}
 
 		// --- Spacing ---
 		$aliases['--space--xs']  = 'var(--spectra-space-xs)';

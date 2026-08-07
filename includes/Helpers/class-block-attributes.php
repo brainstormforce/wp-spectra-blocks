@@ -471,27 +471,32 @@ class BlockAttributes {
 		// Handle anchor attribute manually before processing wrapper_config.
 		// We do this because get_block_wrapper_attributes() might not always have access to
 		// the block context needed to apply anchor support automatically.
-		$has_anchor = ! empty( $attributes['anchor'] );
+		$anchor     = $attributes['anchor'] ?? '';
+		$anchor     = is_scalar( $anchor ) ? (string) $anchor : '';
+		$has_anchor = '' !== $anchor;
 		if ( $has_anchor ) {
-			$wrapper_attrs['id'] = $attributes['anchor'];
+			$wrapper_attrs['id'] = $anchor;
 		}
 
 		if ( ! empty( $wrapper_config ) && is_array( $wrapper_config ) ) {
 			foreach ( $wrapper_config as $key => $value ) {
-				// Add custom attribute only if the key is not empty and the value is non-empty.
-				if ( ! empty( $key ) && ! empty( $value ) ) {
-					// Special handling for class attribute - merge with existing classes.
-					if ( 'class' === $key ) {
-						$existing_classes       = ! empty( $wrapper_attrs['class'] ) ? $wrapper_attrs['class'] : '';
-						$wrapper_attrs['class'] = trim( $existing_classes . ' ' . $value );
-					} elseif ( 'id' === $key ) {
-						// Only use custom ID if no anchor is set (anchor takes priority).
-						if ( ! $has_anchor ) {
-							$wrapper_attrs['id'] = $value;
-						}
-					} else {
-						$wrapper_attrs[ $key ] = $value;
+				$key   = (string) $key;
+				$value = is_scalar( $value ) ? (string) $value : '';
+				// Strict compare: empty('0') is true, which dropped aria-label="0" and id="0".
+				if ( '' === $key || '' === $value ) {
+					continue;
+				}
+				// Special handling for class attribute - merge with existing classes.
+				if ( 'class' === $key ) {
+					$existing_classes       = ! empty( $wrapper_attrs['class'] ) ? $wrapper_attrs['class'] : '';
+					$wrapper_attrs['class'] = trim( $existing_classes . ' ' . $value );
+				} elseif ( 'id' === $key ) {
+					// Only use custom ID if no anchor is set (anchor takes priority).
+					if ( ! $has_anchor ) {
+						$wrapper_attrs['id'] = $value;
 					}
+				} else {
+					$wrapper_attrs[ $key ] = $value;
 				}
 			}
 		}

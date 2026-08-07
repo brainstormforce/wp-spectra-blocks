@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Button, Badge, Text } from '@bsf/force-ui';
 import apiFetch from '@wordpress/api-fetch';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 const ExtendWebsiteItem = ( { plugin } ) => {
 	const { path, slug, siteUrl, icon, type, name, zipUrl, desc, isFree, status, settings_url } = plugin;
@@ -139,19 +139,13 @@ const ExtendWebsiteItem = ( { plugin } ) => {
 		return pluginStatus;
 	};
 
-	const translatedName = sprintf(
-		/* translators: abbreviation for units */ __( '%s', 'spectra-blocks' ),
-		name
-	)
+	const translatedName = name
 
-	const translatedDesc = sprintf(
-		/* translators: abbreviation for units */ __( '%s', 'spectra-blocks' ),
-		desc
-	)
+	const translatedDesc = desc
 
 	return (
 		<Container align="center" containerType="flex" direction="column" justify="between">
-			<h2 className="sr-only">{ __( 'Build Website with AI', 'spectra-blocks' ) }</h2>
+			<h2 className="sr-only">{ name }</h2>
 
 			<Container.Item className="flex items-center justify-between w-full p-1">
 				{ icon() }

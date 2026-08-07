@@ -94,7 +94,7 @@ const ProBlocks = () => {
 				} }
 			>
 				{ 'Activated' !== spectra_blocks_react.pro_plugin_status ? ( <p className="m-0 text-sm font-semibold text-text-primary">
-					{ __( 'Do more with Spectra Pro', 'spectra-blocks' ) }
+					{ __( 'Do more with Spectra Blocks Pro', 'spectra-blocks' ) }
 				</p>
 				) : ( <p className="m-0 text-sm font-semibold text-text-primary">
 					{ __( 'Pro blocks', 'spectra-blocks' ) }

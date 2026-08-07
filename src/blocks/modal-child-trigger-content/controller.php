@@ -47,7 +47,23 @@ $custom_styles = $is_hidden ? array( 'display' => 'none' ) : array();
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'id' => $anchor ), $custom_classes, $custom_styles );
 
 // Add the text if it exists, else make the placeholder as the text.
-$text = ! empty( $attributes['text'] ) ? $attributes['text'] : __( 'Get started by writing something!', 'spectra-blocks' );
+// Strict compare: `empty('0')` is true, so "0" was replaced by the placeholder.
+$text = $attributes['text'] ?? '';
+// `"0"` is falsy in PHP and `false` is not a string; normalise once so every
+// test below compares against a known string.
+$text = is_scalar( $text ) ? (string) $text : '';
+$text = '' !== $text ? $text : __( 'Get started by writing something!', 'spectra-blocks' );
+
+// The label must never contain an anchor: view.php always wraps it in an
+// element with role="button" that toggles the modal, and a link inside it
+// would hijack the click. Strip <a> tags (keeping inner text and all other
+// formatting) via a kses allowlist, which also neutralizes malformed anchors
+// that a regex would miss. Editor-side counterpart: removeAnchorTag() in @spectra-helpers.
+if ( '' !== $text ) {
+	$allowed_label_tags = wp_kses_allowed_html( 'post' );
+	unset( $allowed_label_tags['a'] );
+	$text = wp_kses( $text, $allowed_label_tags );
+}
 
 // return the view.
 return 'file:./view.php';
