@@ -1972,7 +1972,7 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$post_type on WP_Screen\\|null\\.$#"
-			count: 1
+			count: 2
 			path: includes/Blocks/class-popup-builder.php
 
 		-

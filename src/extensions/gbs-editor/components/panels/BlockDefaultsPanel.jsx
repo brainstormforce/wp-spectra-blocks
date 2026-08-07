@@ -7,12 +7,13 @@
  * @since x.x.x
  */
 
-import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch } from '@wordpress/data';
 import Select from 'react-select';
 import getClassOptions from '../../data/class-options';
+import { useGBSConfig } from '../../hooks/useGBSConfig';
 import { regenerateEditorCSS } from '../../utils/liveVars.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -401,14 +402,21 @@ const BlockDefaultsPanel = () => {
 	const [ successMsg, setSuccessMsg ]               = useState( '' );
 	const [ errorMsg, setErrorMsg ]                   = useState( '' );
 
-	const [ availableClasses ] = useState( () => {
+	// The user's saved custom colours (config.custom_colors) — appended to the
+	// colour class groups so they're selectable as block defaults. Recomputed
+	// when the config loads/changes (a useState initializer would miss the async
+	// fetch and never show colours saved after mount).
+	const { config: sgConfig } = useGBSConfig();
+	const customColorSlugs = useMemo( () => Object.keys( sgConfig?.custom_colors ?? {} ), [ sgConfig ] );
+
+	const availableClasses = useMemo( () => {
 		// Strip default-{block} classes — they are the OUTPUT of block defaults, not valid inputs.
 		// Assigning them would create circular CSS aggregation.
-		return getClassOptions().map( ( group ) => ( {
+		return getClassOptions( null, customColorSlugs ).map( ( group ) => ( {
 			...group,
 			options: ( group.options ?? [] ).filter( ( opt ) => ! /^default-/.test( opt.value ) ),
 		} ) ).filter( ( group ) => ( group.options ?? [] ).length > 0 );
-	} );
+	}, [ customColorSlugs ] );
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -699,6 +707,10 @@ const BlockDefaultsPanel = () => {
 					delete window.spectraGSTemporaryStorage[ selectedBlock ];
 				}
 				window.dispatchEvent( new CustomEvent( 'spectraGSClassesUpdated' ) );
+				// Re-inject the block-defaults stylesheet into the editor (incl. the
+				// canvas iframe) so a newly-applied default's CSS shows immediately —
+				// the server stylesheet only regenerates on a full page reload.
+				regenerateEditorCSS();
 			} else {
 				showError( resp.data?.title || __( 'Save failed. Please try again.', 'spectra-blocks' ) );
 			}

@@ -107,7 +107,7 @@ const BlockSettings = () => {
 						{ __(
 							'To enable reCAPTCHA for your form, please follow the steps mentioned',
 							'spectra-blocks'
-						) }
+						) }{ ' ' }
 						<a
 							className="text-spectra focus:text-spectra-hover active:text-spectra-hover hover:text-spectra-hover"
 							href="https://www.google.com/recaptcha/admin/create"

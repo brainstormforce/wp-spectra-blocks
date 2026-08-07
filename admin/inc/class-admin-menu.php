@@ -292,16 +292,18 @@ class Admin_Menu {
 	 */
 	public function add_action_links( $links ) {
 
-		$default_url = admin_url( 'admin.php?page=' . $this->menu_slug );
-		$spectra_pro = \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'plugin-list', 'plugin-list' );
+		$default_url  = admin_url( 'admin.php?page=' . $this->menu_slug );
+		$rollback_url = admin_url( 'admin.php?page=' . $this->menu_slug . '&path=settings&settings=version-control' );
+		$spectra_pro  = \Spectra_Blocks_Admin_Helper::get_spectra_pro_url( '/pricing/', 'free-plugin', 'plugin-list', 'plugin-list' );
 
 		$free_links = array(
 			'<a href="' . esc_url( $default_url ) . '">' . __( 'Settings', 'spectra-blocks' ) . '</a>',
+			'<a href="' . esc_url( $rollback_url ) . '">' . __( 'Rollback', 'spectra-blocks' ) . '</a>',
 		);
 
 		// Check if Spectra Pro plugin is not active.
 		if ( ! is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) && ! file_exists( SPECTRA_BLOCKS_DIR . '../spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
-			$free_links[] = '<a href="' . esc_url( $spectra_pro ) . '" target="_blank" rel="noreferrer" class="spectra-plugins-go-pro">' . __( 'Get Spectra Pro', 'spectra-blocks' ) . '</a>';
+			$free_links[] = '<a href="' . esc_url( $spectra_pro ) . '" target="_blank" rel="noreferrer" class="spectra-plugins-go-pro">' . __( 'Upgrade to Pro', 'spectra-blocks' ) . '</a>';
 		}
 
 		// Merge with $links array if it exists (assuming $links is defined elsewhere).
@@ -352,7 +354,7 @@ class Admin_Menu {
 		// Add the Dashboard Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
 			__( 'Dashboard', 'spectra-blocks' ),
 			$capability,
 			$menu_slug,
@@ -361,7 +363,7 @@ class Admin_Menu {
 
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
 			__( 'AI Features', 'spectra-blocks' ),
 			$capability,
 			$menu_slug . '&path=ai-features',
@@ -384,7 +386,7 @@ class Admin_Menu {
 		// Add the Learn tab in Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
 			__( 'Learn', 'spectra-blocks' ),
 			$capability,
 			$menu_slug . '&path=learn',
@@ -394,7 +396,7 @@ class Admin_Menu {
 		// Finally, add the Settings Submenu.
 		add_submenu_page(
 			$menu_slug,
-			__( 'Spectra', 'spectra-blocks' ),
+			__( 'Spectra Blocks', 'spectra-blocks' ),
 			__( 'Settings', 'spectra-blocks' ),
 			$capability,
 			$menu_slug . '&path=settings',
@@ -406,7 +408,7 @@ class Admin_Menu {
 			add_submenu_page(
 				$menu_slug,
 				__( 'Free vs Pro', 'spectra-blocks' ),
-				__( 'Get Spectra Pro', 'spectra-blocks' ),
+				__( 'Free vs Pro', 'spectra-blocks' ),
 				$capability,
 				$menu_slug . '&path=free-vs-pro',
 				array( $this, 'render' )
@@ -537,7 +539,11 @@ class Admin_Menu {
 				'enable_abilities_nonce'              => wp_create_nonce( 'spectra_blocks_enable_abilities' ),
 				'enable_edit_abilities_nonce'         => wp_create_nonce( 'spectra_blocks_enable_edit_abilities' ),
 				'enable_mcp_server_nonce'             => wp_create_nonce( 'spectra_blocks_enable_mcp_server' ),
+				'visibility_mode_nonce'               => wp_create_nonce( 'spectra_blocks_visibility_mode' ),
+				'visibility_page_nonce'               => wp_create_nonce( 'spectra_blocks_visibility_page' ),
+				'fetch_pages_nonce'                   => wp_create_nonce( 'spectra_blocks_fetch_pages' ),
 				'is_mcp_adapter_active'               => class_exists( 'WP\\MCP\\Plugin' ),
+				'rollback_url'                        => esc_url( add_query_arg( 'version', 'VERSION', wp_nonce_url( admin_url( 'admin-post.php?action=spectra_blocks_rollback' ), 'spectra_blocks_rollback' ) ) ),
 				'rest_url'                            => get_rest_url(),
 				'current_username'                    => wp_get_current_user()->user_login,
 				'application_passwords_url'           => admin_url( 'profile.php#application-passwords-section' ),

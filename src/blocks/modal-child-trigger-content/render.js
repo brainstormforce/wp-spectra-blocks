@@ -2,14 +2,13 @@
  * External dependencies.
  */
 import { RichText, useBlockEditingMode, useBlockProps } from '@wordpress/block-editor';
-import { memo, useMemo } from '@wordpress/element';
+import { memo } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
-import { select } from '@wordpress/data';
 
 /**
  * Internal dependencies.
  */
-import { spectraClassNames } from '@spectra-helpers';
+import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
 
@@ -48,22 +47,6 @@ const Render = ( props ) => {
 	// Get the block editing mode.
 	const blockEditingMode = useBlockEditingMode();
 
-	/**
-	 * Dynamically retrieve all registered RichText format types from the
-	 * WordPress rich-text store and exclude the 'core/link' format.
-	 *
-	 * This ensures that all other formatting options (like bold, italic, etc.)
-	 * remain available in the RichText toolbar, while preventing users from
-	 * inserting or editing links.
-	 */
-	const allowedFormats = useMemo( () => {
-		const allFormats = select( 'core/rich-text' ).getFormatTypes() || [];
-	
-		return allFormats
-			.map( ( format ) => format.name )
-			.filter( ( name ) => name !== 'core/link' && name !== 'core/footnote' );
-	}, [] );
-
 	// Configuration for the useSpectraStyles hook.
 	const config = [
 		{ key: 'textColor' },
@@ -100,11 +83,11 @@ const Render = ( props ) => {
 			tagName={ tagName || 'p' }
 			placeholder={ __( 'Get started by writing something!', 'spectra-blocks' ) }
 			value={ text }
-			onChange={ ( value ) => setAttributes( { text: value } ) }
+			onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 			onMerge={ mergeBlocks }
 			onReplace={ onReplace }
 			onRemove={ () => onReplace( [] ) }
-			allowedFormats={ allowedFormats }
+			withoutInteractiveFormatting
 		/>
 	);
 };

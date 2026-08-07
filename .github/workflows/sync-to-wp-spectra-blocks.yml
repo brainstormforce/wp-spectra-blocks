@@ -1,0 +1,22 @@
+name: Sync master to wp-spectra-blocks
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  sync:
+    name: Sync to wp-spectra-blocks mirror
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to wp-spectra-blocks mirror
+        run: |
+          git remote add mirror https://x-access-token:${{ secrets.WP_SPECTRA_BLOCKS_SYNC_TOKEN }}@github.com/brainstormforce/wp-spectra-blocks.git
+          git push mirror HEAD:master

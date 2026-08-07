@@ -14,6 +14,152 @@
  */
 
 /* ================================================================
+   COMPONENT TOKEN DEFAULTS
+   The Style Guide is colours-only — Typography and UI Styling were
+   removed. These --spectra-* component tokens used to be emitted at
+   runtime by TokenRegistry::register_ui_tokens() from the (now gone)
+   UI-styling presets. They are the frozen DEFAULT values, declared
+   here statically so the sg-* utility layer and the global overrides
+   below keep their default look. Colour-derived values still resolve
+   against the runtime colour tokens (--spectra-neutral-*, --spectra-white)
+   and the theme's --wp--preset--color--* vars.
+   ================================================================ */
+
+:root {
+	--spectra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+	--spectra-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.05);
+	--spectra-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.06);
+	--spectra-radius-interactive: 8px;
+	--spectra-radius-badge: 6px;
+	--spectra-radius-input: 8px;
+	--spectra-radius-card: 12px;
+	--spectra-radius-image: 8px;
+	--spectra-btn-bg: var(--wp--preset--color--primary);
+	--spectra-btn-text: var(--wp--preset--color--background);
+	--spectra-btn-border-color: transparent;
+	--spectra-btn-border-width: 0;
+	--spectra-btn-border-style: none;
+	--spectra-btn-shadow: none;
+	--spectra-btn-secondary-bg: transparent;
+	--spectra-btn-secondary-text: var(--wp--preset--color--primary);
+	--spectra-btn-secondary-border-color: var(--wp--preset--color--primary);
+	--spectra-btn-secondary-border-width: 1.5px;
+	--spectra-btn-secondary-border-style: solid;
+	--spectra-card-bg: transparent;
+	--spectra-card-border-color: transparent;
+	--spectra-card-border-width: 0;
+	--spectra-card-border-style: none;
+	--spectra-card-shadow: none;
+	--spectra-space-xs: 0.5rem;
+	--spectra-space-sm: 1rem;
+	--spectra-space-md: 1.5rem;
+	--spectra-space-lg: 2.5rem;
+	--spectra-space-xl: 4rem;
+	--spectra-space-2xl: 6rem;
+	--spectra-text-xs: 0.75rem;
+	--spectra-text-sm: 0.875rem;
+	--spectra-text-md: 1rem;
+	--spectra-text-lg: 1.125rem;
+	--spectra-text-xl: 1.25rem;
+	--spectra-text-2xl: 1.5rem;
+	--spectra-text-3xl: 1.875rem;
+	--spectra-text-4xl: 2.25rem;
+	--spectra-text-5xl: 3rem;
+	--spectra-text-6xl: 3.75rem;
+	--spectra-text-7xl: 4.5rem;
+	--spectra-text-8xl: 6rem;
+	--spectra-text-9xl: 8rem;
+	--spectra-heading-1: 2.25rem;
+	--spectra-heading-2: 1.875rem;
+	--spectra-heading-3: 1.5rem;
+	--spectra-heading-4: 1.25rem;
+	--spectra-heading-5: 1.125rem;
+	--spectra-heading-6: 1rem;
+	--spectra-section-padding-y: 3.5rem;
+	--spectra-section-gap: 2rem;
+	--spectra-content-max-width: 1200px;
+	--spectra-card-padding: 2rem;
+	--spectra-card-gap: 1.25rem;
+	--spectra-input-bg: var(--wp--preset--color--background);
+	--spectra-input-text: var(--spectra-neutral-7);
+	--spectra-input-border-color: var(--wp--preset--color--outline);
+	--spectra-input-border-width: 1px;
+	--spectra-input-border-style: solid;
+	--spectra-input-placeholder: color-mix(in srgb, var(--spectra-neutral-7) 40%, transparent);
+	--spectra-input-focus-border: var(--wp--preset--color--primary);
+	--spectra-input-focus-shadow: 0 0 0 3px color-mix(in srgb, var(--wp--preset--color--primary) 15%, transparent);
+	--spectra-badge-bg: color-mix(in srgb, var(--wp--preset--color--primary) 10%, transparent);
+	--spectra-badge-text: var(--wp--preset--color--primary);
+	--spectra-badge-border-color: transparent;
+	--spectra-badge-border-width: 0;
+	--spectra-badge-font-size: 0.75rem;
+	--spectra-badge-font-weight: 600;
+	--spectra-badge-letter-spacing: 0.05em;
+	--spectra-badge-text-transform: uppercase;
+	--spectra-badge-padding-x: 0.75em;
+	--spectra-badge-padding-y: 0.25em;
+	--spectra-link-color: var(--wp--preset--color--primary);
+	--spectra-link-decoration: none;
+	--spectra-link-hover-color: var(--wp--preset--color--secondary);
+	--spectra-link-hover-decoration: underline;
+	--spectra-image-overlay: none;
+	--spectra-image-filter: none;
+	--spectra-image-border: none;
+	--spectra-btn-hover-bg: color-mix(in srgb, var(--spectra-btn-bg) 90%, #000);
+	--spectra-btn-hover-text: var(--spectra-btn-text);
+	--spectra-btn-hover-shadow: var(--spectra-shadow-sm);
+	--spectra-btn-hover-translate-y: -1px;
+	--spectra-card-hover-shadow: var(--spectra-shadow-md);
+	--spectra-card-hover-translate-y: -2px;
+	--spectra-dark-card-bg: color-mix(in srgb, var(--spectra-white) 8%, transparent);
+	--spectra-dark-card-border-color: color-mix(in srgb, var(--spectra-white) 10%, transparent);
+	--spectra-dark-card-shadow: none;
+	--spectra-dark-btn-bg: var(--spectra-white);
+	--spectra-dark-btn-text: var(--spectra-neutral-7);
+	--spectra-dark-btn-secondary-bg: transparent;
+	--spectra-dark-btn-secondary-text: var(--spectra-white);
+	--spectra-dark-btn-secondary-border-color: color-mix(in srgb, var(--spectra-white) 30%, transparent);
+	--spectra-body-line-height: 1.65;
+	--spectra-heading-line-height: 1.2;
+	--spectra-body-letter-spacing: 0;
+	--spectra-heading-letter-spacing: -0.02em;
+	--spectra-gradient-primary: linear-gradient(135deg, var(--wp--preset--color--primary), var(--wp--preset--color--secondary));
+	--spectra-gradient-accent: linear-gradient(135deg, var(--wp--preset--color--primary), color-mix(in srgb, var(--wp--preset--color--primary) 60%, var(--wp--preset--color--secondary, #8b5cf6)));
+	--spectra-gradient-surface: linear-gradient(180deg, var(--wp--preset--color--background), var(--wp--preset--color--surface));
+	--spectra-overlay-dark: rgba(0, 0, 0, 0.5);
+	--spectra-overlay-light: rgba(255, 255, 255, 0.7);
+	--spectra-overlay-brand: color-mix(in srgb, var(--wp--preset--color--primary) 80%, transparent);
+	--spectra-overlay-gradient: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
+	--spectra-divider-color: var(--wp--preset--color--outline);
+	--spectra-divider-width: 1px;
+	--spectra-divider-style: solid;
+	--spectra-nav-bg: var(--wp--preset--color--background);
+	--spectra-nav-text: var(--spectra-neutral-7);
+	--spectra-nav-link-hover: var(--wp--preset--color--primary);
+	--spectra-nav-border-bottom: 1px solid color-mix(in srgb, var(--spectra-neutral-7) 5%, transparent);
+	--spectra-icon-size: 24px;
+	--spectra-icon-color: currentcolor;
+	--spectra-icon-container-bg: color-mix(in srgb, var(--wp--preset--color--primary) 10%, transparent);
+	--spectra-icon-container-radius: var(--spectra-radius-badge);
+	--spectra-icon-container-size: 48px;
+	--spectra-transition-fast: 100ms;
+	--spectra-transition-normal: 200ms;
+	--spectra-transition-slow: 350ms;
+	--spectra-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+	--spectra-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--spectra-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+	--spectra-entrance-duration: 400ms;
+	--spectra-entrance-distance: 12px;
+	--spectra-entrance-stagger: 60ms;
+	--spectra-btn-press-scale: 0.97;
+	--spectra-focus-scale: 1.02;
+	--spectra-focus-ring-color: var(--wp--preset--color--primary);
+	--spectra-focus-ring-width: 2px;
+	--spectra-focus-ring-offset: 2px;
+	--spectra-focus-ring-style: solid;
+}
+
+/* ================================================================
    CARDS
    sg-card → applied to spectra/container blocks that serve as cards
    ================================================================ */
@@ -98,7 +244,9 @@
  * a custom border-radius/shadow can add the matching utility class.
  */
 :where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button),
-:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link) {
+:where(
+	.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link
+) {
 	background-color: var(--spectra-btn-bg);
 	color: var(--spectra-btn-text);
 	border-width: var(--spectra-btn-border-width);
@@ -112,8 +260,12 @@
 		transform var(--spectra-transition-normal, 250ms) ease;
 }
 
-:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button:hover),
-:where(.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link:hover) {
+:where(
+.wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button:hover
+),
+:where(
+.wp-block-spectra-buttons:not(.is-style-outline) .wp-block-button__link:hover
+) {
 	background-color: var(--spectra-btn-hover-bg);
 	color: var(--spectra-btn-hover-text);
 	box-shadow: var(--spectra-btn-hover-shadow);
@@ -207,56 +359,6 @@
 .sg-section.sg-section {
 	padding-top: var(--spectra-section-padding-y);
 	padding-bottom: var(--spectra-section-padding-y);
-}
-
-/* ================================================================
-   GLOBAL FORM INPUT OVERRIDE
-   Targets all form elements — no class needed on patterns.
-   ================================================================ */
-
-:where(
-.entry-content
-input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
-	[type="checkbox"]
-):not([type="radio"]):not([type="hidden"])
-),
-:where(.entry-content textarea),
-:where(.entry-content select),
-:where(.wp-block-search__input) {
-	background-color: var(--spectra-input-bg);
-	color: var(--spectra-input-text);
-	border-color: var(--spectra-input-border-color);
-	border-width: var(--spectra-input-border-width);
-	border-style: var(--spectra-input-border-style);
-	border-radius: var(--spectra-radius-input);
-	transition:
-		border-color var(--spectra-transition-normal, 250ms) ease,
-		box-shadow var(--spectra-transition-normal, 250ms) ease;
-}
-
-:where(
-.entry-content
-input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
-	[type="checkbox"]
-):not([type="radio"]):not([type="hidden"])::placeholder
-),
-:where(.entry-content textarea::placeholder),
-:where(.wp-block-search__input::placeholder) {
-	color: var(--spectra-input-placeholder);
-}
-
-:where(
-.entry-content
-input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
-	[type="checkbox"]
-):not([type="radio"]):not([type="hidden"])
-):focus,
-:where(.entry-content textarea):focus,
-:where(.entry-content select):focus,
-:where(.wp-block-search__input):focus {
-	border-color: var(--spectra-input-focus-border);
-	box-shadow: var(--spectra-input-focus-shadow);
-	outline: none;
 }
 
 /* ================================================================
@@ -354,60 +456,6 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 	width: fit-content;
 }
 
-/* ================================================================
-   GLOBAL IMAGE OVERRIDE
-   Targets all block images — no class needed on patterns.
-   Applies shadow, border, overlay, and filter.
-
-   border-radius is set ONLY on the figure parent (which carries
-   `overflow: hidden`), never on the inner <img>. Two reasons:
-     1. The figure's overflow:hidden + border-radius already clips
-        the inner image to rounded corners for Block-UI users — no
-        img-level radius needed.
-     2. WP core/image block validation rejects className attributes
-        on the inner <img> (`save()` only emits class on the figure).
-        So a Tailwind `rounded-*` utility CAN'T live on the img.
-        Keeping img-level radius makes it impossible for SaaS to
-        opt out of image rounding without breaking block validation.
-   ================================================================ */
-
-:where(.entry-content .wp-block-image img) {
-	filter: var(--spectra-image-filter);
-}
-
-.entry-content .wp-block-image {
-	position: relative;
-	overflow: hidden;
-	border-radius: var(--spectra-radius-image);
-}
-
-/* Image shadow and border from image treatment tokens. */
-.entry-content .wp-block-image figure,
-.entry-content figure.wp-block-image {
-	border-radius: var(--spectra-radius-image);
-	box-shadow: var(--spectra-shadow-sm);
-	border: var(--spectra-image-border);
-	overflow: hidden;
-}
-
-/* Image overlay via ::after pseudo-element. */
-.entry-content .wp-block-image::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	background: var(--spectra-image-overlay);
-	pointer-events: none;
-	border-radius: inherit;
-}
-
-/* Spectra image blocks also get treatment. */
-:where(.entry-content .wp-block-spectra-image img) {
-	border-radius: var(--spectra-radius-image);
-	box-shadow: var(--spectra-shadow-sm);
-	border: var(--spectra-image-border);
-	filter: var(--spectra-image-filter);
-}
-
 /* Object-fit propagation for core/image figures.
 
    WP `core/image` save() emits `attrs.className` on the wrapping
@@ -471,7 +519,9 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 
 /* Dark section primary buttons — :where() wrapped so className utilities win. */
 :where(
-.sg-section-dark .wp-block-spectra-buttons:not(.is-style-outline) .wp-element-button
+.sg-section-dark
+.wp-block-spectra-buttons:not(.is-style-outline)
+.wp-element-button
 ),
 :where(
 .sg-section-dark
@@ -483,9 +533,13 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 }
 
 /* Dark section secondary/outline buttons — :where() wrapped. */
-:where(.sg-section-dark .wp-block-spectra-buttons.is-style-outline .wp-element-button),
 :where(
-	.sg-section-dark .wp-block-spectra-buttons.is-style-outline .wp-block-button__link
+.sg-section-dark .wp-block-spectra-buttons.is-style-outline .wp-element-button
+),
+:where(
+.sg-section-dark
+.wp-block-spectra-buttons.is-style-outline
+.wp-block-button__link
 ) {
 	background-color: var(--spectra-dark-btn-secondary-bg);
 	color: var(--spectra-dark-btn-secondary-text);
@@ -559,19 +613,6 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 }
 
 /* ================================================================
-   GLOBAL DIVIDER / SEPARATOR OVERRIDE
-   Targets all hr and separator blocks — no class needed.
-   ================================================================ */
-
-:where(.entry-content hr),
-:where(.entry-content .wp-block-separator) {
-	border-color: var(--spectra-divider-color);
-	border-width: var(--spectra-divider-width);
-	border-style: var(--spectra-divider-style);
-	opacity: 1;
-}
-
-/* ================================================================
    GLOBAL NAVIGATION OVERRIDE
    Targets navigation blocks and header areas.
    ================================================================ */
@@ -626,18 +667,6 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 }
 
 /* ================================================================
-   ACCORDION ITEM BOX-SIZING
-   Item box-sizing defaults to content-box in
-   accordion-child-item/style.scss — override to border-box so padding
-   and borders don't push item width past the parent.
-   ================================================================ */
-
-.wp-block-spectra-accordion-child-item {
-	box-sizing: border-box;
-	width: 100%;
-}
-
-/* ================================================================
    SG-ACCORDION — header layout override
 
    Scoped behind `.sg-accordion` so standalone Spectra accordions keep
@@ -682,58 +711,6 @@ input:not([type="submit"]):not([type="button"]):not([type="reset"]):not(
 .sg-accordion
 .wp-block-spectra-accordion-child-details.wp-block-spectra-accordion-child-details {
 	padding-top: 0;
-}
-
-/* ================================================================
-   PHASE 4 — BEAT COMPETITION
-   ================================================================ */
-
-/* ================================================================
-   MICRO-INTERACTIONS
-   :active press scale on buttons.
-   ================================================================ */
-
-.wp-element-button:active,
-.wp-block-button__link:active,
-.spectra-button__link:active {
-	transform: scale(var(--spectra-btn-press-scale)) !important;
-}
-
-/* ================================================================
-   ACCESSIBILITY
-   :focus-visible ring on all interactive elements.
-   ================================================================ */
-
-.wp-element-button:focus-visible,
-.wp-block-button__link:focus-visible,
-.spectra-button__link:focus-visible,
-.sg-card a:focus-visible,
-.entry-content a:focus-visible {
-	outline:
-		var(--spectra-focus-ring-width) var(--spectra-focus-ring-style)
-		var(--spectra-focus-ring-color) !important;
-	outline-offset: var(--spectra-focus-ring-offset) !important;
-}
-
-.entry-content input:focus-visible,
-.entry-content textarea:focus-visible,
-.entry-content select:focus-visible {
-	outline:
-		var(--spectra-focus-ring-width) var(--spectra-focus-ring-style)
-		var(--spectra-focus-ring-color) !important;
-	outline-offset: var(--spectra-focus-ring-offset) !important;
-}
-
-/* Editor-only: suppress focus-visible outline on buttons/links while editing.
-   The Gutenberg iframe body carries .editor-styles-wrapper so this only
-   fires inside the block editor canvas, not on the frontend. */
-.editor-styles-wrapper .wp-element-button:focus-visible,
-.editor-styles-wrapper .wp-block-button__link:focus-visible,
-.editor-styles-wrapper .spectra-button__link:focus-visible,
-.editor-styles-wrapper .sg-card a:focus-visible,
-.editor-styles-wrapper .entry-content a:focus-visible {
-	outline: none !important;
-	outline-offset: 0 !important;
 }
 
 /* ================================================================

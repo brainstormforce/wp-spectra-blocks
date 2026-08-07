@@ -49,13 +49,14 @@ $custom_classes = array(
 );
 
 // Add the accessibility details based on the attributes.
+$accessibility_label = isset( $attributes['accessibilityLabel'] ) ? (string) $attributes['accessibilityLabel'] : '';
 switch ( $attributes['accessibilityMode'] ?? '' ) {
 	case 'svg':
 		// SVG based accessibility attributes.
 		$icon_props['role']        = 'graphics-symbol';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG icon. */
 				__( 'Open modal', 'spectra-blocks' )
@@ -65,8 +66,8 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 		// Image based accessibility attributes.
 		$icon_props['role']        = 'img';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG image. */
 				__( 'Open modal', 'spectra-blocks' )
@@ -79,7 +80,7 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 
 // Prepare the wrapper aria-label.
 $wrapper_aria_label = '';
-if ( in_array( $attributes['accessibilityMode'] ?? '', array( 'svg', 'image' ), true ) && ! empty( $icon_props['aria-label'] ) ) {
+if ( in_array( $attributes['accessibilityMode'] ?? '', array( 'svg', 'image' ), true ) && isset( $icon_props['aria-label'] ) && '' !== (string) $icon_props['aria-label'] ) {
 	$wrapper_aria_label = $icon_props['aria-label'];
 	// Set the SVG to be decorative since the wrapper has the label.
 	$icon_props['aria-hidden'] = 'true';

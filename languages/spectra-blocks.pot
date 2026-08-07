@@ -2,22 +2,23 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spectra Blocks 1.0.0\n"
+"Project-Id-Version: Spectra Blocks 1.0.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/spectra-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-12T15:12:09+00:00\n"
+"POT-Creation-Date: 2026-08-05T06:13:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spectra-blocks\n"
 
 #. Plugin Name of the plugin
 #: spectra-blocks.php
-#: admin/inc/class-admin-menu.php:343
-#: admin/inc/class-admin-menu.php:344
+#: admin/inc/class-admin-menu.php:345
+#: admin/inc/class-admin-menu.php:346
+#: classes/class-spectra-blocks-onboarding.php:117
 #: includes/class-block-manager.php:192
 msgid "Spectra Blocks"
 msgstr ""
@@ -54,54 +55,54 @@ msgstr ""
 msgid "Sorry, something went wrong."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:128
-#: admin/ajax/class-common-settings.php:178
-#: admin/ajax/class-common-settings.php:194
+#: admin/ajax/class-common-settings.php:131
+#: admin/ajax/class-common-settings.php:181
+#: admin/ajax/class-common-settings.php:197
 msgid "Successfully saved data!"
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:144
+#: admin/ajax/class-common-settings.php:147
 msgid "No post data found!"
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:162
+#: admin/ajax/class-common-settings.php:165
 #: admin/inc/class-admin-menu.php:206
 msgid "Please activate the plugin from the Plugins page."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:686
+#: admin/ajax/class-common-settings.php:689
 msgid "Module not found!"
 msgstr ""
 
 #. Translators: %s is the module name.
-#: admin/ajax/class-common-settings.php:704
+#: admin/ajax/class-common-settings.php:707
 msgid "%s disabled!"
 msgstr ""
 
 #. Translators: %s is the module name.
-#: admin/ajax/class-common-settings.php:714
+#: admin/ajax/class-common-settings.php:717
 msgid "Unable to disable %s"
 msgstr ""
 
 #. Translators: %s is the module name.
-#: admin/ajax/class-common-settings.php:725
+#: admin/ajax/class-common-settings.php:728
 msgid "%s enabled!"
 msgstr ""
 
 #. Translators: %s is the module name.
-#: admin/ajax/class-common-settings.php:735
+#: admin/ajax/class-common-settings.php:738
 msgid "Unable to enable %s"
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:742
+#: admin/ajax/class-common-settings.php:745
 msgid "Unable to save setting."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:787
+#: admin/ajax/class-common-settings.php:790
 msgid "Plugin installation failed."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:882
+#: admin/ajax/class-common-settings.php:885
 msgid "Cached styles cleared successfully!"
 msgstr ""
 
@@ -304,7 +305,7 @@ msgid "Fast and customizable theme for your website."
 msgstr ""
 
 #: admin/inc/class-admin-menu.php:126
-#: classes/class-spectra-blocks-onboarding.php:397
+#: classes/class-spectra-blocks-onboarding.php:396
 msgid "Starter Templates"
 msgstr ""
 
@@ -352,70 +353,73 @@ msgstr ""
 msgid "Could not process theme. Please activate from the Themes page."
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:299
-#: admin/inc/class-admin-menu.php:398
+#: admin/inc/class-admin-menu.php:300
+#: admin/inc/class-admin-menu.php:400
 #: src/blocks/accordion-child-item/settings.js:40
 #: src/blocks/post/settings/general-settings.js:161
 msgid "Settings"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:304
-#: admin/inc/class-admin-menu.php:409
+#: admin/inc/class-admin-menu.php:301
+msgid "Rollback"
+msgstr ""
+
+#: admin/inc/class-admin-menu.php:306
+#: admin/inc/class-admin-menu.php:411
 msgid "Get Spectra Pro"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:355
-#: admin/inc/class-admin-menu.php:364
-#: admin/inc/class-admin-menu.php:387
-#: admin/inc/class-admin-menu.php:397
-#: admin/inc/class-admin-menu.php:496
-#: classes/class-spectra-blocks-onboarding.php:117
+#: admin/inc/class-admin-menu.php:357
+#: admin/inc/class-admin-menu.php:366
+#: admin/inc/class-admin-menu.php:389
+#: admin/inc/class-admin-menu.php:399
+#: admin/inc/class-admin-menu.php:498
 msgid "Spectra"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:356
+#: admin/inc/class-admin-menu.php:358
 msgid "Dashboard"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:365
+#: admin/inc/class-admin-menu.php:367
 msgid "AI Features"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:377
-#: admin/inc/class-admin-menu.php:378
-#: classes/class-spectra-blocks-onboarding.php:322
+#: admin/inc/class-admin-menu.php:379
+#: admin/inc/class-admin-menu.php:380
+#: classes/class-spectra-blocks-onboarding.php:321
 msgid "Popup Builder"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:388
+#: admin/inc/class-admin-menu.php:390
 msgid "Learn"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:408
+#: admin/inc/class-admin-menu.php:410
 msgid "Free vs Pro"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:521
+#: admin/inc/class-admin-menu.php:523
 msgid "Installing"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:522
+#: admin/inc/class-admin-menu.php:524
 msgid "Installed"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:523
+#: admin/inc/class-admin-menu.php:525
 msgid "Activating"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:524
+#: admin/inc/class-admin-menu.php:526
 msgid "Activated"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:525
+#: admin/inc/class-admin-menu.php:527
 msgid "Activate"
 msgstr ""
 
-#: admin/inc/class-admin-menu.php:770
+#: admin/inc/class-admin-menu.php:776
 msgid "Spectra Legacy"
 msgstr ""
 
@@ -1165,7 +1169,7 @@ msgid "Bong"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-0.php:4585
-#: src/blocks/container/settings.js:1218
+#: src/blocks/container/settings.js:1255
 msgid "Book"
 msgstr ""
 
@@ -2202,7 +2206,6 @@ msgstr ""
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:1907
 #: src/extensions/gbs-editor/components/panels/CheatSheetPanel.jsx:131
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:200
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:126
 msgid "Copy"
 msgstr ""
 
@@ -2570,6 +2573,7 @@ msgid "Down Long"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:4016
+#: src/extensions/html-attributes/utils/constants.js:178
 msgid "Download"
 msgstr ""
 
@@ -3162,7 +3166,7 @@ msgid "Film"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:8214
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:101
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:102
 msgid "Filter"
 msgstr ""
 
@@ -3831,7 +3835,7 @@ msgid "Head Side Virus"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:2363
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:47
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:48
 msgid "Heading"
 msgstr ""
 
@@ -4132,7 +4136,7 @@ msgid "Icicles"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:4353
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:58
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:59
 msgid "Icons"
 msgstr ""
 
@@ -4157,10 +4161,10 @@ msgid "Igloo"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:4531
-#: src/blocks/container/settings.js:820
+#: src/blocks/container/settings.js:857
 #: src/blocks/container/toolbar.js:159
 #: src/components/background/index.js:189
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:48
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:49
 msgid "Image"
 msgstr ""
 
@@ -4510,7 +4514,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:6563
 #: src/blocks/list/settings.js:50
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:61
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:62
 msgid "List"
 msgstr ""
 
@@ -4736,7 +4740,6 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:8074
 #: includes/Helpers/class-shadow.php:193
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:78
 msgid "Medium"
 msgstr ""
 
@@ -5843,9 +5846,9 @@ msgid "Renren"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:5407
-#: src/blocks/container/settings.js:1031
-#: src/blocks/container/settings.js:1038
-#: src/blocks/container/settings.js:1042
+#: src/blocks/container/settings.js:1068
+#: src/blocks/container/settings.js:1075
+#: src/blocks/container/settings.js:1079
 #: src/components/background/index.js:72
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:93
 #: src/extensions/image-mask/edit.js:120
@@ -6117,7 +6120,7 @@ msgid "Scribd"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:7092
-#: src/blocks/container/settings.js:1021
+#: src/blocks/container/settings.js:1058
 #: src/blocks/tabs-child-tab-trigger/settings.js:198
 #: src/components/background/index.js:449
 msgid "Scroll"
@@ -6390,7 +6393,7 @@ msgid "Solar Panel"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:8811
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:106
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:107
 msgid "Sort"
 msgstr ""
 
@@ -6965,8 +6968,8 @@ msgid "Tachograph Digital"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:2575
-#: src/blocks/container/settings.js:167
-#: src/blocks/content/settings.js:60
+#: src/blocks/container/settings.js:173
+#: src/blocks/content/settings.js:69
 #: src/blocks/modal-child-trigger-content/settings.js:54
 #: src/blocks/modal-child-trigger-content/settings.js:65
 msgid "Tag"
@@ -8039,7 +8042,7 @@ msgid "Yoast"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:9273
-#: classes/class-spectra-blocks-onboarding.php:143
+#: classes/class-spectra-blocks-onboarding.php:142
 msgid "YouTube"
 msgstr ""
 
@@ -8184,12 +8187,11 @@ msgid "To publish/save your page click here."
 msgstr ""
 
 #: classes/class-spectra-blocks-onboarding.php:114
-#: classes/class-spectra-blocks-onboarding.php:538
-msgid "Spectra Onboarding"
+msgid "Spectra Blocks Onboarding"
 msgstr ""
 
 #: classes/class-spectra-blocks-onboarding.php:122
-msgid "Welcome to Spectra"
+msgid "Welcome to Spectra Blocks"
 msgstr ""
 
 #: classes/class-spectra-blocks-onboarding.php:123
@@ -8197,211 +8199,211 @@ msgid "Build a fast, beautiful WordPress site—effortlessly."
 msgstr ""
 
 #: classes/class-spectra-blocks-onboarding.php:127
-msgid "Getting Started with Spectra"
+msgid "Getting Started with Spectra Blocks"
 msgstr ""
 
 #: classes/class-spectra-blocks-onboarding.php:131
-msgid "Trusted by 1.8M+ websites worldwide"
-msgstr ""
-
-#: classes/class-spectra-blocks-onboarding.php:132
 msgid "Import ready-made patterns & templates"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:133
+#: classes/class-spectra-blocks-onboarding.php:132
 msgid "Easy customization—no coding or design skills"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:134
+#: classes/class-spectra-blocks-onboarding.php:133
 msgid "Drag & Drop blocks to build your layout"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:138
-msgid "Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra."
+#: classes/class-spectra-blocks-onboarding.php:137
+msgid "Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra Blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:140
+#: classes/class-spectra-blocks-onboarding.php:139
 msgid "WordPress Plugin Directory"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:141
+#: classes/class-spectra-blocks-onboarding.php:140
 msgid "Google Search"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:142
+#: classes/class-spectra-blocks-onboarding.php:141
 msgid "Social Media"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:144
+#: classes/class-spectra-blocks-onboarding.php:143
 msgid "A friend or colleague"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:145
+#: classes/class-spectra-blocks-onboarding.php:144
 #: src/components/icon-picker/modal-container.js:200
 msgid "Other"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:148
+#: classes/class-spectra-blocks-onboarding.php:147
 msgid "Advanced design flexibility without bloated builders"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:149
+#: classes/class-spectra-blocks-onboarding.php:148
 msgid "AI and templates help me design quickly"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:150
+#: classes/class-spectra-blocks-onboarding.php:149
 msgid "I need a fast-loading page builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:151
+#: classes/class-spectra-blocks-onboarding.php:150
 msgid "Regular updates and support from Brainstorm Force"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:152
+#: classes/class-spectra-blocks-onboarding.php:151
 msgid "Other (please specify)"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:156
+#: classes/class-spectra-blocks-onboarding.php:155
 msgid "Privacy Policy"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:159
-msgid "Stay in the loop and help shape Spectra! Get feature updates, and help us build a better Spectra by sharing how you use the plugin."
+#: classes/class-spectra-blocks-onboarding.php:158
+msgid "Stay in the loop and help shape Spectra Blocks! Get feature updates, and help us build a better Spectra Blocks by sharing how you use the plugin."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:164
-msgid "Enable the features you need to design faster and build better with Spectra."
+#: classes/class-spectra-blocks-onboarding.php:163
+msgid "Enable the features you need to design faster and build better with Spectra Blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:173
-#: classes/class-spectra-blocks-onboarding.php:179
+#: classes/class-spectra-blocks-onboarding.php:172
+#: classes/class-spectra-blocks-onboarding.php:178
 msgid "Create a Page"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:174
-#: classes/class-spectra-blocks-onboarding.php:183
+#: classes/class-spectra-blocks-onboarding.php:173
+#: classes/class-spectra-blocks-onboarding.php:182
 msgid "Visit Dashboard"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:175
+#: classes/class-spectra-blocks-onboarding.php:174
 msgid "View Documentation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:187
+#: classes/class-spectra-blocks-onboarding.php:186
 msgid "Docs & Help Center"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:318
+#: classes/class-spectra-blocks-onboarding.php:317
 msgid "Advanced Layout Controls"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:319
+#: classes/class-spectra-blocks-onboarding.php:318
 msgid "Build flexible layouts with containers, spacing, and responsive controls."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:323
+#: classes/class-spectra-blocks-onboarding.php:322
 msgid "Create engaging popups for promotions, announcements, and lead generation."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:327
+#: classes/class-spectra-blocks-onboarding.php:326
 msgid "Global Block Styles"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:328
+#: classes/class-spectra-blocks-onboarding.php:327
 msgid "Apply custom styles, classes, and CSS to any block from a unified style editor."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:333
+#: classes/class-spectra-blocks-onboarding.php:332
 msgid "Motion Effects"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:334
+#: classes/class-spectra-blocks-onboarding.php:333
 msgid "Add scroll-triggered animations and motion effects to blocks for an engaging experience."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:339
+#: classes/class-spectra-blocks-onboarding.php:338
 msgid "SVG Animation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:340
+#: classes/class-spectra-blocks-onboarding.php:339
 msgid "Bring SVG graphics to life with custom animations and interactive effects."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:345
+#: classes/class-spectra-blocks-onboarding.php:344
 msgid "Block Positioning"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:346
+#: classes/class-spectra-blocks-onboarding.php:345
 msgid "Position blocks with absolute, fixed, or sticky placement for advanced layout control."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:351
+#: classes/class-spectra-blocks-onboarding.php:350
 msgid "Dynamic Content"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:352
+#: classes/class-spectra-blocks-onboarding.php:351
 msgid "Connect your content and display dynamic data across your website with ease."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:357
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:99
+#: classes/class-spectra-blocks-onboarding.php:356
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:100
 msgid "Loop Builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:358
+#: classes/class-spectra-blocks-onboarding.php:357
 msgid "Design custom layouts for blog posts, archives, and dynamic content."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:363
+#: classes/class-spectra-blocks-onboarding.php:362
 msgid "Login & Registration Forms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:364
+#: classes/class-spectra-blocks-onboarding.php:363
 msgid "Create custom login and registration forms to manage user access on your website."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:399
+#: classes/class-spectra-blocks-onboarding.php:398
 msgid "Launch websites quickly with 300+ professionally designed templates."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:403
+#: classes/class-spectra-blocks-onboarding.php:402
 msgid "SureForms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:405
+#: classes/class-spectra-blocks-onboarding.php:404
 msgid "Create beautiful forms that feel conversational and keep users engaged."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:409
+#: classes/class-spectra-blocks-onboarding.php:408
 msgid "SureMails"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:411
+#: classes/class-spectra-blocks-onboarding.php:410
 msgid "Reliable email delivery so your emails actually reach the inbox."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:415
+#: classes/class-spectra-blocks-onboarding.php:414
 msgid "SureRank"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:417
+#: classes/class-spectra-blocks-onboarding.php:416
 msgid "Simple, lightweight SEO assistant to help your site rank higher."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:502
-#: classes/class-spectra-blocks-onboarding.php:517
+#: classes/class-spectra-blocks-onboarding.php:501
+#: classes/class-spectra-blocks-onboarding.php:516
 msgid "Spectra Onboarding Data"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:542
+#: classes/class-spectra-blocks-onboarding.php:537
+msgid "Spectra Onboarding"
+msgstr ""
+
+#: classes/class-spectra-blocks-onboarding.php:541
 msgid "First Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:546
+#: classes/class-spectra-blocks-onboarding.php:545
 msgid "Last Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:550
+#: classes/class-spectra-blocks-onboarding.php:549
 msgid "Email"
 msgstr ""
 
@@ -8411,6 +8413,23 @@ msgstr ""
 
 #: classes/class-spectra-blocks-rest-api.php:56
 msgid "Post author info."
+msgstr ""
+
+#: classes/class-spectra-blocks-rollback.php:83
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: classes/class-spectra-blocks-rollback.php:84
+#: classes/class-spectra-blocks-rollback.php:113
+msgid "Rollback to Previous Version"
+msgstr ""
+
+#: classes/class-spectra-blocks-rollback.php:95
+msgid "Error occurred. The version selected is invalid. Try selecting a different version."
+msgstr ""
+
+#: classes/class-spectra-blocks-rollback.php:190
+msgid "Spectra Blocks <p>Rollback to Previous Version</p>"
 msgstr ""
 
 #: classes/class-spectra-blocks-security-helper.php:44
@@ -9900,37 +9919,49 @@ msgstr ""
 msgid "Popup Updated"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:575
+#: includes/Blocks/class-popup-builder.php:593
 #: src/components/advanced-gradient-control/index.js:433
 msgid "Type"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:576
+#: includes/Blocks/class-popup-builder.php:594
 msgid "Author"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:594
+#: includes/Blocks/class-popup-builder.php:612
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:645
+#: includes/Blocks/class-popup-builder.php:663
 msgid "Toggle popup status"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:658
+#: includes/Blocks/class-popup-builder.php:676
 #: src/blocks/popup-builder/variations.js:9
 msgid "Info Bar"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:661
+#: includes/Blocks/class-popup-builder.php:679
 #: src/blocks/popup-builder/settings.js:193
 #: src/blocks/popup-builder/variations.js:1085
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:96
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:97
 msgid "Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:664
+#: includes/Blocks/class-popup-builder.php:682
 msgid "Unset"
+msgstr ""
+
+#: includes/Blocks/class-popup-builder.php:776
+msgid "Want to do more with Popup Builder?"
+msgstr ""
+
+#: includes/Blocks/class-popup-builder.php:778
+msgid "Maximize your popup potential with Spectra Blocks Pro. Unlock enhanced features, intuitive design options, and increased conversions!"
+msgstr ""
+
+#: includes/Blocks/class-popup-builder.php:780
+msgid "Upgrade Now"
 msgstr ""
 
 #: includes/class-abilities-manager.php:110
@@ -10011,15 +10042,12 @@ msgid "A keyframe named \"%s\" already exists with different contents."
 msgstr ""
 
 #: includes/Helpers/class-shadow.php:185
-#: src/blocks/container/settings.js:816
-#: src/blocks/container/settings.js:1198
+#: src/blocks/container/settings.js:853
+#: src/blocks/container/settings.js:1235
 #: src/blocks/post/settings/pagination-settings.js:78
 #: src/blocks/slider/settings.js:382
 #: src/components/background/index.js:185
 #: src/extensions/animations/utils/constants.js:35
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:76
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:97
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:130
 #: src/extensions/image-mask/edit.js:58
 msgid "None"
 msgstr ""
@@ -10045,21 +10073,20 @@ msgstr ""
 msgid "Inner Medium"
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:853
+#: includes/StyleGuide/class-engine.php:915
 msgid "You do not have permission to manage the Style Guide."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:886
-#: includes/StyleGuide/class-engine.php:1055
+#: includes/StyleGuide/class-engine.php:959
+#: includes/StyleGuide/class-engine.php:1117
 msgid "Invalid configuration data."
 msgstr ""
 
-#: includes/StyleGuide/class-spectra-one-compat.php:223
+#: includes/StyleGuide/Sync/SpectraOne/class-spectra-one-compat.php:172
 msgid "Inverse"
 msgstr ""
 
-#: includes/StyleGuide/class-spectra-one-compat.php:243
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:24
+#: includes/StyleGuide/Sync/SpectraOne/class-spectra-one-compat.php:192
 msgid "Secondary"
 msgstr ""
 
@@ -10221,7 +10248,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/blocks/modal-child-trigger-content/controller.php:50
-#: src/blocks/modal-child-trigger-content/render.js:101
+#: src/blocks/modal-child-trigger-content/render.js:84
 msgid "Get started by writing something!"
 msgstr ""
 
@@ -10290,7 +10317,7 @@ msgstr ""
 #: src/blocks/tabs-child-tab-button/controller.php:15
 #: src/blocks/tabs-child-tab-button/settings.js:76
 #: src/blocks/tabs-child-tab-trigger/settings.js:398
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:67
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:68
 msgid "Tab"
 msgstr ""
 
@@ -10301,8 +10328,8 @@ msgstr ""
 
 #: src/blocks/accordion-child-header-content/settings.js:63
 #: src/blocks/accordion-child-header-content/settings.js:71
-#: src/blocks/container/settings.js:178
-#: src/blocks/content/settings.js:68
+#: src/blocks/container/settings.js:184
+#: src/blocks/content/settings.js:77
 msgid "HTML Tag"
 msgstr ""
 
@@ -10370,7 +10397,7 @@ msgstr ""
 #: src/blocks/tabs-child-tab-button/settings.js:117
 #: src/blocks/tabs-child-tab-button/settings.js:400
 #: src/blocks/tabs/settings.js:96
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:59
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:60
 msgid "Icon"
 msgstr ""
 
@@ -10427,8 +10454,8 @@ msgstr ""
 
 #: src/blocks/accordion-child-header-icon/settings.js:189
 #: src/blocks/accordion-child-header-icon/settings.js:199
-#: src/blocks/container/settings.js:1052
-#: src/blocks/container/settings.js:1059
+#: src/blocks/container/settings.js:1089
+#: src/blocks/container/settings.js:1096
 #: src/blocks/counter/settings.js:451
 #: src/blocks/counter/settings.js:459
 #: src/blocks/icon/settings.js:238
@@ -10438,8 +10465,6 @@ msgstr ""
 #: src/blocks/modal-child-trigger-icon/settings.js:217
 #: src/blocks/modal-child-trigger-icon/settings.js:227
 #: src/blocks/popup-builder/settings.js:800
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:208
-#: src/extensions/gbs-editor/components/panels/SpacingPanel.jsx:180
 #: src/extensions/image-mask/edit.js:331
 #: src/extensions/image-mask/edit.js:339
 msgid "Size"
@@ -10474,7 +10499,7 @@ msgstr ""
 #: src/blocks/accordion-child-header/settings.js:64
 #: src/blocks/accordion-child-item/settings.js:115
 #: src/blocks/container/toolbar.js:30
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:72
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:73
 msgid "Header"
 msgstr ""
 
@@ -10487,7 +10512,7 @@ msgstr ""
 #: src/blocks/button/settings.js:254
 #: src/blocks/modal-child-trigger-button/settings.js:67
 #: src/blocks/modal/settings.js:51
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:56
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:57
 msgid "Button"
 msgstr ""
 
@@ -10578,28 +10603,28 @@ msgstr ""
 msgid "Header Text Hover/Focus"
 msgstr ""
 
-#: src/blocks/button/render.js:241
+#: src/blocks/button/render.js:224
 msgid "Add text…"
 msgstr ""
 
 #: src/blocks/button/settings.js:72
-#: src/blocks/container/settings.js:670
+#: src/blocks/container/settings.js:707
 #: src/blocks/tabs-child-tab-button/settings.js:466
 msgid "Border Hover"
 msgstr ""
 
 #: src/blocks/button/settings.js:83
-#: src/blocks/container/settings.js:681
+#: src/blocks/container/settings.js:718
 msgid "Enable Border Hover"
 msgstr ""
 
 #: src/blocks/button/settings.js:91
-#: src/blocks/container/settings.js:689
+#: src/blocks/container/settings.js:726
 msgid "Enable border hover to customize the border color on hover."
 msgstr ""
 
 #: src/blocks/button/settings.js:96
-#: src/blocks/container/settings.js:694
+#: src/blocks/container/settings.js:731
 msgid "Border Hover Color"
 msgstr ""
 
@@ -10655,8 +10680,8 @@ msgstr ""
 #: src/blocks/button/settings.js:364
 #: src/blocks/button/settings.js:375
 #: src/blocks/button/settings.js:436
-#: src/blocks/container/settings.js:889
-#: src/blocks/container/settings.js:937
+#: src/blocks/container/settings.js:926
+#: src/blocks/container/settings.js:974
 #: src/blocks/modal-child-trigger-button/settings.js:152
 #: src/blocks/modal-child-trigger-button/settings.js:163
 #: src/blocks/popup-builder/settings.js:282
@@ -10738,8 +10763,8 @@ msgid "e.g., Learn more"
 msgstr ""
 
 #: src/blocks/button/settings.js:545
-#: src/blocks/container/settings.js:424
-#: src/blocks/content/settings.js:105
+#: src/blocks/container/settings.js:461
+#: src/blocks/content/settings.js:151
 #: src/blocks/countdown-child-day/settings.js:36
 #: src/blocks/countdown-child-hour/settings.js:36
 #: src/blocks/countdown-child-label/settings.js:36
@@ -10759,8 +10784,8 @@ msgstr ""
 
 #: src/blocks/button/settings.js:557
 #: src/blocks/buttons/settings.js:37
-#: src/blocks/container/settings.js:454
-#: src/blocks/content/settings.js:112
+#: src/blocks/container/settings.js:491
+#: src/blocks/content/settings.js:158
 #: src/blocks/countdown-child-day/settings.js:43
 #: src/blocks/countdown-child-hour/settings.js:43
 #: src/blocks/countdown-child-label/settings.js:43
@@ -10819,8 +10844,8 @@ msgid "Add Text…"
 msgstr ""
 
 #: src/blocks/container/edit.js:318
-#: src/blocks/container/settings.js:151
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:50
+#: src/blocks/container/settings.js:160
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:51
 msgid "Container"
 msgstr ""
 
@@ -10828,79 +10853,87 @@ msgstr ""
 msgid "Select a container layout"
 msgstr ""
 
-#: src/blocks/container/settings.js:55
+#: src/blocks/container/settings.js:58
 msgid "a generic container with no semantic meaning. Best for styling and layout purposes."
 msgstr ""
 
-#: src/blocks/container/settings.js:56
+#: src/blocks/container/settings.js:59
 msgid "represents introductory content, typically containing navigation aids and headings."
 msgstr ""
 
-#: src/blocks/container/settings.js:57
+#: src/blocks/container/settings.js:60
 msgid "represents a footer for its nearest sectioning content, containing information about the author, copyright, or links."
 msgstr ""
 
-#: src/blocks/container/settings.js:58
+#: src/blocks/container/settings.js:61
 msgid "represents the dominant content of the page. There should be only one main element per page."
 msgstr ""
 
-#: src/blocks/container/settings.js:59
+#: src/blocks/container/settings.js:62
 msgid "represents a standalone piece of content that could be distributed independently, like a blog post or news article."
 msgstr ""
 
-#: src/blocks/container/settings.js:60
+#: src/blocks/container/settings.js:63
 msgid "represents a thematic grouping of content, typically with a heading. Use when no other semantic element is appropriate."
 msgstr ""
 
-#: src/blocks/container/settings.js:61
+#: src/blocks/container/settings.js:64
 msgid "represents content that is tangentially related to the main content, like a sidebar or callout box."
 msgstr ""
 
-#: src/blocks/container/settings.js:62
+#: src/blocks/container/settings.js:65
 msgid "represents self-contained content, like images, diagrams, or code snippets, often with a caption."
 msgstr ""
 
-#: src/blocks/container/settings.js:63
+#: src/blocks/container/settings.js:66
 msgid "represents a caption or legend describing the content of its parent figure element."
 msgstr ""
 
-#: src/blocks/container/settings.js:64
+#: src/blocks/container/settings.js:67
 msgid "represents a summary, caption, or legend for a details element's disclosure box."
 msgstr ""
 
-#: src/blocks/container/settings.js:65
+#: src/blocks/container/settings.js:68
 msgid "represents a section of navigation links to other pages or parts within the current page."
 msgstr ""
 
-#: src/blocks/container/settings.js:66
+#: src/blocks/container/settings.js:69
 msgid "creates a hyperlink to other pages, files, email addresses, or locations within the same page."
 msgstr ""
 
-#: src/blocks/container/settings.js:120
+#: src/blocks/container/settings.js:129
 msgid "Flex Direction"
 msgstr ""
 
-#: src/blocks/container/settings.js:130
-#: src/blocks/container/settings.js:142
+#: src/blocks/container/settings.js:139
+#: src/blocks/container/settings.js:151
 msgid "Orientation Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:145
+#: src/blocks/container/settings.js:154
 msgid "When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block."
 msgstr ""
 
-#: src/blocks/container/settings.js:183
-#: src/blocks/content/settings.js:73
+#. translators: 1: number of attributes, 2: previous HTML tag name
+#: src/blocks/container/settings.js:207
+#: src/blocks/content/settings.js:100
+msgid "%1$d tag attribute cleared after switching from <%2$s>."
+msgid_plural "%1$d tag attributes cleared after switching from <%2$s>."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/blocks/container/settings.js:220
+#: src/blocks/content/settings.js:113
 msgid "Select the appropriate HTML element for semantic markup and accessibility."
 msgstr ""
 
 #. translators: 1: HTML tag name, 2: tag description
-#: src/blocks/container/settings.js:196
+#: src/blocks/container/settings.js:232
 msgid "The %1$s HTML tag %2$s"
 msgstr ""
 
-#: src/blocks/container/settings.js:215
-#: src/blocks/container/settings.js:228
+#: src/blocks/container/settings.js:252
+#: src/blocks/container/settings.js:265
 #: src/blocks/countdown/settings.js:295
 #: src/blocks/countdown/settings.js:303
 #: src/blocks/slider/settings.js:407
@@ -10910,8 +10943,8 @@ msgstr ""
 msgid "Overflow"
 msgstr ""
 
-#: src/blocks/container/settings.js:332
-#: src/blocks/container/settings.js:370
+#: src/blocks/container/settings.js:369
+#: src/blocks/container/settings.js:407
 #: src/blocks/countdown/settings.js:665
 #: src/blocks/countdown/settings.js:741
 #: src/blocks/popup-builder/settings.js:1018
@@ -10919,42 +10952,41 @@ msgstr ""
 msgid "Sizes"
 msgstr ""
 
-#: src/blocks/container/settings.js:437
+#: src/blocks/container/settings.js:474
 #: src/blocks/modal-child-popup-content/settings.js:210
 #: src/blocks/popup-builder/settings.js:895
 #: src/blocks/slider-child/settings.js:79
 #: src/blocks/slider/settings.js:863
 #: src/components/background/index.js:132
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:29
 msgid "Background"
 msgstr ""
 
-#: src/blocks/container/settings.js:470
+#: src/blocks/container/settings.js:507
 msgid "Top Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:482
+#: src/blocks/container/settings.js:519
 msgid "Bottom Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:505
+#: src/blocks/container/settings.js:542
 #: src/blocks/slider-child/settings.js:104
 #: src/blocks/slider/settings.js:888
 msgid "Advanced BG"
 msgstr ""
 
-#: src/blocks/container/settings.js:514
+#: src/blocks/container/settings.js:551
 msgid "Advanced BG Hover"
 msgstr ""
 
-#: src/blocks/container/settings.js:530
+#: src/blocks/container/settings.js:567
 #: src/blocks/slider-child/settings.js:118
 #: src/blocks/slider/settings.js:902
 msgid "Advanced gradients will override the basic background colors/gradients when set."
 msgstr ""
 
-#: src/blocks/container/settings.js:555
-#: src/blocks/container/settings.js:565
+#: src/blocks/container/settings.js:592
+#: src/blocks/container/settings.js:602
 #: src/blocks/modal-child-popup-content/settings.js:255
 #: src/blocks/modal-child-popup-content/settings.js:265
 #: src/blocks/slider-child/settings.js:144
@@ -10964,19 +10996,19 @@ msgstr ""
 msgid "Overlay Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:607
+#: src/blocks/container/settings.js:644
 #: src/components/shadow-control/index.js:59
 msgid "Box Shadow"
 msgstr ""
 
-#: src/blocks/container/settings.js:644
+#: src/blocks/container/settings.js:681
 #: src/components/shadow-control/index.js:74
 msgid "Theme"
 msgstr ""
 
-#: src/blocks/container/settings.js:651
-#: src/blocks/container/settings.js:930
-#: src/blocks/container/settings.js:1065
+#: src/blocks/container/settings.js:688
+#: src/blocks/container/settings.js:967
+#: src/blocks/container/settings.js:1102
 #: src/components/background/index.js:66
 #: src/components/background/index.js:521
 #: src/components/shadow-control/index.js:81
@@ -10984,325 +11016,320 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
-#: src/blocks/container/settings.js:658
-#: src/blocks/container/settings.js:926
+#: src/blocks/container/settings.js:695
+#: src/blocks/container/settings.js:963
 #: src/components/background/index.js:517
 #: src/components/shadow-control/index.js:88
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:36
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:37
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:40
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:66
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:88
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:51
 msgid "Default"
 msgstr ""
 
-#: src/blocks/container/settings.js:695
+#: src/blocks/container/settings.js:732
 msgid "Set the border color that appears when hovering over the container. The border width and style will match the normal border."
 msgstr ""
 
-#: src/blocks/container/settings.js:758
+#: src/blocks/container/settings.js:795
 msgid "Overlay Settings"
 msgstr ""
 
-#: src/blocks/container/settings.js:781
-#: src/blocks/container/settings.js:789
+#: src/blocks/container/settings.js:818
+#: src/blocks/container/settings.js:826
 msgid "Overlay Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:846
+#: src/blocks/container/settings.js:883
 msgid "Add Overlay Image"
 msgstr ""
 
-#: src/blocks/container/settings.js:860
+#: src/blocks/container/settings.js:897
 msgid "Image failed to load"
 msgstr ""
 
-#: src/blocks/container/settings.js:864
+#: src/blocks/container/settings.js:901
 #: src/components/background/index.js:262
 #: src/extensions/image-mask/edit.js:291
 msgid "Replace"
 msgstr ""
 
-#: src/blocks/container/settings.js:871
+#: src/blocks/container/settings.js:908
 #: src/components/background/index.js:276
+#: src/extensions/html-attributes/controls.js:298
 #: src/extensions/image-mask/edit.js:308
 msgid "Remove"
 msgstr ""
 
-#: src/blocks/container/settings.js:910
+#: src/blocks/container/settings.js:947
 msgid "Overlay Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:948
+#: src/blocks/container/settings.js:985
 #: src/components/background/index.js:546
 msgid "Centralized Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:961
+#: src/blocks/container/settings.js:998
 #: src/components/background/index.js:562
 #: src/components/shadow-control/index.js:322
 msgid "X Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:984
+#: src/blocks/container/settings.js:1021
 #: src/components/background/index.js:588
 #: src/components/shadow-control/index.js:347
 msgid "Y Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:1011
-#: src/blocks/container/settings.js:1018
+#: src/blocks/container/settings.js:1048
+#: src/blocks/container/settings.js:1055
 msgid "Attachment"
 msgstr ""
 
-#: src/blocks/container/settings.js:1022
+#: src/blocks/container/settings.js:1059
 #: src/components/background/index.js:450
 msgid "Fixed"
 msgstr ""
 
-#: src/blocks/container/settings.js:1023
+#: src/blocks/container/settings.js:1060
 #: src/components/background/index.js:451
 msgid "Inherit"
 msgstr ""
 
-#: src/blocks/container/settings.js:1041
+#: src/blocks/container/settings.js:1078
 #: src/components/background/index.js:71
 #: src/extensions/image-mask/edit.js:116
 msgid "No Repeat"
 msgstr ""
 
-#: src/blocks/container/settings.js:1043
+#: src/blocks/container/settings.js:1080
 #: src/components/background/index.js:73
 #: src/extensions/image-mask/edit.js:124
 msgid "Repeat X"
 msgstr ""
 
-#: src/blocks/container/settings.js:1044
+#: src/blocks/container/settings.js:1081
 #: src/components/background/index.js:74
 #: src/extensions/image-mask/edit.js:128
 msgid "Repeat Y"
 msgstr ""
 
-#: src/blocks/container/settings.js:1062
+#: src/blocks/container/settings.js:1099
 #: src/components/background/index.js:63
 #: src/extensions/image-mask/edit.js:105
 msgid "Cover"
 msgstr ""
 
-#: src/blocks/container/settings.js:1063
+#: src/blocks/container/settings.js:1100
 #: src/components/background/index.js:64
 #: src/extensions/image-mask/edit.js:109
 msgid "Contain"
 msgstr ""
 
-#: src/blocks/container/settings.js:1064
+#: src/blocks/container/settings.js:1101
 #: src/blocks/tabs-child-tab-trigger/settings.js:205
 #: src/components/background/index.js:65
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:130
 #: src/extensions/image-mask/edit.js:101
 msgid "Auto"
 msgstr ""
 
-#: src/blocks/container/settings.js:1081
-#: src/blocks/container/settings.js:1094
+#: src/blocks/container/settings.js:1118
+#: src/blocks/container/settings.js:1131
 msgid "Overlay Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1118
-#: src/blocks/container/settings.js:1125
+#: src/blocks/container/settings.js:1155
+#: src/blocks/container/settings.js:1162
 msgid "Blend Mode"
 msgstr ""
 
-#: src/blocks/container/settings.js:1128
+#: src/blocks/container/settings.js:1165
 #: src/components/shadow-control/index.js:283
 msgid "Normal"
 msgstr ""
 
-#: src/blocks/container/settings.js:1129
+#: src/blocks/container/settings.js:1166
 msgid "Multiply"
 msgstr ""
 
-#: src/blocks/container/settings.js:1130
+#: src/blocks/container/settings.js:1167
 msgid "Screen"
 msgstr ""
 
-#: src/blocks/container/settings.js:1131
+#: src/blocks/container/settings.js:1168
 #: src/blocks/popup-builder/settings.js:334
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:95
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:96
 msgid "Overlay"
 msgstr ""
 
-#: src/blocks/container/settings.js:1132
+#: src/blocks/container/settings.js:1169
 msgid "Darken"
 msgstr ""
 
-#: src/blocks/container/settings.js:1133
+#: src/blocks/container/settings.js:1170
 msgid "Lighten"
 msgstr ""
 
-#: src/blocks/container/settings.js:1134
+#: src/blocks/container/settings.js:1171
 msgid "Color Dodge"
 msgstr ""
 
-#: src/blocks/container/settings.js:1135
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:148
+#: src/blocks/container/settings.js:1172
 msgid "Saturation"
 msgstr ""
 
-#: src/blocks/container/settings.js:1136
+#: src/blocks/container/settings.js:1173
 #: src/components/shadow-control/index.js:305
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:197
 msgid "Color"
 msgstr ""
 
-#: src/blocks/container/settings.js:1144
-#: src/blocks/container/settings.js:1151
+#: src/blocks/container/settings.js:1181
+#: src/blocks/container/settings.js:1188
 msgid "Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1199
+#: src/blocks/container/settings.js:1236
 msgid "Tilt"
 msgstr ""
 
-#: src/blocks/container/settings.js:1200
+#: src/blocks/container/settings.js:1237
 msgid "Mountains"
 msgstr ""
 
-#: src/blocks/container/settings.js:1201
+#: src/blocks/container/settings.js:1238
 msgid "Wave Brush"
 msgstr ""
 
-#: src/blocks/container/settings.js:1202
+#: src/blocks/container/settings.js:1239
 msgid "Waves"
 msgstr ""
 
-#: src/blocks/container/settings.js:1203
+#: src/blocks/container/settings.js:1240
 msgid "Waves Pattern"
 msgstr ""
 
-#: src/blocks/container/settings.js:1204
+#: src/blocks/container/settings.js:1241
 msgid "Triangle"
 msgstr ""
 
-#: src/blocks/container/settings.js:1205
+#: src/blocks/container/settings.js:1242
 msgid "Drops"
 msgstr ""
 
-#: src/blocks/container/settings.js:1206
+#: src/blocks/container/settings.js:1243
 msgid "Clouds"
 msgstr ""
 
-#: src/blocks/container/settings.js:1207
+#: src/blocks/container/settings.js:1244
 msgid "ZigZag"
 msgstr ""
 
-#: src/blocks/container/settings.js:1208
+#: src/blocks/container/settings.js:1245
 msgid "Pyramids"
 msgstr ""
 
-#: src/blocks/container/settings.js:1209
+#: src/blocks/container/settings.js:1246
 msgid "Triangle Asymmetrical"
 msgstr ""
 
-#: src/blocks/container/settings.js:1210
+#: src/blocks/container/settings.js:1247
 msgid "Tilt Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1211
+#: src/blocks/container/settings.js:1248
 msgid "Fan Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1212
+#: src/blocks/container/settings.js:1249
 msgid "Curve"
 msgstr ""
 
-#: src/blocks/container/settings.js:1213
+#: src/blocks/container/settings.js:1250
 msgid "Curve Asymmetrical"
 msgstr ""
 
-#: src/blocks/container/settings.js:1214
+#: src/blocks/container/settings.js:1251
 msgid "Curve Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:1215
+#: src/blocks/container/settings.js:1252
 msgid "Curve Asymmetrical Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:1216
+#: src/blocks/container/settings.js:1253
 msgid "Arrow"
 msgstr ""
 
-#: src/blocks/container/settings.js:1217
+#: src/blocks/container/settings.js:1254
 msgid "Arrow Split"
 msgstr ""
 
-#: src/blocks/container/settings.js:1234
+#: src/blocks/container/settings.js:1271
 msgid "Shape Dividers"
 msgstr ""
 
-#: src/blocks/container/settings.js:1256
+#: src/blocks/container/settings.js:1293
 msgid "Divider Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:1262
+#: src/blocks/container/settings.js:1299
 msgid "Shape Divider Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1269
+#: src/blocks/container/settings.js:1306
 #: src/blocks/popup-builder/settings.js:304
 #: src/blocks/popup-builder/settings.js:453
 #: src/extensions/sticky-container/controls.js:121
 msgid "Top"
 msgstr ""
 
-#: src/blocks/container/settings.js:1273
+#: src/blocks/container/settings.js:1310
 #: src/blocks/popup-builder/settings.js:318
 #: src/blocks/popup-builder/settings.js:460
 #: src/extensions/sticky-container/controls.js:125
 msgid "Bottom"
 msgstr ""
 
-#: src/blocks/container/settings.js:1283
+#: src/blocks/container/settings.js:1320
 msgid "Top Shape Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:1306
+#: src/blocks/container/settings.js:1343
 msgid "Top Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1316
-#: src/blocks/container/settings.js:1423
+#: src/blocks/container/settings.js:1353
+#: src/blocks/container/settings.js:1460
 #: src/extensions/animations/utils/constants.js:51
 msgid "Flip"
 msgstr ""
 
-#: src/blocks/container/settings.js:1323
-#: src/blocks/container/settings.js:1430
+#: src/blocks/container/settings.js:1360
+#: src/blocks/container/settings.js:1467
 msgid "Invert"
 msgstr ""
 
-#: src/blocks/container/settings.js:1330
-#: src/blocks/container/settings.js:1437
+#: src/blocks/container/settings.js:1367
+#: src/blocks/container/settings.js:1474
 msgid "Bring To Front"
 msgstr ""
 
-#: src/blocks/container/settings.js:1342
+#: src/blocks/container/settings.js:1379
 msgid "Top Shape Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1352
-#: src/blocks/container/settings.js:1459
+#: src/blocks/container/settings.js:1389
+#: src/blocks/container/settings.js:1496
 #: src/blocks/modal-child-popup-content/settings.js:74
 #: src/blocks/popup-builder/settings.js:238
 msgid "Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1362
+#: src/blocks/container/settings.js:1399
 msgid "Top Shape Height"
 msgstr ""
 
-#: src/blocks/container/settings.js:1372
-#: src/blocks/container/settings.js:1479
+#: src/blocks/container/settings.js:1409
+#: src/blocks/container/settings.js:1516
 #: src/blocks/counter-child-progress-bar/settings.js:62
 #: src/blocks/counter-child-progress-bar/settings.js:70
 #: src/blocks/google-map/settings.js:463
@@ -11311,19 +11338,19 @@ msgstr ""
 msgid "Height"
 msgstr ""
 
-#: src/blocks/container/settings.js:1390
+#: src/blocks/container/settings.js:1427
 msgid "Bottom Shape Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:1413
+#: src/blocks/container/settings.js:1450
 msgid "Bottom Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1449
+#: src/blocks/container/settings.js:1486
 msgid "Bottom Shape Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1469
+#: src/blocks/container/settings.js:1506
 msgid "Bottom Shape Height"
 msgstr ""
 
@@ -11400,7 +11427,7 @@ msgid "Fieldset"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:112
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:73
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:74
 msgid "Details"
 msgstr ""
 
@@ -11547,7 +11574,7 @@ msgid "Time"
 msgstr ""
 
 #: src/blocks/content/render.js:41
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:86
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:87
 msgid "Label"
 msgstr ""
 
@@ -11627,7 +11654,7 @@ msgstr ""
 msgid "Write something – paragraph, heading, or more…"
 msgstr ""
 
-#: src/blocks/content/settings.js:50
+#: src/blocks/content/settings.js:57
 #: src/blocks/countdown/settings.js:125
 #: src/blocks/counter/settings.js:54
 #: src/blocks/google-map/settings.js:336
@@ -11636,30 +11663,30 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/blocks/content/settings.js:158
+#: src/blocks/content/settings.js:204
 #: src/blocks/modal-child-trigger-content/settings.js:165
 msgid "Not available for span tag."
 msgstr ""
 
-#: src/blocks/content/settings.js:161
+#: src/blocks/content/settings.js:207
 #: src/blocks/modal-child-trigger-content/settings.js:168
 msgid "Not available for aligned text."
 msgstr ""
 
-#: src/blocks/content/settings.js:164
+#: src/blocks/content/settings.js:210
 #: src/blocks/modal-child-trigger-content/settings.js:171
 msgid "Showing large initial letter."
 msgstr ""
 
-#: src/blocks/content/settings.js:167
+#: src/blocks/content/settings.js:213
 #: src/blocks/modal-child-trigger-content/settings.js:174
 msgid "Show a large initial letter."
 msgstr ""
 
-#: src/blocks/content/settings.js:176
-#: src/blocks/content/settings.js:177
-#: src/blocks/content/settings.js:184
-#: src/blocks/content/settings.js:189
+#: src/blocks/content/settings.js:222
+#: src/blocks/content/settings.js:223
+#: src/blocks/content/settings.js:230
+#: src/blocks/content/settings.js:235
 #: src/blocks/modal-child-trigger-content/settings.js:183
 #: src/blocks/modal-child-trigger-content/settings.js:184
 #: src/blocks/modal-child-trigger-content/settings.js:192
@@ -11667,32 +11694,32 @@ msgstr ""
 msgid "Drop cap"
 msgstr ""
 
-#: src/blocks/content/settings.js:237
+#: src/blocks/content/settings.js:283
 msgid "Text Shadow"
 msgstr ""
 
-#: src/blocks/content/settings.js:261
+#: src/blocks/content/settings.js:307
 msgid "Enable Text Shadow"
 msgstr ""
 
-#: src/blocks/content/settings.js:262
+#: src/blocks/content/settings.js:308
 msgid "Enable text shadow to customize the shadow properties."
 msgstr ""
 
-#: src/blocks/content/settings.js:295
+#: src/blocks/content/settings.js:341
 msgid "Text Shadow X Offset"
 msgstr ""
 
-#: src/blocks/content/settings.js:330
+#: src/blocks/content/settings.js:376
 msgid "Text Shadow Y Offset"
 msgstr ""
 
-#: src/blocks/content/settings.js:365
+#: src/blocks/content/settings.js:411
 msgid "Text Shadow Blur Radius"
 msgstr ""
 
 #: src/blocks/countdown-child-number/settings.js:49
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:85
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:86
 msgid "Number"
 msgstr ""
 
@@ -11812,8 +11839,8 @@ msgstr ""
 
 #: src/blocks/countdown/settings.js:556
 #: src/blocks/separator/settings.js:47
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:53
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:87
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:54
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:88
 msgid "Separator"
 msgstr ""
 
@@ -12433,8 +12460,7 @@ msgstr ""
 
 #: src/blocks/modal/settings.js:53
 #: src/blocks/popup-builder/settings.js:870
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:51
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:176
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:52
 msgid "Text"
 msgstr ""
 
@@ -12582,7 +12608,7 @@ msgid "Push page content down when banner is shown."
 msgstr ""
 
 #: src/blocks/popup-builder/settings.js:565
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:97
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:98
 msgid "Close Icon"
 msgstr ""
 
@@ -12827,7 +12853,7 @@ msgstr ""
 
 #: src/blocks/post/settings/filter-settings.js:77
 #: src/components/icon-picker/header-container.js:30
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:100
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:101
 msgid "Search"
 msgstr ""
 
@@ -13027,7 +13053,7 @@ msgid "Pagination Background Active"
 msgstr ""
 
 #: src/blocks/post/settings/pagination-settings.js:47
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:108
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:109
 msgid "Pagination"
 msgstr ""
 
@@ -13104,8 +13130,6 @@ msgid "Style"
 msgstr ""
 
 #: src/blocks/separator/settings.js:71
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:33
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:109
 msgid "Solid"
 msgstr ""
 
@@ -13411,7 +13435,7 @@ msgid "Transform to Tab Button"
 msgstr ""
 
 #: src/blocks/tabs/edit.js:88
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:65
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:66
 msgid "Tabs"
 msgstr ""
 
@@ -13537,12 +13561,6 @@ msgid "Align tabs vertically before the tabpanels"
 msgstr ""
 
 #: src/components/advanced-gradient-control/index.js:386
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:238
-#: src/extensions/gbs-editor/components/panels/SpacingPanel.jsx:210
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:147
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:147
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:148
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:96
 msgid "Reset"
 msgstr ""
 
@@ -13869,10 +13887,7 @@ msgid "Preview animation"
 msgstr ""
 
 #: src/extensions/animations/controls.js:214
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:936
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:248
-#: src/extensions/gbs-editor/components/panels/SpacingPanel.jsx:220
-#: src/extensions/gbs-editor/components/typography/MonoSection.jsx:47
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:948
 msgid "Preview"
 msgstr ""
 
@@ -13918,7 +13933,7 @@ msgid "Flip Right"
 msgstr ""
 
 #: src/extensions/animations/utils/constants.js:62
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:78
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:79
 msgid "Slide"
 msgstr ""
 
@@ -14022,606 +14037,357 @@ msgstr ""
 msgid "Control block visibility based on user state, role, browser, OS, or day. Hidden blocks are completely removed from the page output."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:60
-msgid "Extended Palettes require Spectra Pro"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:63
-msgid "Unlock up to 7 independent brand colours. Each generates its own 11-shade scale and colour schemes."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:82
-msgid "Color %d"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:101
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:129
-msgid "Base color"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:106
-msgid "Chromatic %d base hex colour"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:115
-msgid "Chromatic %d shades"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/ExtendedSection.jsx:122
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:179
-msgid "Color name"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:49
-msgid "None (pure grey)"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:57
-msgid "Neutral scale"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:59
-msgid "0 (white) → 7 (near-black)"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:64
-msgid "Neutral shades 0 to 7"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:74
-msgid "Tint source"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:86
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:101
-msgid "Pro"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:91
-msgid "Adds a subtle hue to the grey scale so neutrals feel connected to your brand."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:98
-#: src/extensions/gbs-editor/components/colors/NeutralSection.jsx:115
-msgid "Tint strength"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PaletteSection.jsx:33
-msgid "Extended palettes"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:131
-msgid "shade-7 anchor"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:137
-msgid "Primary base hex colour"
-msgstr ""
-
-#. translators: %s: contrast ratio, e.g. 2.8
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:143
-msgid "Too light for body text (%s:1 on white) — safe as a fill or accent."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:149
-msgid "All other shades are computed from this value using OKLCH."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:157
-msgid "Shade scale"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:159
-msgid "auto-generated (OKLCH)"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:165
-msgid "Primary colour shades 1 to 11"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:168
-msgid "1 lightest → 7 base · 8–11 deep dark"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:185
-msgid "Primary colour name"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/PrimarySection.jsx:189
-msgid "Used in the WordPress colour palette and as the CSS variable label."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SchemesSection.jsx:74
-msgid "dark"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SchemesSection.jsx:99
-msgid "No schemes computed yet. Save a config to generate colour schemes."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SchemesSection.jsx:112
-msgid "Apply a scheme to any container block using the \"Color Scheme\" control. The scheme sets background, text, accent, and border colours automatically via CSS variables."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SchemesSection.jsx:118
-msgid "Chromatic schemes"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SchemesSection.jsx:138
-msgid "Neutral schemes"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:23
-msgid "Primary"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:25
-msgid "Tertiary"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:26
-msgid "Quaternary"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:27
-msgid "Heading text"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:28
-msgid "Body text"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:30
-msgid "Foreground"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:31
-msgid "Surface"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:32
-msgid "Outline / border"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:33
-msgid "Neutral"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:34
-msgid "SG accent"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:35
-msgid "SG secondary"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:36
-msgid "SG heading"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:37
-msgid "SG body"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:38
-msgid "SG surface"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:39
-msgid "SG background"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:40
-msgid "SG border"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:41
-msgid "SG neutral"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:42
-msgid "SG muted"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:102
-msgid "These slugs map semantic role names to specific shade tokens. Gutenberg blocks, theme.json palette entries, and CSS variables all use these aliases."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:108
-msgid "Core semantic roles"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:110
-msgid "Core semantic colour map"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:114
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:136
-msgid "Role"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:115
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:137
-msgid "Shade ref"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:116
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:138
-msgid "Hex"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:127
-msgid "Astra compatibility slugs"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:129
-msgid "sg-*"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/colors/SemanticSection.jsx:132
-msgid "sg-* semantic colour map"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/controls/HexColorInput.jsx:94
-#: src/extensions/gbs-editor/components/controls/HexColorInput.jsx:129
-msgid "Open colour picker"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/controls/HexColorInput.jsx:107
-msgid "Hex colour value"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:46
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:47
 msgid "Core Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:49
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:50
 msgid "Common Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:52
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:53
 msgid "Google Map"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:54
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:55
 msgid "Button Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:55
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:56
 msgid "Buttons"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:57
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:58
 msgid "Icon Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:60
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:61
 msgid "List Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:62
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:63
 msgid "List Item"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:63
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:64
 msgid "List Icon"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:64
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:65
 msgid "Tabs Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:66
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:67
 msgid "Tab Area"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:68
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:69
 msgid "Panel"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:69
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:70
 msgid "Accordion Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:70
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:71
 msgid "Accordion"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:71
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:72
 msgid "Accordion Item"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:74
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:75
 msgid "Header Title"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:75
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:76
 msgid "Header Icon"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:76
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:77
 msgid "Slider Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:77
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:78
 msgid "Slider"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:79
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:80
 msgid "Countdown Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:80
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:81
 msgid "Countdown"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:81
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:82
 msgid "Day Container"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:82
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:83
 msgid "Hour Container"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:83
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:84
 msgid "Minute Container"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:84
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:85
 msgid "Second Container"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:88
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:89
 msgid "Expiry Wrapper"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:89
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:90
 msgid "Modal Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:90
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:91
 msgid "Modal"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:91
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:92
 msgid "Trigger"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:92
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:93
 msgid "Trigger: Button"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:93
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:94
 msgid "Trigger: Content"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:94
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:95
 msgid "Trigger: Icon"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:98
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:99
 msgid "Loop Builder Blocks"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:102
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:103
 msgid "Filter: Dropdown"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:103
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:104
 msgid "Filter: Checkbox"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:104
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:105
 msgid "Filter: Button"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:105
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:106
 msgid "Reset Button"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:107
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:108
 msgid "Template"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:109
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:110
 msgid "Previous Button"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:110
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:111
 msgid "Page Numbers"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:111
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:112
 msgid "Next Button"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:112
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:113
 msgid "No Results"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:210
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:211
 msgid "This is a sample heading for preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:215
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:216
 msgid "Sample image for preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:218
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:219
 msgid "This is container content for preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:221
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:222
 msgid "This is sample content text for preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:224
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:225
 msgid "New York, NY, USA"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:229
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:230
 msgid "Button 1"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:230
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:231
 msgid "Button 2"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:245
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:246
 msgid "List item %d"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:257
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:258
 msgid "Tab %d"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:263
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:264
 msgid "Content of Tab %d"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:277
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:278
 msgid "Item %d"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:283
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:284
 msgid "Details for item %d"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:292
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:293
 msgid "Slide %d content for preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:309
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:310
 msgid "Preview of expiry wrapper"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:338
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:339
 msgid "Modal content preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:689
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:697
 msgid "Saved!"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:703
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:715
 msgid "Save failed. Please try again."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:706
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:718
 msgid "Network error while saving."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:729
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:741
 msgid "All block defaults removed."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:731
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:743
 msgid "Failed to remove defaults."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:735
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:747
 msgid "Failed to remove all block defaults."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:759
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:771
 msgid "Could not save setting."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:763
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:775
 msgid "Network error."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:776
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:788
 msgid "Block defaults requires Spectra Pro"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:779
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:791
 msgid "Upgrade to assign default classes per block type."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:795
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:807
 msgid "Block defaults"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:798
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:810
 msgid "Pre-apply utility classes to every new block of a type."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:804
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:816
 msgid "Enabled"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:805
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:817
 msgid "Disabled"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:823
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:835
 msgid "Enable block defaults using the toggle to configure default classes for your Spectra blocks."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:836
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:848
 msgid "Select a block"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:847
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:859
 msgid "— Choose a block —"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:881
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:893
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:150
 msgid "State"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:901
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:913
 msgid "Add classes"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:908
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:920
 msgid "Select classes…"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:928
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:940
 msgid "No classes assigned to this block yet — pick from “Add classes” above."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:941
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:953
 msgid "Loading preview…"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:946
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:958
 msgid "Block defaults preview"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:981
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1040
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:993
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1052
 msgid "Removing…"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:981
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1014
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:993
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1026
 msgid "Remove all block defaults"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:995
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1007
 msgid "Clear all"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1003
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1015
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:233
 #: src/extensions/gbs-editor/components/panels/CustomVarsPanel.jsx:253
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:215
 msgid "Saving…"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1003
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1015
 msgid "Save changes"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1023
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1035
 msgid "Are you sure you want to remove all block defaults? This cannot be undone."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1032
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1044
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:225
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:552
 #: src/extensions/gbs-editor/components/panels/CustomVarsPanel.jsx:143
@@ -14631,7 +14397,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1040
+#: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:1052
 msgid "Remove All"
 msgstr ""
 
@@ -14673,14 +14439,6 @@ msgstr ""
 
 #: src/extensions/gbs-editor/components/panels/CheatSheetPanel.jsx:338
 msgid "Next →"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/ColorsPanel.jsx:155
-msgid "Loading style guide…"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/ColorsPanel.jsx:163
-msgid "Failed to load style guide configuration."
 msgstr ""
 
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:41
@@ -14876,22 +14634,6 @@ msgstr ""
 msgid "The -- prefix is added automatically. Values can be any valid CSS value."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:160
-msgid "Loading font sizes…"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:183
-msgid "Headings"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:265
-msgid "Sample text at %s"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/FontSizePanel.jsx:267
-msgid "Preview of a Heading %s"
-msgstr ""
-
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:81
 msgid "Easing"
 msgstr ""
@@ -14913,7 +14655,6 @@ msgid "Usage"
 msgstr ""
 
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:200
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:126
 msgid "Copied!"
 msgstr ""
 
@@ -14955,48 +14696,6 @@ msgstr ""
 
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:353
 msgid "Creating…"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:118
-msgid "Computed tokens"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:124
-msgid "Copy all token declarations"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:243
-msgid "Loading presets…"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/PresetsPanel.jsx:251
-msgid "No preset for section \"%s\"."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/SpacingPanel.jsx:141
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:95
-msgid "Loading spacing…"
-msgstr ""
-
-#. translators: %s: spacing value e.g. "1.5rem"
-#: src/extensions/gbs-editor/components/panels/SpacingPanel.jsx:242
-msgid "%s"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/TypographyPanel.jsx:123
-msgid "Loading typography settings…"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/TypographyPanel.jsx:131
-msgid "Failed to load typography configuration."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/TypographyPanel.jsx:140
-msgid "Font changes apply after save + refresh."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/panels/TypographyPanel.jsx:153
-msgid "No editor for section \"%s\"."
 msgstr ""
 
 #: src/extensions/gbs-editor/components/panels/VariablesPanel.jsx:32
@@ -15047,523 +14746,253 @@ msgstr ""
 msgid "No tokens match your filter."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:30
-msgid "Button style"
+#: src/extensions/html-attributes/controls.js:174
+msgid "Use a valid datetime format, e.g. 2024–06–15 or 14:30"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:31
-msgid "Controls the visual treatment for all primary and secondary buttons across the site."
+#: src/extensions/html-attributes/controls.js:277
+msgid "Attribute name"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:33
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:109
-msgid "Filled background"
+#: src/extensions/html-attributes/controls.js:278
+msgid "Name"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:34
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:56
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:67
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:143
-msgid "Soft"
+#: src/extensions/html-attributes/controls.js:289
+msgid "Attribute value"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:34
-msgid "Tinted light fill"
+#: src/extensions/html-attributes/controls.js:290
+#: src/extensions/html-attributes/controls.js:354
+#: src/extensions/html-attributes/utils/constants.js:201
+msgid "Value"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:35
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:110
-msgid "Outline"
+#: src/extensions/html-attributes/controls.js:307
+msgid "Event handler — will be stripped on save."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:35
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:110
-msgid "Border only"
+#: src/extensions/html-attributes/controls.js:308
+msgid "Managed by block settings — not allowed here."
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:36
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:47
-msgid "Elevated"
+#: src/extensions/html-attributes/controls.js:353
+msgid "Attribute"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:36
-msgid "Filled + shadow"
+#: src/extensions/html-attributes/controls.js:372
+msgid "Add Attribute"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:41
-msgid "Card style"
+#: src/extensions/html-attributes/controls.js:402
+msgid "Custom Attributes"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:42
-msgid "Controls the default card background, border, and shadow."
+#: src/extensions/html-attributes/controls.js:466
+msgid "Block Attributes"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:44
-msgid "Flat"
+#: src/extensions/html-attributes/utils/constants.js:74
+msgid "Date/Time"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:44
-msgid "Transparent bg"
+#: src/extensions/html-attributes/utils/constants.js:76
+msgid "Machine–readable date/time value — e.g. 2024–01–15, 2024–01, 14:30"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:45
-msgid "Outlined"
+#: src/extensions/html-attributes/utils/constants.js:82
+msgid "For (Input ID)"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:45
-msgid "Border + white bg"
+#: src/extensions/html-attributes/utils/constants.js:84
+msgid "ID of the form control this label is associated with"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:46
-msgid "Tinted"
+#: src/extensions/html-attributes/utils/constants.js:90
+msgid "Cite URL"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:46
-msgid "Surface bg fill"
+#: src/extensions/html-attributes/utils/constants.js:92
+msgid "URL of the source being quoted"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:47
-msgid "White + shadow"
+#: src/extensions/html-attributes/utils/constants.js:98
+#: src/extensions/html-attributes/utils/constants.js:101
+#: src/extensions/html-attributes/utils/constants.js:104
+#: src/extensions/html-attributes/utils/constants.js:107
+#: src/extensions/html-attributes/utils/constants.js:110
+#: src/extensions/html-attributes/utils/constants.js:113
+#: src/extensions/html-attributes/utils/constants.js:119
+#: src/extensions/html-attributes/utils/constants.js:123
+#: src/extensions/html-attributes/utils/constants.js:128
+#: src/extensions/html-attributes/utils/constants.js:131
+#: src/extensions/html-attributes/utils/constants.js:137
+#: src/extensions/html-attributes/utils/constants.js:141
+#: src/extensions/html-attributes/utils/constants.js:144
+#: src/extensions/html-attributes/utils/constants.js:177
+msgid "ARIA Label"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:52
-msgid "Input style"
+#: src/extensions/html-attributes/utils/constants.js:98
+#: src/extensions/html-attributes/utils/constants.js:101
+#: src/extensions/html-attributes/utils/constants.js:104
+#: src/extensions/html-attributes/utils/constants.js:107
+#: src/extensions/html-attributes/utils/constants.js:110
+#: src/extensions/html-attributes/utils/constants.js:113
+msgid "Accessible name when the visible heading text is not descriptive enough"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:53
-msgid "Controls form field borders and backgrounds across all blocks."
+#: src/extensions/html-attributes/utils/constants.js:118
+#: src/extensions/html-attributes/utils/constants.js:122
+msgid "ARIA Role"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:55
-msgid "Boxed"
+#: src/extensions/html-attributes/utils/constants.js:118
+msgid "Landmark or widget role (e.g. region, presentation, list)"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:55
-msgid "Full border box"
+#: src/extensions/html-attributes/utils/constants.js:119
+msgid "Accessible name for this element when no visible label is present"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:56
-msgid "Tinted fill, no border"
+#: src/extensions/html-attributes/utils/constants.js:122
+msgid "Widget role for this inline element"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:57
-msgid "Underlined"
+#: src/extensions/html-attributes/utils/constants.js:123
+msgid "Accessible name for screen readers"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:57
-msgid "Bottom border only"
+#: src/extensions/html-attributes/utils/constants.js:128
+msgid "Distinguishes multiple headers on the page; omit for the main site header"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:62
-msgid "Roundness"
+#: src/extensions/html-attributes/utils/constants.js:131
+msgid "Distinguishes multiple footers on the page; omit for the main site footer"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:63
-msgid "Sets border-radius for interactive elements, cards, images, and badges."
+#: src/extensions/html-attributes/utils/constants.js:134
+#: src/extensions/html-attributes/utils/constants.js:138
+#: src/extensions/html-attributes/utils/constants.js:147
+#: src/extensions/html-attributes/utils/constants.js:155
+msgid "ARIA Labelledby"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:65
-msgid "Sharp"
+#: src/extensions/html-attributes/utils/constants.js:134
+msgid "ID of the heading that names this article"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:65
-msgid "2px — minimal curves"
+#: src/extensions/html-attributes/utils/constants.js:137
+msgid "Section only becomes a landmark when it has an accessible name"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:66
-msgid "8–12px — balanced"
+#: src/extensions/html-attributes/utils/constants.js:138
+msgid "ID of the heading that labels this section (alternative to ARIA Label)"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:67
-msgid "12–20px — rounded"
+#: src/extensions/html-attributes/utils/constants.js:141
+msgid "Label this complementary landmark"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:68
-msgid "Full"
+#: src/extensions/html-attributes/utils/constants.js:144
+msgid "Required when a page has more than one nav element"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:68
-msgid "Pill shapes"
+#: src/extensions/html-attributes/utils/constants.js:147
+msgid "ID of the figcaption element inside this figure"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:73
-msgid "Shadow depth"
+#: src/extensions/html-attributes/utils/constants.js:150
+msgid "ID"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:74
-msgid "Controls the shadow-sm / shadow-md / shadow-lg token values used on cards and buttons."
+#: src/extensions/html-attributes/utils/constants.js:150
+msgid "Reference target for aria-labelledby on the parent figure"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:76
-msgid "Flat, no shadow"
+#: src/extensions/html-attributes/utils/constants.js:155
+msgid "ID of the element that names this dialog"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:77
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:98
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:108
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:131
-msgid "Subtle"
+#: src/extensions/html-attributes/utils/constants.js:156
+msgid "ARIA Modal"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:77
-msgid "Light ambient"
+#: src/extensions/html-attributes/utils/constants.js:156
+msgid "Marks this as a modal dialog for assistive technology"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:78
-msgid "Clear depth"
+#: src/extensions/html-attributes/utils/constants.js:157
+msgid "Open by default"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:79
-msgid "Deep"
+#: src/extensions/html-attributes/utils/constants.js:157
+msgid "Renders the dialog in the open (visible) state on page load"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:79
-msgid "High contrast lift"
+#: src/extensions/html-attributes/utils/constants.js:162
+msgid "Href"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:84
-msgid "Spacing density"
+#: src/extensions/html-attributes/utils/constants.js:162
+msgid "URL this link points to"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:85
-msgid "Scales all space-xs → space-2xl tokens by a density multiplier (0.75× / 1× / 1.5×)."
+#: src/extensions/html-attributes/utils/constants.js:165
+msgid "Target"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:87
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:50
-msgid "Compact"
+#: src/extensions/html-attributes/utils/constants.js:168
+#: src/extensions/html-attributes/utils/constants.js:189
+msgid "— Default —"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:87
-msgid "0.75× — tight layout"
+#: src/extensions/html-attributes/utils/constants.js:174
+msgid "Where to open the link"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:88
-msgid "1× — balanced spacing"
+#: src/extensions/html-attributes/utils/constants.js:176
+msgid "Rel"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:89
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:52
-msgid "Spacious"
+#: src/extensions/html-attributes/utils/constants.js:176
+msgid "Link relationship; noopener noreferrer is added automatically when target is _blank"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:89
-msgid "1.5× — open layout"
+#: src/extensions/html-attributes/utils/constants.js:177
+msgid "Accessible label when the visible link text is not descriptive"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:94
-msgid "Motion style"
+#: src/extensions/html-attributes/utils/constants.js:178
+msgid "Prompts the browser to download the resource instead of navigating to it"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:95
-msgid "Sets transition durations and entrance animation parameters."
+#: src/extensions/html-attributes/utils/constants.js:183
+msgid "Start"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:97
-msgid "Instant transitions"
+#: src/extensions/html-attributes/utils/constants.js:183
+msgid "Starting value for the ordered list counter"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:98
-msgid "100–200ms transitions"
+#: src/extensions/html-attributes/utils/constants.js:186
+msgid "Marker Type"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:99
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:132
-msgid "Standard"
+#: src/extensions/html-attributes/utils/constants.js:196
+msgid "Numbering type for list markers"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:99
-msgid "150–250ms transitions"
+#: src/extensions/html-attributes/utils/constants.js:198
+msgid "Reversed"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:100
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:133
-msgid "Expressive"
+#: src/extensions/html-attributes/utils/constants.js:198
+msgid "Count down instead of up"
 msgstr ""
 
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:100
-msgid "200–350ms + spring"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:105
-msgid "Badge style"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:106
-msgid "Controls padding, border-radius, and fill for tag/badge elements."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:108
-msgid "Soft tinted fill"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:111
-msgid "Pill"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:111
-msgid "Full-radius pill"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:116
-msgid "Image treatment"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:117
-msgid "Adjusts image filter, contrast, and saturation for consistent visual tone."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:119
-msgid "Natural"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:119
-msgid "No filter applied"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:120
-msgid "Polished"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:120
-msgid "Subtle contrast boost"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:121
-msgid "Dramatic"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:121
-msgid "High contrast + vignette"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:122
-msgid "Editorial"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:122
-msgid "Desaturated editorial look"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:127
-msgid "Hover intensity"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:128
-msgid "Controls how much buttons, cards, and links animate on hover."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:130
-msgid "No hover effects"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:131
-msgid "Light darken + lift"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:132
-msgid "Clear darken + lift"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:133
-msgid "Strong lift + shadow"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:138
-msgid "Shade profile"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:139
-msgid "Controls the lightness curve used when generating chromatic shade steps."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:141
-msgid "Punchy"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:141
-msgid "High contrast steps"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:142
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:152
-msgid "Balanced"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:142
-msgid "Even perceptual spread"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:143
-msgid "Gentle, low contrast"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:149
-msgid "Scales the chroma of generated chromatic shades. Affects all palette colours."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:151
-msgid "Vivid"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:151
-msgid "Full chroma"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:152
-msgid "Slightly muted"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:153
-msgid "Muted"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/presetCatalog.js:153
-msgid "Low saturation"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:23
-msgid "Extra small — icons, tight gaps"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:24
-msgid "Small — component inner padding"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:25
-msgid "Medium — section inner padding"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:26
-msgid "Large — between components"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:27
-msgid "Extra large — section margins"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:28
-msgid "2× extra large — hero / full-bleed"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:61
-msgid "Density Multiplier"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:64
-msgid "Scales all spacing steps by a global factor. Individual overrides below apply on top."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:86
-msgid "Step Overrides"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:90
-msgid "Set absolute values for individual steps, overriding the density multiplier. Click ↺ to restore."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/presets/SpacingSection.jsx:137
-msgid "%s spacing value"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:75
-msgid "Body font"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:99
-msgid "Text scale"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:161
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:184
-msgid "Spacing"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:164
-msgid "Edit in Pro"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:171
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:186
-msgid "Line height"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:179
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:187
-msgid "Letter spacing"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:193
-msgid "Links"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:198
-msgid "Decoration"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:199
-msgid "Hover color"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/BodySection.jsx:200
-msgid "Hover decoration"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/FontPicker.jsx:51
-msgid "selected"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/FontPicker.jsx:78
-msgid "Heading font family"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/FontPicker.jsx:79
-msgid "Body font family"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/FontPicker.jsx:81
-msgid "Sans-serif"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/FontPicker.jsx:82
-msgid "Serif"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:94
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:95
-msgid "Reset to default"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:138
-msgid "Heading font"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:154
-msgid "Size scale"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:162
-msgid "Heading size scale"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/HeadingsSection.jsx:176
-msgid "Changes apply immediately. Click ↺ to restore the default for any level."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/MonoSection.jsx:29
-msgid "Code & monospace"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/MonoSection.jsx:35
-msgid "System monospace"
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/MonoSection.jsx:38
-msgid "Uses the browser's system monospace stack. Custom monospace font selection is coming in a future release."
-msgstr ""
-
-#: src/extensions/gbs-editor/components/typography/MonoSection.jsx:52
-msgid "Monospace font preview"
+#: src/extensions/html-attributes/utils/constants.js:201
+msgid "Sets the counter for this item and all subsequent items"
 msgstr ""
 
 #: src/extensions/image-mask/edit.js:70

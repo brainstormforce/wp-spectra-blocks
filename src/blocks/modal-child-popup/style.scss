@@ -41,7 +41,7 @@ body.spectra-modal-active {
 		top: 0;
 		bottom: 0;
 		justify-content: center;
-		align-items: center;
+		align-items: flex-start;
 		background: rgba(0, 0, 0, 0.7);
 		left: 0;
 		right: 0;
@@ -51,6 +51,8 @@ body.spectra-modal-active {
 		visibility: visible;
 		z-index: 999999;
 		box-sizing: border-box;
+		overflow-y: auto;
+		padding: 40px 20px 20px;
 
 	}
 
@@ -83,6 +85,7 @@ body.spectra-modal-active {
 		position: relative;
 		opacity: 1;
 		transition: opacity 0.3s ease;
+		margin: auto;
 
 		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar {
 			width: 5px;
@@ -103,6 +106,7 @@ body.spectra-modal-active {
 		position: static;
 		opacity: 1;
 		transition: opacity 0.3s ease;
+		margin: auto;
 
 		:where(.wp-block-spectra-modal-popup-content)::-webkit-scrollbar {
 			width: 5px;

@@ -146,52 +146,430 @@ body.spectra-page-zip-builder
 	letter-spacing: revert;
 }
 
-// A19 — SureForms field skin vs the source's UA reality. The per-form overlay (payload) carries
-// every DECLARED source value at a higher tier; these clauses give the UNDECLARED axes honest UA
-// values (system colors, no guessed hexes) instead of the skin's derived gray. Container-level
-// vars (0,1,1) out-cascade the skin's container-id inline vars; the overlay's element vars win.
-body.spectra-page-zip-builder :where(.srfm-form-container) {
-	--srfm-color-input-background: Field;
-	--srfm-color-input-text: FieldText;
-	--spectra-input-bg: Field;
-	--spectra-input-text: FieldText;
+// A19 (v2) — IMPORTED SUREFORMS, DE-SKINNED. Every imported form is created with
+// SureForms styling disabled (PR #2925; the importer sets `disable_default_styles`),
+// so the plugin drops its four frontend stylesheets + the derived CSS-var block and
+// stamps `.srfm-styling-none` on the container. That removes the field SKIN — the
+// source design is painted DIRECTLY onto the `.srfm-*` elements by the per-form
+// overlay (block-converter `formOverlay.ts`), no CSS-var bridge, no `!important`.
+// What the dropped stylesheets ALSO carried is the CONSTANT layout skeleton (the
+// flex track, the width presets, the box model); reproduce that ONCE here, gated on
+// the marker so ONLY de-skinned imported forms get it. Reset tier (0,1,1) via
+// `:where()` — the per-form overlay (0,2,0+) wins any axis it declares (gap,
+// max-width, row/inline layout). No `!important`, ever (as everywhere in this file).
 
-	// Dropdown MENU surfaces (TomSelect chrome): the skin's hsl(from …) formulas collapse when
-	// the styling meta is empty (near-black menu, unreadable options). System colors keep it legible.
-	--srfm-expandable-menu-background: Field;
-	--srfm-dropdown-option-text-color: FieldText;
-	--srfm-dropdown-option-selected-text: FieldText;
-	--srfm-dropdown-placeholder-color: GrayText;
-	--srfm-dropdown-icon-color: GrayText;
-	--srfm-dropdown-menu-border-color: color-mix(in srgb, FieldText 18%, Field);
-	--srfm-dropdown-option-background-hover: color-mix(in srgb, FieldText 8%, Field);
-	--srfm-dropdown-option-background-selected: color-mix(in srgb, FieldText 12%, Field);
-	--srfm-dropdown-option-selected-icon: FieldText;
-
-	// FOCUS ring — the pro skin paints its own !important a11y ring reading these tokens (read
-	// currentColor as a "doubled border"). Re-pin to the UA declaration so the rule draws the
-	// native ring instead — focus stays visible, source-exact.
-	--spectra-focus-ring-style: auto;
-	--spectra-focus-ring-width: 1px;
-	--spectra-focus-ring-color: -webkit-focus-ring-color;
-	--spectra-focus-ring-offset: 0;
-
-	// FOCUS glow — SureForms paints a box-shadow halo on checkbox/GDPR/multi-choice/number/richtext
-	// wraps; no silent source renders one (UA reality is the outline ring above).
-	--srfm-color-input-border-focus-glow: transparent;
-
-	// Selected/checked surface + label/prefix text. Labels live on the PAGE surface → currentColor;
-	// prefix/suffix sit in the Field box → GrayText. scheme-primary consumers stay SureForms-default.
-	--srfm-color-input-selected: color-mix(in srgb, FieldText 12%, Field);
-	--srfm-color-input-label: currentcolor;
-	--srfm-color-input-prefix: GrayText;
+// Field track — a wrapping flex row (native SureForms grammar). Full-width blocks
+// stack; row-paired blocks ride the width presets below. The overlay overrides the
+// gap / direction per source form.
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-form) {
+	display: flex;
+	flex-wrap: wrap;
+	row-gap: 16px;
+	column-gap: 16px;
 }
 
-// SureForms required asterisk: the source (novalidate) renders none. Required-ness stays
-// announced via the control's own required/aria attributes.
+// box-sizing + input-fills-block — the load-bearing staples from the dropped
+// common.min.css without which every padded field overflows its column.
+body.spectra-page-zip-builder :where(.srfm-styling-none),
+body.spectra-page-zip-builder :where(.srfm-styling-none *) {
+	box-sizing: border-box;
+}
+
 body.spectra-page-zip-builder
-:where(.srfm-form-container)
-:where(.srfm-required) {
+:where(.srfm-styling-none .srfm-input-common:not(.srfm-input-checkbox):not(.srfm-input-gdpr)) {
+	width: 100%;
+	max-width: 100%;
+}
+// The checkbox/gdpr REAL <input> is meant to be visually hidden (SureForms marks it
+// `.screen-reader-text`) — we draw the visible box via `.srfm-cbx`. But that WP-core
+// class isn't reliably present on imported pages (its `clip` was missing here), so a
+// CHECKED native checkbox painted its glyph at the absolutely-positioned top-left (a
+// stray second checkbox). Hide it ourselves with a self-contained sr-only clip.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-input-checkbox),
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-input-gdpr) {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+// Per-field width presets — the committer patches the `fieldWidth` block attr, which
+// SureForms renders as these classes; with the stylesheets gone we own their
+// flex-basis. The gap is subtracted through `--srfm-column-gap-between-blocks`
+// (SureForms's own token, matched here) — the overlay sets it to the SOURCE form's
+// actual gap, so the columns stay exact for any gap (default 16px). Stacks < 576px.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-25) {
+	flex: 0 1 calc(25% - 0.75 * var(--srfm-column-gap-between-blocks, 16px));
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-33-33) {
+	flex: 0 1 calc(33.33% - 0.6666666667 * var(--srfm-column-gap-between-blocks, 16px));
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-50) {
+	flex: 0 1 calc(50% - var(--srfm-column-gap-between-blocks, 16px) / 2);
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-66-66) {
+	flex: 0 1 calc(66.66% - 0.3333333333 * var(--srfm-column-gap-between-blocks, 16px));
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-75) {
+	flex: 0 1 calc(75% - var(--srfm-column-gap-between-blocks, 16px) / 4);
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-100) {
+	flex: 0 1 100%;
+}
+
+// Flex items default to `min-width: auto` (= min-content), so a field whose content
+// is wider than its width preset refuses to shrink and WRAPS to its own row, breaking
+// the paired layout. The trigger is a dropdown: while focused its search input shows
+// and the selected value is long, pushing the control's min-content past the basis
+// (measured live: a 50% dropdown grew to its 313px content vs its 274px basis and
+// dropped below its row-mate). `min-width: 0` makes every field honor its preset
+// regardless of content — the dropdown's `.item` ellipsizes. Ordered BEFORE the
+// <576px stack rule so that rule's `min-width: 100%` still wins there.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block) {
+	min-width: 0;
+}
+
+@media (max-width: 576px) {
+
+	body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-25),
+	body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-33-33),
+	body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-50),
+	body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-66-66),
+	body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-width-75) {
+		min-width: 100%;
+		width: 100%;
+	}
+}
+
+// fieldset reset (dropdown/multi-choice wrap it) + label/legend as block.
+// Structural only — the label/field TYPOGRAPHY stays source-owned (overlay);
+// undeclared axes fall to the page/UA default (the source's reality). NOTE: no
+// `.srfm-block-wrap` rule — SureForms ships none, and a `line-height:0` there
+// collapsed every wrapped line (textarea placeholder, checkbox label) onto one
+// baseline (the "double-vision" overlap).
+body.spectra-page-zip-builder :where(.srfm-styling-none fieldset) {
+	border: none;
+	margin: 0;
+	padding: 0;
+	min-width: 0;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-label),
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-block-legend) {
+	display: block;
+}
+
+// Checkbox / GDPR control skeleton. disable_default_styles drops SureForms's custom
+// checkbox skin AND the offscreen symbol-<svg> collapse. Reproduce the CONSTANT
+// structure only — the box layout, the checkmark opacity toggle, the symbol collapse;
+// the box's source COLOUR/size rides the per-form overlay. Without the symbol collapse
+// the holder <svg> renders at the UA 300×150 default and injects a huge gap; without
+// the toggle the checkmark shows while unchecked. Neutral `currentColor` box so an
+// un-overlaid checkbox is still visible on any theme.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-inline-svg) {
+	position: absolute;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-cbx) {
+	display: flex;
+	width: 100%;
+	gap: 8px;
+	align-items: flex-start;
+	cursor: pointer;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-cbx .srfm-span-wrap:first-child) {
+	flex: 0 0 auto;
+	position: relative;
+	width: 18px;
+	height: 18px;
+	border: 1px solid currentcolor;
+	border-radius: 4px;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-cbx .srfm-span-wrap:first-child svg) {
+	opacity: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 12px;
+	height: 10px;
+	transform: translate(-50%, -50%);
+	fill: none;
+	stroke: currentcolor;
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-input-common:checked + .srfm-cbx .srfm-span-wrap:first-child svg) {
+	opacity: 1;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-cbx .srfm-span-wrap:last-child) {
+	flex: 1;
+	min-width: 0;
+	max-width: calc(100% - 30px);
+}
+
+// Multi-choice (radio / checkbox groups). SureForms renders custom "option cards":
+// a native input SF hides via the (now-dropped) block CSS + SVG check indicators +
+// a bordered card. The native `.srfm-input-multi-choice-single` carries NO
+// screen-reader-text, so de-skinned it is visible — render as a plain NATIVE control
+// list (what a source radio/checkbox group actually is): flatten the card wrappers,
+// hide SF's now-static SVG indicators, keep the input + label inline. The option
+// accent tint rides the per-form overlay; label typography stays source-owned.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-block .srfm-block-wrap) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-block .srfm-block-wrap.srfm-vertical-layout) {
+	flex-direction: column;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-single),
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-single .srfm-block-content-wrap),
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-single .srfm-option-container) {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-multi-choice-single .srfm-icon-container) {
+	display: none;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-input-multi-choice-single) {
+	flex: 0 0 auto;
+	width: 16px;
+	height: 16px;
+	margin: 0;
+}
+
+// Dropdown (TomSelect, single-select) internals. disable_default_styles drops the
+// skin that, on a single-select: (a) hides the selected item's remove "×", (b)
+// collapses the type-to-search input to height:0, (c) hides the clear button, AND
+// (d) keeps the control on ONE line — SF sets `flex-wrap:nowrap` + pins the caret
+// absolutely, overriding TomSelect core's `flex-wrap:wrap`. Without (d) the caret
+// drops to a 2nd line once the value is long, making the box TALLER than its
+// sibling fields. Reproduce all of it; multi-selects never reach TomSelect (the
+// converter maps `<select multiple>` to a multi-choice field). The `.ts-control`
+// box appearance (border/bg/padding) stays source-owned (overlay).
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common.single .item .remove) {
+	// SureForms enables BOTH the remove_button (per-item "×") and clear_button plugins;
+	// on single-select the item "×" is redundant with the right-side clear "×". Native
+	// SF hides it, but TomSelect's `.plugin-remove_button .item .remove{display:inline-
+	// block}` (0,3,0) out-specifies a :where() rule — so `!important` is required.
+	display: none !important;
+}
+// Collapse the type-to-search input ONLY once an item is selected (the item then
+// supplies the control's line box, so no cursor overlaps the value). While EMPTY the
+// input stays — it shows the placeholder AND reserves the line height, so the control
+// matches the text-input height in both states. (SureForms used a fixed
+// --srfm-input-height for this; letting the line box do it tracks the source's own
+// padding/line-height instead of a magic number.)
+// `min-width` + `flex` need `!important`, and without it this whole rule was inert:
+// TomSelect core's `.ts-control>input{flex:1 1 auto;min-width:7rem}` is (0,1,1) and so
+// is `body.spectra-page-zip-builder :where(…)` — a tie that sheet order decides, and
+// this baseline is enqueued BEFORE tom-select.css. So the input kept a 112px floor and
+// `flex-grow`, and since `.item` is the only shrinkable sibling (`min-width:0`), the
+// SELECTED VALUE absorbed the entire overflow: measured 1.3px wide, i.e. an empty-
+// looking control with only the "×" and caret showing. `width`/`height`/`padding` win
+// on their own (core sets no width/height, and its `padding:0!important` agrees).
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common.single.has-items .ts-control input[id^="tomselect-"]) {
+	width: 0;
+	min-width: 0 !important;
+	height: 0;
+	padding: 0;
+	flex: 0 0 0 !important;
+}
+// The RIGHT-side clear "×": absolute, sitting just left of the caret; hidden until a
+// value is selected, then revealed — exactly native SureForms (`.has-items .clear-
+// button{visibility:visible}`). This is the ONLY "×" shown; the inline per-item
+// remove above stays hidden (that was the stray left-side "×").
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .clear-button) {
+	position: absolute;
+	top: 50%;
+	// TomSelect core positions the clear button with `right: max(var(--ts-pr-caret),8px)`
+	// (higher specificity than a :where() rule), and `--ts-pr-caret` computes huge here
+	// — pushing the "×" to the LEFT, over the selected value. Force it to the right;
+	// `!important` (+ left:auto) is needed to beat TomSelect's own positioning.
+	left: auto !important;
+	right: 2.25em !important;
+	transform: translateY(-50%);
+	width: 16px;
+	height: 16px;
+	visibility: hidden;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common.has-items .clear-button) {
+	visibility: visible;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .ts-control) {
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 0;
+	line-height: inherit;
+	// Reserve the icon zone through TomSelect's OWN mechanism instead of compensating
+	// downstream. It ships `.ts-control:not(.rtl){padding-right:max(var(--ts-pr-min),
+	// var(--ts-pr-clear-button) + var(--ts-pr-caret))!important}`, but SureForms draws
+	// its own caret (.ts-dropdown-icon below) and never registers TomSelect's caret
+	// plugin, so `--ts-pr-caret` stays UNSET. The sum then reads `1em + 0` — a unitless
+	// zero is not a length inside CSS math — so the whole !important declaration is
+	// invalid at computed-value time and `padding-right` falls to its initial 0. The
+	// control lost its right padding entirely, and the gap was papered over with
+	// `margin-right: 2.75em` on `.item`: a hand-tuned constant (exactly
+	// `--ts-pr-clear-button` 1em + a 1.75em caret — the number the formula WOULD have
+	// produced) that over-reserved past the caret by ~1em of dead space while still
+	// leaving a long value 7.5px UNDER the clear "×".
+	// Defining the variable makes the shipped formula compute: max(.75rem, 1em +
+	// 2.25em) = 3.25em. 2.25em is where the clear "×" is pinned above, so the reserve
+	// tracks that value rather than restating it. Measured: padding-right 0 → 55.12px,
+	// long-value overlap +7.5px → −1px.
+	--ts-pr-caret: 2.25em;
+}
+// TomSelect's inner input/item default to `font-size:13px` + `line-height:normal`
+// (its OWN base CSS), and disable_default_styles dropped SureForms' `.ts-control
+// input{font-size:inherit}` — so a dropdown's text is smaller than the sibling text
+// inputs and the box renders several px SHORTER. Restore inherit so the control's
+// text matches the inputs' font/line and the box heights line up. `!important` is
+// required here to beat TomSelect core's own rules (they use it too).
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .ts-control input),
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .item) {
+	font-size: inherit !important;
+	line-height: inherit !important;
+	// …and the COLOUR, for the same reason. TomSelect's base CSS sets it DIRECTLY on
+	// the inner nodes — `.ts-control,.ts-control input,.ts-dropdown{color:#303030}` —
+	// so they never inherit the control's source-derived colour the overlay carries on
+	// `.ts-control`. Measured: a source select whose text is #0b0b0a rendered #303030,
+	// and its placeholder (which IS the rendered value until the user picks) came out
+	// lighter still at 65% alpha of that. `!important` again: TomSelect's colour
+	// declaration carries none, but `.ts-control input` is (0,1,1) and so is
+	// `body.spectra-page-zip-builder :where(…)` — a tie that sheet order decides, and
+	// this baseline is enqueued BEFORE tom-select.css.
+	color: inherit !important;
+}
+// The placeholder is the dropdown's RENDERED VALUE until a selection is made — the
+// source draws that text as a real selected <option> at full strength, so the UA's
+// ~65% placeholder alpha has to go too.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .ts-control input)::placeholder {
+	color: inherit;
+	opacity: 1;
+}
+// Selected value: ellipsis long text. The room on the right for the clear "×" + caret
+// is reserved by TomSelect's OWN formula — see the --ts-pr-caret note below.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .item) {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-dropdown-common .ts-dropdown-icon) {
+	position: absolute;
+	right: 0.75em;
+}
+
+// Submit container full-width — the inline `width:100%` the `justify` lever writes on
+// the button + `.wp-block-button` resolves against THIS (the dropped frontend.min.css
+// set it). Left/center/right ride the button's own inline `text-align`.
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-submit-container) {
+	width: 100%;
+}
+
+// SureForms required asterisk: the source (novalidate) renders none. Required-ness
+// stays announced via the control's own required/aria attributes.
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-required) {
+	display: none;
+}
+
+// Validation messages are SERVER-rendered with their text ("This field is
+// required.") and hidden by SureForms's (now-dropped) stylesheet until
+// validation.js flags the block with `.srfm-error` / `.srfm-valid-email-error`.
+// Without this, every required field shows its error on first paint. Hide by
+// default; reveal on the error state (same-tier rule declared after → wins when
+// the state class is present). Matches the source (novalidate) reality: no error
+// until the user actually submits.
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-error-message) {
+	display: none;
+	color: #dc2626;
+}
+
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-error) :where(.srfm-error-message),
+body.spectra-page-zip-builder
+:where(.srfm-styling-none .srfm-valid-email-error) :where(.srfm-error-message) {
+	display: block;
+}
+
+// Other SureForms elements that are `display:none` BY DEFAULT in the (now-dropped)
+// stylesheet and are ALWAYS present in the markup — so without reproducing their hide
+// they render on page load:
+//   .srfm-success-box  the post-submit confirmation box (empty until JS fills it),
+//   .srfm-loader       the submit-button spinner,
+//   .srfm-hidden-block conditional-logic hidden fields,
+//   .srfm-display-none / .srfm-hide  SureForms' generic hide utilities (captcha wrap,
+//                       page-break submit container, etc.).
+// (The honeypot is type=hidden and the checkbox/gdpr sr-only input is hidden by WP
+// core `.screen-reader-text` — both unaffected by disable_default_styles.)
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-success-box) {
+	display: none;
+}
+// …but SureForms' JS adds `.srfm-active` to the success box on a successful submit,
+// and the (dropped) stylesheet revealed it — without this the form hides on submit
+// and NO confirmation shows (an empty card). Reproduce the reveal + its centering.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-success-box.srfm-active) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	white-space: pre-wrap;
+}
+// The confirmation content (check icon + heading + message) is injected into the
+// description; the dropped sheet laid it out as a centered column. Reproduce that so
+// the icon sits centered above the centered text, not left-aligned.
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-success-box-description) {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 8px;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-loader) {
+	display: none;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-hidden-block) {
+	display: none;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-display-none) {
+	display: none;
+}
+
+body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-hide) {
 	display: none;
 }
 
@@ -268,4 +646,19 @@ body.spectra-page-zip-builder
 // untouched so an authored (0,3,0) parent gs uppercase still cascades to labels.
 body.spectra-page-zip-builder .wp-block-spectra-countdown {
 	text-transform: revert;
+}
+
+// A31 — themes underline CONTENT links at up to (0,2,1) (Astra:
+// `.ast-single-post .entry-content a { text-decoration: underline }`), and a nav embedded in
+// imported content (standalone imports carry their header in post_content) is a MENU, not
+// prose — the source authored no underline, and the gs class rides the <li> so it can never
+// counter a rule set directly ON the <a>. Same (0,2,1) tier + this sheet's later print order
+// wins the tie; an authored nav-link decoration still wins via its gs (0,3,0) lift.
+// (component-tokens' GLOBAL LINK OVERRIDE is fixed at the source to exclude nav anchors —
+// this row counters THEME prose-link styling on zip-built pages only.)
+body.spectra-page-zip-builder
+:where(.entry-content)
+.wp-block-navigation
+:where(a) {
+	text-decoration: none;
 }

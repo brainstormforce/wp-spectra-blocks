@@ -24,23 +24,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ClassRegistry {
 
 	/**
-	 * Maps SG chromatic shade indices (1-11) to Tailwind shade labels (50-950).
+	 * Maps SG chromatic shade indices to Tailwind shade labels.
+	 *
+	 * Only the seed (`chromaticN-7` → `600`) exists — shade ramps are no longer
+	 * generated, so `bg-primary-600` is the one live chromatic shade per colour.
 	 *
 	 * @since 1.0.0
 	 * @var array<int, string>
 	 */
 	const CHROMATIC_SHADE_MAP = array(
-		1  => '50',
-		2  => '100',
-		3  => '200',
-		4  => '300',
-		5  => '400',
-		6  => '500',
-		7  => '600',
-		8  => '700',
-		9  => '800',
-		10 => '900',
-		11 => '950',
+		7 => '600',
 	);
 
 	/**
@@ -122,8 +115,10 @@ class ClassRegistry {
 	}
 
 	/**
-	 * Maps SG neutral shade indices (0-7) to Tailwind shade labels.
-	 * Gaps at 400, 700, 900 are filled via NEUTRAL_GAP_FILL.
+	 * Maps SG neutral shade indices to Tailwind shade labels.
+	 *
+	 * Only the six stored neutral stops exist — the interpolated stops 3 and 6
+	 * (old `base-300`/`base-800`) are no longer generated.
 	 *
 	 * @since 1.0.0
 	 * @var array<int, string>
@@ -132,23 +127,20 @@ class ClassRegistry {
 		0 => '50',
 		1 => '100',
 		2 => '200',
-		3 => '300',
 		4 => '500',
 		5 => '600',
-		6 => '800',
 		7 => '950',
 	);
 
 	/**
-	 * Fills neutral Tailwind shade gaps using the nearest available SG neutral token.
+	 * Fills neutral Tailwind shade gaps using the nearest available SG neutral
+	 * token. (Numeric-string keys are cast to int by PHP.)
 	 *
 	 * @since 1.0.0
-	 * @var array<string, string>
+	 * @var array<int, string>
 	 */
 	const NEUTRAL_GAP_FILL = array(
-		'400' => 'neutral-3',
 		'700' => 'neutral-5',
-		'900' => 'neutral-6',
 	);
 
 	/**
@@ -2242,7 +2234,10 @@ class ClassRegistry {
 			$slug = self::get_chromatic_slug( $index, $chromatic );
 
 			foreach ( self::CHROMATIC_SHADE_MAP as $sg_shade => $tw_shade ) {
-				$token = "chromatic{$index}-{$sg_shade}";
+				// The emitted CSS var is keyed by the seed's SEMANTIC slug
+				// (primary/secondary/accent/success/error/info/warning), the same
+				// name the engine sets — see ColorModel::CHROMATIC_SLUG.
+				$token = \SpectraBlocks\StyleGuide\ColorModel::chromatic_token( (int) $index );
 				$var   = "var(--spectra-{$token})";
 
 				self::register_color_for_all_prefixes(
@@ -2393,8 +2388,9 @@ class ClassRegistry {
 			$slug  = self::get_chromatic_slug( $index, $chromatic );
 			$label = $chromatic['name'] ?? "Chromatic {$index}";
 			foreach ( self::CHROMATIC_SHADE_MAP as $sg_shade => $tw_shade ) {
+				$token                            = \SpectraBlocks\StyleGuide\ColorModel::chromatic_token( (int) $index );
 				$sources[ "{$slug}-{$tw_shade}" ] = array(
-					'var'   => "var(--spectra-chromatic{$index}-{$sg_shade})",
+					'var'   => "var(--spectra-{$token})",
 					'label' => "{$label} {$tw_shade}",
 				);
 			}
@@ -4327,46 +4323,14 @@ class ClassRegistry {
 		);
 
 		// --- Columns ---
-		for ( $i = 1; $i <= 12; $i++ ) {
-			$classes[ "columns-{$i}" ] = array(
-				'css'         => "columns: {$i};",
-				'title'       => "Columns {$i}",
-				'description' => "Splits content into {$i} columns.",
-				'category'    => 'layout',
-				'tags'        => array( 'columns' ),
-			);
-		}
-		$classes['columns-auto'] = array(
-			'css'         => 'columns: auto;',
-			'title'       => 'Columns auto',
-			'description' => 'Uses automatic column count.',
-			'category'    => 'layout',
-			'tags'        => array( 'columns' ),
-		);
-		$columns_sizes           = array(
-			'3xs' => '16rem',
-			'2xs' => '18rem',
-			'xs'  => '20rem',
-			'sm'  => '24rem',
-			'md'  => '28rem',
-			'lg'  => '32rem',
-			'xl'  => '36rem',
-			'2xl' => '42rem',
-			'3xl' => '48rem',
-			'4xl' => '56rem',
-			'5xl' => '64rem',
-			'6xl' => '72rem',
-			'7xl' => '80rem',
-		);
-		foreach ( $columns_sizes as $key => $value ) {
-			$classes[ "columns-{$key}" ] = array(
-				'css'         => "columns: {$value};",
-				'title'       => "Columns {$key}",
-				'description' => "Uses {$value} as the ideal column width.",
-				'category'    => 'layout',
-				'tags'        => array( 'columns' ),
-			);
-		}
+		// Intentionally NOT registered as static utility classes. `columns-{n}`
+		// is too generic a class name — the static sheet ships site-wide in Free
+		// (no per-post filtering), so `:root .columns-4 { columns: 4 }` was being
+		// forced onto ANY element carrying a `columns-4` class (themes/other
+		// plugins use it for grid layouts), hijacking it into CSS multi-column.
+		// Arbitrary `columns-*` tokens authored on a Spectra block are still
+		// resolved on demand by the JIT compiler (PREFIX_MAP: `columns`).
+		// @since 1.0.3
 
 		$break_values = array( 'auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column' );
 		foreach ( $break_values as $value ) {

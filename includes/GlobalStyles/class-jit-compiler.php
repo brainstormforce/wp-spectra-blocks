@@ -3449,7 +3449,7 @@ class JitCompiler {
 	 *
 	 * Pass-throughs don't carry a concrete color to wrap in `color-mix()`,
 	 * but dropping them would break the compositional chain downstream.
-	 * A single-var reference like `--tw-gradient-from: var(--spectra-chromatic1-6)`
+	 * A single-var reference like `--tw-gradient-from: var(--spectra-chromatic1-7)`
 	 * is NOT a pass-through — it's a color-value-via-var and MUST be wrapped
 	 * by alpha-slash. Hence the `,` requirement in the pattern.
 	 *

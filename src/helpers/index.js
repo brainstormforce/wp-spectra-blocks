@@ -112,6 +112,20 @@ export const getIconName = ( iconValue ) => {
 };
 
 /**
+ * Function to remove anchor tags from a rich-text value, keeping their inner text.
+ *
+ * Button-like labels are rendered inside an interactive wrapper (an anchor or a
+ * button) on the frontend, and a nested anchor there is invalid HTML that the
+ * browser parser tears apart. Server-side counterpart: the kses allowlist strip
+ * in each block's controller.php.
+ *
+ * @param {string} value the rich-text value.
+ * @since x.x.x
+ * @return {string} The value with anchor tags removed.
+ */
+export const removeAnchorTag = ( value ) => value.toString().replace( /<\/?a(\s[^>]*)?>/gi, '' );
+
+/**
  * Re-export SVG security utilities
  */
 export { processSpectraSVG, validateSVGStructure, isSVGUploadEnabled } from './svg-security';

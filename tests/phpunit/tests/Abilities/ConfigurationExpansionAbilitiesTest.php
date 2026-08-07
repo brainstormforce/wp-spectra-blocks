@@ -725,13 +725,13 @@ class ConfigurationExpansionAbilitiesTest extends WP_UnitTestCase {
 
 		UpdatePluginSetting::instance()->execute(
 			array(
-				'key'   => 'spectra_blocks_load_gfonts_locally',
-				'value' => 'disabled',
+				'key'   => 'spectra_blocks_enable_block_responsive',
+				'value' => 'enabled',
 			)
 		);
 
 		$settings = \SpectraBlocks\Abilities\GetPluginSettings::instance()->execute( array() );
-		$this->assertSame( 'disabled', $settings['settings']['spectra_blocks_load_gfonts_locally'] ?? null );
+		$this->assertSame( 'enabled', $settings['settings']['spectra_blocks_enable_block_responsive'] ?? null );
 	}
 
 	/**

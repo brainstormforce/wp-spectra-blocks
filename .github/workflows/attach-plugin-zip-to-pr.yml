@@ -1,0 +1,80 @@
+name: Attach plugin zip to PR
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'includes/**'
+      - 'admin/assets/src/**'
+      - 'spectra-blocks.php'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'webpack.config.js'
+      - 'bin/build-zip.sh'
+      - '.github/workflows/attach-plugin-zip-to-pr.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  PLUGIN_SLUG: ${{ github.event.repository.name }}
+
+jobs:
+  generate-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Cache admin node_modules
+        uses: actions/cache@v4
+        with:
+          path: admin/node_modules
+          key: ${{ runner.os }}-admin-npm-${{ hashFiles('admin/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-admin-npm-
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Build plugin assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build admin dashboard
+        run: |
+          cd admin
+          npm ci
+          npm run build
+
+      - name: Set Composer Token
+        run: composer config github-oauth.github.com ${{ secrets.BSF_PRODUCTS_REPO_TOKEN }}
+
+      - name: Install Composer dependencies (no-dev)
+        run: composer install --prefer-dist --no-progress --no-dev
+
+      - name: Generate ZIP
+        run: bash ./bin/build-zip.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PLUGIN_SLUG }}-plugin
+          path: ./artifact/${{ env.PLUGIN_SLUG }}.zip

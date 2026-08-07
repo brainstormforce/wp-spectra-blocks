@@ -55,7 +55,7 @@ class Sanitizer {
 	 *
 	 * When `$strict` is true (used for user-supplied payloads and JIT bracket
 	 * tokens), any `var()` usage is rejected. The engine's own colour utility
-	 * emission path — which legitimately emits `var(--spectra-chromatic1-6)`
+	 * emission path — which legitimately emits `var(--spectra-chromatic1-7)`
 	 * et al. from the Style Guide palette — passes `$strict = false`.
 	 *
 	 * @since 1.0.0

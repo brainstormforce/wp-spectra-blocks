@@ -43,13 +43,14 @@ if ( $has_link ) {
 }
 
 // Add the accessibility details based on the attributes.
+$accessibility_label = isset( $attributes['accessibilityLabel'] ) ? (string) $attributes['accessibilityLabel'] : '';
 switch ( $attributes['accessibilityMode'] ?? '' ) {
 	case 'svg':
 		// SVG based accessibility attributes.
 		$icon_props['role']        = 'graphics-symbol';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG icon. */
 				__( 'An icon named %s', 'spectra-blocks' ),
@@ -60,8 +61,8 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 		// Image based accessibility attributes.
 		$icon_props['role']        = 'img';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG image. */
 				__( 'An image named %s', 'spectra-blocks' ),
@@ -102,7 +103,7 @@ if ( $render_link ) {
 	$accessibility_mode = $attributes['accessibilityMode'] ?? '';
 	if ( 'decorative' !== $accessibility_mode ) {
 		// For non-decorative icons with links, use the provided label if any, else use the icon's name.
-		$element_attributes['aria-label'] = ! empty( $icon_props['aria-label'] ) ? $icon_props['aria-label'] : Renderer::get_icon_name( $icon );
+		$element_attributes['aria-label'] = isset( $icon_props['aria-label'] ) && '' !== (string) $icon_props['aria-label'] ? $icon_props['aria-label'] : Renderer::get_icon_name( $icon );
 	}
 	// For decorative icons with links, no aria-label is added - screen readers will announce the link URL.
 }

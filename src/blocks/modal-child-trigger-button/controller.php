@@ -12,10 +12,27 @@ use SpectraBlocks\Helpers\Core;
 
 // The main attributes that need to exist.
 $text = $attributes['text'] ?? '';
+// `"0"` is falsy in PHP and `false` is not a string; normalise once so every
+// test below compares against a known string.
+$text = is_scalar( $text ) ? (string) $text : '';
+
 $icon = $attributes['icon'] ?? null;
 
+// The label must never contain an anchor: view.php always wraps it in a
+// div with role="button" that toggles the modal, and a link inside it would
+// hijack the click. Strip <a> tags (keeping inner text and all other
+// formatting) via a kses allowlist, which also neutralizes malformed anchors
+// that a regex would miss. Editor-side counterpart: removeAnchorTag() in @spectra-helpers.
+if ( '' !== $text ) {
+	$allowed_label_tags = wp_kses_allowed_html( 'post' );
+	unset( $allowed_label_tags['a'] );
+	$text = wp_kses( $text, $allowed_label_tags );
+}
+
 // If the main attributes do not exist, abandon ship.
-if ( ! $text && ! isset( $icon ) ) {
+// Strict compare: `! '0'` is true, so a trigger labelled "0" with no icon
+// rendered nothing at all.
+if ( '' === $text && ! isset( $icon ) ) {
 	return;
 }
 
@@ -29,7 +46,8 @@ $modal_trigger = $attributes['modalTrigger'] ?? ( $block->context['spectra/modal
 
 // Aria label for accessibility - prioritize user-defined ariaLabel, fallback to text content.
 $user_aria_label = $attributes['ariaLabel'] ?? '';
-$aria_label      = ! empty( $user_aria_label ) ? $user_aria_label : ( ! empty( $text ) ? wp_strip_all_tags( $text ) : '' );
+$user_aria_label = is_scalar( $user_aria_label ) ? (string) $user_aria_label : '';
+$aria_label      = '' !== $user_aria_label ? $user_aria_label : ( '' !== $text ? wp_strip_all_tags( $text ) : '' );
 
 // Icon colors.
 $icon_color       = $attributes['iconColor'] ?? '';

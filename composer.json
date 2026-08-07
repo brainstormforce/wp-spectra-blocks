@@ -12,7 +12,7 @@
 		"brainstormforce/nps-survey": "^1",
 		"brainstormforce/zipwp-images": "^1",
 		"brainstormforce/gutenberg-templates": "dev-master",
-		"brainstormforce/one-onboarding": "^1.0"
+		"brainstormforce/one-onboarding": "^1.0.5"
 	},
 	"repositories": [
 		{

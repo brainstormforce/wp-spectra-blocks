@@ -110,10 +110,9 @@ class ParityV3Test extends WP_UnitTestCase {
 			array( 'backdrop-saturate-150', 'saturate(150%)' ),
 			array( 'backdrop-sepia', 'sepia(100%)' ),
 
-			// Columns.
-			array( 'columns-3', 'columns: 3;' ),
-			array( 'columns-auto', 'columns: auto;' ),
-			array( 'columns-md', 'columns: 28rem;' ),
+			// Columns — `columns-{n}` static utilities were removed (too generic a
+			// class name; hijacked any element's `columns-4` into CSS multi-column).
+			// Arbitrary `columns-*` tokens still resolve via the JIT compiler.
 			array( 'break-before-page', 'break-before: page;' ),
 			array( 'break-after-column', 'break-after: column;' ),
 			array( 'break-inside-avoid', 'break-inside: avoid;' ),

@@ -185,6 +185,27 @@
 		}
 	}
 
+	// Auto-height popup: content scrolls inside the container, not the wrapper.
+	// The close button is a direct child of the wrapper (not the container), so
+	// scrolling the container keeps the close button pinned and always visible.
+	// Popups do NOT get spectra-has-auto-height (that class is banner-only) so
+	// there is no cascade conflict with the height:auto / overflow:visible rule above.
+	&.spectra-popup-builder--popup:not(.spectra-has-fixed-height) {
+
+		.spectra-popup-builder__wrapper--popup {
+			max-height: calc(100vh - 40px);
+		}
+
+		// Container scrolls when content exceeds the viewport height.
+		// height:auto overrides the base height:100% (which needs an explicit parent
+		// height to resolve — max-height alone is not enough).
+		.spectra-popup-builder__container--popup {
+			height: auto;
+			max-height: calc(100vh - 40px);
+			overflow-y: auto;
+		}
+	}
+
 	&.spectra-popup-builder--banner {
 		width: 100%;
 		height: unset;

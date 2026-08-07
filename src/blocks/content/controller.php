@@ -11,9 +11,11 @@ use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get the text content from attributes with empty string fallback.
 $text = $attributes['text'] ?? '';
+$text = is_scalar( $text ) ? (string) $text : '';
 
-// Early return if no text content is provided.
-if ( empty( $text ) ) {
+// Strict compare: empty('0') is true in PHP, which dropped a literal "0" stat
+// value. Only a truly empty string counts as no content.
+if ( '' === $text ) {
 	return '';
 }
 

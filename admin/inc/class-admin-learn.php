@@ -36,20 +36,20 @@ class Admin_Learn {
 			array(
 				'id'          => 'editor-basics',
 				'title'       => __( 'Editor Basics', 'spectra-blocks' ),
-				'description' => __( 'Edit your pages using Spectra with step-by-step guide and make them live with confidence.', 'spectra-blocks' ),
+				'description' => __( 'Add your first block and drop in ready-made sections to get a page started.', 'spectra-blocks' ),
 				'url'         => 'https://wpspectra.com/docs/getting-started-v3/#build-from-scratch-',
 				'steps'       => array(
 					array(
 						'id'          => 'add-your-first-block',
 						'title'       => __( 'Add Your First Block', 'spectra-blocks' ),
-						'description' => __( 'Use the plus icon to insert a block like a heading, image, or button. Its the quickest way to start shaping your page.', 'spectra-blocks' ),
+						'description' => __( 'Use the plus icon to insert a block like a heading, image, or button. It\'s the quickest way to start shaping your page.', 'spectra-blocks' ),
 						'learn'       => array(
 							'type'    => 'dialog',
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
 									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/add-your-first-block.png',
-									'alt' => __( 'Add Your First Spectra Block in Editor', 'spectra-blocks' ),
+									'alt' => __( 'Add your first block in the editor', 'spectra-blocks' ),
 								),
 							),
 						),
@@ -63,14 +63,14 @@ class Admin_Learn {
 					array(
 						'id'          => 'insert-ready-made-sections',
 						'title'       => __( 'Insert Ready-Made Sections', 'spectra-blocks' ),
-						'description' => __( 'Add pre-designed Spectra patterns to build sections faster without starting from scratch.', 'spectra-blocks' ),
+						'description' => __( 'Add pre-designed Spectra Blocks patterns to build sections faster without starting from scratch.', 'spectra-blocks' ),
 						'learn'       => array(
 							'type'    => 'dialog',
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
 									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/insert-ready-made-template-1.png',
-									'alt' => __( 'Inseart the Ready-Made Spectra sections in Editor', 'spectra-blocks' ),
+									'alt' => __( 'Insert ready-made sections in the editor', 'spectra-blocks' ),
 								),
 							),
 						),
@@ -86,7 +86,7 @@ class Admin_Learn {
 			array(
 				'id'          => 'design-essentials',
 				'title'       => __( 'Design Essentials', 'spectra-blocks' ),
-				'description' => __( 'Create clean, consistent sections that reflect your brand and message', 'spectra-blocks' ),
+				'description' => __( 'Create clean, consistent sections that reflect your brand and message.', 'spectra-blocks' ),
 				'url'         => 'https://wpspectra.com/docs/spectra-design-library-guide/',
 				'steps'       => array(
 					array(
@@ -120,7 +120,7 @@ class Admin_Learn {
 								'type' => 'image',
 								'data' => array(
 									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/customize-cta-sections.png',
-									'alt' => __( 'Customize CTA Sections in Astra', 'spectra-blocks' ),
+									'alt' => __( 'Customize CTA sections', 'spectra-blocks' ),
 								),
 							),
 						),
@@ -161,7 +161,7 @@ class Admin_Learn {
 			$chapters[] = array(
 				'id'          => 'page-layout-settings',
 				'title'       => __( 'Page Layout Settings', 'spectra-blocks' ),
-				'description' => __( 'Control how your page looks from edge to edge using layout options powered by Astra', 'spectra-blocks' ),
+				'description' => __( 'Control how your page looks from edge to edge using layout options powered by Astra.', 'spectra-blocks' ),
 				'url'         => 'https://wpastra.com/docs/understanding-container-style-in-astra-theme-customizing-your-containers-look/',
 				'steps'       => array(
 					array(
@@ -312,13 +312,13 @@ class Admin_Learn {
 		$chapters[] = array(
 			'id'          => 'make-your-page-live',
 			'title'       => __( 'Make Your Page Live', 'spectra-blocks' ),
-			'description' => __( 'Review, save, and publish your work with confidence', 'spectra-blocks' ),
+			'description' => __( 'Review, save, and publish your work with confidence.', 'spectra-blocks' ),
 			'url'         => 'https://wpspectra.com/docs/preview-options/',
 			'steps'       => array(
 				array(
 					'id'          => 'preveiw-your-changes',
 					'title'       => __( 'Preview Your Changes', 'spectra-blocks' ),
-					'description' => __( 'Keep your progress safe by saving your draft as you refine your design and preview how your page looks to the world!', 'spectra-blocks' ),
+					'description' => __( 'Keep your progress safe by saving your draft as you refine your design and preview how your page looks to the world.', 'spectra-blocks' ),
 					'learn'       => array(
 						'type'    => 'dialog',
 						'content' => array(

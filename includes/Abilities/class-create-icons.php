@@ -143,9 +143,10 @@ class CreateIcons extends AbstractAbility {
 				$icon_attrs['linkURL'] = esc_url_raw( $icon['linkURL'] );
 			}
 
-			if ( ! empty( $icon['accessibilityLabel'] ) ) {
+			$a11y_label = isset( $icon['accessibilityLabel'] ) ? (string) $icon['accessibilityLabel'] : '';
+			if ( '' !== $a11y_label ) {
 				$icon_attrs['accessibilityMode']  = 'linked';
-				$icon_attrs['accessibilityLabel'] = sanitize_text_field( $icon['accessibilityLabel'] );
+				$icon_attrs['accessibilityLabel'] = sanitize_text_field( $a11y_label );
 			}
 
 			$icon_attrs_json = ! empty( $icon_attrs ) ? ' ' . wp_json_encode( $icon_attrs ) : '';

@@ -69,6 +69,12 @@ class AssetLoader {
 		add_filter( 'body_class', array( $this, 'add_zip_builder_body_class' ) );
 		add_filter( 'admin_body_class', array( $this, 'add_zip_builder_admin_body_class' ) );
 
+		// NOTE: the `<canvas>` KSES allowance is NOT registered here. It widens
+		// the allow-list for every `post`-context `wp_kses_post()` call on the
+		// request — comment text, widget text, any third party's — when only the
+		// content block's own call needs it. {@see self::with_canvas_allowed()}
+		// wraps that one call instead.
+
 		// Import-marker meta (the body-class detector's source of truth) —
 		// registered so the importer can set it over REST at page-write time.
 		add_action( 'init', array( $this, 'register_import_marker_meta' ) );
@@ -120,6 +126,75 @@ class AssetLoader {
 		}
 
 		return $classes;
+	}
+
+	/**
+	 * Frontend: allow the inert `<canvas>` tag through `wp_kses_post` while
+	 * rendering an imported (zip-built) singular view. WordPress' `post` KSES
+	 * context drops `<canvas>`, so the content block's `wp_kses_post( $text )`
+	 * strips a JS-drawn canvas (e.g. an imported hero visualization) before the
+	 * block's `spectraCustomJS` can draw on it. `<canvas>` is inert — no `src`,
+	 * no script, and `on*` handlers are stripped by KSES regardless — so this
+	 * only lets the element survive, adding no script-execution surface.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<string, mixed>|mixed $tags    Allowed tags for this context.
+	 * @param string                     $context KSES context (e.g. `post`).
+	 * @return array<string, mixed>|mixed Possibly-extended tags.
+	 */
+	public static function allow_canvas_on_zip_built_pages( $tags, $context ) {
+		if ( 'post' !== $context || ! is_array( $tags ) ) {
+			return $tags;
+		}
+
+		// Frontend singular imported views only — the block editor / REST
+		// render never runs the drawing script, so a canvas would be blank.
+		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ! is_singular() ) {
+			return $tags;
+		}
+
+		$post_id = get_queried_object_id();
+		if ( ! $post_id || ! self::is_zip_built_page( (int) $post_id ) ) {
+			return $tags;
+		}
+
+		$tags['canvas'] = array(
+			'id'          => true,
+			'class'       => true,
+			'style'       => true,
+			'width'       => true,
+			'height'      => true,
+			'role'        => true,
+			'aria-label'  => true,
+			'aria-hidden' => true,
+		);
+
+		return $tags;
+	}
+
+	/**
+	 * Run `wp_kses_post()` on imported block text with `<canvas>` permitted.
+	 *
+	 * The allowance is added and removed around THIS call only. Registering the
+	 * filter for the whole request widened the allow-list for every other
+	 * `post`-context `wp_kses_post()` on the page too — comments, widgets,
+	 * anything a third party sanitises — which is far more surface than the one
+	 * block that needs it.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string $text Raw block text.
+	 * @return string Sanitised HTML.
+	 */
+	public static function with_canvas_allowed( string $text ): string {
+		$allow = array( self::class, 'allow_canvas_on_zip_built_pages' );
+
+		add_filter( 'wp_kses_allowed_html', $allow, 10, 2 );
+		$out = wp_kses_post( $text );
+		remove_filter( 'wp_kses_allowed_html', $allow, 10 );
+
+		return $out;
 	}
 
 	/**

@@ -60,7 +60,7 @@ const HeroSection = () => {
 							className="text-text-primary"
 							size="lg"
 							tag="h2"
-							title={__( 'Welcome To Spectra Blocks', 'spectra-blocks' )}
+							title={__( 'Welcome to Spectra Blocks', 'spectra-blocks' )}
 						/>
 						<Badge
 							className="uppercase -translate-y-1/2 py-0 px-1 text-text-secondary bg-background-secondary"
@@ -116,7 +116,7 @@ const HeroSection = () => {
 				<img
 					src={ 'Activated' === spectra_blocks_react.pro_plugin_status ? proVideoThumbnailUrl : freeVideoThumbnailUrl }
 					className="w-full h-full object-cover rounded-lg aspect-video cursor-pointer"
-					alt="Video Thumbnail"
+					alt={ __( 'Getting started with Spectra Blocks video', 'spectra-blocks' ) }
 				/>
 
 				{/* <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black bg-opacity-50 rounded-full">

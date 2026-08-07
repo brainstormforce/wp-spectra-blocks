@@ -282,7 +282,7 @@ export const sections = [
 			},
 			{
 				id: 2,
-				content: __( 'Build full-width mega menus with any Spectra block inside', 'spectra-blocks' ),
+				content: __( 'Build full-width mega menus with any block inside', 'spectra-blocks' ),
 				iconFree: false,
 				iconPro: true,
 			},

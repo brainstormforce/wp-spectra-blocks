@@ -16,7 +16,7 @@ use SpectraBlocks\Helpers\Renderer;
 	data-wp-on--click="spectra/modal::actions.toggle"
 	role="button"
 	tabindex="0"
-	<?php if ( ! empty( $wrapper_aria_label ) ) : ?>
+	<?php if ( '' !== $wrapper_aria_label ) : ?>
 		aria-label="<?php echo esc_attr( $wrapper_aria_label ); ?>"
 	<?php endif; ?>>
 <?php

@@ -2,14 +2,14 @@
  * External dependencies.
  */
 import { RichText, useBlockProps } from '@wordpress/block-editor';
-import { memo, useEffect, useCallback, useMemo } from '@wordpress/element';
+import { memo, useEffect, useCallback } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies.
  */
 import { useSpectraStyles } from '@spectra-hooks';
-import { spectraClassNames } from '@spectra-helpers';
+import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import RenderSVG from '@spectra-helpers/render-svg';
 
 /**
@@ -102,15 +102,6 @@ const Render = ( props ) => {
 		const { getBlockParentsByBlockName } = select( 'core/block-editor' );
 		return getBlockParentsByBlockName( clientId, 'spectra/tabs', true )[0];
 	}, [ clientId, isSelected ] );
-
-	// Get allowed formats for RichText
-	const allowedFormats = useMemo( () => {
-		const { select } = wp.data;
-		const allFormats = select( 'core/rich-text' ).getFormatTypes() || [];
-		return allFormats
-			.map( ( format ) => format.name )
-			.filter( ( name ) => name !== 'core/link' && name !== 'core/footnote' );
-	}, [] );
 
 	// INFINITE LOOP FIX: Only update currentTab if it's actually different for duplicate causing memeory leak.
 	useEffect( () => {
@@ -237,9 +228,9 @@ const Render = ( props ) => {
 				placeholder={ placeholder }
 				value={ text }
 				tagName="div"
-				onChange={ ( value ) => setAttributes( { text: value } ) }
+				onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 				className="spectra-button__link"
-				allowedFormats={ allowedFormats }
+				withoutInteractiveFormatting
 			/>
 		);
 	}, [

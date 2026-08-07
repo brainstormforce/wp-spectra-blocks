@@ -40,7 +40,7 @@ const BSFAnalyticsOption = () => {
 
 	const renderText = () => (
 		<span className='m-0'>
-			{__( 'Collect non-sensitive information from your website, such as the PHP version and features used, to help us fix bugs faster, make smarter decisions, and build features that actually matter to you. Please read', 'spectra-blocks' )}
+			{__( 'Collect non-sensitive information from your website, such as the PHP version and features used, to help us fix bugs faster, make smarter decisions, and build features that actually matter to you. Please read', 'spectra-blocks' )}{ ' ' }
 
 			<a
 				href={'https://store.brainstormforce.com/usage-tracking/?utm_source=spectra_blocks_dashboard&utm_medium=general_settings&utm_campaign=usage_tracking'}

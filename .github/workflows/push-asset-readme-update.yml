@@ -1,0 +1,26 @@
+name: Push Asset and Readme Update
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - readme.txt
+      - .wordpress-org/**
+
+jobs:
+  push:
+    name: Push to WordPress.org assets SVN
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: WordPress Plugin Asset Update
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: spectra-blocks
+          IGNORE_OTHER_FILES: true

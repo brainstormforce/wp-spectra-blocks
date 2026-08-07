@@ -62,7 +62,7 @@ const ProFeatures = () => {
 				</div>
 
 				<div className="flex flex-col w-full p-1">
-					<p className="text-sm font-medium text-text-primary m-0">AI Assistant</p>
+					<p className="text-sm font-medium text-text-primary m-0">{ __( 'AI Assistant', 'spectra-blocks' ) }</p>
 					<div className="flex items-center justify-between w-full">
 						<Link
 							to={ {
@@ -90,7 +90,7 @@ const ProFeatures = () => {
 				</div>
 
 				<div className="flex flex-col w-full p-1">
-					<p className="text-sm font-medium text-text-primary m-0">Need Help</p>
+					<p className="text-sm font-medium text-text-primary m-0">{ __( 'Need Help?', 'spectra-blocks' ) }</p>
 					<div className="flex items-center justify-between w-full">
 						<a
 							href="https://wpspectra.com/contact/"

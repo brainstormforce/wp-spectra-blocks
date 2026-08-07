@@ -18,7 +18,8 @@ use SpectraBlocks\Helpers\Renderer;
 	data-wp-on--click="spectra/modal::actions.toggle"
 	role="button"
 	tabindex="0"
-<?php if ( ! empty( $aria_label ) ) : ?>
+<?php // Strict compare: empty('0') is true, and this trigger may have no other accessible name. ?>
+<?php if ( '' !== (string) $aria_label ) : ?>
 	aria-label="<?php echo esc_attr( $aria_label ); ?>"
 <?php endif; ?>
 >

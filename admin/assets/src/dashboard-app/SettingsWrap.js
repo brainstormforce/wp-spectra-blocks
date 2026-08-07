@@ -4,11 +4,13 @@ import AdminHeader from '@Common/components/AdminHeader';
 import MainNav from './MainNav';
 import SettingsRoute from './SettingsRoute';
 import SettingsSavedNotification from './SettingsSavedNotification';
+import SyncAdminMenu from './SyncAdminMenu';
 
 const SettingsWrap = () => {
 
     return (
         <Router>
+			<SyncAdminMenu/>
             <AdminHeader>
 				<MainNav/>
 			</AdminHeader>

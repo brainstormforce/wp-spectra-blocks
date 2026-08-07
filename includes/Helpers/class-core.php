@@ -47,6 +47,21 @@ class Core {
 	}
 
 	/**
+	 * Whether Spectra Blocks Pro is active.
+	 *
+	 * Checked via the Pro plugin's version constant, so the answer is reliable
+	 * from the moment Pro's main file has loaded. Call it from hook callbacks
+	 * (not at registration time) to stay independent of plugin load order.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return bool True when spectra-blocks-pro is active.
+	 */
+	public static function is_pro_active(): bool {
+		return defined( 'SPECTRA_BLOCKS_PRO_VER' );
+	}
+
+	/**
 	 * Store Json variable
 	 *
 	 * @since 3.0.0

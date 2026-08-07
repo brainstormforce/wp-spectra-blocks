@@ -24,31 +24,11 @@ const globalDataReducer = ( state = {}, action ) => {
                 ...state,
                 enableTemplates: action.payload,
             };
-        case 'UPDATE_ENABLE_SELECTED_FONT_FAMILIES':
-            return {
-                ...state,
-                enableSelectedFontFamilies: action.payload,
-            };
-        case 'UPDATE_SELECTED_FONT_FAMILIES':
-            return {
-                ...state,
-                selectedFontFamilies: action.payload,
-            };
         case 'UPDATE_ENABLE_FSE_FONT_FAMILIES':
             return {
                 ...state,
                 enableFSEFontFamilies: action.payload,
         };
-        case 'UPDATE_ENABLE_LOAD_FONTS_LOCALLY':
-            return {
-                ...state,
-                enableLoadFontsLocally: action.payload,
-            };
-        case 'UPDATE_ENABLE_PRELOAD_LOCAL_FONTS':
-            return {
-                ...state,
-                enablePreloadLocalFonts: action.payload,
-            };
         case 'UPDATE_ENABLE_ANIMATIONS_EXTENSION':
             return {
                 ...state,
@@ -132,6 +112,16 @@ const globalDataReducer = ( state = {}, action ) => {
 			return {
 				...state,
 				enableMcpServer: action.payload,
+			};
+		case 'UPDATE_VISIBILITY_MODE':
+			return {
+				...state,
+				visibilityMode: action.payload,
+			};
+		case 'UPDATE_VISIBILITY_PAGE':
+			return {
+				...state,
+				visibilityPage: action.payload,
 			};
         default:
             return state;

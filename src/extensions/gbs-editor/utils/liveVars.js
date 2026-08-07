@@ -14,38 +14,6 @@ import apiFetch from '@wordpress/api-fetch';
 import { dispatch, select } from '@wordpress/data';
 
 /**
- * Mirrors the PHP Engine::$default_semantic_map.
- * Maps WP palette slugs → token keys in computed.tokens.
- *
- * Kept in sync with class-engine.php; used to derive --wp--preset--color--*
- * live without a page reload.
- *
- * @since x.x.x
- */
-const SEMANTIC_MAP = {
-	'primary':        'chromatic1-7',
-	'secondary':      'chromatic1-5',
-	'tertiary':       'chromatic1-2',
-	'quaternary':     'chromatic2-2',
-	'heading':        'neutral-7',
-	'body':           'neutral-5',
-	'background':     'neutral-0',
-	'foreground':     'chromatic1-7',
-	'surface':        'neutral-1',
-	'outline':        'neutral-2',
-	'neutral':        'neutral-4',
-	'sg-accent':      'chromatic1-7',
-	'sg-secondary':   'chromatic1-5',
-	'sg-heading':     'neutral-7',
-	'sg-body':        'neutral-5',
-	'sg-surface':     'neutral-1',
-	'sg-background':  'neutral-0',
-	'sg-border':      'neutral-2',
-	'sg-neutral':     'neutral-6',
-	'sg-muted':       'neutral-4',
-};
-
-/**
  * Astra global-color slug index → Style Guide shade token.
  *
  * Kept in sync with GlobalStylesBridge::ASTRA_SHADE_MAP (class-global-styles-bridge.php).
@@ -55,16 +23,105 @@ const SEMANTIC_MAP = {
  * @since x.x.x
  */
 const ASTRA_SHADE_MAP = {
-	0: 'chromatic1-7',
-	1: 'chromatic1-5',
+	0: 'primary',
+	1: 'secondary',
 	2: 'neutral-7',
 	3: 'neutral-5',
-	4: 'neutral-1',
-	5: 'neutral-0',
+	4: 'neutral-0',
+	5: 'neutral-1',
 	6: 'neutral-2',
-	7: 'neutral-6',
-	8: 'neutral-4',
+	// Slots 7 (Subtle Background) and 8 (Other Supporting) are unmanaged — their
+	// old tokens (the interpolated neutral-3/neutral-6) are no longer generated.
 };
+
+/**
+ * Slugs that {@see syncEditorSwatches} has appended to the block-editor palette
+ * this session. Tracked so a later call can REMOVE exactly the entries it added
+ * (a deleted custom colour) without touching theme-owned swatches — an absent
+ * slug is otherwise indistinguishable from a theme colour.
+ *
+ * @type {Set<string>}
+ */
+const appendedSwatchSlugs = new Set();
+
+/**
+ * Normalise a colour to a comparable `#rrggbb` key, or '' when it is not a plain
+ * hex (CSS `var(--…)`, `transparent`, `currentColor`, empty). Mirrors the server's
+ * normalize_hex_key so the live picker dedupe matches the REST/server one.
+ *
+ * @since x.x.x
+ *
+ * @param {*} color Raw colour value.
+ * @return {string} Lower-case `#rrggbb`, or ''.
+ */
+function hexKey( color ) {
+	if ( typeof color !== 'string' ) {
+		return '';
+	}
+	const c = color.trim().toLowerCase();
+	if ( /^#[0-9a-f]{6}$/.test( c ) ) {
+		return c;
+	}
+	const m = c.match( /^#([0-9a-f])([0-9a-f])([0-9a-f])$/ );
+	if ( m ) {
+		return `#${ m[ 1 ] }${ m[ 1 ] }${ m[ 2 ] }${ m[ 2 ] }${ m[ 3 ] }${ m[ 3 ] }`;
+	}
+	return '';
+}
+
+/**
+ * Colour-based swatch dedupe — the client-side twin of the server's
+ * strip_picker_duplicate_entries(): drop sg-* aliases, and drop a swatch THIS live
+ * sync appended (tracked in appendedSwatchSlugs) when it duplicates the colour of an
+ * AUTHORITATIVE swatch (a theme/server entry we did not append). Authoritative
+ * swatches are never removed, so two distinct theme roles that share a hex (e.g.
+ * heading + a shuffled foreground) both survive. Non-hex values and unique colours
+ * are always kept.
+ *
+ * @since x.x.x
+ *
+ * @param {Array} palette Palette entries.
+ * @return {Array} Deduped palette (an appended swatch loses to an authoritative one).
+ */
+function dedupeSwatchesThemeWins( palette ) {
+	// AUTHORITATIVE swatches are every entry this live sync did NOT append itself —
+	// the theme's own colours plus the server-injected ones. They are NEVER dropped,
+	// so two distinct theme roles that happen to share a hex (e.g. `heading` and a
+	// shuffled `foreground`) both survive — the earlier colour-only rule wrongly
+	// collapsed them and lost the second role's swatch. Only a swatch WE appended
+	// that duplicates an authoritative colour (the mapped/synced case, e.g. Astra's
+	// `primary` vs `ast-global-color-0`) is dropped. Mirrors the server's
+	// strip_picker_duplicate_entries, which keeps every theme.json role.
+	const authorityColors = new Set();
+	palette.forEach( ( entry ) => {
+		const slug = entry?.slug || '';
+		if ( /^sg-/.test( slug ) || appendedSwatchSlugs.has( slug ) ) {
+			return;
+		}
+		const key = hexKey( entry?.color );
+		if ( key ) {
+			authorityColors.add( key );
+		}
+	} );
+
+	const kept = [];
+	palette.forEach( ( entry ) => {
+		const slug = entry?.slug || '';
+		if ( /^sg-/.test( slug ) ) {
+			return; // drop sg-* aliases outright
+		}
+		if ( ! appendedSwatchSlugs.has( slug ) ) {
+			kept.push( entry ); // authoritative (theme/server) swatch — always keep
+			return;
+		}
+		const key = hexKey( entry?.color );
+		if ( key && authorityColors.has( key ) ) {
+			return; // our appended swatch duplicates an authoritative colour → drop
+		}
+		kept.push( entry );
+	} );
+	return kept;
+}
 
 /**
  * Collect all documents that should receive live CSS updates.
@@ -123,6 +180,26 @@ export function injectStyleSheet( id, css ) {
 }
 
 /**
+ * Remove a live-injected <style> tag from all editor documents (host + iframe).
+ *
+ * The counterpart to {@see injectStyleSheet}: injectStyleSheet cannot neutralise
+ * a sheet by writing an empty string (it early-returns on falsy CSS), so tearing
+ * a live overlay back down needs an explicit removal. Used when discarding
+ * unsaved Style Guide edits, to drop the preview overlays and let the canvas fall
+ * back to the server-rendered saved palette.
+ *
+ * @since x.x.x
+ *
+ * @param {string} id The id of the style element to remove.
+ * @return {void}
+ */
+export function removeStyleSheet( id ) {
+	for ( const doc of getEditorDocuments() ) {
+		doc.getElementById( id )?.remove();
+	}
+}
+
+/**
  * Remove stale per-page custom-CSS <style> sheets from all editor documents,
  * keeping only the current page's.
  *
@@ -152,34 +229,56 @@ export function removeOtherPageSheets( keepId ) {
 }
 
 /**
- * Build a :root {} block that defines --wp--preset--color--* vars for every
- * semantic slot in SEMANTIC_MAP, resolved from the current computed.tokens.
+ * Refresh the live-preview overlay after any out-of-band page-CSS save.
  *
- * This mirrors what GlobalStylesBridge::sync_user_layer_palette() writes to
- * the database so the editor canvas sees the updated values live.
+ * Our `spectra-gen-custom-css-<id>` overlay (no suffix) only gets rebuilt by
+ * OUR own code (page load, SPA nav, this panel's own edits) — a caller that
+ * saves through `/global-styles/save` some other way (e.g. the ZIP AI
+ * editor's chat-driven style edits) never triggers a rebuild, so the overlay
+ * goes stale and — since it deliberately sits later in `<body>` to win the
+ * cascade — silently shadows the fresh CSS the other caller just wrote (found
+ * live, 2026-07-14: a style edit "succeeded" with no visible change).
+ *
+ * `apiFetch` middleware is the standard WP way to observe REST calls without
+ * the caller needing to know we exist. Reuses `regeneratePageCSS()` as-is —
+ * it already fetches + renders + rebuilds the overlay correctly.
+ *
+ * `apiFetch.use()` appends a permanent global middleware — register once. The
+ * `useEffect([])` caller fires per mount (entity swap / StrictMode), so a
+ * module-scoped flag guards against stacking duplicates.
  *
  * @since x.x.x
  *
- * @param {Object} tokens Flat token map from computed.tokens.
- * @return {string} CSS string, or empty string if tokens is empty.
+ * @return {void}
  */
-export function buildWPPresetCSS( tokens ) {
-	if ( ! tokens ) {return '';}
-	const decls = [];
-	for ( const [ slug, tokenKey ] of Object.entries( SEMANTIC_MAP ) ) {
-		const hex = tokens[ tokenKey ];
-		if ( hex ) {
-			decls.push( `--wp--preset--color--${ slug }:${ hex }` );
-		}
+let externalPageCssWatcherRegistered = false;
+
+export function watchExternalPageCssSaves() {
+	if ( externalPageCssWatcherRegistered ) {
+		return;
 	}
-	return decls.length ? `:root{${ decls.join( ';' ) }}` : '';
+	externalPageCssWatcherRegistered = true;
+	apiFetch.use( ( options, next ) => {
+		const isPageSave = options.method === 'POST'
+			&& typeof options.path === 'string'
+			&& options.path.indexOf( '/spectra-blocks/v1/global-styles/save' ) !== -1
+			&& options.data?.scope === 'page';
+		if ( ! isPageSave ) {
+			return next( options );
+		}
+		return next( options ).then( ( result ) => {
+			regeneratePageCSS( options.data.post_id );
+			return result;
+		} );
+	} );
 }
 
 /**
  * Build the full WP preset palette CSS the canvas needs — every slug the server
- * `inject_palette()` registers: shade slugs (`spectra-chromatic*`, `neutral*`)
- * from `computed.palette`, PLUS semantic slugs (`primary`, `sg-accent`, …)
- * resolved from the config's `semantic_map` × `computed.tokens`.
+ * `inject_palette()` registers: semantic slugs (`primary`, `sg-accent`, …)
+ * resolved from the config's `semantic_map` × `computed.tokens`, plus any
+ * entries in `computed.palette` (empty by default — raw tokens are no longer
+ * published as presets).
  *
  * Scoped to `:root, .editor-styles-wrapper` so it wins inside the editor iframe,
  * where WordPress re-defines these vars on `.editor-styles-wrapper` (a plain
@@ -280,6 +379,18 @@ export async function refreshStyleGuidePalette() {
 			apiFetch( { path: '/spectra-blocks/v1/style-guide/config' } ),
 			apiFetch( { path: '/spectra-blocks/v1/style-guide/compute' } ),
 		] );
+
+		// UNSAVED gate: with no saved Style Guide the compute endpoint resolves to
+		// inherited/default colours, and injecting those restyles a canvas the user
+		// never configured (e.g. `foreground` snapping to the derived heading value
+		// while the front end keeps the theme's own colour). Every server-side
+		// injector applies the same rule (inject_palette et al.); this on-load path
+		// must too. The Style Guide EDIT paths (ColorsPanel / StyleGuideContext)
+		// keep their live preview injection — they don't come through here.
+		if ( ! config?.saved ) {
+			return;
+		}
+
 		if ( computed?.css ) {
 			injectStyleSheet( 'spectra-gbs-v2-live-color-vars', computed.css );
 		}
@@ -291,8 +402,12 @@ export async function refreshStyleGuidePalette() {
 		// EVERY editor (not just when the Style Guide panel is mounted), because
 		// WordPress can serve a stale cached theme.json palette to the picker while
 		// the canvas already renders the fresh injected vars above — leaving the
-		// swatch showing one colour and the applied block another.
-		syncEditorSwatches( computed, config );
+		// swatch showing one colour and the applied block another. Pro-gated:
+		// surfacing Style Guide swatches in the picker is a Pro capability, and the
+		// server strips them when Pro is off — re-appending here would leak them back.
+		if ( config?.pro ) {
+			syncEditorSwatches( computed, config );
+		}
 	} catch ( _err ) {
 		// Non-fatal — canvas falls back to the server-rendered palette.
 	}
@@ -328,34 +443,6 @@ export async function regenerateEditorCSS() {
 		injectStyleSheet( 'spectra-gs-dynamic-user-classes', css );
 	} catch ( _err ) {
 		// Non-fatal — CSS refreshes on next page load.
-	}
-}
-
-/**
- * Re-fetch computed token CSS and inject it into the live editor canvas.
- *
- * Used after preset/config saves that change CSS variable values but don't go
- * through ColorsPanel's computed watcher (which is the only panel that has
- * the injection side-effect wired up by default).
- *
- * @since x.x.x
- *
- * @return {Promise<void>}
- */
-export async function refreshComputedCSS() {
-	try {
-		const data = await apiFetch( { path: '/spectra-blocks/v1/style-guide/compute' } );
-		if ( data?.css ) {
-			injectStyleSheet( 'spectra-gbs-live-color-vars', data.css );
-		}
-		if ( data?.tokens ) {
-			const css = buildWPPresetCSS( data.tokens );
-			if ( css ) {
-				injectStyleSheet( 'spectra-gbs-live-wp-preset-colors', css );
-			}
-		}
-	} catch ( _err ) {
-		// Non-fatal.
 	}
 }
 
@@ -446,12 +533,14 @@ export function regenerateSitewideCSS() {
  * align_astra_palette_swatches), but Style Guide colour edits recompute tokens
  * live and would otherwise leave the picker showing the pre-edit colours. This
  * mirrors the server palette assembly against the freshly-computed tokens:
- *   - shade slugs        ← computed.palette
  *   - semantic slugs     ← config.semantic_map × computed.tokens (+ overrides)
  *   - ast-global-color-N ← ASTRA_SHADE_MAP × computed.tokens
  *
- * Only existing entries are updated (matched by slug); nothing is added,
- * removed, or reordered, so the picker layout stays stable.
+ * Existing entries are updated in place (matched by slug), Style-Guide-owned
+ * slugs missing from the palette (e.g. a just-added custom colour) are appended,
+ * and previously-appended slugs that leave the config (a removed custom colour)
+ * are pruned. Theme-owned swatches are never added or removed, so the picker
+ * layout stays stable.
  *
  * @since x.x.x
  *
@@ -486,9 +575,19 @@ export function syncEditorSwatches( computed, config ) {
 		} );
 	}
 
-	const overrides = config?.semantic_overrides;
-	if ( overrides && typeof overrides === 'object' ) {
-		Object.entries( overrides ).forEach( ( [ slug, hex ] ) => {
+	// Per-slug overrides. Prefer the live `custom_colors` (present on the pro
+	// editor's draft config) over the server-derived `semantic_overrides` — the
+	// derived key only refreshes on fetch, so it lags a just-added custom colour.
+	const customColors = config?.custom_colors;
+	if ( customColors && typeof customColors === 'object' ) {
+		Object.entries( customColors ).forEach( ( [ slug, def ] ) => {
+			const hex = def?.hex ?? def;
+			if ( hex ) {
+				map[ slug ] = hex;
+			}
+		} );
+	} else if ( config?.semantic_overrides && typeof config.semantic_overrides === 'object' ) {
+		Object.entries( config.semantic_overrides ).forEach( ( [ slug, hex ] ) => {
 			if ( hex ) {
 				map[ slug ] = hex;
 			}
@@ -518,7 +617,21 @@ export function syncEditorSwatches( computed, config ) {
 	}
 
 	let changed = false;
-	const next  = themePalette.map( ( entry ) => {
+
+	// REMOVE entries this function previously appended that are no longer in the
+	// config (a deleted custom colour) — mirrors the ADD below so the picker drops
+	// the swatch live, without a reload. Only self-appended slugs are pruned, so
+	// theme-owned swatches are never touched.
+	let next = themePalette.filter( ( entry ) => {
+		if ( entry?.slug && appendedSwatchSlugs.has( entry.slug ) && ! map[ entry.slug ] ) {
+			appendedSwatchSlugs.delete( entry.slug );
+			changed = true;
+			return false;
+		}
+		return true;
+	} );
+
+	next = next.map( ( entry ) => {
 		if ( entry?.slug && map[ entry.slug ] && map[ entry.slug ] !== entry.color ) {
 			changed = true;
 			return { ...entry, color: map[ entry.slug ] };
@@ -526,7 +639,49 @@ export function syncEditorSwatches( computed, config ) {
 		return entry;
 	} );
 
-	// Dispatch only when a swatch colour actually moved — avoids a needless
+	// APPEND slugs the palette doesn't carry yet — a just-added custom colour has
+	// no entry to update, so without this it only shows up after a reload (when
+	// the server's inject_palette() re-registers the palette). Astra alias slugs
+	// are excluded: those belong to the theme's own palette and stay update-only.
+	// sg-* alias slugs are excluded too — they are render-compat aliases, never
+	// pickable swatches; the server strips them from every picker surface
+	// (strip_sg_alias_swatches_from_rest / remove_sg_alias_swatches), so
+	// re-appending them here would bring the duplicate swatches back live.
+	// Duplicate colours are handled by the colour dedupe below (theme swatch wins),
+	// so appending is only gated on slug + name here.
+	const present      = new Set( next.map( ( entry ) => entry?.slug ) );
+	const presentNames = new Set(
+		next.map( ( entry ) => ( typeof entry?.name === 'string' ? entry.name.trim().toLowerCase() : '' ) ).filter( Boolean )
+	);
+	Object.entries( map ).forEach( ( [ slug, hex ] ) => {
+		if ( present.has( slug ) || /^ast-global-color-\d+$/.test( slug ) || /^sg-/.test( slug ) ) {
+			return;
+		}
+		const name = customColors?.[ slug ]?.name
+			|| slug.replace( /^sg-/, '' ).replace( /-+/g, ' ' ).replace( /\b\w/g, ( c ) => c.toUpperCase() );
+		const nameKey = name.trim().toLowerCase();
+		if ( nameKey && presentNames.has( nameKey ) ) {
+			return;
+		}
+		presentNames.add( nameKey );
+		next.push( { slug, color: hex, name } );
+		appendedSwatchSlugs.add( slug );
+		changed = true;
+	} );
+
+	// Final dedupe (mirrors the server's strip_picker_duplicate_entries): drop a
+	// swatch WE appended that duplicates an authoritative (theme/server) colour —
+	// keeping the theme swatch — while NEVER removing an authoritative swatch, so two
+	// distinct theme roles that share a hex (e.g. heading + a shuffled foreground)
+	// both stay. Runs on the whole palette, so it also clears any dupe left over from
+	// an earlier sync in this session.
+	const deduped = dedupeSwatchesThemeWins( next );
+	if ( deduped.length !== next.length ) {
+		next    = deduped;
+		changed = true;
+	}
+
+	// Dispatch only when a swatch actually moved or was added — avoids a needless
 	// settings churn (and re-render) on computes that changed no swatch.
 	if ( changed ) {
 		dispatch( 'core/block-editor' ).updateSettings( {

@@ -123,7 +123,9 @@ if ( $will_push_content && 'banner' === $variant_type ) {
 
 if ( $has_fixed_height ) {
 	$popup_classes[] = 'spectra-has-fixed-height';
-} elseif ( ! isset( $has_fixed_height ) ) {
+} elseif ( 'banner' === $variant_type ) {
+	// Auto-height banners need this class; popups use a separate CSS rule to
+	// avoid the root height:auto / overflow:visible cascade it introduces.
 	$popup_classes[] = 'spectra-has-auto-height';
 }
 
