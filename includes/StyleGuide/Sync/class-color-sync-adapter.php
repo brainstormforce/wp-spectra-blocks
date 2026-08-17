@@ -10,7 +10,7 @@
  * store (FSE `wp_global_styles`, Astra option, …) an additive implementation.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Interface ColorSyncAdapter
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 interface ColorSyncAdapter {
 
@@ -34,7 +34,7 @@ interface ColorSyncAdapter {
 	 * Called before any read/write so an unsupported store is a silent no-op,
 	 * never an error (e.g. the Astra adapter when Astra is not active).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return bool
 	 */
@@ -47,7 +47,7 @@ interface ColorSyncAdapter {
 	 * (`transparent`, `currentColor`, `color-mix(...)`) may be returned verbatim;
 	 * the caller decides what is usable.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string> slug => color.
 	 */
@@ -59,7 +59,7 @@ interface ColorSyncAdapter {
 	 *
 	 * Implements the whole-palette rule: unmapped/foreign slugs are never dropped.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $patch slug => hex to set.
 	 * @return bool True when a write occurred, false on no-op / failure.
@@ -75,7 +75,7 @@ interface ColorSyncAdapter {
 	 * model — e.g. Astra, where several slots share a token and slot indices
 	 * depend on a compatibility flag — returns its own full patch here.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param TokenRegistry $tokens The computed Style Guide token registry.
 	 * @return array<string, string> slug => hex, or empty to fall back to generic.
@@ -85,7 +85,7 @@ interface ColorSyncAdapter {
 	/**
 	 * Human-readable adapter label (logging / UI).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string
 	 */

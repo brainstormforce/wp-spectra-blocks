@@ -36,9 +36,13 @@ class DailyKpiCountersTest extends WP_UnitTestCase {
 		delete_option( Spectra_Blocks_Daily_KPI_Counters::OPT_PUBLISH );
 		delete_option( Spectra_Blocks_Daily_KPI_Counters::OPT_BLOCK_TYPES );
 		delete_option( Spectra_Blocks_Daily_KPI_Counters::OPT_ADVANCED );
+		delete_option( 'spectra_blocks_pro_gs_user_css' );
 		delete_transient( Spectra_Blocks_Daily_KPI_Counters::TRANSIENT_PAGES_COUNT );
 
 		$this->kpi = Spectra_Blocks_Daily_KPI_Counters::get_instance();
+
+		// add_kpi_stats() now requires usage opt-in before contributing to the payload.
+		update_site_option( 'spectra_blocks_usage_optin', 'yes' );
 	}
 
 	// -------------------------------------------------------------------------
@@ -222,7 +226,7 @@ class DailyKpiCountersTest extends WP_UnitTestCase {
 	 * Updating the GBS option records 'gbs' advanced feature.
 	 */
 	public function test_advanced_feature_gbs_on_update_option() {
-		update_option( 'spectra_global_block_styles', array( 'color' => '#fff' ) );
+		update_option( 'spectra_blocks_pro_gs_user_css', array( 'color' => '#fff' ) );
 
 		$today = gmdate( 'Y-m-d' );
 		$data  = $this->kpi->get_last_n_days( Spectra_Blocks_Daily_KPI_Counters::OPT_ADVANCED, 7 );
@@ -235,8 +239,8 @@ class DailyKpiCountersTest extends WP_UnitTestCase {
 	 * Advanced features should be deduplicated within a day.
 	 */
 	public function test_advanced_features_deduped_per_day() {
-		update_option( 'spectra_global_block_styles', array( 'color' => '#fff' ) );
-		update_option( 'spectra_global_block_styles', array( 'color' => '#000' ) );
+		update_option( 'spectra_blocks_pro_gs_user_css', array( 'color' => '#fff' ) );
+		update_option( 'spectra_blocks_pro_gs_user_css', array( 'color' => '#000' ) );
 
 		$today = gmdate( 'Y-m-d' );
 		$data  = $this->kpi->get_last_n_days( Spectra_Blocks_Daily_KPI_Counters::OPT_ADVANCED, 7 );
@@ -373,15 +377,8 @@ class DailyKpiCountersTest extends WP_UnitTestCase {
 
 		$this->assertNotEmpty( $kpi_records, 'kpi_records should not be empty.' );
 
-		$yesterday_record = null;
-		foreach ( $kpi_records as $record ) {
-			if ( $record['date'] === $yesterday ) {
-				$yesterday_record = $record;
-				break;
-			}
-		}
-
-		$this->assertNotNull( $yesterday_record, "Record for {$yesterday} missing." );
+		$this->assertArrayHasKey( $yesterday, $kpi_records, "Record for {$yesterday} missing." );
+		$yesterday_record = $kpi_records[ $yesterday ];
 		$this->assertArrayHasKey( 'numeric_values', $yesterday_record );
 
 		$nv = $yesterday_record['numeric_values'];
@@ -420,7 +417,7 @@ class DailyKpiCountersTest extends WP_UnitTestCase {
 		// Yesterday's entry must be present; today's must not be.
 		$this->assertNotEmpty( $kpi_records, 'kpi_records should contain at least yesterday.' );
 
-		$dates = array_column( $kpi_records, 'date' );
+		$dates = array_keys( $kpi_records );
 		$this->assertContains( $yesterday, $dates, 'Yesterday record missing.' );
 		$this->assertNotContains( $today, $dates, "Today's entry should be excluded." );
 	}

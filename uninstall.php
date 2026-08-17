@@ -35,6 +35,7 @@ $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LI
 // Discrete options that don't share the prefix.
 $spectra_blocks_extra_options = array(
 	'spectra_global_block_styles',
+	'spectra_extension_analytics',
 );
 
 foreach ( $spectra_blocks_extra_options as $spectra_blocks_option ) {
@@ -55,6 +56,7 @@ $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LI
 
 if ( is_multisite() ) {
 	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s", '_site_transient_spectra_%', '_site_transient_timeout_spectra_%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s", $wpdb->esc_like( 'spectra_blocks_' ) . '%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 }
 
 // Legacy geolocation transient from the bundled zipwp-images library — uses a

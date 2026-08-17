@@ -68,14 +68,18 @@ class ThemeStyleCompat {
 	 * @var array<string, string>
 	 */
 	const COLOR_HEURISTICS = array(
-		'/^(base|background|bg|page|canvas)$/'  => 'neutral-0',
-		'/(contrast|foreground|heading|title)/' => 'neutral-7',
-		'/^(body|text|content)$/'               => 'neutral-5',
-		'/(surface|card|panel)/'                => 'neutral-1',
-		'/(border|outline|divider|stroke)/'     => 'neutral-2',
-		'/(muted|subtle|neutral)/'              => 'neutral-4',
-		'/^(primary|accent)$/'                  => 'primary',
-		'/^secondary$/'                         => 'secondary',
+		'/^(base|background|bg|page|canvas)$/' => 'neutral-0',
+		// Exact `foreground` now has a role of its own, so it takes the stored value
+		// rather than the heading colour. Must precede the heading pattern below,
+		// which is unanchored and would otherwise swallow it.
+		'/^foreground$/'                       => 'foreground',
+		'/(contrast|heading|title)/'           => 'neutral-7',
+		'/^(body|text|content)$/'              => 'neutral-5',
+		'/(surface|card|panel)/'               => 'neutral-1',
+		'/(border|outline|divider|stroke)/'    => 'neutral-2',
+		'/(muted|subtle|neutral)/'             => 'neutral-4',
+		'/^(primary|accent)$/'                 => 'primary',
+		'/^secondary$/'                        => 'secondary',
 	);
 
 	/**

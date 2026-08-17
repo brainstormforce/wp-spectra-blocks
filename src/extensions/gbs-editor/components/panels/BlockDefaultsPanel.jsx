@@ -14,6 +14,7 @@ import { dispatch } from '@wordpress/data';
 import Select from 'react-select';
 import getClassOptions from '../../data/class-options';
 import { useGBSConfig } from '../../hooks/useGBSConfig';
+import { useCustomClasses } from '../../hooks/useCustomClasses.js';
 import { regenerateEditorCSS } from '../../utils/liveVars.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -409,14 +410,24 @@ const BlockDefaultsPanel = () => {
 	const { config: sgConfig } = useGBSConfig();
 	const customColorSlugs = useMemo( () => Object.keys( sgConfig?.custom_colors ?? {} ), [ sgConfig ] );
 
+	// Live global custom classes — stays current when classes are created or
+	// deleted elsewhere this session (the hook re-fetches on the
+	// spectraGSClassesUpdated event). Until the first fetch SUCCEEDS we pass null so
+	// getClassOptions falls back to the PHP page-load snapshot; `loaded` (not
+	// `! loading`) is the gate, because a failed fetch also clears `loading` and
+	// would otherwise hand an empty {} to getClassOptions — which treats it as
+	// authoritative and drops the Custom Classes group entirely.
+	const { classes: liveCustomClasses, loaded: classesLoaded } = useCustomClasses( null, 0 );
+	const customClassesSource = classesLoaded ? liveCustomClasses : null;
+
 	const availableClasses = useMemo( () => {
 		// Strip default-{block} classes — they are the OUTPUT of block defaults, not valid inputs.
 		// Assigning them would create circular CSS aggregation.
-		return getClassOptions( null, customColorSlugs ).map( ( group ) => ( {
+		return getClassOptions( customClassesSource, customColorSlugs ).map( ( group ) => ( {
 			...group,
 			options: ( group.options ?? [] ).filter( ( opt ) => ! /^default-/.test( opt.value ) ),
 		} ) ).filter( ( group ) => ( group.options ?? [] ).length > 0 );
-	}, [ customColorSlugs ] );
+	}, [ customColorSlugs, customClassesSource ] );
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 

@@ -8,7 +8,7 @@
  * active theme's own palette slugs.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -24,14 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * lookup. A `null` slug means "this theme has no color for that role" — the
  * sync skips it, it is never an error.
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class ThemeColorMapping {
 
 	/**
 	 * Forward map: role => slug|null.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, string|null>
 	 */
 	private $map;
@@ -39,7 +39,7 @@ class ThemeColorMapping {
 	/**
 	 * Reverse map: slug => role[] (a slug may serve more than one role).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, string[]>
 	 */
 	private $inverse;
@@ -50,7 +50,7 @@ class ThemeColorMapping {
 	 * Unknown roles are dropped; blank slugs are normalized to null so callers
 	 * can treat "unmapped" uniformly.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string|null> $map role => slug|null.
 	 */
@@ -74,7 +74,7 @@ class ThemeColorMapping {
 	/**
 	 * The theme slug a role maps to, or null when this theme has no such color.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $role Canonical role.
 	 * @return string|null
@@ -86,7 +86,7 @@ class ThemeColorMapping {
 	/**
 	 * Whether a role maps to a real slug in this theme.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $role Canonical role.
 	 * @return bool
@@ -98,7 +98,7 @@ class ThemeColorMapping {
 	/**
 	 * All roles a slug serves (reverse lookup). Empty if the slug is unmapped.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $slug Theme palette slug.
 	 * @return string[]
@@ -112,7 +112,7 @@ class ThemeColorMapping {
 	 * (serves more than one role). Ambiguous slugs are intentionally not
 	 * resolved here — reverse sync skips them until a priority policy is set.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $slug Theme palette slug.
 	 * @return string|null
@@ -125,7 +125,7 @@ class ThemeColorMapping {
 	/**
 	 * Whether a slug serves more than one role (reverse sync is unsafe).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $slug Theme palette slug.
 	 * @return bool
@@ -143,7 +143,7 @@ class ThemeColorMapping {
 	 * Returns null when zero — or more than one — brand roles claim the slug
 	 * (a genuine brand collision stays push-only until a priority policy exists).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $slug Theme palette slug.
 	 * @return string|null
@@ -161,7 +161,7 @@ class ThemeColorMapping {
 	/**
 	 * Roles that map to a real slug (non-null), in canonical order.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string[]
 	 */
@@ -178,7 +178,7 @@ class ThemeColorMapping {
 	/**
 	 * The raw forward map (role => slug|null), for inspection / persistence.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string|null>
 	 */

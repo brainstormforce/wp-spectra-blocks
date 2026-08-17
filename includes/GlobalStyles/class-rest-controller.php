@@ -1472,7 +1472,7 @@ class RestController {
 	 * resolver maps those, and a bare non-convention word (a typo / mis-authored
 	 * descendant) is still dropped by design.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $state State key.
 	 * @return string Canonical state key.
@@ -1499,7 +1499,7 @@ class RestController {
 	 * `WebkitTransform` → `-webkit-transform` (else the invalid `webkit-transform`
 	 * is dropped). A leading-uppercase or `ms`-led key is only ever a vendor prefix.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $property Declaration property key.
 	 * @return string Kebab-case property key.
@@ -1527,7 +1527,7 @@ class RestController {
 	 * map's own selector/condition key upstream, are never touched. See
 	 * {@see css_property_to_kebab()} for the custom-property carve-out.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $decls Declaration map.
 	 * @return array<string, mixed> Map with kebab-case property keys.
@@ -1549,7 +1549,7 @@ class RestController {
 	 * `wrapperStyles` (`{ selector => { prop => val } }`) sub-buckets. @media
 	 * conditions, class names, states, and selectors are left intact.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $entry One mediaQuery entry (its sub-buckets).
 	 * @return array<string, mixed> Entry with kebab-case declaration keys.

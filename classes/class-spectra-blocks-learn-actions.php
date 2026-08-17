@@ -817,7 +817,7 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 										foundSpectra = true;
 									} else {
 										// No Spectra block found — insert a container as fallback.
-										foundSpectra = insertSpectraBlock('spectra/container');
+										foundSpectra = insertSpectraBlock('spectra/buttons');
 									}
 
 									if (!foundSpectra) {
@@ -861,7 +861,125 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 							});
 							break;
 
-						case 'preveiw-your-changes':
+						case 'open-global-styles':
+							// Guide the user to the \"Manage Global Styles\" button in the block
+							// inspector (do not auto-open the modal — the step teaches where it is).
+							waitForEditor(() => {
+								setTimeout(() => {
+									if (isDistractionFreeMode()) {
+										return;
+									}
+
+									// Select a Spectra block so the inspector shows the Global Styles panel.
+									var blocks = wp.data.select('core/block-editor').getBlocks();
+									function findFirstSpectraBlock(blockList) {
+										for (var i = 0; i < blockList.length; i++) {
+											var block = blockList[i];
+											if (block.name && block.name.startsWith('spectra/')) {
+												return block;
+											}
+											if (block.innerBlocks && block.innerBlocks.length > 0) {
+												var inner = findFirstSpectraBlock(block.innerBlocks);
+												if (inner) return inner;
+											}
+										}
+										return null;
+									}
+
+									var spectraBlock = findFirstSpectraBlock(blocks);
+									var ready = false;
+									if (spectraBlock) {
+										wp.data.dispatch('core/block-editor').selectBlock(spectraBlock.clientId);
+										ready = true;
+									} else {
+										ready = insertSpectraBlock('spectra/buttons');
+									}
+
+									if (!ready) {
+										if (window.history && window.history.replaceState) {
+											window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+										}
+										return;
+									}
+
+									// Poll for the \"Manage Global Styles\" button, then highlight it.
+									setTimeout(() => {
+										var startTime = Date.now();
+										(function pollForManageButton() {
+											var buttons = document.querySelectorAll('.interface-complementary-area button, .block-editor-block-inspector button');
+											var manageButton = null;
+											for (var i = 0; i < buttons.length; i++) {
+												var txt = (buttons[i].textContent || '').trim().toLowerCase();
+												if (txt.indexOf('manage global styles') !== -1) {
+													manageButton = buttons[i];
+													break;
+												}
+											}
+
+											if (manageButton) {
+												manageButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+												setTimeout(() => {
+													highlightElement(manageButton, 5000, '" . esc_js( __( 'Click here to open and manage Global Styles.', 'spectra-blocks' ) ) . "');
+												}, 300);
+												setTimeout(() => {
+													if (window.history && window.history.replaceState) {
+														window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+													}
+												}, 500);
+											} else if (Date.now() - startTime < 8000) {
+												setTimeout(pollForManageButton, 200);
+											} else {
+												// Fallback: the button never rendered (panel collapsed
+												// or Pro inactive) — highlight the Global Styles panel
+												// instead, so the user still gets pointed to it.
+												var headers = document.querySelectorAll('.components-tools-panel-header h2');
+												var globalStylesPanel = null;
+												for (var h = 0; h < headers.length; h++) {
+													if (headers[h].textContent.trim() === 'Global Styles') {
+														globalStylesPanel = headers[h].closest('.components-tools-panel');
+														break;
+													}
+												}
+												if (globalStylesPanel) {
+													globalStylesPanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+													setTimeout(() => {
+														highlightElement(globalStylesPanel, 5000, '" . esc_js( __( 'Open and manage Global Styles from this panel.', 'spectra-blocks' ) ) . "');
+													}, 300);
+												}
+												setTimeout(() => {
+													if (window.history && window.history.replaceState) {
+														window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+													}
+												}, 500);
+											}
+										})();
+									}, 1000);
+								}, 2000);
+							});
+							break;
+
+						case 'set-global-colors-fonts-spacing':
+						case 'use-block-defaults':
+							waitForEditor(() => {
+								setTimeout(() => {
+									// Global Styles lives in the block editor (GBS modal). Open the
+									// relevant view via the Pro-registered API when available.
+									if (window.__spectraGBSEditorV2 && typeof window.__spectraGBSEditorV2.open === 'function') {
+										var gbsNav = ('use-block-defaults' === action) ? 'blockdefaults' : 'styleguide';
+										window.__spectraGBSEditorV2.open(gbsNav);
+									}
+
+									// Remove hash after execution.
+									setTimeout(() => {
+										if (window.history && window.history.replaceState) {
+											window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+										}
+									}, 500);
+								}, 2000);
+							});
+							break;
+
+						case 'preview-your-changes':
 							waitForEditor(() => {
 								setTimeout(() => {
 									if (openPreviewPanel()) {
@@ -879,7 +997,9 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 						case 'publish-your-page':
 							waitForEditor(() => {
 								setTimeout(() => {
-									waitForElement('.editor-post-publish-button', (element) => {
+									// Match the publish control across editor variants: the direct
+									// button, its inner button, or the pre-publish panel toggle.
+									waitForElement('.editor-post-publish-button, .editor-post-publish-button__button, .editor-post-publish-panel__toggle', (element) => {
 										if (isDistractionFreeMode()) {
 											return;
 										}
@@ -913,11 +1033,20 @@ if ( ! class_exists( 'Spectra_Blocks_Learn_Actions' ) ) {
 						'customize-cta-sections',
 						'block-settings-styles',
 						'find-global-styles-in-block-settings',
-						'preveiw-your-changes',
+						'open-global-styles',
+						'set-global-colors-fonts-spacing',
+						'use-block-defaults',
+						'preview-your-changes',
 						'publish-your-page'
 					];
 
-					var action = hash.replace('#learn-', '');
+					// Spectra-namespaced hash so a co-active UAGB (which listens on the
+					// generic `#learn-` prefix with the same action IDs) does not also
+					// fire and insert/select its own blocks.
+					if (0 !== hash.indexOf('#spectra-learn-')) {
+						return;
+					}
+					var action = hash.replace('#spectra-learn-', '');
 					if (learnActions.includes(action)) {
 						executeLearnAction(action);
 					}

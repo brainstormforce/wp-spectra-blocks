@@ -155,15 +155,36 @@ body .wp-block-spectra-counter-child-wrapper.spectra-no-block-gap {
 	column-gap: 0;
 }
 
-// `:where(:not(h4,h5,h6))` keeps the selector at (0,2,1) while EXCLUDING the
-// minor headings: the blockGap channel this rule zeroes is the SAME channel
-// as their UA margins, and imported sources rely on those (measured live
-// 2026-07-02: an unclassed footer <h4> lost its ~24px UA margin-top — the
-// footer −23.9px defect). The converter's own reset carries the identical
-// carve-out (`.is-layout-flow > :where(:not(h4,h5,h6))`); a payload-side
-// counter-rule CANNOT fix this instead — this sheet prints after the GBS
-// payload, so the payload loses the (0,2,1) tie by order.
-body .wp-block-spectra-container.spectra-no-block-gap > :where(:not(h4, h5, h6)) {
+// (The former `> :where(:not(h4,h5,h6)) { margin-block-start: 0 }` child-margin
+// counter-rule was REMOVED 2026-08-16 with the root fix: on imported pages the
+// AssetLoader's render_block filter strips core's `is-layout-*` classes from
+// spectra/container, so WP's blockGap margin injection never matches and every
+// child keeps its source/UA margin — which this counter-rule was destroying
+// (measured: 13/16 paragraphs lost their UA 1em on the crypto benchmark).
+// Constant-value counter-rules are a proven dead end here: authored reset
+// lanes span (0,0,1)–(0,1,2), overlapping every altitude — see the A13 note in
+// imported-baseline.scss. The row/column-gap zero above stays: flex/grid `gap`
+// is not UA-inherited, so zero IS the source baseline when nothing authored.
+
+// Editor-canvas twin of the rule above. Gutenberg renders InnerBlocks inside
+// `.block-editor-inner-blocks > .block-editor-block-list__layout`, and both
+// wrappers are `display: contents` for flow containers (set in
+// `blocks/container/editor.scss` — the layout wrapper is only left boxed for
+// core flex/grid). `display: contents` drops the BOXES, not the NODES, so the
+// blocks are still DOM grandchildren: WordPress's own
+// `:root :where(.is-layout-flow) > *` blockGap rule matches (that wrapper
+// really is their parent and carries `is-layout-flow`) while the `>` above,
+// anchored on the container, lands two levels short and matches nothing. The
+// container's `row-gap`/`column-gap` reset is unaffected — it targets the
+// container itself, and the flattened wrappers hoist the blocks into its
+// flex/grid formatting context, so `gap` still applies.
+// Both wrappers ride `:where()` so they add ZERO specificity: this stays at
+// (0,2,1), the same budget as the front-end rule, keeping it above defaults but
+// below gs-* (0,3,0) and per-block attrs (0,4,0). Spelled out plainly the
+// selector would be (0,4,1) and would start OUTRANKING authored source spacing
+// — the neutralizer would win over the very gs-* gap it is meant to defer to.
+// The `h4, h5, h6` carve-out is identical for the reason documented above.
+body .wp-block-spectra-container.spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(:not(h4, h5, h6)) {
 	margin-block-start: 0;
 }
 

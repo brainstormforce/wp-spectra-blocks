@@ -53,7 +53,7 @@ class Core {
 	 * from the moment Pro's main file has loaded. Call it from hook callbacks
 	 * (not at registration time) to stay independent of plugin load order.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return bool True when spectra-blocks-pro is active.
 	 */

@@ -319,7 +319,7 @@ class Renderer {
 		// Add additional attributes if provided.
 		if ( ! empty( $additional_props ) ) {
 			foreach ( $additional_props as $attr => $value ) {
-				if ( ( '' !== (string) $value ) && 'class' !== $attr ) { // class already handled above; '' !== cast guards against "0".
+				if ( 'class' !== $attr && ( is_array( $value ) ? array() !== $value : '' !== (string) $value ) ) { // class already handled above; '' !== cast guards against "0"; arrays (e.g. style) must not be cast to string.
 					// For uploaded SVGs, avoid overriding fill attribute to preserve original colors.
 					if ( 'fill' === $attr && 'currentColor' === $value ) {
 						// Check if SVG already has fill/stroke attributes - if so, don't override.

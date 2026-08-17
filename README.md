@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.0  
 **Requires PHP:** 8.1  
-**Stable tag:** 1.0.3  
+**Stable tag:** 1.0.5  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -342,6 +342,16 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 ## Changelog ##
+
+### 1.0.5 - Monday, 17th August 2026 ###
+* Fix: Buttons and button-style links now output valid HTML markup.
+* Fix: Images using data URIs are no longer stripped from your content.
+
+### 1.0.4 - Thursday, 13th August 2026 ###
+* Improvement: Improved the onboarding wizard, including correct detection of an active Spectra Blocks Pro plan.
+* Improvement: Improved the Learn tab, including updated Global Styles guidance and visuals.
+* Fix: Buttons no longer receive a forced default border radius — your theme now controls button shape.
+* Fix: Resolved a PHP warning that could appear when using custom SVG icons.
 
 ### 1.0.3 - Thursday, 6th August 2026 ###
 * New: Style Guide colours now stay in sync with your WordPress theme colours automatically.

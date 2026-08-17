@@ -46,7 +46,7 @@ if ( $show_icon_on_hover && ! empty( $hover_icon ) && 'left' === $hover_icon_pos
 
 // Button text.
 if ( $show_text ) {
-	echo '<div class="spectra-button__link">' . wp_kses_post( $text ) . '</div>';
+	echo '<span class="spectra-button__link">' . wp_kses_post( $text ) . '</span>';
 }
 
 // Hover icon on right.

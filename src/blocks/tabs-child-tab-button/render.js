@@ -227,7 +227,7 @@ const Render = ( props ) => {
 			<RichText
 				placeholder={ placeholder }
 				value={ text }
-				tagName="div"
+				tagName="span"
 				onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 				className="spectra-button__link"
 				withoutInteractiveFormatting

@@ -12,7 +12,7 @@
  * classification.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Canonical role constants + brand / push-only classification.
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class ColorRoles {
 
@@ -55,11 +55,12 @@ class ColorRoles {
 	const LINK            = 'link';
 	const BORDER          = 'border';
 	const MUTED           = 'muted';
+	const FOREGROUND      = 'foreground';
 
 	/**
 	 * Brand roles (two-way sync).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var string[]
 	 */
 	const BRAND = array(
@@ -71,7 +72,7 @@ class ColorRoles {
 	/**
 	 * Neutral / semantic roles (push-only).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var string[]
 	 */
 	const NEUTRAL = array(
@@ -82,6 +83,7 @@ class ColorRoles {
 		self::LINK,
 		self::BORDER,
 		self::MUTED,
+		self::FOREGROUND,
 	);
 
 	/**
@@ -89,10 +91,10 @@ class ColorRoles {
 	 *
 	 * Theme-independent: the canonical Style Guide shade each role is drawn from.
 	 * Uses the TokenRegistry key format (e.g. `primary`, `neutral-0`), the
-	 * same one {@see \SpectraBlocks\StyleGuide\GlobalStylesBridge::ASTRA_SHADE_MAP}
+	 * same one {@see \SpectraBlocks\StyleGuide\GlobalStylesBridge::astra_shade_map()}
 	 * resolves. Brand keys equal `chromatics[N].hex` exactly.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, string>
 	 */
 	const SG_TOKEN = array(
@@ -106,12 +108,13 @@ class ColorRoles {
 		self::LINK            => 'primary',
 		self::BORDER          => 'neutral-2',
 		self::MUTED           => 'neutral-4',
+		self::FOREGROUND      => 'foreground',
 	);
 
 	/**
 	 * All canonical roles.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string[]
 	 */
@@ -122,7 +125,7 @@ class ColorRoles {
 	/**
 	 * Brand roles (two-way).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string[]
 	 */
@@ -133,7 +136,7 @@ class ColorRoles {
 	/**
 	 * Whether a role is a brand role (i.e. eligible for reverse / two-way sync).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $role Role constant.
 	 * @return bool
@@ -145,7 +148,7 @@ class ColorRoles {
 	/**
 	 * Whether a string is a known canonical role.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $role Candidate role.
 	 * @return bool
@@ -157,7 +160,7 @@ class ColorRoles {
 	/**
 	 * The Style Guide token key that sources a role's color, or null if unknown.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $role Role constant.
 	 * @return string|null

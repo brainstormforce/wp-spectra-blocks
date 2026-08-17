@@ -39,10 +39,14 @@ body.spectra-page-zip-builder
 	height: auto;
 }
 
-// A17 — theme.json sizes h1–h6 via element rules (size/weight/family/line-height); a source
-// relying on the UA baseline gets theme typography it never declared. Element tier (0,0,1),
-// printed after the payload so it beats bare `h4 {}` sources. `revert` returns each axis to
-// inheritance/UA; authored headings ride gs classes (0,3,0) and win regardless.
+// A17 — theme.json sizes h1–h6 via element rules (size/weight/family/line-height), and the
+// host's global-styles USER layer (Style-Guide-synced wp_global_styles) adds text-transform /
+// letter-spacing at the same (0,0,1) tier: a source relying on the UA baseline gets host
+// typography it never declared (measured 2026-08-16: 125 of 142 visible headings across an
+// 8-template import benchmark rendered the HOST site's uppercase/capitalize). Element tier
+// (0,0,1), printed after global-styles-inline-css so equal specificity resolves to us.
+// `revert` returns each axis to inheritance/UA; authored headings ride gs classes (0,3,0)
+// and win regardless.
 :where(body.spectra-page-zip-builder)
 :where(.entry-content, .wp-block-template-part)
 h1,
@@ -65,7 +69,9 @@ h6 {
 	font-size: revert;
 	font-weight: revert;
 	line-height: revert;
+	letter-spacing: revert;
 	margin: revert;
+	text-transform: revert;
 }
 
 // CHROME structural family (template-part clauses on the body-class key). The standalone
@@ -117,6 +123,15 @@ a:not([class*="btn"]) {
 // A13 — WP layout supports add a blockGap `margin-block-start` the source never declared.
 // The h4–h6 carve-out is LOAD-BEARING: that channel also carries minor headings' UA margins
 // the source relies on (footer h4 lost ~24px). Authored child margins ride gs (0,3,0). (0,1,1)
+
+// KNOWN CEILING, measured 2026-08-16 — do not retry a constant-value fix: `0` destroys UA
+// margins on sources that rely on them (crypto benchmark: 13/16 paragraphs lost their UA 1em),
+// but `revert` is WORSE — it empties the author origin when it wins, and authored reset lanes
+// span (0,0,1) `body *` … (0,1,2) `body .card p`, OVERLAPPING both WP's injected (0,1,0) and
+// any altitude this rule can take (revert at (0,1,1) re-inflated consulting +27px; at (0,1,0)
+// it beat consulting's `body *` reset: +13.3% page diff). No constant counter-rule altitude is
+// correct for all sources. The real fix is stopping WP's blockGap emission on imported pages
+// (theme-json/layout filter, PHP-side) so the UA baseline stands and every authored lane wins.
 body.spectra-page-zip-builder
 :where(.is-layout-flow, .is-layout-constrained) > :where(:not(h4, h5, h6)) {
 	margin-block-start: 0;
@@ -127,6 +142,13 @@ body.spectra-page-zip-builder
 :where(body.spectra-page-zip-builder) .entry-content.wp-block-post-content {
 	margin-top: 0;
 }
+
+// (A28 attempted and withdrawn 2026-08-16: `body { margin: revert }` at (0,0,1) restores the
+// UA 8px for sources that rely on it — showcase 6.4→2.6 — but the payload's own body lane
+// prints EARLIER (spectra-gen-sitewide at enqueue 72 vs this sheet at 76), so declared-zero
+// sources lose the tie and regress (consulting 0→2.0). Below (0,0,1) it loses to WP's own
+// body reset instead. Same emission-level ceiling as the A13 note; the fix belongs in the
+// converter — pin the source's EFFECTIVE body margin into rootStyles when undeclared.)
 
 // A13 — core/group default inline padding the source never asked for. (0,0,1)
 :where(body.spectra-page-zip-builder) :where(.wp-block-group) {
@@ -583,10 +605,14 @@ body.spectra-page-zip-builder
 	word-break: revert;
 }
 
-// A16 — theme.json elements.button decoration (border/radius/bg/hover-bg/line-height) at (0,1,0):
-// purple outline imported buttons never had + severed inherited line-height. Authored buttons
-// declare bg + font-size + :hover bg at gs (0,3,0) and win. HOVER ARM required — theme hover is
-// (0,2,0). `line-height: revert` governs only UNMARKED buttons (NO_LINE_HEIGHT marker rides above).
+// A16 — theme.json elements.button decoration (border/radius/bg/hover-bg/line-height/PADDING)
+// at (0,1,0): purple outline imported buttons never had + severed inherited line-height + the
+// 16px/32px `.wp-element-button` padding that inflated a converted text link from 21px to 53px
+// tall and re-centered its whole grid row (measured 2026-08-16, consulting benchmark). Authored
+// buttons declare bg + font-size + padding + :hover bg at gs (0,3,0) and win; `padding: revert`
+// governs only buttons whose source never declared padding — returning them to the UA/source
+// baseline instead of the theme skin. HOVER ARM required — theme hover is (0,2,0).
+// `line-height: revert` governs only UNMARKED buttons (NO_LINE_HEIGHT marker rides above).
 body.spectra-page-zip-builder
 :where(.entry-content, .wp-block-template-part)
 :where(.wp-element-button, .wp-block-button__link) {
@@ -594,6 +620,7 @@ body.spectra-page-zip-builder
 	border: revert;
 	border-radius: revert;
 	line-height: revert;
+	padding: revert;
 }
 
 body.spectra-page-zip-builder

@@ -10,7 +10,7 @@
  * to `src/extensions/gbs-editor-v2/utils/colorMath.js` in the Pro plugin.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide;
@@ -22,14 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class ColorMath
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class ColorMath {
 
 	/**
 	 * Normalise to `#rrggbb` (lower-case), or a fallback when not a 6-digit hex.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $hex      Raw colour.
 	 * @param string $fallback Value returned when $hex is not a 6-digit hex.
@@ -45,7 +45,7 @@ class ColorMath {
 	/**
 	 * Parse `#rrggbb` into [r, g, b] (0-255). Mirrors colorMath.js `parse()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $hex Colour.
 	 * @return array{0:int,1:int,2:int} RGB channels.
@@ -62,7 +62,7 @@ class ColorMath {
 	/**
 	 * Linear interpolate from $a toward $b by $t (0..1). Mirrors colorMath.js `mix()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $a Start colour.
 	 * @param string $b End colour.
@@ -84,7 +84,7 @@ class ColorMath {
 	/**
 	 * WCAG relative luminance (0..1). Mirrors colorMath.js `luminance()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $hex Colour.
 	 * @return float Luminance.
@@ -101,7 +101,7 @@ class ColorMath {
 	/**
 	 * WCAG contrast ratio (1..21). Mirrors colorMath.js `contrastRatio()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $a Colour A.
 	 * @param string $b Colour B.

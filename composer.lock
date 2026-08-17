@@ -243,16 +243,16 @@
         },
         {
             "name": "brainstormforce/one-onboarding",
-            "version": "v1.0.5",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/one-onboarding.git",
-                "reference": "6cbb6a4f581ba23397c43bd9b46c9079cc5289a0"
+                "reference": "be28daa9182f93481ef066a4e2cdc159ae815a48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/one-onboarding/zipball/6cbb6a4f581ba23397c43bd9b46c9079cc5289a0",
-                "reference": "6cbb6a4f581ba23397c43bd9b46c9079cc5289a0",
+                "url": "https://api.github.com/repos/brainstormforce/one-onboarding/zipball/be28daa9182f93481ef066a4e2cdc159ae815a48",
+                "reference": "be28daa9182f93481ef066a4e2cdc159ae815a48",
                 "shasum": ""
             },
             "require": {
@@ -314,10 +314,10 @@
             ],
             "description": "One Onboarding is a comprehensive library designed to create seamless onboarding experiences for Brainstorm Force (BSF) products including Astra theme, Spectra plugin, and other WordPress products.",
             "support": {
-                "source": "https://github.com/brainstormforce/one-onboarding/tree/v1.0.5",
+                "source": "https://github.com/brainstormforce/one-onboarding/tree/v1.0.7",
                 "issues": "https://github.com/brainstormforce/one-onboarding/issues"
             },
-            "time": "2026-08-06T11:49:58+00:00"
+            "time": "2026-08-13T09:36:53+00:00"
         },
         {
             "name": "brainstormforce/zipwp-images",

@@ -767,7 +767,7 @@ class BlockUsageTracker {
 	 * @return bool True if analytics is enabled, false otherwise.
 	 */
 	private function is_analytics_enabled() {
-		$optin_status = get_option( 'spectra_blocks_usage_optin', 'no' );
+		$optin_status = get_site_option( 'spectra_blocks_usage_optin', 'no' );
 
 		return 'yes' === $optin_status;
 	}

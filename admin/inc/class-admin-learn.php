@@ -30,8 +30,11 @@ class Admin_Learn {
 	 */
 	public static function get_chapters_structure() {
 		// Add Edit Your Homepage chapter as the last item.
-		$homepage_id  = intval( get_option( 'page_on_front', 0 ) ); // @phpstan-ignore-line as get_option returns mixed.
-		$homepage_url = $homepage_id ? admin_url( 'post.php?post=' . $homepage_id . '&action=edit' ) : admin_url( 'options-reading.php' );
+		$homepage_id = intval( get_option( 'page_on_front', 0 ) ); // @phpstan-ignore-line as get_option returns mixed.
+		// When a static front page is set, open it in the editor; otherwise open a
+		// new page in the block editor so the "Set Up" steps land the user where the
+		// in-editor guided actions run — not on the WordPress Reading settings page.
+		$homepage_url = $homepage_id ? admin_url( 'post.php?post=' . $homepage_id . '&action=edit' ) : admin_url( 'post-new.php?post_type=page' );
 		$chapters     = array(
 			array(
 				'id'          => 'editor-basics',
@@ -48,14 +51,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/add-your-first-block.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/add-your-first-block.webp',
 									'alt' => __( 'Add your first block in the editor', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => $homepage_url . '#learn-add-your-first-block',
+							'url'        => $homepage_url . '#spectra-learn-add-your-first-block',
 							'isExternal' => true,
 						),
 						'completed'   => false,
@@ -69,14 +72,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/insert-ready-made-template-1.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/insert-ready-made-template-1.webp',
 									'alt' => __( 'Insert ready-made sections in the editor', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => ( 'yes' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ) ? $homepage_url . '#learn-insert-ready-made-sections' : admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ) ),
+							'url'        => ( 'yes' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ) ? $homepage_url . '#spectra-learn-insert-ready-made-sections' : admin_url( 'admin.php?page=spectra-blocks&path=settings&settings=editor-enhancements' ) ),
 							'isExternal' => ( 'yes' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_templates_button', 'yes' ) ),
 						),
 						'completed'   => false,
@@ -98,14 +101,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/replace-placeholder-content.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/replace-placeholder-content.webp',
 									'alt' => __( 'Replace Placeholder Content', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => $homepage_url . '#learn-replace-placeholder-content',
+							'url'        => $homepage_url . '#spectra-learn-replace-placeholder-content',
 							'isExternal' => true,
 						),
 						'completed'   => false,
@@ -119,14 +122,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/customize-cta-sections.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/customize-cta-sections.webp',
 									'alt' => __( 'Customize CTA sections', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => $homepage_url . '#learn-customize-cta-sections',
+							'url'        => $homepage_url . '#spectra-learn-customize-cta-sections',
 							'isExternal' => true,
 						),
 						'completed'   => false,
@@ -140,14 +143,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/block-settings-styles.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/block-settings-styles.webp',
 									'alt' => __( 'Block Settings & Styles', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => $homepage_url . '#learn-block-settings-styles',
+							'url'        => $homepage_url . '#spectra-learn-block-settings-styles',
 							'isExternal' => true,
 						),
 						'isPro'       => false,
@@ -173,7 +176,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/change-page-layout.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/change-page-layout.webp',
 									'alt' => __( 'Choose Page Layout', 'spectra-blocks' ),
 								),
 							),
@@ -194,7 +197,7 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/show-and-hide-elements.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/show-and-hide-elements.webp',
 									'alt' => __( 'Show or Hide Elements', 'spectra-blocks' ),
 								),
 							),
@@ -219,22 +222,22 @@ class Admin_Learn {
 				'steps'       => array(
 					array(
 						'id'          => 'open-global-styles',
-						'title'       => __( 'Open Global Styles', 'spectra-blocks' ),
-						'description' => __( 'Access Global Styles to control typography, colors, and spacing for your entire site from one place.', 'spectra-blocks' ),
+						'title'       => __( 'Manage Global Styles', 'spectra-blocks' ),
+						'description' => __( 'Access Global Styles to control your site\'s design from one place.', 'spectra-blocks' ),
 						'learn'       => array(
 							'type'    => 'dialog',
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/open-global-styles.png',
-									'alt' => __( 'Open Global Styles', 'spectra-blocks' ),
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/open-global-styles.webp',
+									'alt' => __( 'Manage Global Styles', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&learn=open-global-styles' ),
-							'isExternal' => false,
+							'url'        => $homepage_url . '#spectra-learn-open-global-styles',
+							'isExternal' => true,
 						),
 						'isPro'       => true,
 						'completed'   => false,
@@ -248,14 +251,14 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/find-global-styles-in-block-settings.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/find-global-styles-in-block-settings.webp',
 									'alt' => __( 'Find Global Styles in Block Settings', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => $homepage_url . '#learn-find-global-styles-in-block-settings',
+							'url'        => $homepage_url . '#spectra-learn-find-global-styles-in-block-settings',
 							'isExternal' => true,
 						),
 						'isPro'       => true,
@@ -263,22 +266,22 @@ class Admin_Learn {
 					),
 					array(
 						'id'          => 'set-global-colors-fonts-spacing',
-						'title'       => __( 'Set Global Colors, Fonts & Spacing', 'spectra-blocks' ),
-						'description' => __( 'Define colors, font sizes, and spacing once so every page stays consistent without manual block styling.', 'spectra-blocks' ),
+						'title'       => __( 'Set Global Colors', 'spectra-blocks' ),
+						'description' => __( 'Define colors once so every page stays consistent without manual block styling.', 'spectra-blocks' ),
 						'learn'       => array(
 							'type'    => 'dialog',
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/set-global-colors-fonts-spacing.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/set-global-colors-fonts-spacing.webp',
 									'alt' => __( 'Set Global Colors, Fonts & Spacing', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&settings=colors&learn=set-global-colors-fonts-spacing' ),
-							'isExternal' => false,
+							'url'        => $homepage_url . '#spectra-learn-set-global-colors-fonts-spacing',
+							'isExternal' => true,
 						),
 						'isPro'       => true,
 						'completed'   => false,
@@ -292,15 +295,15 @@ class Admin_Learn {
 							'content' => array(
 								'type' => 'image',
 								'data' => array(
-									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/use-block-defaults.png',
+									'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/use-block-defaults.webp',
 									'alt' => __( 'Use Block Defaults', 'spectra-blocks' ),
 								),
 							),
 						),
 						'action'      => array(
 							'label'      => __( 'Set Up', 'spectra-blocks' ),
-							'url'        => admin_url( 'admin.php?page=spectra-blocks&path=global-styles&settings=block-defaults&learn=use-block-defaults' ),
-							'isExternal' => false,
+							'url'        => $homepage_url . '#spectra-learn-use-block-defaults',
+							'isExternal' => true,
 						),
 						'isPro'       => true,
 						'completed'   => false,
@@ -316,7 +319,7 @@ class Admin_Learn {
 			'url'         => 'https://wpspectra.com/docs/preview-options/',
 			'steps'       => array(
 				array(
-					'id'          => 'preveiw-your-changes',
+					'id'          => 'preview-your-changes',
 					'title'       => __( 'Preview Your Changes', 'spectra-blocks' ),
 					'description' => __( 'Keep your progress safe by saving your draft as you refine your design and preview how your page looks to the world.', 'spectra-blocks' ),
 					'learn'       => array(
@@ -324,14 +327,14 @@ class Admin_Learn {
 						'content' => array(
 							'type' => 'image',
 							'data' => array(
-								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/preview-your-changes.png',
+								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/preview-your-changes.webp',
 								'alt' => __( 'Preview Your Changes', 'spectra-blocks' ),
 							),
 						),
 					),
 					'action'      => array(
 						'label'      => __( 'Set Up', 'spectra-blocks' ),
-						'url'        => $homepage_url . '#learn-preveiw-your-changes',
+						'url'        => $homepage_url . '#spectra-learn-preview-your-changes',
 						'isExternal' => true,
 					),
 					'completed'   => false,
@@ -345,14 +348,14 @@ class Admin_Learn {
 						'content' => array(
 							'type' => 'image',
 							'data' => array(
-								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/publish-your-page.png',
+								'src' => SPECTRA_BLOCKS_URL . 'assets/admin/images/learn/publish-your-page.webp',
 								'alt' => __( 'Publish Your Page', 'spectra-blocks' ),
 							),
 						),
 					),
 					'action'      => array(
 						'label'      => __( 'Set Up', 'spectra-blocks' ),
-						'url'        => $homepage_url . '#learn-publish-your-page',
+						'url'        => $homepage_url . '#spectra-learn-publish-your-page',
 						'isExternal' => true,
 					),
 					'completed'   => false,

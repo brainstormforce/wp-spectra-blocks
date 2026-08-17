@@ -79,6 +79,25 @@ class AssetLoader {
 		// registered so the importer can set it over REST at page-write time.
 		add_action( 'init', array( $this, 'register_import_marker_meta' ) );
 
+		// Imported pages own ALL their spacing (the converter bakes the source's
+		// cascade into gs-* classes; undeclared axes must stay on the UA
+		// baseline the source rendered with). Core's layout support injects
+		// `is-layout-*` / `wp-container-*` classes whose global blockGap rules
+		// (`:root :where(.is-layout-flow) > *` at (0,1,0)) then re-margin every
+		// child — a channel that provably CANNOT be neutralized with a
+		// constant-value counter-rule, because authored reset lanes span
+		// (0,0,1) `body *` … (0,1,2) `body .card p`, overlapping every altitude
+		// a counter could take (measured both ways, 2026-08-16: zeroing cost
+		// UA-reliant sources their paragraph margins; `revert` re-inflated
+		// reset-based sources). Stripping the classes kills the injection at
+		// its source: the gap rules simply never match. Named block filters run
+		// AFTER core's generic `render_block` layout filter, so the classes
+		// exist by the time this runs; render-time, so already-imported pages
+		// heal without re-import. Scoped to spectra/container — the imported
+		// tree's structural mass — leaving core/post-content's constrained
+		// centering untouched.
+		add_filter( 'render_block_spectra/container', array( $this, 'strip_layout_classes_on_imported_pages' ), 20, 2 );
+
 		// Load utility functions for GT integration.
 		$this->load_gt_utils();
 	}
@@ -182,7 +201,7 @@ class AssetLoader {
 	 * anything a third party sanitises — which is far more surface than the one
 	 * block that needs it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $text Raw block text.
 	 * @return string Sanitised HTML.
@@ -195,6 +214,125 @@ class AssetLoader {
 		remove_filter( 'wp_kses_allowed_html', $allow, 10 );
 
 		return $out;
+	}
+
+	/**
+	 * The layout type WordPress will actually render for a block, resolved the
+	 * same way core does in `wp_render_layout_support_flag()`
+	 * (wp-includes/block-supports/layout.php): the block's own `attrs.layout`
+	 * when present, otherwise the block type's registered
+	 * `supports.layout.default` — which for `spectra/container` is FLEX. An
+	 * absent attribute is therefore NOT flow, and treating it as flow stripped
+	 * the layout off every container that never wrote one.
+	 *
+	 * `inherit`/`contentSize` force `constrained`, mirroring core, and a layout
+	 * array carrying no `type` falls to core's `default` (flow) classname.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string,mixed> $block Parsed block.
+	 * @return string Resolved layout type ('default' when flow).
+	 */
+	private static function resolved_layout_type( $block ): string {
+		$attrs  = is_array( $block ) && isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+		$layout = isset( $attrs['layout'] ) && is_array( $attrs['layout'] ) ? $attrs['layout'] : null;
+
+		if ( null === $layout ) {
+			$name       = isset( $block['blockName'] ) && is_string( $block['blockName'] ) ? $block['blockName'] : '';
+			$registered = '' !== $name ? \WP_Block_Type_Registry::get_instance()->get_registered( $name ) : null;
+			$supports   = ( $registered instanceof \WP_Block_Type ) && is_array( $registered->supports ) ? $registered->supports : array();
+			$fallback   = $supports['layout']['default'] ?? ( $supports['__experimentalLayout']['default'] ?? array() );
+			$layout     = is_array( $fallback ) ? $fallback : array();
+		}
+
+		if ( ! empty( $layout['inherit'] ) || ! empty( $layout['contentSize'] ) ) {
+			return 'constrained';
+		}
+
+		return isset( $layout['type'] ) && is_string( $layout['type'] ) ? $layout['type'] : 'default';
+	}
+
+	/**
+	 * Frontend render: remove core layout-support classes from an imported
+	 * page's container markup, so the global blockGap margin/gap rules those
+	 * classes key on never apply. See the hook registration in {@see init()}
+	 * for the full why (the counter-rule impossibility measurement).
+	 *
+	 * Removes `is-layout-{type}`, `wp-block-…-is-layout-{type}` and generated
+	 * `wp-container-…` tokens from the FIRST tag only — that is the wrapper
+	 * core decorated; inner markup is the block's own children, each filtered
+	 * on its own render. Editor and non-imported pages are untouched, and so is
+	 * any container whose layout is flex/grid/constrained (see the body: those
+	 * classes ARE that container's layout).
+	 *
+	 * Known scope limit: importedness is decided from the QUERIED post, so a
+	 * flow container rendered from a shared template part or a query-loop item
+	 * is treated as imported while an imported page is being viewed. The blast
+	 * radius is one channel — core's flow blockGap margin — and the layout gate
+	 * above keeps every flex/grid/constrained part intact.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string              $block_content Rendered block HTML.
+	 * @param array<string,mixed> $block         Parsed block (attrs decide the layout gate).
+	 * @return string Block HTML with flow layout classes stripped on imported pages.
+	 */
+	public function strip_layout_classes_on_imported_pages( $block_content, $block = array() ) {
+		if ( is_admin() || ! is_singular() ) {
+			return $block_content;
+		}
+		$post_id = (int) get_queried_object_id();
+		if ( ! $post_id || ! self::is_zip_built_page( $post_id ) || ! is_string( $block_content ) || '' === $block_content ) {
+			return $block_content;
+		}
+
+		// FLOW containers only. The blockGap injection this strip exists to kill
+		// is the flow channel — core's global `:where(.is-layout-flow) > *
+		// { margin-block-start: … }`, which is keyed on the CLASS and therefore
+		// cannot be prevented through block attributes; removing the class is the
+		// only lever. But `spectra/container` takes its display/gap/direction from
+		// core layout support (`supports.layout.default` in block.json is FLEX; the
+		// block ships no `display:flex` of its own), so stripping these classes off
+		// a flex or grid container would delete its layout outright — a row would
+		// collapse to a stack and the authored gap would vanish. Converter output
+		// is mostly flow, but NOT always: `content.ts` emits a flex row precisely
+		// when the source has no flex of its own (so no gs-* class supplies
+		// `display`), and the anchor-button/navigation transforms emit flex too.
+		//
+		// The layout type is therefore resolved exactly as core resolves it in
+		// `wp_render_layout_support_flag()` (wp-includes/block-supports/layout.php):
+		// the block's own `attrs.layout` when present, otherwise the block type's
+		// registered `supports.layout.default` — an ABSENT attribute means FLEX for
+		// this block, not flow. Reading absent as flow stripped the layout off every
+		// container that never wrote the attribute.
+		$layout_type = self::resolved_layout_type( $block );
+		if ( 'default' !== $layout_type && 'flow' !== $layout_type ) {
+			return $block_content;
+		}
+
+		$processor = new \WP_HTML_Tag_Processor( $block_content );
+		if ( ! $processor->next_tag() ) {
+			return $block_content;
+		}
+
+		// `class_list()` normalises the tokens and handles tab/newline/multi-space
+		// separators a manual explode does not. Materialised first: removing while
+		// iterating the live attribute is not a supported traversal.
+		$tokens = array();
+		foreach ( $processor->class_list() as $token ) {
+			$tokens[] = $token;
+		}
+		foreach ( $tokens as $token ) {
+			if (
+				0 === strpos( $token, 'is-layout-' ) ||
+				0 === strpos( $token, 'wp-container-' ) ||
+				false !== strpos( $token, '-is-layout-' )
+			) {
+				$processor->remove_class( $token );
+			}
+		}
+
+		return $processor->get_updated_html();
 	}
 
 	/**
@@ -247,6 +385,34 @@ class AssetLoader {
 				},
 			)
 		);
+
+		// Run-scoped identity stamps the importer writes alongside the marker.
+		// Protected (underscore) keys are silently DROPPED by REST unless
+		// registered with show_in_rest, which would disable the importer's
+		// reclaim/dedup probes entirely. Subtype registration is inert when the
+		// post type is absent (e.g. SureForms not installed), so no guards.
+		$identity_keys = array(
+			'page'           => array( '_zipai_import_id' ),
+			'sureforms_form' => array( '_zipai_import_id', '_zipai_form_hash' ),
+			'wp_navigation'  => array( '_zipai_nav_hash' ),
+		);
+		foreach ( $identity_keys as $post_type => $keys ) {
+			foreach ( $keys as $key ) {
+				register_post_meta(
+					$post_type,
+					$key,
+					array(
+						'type'          => 'string',
+						'single'        => true,
+						'default'       => '',
+						'show_in_rest'  => true,
+						'auth_callback' => static function ( $allowed, $meta_key, $post_id ) {
+							return current_user_can( 'edit_post', $post_id );
+						},
+					)
+				);
+			}
+		}
 	}
 
 	/**

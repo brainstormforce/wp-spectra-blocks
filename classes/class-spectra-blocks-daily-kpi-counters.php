@@ -79,8 +79,8 @@ class Spectra_Blocks_Daily_KPI_Counters {
 		add_action( 'save_post', array( $this, 'on_save_post_record_block_types' ), 20, 2 );
 
 		// Global Block Styles advanced-feature tracking.
-		add_action( 'update_option_spectra_global_block_styles', array( $this, 'on_gbs_changed' ) );
-		add_action( 'add_option_spectra_global_block_styles', array( $this, 'on_gbs_added' ) );
+		add_action( 'update_option_spectra_blocks_pro_gs_user_css', array( $this, 'on_gbs_changed' ) );
+		add_action( 'add_option_spectra_blocks_pro_gs_user_css', array( $this, 'on_gbs_added' ) );
 
 		// Priority 30: append KPI data to the BSF Analytics payload.
 		add_filter( 'bsf_core_stats', array( $this, 'add_kpi_stats' ), 30 );
@@ -335,6 +335,10 @@ class Spectra_Blocks_Daily_KPI_Counters {
 	 * @return array<string, mixed>
 	 */
 	public function add_kpi_stats( $stats ) {
+		if ( 'yes' !== get_site_option( 'spectra_blocks_usage_optin', 'no' ) ) {
+			return $stats;
+		}
+
 		if ( empty( $stats['plugin_data']['spectra_blocks'] ) || ! is_array( $stats['plugin_data']['spectra_blocks'] ) ) {
 			$stats['plugin_data']['spectra_blocks'] = array();
 		}
@@ -352,8 +356,7 @@ class Spectra_Blocks_Daily_KPI_Counters {
 			if ( $date === $today ) {
 				continue;
 			}
-			$kpi_records[] = array(
-				'date'           => $date,
+			$kpi_records[ $date ] = array(
 				'numeric_values' => array(
 					'spectra_posts_published_daily'        => isset( $publish[ $date ] ) ? (int) $publish[ $date ] : 0,
 					'spectra_distinct_block_types_daily'   => isset( $types[ $date ] ) && is_array( $types[ $date ] ) ? count( $types[ $date ] ) : 0,

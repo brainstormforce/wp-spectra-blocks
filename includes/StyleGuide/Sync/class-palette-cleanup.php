@@ -15,7 +15,7 @@
  * Nothing else references it.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class PaletteCleanup
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class PaletteCleanup {
 
@@ -37,7 +37,7 @@ class PaletteCleanup {
 	 * Option flag marking that the one-time cleanup has run, so it never repeats
 	 * on subsequent admin loads.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var string
 	 */
 	const FLAG = 'spectra_blocks_sg_palette_cleaned';
@@ -45,7 +45,7 @@ class PaletteCleanup {
 	/**
 	 * The Style Guide engine (source of the currently-managed colour slugs).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var Engine
 	 */
 	private $engine;
@@ -53,7 +53,7 @@ class PaletteCleanup {
 	/**
 	 * Constructor.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param Engine $engine Style Guide engine.
 	 */
@@ -64,7 +64,7 @@ class PaletteCleanup {
 	/**
 	 * Hook the one-time cleanup to `admin_init`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return void
 	 */
@@ -77,7 +77,7 @@ class PaletteCleanup {
 	 * build activates or the plugin is upgraded — then set a flag so it never
 	 * repeats.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return void
 	 */
@@ -97,7 +97,7 @@ class PaletteCleanup {
 	 * Idempotent — safe to run more than once. Public so a WP-CLI command or manual
 	 * re-run can invoke it directly.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return void
 	 */
@@ -132,7 +132,7 @@ class PaletteCleanup {
 	 * removed again, leaving only the theme's own colours (the theme's swatches are
 	 * preserved; see {@see strip_post()}). Idempotent; raw write, no save_post.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int $post_id wp_global_styles post ID.
 	 * @return void
@@ -157,7 +157,7 @@ class PaletteCleanup {
 	 * — which does NOT fire `save_post`, so it can't re-enter the pull hook. A no-op
 	 * when the post carries no Spectra-injected slugs.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int                  $post_id wp_global_styles post ID.
 	 * @param array<string, mixed> $content Decoded post content.
@@ -246,7 +246,7 @@ class PaletteCleanup {
 	 * Style Guide's own runtime palette filters, so a theme colour can never be
 	 * mistaken for a Spectra injection. Statically cached per request.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, true>
 	 */

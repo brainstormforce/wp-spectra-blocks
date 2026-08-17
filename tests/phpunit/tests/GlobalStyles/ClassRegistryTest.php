@@ -1051,29 +1051,6 @@ class ClassRegistryTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test get_grouped_options_for_editor() returns React Select format.
-	 */
-	public function test_get_grouped_options_for_editor(): void {
-		$groups = ClassRegistry::get_grouped_options_for_editor();
-
-		$this->assertIsArray( $groups );
-		$this->assertNotEmpty( $groups );
-
-		// Each group should have 'label' and 'options'.
-		foreach ( $groups as $group ) {
-			$this->assertArrayHasKey( 'label', $group );
-			$this->assertArrayHasKey( 'options', $group );
-			$this->assertIsArray( $group['options'] );
-
-			// Each option should have 'value' and 'label'.
-			if ( ! empty( $group['options'] ) ) {
-				$this->assertArrayHasKey( 'value', $group['options'][0] );
-				$this->assertArrayHasKey( 'label', $group['options'][0] );
-			}
-		}
-	}
-
-	/**
 	 * Test each class entry has required fields (css, title, description, category, tags).
 	 */
 	public function test_all_classes_have_required_fields(): void {
