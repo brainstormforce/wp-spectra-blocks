@@ -10,7 +10,7 @@
  * sync) because `content_save_pre` would mangle the JSON's unicode escapes.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class FseGlobalStylesAdapter
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class FseGlobalStylesAdapter implements ColorSyncAdapter {
 
@@ -35,7 +35,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	 * `wp_global_styles`, but writes there are ignored in favor of their own
 	 * option store, so only true block/FSE themes use this adapter.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return bool
 	 */
@@ -46,7 +46,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	/**
 	 * Human-readable label.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string
 	 */
@@ -57,7 +57,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	/**
 	 * FSE themes use the generic role → slug mapping, so no theme-specific patch.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param TokenRegistry $tokens The computed Style Guide token registry.
 	 * @return array<string, string> Always empty (fall back to generic).
@@ -74,7 +74,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	 * overrides (user wins), so every theme-defined slug is present even before
 	 * the user has customized anything.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string>
 	 */
@@ -104,7 +104,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	 * Patch mapped slugs into the user post's `theme` palette, preserving all
 	 * other entries, then flush the global-styles caches.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $patch slug => hex.
 	 * @return bool
@@ -202,7 +202,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	/**
 	 * The active theme's user global-styles post (get-or-create).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return \WP_Post|null
 	 */
@@ -215,7 +215,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	/**
 	 * The `theme`-origin entries from decoded user post content.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $content Decoded wp_global_styles post content.
 	 * @return array<int, array<string, mixed>>
@@ -244,7 +244,7 @@ class FseGlobalStylesAdapter implements ColorSyncAdapter {
 	 * Parses parent theme.json first, then child (child wins), so child-theme
 	 * palette overrides are honoured.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string>
 	 */

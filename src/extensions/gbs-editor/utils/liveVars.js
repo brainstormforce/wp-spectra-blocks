@@ -14,24 +14,80 @@ import apiFetch from '@wordpress/api-fetch';
 import { dispatch, select } from '@wordpress/data';
 
 /**
- * Astra global-color slug index → Style Guide shade token.
+ * The Astra slot map from a computed/preview payload, or an EMPTY map.
  *
- * Kept in sync with GlobalStylesBridge::ASTRA_SHADE_MAP (class-global-styles-bridge.php).
- * Used to align the ast-global-color-{N} picker swatches with the colour that
- * actually gets applied, live — mirroring the server's align_astra_palette_swatches().
+ * Which slot carries which colour is decided at runtime by Astra's
+ * `astra_4_8_9_compatibility()` flag, which the client cannot read — on a legacy
+ * install slots 4/5 are swapped relative to a reorganized one. So the server ships
+ * the resolved map as `astra_shade_map` on the computed/preview REST payloads
+ * ({@see GlobalStylesBridge::astra_shade_map()}), and this is the only source of
+ * truth the client has.
+ *
+ * Returns `{}` when that key is missing rather than falling back to a hardcoded
+ * layout. This USED to guess the reorganized order, which fails silently and
+ * badly: on a legacy install every guessed slot is wrong, so the live preview
+ * writes Style Guide colours onto the wrong Astra swatches with nothing to signal
+ * it. An empty map instead makes the callers no-ops — no alias CSS is emitted and
+ * no swatch is realigned — so Astra simply keeps its own colours until the next
+ * payload arrives. A missing preview is recoverable; a confidently wrong one is
+ * not. The realistic trigger is a version skew where Pro ships ahead of the free
+ * plugin and the field is absent from the response.
  *
  * @since x.x.x
+ *
+ * @param {Object|undefined} map `astra_shade_map` from a computed/preview payload.
+ * @return {Object} slot index => shade token key, or `{}` when unavailable.
  */
-const ASTRA_SHADE_MAP = {
-	0: 'primary',
-	1: 'secondary',
-	2: 'neutral-7',
-	3: 'neutral-5',
-	4: 'neutral-0',
-	5: 'neutral-1',
-	6: 'neutral-2',
-	// Slots 7 (Subtle Background) and 8 (Other Supporting) are unmanaged — their
-	// old tokens (the interpolated neutral-3/neutral-6) are no longer generated.
+const astraShadeMap = ( map ) =>
+	map && 'object' === typeof map && Object.keys( map ).length ? map : {};
+
+/**
+ * Whether a palette entry's colour is already a `var(--<slug>)` reference to its
+ * OWN variable.
+ *
+ * Astra registers its nine global colours as variable references rather than
+ * literals, and the colour picker prints a swatch's raw value as its subtitle —
+ * so the user sees the recognisable `--ast-global-color-0` under "Brand".
+ * Replacing it with the resolved hex swapped that name for an opaque code.
+ *
+ * Rewriting is unnecessary: the same variable is redefined to the Style Guide
+ * colour by {@see buildAstraAliasCSS}, so the reference already resolves to
+ * exactly the hex we would have written. Mirrors the server-side guard in
+ * GlobalStylesBridge::is_own_var_reference().
+ *
+ * @since x.x.x
+ *
+ * @param {*}      color Palette entry colour value.
+ * @param {string} slug  Palette entry slug (e.g. `ast-global-color-0`).
+ * @return {boolean} True when the value is a var() reference to its own variable.
+ */
+const isOwnVarReference = ( color, slug ) =>
+	typeof color === 'string' &&
+	'' !== color &&
+	new RegExp( `var\\(\\s*--${ slug.replace( /[.*+?^${}()|[\]\\]/g, '\\$&' ) }\\s*[,)]` ).test( color );
+
+/**
+ * The comparable hex behind a palette entry's colour value.
+ *
+ * A literal normalises directly; a `var(--<slug>)` self-reference resolves through
+ * the supplied slot map to the hex it renders as. Without that, keeping the
+ * reference would silently disable the dedupe below — a var() value normalises to
+ * '' and so shields nothing, letting every Spectra swatch reappear alongside the
+ * theme's own. Mirrors the server's GlobalStylesBridge::resolve_palette_hex().
+ *
+ * @since x.x.x
+ *
+ * @param {*}      color          Palette entry colour value.
+ * @param {string} slug           Palette entry slug.
+ * @param {Object} astraHexBySlug slug => hex for the Astra slots.
+ * @return {string} Lower-case `#rrggbb`, or '' when not comparable.
+ */
+const resolvedHexKey = ( color, slug, astraHexBySlug ) => {
+	const direct = hexKey( color );
+	if ( direct ) {
+		return direct;
+	}
+	return isOwnVarReference( color, slug ) ? hexKey( astraHexBySlug?.[ slug ] ) : '';
 };
 
 /**
@@ -80,10 +136,13 @@ function hexKey( color ) {
  *
  * @since x.x.x
  *
- * @param {Array} palette Palette entries.
+ * @param {Array}  palette        Palette entries.
+ * @param {Object} astraHexBySlug slug => hex for the Astra slots, so a `var()`
+ *                                self-reference still resolves to a comparable
+ *                                colour ({@see resolvedHexKey}).
  * @return {Array} Deduped palette (an appended swatch loses to an authoritative one).
  */
-function dedupeSwatchesThemeWins( palette ) {
+function dedupeSwatchesThemeWins( palette, astraHexBySlug = {} ) {
 	// AUTHORITATIVE swatches are every entry this live sync did NOT append itself —
 	// the theme's own colours plus the server-injected ones. They are NEVER dropped,
 	// so two distinct theme roles that happen to share a hex (e.g. `heading` and a
@@ -98,7 +157,7 @@ function dedupeSwatchesThemeWins( palette ) {
 		if ( /^sg-/.test( slug ) || appendedSwatchSlugs.has( slug ) ) {
 			return;
 		}
-		const key = hexKey( entry?.color );
+		const key = resolvedHexKey( entry?.color, slug, astraHexBySlug );
 		if ( key ) {
 			authorityColors.add( key );
 		}
@@ -329,7 +388,7 @@ export function buildPresetPaletteCSS( palette, tokens, semanticMap, overrides )
 /**
  * Build the Astra global-colour alias CSS (`--ast-global-color-{N}` +
  * `--wp--preset--color--ast-global-color-{N}`) from the computed tokens, using
- * ASTRA_SHADE_MAP — mirroring the server's get_astra_compat_css() /
+ * the resolved Astra slot map — mirroring the server's get_astra_compat_css() /
  * inject_astra_compat_editor_styles().
  *
  * Elements that resolve through the theme's `--ast-global-color-*` (e.g. the
@@ -343,15 +402,19 @@ export function buildPresetPaletteCSS( palette, tokens, semanticMap, overrides )
  *
  * @since x.x.x
  *
- * @param {Object} tokens computed.tokens (shade-key => hex).
+ * @param {Object} tokens   computed.tokens (shade-key => hex).
+ * @param {Object} shadeMap computed.astra_shade_map — the server-resolved slot map.
+ *                          Omit and no aliases are emitted — the client cannot
+ *                          know Astra's slot order on its own, and guessing it
+ *                          writes colours onto the wrong swatches.
  * @return {string} CSS, or '' when there is nothing to emit.
  */
-export function buildAstraAliasCSS( tokens ) {
+export function buildAstraAliasCSS( tokens, shadeMap ) {
 	if ( ! tokens || typeof tokens !== 'object' ) {
 		return '';
 	}
 	const decls = [];
-	Object.entries( ASTRA_SHADE_MAP ).forEach( ( [ index, tokenKey ] ) => {
+	Object.entries( astraShadeMap( shadeMap ) ).forEach( ( [ index, tokenKey ] ) => {
 		const hex = tokens[ tokenKey ];
 		if ( hex ) {
 			decls.push( `--ast-global-color-${ index }:${ hex }` );
@@ -480,25 +543,28 @@ export async function refreshCustomVarsCSS() {
  *
  * @since x.x.x
  *
- * @param {number} postId The current post ID. No-ops when postId <= 0.
+ * @param {number|string} postId The current post ID. No-ops when it does not resolve to a
+ *                               positive integer — FSE template IDs are strings (e.g.
+ *                               "astra//home") and have no page-scoped CSS to render.
  * @return {Promise<void>}
  */
 export async function regeneratePageCSS( postId ) {
-	if ( postId <= 0 ) { return; }
+	const pageId = Number( postId ) || 0;
+	if ( pageId <= 0 ) { return; }
 	try {
 		const saveData = await apiFetch( {
-			path: `/spectra-blocks/v1/global-styles/save?scope=page&post_id=${ postId }`,
+			path: `/spectra-blocks/v1/global-styles/save?scope=page&post_id=${ pageId }`,
 		} );
 		const payload = saveData?.payload;
 		if ( ! payload || Object.keys( payload ).length === 0 ) { return; }
 		const renderData = await apiFetch( {
 			path: '/spectra-blocks/v1/global-styles/render',
 			method: 'POST',
-			data: { payload, post_id: postId, scope: 'page' },
+			data: { payload, post_id: pageId, scope: 'page' },
 		} );
 		const css = renderData?.css;
 		if ( css ) {
-			injectStyleSheet( `spectra-gen-custom-css-${ postId }`, css );
+			injectStyleSheet( `spectra-gen-custom-css-${ pageId }`, css );
 		}
 	} catch ( _err ) {
 		// Non-fatal.
@@ -534,7 +600,7 @@ export function regenerateSitewideCSS() {
  * live and would otherwise leave the picker showing the pre-edit colours. This
  * mirrors the server palette assembly against the freshly-computed tokens:
  *   - semantic slugs     ← config.semantic_map × computed.tokens (+ overrides)
- *   - ast-global-color-N ← ASTRA_SHADE_MAP × computed.tokens
+ *   - ast-global-color-N ← computed.astra_shade_map × computed.tokens
  *
  * Existing entries are updated in place (matched by slug), Style-Guide-owned
  * slugs missing from the palette (e.g. a just-added custom colour) are appended,
@@ -594,7 +660,7 @@ export function syncEditorSwatches( computed, config ) {
 		} );
 	}
 
-	Object.entries( ASTRA_SHADE_MAP ).forEach( ( [ index, tokenKey ] ) => {
+	Object.entries( astraShadeMap( computed?.astra_shade_map ) ).forEach( ( [ index, tokenKey ] ) => {
 		if ( tokens[ tokenKey ] ) {
 			map[ `ast-global-color-${ index }` ] = tokens[ tokenKey ];
 		}
@@ -632,7 +698,12 @@ export function syncEditorSwatches( computed, config ) {
 	} );
 
 	next = next.map( ( entry ) => {
-		if ( entry?.slug && map[ entry.slug ] && map[ entry.slug ] !== entry.color ) {
+		if (
+			entry?.slug &&
+			map[ entry.slug ] &&
+			map[ entry.slug ] !== entry.color &&
+			! isOwnVarReference( entry.color, entry.slug )
+		) {
 			changed = true;
 			return { ...entry, color: map[ entry.slug ] };
 		}
@@ -675,7 +746,9 @@ export function syncEditorSwatches( computed, config ) {
 	// distinct theme roles that share a hex (e.g. heading + a shuffled foreground)
 	// both stay. Runs on the whole palette, so it also clears any dupe left over from
 	// an earlier sync in this session.
-	const deduped = dedupeSwatchesThemeWins( next );
+	// `map` carries ast-global-color-N => hex, which lets the dedupe resolve the
+	// var() references the Astra entries keep (see resolvedHexKey).
+	const deduped = dedupeSwatchesThemeWins( next, map );
 	if ( deduped.length !== next.length ) {
 		next    = deduped;
 		changed = true;

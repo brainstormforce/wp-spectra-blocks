@@ -19,7 +19,6 @@
  * WordPress dependencies.
  */
 import { useState, useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { Spinner, TextControl, Icon } from '@wordpress/components';
 import { edit as editIcon } from '@wordpress/icons';
@@ -28,6 +27,7 @@ import { edit as editIcon } from '@wordpress/icons';
  * Internal dependencies.
  */
 import { useCustomClasses } from '../../hooks/useCustomClasses.js';
+import { useEditedPostId } from '../../hooks/useEditedPostId.js';
 import { regenerateEditorCSS, regeneratePageCSS } from '../../utils/liveVars.js';
 import CSSAutocomplete from '../CSSAutocomplete.jsx';
 import {
@@ -248,10 +248,7 @@ const ClassEditor = forwardRef( ( { className, styles, onSave, onCancel, saving 
  * @return {Element} Rendered CustomClassesPanel.
  */
 const CustomClassesPanel = ( { initialClass = null, onStatusChange } ) => {
-	const postId = useSelect(
-		( select ) => select( 'core/editor' )?.getCurrentPostId?.() ?? 0,
-		[]
-	);
+	const postId = useEditedPostId();
 	const { classes, loading, saving, saveClass, deleteClass } =
 		useCustomClasses( null, postId );
 

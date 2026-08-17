@@ -37,7 +37,7 @@ class SpectraOneCompat {
 	 * is bound to, so element edits share a token with their slug (e.g. Text and
 	 * Captions both → `neutral-5`); last-in wins on a shared token.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<int, array{path: string[], token: string}>
 	 */
 	const ELEMENT_MAP = array(
@@ -215,7 +215,7 @@ class SpectraOneCompat {
 	 * overrides so they inherit the palette `var()` again — keeping the Style Guide
 	 * the single source of truth.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int           $post_id Saved wp_global_styles post ID.
 	 * @param \WP_Post|null $post    Saved post object (unused).
@@ -279,7 +279,7 @@ class SpectraOneCompat {
 	/**
 	 * Read a value out of a `styles` sub-tree by key path, or null if absent.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $styles The `styles` array.
 	 * @param string[]             $path   Key path (e.g. ['elements','link','color','text']).
@@ -302,7 +302,7 @@ class SpectraOneCompat {
 	 * `content_save_pre` mangling and does NOT fire `save_post`, so no sync loop).
 	 * Empty parent nodes are pruned.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int                            $post_id User global-styles post ID.
 	 * @param array<int, array<int, string>> $paths Paths (relative to `styles`) to unset.
@@ -351,7 +351,7 @@ class SpectraOneCompat {
 	/**
 	 * Recursively unset a key path from an array, pruning emptied parents.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $arr  Array to mutate (by reference).
 	 * @param string[]             $path Key path to unset.

@@ -12,6 +12,7 @@
 namespace SpectraBlocks\StyleGuide;
 
 use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\StyleGuide\Sync\Astra\AstraPaletteAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -25,16 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GlobalStylesBridge {
 
 	/**
-	 * Mapping from Astra global color indices to Spectra shade token keys.
+	 * Astra slot index => Style Guide shade token, for the ACTIVE Astra layout.
 	 *
-	 * Used for the editor-side surfaces only: the --ast-global-color-{N} CSS
-	 * aliases (imported Astra content on FSE themes) and the block-editor swatch
-	 * alignment. Kept in sync with AstraPaletteAdapter's semantic → token map so
-	 * the editor swatches match what the adapter actually pushes to Astra.
-	 *
-	 * NOTE: this static map assumes Astra's REORGANIZED (4.8.9+) slot ordering.
-	 * The authoritative push (AstraPaletteAdapter::resolve_patch) resolves the
-	 * background indices from the live compatibility flag; this const does not.
+	 * Used by the render-time surfaces: the `--ast-global-color-{N}` CSS aliases
+	 * (frontend + editor iframe, and imported Astra content on FSE themes) and the
+	 * block-editor swatch alignment.
 	 *
 	 * Astra slot semantics (reorganized ordering):
 	 *   0 = Brand              5 = Secondary Background
@@ -43,21 +39,25 @@ class GlobalStylesBridge {
 	 *   3 = Text               8 = Other Supporting
 	 *   4 = Primary Background
 	 *
-	 * @since 1.0.0
-	 * @var array<int, string>
+	 * Delegates to {@see AstraPaletteAdapter::shade_map()} — the same map the theme
+	 * push writes through — so the render-time aliases always describe the slots the
+	 * sync actually populated. This was a hardcoded constant, which silently assumed
+	 * Astra's post-4.8.9 slot order; on a legacy install (`enable-4-8-9-compatibility`
+	 * present) the background slots are swapped, so the constant aliased slot 4 to
+	 * `neutral-0` while the sync had written `neutral-1` there — page background and
+	 * surface rendered swapped, and outline (written to slot 7) was never aliased.
+	 *
+	 * Slots 7 (Subtle Background) and 8 (Other Supporting) are unmanaged in the
+	 * reorganized layout — their old tokens (the interpolated neutral-3/neutral-6)
+	 * are no longer generated, so Astra keeps its own values for them.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @return array<int, string> slot index => shade token key.
 	 */
-	const ASTRA_SHADE_MAP = array(
-		0 => 'primary',
-		1 => 'secondary',
-		2 => 'neutral-7',
-		3 => 'neutral-5',
-		4 => 'neutral-0',
-		5 => 'neutral-1',
-		6 => 'neutral-2',
-		// Slots 7 (Subtle Background) and 8 (Other Supporting) are unmanaged —
-		// their old tokens (the interpolated neutral-3/neutral-6) are no longer
-		// generated. Astra keeps its own values for them.
-	);
+	public static function astra_shade_map(): array {
+		return AstraPaletteAdapter::shade_map();
+	}
 
 	/**
 	 * The Engine instance.
@@ -66,6 +66,19 @@ class GlobalStylesBridge {
 	 * @var Engine
 	 */
 	private $engine;
+
+	/**
+	 * Whether the free-mode palette has already been attached to core's
+	 * `global-styles` handle this request.
+	 *
+	 * {@see attach_palette_to_global_styles()} runs on two hooks (only one of which
+	 * fires usefully, depending on the theme type); this keeps the second a no-op so
+	 * the declarations are never appended twice.
+	 *
+	 * @since 1.0.5
+	 * @var bool
+	 */
+	private $palette_attached_to_global_styles = false;
 
 	/**
 	 * Constructor.
@@ -133,6 +146,14 @@ class GlobalStylesBridge {
 
 		// Enqueue the CSS variables on the frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_css' ), 5 );
+
+		// Make the free-mode palette win the cascade over the theme's theme.json by
+		// riding core's own `global-styles` handle instead of betting on print order.
+		// Two hooks because core creates that handle at `wp_enqueue_scripts` on block
+		// themes and at `wp_footer` on classic ones. See
+		// attach_palette_to_global_styles().
+		add_action( 'wp_enqueue_scripts', array( $this, 'attach_palette_to_global_styles' ), 20 );
+		add_action( 'wp_footer', array( $this, 'attach_palette_to_global_styles' ), 2 );
 
 		// LAST in <head>, deliberately. See print_page_palette().
 		add_action( 'wp_head', array( $this, 'print_page_palette' ), 100 );
@@ -481,7 +502,7 @@ class GlobalStylesBridge {
 	 * ever called from that method, i.e. after the Pro + saved-guide gate — Style
 	 * Guide colours are therefore never injected while Pro is inactive.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<int, array<string, string>> Palette entries (empty when none).
 	 */
@@ -489,16 +510,41 @@ class GlobalStylesBridge {
 		// Display names must come from the theme's OWN palette definition — Astra's
 		// "Brand" / "Alternate Brand" / …, a block theme's "Primary" / … — NOT the
 		// slug-derived label (which would render Astra's slots as "Ast Global Color 0").
-		// The resolver carries the correct names (with `var(--…)` colours); the adapter
-		// carries the resolved hex. Combine: name from the resolver, colour from the
-		// adapter, falling back to the slug label only when the theme names none.
-		$names = array();
+		//
+		// The theme's declared VALUE matters just as much. Astra declares its nine
+		// global colours as `var(--ast-global-color-N)` references, and the editor's
+		// colour picker prints a swatch's raw value as its subtitle — so the user sees
+		// the recognisable `--ast-global-color-0` under "Brand". Seeding from the
+		// adapter's resolved hex instead replaced that name with an opaque `#D11204`
+		// the moment a Style Guide was saved (this seed only runs once
+		// overlay_managed_palette() passes its has_saved_style_guide() gate, which is
+		// why the label degraded on save and not before).
+		//
+		// Keeping the reference does NOT make the swatch show a stale colour: the
+		// variable is redefined to the Style Guide value in both documents the picker
+		// can live in ({@see enqueue_editor_css}, {@see inject_astra_compat_editor_styles}),
+		// and the theme sync has already written those colours into Astra's own
+		// palette, so the reference resolves to the same hex from either direction.
+		//
+		// So: name AND colour from the resolver when it declares the slug, falling back
+		// to the adapter's resolved hex (and the slug label) when it does not.
+		$names  = array();
+		$values = array();
 		if ( class_exists( '\WP_Theme_JSON_Resolver' ) ) {
 			$settings      = \WP_Theme_JSON_Resolver::get_theme_data()->get_settings();
 			$theme_palette = ( isset( $settings['color']['palette']['theme'] ) && is_array( $settings['color']['palette']['theme'] ) ) ? $settings['color']['palette']['theme'] : array();
 			foreach ( $theme_palette as $entry ) {
-				if ( is_array( $entry ) && isset( $entry['slug'], $entry['name'] ) && is_string( $entry['slug'] ) && is_string( $entry['name'] ) ) {
+				if ( ! is_array( $entry ) || ! isset( $entry['slug'] ) || ! is_string( $entry['slug'] ) ) {
+					continue;
+				}
+				if ( isset( $entry['name'] ) && is_string( $entry['name'] ) ) {
 					$names[ $entry['slug'] ] = $entry['name'];
+				}
+				// Only carry a var() reference across. A literal the theme declares may
+				// be stale relative to the adapter (Astra's theme.json literals do not
+				// track the customizer), so those still take the adapter's resolved hex.
+				if ( isset( $entry['color'] ) && is_string( $entry['color'] ) && false !== strpos( $entry['color'], 'var(' ) ) {
+					$values[ $entry['slug'] ] = $entry['color'];
 				}
 			}
 		}
@@ -516,7 +562,7 @@ class GlobalStylesBridge {
 				if ( is_string( $slug ) && '' !== $slug && is_string( $hex ) && '' !== $hex ) {
 					$out[] = array(
 						'slug'  => $slug,
-						'color' => $hex,
+						'color' => $values[ $slug ] ?? $hex,
 						'name'  => $names[ $slug ] ?? TokenRegistry::format_slug_label( $slug ),
 					);
 				}
@@ -538,7 +584,7 @@ class GlobalStylesBridge {
 	 *
 	 * Style Guide colours are added ONLY when Pro is active (the guard below).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<int, array<string, string>> $palette User-layer `theme` palette entries.
 	 * @return array<int, array<string, string>>|null Updated palette, or null when
@@ -658,7 +704,7 @@ class GlobalStylesBridge {
 	 * Themes with no readable theme.json palette (e.g. Astra) yield an empty order
 	 * and the palette is returned unchanged.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<int, array<string, string>> $palette Palette entries.
 	 * @return array<int, array<string, string>> Reordered palette.
@@ -702,7 +748,7 @@ class GlobalStylesBridge {
 	 * appended) rather than the resolver, so the Style Guide's own runtime palette
 	 * filters can't perturb the order. Statically cached per request.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<int, string> Ordered slugs (empty when the theme declares none).
 	 */
@@ -759,7 +805,7 @@ class GlobalStylesBridge {
 	 * {@see maybe_override_managed_user_palette}. Runtime only: the stored post is
 	 * untouched.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param \WP_HTTP_Response|\WP_Error $result  Result to send to the client.
 	 * @param array|mixed                 $handler Route handler (unused).
@@ -841,7 +887,7 @@ class GlobalStylesBridge {
 	 * the overlay) so it also covers the editor's preloaded request, and runs after
 	 * the managed-palette overlay.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param \WP_HTTP_Response|\WP_Error $result  Result to send to the client.
 	 * @param array|mixed                 $handler Route handler (unused).
@@ -882,6 +928,54 @@ class GlobalStylesBridge {
 	}
 
 	/**
+	 * The comparable hex behind a palette entry's colour value.
+	 *
+	 * A literal hex normalises directly. A `var(--ast-global-color-N)` reference —
+	 * which is how Astra declares its nine global colours, and what
+	 * {@see seed_palette_from_theme()} deliberately preserves so the picker keeps
+	 * showing the variable NAME — is resolved through the slot map to the Style
+	 * Guide token behind it. That is the same hex the reference renders as, so the
+	 * duplicate detection below behaves identically whether an entry carries the
+	 * reference or the resolved literal.
+	 *
+	 * Without this, keeping the reference would silently disable the dedupe: a
+	 * var() value normalises to '' and so shields nothing, letting every Spectra
+	 * swatch reappear alongside the theme's own and flooding the picker.
+	 *
+	 * Returns '' for anything with no comparable colour — `transparent`,
+	 * `currentColor`, an unrelated variable, or an unmanaged Astra slot (7/8),
+	 * which has no Style Guide colour behind it.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param string $color Palette entry colour value.
+	 * @return string Lower-case `#rrggbb`, or '' when not comparable.
+	 */
+	private function resolve_palette_hex( string $color ): string {
+		$hex = $this->normalize_hex_key( $color );
+		if ( '' !== $hex ) {
+			return $hex;
+		}
+
+		if ( ! preg_match( '/var\(\s*--ast-global-color-(\d+)/', $color, $matches ) ) {
+			return '';
+		}
+
+		$shade_key = self::astra_shade_map()[ (int) $matches[1] ] ?? null;
+		if ( null === $shade_key ) {
+			return ''; // Unmanaged slot (7/8) — no Style Guide colour behind it.
+		}
+
+		$this->engine->maybe_compute();
+		$tokens = $this->engine->get_token_registry();
+		if ( null === $tokens ) {
+			return '';
+		}
+
+		return $this->normalize_hex_key( (string) ( $tokens->get( $shade_key ) ?? '' ) );
+	}
+
+	/**
 	 * Remove non-pickable duplicates from a picker-facing palette list.
 	 *
 	 * Two rules, applied to PICKER surfaces only (the render-path palette is
@@ -895,10 +989,14 @@ class GlobalStylesBridge {
 	 *     dropped — the mapped colour "merges into" the theme swatch. Names differ
 	 *     ("Brand" vs "Primary"), so a name match can't catch these; the theme slug
 	 *     is identified from theme.json. Colours with no theme-native counterpart
-	 *     (accent, status, foreground, custom vars) are unique and always kept, and
-	 *     non-hex values (`var(--…)`, `transparent`) are never deduped.
+	 *     (accent, status, foreground, custom vars) are unique and always kept.
 	 *
-	 * @since x.x.x
+	 * Comparison goes through {@see resolve_palette_hex()}, so a theme entry that
+	 * declares its colour as `var(--ast-global-color-N)` still shields its Spectra
+	 * duplicate; values with no comparable colour (`transparent`, `currentColor`)
+	 * are never deduped.
+	 *
+	 * @since 1.0.4
 	 *
 	 * @param array<int, mixed> $palette Palette entries (from decoded REST/theme.json data).
 	 * @return array<int, mixed>|null Filtered entries, or null when unchanged.
@@ -917,7 +1015,7 @@ class GlobalStylesBridge {
 		$theme_colors = array();
 		foreach ( $palette as $entry ) {
 			if ( is_array( $entry ) && isset( $entry['slug'], $entry['color'] ) && is_string( $entry['slug'] ) && isset( $theme_native[ $entry['slug'] ] ) ) {
-				$hex = $this->normalize_hex_key( (string) $entry['color'] );
+				$hex = $this->resolve_palette_hex( (string) $entry['color'] );
 				if ( '' !== $hex ) {
 					$theme_colors[ $hex ] = true;
 				}
@@ -961,7 +1059,7 @@ class GlobalStylesBridge {
 	 * Normalise a colour string to a comparable `#rrggbb` key, or '' when it is not
 	 * a plain hex (CSS `var(--…)`, `transparent`, `currentColor`, empty).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $color Raw colour value.
 	 * @return string Lower-case `#rrggbb`, or '' when not a comparable hex.
@@ -1064,7 +1162,7 @@ class GlobalStylesBridge {
 	 * `global-styles-inline-css` AFTER our token stylesheet (measured on a real page
 	 * at byte 41233 vs ours at 27979) — the site won and this did nothing.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @return void
 	 */
 	public function print_page_palette(): void {
@@ -1152,11 +1250,16 @@ class GlobalStylesBridge {
 
 		// Only remap the theme's own global colours onto the Style Guide palette
 		// when a Style Guide has actually been SAVED. `get_config()` falls back to
-		// the engine's DEFAULT palette (so it's never empty) — check the RAW saved
-		// option instead. With nothing saved, leave the theme's colours intact:
-		// don't replace colours the user never saved.
-		$saved_config = get_option( Engine::OPTION_KEY, array() );
-		if ( ! is_array( $saved_config ) || empty( $saved_config ) ) {
+		// the engine's DEFAULT palette (so it's never empty), so this must test the
+		// stored option — via `has_saved_style_guide()`, which additionally requires
+		// the v2 `colors` map. A bare `! empty( $option )` check is NOT equivalent:
+		// an option that exists but is not v2-shaped (a legacy config, or a leftover
+		// `presets`/`typography` blob that `get_stored_config()` now strips) passes
+		// it while `has_saved_style_guide()` — and therefore the whole theme PUSH —
+		// says unsaved. That gap repaints the theme's colours from the DEFAULT
+		// palette while Astra's own stored palette is never touched, which is exactly
+		// the "picker shows Spectra defaults, DB is correct" report (GH #667).
+		if ( ! $this->engine->has_saved_style_guide() ) {
 			return '';
 		}
 
@@ -1164,7 +1267,7 @@ class GlobalStylesBridge {
 		$lines[] = '';
 		$lines[] = "\t/* Astra global color compatibility aliases */";
 
-		foreach ( self::ASTRA_SHADE_MAP as $index => $shade_key ) {
+		foreach ( self::astra_shade_map() as $index => $shade_key ) {
 			$hex = $tokens->get( $shade_key );
 			if ( null !== $hex ) {
 				// Fall back to the token's resolved hex so the alias never becomes
@@ -1196,15 +1299,11 @@ class GlobalStylesBridge {
 	 * @return string CSS lines for :root injection, or empty string.
 	 */
 	private function get_sg_preset_css() {
-		$tokens = $this->engine->get_token_registry();
+		$map = $this->managed_preset_map();
 
-		if ( null === $tokens ) {
+		if ( empty( $map ) ) {
 			return '';
 		}
-
-		$config       = $this->engine->get_config();
-		$semantic_map = isset( $config['semantic_map'] ) && is_array( $config['semantic_map'] ) ? $config['semantic_map'] : array();
-		$overrides    = $this->get_semantic_overrides();
 
 		// Which managed slugs to emit as inline `--wp--preset--color--*` vars.
 		//
@@ -1219,41 +1318,155 @@ class GlobalStylesBridge {
 		// is the free fallback: it defines the variables WITHOUT adding any picker
 		// swatch. Gated on a saved guide so an untouched site is never restyled, and
 		// skipped when Pro is active since inject_palette() already covers them.
+		//
+		// NOTE this sheet loses the cascade to core's theme.json palette on some
+		// render paths — {@see attach_palette_to_global_styles()} is what makes the
+		// free-mode semantic values actually win. This copy still matters: it is the
+		// only emission on themes that register no `global-styles` handle at all.
 		$emit_semantic = ! Core::is_pro_active() && $this->engine->has_saved_style_guide();
-
-		$emit_slugs = array();
-		foreach ( array_keys( $semantic_map ) as $slug ) {
-			if ( $emit_semantic || 0 === strpos( $slug, 'sg-' ) ) {
-				$emit_slugs[ $slug ] = true;
-			}
-		}
-		foreach ( array_keys( $overrides ) as $slug ) {
-			if ( $emit_semantic || 0 === strpos( $slug, 'sg-' ) ) {
-				$emit_slugs[ $slug ] = true;
-			}
-		}
 
 		$lines   = array();
 		$lines[] = '';
 		$lines[] = "\t/* Style Guide WP preset color vars */";
 
-		foreach ( array_keys( $emit_slugs ) as $slug ) {
-			// Explicit override wins over the shade-derived value (mirrors
-			// inject_palette); fall back to the semantic_map shade token.
-			$hex = isset( $overrides[ $slug ] )
-				? $overrides[ $slug ]
-				: ( isset( $semantic_map[ $slug ] ) ? $tokens->get( $semantic_map[ $slug ] ) : null );
-
-			if ( null !== $hex && '' !== $hex ) {
-				$lines[] = sprintf(
-					"\t--wp--preset--color--%s: %s;",
-					esc_attr( $slug ),
-					esc_attr( $hex )
-				);
+		foreach ( $map as $slug => $value ) {
+			if ( ! $emit_semantic && 0 !== strpos( $slug, 'sg-' ) ) {
+				continue;
 			}
+			$lines[] = sprintf( "\t--wp--preset--color--%s: %s;", $slug, $value );
 		}
 
 		return count( $lines ) > 2 ? implode( "\n", $lines ) : '';
+	}
+
+	/**
+	 * Every Style-Guide-managed palette slug resolved to its current CSS colour.
+	 *
+	 * The single resolution point for `--wp--preset--color--*` values: the explicit
+	 * per-slug override wins (mirroring {@see inject_palette()}), else the
+	 * `semantic_map` shade token. Slugs and values are sanitised HERE — the callers
+	 * print into a CSS context, where `esc_attr()` is no protection at all (it
+	 * leaves `;`, `{`, `}` and `:` untouched, so a malformed slug could close the
+	 * rule and append declarations). Mirrors {@see Engine::page_preset_map()}, which
+	 * already sanitises the identical shape for the page-scoped palette.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @return array<string, string> Sanitised slug => CSS colour, in map order.
+	 */
+	private function managed_preset_map(): array {
+		$tokens = $this->engine->get_token_registry();
+
+		if ( null === $tokens ) {
+			return array();
+		}
+
+		$config       = $this->engine->get_config();
+		$semantic_map = isset( $config['semantic_map'] ) && is_array( $config['semantic_map'] ) ? $config['semantic_map'] : array();
+		$overrides    = $this->get_semantic_overrides();
+
+		$slugs = array_unique( array_merge( array_keys( $semantic_map ), array_keys( $overrides ) ) );
+
+		$out = array();
+		foreach ( $slugs as $slug ) {
+			$value = isset( $overrides[ $slug ] )
+				? $overrides[ $slug ]
+				: ( isset( $semantic_map[ $slug ] ) ? $tokens->get( $semantic_map[ $slug ] ) : null );
+
+			// is_string() guard, not just a null check: a non-string here would raise
+			// an "Array to string conversion" warning — or, for an unserialized
+			// object, a fatal — from inside the render path.
+			if ( ! is_string( $value ) || '' === $value ) {
+				continue;
+			}
+
+			$clean_slug = sanitize_key( (string) $slug );
+
+			// Hex is the normal case ({@see Engine::canonical_config()} stores nothing
+			// else). A bare CSS keyword (`transparent`, `currentColor`) is accepted too
+			// because the token registry carries them — no punctuation, so they cannot
+			// break out of the declaration. `\z`, not `$`, which would also match before
+			// a trailing newline. Anything else is dropped rather than escaped.
+			$clean_value = sanitize_hex_color( $value );
+			if ( ! is_string( $clean_value ) || '' === $clean_value ) {
+				$clean_value = 1 === preg_match( '/^[a-zA-Z-]+\z/', $value ) ? $value : '';
+			}
+
+			if ( '' !== $clean_slug && '' !== $clean_value ) {
+				$out[ $clean_slug ] = $clean_value;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Attach the free-mode Style Guide palette to core's own `global-styles` handle,
+	 * so a saved guide's colours win over the theme's theme.json palette.
+	 *
+	 * The free fallback in {@see get_sg_preset_css()} already emits these
+	 * `--wp--preset--color--*` vars, but it rides the `spectra-style-guide-tokens`
+	 * stylesheet, and both are `:root` blocks — equal specificity, so SOURCE ORDER
+	 * decides. That order is not ours to control:
+	 *
+	 * - Block themes: core runs `wp_enqueue_global_styles()` on `wp_enqueue_scripts`,
+	 *   printing the theme palette in the `wp_head` pass BEFORE our sheet → we win.
+	 * - Classic themes (WP 6.9+ on-demand assets): the head call only registers a
+	 *   placeholder and returns; the palette is printed at `wp_footer` and hoisted
+	 *   back into that placeholder, which lands AFTER our sheet → the THEME wins and
+	 *   the saved guide silently does not render.
+	 *
+	 * Measured on one site, one saved guide, changing only the theme: on Astra the
+	 * theme's colour won, on a block theme the guide's did. Rather than bet on a
+	 * position, attach to core's handle — WordPress then prints these declarations
+	 * immediately after core's own global styles, wherever core chooses to print
+	 * them, including the footer-then-hoist path.
+	 *
+	 * Runs on `wp_enqueue_scripts` (block themes, handle already registered) AND
+	 * `wp_footer` (classic themes, where core creates the handle at `wp_footer:1`);
+	 * whichever fires first wins and the other is a no-op.
+	 *
+	 * Free + saved only: with Pro, {@see inject_palette()} owns the theme.json layer;
+	 * with nothing saved, every theme must render exactly as it intends.
+	 *
+	 * @since 1.0.5
+	 * @return void
+	 */
+	public function attach_palette_to_global_styles(): void {
+		if ( $this->palette_attached_to_global_styles ) {
+			return;
+		}
+
+		if ( Core::is_pro_active() || ! $this->engine->has_saved_style_guide() ) {
+			return;
+		}
+
+		// Core has not created the handle yet (classic themes) — the wp_footer pass
+		// will, or the theme has no global styles at all and get_sg_preset_css()
+		// remains the only emission.
+		if ( ! wp_style_is( 'global-styles', 'registered' ) ) {
+			return;
+		}
+
+		// This can run before Engine::maybe_compute() on the `init` hook has had a
+		// chance to warm the registry.
+		$this->engine->maybe_compute();
+
+		$map = $this->managed_preset_map();
+		if ( empty( $map ) ) {
+			return;
+		}
+
+		$decls = '';
+		foreach ( $map as $slug => $value ) {
+			$decls .= sprintf( '--wp--preset--color--%s:%s;', $slug, $value );
+		}
+
+		// Values are sanitised in managed_preset_map(); nothing here can carry CSS
+		// punctuation.
+		wp_add_inline_style( 'global-styles', ':root{' . $decls . '}' );
+
+		$this->palette_attached_to_global_styles = true;
 	}
 
 	/**
@@ -1283,18 +1496,18 @@ class GlobalStylesBridge {
 		}
 
 		// Only remap the theme's global colours onto the Style Guide palette when a
-		// Style Guide has actually been SAVED (raw option — get_config() falls back
-		// to defaults). With nothing saved, leave the theme's own colours intact:
-		// alias the WP preset var to Astra's OWN value (so editor previews still
-		// resolve) instead of the default token palette. Mirrors the frontend guard
-		// in get_astra_compat_css().
-		$saved_config = get_option( Engine::OPTION_KEY, array() );
-		$has_saved    = is_array( $saved_config ) && ! empty( $saved_config );
+		// Style Guide has actually been SAVED. With nothing saved, leave the theme's
+		// own colours intact: alias the WP preset var to Astra's OWN value (so editor
+		// previews still resolve) instead of the default token palette. Same
+		// `has_saved_style_guide()` gate as the theme push and the frontend
+		// get_astra_compat_css(), so the picker can never preview a palette the sync
+		// has not actually written (see the note there).
+		$has_saved = $this->engine->has_saved_style_guide();
 
 		$root_lines    = array( ':root {' );
 		$utility_lines = array();
 
-		foreach ( self::ASTRA_SHADE_MAP as $index => $shade_key ) {
+		foreach ( self::astra_shade_map() as $index => $shade_key ) {
 			$hex = $tokens->get( $shade_key );
 
 			if ( null === $hex ) {
@@ -1591,7 +1804,7 @@ class GlobalStylesBridge {
 	 * mapped shade token in the canvas), so the applied colour is the Style Guide's,
 	 * not Astra's. That split is why the swatch and the applied colour disagree.
 	 *
-	 * Overwriting each swatch's value with the resolved ASTRA_SHADE_MAP hex makes the
+	 * Overwriting each swatch's value with the resolved astra_shade_map() hex makes the
 	 * picker show the colour that will actually be applied. Runs on the final,
 	 * fully-merged block-editor settings so it is the last word regardless of how the
 	 * theme registered its palette.
@@ -1629,13 +1842,14 @@ class GlobalStylesBridge {
 		// site. With nothing saved, leave the theme's own swatches intact so the
 		// picker matches what actually renders. Mirrors the guards in
 		// get_astra_compat_css() / inject_astra_compat_editor_styles().
-		$saved_config = get_option( Engine::OPTION_KEY, array() );
-		if ( ! is_array( $saved_config ) || empty( $saved_config ) ) {
+		// Same gate as the theme push and the two CSS emitters — see the note in
+		// get_astra_compat_css() for why `! empty( $option )` is not equivalent.
+		if ( ! $this->engine->has_saved_style_guide() ) {
 			return $settings;
 		}
 
 		$astra_remap = array();
-		foreach ( self::ASTRA_SHADE_MAP as $index => $shade_key ) {
+		foreach ( self::astra_shade_map() as $index => $shade_key ) {
 			$hex = $tokens->get( $shade_key );
 			if ( null !== $hex ) {
 				$astra_remap[ 'ast-global-color-' . $index ] = $hex;
@@ -1655,7 +1869,8 @@ class GlobalStylesBridge {
 			&& isset( $settings['__experimentalFeatures']['color']['palette'] ) && is_array( $settings['__experimentalFeatures']['color']['palette'] )
 			&& isset( $settings['__experimentalFeatures']['color']['palette']['theme'] ) && is_array( $settings['__experimentalFeatures']['color']['palette']['theme'] ) ) {
 			foreach ( $settings['__experimentalFeatures']['color']['palette']['theme'] as &$feature_entry ) {
-				if ( isset( $feature_entry['slug'], $astra_remap[ $feature_entry['slug'] ] ) ) {
+				if ( isset( $feature_entry['slug'], $astra_remap[ $feature_entry['slug'] ] )
+					&& ! self::is_own_var_reference( $feature_entry['color'] ?? null, $feature_entry['slug'] ) ) {
 					$feature_entry['color'] = $astra_remap[ $feature_entry['slug'] ];
 				}
 			}
@@ -1665,7 +1880,8 @@ class GlobalStylesBridge {
 		// Legacy flat palette (settings.colors) used by older/classic colour controls.
 		if ( isset( $settings['colors'] ) && is_array( $settings['colors'] ) ) {
 			foreach ( $settings['colors'] as &$legacy_entry ) {
-				if ( isset( $legacy_entry['slug'], $astra_remap[ $legacy_entry['slug'] ] ) ) {
+				if ( isset( $legacy_entry['slug'], $astra_remap[ $legacy_entry['slug'] ] )
+					&& ! self::is_own_var_reference( $legacy_entry['color'] ?? null, $legacy_entry['slug'] ) ) {
 					$legacy_entry['color'] = $astra_remap[ $legacy_entry['slug'] ];
 				}
 			}
@@ -1673,6 +1889,41 @@ class GlobalStylesBridge {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Whether a palette entry's colour is already a `var(--ast-global-color-N)`
+	 * reference to its OWN slug.
+	 *
+	 * Astra registers its nine global colours as variable references rather than
+	 * literals, and the block editor's colour picker prints a swatch's raw value as
+	 * its subtitle — so the user sees the recognisable `--ast-global-color-0` under
+	 * "Brand". Overwriting that with the resolved hex replaced the variable name
+	 * with an opaque code the moment a Style Guide was saved.
+	 *
+	 * The overwrite is not needed to make the swatch show the right colour: the
+	 * variable itself is redefined to the Style Guide value in BOTH documents the
+	 * picker can live in — the admin host head ({@see enqueue_editor_css()}) and the
+	 * canvas iframe ({@see inject_astra_compat_editor_styles()}) — so the reference
+	 * already resolves to exactly the hex we would have written.
+	 *
+	 * A theme that registers a LITERAL hex for these slugs still gets the overwrite,
+	 * which is what keeps the picker honest about the colour that will be applied.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param mixed  $color The palette entry's colour value.
+	 * @param string $slug  The palette entry's slug (e.g. `ast-global-color-0`).
+	 * @return bool True when the value is a var() reference to the slug's own variable.
+	 */
+	private static function is_own_var_reference( $color, string $slug ): bool {
+		if ( ! is_string( $color ) || '' === $color ) {
+			return false;
+		}
+		return (bool) preg_match(
+			'/var\(\s*--' . preg_quote( $slug, '/' ) . '\s*[,)]/',
+			$color
+		);
 	}
 
 	/**
@@ -1691,7 +1942,7 @@ class GlobalStylesBridge {
 	 * align_astra_palette_swatches at 20). A no-op while Pro is active, or before a
 	 * Style Guide has been saved.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $settings Block editor settings.
 	 * @return array<string, mixed> Filtered settings.
@@ -1764,7 +2015,7 @@ class GlobalStylesBridge {
 	 * Hooked to block_editor_settings_all at priority 22 (after the Pro-inactive
 	 * strip, which already removes every managed swatch when Pro is off).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $settings Block editor settings.
 	 * @return array<string, mixed>
@@ -1798,10 +2049,11 @@ class GlobalStylesBridge {
 	 * Inject Style Guide token CSS variables into the editor iframe.
 	 *
 	 * Component-tokens.css is enqueued via enqueue_block_editor_assets and reaches
-	 * the editor iframe, but the token variable definitions (:root { --spectra-btn-text: ... })
-	 * are added via wp_add_inline_style() which only reaches the admin <head>.
-	 * This filter ensures the variables are also available inside the iframe canvas
-	 * so that rules like color:var(--spectra-btn-text) resolve correctly.
+	 * the editor iframe, but the runtime colour token definitions
+	 * (:root { --spectra-neutral-0: ... }) are added via wp_add_inline_style()
+	 * which only reaches the admin <head>. This filter ensures the variables are
+	 * also available inside the iframe canvas so that rules like
+	 * color:var(--spectra-neutral-0) resolve correctly.
 	 *
 	 * @since 1.0.0
 	 *

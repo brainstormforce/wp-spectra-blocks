@@ -8,7 +8,9 @@
 
 namespace SpectraBlocks\Tests\StyleGuide\Sync;
 
+use SpectraBlocks\StyleGuide\ColorModel;
 use SpectraBlocks\StyleGuide\Sync\ColorRoles;
+use SpectraBlocks\StyleGuide\Sync\MappingResolver;
 use WP_UnitTestCase;
 
 /**
@@ -24,8 +26,45 @@ class ColorRolesTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_all_roles(): void {
-		$this->assertCount( 10, ColorRoles::all() );
+		$this->assertCount( 11, ColorRoles::all() );
 		$this->assertCount( 3, ColorRoles::brand_roles() );
+	}
+
+	/**
+	 * Foreground is a first-class role sourced from its OWN stored colour.
+	 *
+	 * It used to be a derived variable that the override layer recomputed on every
+	 * read, which meant a theme shipping a `foreground` palette swatch (Spectra One)
+	 * had it silently repainted on the first Style Guide save. Pinning the role and
+	 * its token here is what keeps that from regressing.
+	 *
+	 * @return void
+	 */
+	public function test_foreground_is_a_stored_role(): void {
+		$this->assertTrue( ColorRoles::is_valid( ColorRoles::FOREGROUND ) );
+		$this->assertFalse( ColorRoles::is_brand( ColorRoles::FOREGROUND ) );
+
+		// Its own token, not a neutral stop borrowed from another role.
+		$this->assertSame( 'foreground', ColorRoles::sg_token( ColorRoles::FOREGROUND ) );
+		$this->assertSame( 'foreground', ColorModel::slug_for_token( 'foreground' ) );
+		$this->assertTrue( ColorModel::is_core_slug( 'foreground' ) );
+		$this->assertArrayHasKey( 'foreground', ColorModel::default_colors() );
+
+		// The semantic slug resolves to that token rather than to `neutral-7`.
+		$this->assertSame( 'foreground', ColorModel::semantic_map()['foreground'] );
+	}
+
+	/**
+	 * Spectra One maps the role to its native swatch; Astra has no such slot.
+	 *
+	 * @return void
+	 */
+	public function test_foreground_theme_mappings(): void {
+		$this->assertSame(
+			'foreground',
+			MappingResolver::for_theme( 'spectra-one' )->slug_for( ColorRoles::FOREGROUND )
+		);
+		$this->assertNull( MappingResolver::for_theme( 'astra' )->slug_for( ColorRoles::FOREGROUND ) );
 	}
 
 	/**

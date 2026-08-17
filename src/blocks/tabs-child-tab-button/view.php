@@ -33,7 +33,7 @@ if ( isset( $icon ) && 'before' === $icon_position ) {
 
 // Render the text if required.
 if ( $show_text ) {
-	echo '<div class="spectra-button__link">' . wp_kses_post( $text ) . '</div>';
+	echo '<span class="spectra-button__link">' . wp_kses_post( $text ) . '</span>';
 }
 
 // Render the icon after the text if required.

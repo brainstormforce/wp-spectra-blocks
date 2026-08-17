@@ -223,7 +223,7 @@ const Render = ( props ) => {
 			<RichText
 				placeholder={ __( 'Add text…', 'spectra-blocks' ) }
 				value={ text }
-				tagName="div"
+				tagName="span"
 				onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 				className="spectra-button__link"
 				rel={ htmlTagLink?.noFollow ? 'nofollow noopener' : 'follow noopener' }

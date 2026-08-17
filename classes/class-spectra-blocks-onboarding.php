@@ -111,13 +111,13 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 			\One_Onboarding\Core\Register::register_product(
 				'spectra-blocks',
 				array(
-					'title'       => __( 'Spectra Blocks Onboarding', 'spectra-blocks' ),
-					'product'     => array(
+					'title'                   => __( 'Spectra Blocks Onboarding', 'spectra-blocks' ),
+					'product'                 => array(
 						'id'   => 'spectra-blocks',
 						'name' => __( 'Spectra Blocks', 'spectra-blocks' ),
 					),
-					'logo'        => $plugin_url . 'admin/assets/images/spectra-blocks-wordmark.svg',
-					'screens'     => array(
+					'logo'                    => $plugin_url . 'admin/assets/images/spectra-blocks-wordmark.svg',
+					'screens'                 => array(
 						'welcome'   => array(
 							'heading'     => __( 'Welcome to Spectra Blocks', 'spectra-blocks' ),
 							'description' => __( 'Design your WordPress site with blocks that stay fast. Setup takes about two minutes.', 'spectra-blocks' ),
@@ -163,7 +163,8 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 							),
 						),
 						'features'  => array(
-							'description' => __( 'Enable the features you need to design faster and build better with Spectra Blocks.', 'spectra-blocks' ),
+							'heading'     => __( 'Spectra Blocks features', 'spectra-blocks' ),
+							'description' => __( 'Powerful features to design faster and build better with Spectra Blocks.', 'spectra-blocks' ),
 							'featureList' => self::get_feature_list(),
 							'upgradeUrl'  => 'https://wpspectra.com/pricing/?utm_source=spectra_dashboard&utm_medium=onboarding&utm_campaign=pro-features',
 						),
@@ -195,17 +196,19 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 							),
 						),
 					),
-					'exit'        => array(
+					'exit'                    => array(
 						'url'   => admin_url( 'admin.php?page=spectra-blocks' ),
 						'label' => __( 'Exit setup', 'spectra-blocks' ),
 					),
-					'colors'      => array(
+					'colors'                  => array(
 						'primary-brand'   => '#6005FF',
 						'secondary-brand' => '#4D21CA',
 					),
-					'option_name' => 'spectra_blocks_onboarding',
-					'pro_status'  => self::get_pro_status(),
-					'pro_slug'    => 'spectra-pro',
+					'option_name'             => 'spectra_blocks_onboarding',
+					'pro_status'              => self::get_pro_status(),
+					'pro_slug'                => 'spectra-blocks-pro',
+					// Toggling any one Pro feature on the Features screen selects/clears the whole Pro set.
+					'select_all_pro_features' => true,
 				)
 			);
 
@@ -224,16 +227,16 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
-			if ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) ) {
-				return 'Activated';
+			if ( is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
+				return 'active';
 			}
 
 			$all_plugins = get_plugins();
-			if ( isset( $all_plugins['spectra-pro/spectra-pro.php'] ) ) {
-				return 'Installed';
+			if ( isset( $all_plugins['spectra-blocks-pro/spectra-blocks-pro.php'] ) ) {
+				return 'inactive';
 			}
 
-			return 'Not Installed';
+			return 'not-installed';
 		}
 
 		/**
@@ -266,6 +269,8 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 				$optin     = ! empty( $user_info['optIn'] );
 
 				update_site_option( 'spectra_blocks_usage_optin', $optin ? 'yes' : 'no' );
+				// Mirror to the dashboard analytics setting so both consent sources stay coherent.
+				update_option( 'spectra_blocks_analytics_optin', $optin ? 'yes' : 'no' );
 
 				if ( $optin ) {
 					self::generate_lead( $user_info );

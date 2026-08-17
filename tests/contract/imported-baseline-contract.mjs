@@ -106,7 +106,9 @@ const PINS = [
 	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common.single .item .remove)', decls: [ 'display:none' ] },
 	// Search input collapses ONLY once a value is selected (item then supplies the line
 	// box); empty keeps it so the placeholder shows + the height matches text inputs.
-	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common.single.has-items .ts-control input[id^=tomselect-])', decls: [ 'height:0' ] },
+	// Substring stops before the attr value: src quotes it (`[id^="tomselect-"]`),
+	// the minified build does not — the shared prefix matches both.
+	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common.single.has-items .ts-control input[id^=', decls: [ 'height:0' ] },
 	// Right-side clear "×" revealed on selection (native SureForms), left of the caret.
 	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common.has-items .clear-button)', decls: [ 'visibility:visible' ] },
 	// …and pinned to the RIGHT — absent: TomSelect's `--ts-pr-caret` puts the "×" on the
@@ -119,6 +121,15 @@ const PINS = [
 	// dropdown's box matches the sibling text inputs' height (else it renders shorter).
 	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common .ts-control input)', decls: [ 'font-size:inherit' ] },
 	{ sel: ':where(.srfm-styling-none .srfm-dropdown-common .ts-dropdown-icon)', decls: [ 'position:absolute' ] },
+	// A17 heading revert must cover the axes the HOST's global-styles user layer sets at the
+	// same (0,0,1) tier — absent: imported headings render the host site's uppercase/
+	// capitalize + per-heading letter-spacing (measured 2026-08-16: 125/142 headings across
+	// an 8-template benchmark wore the host's text-transform).
+	{ sel: ':where(.entry-content,.wp-block-template-part) h6', decls: [ 'text-transform:revert', 'letter-spacing:revert' ] },
+	// A16 button revert must cover the theme's `.wp-element-button` padding — absent: a
+	// converted text link that never declared padding inflates 21px → 53px tall and
+	// re-centers its grid row (consulting benchmark, 2026-08-16).
+	{ sel: ':where(.wp-element-button,.wp-block-button__link)', decls: [ 'padding:revert' ] },
 ];
 
 // The declaration body of the rule whose selector list contains `sel` — from the

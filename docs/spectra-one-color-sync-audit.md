@@ -76,7 +76,7 @@ Read every row left-to-right: **this Spectra One colour becomes this Style Guide
 palette. It is still two-way because it maps to a brand seed (`chromatic3`). This is
 the key difference from Astra, which has no accent slot at all.
 
-#### B. Neutrals (two-way ⇄) & tints/mirrors (push-only →)
+#### B. Neutrals + Foreground (two-way ⇄) & tints (unmanaged —)
 
 | Spectra One slug | Label | Theme default | Sync | → Style Guide colour | SG token | SG default |
 | --- | --- | --- | :--: | --- | --- | --- |
@@ -88,7 +88,7 @@ the key difference from Astra, which has no accent slot at all.
 | `neutral` | Neutral | `#6E7787` | ⇄ | **Muted** | `neutral-4` | computed |
 | `tertiary` | Tertiary | `#F6EBFE` | — | *unmanaged* (was a primary tint — tint shades are no longer generated) | — | — |
 | `quaternary` | Quaternary | `#FFFBEB` | — | *unmanaged* (was a secondary tint) | — | — |
-| `foreground` | Foreground | `#6431F7` | → | **Primary** (mirror) | `chromatic1-7` | `#6431f6` |
+| `foreground` | Foreground | `#6431F7` | ⇄ | **Foreground** | `foreground` | `#ffffff` |
 
 Spectra One's `primary`/`secondary` theme defaults (`#6431F6` / `#7345F7`) match the
 Style Guide seeds exactly — it's the sibling theme. `heading`/`body` are the theme's
@@ -101,8 +101,9 @@ own values; the Style Guide's `neutral-7`/`neutral-5` are stored colours and may
   (Text/Background/Link/Heading/Button/Captions) are two-way — see §2.3.
 - `—` **unmanaged** — `tertiary`/`quaternary` kept the theme's own values: they were
   driven by generated tint shades, which no longer exist.
-- `→` **push-only** — Style Guide → theme only. `foreground` mirrors Primary, so a
-  direct edit of that swatch is not pulled back.
+- `→` **push-only** — Style Guide → theme only. No palette swatch is push-only any
+  more: `foreground` used to be, as a mirror of Primary, and is now two-way in its
+  own right (see below). The symbol is kept for the derived settings in §2.2.
 
 ### 2.2 Colours the Style Guide injects (no native slot)
 
@@ -176,8 +177,15 @@ hardcoded pair `#1F2937`/`#fff`) are unaffected.
 - **SG neutral defaults are computed** (OKLCH-derived from the brand seed); only
   `neutral-0` = `#ffffff` is a fixed literal. Neutral rows describe the value rather
   than pin a hex.
-- **`foreground` mirrors `primary`** (both → `chromatic1-7`); it is a separate slug,
-  so it's push-only even though it equals the two-way Primary.
+- **`foreground` is its own stored role**, not a mirror of Primary. It used to be a
+  DERIVED variable recomputed as `contrast('#ffffff', primary) >= 4.5 ? '#ffffff' :
+  heading`, and because that override layer is applied AFTER the semantic map, the
+  slug resolved to neither the theme's `#6431F7` nor `SEMANTIC_MAP`'s `neutral-7` —
+  it resolved to white, so the first Style Guide save repainted the theme's swatch.
+  It is now the tenth stored core role with its own token, mapped to this theme's
+  native swatch, so it round-trips like the other nine: an unsaved guide inherits
+  `#6431F7`, and saving writes that same value back rather than overwriting it.
+  The contrast formula survives as the editor's AUTO/Reset derivation for the row.
 - **`transparent` / `currentColor` / `inherit`** are utility palette entries and are
   never synced.
 

@@ -57,34 +57,79 @@ class Engine {
 	const CACHE_KEY = 'spectra_style_guide_tokens';
 
 	/**
-	 * Mapping from Astra global color slug strings to Style Guide sg-* slugs.
+	 * Style Guide shade token => its `sg-*` palette alias.
 	 *
-	 * Used by rewrite_astra_color_attrs() to rewrite block attribute values
-	 * (textColor, backgroundColor, borderColor, and var:preset|color|* style
-	 * references) from Astra palette slugs to the sg-* equivalents at render
-	 * time. No database changes — purely a runtime filter.
+	 * The layout-independent half of the Astra slug rewrite: which alias stands for
+	 * a given token. {@see self::astra_to_sg_slug()} composes it with the adapter's
+	 * flag-aware slot map to get the Astra-slug => sg-slug table that
+	 * {@see self::rewrite_astra_color_attrs()} applies.
 	 *
 	 * @since 1.0.0
 	 * @var array<string, string>
 	 */
-	const ASTRA_TO_SG_SLUG = array(
-		// Each Astra slot maps to the sg-* alias of the SAME Style Guide token it is
-		// synced to by AstraPaletteAdapter::SEMANTIC_TOKENS, so the rewritten colour
-		// matches the slot's real value on every theme (slot 0 brand->primary,
-		// 1 alt-brand->secondary, 2 headings->neutral-7, 3 text->neutral-5,
-		// 4 primary-bg->neutral-0, 5 secondary-bg->neutral-1, 6 alternate-bg->neutral-2).
-		// Slots 7 (subtle bg) and 8 (other supporting) are NOT synced to any Style
-		// Guide token, so they are intentionally omitted — leaving `ast-global-color-7/8`
-		// unrewritten resolves them to Astra's OWN values instead of force-mapping them
-		// to an unrelated Style Guide colour (which made distinct slots render alike).
-		'ast-global-color-0' => 'primary',
-		'ast-global-color-1' => 'secondary',
-		'ast-global-color-2' => 'sg-heading',
-		'ast-global-color-3' => 'sg-body',
-		'ast-global-color-4' => 'sg-background',
-		'ast-global-color-5' => 'sg-surface',
-		'ast-global-color-6' => 'sg-border',
+	const TOKEN_TO_SG_SLUG = array(
+		'primary'   => 'primary',
+		'secondary' => 'secondary',
+		'neutral-7' => 'sg-heading',
+		'neutral-5' => 'sg-body',
+		'neutral-0' => 'sg-background',
+		'neutral-1' => 'sg-surface',
+		'neutral-2' => 'sg-border',
+		'neutral-4' => 'sg-muted',
+		'accent'    => 'sg-accent',
 	);
+
+	/**
+	 * Astra palette slug => Style Guide `sg-*` alias slug, for the ACTIVE layout.
+	 *
+	 * Each Astra slot maps to the sg-* alias of the SAME Style Guide token the sync
+	 * writes into that slot, so the rewritten colour always matches the slot's real
+	 * value. The slot INDEX comes from {@see AstraPaletteAdapter::shade_map()} rather
+	 * than a hardcoded table: Astra's background slots move with the 4.8.9 reorganize
+	 * flag, so a fixed table rewrote legacy installs to the wrong colour (background
+	 * and surface swapped, and the slot holding outline left unrewritten).
+	 *
+	 * Slots not covered by the sync (Subtle Background / Other Supporting) are
+	 * absent, so `ast-global-color-7/8` stay unrewritten and resolve to Astra's OWN
+	 * values instead of being force-mapped onto an unrelated Style Guide colour
+	 * (which made distinct slots render alike).
+	 *
+	 * @since 1.0.5
+	 *
+	 * @return array<string, string> Astra slug => sg-* slug.
+	 */
+	public static function astra_to_sg_slug(): array {
+		// Memoized: the caller is `rewrite_astra_color_attrs()` on `render_block_data`,
+		// i.e. once per BLOCK, and building this map costs an Astra option read plus a
+		// filter dispatch. This replaced a plain class constant, so without the memo a
+		// content-heavy page pays that repeatedly for a value that cannot change —
+		// Astra's slot layout is fixed by a stored compatibility flag that only moves
+		// on a theme upgrade, never mid-request. {@see self::flush_caches()} clears it
+		// so tests and any consumer that does change the flag can force a rebuild.
+		if ( null !== self::$astra_to_sg_slug ) {
+			return self::$astra_to_sg_slug;
+		}
+
+		$map = array();
+		foreach ( AstraPaletteAdapter::shade_map() as $index => $token ) {
+			if ( isset( self::TOKEN_TO_SG_SLUG[ $token ] ) ) {
+				$map[ AstraPaletteAdapter::SLUG_PREFIX . $index ] = self::TOKEN_TO_SG_SLUG[ $token ];
+			}
+		}
+
+		self::$astra_to_sg_slug = $map;
+		return $map;
+	}
+
+	/**
+	 * Memoized Astra slug => `sg-*` slug map ({@see self::astra_to_sg_slug()}), or
+	 * null when not yet built. Static because the render-path caller is a filter on
+	 * every block, not an instance method.
+	 *
+	 * @since 1.0.5
+	 * @var array<string, string>|null
+	 */
+	private static $astra_to_sg_slug = null;
 
 	/**
 	 * Singleton instance.
@@ -252,11 +297,13 @@ class Engine {
 		$attrs    = $parsed_block['attrs'];
 		$modified = false;
 
+		$astra_to_sg = self::astra_to_sg_slug();
+
 		// Rewrite direct palette slug attributes.
 		$slug_keys = array( 'textColor', 'backgroundColor', 'borderColor' );
 		foreach ( $slug_keys as $key ) {
-			if ( isset( $attrs[ $key ] ) && isset( self::ASTRA_TO_SG_SLUG[ $attrs[ $key ] ] ) ) {
-				$attrs[ $key ] = self::ASTRA_TO_SG_SLUG[ $attrs[ $key ] ];
+			if ( isset( $attrs[ $key ] ) && isset( $astra_to_sg[ $attrs[ $key ] ] ) ) {
+				$attrs[ $key ] = $astra_to_sg[ $attrs[ $key ] ];
 				$modified      = true;
 			}
 		}
@@ -270,7 +317,7 @@ class Engine {
 
 				$search  = array();
 				$replace = array();
-				foreach ( self::ASTRA_TO_SG_SLUG as $astra_slug => $sg_slug ) {
+				foreach ( $astra_to_sg as $astra_slug => $sg_slug ) {
 					$search[]  = 'var:preset|color|' . $astra_slug;
 					$replace[] = 'var:preset|color|' . $sg_slug;
 				}
@@ -368,7 +415,8 @@ class Engine {
 	 * @return void
 	 */
 	public function flush_caches(): void {
-		$this->token_registry = null;
+		$this->token_registry   = null;
+		self::$astra_to_sg_slug = null;
 		wp_cache_delete( self::CACHE_KEY, self::CACHE_GROUP );
 
 		if ( function_exists( 'wp_clean_theme_json_cache' ) ) {
@@ -446,6 +494,15 @@ class Engine {
 			$tokens->set( $slug, $hex );
 		}
 
+		// Standalone roles — stored colours with no ramp position (foreground), so the
+		// hex is set straight onto the role's own token.
+		foreach ( ColorModel::standalone_map() as $slug => $token ) {
+			$hex = sanitize_hex_color( $colors[ $slug ] ?? '' );
+			if ( $hex ) {
+				$tokens->set( $token, $hex );
+			}
+		}
+
 		// Constants.
 		$tokens->set( 'white', '#ffffff' );
 		$tokens->set( 'transparent', 'transparent' );
@@ -465,7 +522,7 @@ class Engine {
 	 * their ramp positions (0/1/2/4/5/7). No interpolation: stops 3 and 6 are
 	 * not generated.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $config Config array.
 	 * @return array<int, string> stop => hex.
@@ -483,7 +540,7 @@ class Engine {
 	 * Resolve the nine v2 colours from a config, filling any missing slug from the
 	 * defaults so compute() always has a complete palette.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $config Config array.
 	 * @return array<string, string> slug => hex for all nine core roles.
@@ -505,7 +562,7 @@ class Engine {
 	 * Build the internal index-keyed chromatic map the shade pipeline expects:
 	 * brand chromatics 1-3 from the stored colours + fixed status chromatics 4-7.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $colors slug => hex (nine core roles).
 	 * @return array<int, array{hex: string, name: string}> index => chromatic.
@@ -532,7 +589,7 @@ class Engine {
 	 * {@see ColorModel::default_colors()}, the single PHP source for every colour
 	 * default (brand, neutral and status).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string> slug => hex (nine core roles).
 	 */
@@ -552,7 +609,7 @@ class Engine {
 	 * reverse sync uses ({@see Sync\SyncOrchestrator::pull_from_theme()}), run once
 	 * to seed defaults rather than to persist.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string> slug => hex for all nine core roles.
 	 */
@@ -573,8 +630,9 @@ class Engine {
 
 		// Read the active theme's palette from whichever store adapter supports it
 		// (FSE global styles on block themes, Astra settings when Astra is active).
+		$astra   = new AstraPaletteAdapter();
 		$by_slug = array();
-		foreach ( array( new FseGlobalStylesAdapter(), new AstraPaletteAdapter() ) as $adapter ) {
+		foreach ( array( new FseGlobalStylesAdapter(), $astra ) as $adapter ) {
 			if ( $adapter->is_supported() ) {
 				$by_slug += $adapter->read();
 			}
@@ -584,6 +642,41 @@ class Engine {
 
 		if ( empty( $by_slug ) ) {
 			return $colors;
+		}
+
+		// Astra: resolve through the ADAPTER's own slot map, not the curated
+		// MappingResolver profile. The profile cannot serve here for two reasons.
+		// First, it registers only the two brand slots, so the five neutral roles
+		// (heading/body/background/surface/outline) would stay on Spectra's literals
+		// — and the user's FIRST save would then push those literals over Astra's own
+		// headings/text/backgrounds. Second, its slugs are fixed indices, while
+		// Astra's background slots move with the 4.8.9 reorganize flag, so a legacy
+		// install would inherit the wrong slots.
+		// {@see AstraPaletteAdapter::shade_map()} is the same source of truth the
+		// push uses, so what the Style Guide inherits is exactly what it writes back:
+		// leave a colour untouched in the editor and its save is a no-op for Astra.
+		//
+		// Runs BEFORE the generic pass so the mapping stays overridable: the resolved
+		// role map is filterable ({@see MappingResolver::for_active_theme()}, the
+		// documented extension point for the stored/manual tier and third parties),
+		// and applying this after it would silently beat any Astra rows a filter set.
+		// The curated profile's own two brand rows resolve to these same slots, so the
+		// generic pass simply re-affirms them when nothing filters the mapping.
+		if ( $astra->is_supported() ) {
+			foreach ( $astra->reverse_map() as $index => $token ) {
+				$slug = AstraPaletteAdapter::SLUG_PREFIX . $index;
+				if ( ! isset( $by_slug[ $slug ] ) ) {
+					continue;
+				}
+				$core = ColorModel::slug_for_token( (string) $token );
+				if ( null === $core ) {
+					continue;
+				}
+				$hex = sanitize_hex_color( (string) $by_slug[ $slug ] );
+				if ( $hex ) {
+					$colors[ $core ] = $hex;
+				}
+			}
 		}
 
 		// Land each registered role's theme colour on the core slug it owns — only
@@ -723,7 +816,7 @@ class Engine {
 	 * Accepts the stored config only when it has a `colors` map. Anything else — an
 	 * empty option or a legacy v1 config — falls back to the default. No migration.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, mixed> Canonical v2 config.
 	 */
@@ -758,7 +851,7 @@ class Engine {
 	 *
 	 * Front end only — editing surfaces resolve the SITE guide.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, mixed>|null
 	 */
@@ -779,7 +872,7 @@ class Engine {
 	 * which is cached site-wide, so a page palette there would leak onto every other
 	 * page under a persistent object cache.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string> slug => hex.
 	 */
@@ -829,7 +922,7 @@ class Engine {
 	 * The `--wp--preset--color--*` block for the queried page's own Style Guide, or
 	 * '' when it has none.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string CSS, or ''.
 	 */
@@ -851,7 +944,7 @@ class Engine {
 	 * the lock renders on `body` and would otherwise beat the `:root` block
 	 * {@see GlobalStylesBridge::print_page_palette()} emits for this page.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return string[] Slugs without the `--wp--preset--color--` prefix.
 	 */
@@ -867,7 +960,7 @@ class Engine {
 	 * therefore carries no `_` prefix, {@see self::protect_page_meta()} marks it
 	 * protected so the classic Custom Fields box neither lists nor writes it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @return void
 	 */
 	public function register_page_meta(): void {
@@ -894,7 +987,7 @@ class Engine {
 	/**
 	 * Hide the page-level Style Guide meta from the Custom Fields UI.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param bool   $is_protected Whether the key is protected.
 	 * @param string $meta_key     Meta key.
@@ -907,7 +1000,7 @@ class Engine {
 	/**
 	 * Sanitize a page-level Style Guide before it is stored.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param mixed $value Incoming meta value.
 	 * @return array<string, mixed> Canonical, sanitized v2 config.
@@ -922,7 +1015,7 @@ class Engine {
 	 * matches a generated preset slug thereby overrides it (old semantic_overrides
 	 * behaviour); a new slug adds a colour.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $custom_colors Custom colours.
 	 * @return array<string, string> slug => hex.
@@ -956,7 +1049,7 @@ class Engine {
 	 *  - surface-2  : Primary mixed 90% toward the background.
 	 *  - overlay    : heading mixed 20% toward black.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $colors The nine core role colours (slug => hex).
 	 * @return array<string, string> slug => hex.
@@ -966,10 +1059,15 @@ class Engine {
 		$background = ColorMath::normalize( (string) ( $colors['background'] ?? '' ), '#ffffff' );
 		$heading    = ColorMath::normalize( (string) ( $colors['heading'] ?? '' ), '#111111' );
 
+		// `foreground` is NOT listed here any more. It is a stored core role, so its
+		// value comes from `colors['foreground']` via the semantic map. Leaving it in
+		// this layer made the override win over the map on every read — including on
+		// themes that ship their own `foreground` swatch, which a Style Guide save
+		// then silently repainted. The contrast formula it used lives on as the
+		// editor's AUTO/Reset derivation for the role.
 		return array(
-			'foreground' => ColorMath::contrast_ratio( '#ffffff', $primary ) >= 4.5 ? '#ffffff' : $heading,
-			'surface-2'  => ColorMath::mix( $primary, $background, 0.9 ),
-			'overlay'    => ColorMath::mix( $heading, '#000000', 0.2 ),
+			'surface-2' => ColorMath::mix( $primary, $background, 0.9 ),
+			'overlay'   => ColorMath::mix( $heading, '#000000', 0.2 ),
 		);
 	}
 
@@ -982,7 +1080,7 @@ class Engine {
 	 * through, so a slug or hex that reaches `wp_head` can only ever be one that
 	 * `sanitize_key()`/`sanitize_hex_color()` accepted.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $config Configuration array.
 	 * @return array<string, mixed> Canonical v2 config.
@@ -1014,7 +1112,7 @@ class Engine {
 	 * merge and {@see self::canonical_config()} so a colour is sanitized identically
 	 * whether it arrives over the route or straight through `update_post_meta()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string|int, mixed> $custom_colors Raw custom colours.
 	 * @return array<string, array<string, string>> slug => { hex, name }.
@@ -1190,13 +1288,13 @@ class Engine {
 	 * id) could write a palette into someone else's draft, a revision, an attachment,
 	 * a `wp_template_part` or a `wp_block`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * Shared with the Global Styles page-scoped writers, which have the same shape
 	 * and the same exposure — a larger one, in fact, since they store arbitrary
 	 * per-page CSS rather than a colour palette.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int $post_id Target post.
 	 * @return true|\WP_Error
@@ -1435,9 +1533,15 @@ class Engine {
 
 		return rest_ensure_response(
 			array(
-				'tokens'  => $this->token_registry ? $this->token_registry->get_all() : array(),
-				'palette' => $this->token_registry ? $this->token_registry->get_wp_palette() : array(),
-				'css'     => $this->token_registry ? $this->token_registry->get_css_string() : '',
+				'tokens'          => $this->token_registry ? $this->token_registry->get_all() : array(),
+				'palette'         => $this->token_registry ? $this->token_registry->get_wp_palette() : array(),
+				'css'             => $this->token_registry ? $this->token_registry->get_css_string() : '',
+				// The editor's live preview mirrors the Astra aliases the bridge emits,
+				// so it needs the SAME slot map — which is layout-dependent and only
+				// resolvable server-side ({@see GlobalStylesBridge::astra_shade_map()}).
+				// Shipping it here keeps the client from hardcoding a copy that is wrong
+				// on legacy Astra installs.
+				'astra_shade_map' => GlobalStylesBridge::astra_shade_map(),
 			)
 		);
 	}
@@ -1472,20 +1576,24 @@ class Engine {
 
 		return rest_ensure_response(
 			array(
-				'tokens'   => $this->token_registry ? $this->token_registry->get_all() : array(),
-				'palette'  => $this->token_registry ? $this->token_registry->get_wp_palette() : array(),
-				'css'      => $this->token_registry ? $this->token_registry->get_css_string() : '',
+				'tokens'          => $this->token_registry ? $this->token_registry->get_all() : array(),
+				'palette'         => $this->token_registry ? $this->token_registry->get_wp_palette() : array(),
+				'css'             => $this->token_registry ? $this->token_registry->get_css_string() : '',
 				// Ready-to-inject combined CSS for a live editor preview (Layer A
 				// token ramps + Layer B --wp--preset--color--*), so a consumer can
 				// inject ONE string with no client-side token math. The semantic map
 				// is the ColorModel constant; overrides derive from custom_colors
 				// (build_config_from_request returns canonical keys only).
-				'css_full' => $this->build_preview_css(
+				'css_full'        => $this->build_preview_css(
 					ColorModel::semantic_map(),
 					$this->custom_colors_as_overrides(
 						isset( $config['custom_colors'] ) && is_array( $config['custom_colors'] ) ? $config['custom_colors'] : array()
 					)
 				),
+				// Layout-aware Astra slot map — see rest_get_computed(). The preview
+				// path needs it too: the editor mirrors the Astra aliases live while
+				// the user drags a colour, before anything is saved.
+				'astra_shade_map' => GlobalStylesBridge::astra_shade_map(),
 			)
 		);
 	}
@@ -1505,7 +1613,7 @@ class Engine {
 	 *
 	 * MUST be called AFTER compute() — reads the live token_registry.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $semantic_map slug => shade-token key (e.g. "primary" => "chromatic1-7").
 	 * @param array<string, string> $overrides    slug => explicit hex (wins over the derived value).
@@ -1547,9 +1655,9 @@ class Engine {
 		// on apply (inject_astra_compat_editor_styles + get_astra_compat_css) so
 		// Astra-driven blocks (--wp--preset--color--ast-global-color-N via the
 		// has-ast-global-color-N-* classes, and the raw --ast-global-color-N alias)
-		// preview too. Uses the bridge's ASTRA_SHADE_MAP as the single source.
+		// preview too. Uses the bridge's astra_shade_map() as the single source.
 		$ast_decls = array();
-		foreach ( GlobalStylesBridge::ASTRA_SHADE_MAP as $index => $shade_key ) {
+		foreach ( GlobalStylesBridge::astra_shade_map() as $index => $shade_key ) {
 			if ( ! isset( $tokens[ $shade_key ] ) ) {
 				continue;
 			}

@@ -61,6 +61,7 @@ class Spectra_Blocks_Loader {
 		Spectra_Blocks_Rollback::init();
 		Spectra_Blocks_Visibility::get_instance();
 		add_action( 'init', array( 'Spectra_Blocks_Helper', 'init' ) );
+		add_action( 'admin_init', array( __CLASS__, 'maybe_track_version_update' ) );
 
 		// Shared BSF libraries — use class_exists / global version negotiation
 		// to avoid conflicts when UAGB (or another BSF plugin) is also active.
@@ -69,6 +70,24 @@ class Spectra_Blocks_Loader {
 		// BSF Analytics.
 		if ( ! class_exists( 'BSF_Analytics_Loader' ) && file_exists( $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php' ) ) {
 			require_once $lib_dir . 'bsf-analytics/class-bsf-analytics-loader.php';
+		}
+
+		// Register the Spectra Blocks analytics entity so usage data is collected
+		// and transmitted under its own product, independent of Spectra/UAGB.
+		if ( class_exists( 'BSF_Analytics_Loader' ) && is_callable( 'BSF_Analytics_Loader::get_instance' ) ) {
+			$spectra_blocks_bsf_analytics = BSF_Analytics_Loader::get_instance();
+
+			$spectra_blocks_bsf_analytics->set_entity(
+				array(
+					'spectra_blocks' => array(
+						'product_name'        => 'Spectra Blocks',
+						'path'                => untrailingslashit( $lib_dir . 'bsf-analytics' ),
+						'author'              => 'Spectra by Brainstorm Force',
+						'time_to_display'     => '+24 hours',
+						'hide_optin_checkbox' => true,
+					),
+				)
+			);
 		}
 
 		// Zip AI — global version negotiation via $zip_ai_version / $zip_ai_path.
@@ -110,6 +129,9 @@ class Spectra_Blocks_Loader {
 
 		// Load learn actions for block editor guided steps.
 		require_once $classes_dir . 'class-spectra-blocks-learn-actions.php';
+
+		// Auto-open the Astra Settings panel for the Learn "Page Layout" steps.
+		require_once $classes_dir . 'class-spectra-blocks-astra-settings-auto-open.php';
 
 		// Load learn actions for admin dashboard guided tooltips.
 		require_once $classes_dir . 'class-spectra-blocks-admin-learn-actions.php';
@@ -167,6 +189,35 @@ class Spectra_Blocks_Loader {
 	}
 
 	/**
+	 * Detect a plugin version change on load and emit the plugin_updated event.
+	 *
+	 * Compares the stored version against the current constant and fires the
+	 * update actions the event tracker listens on, then stamps the new version.
+	 * The first observation only stamps (no event — the from-version is unknown).
+	 *
+	 * @since 1.0.4
+	 * @return void
+	 */
+	public static function maybe_track_version_update() {
+		$current = defined( 'SPECTRA_BLOCKS_VER' ) ? SPECTRA_BLOCKS_VER : '';
+		if ( '' === $current ) {
+			return;
+		}
+
+		$stored = get_option( 'spectra_blocks_version', '' );
+		if ( ! is_string( $stored ) || '' === $stored ) {
+			update_option( 'spectra_blocks_version', $current );
+			return;
+		}
+
+		if ( $stored !== $current ) {
+			do_action( 'spectra_blocks_update_before' );
+			update_option( 'spectra_blocks_version', $current );
+			do_action( 'spectra_blocks_update_after' );
+		}
+	}
+
+	/**
 	 * Plugin activation callback.
 	 */
 	public static function on_activation() {
@@ -181,6 +232,11 @@ class Spectra_Blocks_Loader {
 		// semantics, or the utility grammar (GIT-106 cutover).
 		if ( class_exists( '\\SpectraBlocks\\GlobalStyles\\JitCache' ) ) {
 			\SpectraBlocks\GlobalStyles\JitCache::bump_version();
+		}
+
+		// Stamp first-install time for days-since-install analytics.
+		if ( ! get_site_option( 'spectra_blocks_usage_installed_time' ) ) {
+			update_site_option( 'spectra_blocks_usage_installed_time', time() );
 		}
 
 		update_option( '__spectra_blocks_do_redirect', true );

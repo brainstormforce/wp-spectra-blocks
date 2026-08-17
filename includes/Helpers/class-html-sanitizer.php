@@ -779,7 +779,9 @@ class HtmlSanitizer {
 				'aria-activedescendant' => true,
 			),
 			/**
-			 * Script tag for structured data (JSON-LD only).
+			 * Script tag for structured data (JSON-LD only). kses validates this
+			 * `type` when present but cannot REQUIRE it, so the JSON-LD-only part
+			 * is enforced after sanitization by strip_disallowed_scripts().
 			 */
 			'script'        => array(
 				'type' => array( 'application/ld+json' ),
@@ -923,6 +925,148 @@ class HtmlSanitizer {
 
 
 	/**
+	 * Swaps `data:image/*` sources for inert https placeholders.
+	 *
+	 * `wp_kses()` runs every URL attribute through `wp_kses_bad_protocol()`,
+	 * and a disallowed scheme is not blanked — it is REMOVED, leaving the rest
+	 * of the value behind. So `src="data:image/svg+xml,…"` comes back as
+	 * `src="image/svg+xml,…"`, which the browser then resolves as a relative
+	 * path and 404s. The image is not merely unstyled, it is broken, and the
+	 * markup that produced it was valid.
+	 *
+	 * Adding `data` to `kses_allowed_protocols` would fix the symptom and open
+	 * the `href` vector at the same time. Shielding the value instead keeps the
+	 * scheme restriction everywhere it matters — the same technique this method
+	 * already uses for SureForms' `<style>` block.
+	 *
+	 * Three constraints keep the shield to contexts a browser treats as an
+	 * image, where SVG is rendered but its script never runs:
+	 *
+	 * - Media tags only (`img`/`video`/`source`). `iframe`, `embed` and
+	 *   `object` are allowlisted in this same file and DO execute script in
+	 *   `data:image/svg+xml`, so they must keep getting the scheme stripped.
+	 * - The `src`/`poster` attributes only, never `href` —
+	 *   `data:text/html;base64,…` in a link is the live XSS vector that keeps
+	 *   `data` out of `wp_allowed_protocols()`.
+	 * - The `data:image/` mediatype only, so `data:text/html` is still stripped
+	 *   even inside a `src`.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param string               $content HTML about to be sanitized.
+	 * @param array<string,string> $store   Filled with placeholder => original value.
+	 * @return string Content with data: image sources replaced by placeholders.
+	 */
+	private static function shield_data_uris( string $content, array &$store ): string {
+		// stripos, not strpos: both patterns below are /i, and a scheme and
+		// mediatype are case-insensitive, so `DATA:image/` is a valid data URI.
+		// A case-sensitive guard would make the fix depend on whether some
+		// unrelated image elsewhere in the same string happened to be lowercase.
+		if ( false === stripos( $content, 'data:image/' ) ) {
+			return $content;
+		}
+
+		// Unguessable per call: a deterministic placeholder could be written
+		// verbatim into an `href` by the content itself and would then be
+		// restored to a `data:` URI, bypassing the href exclusion above.
+		// random_bytes() rather than wp_generate_password(): the latter is a
+		// pluggable running through the `random_password` filter, so a plugin
+		// could pin it to a constant (reopening the forgery) or return bytes
+		// that do not survive kses (leaking the placeholder into the page).
+		$salt = bin2hex( random_bytes( 8 ) );
+
+		// Match whole media tags first — the attribute pattern alone is
+		// tag-agnostic and would also shield `<iframe src>`/`<embed src>`.
+		// The atomic group is quote-aware so an unencoded `>` inside a data
+		// URI cannot end the tag early.
+		return preg_replace_callback(
+			'#<(?:img|video|source)\b(?>[^>"\']+|"[^"]*"|\'[^\']*\')*>#i',
+			static function ( $tag ) use ( &$store, $salt ) {
+				return preg_replace_callback(
+					// `<` and `>` are excluded from the value as well as quotes:
+					// the restore re-emits these bytes verbatim, and kses would
+					// otherwise have entity-encoded them. Costs only inline SVG
+					// data URIs left un-percent-encoded, which almost always
+					// carry quotes and are excluded on that count already.
+					'#\s(src|poster)\s*=\s*(["\'])(data:image/[^"\'<>]*)\2#i',
+					static function ( $matches ) use ( &$store, $salt ) {
+						// A syntactically ordinary https URL: kses passes it through
+						// untouched, so the placeholder is still there to swap back.
+						$key           = 'https://spectra-data-uri.invalid/' . $salt . '/' . count( $store ) . '/';
+						$store[ $key ] = $matches[3];
+						return ' ' . $matches[1] . '=' . $matches[2] . $key . $matches[2];
+					},
+					$tag[0]
+					// On PCRE failure keep the tag as-is: worst case the scheme
+					// is stripped, which is today's behaviour.
+				) ?? $tag[0];
+			},
+			$content
+		) ?? $content;
+	}
+
+	/**
+	 * Tells whether a `<script>` opening tag's attributes mark it as JSON-LD.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param string $attrs The raw attribute string from the opening tag.
+	 * @return bool True when `type` is `application/ld+json`.
+	 */
+	private static function is_json_ld_script( string $attrs ): bool {
+		// The optional-quote backreference accepts `type=application/ld+json`,
+		// `type="…"` and `type='…'` — kses normalises quoting, but this helper
+		// also runs over content kses left as-is (see strip_disallowed_scripts).
+		return 1 === preg_match( '#\btype\s*=\s*(["\']?)application/ld\+json\1#i', $attrs );
+	}
+
+	/**
+	 * Drops `<script>` elements that are not JSON-LD.
+	 *
+	 * The allowlist above declares `script` with `type` constrained to
+	 * `application/ld+json`, but kses only validates an attribute's VALUE when
+	 * the attribute is present — it cannot REQUIRE one. A bare `<script>` is
+	 * therefore an allowed element and survives `wp_kses()` intact, so the
+	 * "JSON-LD only" intent was documented but never enforced.
+	 *
+	 * Runs BEFORE the data: URI restore: at that point every shielded value is
+	 * an inert https placeholder, so any `<script>` still present is a real
+	 * element rather than bytes inside an attribute value that this regex could
+	 * corrupt.
+	 *
+	 * @since 1.0.5
+	 *
+	 * @param string $html Kses-sanitized HTML.
+	 * @return string HTML with non-JSON-LD script elements removed.
+	 */
+	private static function strip_disallowed_scripts( string $html ): string {
+		if ( false === stripos( $html, '<script' ) ) {
+			return $html;
+		}
+
+		// Paired form first, so the payload does not survive as text content.
+		$html = preg_replace_callback(
+			'#<script\b([^>]*)>.*?</script\s*>#is',
+			static function ( $matches ) {
+				return self::is_json_ld_script( $matches[1] ) ? $matches[0] : '';
+			},
+			$html
+			// On PCRE failure keep the input: the orphan pass below still runs.
+		) ?? $html;
+
+		// An UNCLOSED `<script>` is the leftover that matters — a browser treats
+		// the remainder of the document as its body — so drop the opening tag
+		// too. A stray `</script>` needs no handling; alone it is inert.
+		return preg_replace_callback(
+			'#<script\b([^>]*)>#i',
+			static function ( $matches ) {
+				return self::is_json_ld_script( $matches[1] ) ? $matches[0] : '';
+			},
+			$html
+		) ?? $html;
+	}
+
+	/**
 	 * Sanitizes and outputs or returns HTML content.
 	 *
 	 * When $echo is true, outputs the sanitized HTML directly. When false, returns the sanitized string.
@@ -951,9 +1095,24 @@ class HtmlSanitizer {
 			}
 		}
 
+		// Shield data: image sources — kses would strip the scheme and leave a
+		// broken relative URL behind ({@see shield_data_uris}).
+		$data_uris = array();
+		$content   = self::shield_data_uris( $content, $data_uris );
+
 		// Temporarily allow SVG CSS properties during processing.
 		self::allow_svg_css_properties();
 		$sanitized = wp_kses( $content, $allowed_tags );
+
+		// Enforce the allowlist's "JSON-LD only" intent for `script`, which kses
+		// itself cannot express ({@see strip_disallowed_scripts}).
+		$sanitized = self::strip_disallowed_scripts( $sanitized );
+
+		// Restore them verbatim: the same bytes that were removed, so the value
+		// is no less escaped than it arrived. strtr() replaces in a single pass,
+		// so a placeholder can never be substituted into already-restored text;
+		// it also no-ops on an empty array.
+		$sanitized = strtr( $sanitized, $data_uris );
 
 		// Clean up by removing our filters.
 		remove_all_filters( 'safe_style_css' );

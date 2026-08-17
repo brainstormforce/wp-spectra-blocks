@@ -56,7 +56,7 @@ class BlockJsCompiler {
 	/**
 	 * The block attribute holding a block's own inline JS.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var string
 	 */
 	const JS_ATTRIBUTE = 'spectraCustomJS';
@@ -64,7 +64,7 @@ class BlockJsCompiler {
 	/**
 	 * `spectraCustomJS` of every block rendered this request, in render order.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var string[]
 	 */
 	private $rendered_js = array();
@@ -117,7 +117,7 @@ class BlockJsCompiler {
 	 * would hit hardest exactly where the cap is scarcest: every non-super-admin on
 	 * multisite, and everyone at all under `DISALLOW_UNFILTERED_HTML`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $data    Sanitized post data, slashed.
 	 * @param array<string, mixed> $postarr Raw post array (for the id on updates).
@@ -167,7 +167,7 @@ class BlockJsCompiler {
 	/**
 	 * The JS snippets already stored on the post being written, if any.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $postarr Raw post array.
 	 * @return string[] Snippets, as stored.
@@ -193,7 +193,7 @@ class BlockJsCompiler {
 	/**
 	 * Recursively gather every JS snippet in a parsed block tree.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<int|string, mixed> $blocks Parsed blocks.
 	 * @param string[]                 $found  Collected snippets, by reference.
@@ -218,7 +218,7 @@ class BlockJsCompiler {
 	/**
 	 * Remove JS attributes that are not already stored, in place.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<int|string, mixed> $blocks Parsed blocks, edited by reference.
 	 * @param string[]                 $stored Snippets already on the post.
@@ -258,7 +258,7 @@ class BlockJsCompiler {
 	 * post content, template parts, patterns, synced blocks alike. Duplicate
 	 * snippets collapse, so a part rendered twice still runs once.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string               $block_content Rendered block HTML.
 	 * @param array<string, mixed> $block         Parsed block.

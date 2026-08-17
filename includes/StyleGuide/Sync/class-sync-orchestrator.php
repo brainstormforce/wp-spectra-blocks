@@ -16,7 +16,7 @@
  * write back); a single static guard blocks pull from re-entering itself.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -32,14 +32,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class SyncOrchestrator
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class SyncOrchestrator {
 
 	/**
 	 * The Style Guide engine.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var Engine
 	 */
 	private $engine;
@@ -47,7 +47,7 @@ class SyncOrchestrator {
 	/**
 	 * Re-entrancy guard for the reverse (pull) direction.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var bool
 	 */
 	private static $syncing = false;
@@ -55,7 +55,7 @@ class SyncOrchestrator {
 	/**
 	 * Constructor.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param Engine $engine Style Guide engine.
 	 */
@@ -66,7 +66,7 @@ class SyncOrchestrator {
 	/**
 	 * Register both sync directions.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return void
 	 */
@@ -95,7 +95,7 @@ class SyncOrchestrator {
 	 * the active theme's store actually writes (FSE on block themes, Astra when
 	 * Astra is active).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return ColorSyncAdapter[]
 	 */
@@ -109,7 +109,7 @@ class SyncOrchestrator {
 	/**
 	 * PUSH (SG → theme): patch each mapped role's color into the active theme.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $config Saved config (unused; reads live tokens).
 	 * @return void
@@ -187,7 +187,7 @@ class SyncOrchestrator {
 	 * `save_post_wp_global_styles` only fires when the user edits global styles,
 	 * so it is safe to reseed whenever a brand slug differs from the Style Guide.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param int           $post_id Saved wp_global_styles post ID.
 	 * @param \WP_Post|null $post    Saved post object.
@@ -285,7 +285,7 @@ class SyncOrchestrator {
 	 * to a token, then {@see apply_reverse_colors()} writes the owning stored
 	 * colour (`colors[slug]`).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param mixed $old_value Previous astra-settings option value.
 	 * @param mixed $value     New astra-settings option value.
@@ -343,7 +343,7 @@ class SyncOrchestrator {
 	 *    against the effective value), so a plain re-save of an unchanged palette
 	 *    writes nothing.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $token_hexes  SG token key => hex (core roles).
 	 * @param array<string, string> $custom_hexes slug => hex (status + custom overrides).
@@ -430,7 +430,7 @@ class SyncOrchestrator {
 	 * variable stays auto. Slugs the Style Guide doesn't manage (the theme's own
 	 * colours, brand-new picker entries) are never captured.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, string> $by_slug Saved theme palette, slug => hex.
 	 * @return array<string, string> slug => hex for genuinely-edited overrides.
@@ -476,7 +476,7 @@ class SyncOrchestrator {
 	/**
 	 * Whether a reverse (pull) sync is currently in progress.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return bool
 	 */
@@ -487,7 +487,7 @@ class SyncOrchestrator {
 	/**
 	 * Resolve each role's Style Guide source color as role => hex.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return array<string, string>
 	 */

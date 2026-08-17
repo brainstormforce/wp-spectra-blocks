@@ -12,7 +12,7 @@
  * override without touching this class.
  *
  * @package Spectra\StyleGuide
- * @since   x.x.x
+ * @since   1.0.4
  */
 
 namespace SpectraBlocks\StyleGuide\Sync;
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class MappingResolver
  *
- * @since x.x.x
+ * @since 1.0.4
  */
 class MappingResolver {
 
@@ -39,7 +39,7 @@ class MappingResolver {
 	 * brand role is deliberately given a DISTINCT slug per theme to keep reverse
 	 * sync unambiguous.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, array<string, string|null>>
 	 */
 	const CURATED = array(
@@ -62,6 +62,10 @@ class MappingResolver {
 			ColorRoles::HEADING_TEXT    => 'heading',
 			ColorRoles::BORDER          => 'outline',
 			ColorRoles::MUTED           => 'neutral',
+			// The theme ships its own `foreground` swatch. Mapping it makes the pair
+			// two-way, so the Style Guide inherits the theme's value instead of
+			// repainting it on the first save.
+			ColorRoles::FOREGROUND      => 'foreground',
 		),
 
 		// Twenty Twenty-Five — `contrast` is dual-use (body text AND button bg).
@@ -79,6 +83,7 @@ class MappingResolver {
 			ColorRoles::HEADING_TEXT    => null,
 			ColorRoles::LINK            => null,
 			ColorRoles::MUTED           => null,
+			ColorRoles::FOREGROUND      => null,
 		),
 
 		// Astra — hybrid, index-based (`--ast-global-color-{N}`, slugs
@@ -103,13 +108,15 @@ class MappingResolver {
 			ColorRoles::BORDER          => null,
 			ColorRoles::LINK            => null,
 			ColorRoles::MUTED           => null,
+			// No Astra global-colour slot corresponds to it.
+			ColorRoles::FOREGROUND      => null,
 		),
 	);
 
 	/**
 	 * Resolve the mapping for the active theme.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @return ThemeColorMapping
 	 */
@@ -120,7 +127,7 @@ class MappingResolver {
 	/**
 	 * Resolve the mapping for a given theme stylesheet.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $stylesheet Theme stylesheet (directory) slug.
 	 * @return ThemeColorMapping
@@ -152,7 +159,7 @@ class MappingResolver {
 		 * The stored/manual override tier and third parties hook here to add or
 		 * correct a mapping without editing curated data.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.4
 		 *
 		 * @param array<string, string|null> $map        role => slug|null.
 		 * @param string                      $stylesheet Theme stylesheet slug.
@@ -165,7 +172,7 @@ class MappingResolver {
 	/**
 	 * Whether a hand-verified curated profile exists for a theme.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $stylesheet Theme stylesheet slug.
 	 * @return bool
@@ -180,7 +187,7 @@ class MappingResolver {
 	 * `primary` is derived separately (button background) because it is a brand
 	 * role and must be proven distinct from the text/background slugs first.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, string[]>
 	 */
 	const DERIVE_PATHS = array(
@@ -194,7 +201,7 @@ class MappingResolver {
 	/**
 	 * In-request memo of derived maps, keyed by stylesheet.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 * @var array<string, array<string, string|null>>
 	 */
 	private static $derive_memo = array();
@@ -211,7 +218,7 @@ class MappingResolver {
 	 * Only the active theme can be derived (its theme.json is the loaded one);
 	 * any other stylesheet yields an empty map.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $stylesheet Theme stylesheet slug.
 	 * @return array<string, string|null>
@@ -236,7 +243,7 @@ class MappingResolver {
 	/**
 	 * Set of palette slugs defined by the theme (for validating derived slugs).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $raw theme.json raw data.
 	 * @return array<string, true>
@@ -261,7 +268,7 @@ class MappingResolver {
 	/**
 	 * Build the derived role => slug map from a styles tree.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $styles  theme.json `styles` tree.
 	 * @param array<string, true>  $palette Valid theme palette slugs.
@@ -323,7 +330,7 @@ class MappingResolver {
 	/**
 	 * Read a nested value from an array by path.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param array<string, mixed> $arr  Source array.
 	 * @param string[]             $path Key path.
@@ -348,7 +355,7 @@ class MappingResolver {
 	 *   - v3 short: `var:preset|color|base`
 	 * Literal colors / non-preset references (`currentColor`, `#fff`) yield null.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param mixed $value Styles value.
 	 * @return string|null

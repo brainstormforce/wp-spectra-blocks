@@ -164,11 +164,23 @@ intentionally left out of the sync (Astra has no equivalent to map them to):
 
 | Style Guide colour | SG token | SG default |
 | --- | --- | --- |
-| Accent | `chromatic3-7` | `#f59e0b` |
-| Success | `chromatic4-7` | `#10b981` |
-| Error | `chromatic5-7` | `#ef4444` |
-| Info | `chromatic6-7` | `#8b5cf6` |
-| Warning | `chromatic7-7` | `#d97706` |
+| Accent | `accent` | `#f59e0b` |
+| Neutral (Muted) | `neutral-4` | `#767884` |
+| Foreground | `foreground` | `#ffffff` |
+| Success | `success` | `#10b981` |
+| Error | `error` | `#ef4444` |
+| Info | `info` | `#8b5cf6` |
+| Warning | `warning` | `#d97706` |
+
+**Neutral** and **Foreground** were previously missing from this list even though
+neither is synced. Astra's nine slots consume `neutral-0/1/2/5/7` and skip
+`neutral-4`: it has no "muted / placeholder text" role, and no foreground slot
+either. Both keep the Style Guide's own value on an Astra site — they render via
+`--spectra-neutral-4` / `--spectra-foreground` and their `--wp--preset--color--*`
+slugs, they simply have no Astra twin to push to or pull from.
+
+The token column above also used the retired `chromaticN-7` names; the emitted
+tokens are keyed by semantic slug ({@see ColorModel::CHROMATIC_SLUG}).
 
 ### 2.4 Notes on the values
 

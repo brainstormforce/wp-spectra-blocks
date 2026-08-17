@@ -316,7 +316,7 @@ class Engine {
 	 * through {@see GenCssOrphanStripper::read_page_payload()} — the one reader.
 	 *
 	 * @since 1.0.0
-	 * @since x.x.x Frontend registration, inline attachment and enqueue all deferred to `wp_footer`.
+	 * @since 1.0.4 Frontend registration, inline attachment and enqueue all deferred to `wp_footer`.
 	 * @return void
 	 */
 	public function enqueue_gen_custom_css_for_current_post(): void {
@@ -455,7 +455,7 @@ class Engine {
 	 * (called from the `wp_footer` closure) so the dependency pin and the
 	 * idempotency guard cannot drift between the two.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param string $handle Style handle to register.
 	 * @param string $css    Rendered CSS payload.
@@ -1021,7 +1021,7 @@ class Engine {
 	 * uses `invisible` as a state marker; without this guard the `:root` rule
 	 * hides the post title from the editing surface).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.4
 	 *
 	 * @param bool $is_editor Whether generating CSS for the block editor iframe.
 	 * @return string

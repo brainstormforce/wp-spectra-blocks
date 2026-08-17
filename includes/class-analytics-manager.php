@@ -40,6 +40,25 @@ class AnalyticsManager {
 
 		// Initialize extension usage tracker separately.
 		( ExtensionUsageTracker::instance() )->init();
+
+		// Initialize milestone event tracker so spectra_blocks_events populates.
+		( \Spectra\Analytics\EventTracker::instance() )->init();
+
+		// Keep the dashboard analytics toggle in sync with the canonical send gate.
+		add_action( 'add_option_spectra_blocks_analytics_optin', array( $this, 'sync_usage_optin' ) );
+		add_action( 'update_option_spectra_blocks_analytics_optin', array( $this, 'sync_usage_optin' ) );
+	}
+
+	/**
+	 * Mirror the dashboard analytics opt-in to the canonical bsf-analytics usage
+	 * opt-in (site option) that actually gates transmission.
+	 *
+	 * @since 1.0.4
+	 * @return void
+	 */
+	public function sync_usage_optin() {
+		$optin = get_option( 'spectra_blocks_analytics_optin', 'no' );
+		update_site_option( 'spectra_blocks_usage_optin', 'yes' === $optin ? 'yes' : 'no' );
 	}
 
 	/**
