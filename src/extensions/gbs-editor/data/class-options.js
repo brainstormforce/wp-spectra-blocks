@@ -578,6 +578,21 @@ const generateColorClasses = ( classType, isTranslucent, positionalChar = '' ) =
 			{ value: `${ classType }--${ positionalChar }base-inverted`, label: `${ classType }--${ positionalChar }base-inverted` },
 			...translucentColors.base.inverted,
 		],
+		// Remaining Style Guide palette colours — one base class each (no ramp),
+		// resolving through the `--color--{slug}` alias to each colour's preset var.
+		semantic: [
+			{ value: `${ classType }--${ positionalChar }accent`, label: `${ classType }--${ positionalChar }accent` },
+			{ value: `${ classType }--${ positionalChar }heading`, label: `${ classType }--${ positionalChar }heading` },
+			{ value: `${ classType }--${ positionalChar }body`, label: `${ classType }--${ positionalChar }body` },
+			{ value: `${ classType }--${ positionalChar }background`, label: `${ classType }--${ positionalChar }background` },
+			{ value: `${ classType }--${ positionalChar }surface`, label: `${ classType }--${ positionalChar }surface` },
+			{ value: `${ classType }--${ positionalChar }outline`, label: `${ classType }--${ positionalChar }outline` },
+			{ value: `${ classType }--${ positionalChar }foreground`, label: `${ classType }--${ positionalChar }foreground` },
+			{ value: `${ classType }--${ positionalChar }success`, label: `${ classType }--${ positionalChar }success` },
+			{ value: `${ classType }--${ positionalChar }error`, label: `${ classType }--${ positionalChar }error` },
+			{ value: `${ classType }--${ positionalChar }info`, label: `${ classType }--${ positionalChar }info` },
+			{ value: `${ classType }--${ positionalChar }warning`, label: `${ classType }--${ positionalChar }warning` },
+		],
 	}
 };
 
@@ -1441,6 +1456,7 @@ const classOptions = [
 			...colorOptions.text.primary,
 			...colorOptions.text.secondary,
 			...colorOptions.text.base,
+			...colorOptions.text.semantic,
 		],
 	},
 	{
@@ -1450,6 +1466,7 @@ const classOptions = [
 			...colorOptions.background.primary,
 			...colorOptions.background.secondary,
 			...colorOptions.background.base,
+			...colorOptions.background.semantic,
 		],
 	},
 	{
@@ -1565,21 +1582,40 @@ const classOptions = [
 /**
  * Get the class options with custom options if available.
  *
- * @param {Object|null} liveClasses
+ * @param {Object|null} liveClasses      Live user-defined custom classes to prepend.
+ * @param {string[]}    customColorSlugs Saved custom-colour slugs to append as color--/background-- options.
  * @since x.x.x
  *
  * @return {Array} An array of class options for the React Select dropdown.
  */
-const getClassOptions = ( liveClasses = null ) => {
+const getClassOptions = ( liveClasses = null, customColorSlugs = [] ) => {
 	const customOptions = addCustomOptions( liveClasses );
 
-	// If there are no custom options, return the standard classOptions
-	if ( Object.keys( customOptions ).length === 0 ) {
-		return classOptions;
+	// Inject the user's saved custom colours into the colour groups. These are
+	// per-site (config.custom_colors), so they can't live in the static
+	// classOptions — they're appended at call time as color--{slug} /
+	// background--{slug}, matching the aliases + catalog on the server.
+	let groups = classOptions;
+	const slugs = Array.isArray( customColorSlugs ) ? customColorSlugs.filter( Boolean ) : [];
+	if ( slugs.length ) {
+		groups = classOptions.map( ( group ) => {
+			if ( 'Color: Text' === group.label ) {
+				return { ...group, options: [ ...group.options, ...slugs.map( ( s ) => ( { value: `color--${ s }`, label: `color--${ s }` } ) ) ] };
+			}
+			if ( 'Color: Background' === group.label ) {
+				return { ...group, options: [ ...group.options, ...slugs.map( ( s ) => ( { value: `background--${ s }`, label: `background--${ s }` } ) ) ] };
+			}
+			return group;
+		} );
 	}
 
-	// If there are custom options, prepend them to the classOptions array
-	return [ customOptions, ...classOptions ];
+	// If there are no custom options, return the (possibly colour-augmented) groups.
+	if ( Object.keys( customOptions ).length === 0 ) {
+		return groups;
+	}
+
+	// If there are custom options, prepend them to the groups array.
+	return [ customOptions, ...groups ];
 };
 
 // Export the getClassOptions function by default.

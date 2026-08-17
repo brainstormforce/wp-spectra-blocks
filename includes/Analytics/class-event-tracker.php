@@ -49,8 +49,13 @@ class EventTracker {
 	 * @var string[]
 	 */
 	private static $tracked_settings = array(
-		'spectra_blocks_active_blocks',
-		'spectra_blocks_file_generation',
+		'spectra_blocks_enable_gbs_extension',
+		'spectra_blocks_enable_dynamic_content',
+		'spectra_blocks_enable_animations_extension',
+		'spectra_blocks_enable_block_responsive',
+		'spectra_blocks_enable_abilities',
+		'spectra_blocks_enable_mcp_server',
+		'spectra_blocks_visibility_mode',
 	);
 
 	/**
@@ -63,6 +68,7 @@ class EventTracker {
 		add_action( 'admin_init', array( $this, 'track_plugin_activated' ) );
 		add_action( 'admin_init', array( $this, 'detect_state_events' ) );
 		add_action( 'update_option_spectra_blocks_usage_optin', array( $this, 'track_analytics_optin' ), 10, 2 );
+		add_action( 'update_site_option_spectra_blocks_usage_optin', array( $this, 'track_analytics_optin' ), 10, 2 );
 		add_action( 'save_post', array( $this, 'track_first_spectra_block_used' ), 20, 2 );
 		add_action( 'wp_ajax_ast_block_templates_importer', array( $this, 'track_first_template_imported' ), 5 );
 		add_action( 'wp_ajax_ast_block_templates_import_template_kit', array( $this, 'track_first_template_imported' ), 5 );
@@ -75,8 +81,41 @@ class EventTracker {
 			add_action( 'update_option_' . $setting_key, array( $this, 'track_setting_changed' ), 10, 3 );
 		}
 
-		add_action( 'one_onboarding_state_saved_spectra', array( $this, 'track_onboarding_skipped' ), 10, 2 );
-		add_action( 'one_onboarding_completion_spectra', array( $this, 'track_onboarding_completed' ), 10, 2 );
+		add_action( 'one_onboarding_state_saved_spectra-blocks', array( $this, 'track_onboarding_skipped' ), 10, 2 );
+		add_action( 'one_onboarding_completion_spectra-blocks', array( $this, 'track_onboarding_completed' ), 10, 2 );
+
+		// Flush queued milestone events into the analytics payload so they are transmitted.
+		add_filter( 'bsf_core_stats', array( $this, 'add_events_stats' ), 40 );
+	}
+
+	/**
+	 * Flush queued milestone events into the bsf_core_stats analytics payload.
+	 *
+	 * Events are transmitted under the plugin's own `spectra_blocks` product
+	 * bucket, independent of Spectra/UAGB. Gated on the usage opt-in.
+	 *
+	 * @since 1.0.4
+	 * @param array<string, mixed> $stats Aggregated stats passed through the bsf_core_stats filter.
+	 * @return array<string, mixed>
+	 */
+	public function add_events_stats( $stats ) {
+		if ( 'yes' !== get_site_option( 'spectra_blocks_usage_optin', 'no' ) ) {
+			return $stats;
+		}
+
+		$events = Events::flush_pending();
+		if ( empty( $events ) ) {
+			return $stats;
+		}
+
+		$plugin_data = ( isset( $stats['plugin_data'] ) && is_array( $stats['plugin_data'] ) ) ? $stats['plugin_data'] : array();
+		$bucket      = ( isset( $plugin_data['spectra_blocks'] ) && is_array( $plugin_data['spectra_blocks'] ) ) ? $plugin_data['spectra_blocks'] : array();
+
+		$bucket['events_record']       = $events;
+		$plugin_data['spectra_blocks'] = $bucket;
+		$stats['plugin_data']          = $plugin_data;
+
+		return $stats;
 	}
 
 	/**
@@ -241,7 +280,6 @@ class EventTracker {
 		$this->detect_spectra_pro_activated();
 		$this->detect_ai_assistant_first_use();
 		$this->detect_onboarding_completed();
-		$this->detect_first_form_created();
 		$this->detect_first_popup_created();
 
 		set_transient( 'spectra_blocks_state_events_checked', 1, DAY_IN_SECONDS );
@@ -346,29 +384,6 @@ class EventTracker {
 		Events::track( 'first_pattern_imported' );
 	}
 
-	/**
-	 * Detect if a Spectra form block has been created.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	private function detect_first_form_created() {
-		if ( Events::is_tracked( 'first_form_created' ) ) {
-			return;
-		}
-
-		if ( ! class_exists( '\\Spectra\\Analytics\\BlockUsageTracker' ) ) {
-			return;
-		}
-
-		$tracker     = BlockUsageTracker::instance();
-		$usage_stats = is_callable( array( $tracker, 'get_usage_statistics' ) ) ? $tracker->get_usage_statistics() : array();
-		$most_used   = isset( $usage_stats['most_used_blocks'] ) && is_array( $usage_stats['most_used_blocks'] ) ? $usage_stats['most_used_blocks'] : array();
-
-		if ( ! empty( $most_used['forms'] ) && (int) $most_used['forms'] > 0 ) {
-			Events::track( 'first_form_created' );
-		}
-	}
 
 	/**
 	 * Detect if a Spectra popup has been created.

@@ -116,12 +116,6 @@ class Engine {
 		// (0,3,0) ties.
 		add_action( 'enqueue_block_assets', array( $instance, 'enqueue_gen_custom_css_for_current_post' ), 100 );
 
-		// Region-keyed V2 site-wide NON-CLASS render (rootStyles/wrapperStyles/…
-		// from the GBS option `spectra_blocks_pro_gs_user_css`; classes render via
-		// the utility stylesheet). On by default; the
-		// `spectra_blocks_render_gen_sitewide` filter can disable it.
-		add_action( 'enqueue_block_assets', array( $instance, 'enqueue_gen_sitewide_css' ), 99 );
-
 		// Hand the (page-agnostic) site-wide chrome CSS to the GBS editor JS so it
 		// can re-inject it into the canvas after Site Editor SPA navigation, which
 		// drops the enqueue_block_assets seed above. Priority 20 runs AFTER the
@@ -140,30 +134,55 @@ class Engine {
 		// its own print path.
 		add_action( 'wp_enqueue_scripts', array( $instance, 'pin_styles_after_theme_globals' ), PHP_INT_MAX );
 
-		// If Pro is present, Pro's GlobalStyles extension owns the stylesheet output.
-		// Free's engine yields to avoid duplicate CSS.
+		// If Pro is present, Pro's GlobalStyles extension owns the NAMED-CLASS
+		// stylesheet (the GBS-editor `gs-*` custom classes, `spectra_gs_classes` —
+		// Pro's `generate_gs_stylesheet` has its own, more optimized per-post-
+		// filtered renderer for exactly that). Free's `enqueue_stylesheet` yields
+		// there to avoid duplicate CSS.
 		//
 		// GBS V1→V2 consolidation (behind `spectra_blocks_gbs_unified_render`,
-		// default false): when the flag is ON, free STOPS yielding so
-		// `GenCssRenderer` becomes the single class renderer on Pro sites too
+		// default false): when the flag is ON, free STOPS yielding on THIS path
+		// too so `GenCssRenderer` becomes the single class renderer on Pro sites
 		// (Pro's `generate_gs_stylesheet` then trims to block-defaults only).
-		// Flag OFF (default) = current behaviour exactly. NOTE: the flag-on path
-		// is not complete until the Pro-side trim + legacy read-compat land — do
-		// NOT enable it until then. See GBS-V1-V2-CONSOLIDATION-ROADMAP.
-		if ( class_exists( '\\SpectraBlocksPro\\Extensions\\GlobalStyles' ) && ! self::is_unified_render() ) {
-			return;
+		// Flag OFF (default) = current named-class behaviour exactly. NOTE: the
+		// flag-on path is not complete until the Pro-side trim + legacy
+		// read-compat land — do NOT enable it until then. See
+		// GBS-V1-V2-CONSOLIDATION-ROADMAP.
+		$pro_owns_named_classes = class_exists( '\\SpectraBlocksPro\\Extensions\\GlobalStyles' ) && ! self::is_unified_render();
+		if ( ! $pro_owns_named_classes ) {
+			add_action( 'enqueue_block_assets', array( $instance, 'enqueue_stylesheet' ), 99 );
 		}
 
-		// Pro-less path (ERA sites): emit utility-class CSS directly on frontend + editor.
-		// `enqueue_block_assets` fires for both frontend and the block editor iframe, so
-		// a single hook covers every render context where JIT output is needed.
-		// High priority (99) so utility + JIT stylesheets enqueue AFTER WP core's
-		// `global-styles-inline-css` (theme.json output). Source order matters:
-		// at equal specificity, the later rule wins — and `:root :where(...)`
-		// theme.json selectors share 0,1,0 specificity with our `.bg-[#hex]`
-		// utility class, so we must emit after to win cleanly.
-		add_action( 'enqueue_block_assets', array( $instance, 'enqueue_stylesheet' ), 99 );
+		// The Tailwind-utility JIT compiler (arbitrary classes like `bg-primary-500`,
+		// `flex`, `gap-2` — resolved by PATTERN, not a stored named-class list) has
+		// NO Pro equivalent anywhere (confirmed: zero references to PREFIX_MAP /
+		// compile_token / JitCompiler in spectra-blocks-pro) — it is exclusively
+		// Free's domain. It was incorrectly folded into the SAME yield-to-Pro
+		// condition above, so on any Pro-active site this JIT CSS was computed and
+		// correctly persisted (JitCache) but NEVER ENQUEUED at all — nothing took
+		// its place. Found live 2026-07-14: a freshly-generated section's utility
+		// classes (a button row's flex/gap layout, its buttons' own colors) never
+		// rendered — not "different from Pro's rendering", simply never rendered,
+		// on both the block editor canvas AND the published frontend. This must
+		// run unconditionally, independent of Pro's presence or the migration flag.
+		// `enqueue_block_assets` fires for both frontend and the block editor
+		// iframe, so a single hook covers every render context where JIT output is
+		// needed. High priority (99) so utility + JIT stylesheets enqueue AFTER WP
+		// core's `global-styles-inline-css` (theme.json output). Source order
+		// matters: at equal specificity, the later rule wins — and
+		// `:root :where(...)` theme.json selectors share 0,1,0 specificity with
+		// our `.bg-[#hex]` utility class, so we must emit after to win cleanly.
 		add_action( 'enqueue_block_assets', array( $instance, 'enqueue_jit_for_current_post' ), 99 );
+
+		// Region-keyed V2 site-wide NON-CLASS render (rootStyles/wrapperStyles +
+		// verbatim off-grid overrides the mobile-first GBS class grammar can't
+		// model). Registered AFTER `enqueue_stylesheet` (99) so its dependency pin
+		// resolves and it prints AFTER the sitewide class surface — load-bearing:
+		// both are (0,3,0), so source order decides. A desktop-first override (e.g.
+		// `.stats-grid` → 2 cols below 960px) must beat the always-on base or the
+		// layout reverts to desktop on mobile. Before the per-page payload (100) —
+		// page still owns ties. `spectra_blocks_render_gen_sitewide` can disable.
+		add_action( 'enqueue_block_assets', array( $instance, 'enqueue_gen_sitewide_css' ), 99 );
 
 		/**
 		 * Fires after the Global Styles engine has finished initialization.
@@ -212,7 +231,7 @@ class Engine {
 	 * @return void
 	 */
 	public function enqueue_stylesheet(): void {
-		$css = $this->build_stylesheet_css();
+		$css = $this->build_stylesheet_css( is_admin() );
 
 		if ( '' === $css ) {
 			return;
@@ -228,7 +247,7 @@ class Engine {
 	/**
 	 * Enqueue JIT-compiled CSS for the currently-resolved post.
 	 *
-	 * Uses a dedicated `spectra-gs-dynamic-styles` handle so the static
+	 * Uses a dedicated `spectra-gs-jit-styles` handle so the static
 	 * utility stylesheet stays cacheable per site while per-post JIT output
 	 * bumps only when its post changes. Both are wrapped in
 	 * `@layer utilities` so block-default non-layered rules (e.g.
@@ -249,10 +268,31 @@ class Engine {
 			return;
 		}
 
-		$handle = 'spectra-gs-dynamic-styles';
+		// OWN handle. Pro registers `spectra-gs-dynamic-styles` too
+		// (spectra-blocks-pro Extensions/GlobalStyles.php:2376), and the
+		// `! wp_style_is( registered )` guard below meant that whenever Pro got
+		// there first, free skipped registration and then appended its JIT CSS
+		// into PRO's stylesheet — which Pro's preview builder overwrites
+		// wholesale on any Global Styles edit, deleting free's JIT from the
+		// canvas until reload. Two owners, one handle, last writer wins.
+		$handle = 'spectra-gs-jit-styles';
 		if ( ! wp_style_is( $handle, 'registered' ) ) {
+			// Depend on the utility surface so this prints after it and wins
+			// source-order ties — but ONLY when it exists. Pinning an
+			// unregistered handle makes `WP_Dependencies::all_deps()` take its
+			// missing-dependency branch and silently drop this style entirely,
+			// so the JIT CSS is computed, cached and rendered nowhere. Two ways
+			// the handle is absent: Pro owns the named classes, so
+			// `enqueue_stylesheet` is never hooked (see `$pro_owns_named_classes`
+			// above); or it IS hooked but `build_stylesheet_css()` returned ''
+			// and it early-returned before registering. Same guard as the
+			// sitewide sheet below.
+			$deps = array();
+			if ( wp_style_is( 'spectra-gs-utility-classes', 'registered' ) || wp_style_is( 'spectra-gs-utility-classes', 'enqueued' ) ) {
+				$deps[] = 'spectra-gs-utility-classes';
+			}
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
-			wp_register_style( $handle, false, array( 'spectra-gs-utility-classes' ), null );
+			wp_register_style( $handle, false, $deps, null );
 			wp_enqueue_style( $handle );
 		}
 
@@ -276,6 +316,7 @@ class Engine {
 	 * through {@see GenCssOrphanStripper::read_page_payload()} — the one reader.
 	 *
 	 * @since 1.0.0
+	 * @since 1.0.4 Frontend registration, inline attachment and enqueue all deferred to `wp_footer`.
 	 * @return void
 	 */
 	public function enqueue_gen_custom_css_for_current_post(): void {
@@ -323,6 +364,31 @@ class Engine {
 		if ( null === $stored ) {
 			return;
 		}
+
+		// Style Guide owns colour on PAGE scope too — same rule as
+		// {@see build_sitewide_css}. A multi-page import commits ONE page site-wide
+		// and the rest page-scoped, so without this only the homepage honoured the
+		// guide: every other page re-bound all 15 slugs to its own `custom-N` on
+		// `body`, beating the guide's inherited `:root`. Worse when two slugs share a
+		// `custom-N` (`primary` and `foreground` did) — the button label vanishes.
+		if ( ! empty( $stored['presetLock'] ) && is_array( $stored['presetLock'] ) ) {
+			$stored['presetLock'] = $this->strip_style_guide_color_locks( $stored['presetLock'] );
+
+			// A page carrying its OWN Style Guide owns those slugs whether or not the
+			// SITE guide was ever saved — strip_style_guide_color_locks() defers to the
+			// site option, so on a guide-less site the page's lock would survive, render
+			// on `body`, and beat the `:root` block print_page_palette() emits for it.
+			if ( class_exists( '\\SpectraBlocks\\StyleGuide\\Engine' ) ) {
+				foreach ( \SpectraBlocks\StyleGuide\Engine::get_instance()->page_managed_color_slugs() as $slug ) {
+					unset( $stored['presetLock'][ '--wp--preset--color--' . $slug ] );
+				}
+			}
+
+			if ( empty( $stored['presetLock'] ) ) {
+				unset( $stored['presetLock'] );
+			}
+		}
+
 		$css = GenCssRenderer::render( $stored, (int) $post_id, is_admin() );
 		if ( '' === $css ) {
 			return;
@@ -344,6 +410,71 @@ class Engine {
 		}
 
 		$handle = 'spectra-gen-custom-css-' . $post_id;
+
+		if ( is_admin() ) {
+			self::register_gen_custom_css( $handle, (string) $css );
+			return;
+		}
+
+		// FRONTEND: defer registration, inline attachment, AND enqueue to
+		// wp_footer (priority 5) so the handle does not exist during wp_head at
+		// all. This closes the window in which a third party (an optimizer
+		// plugin, or a dependency edge from another handle) could enqueue the
+		// already-registered handle between wp_head p1 (enqueue_block_assets)
+		// and wp_print_styles (wp_head p8) — which would print it in <head>
+		// BEFORE spectra-responsive-styles has accumulated its render-time CSS,
+		// re-opening the empty-responsive-styles failure documented in
+		// register_gen_custom_css(). Registering nothing until the footer makes
+		// that unreachable rather than merely unlikely.
+		//
+		// NOTE: on WP 6.9+ CLASSIC themes (Astra, and therefore ZipWP sites),
+		// core's wp_hoist_late_printed_styles() intentionally relocates ALL
+		// footer-printed styles — including this handle — to the end of <head>
+		// via the template-enhancement output buffer: it captures
+		// wp_styles()->do_footer_items() at wp_print_footer_scripts and inserts
+		// the result before </head> (see script-loader.php, and the note in
+		// wp_enqueue_stored_styles() saying as much). So this handle STILL
+		// appears in <head> on such sites, and that is not this bug: the
+		// capture runs AFTER content render, so spectra-responsive-styles is
+		// captured FULL and do_footer_items() resolves the dep chain inside the
+		// capture. Location in the source differs; the cascade does not. Do not
+		// "fix" that by fighting the hoist.
+		add_action(
+			'wp_footer',
+			static function () use ( $handle, $css ): void {
+				self::register_gen_custom_css( $handle, (string) $css );
+			},
+			5
+		);
+	}
+
+	/**
+	 * Register, inline-attach and enqueue the per-page Gen CSS payload.
+	 *
+	 * Shared by both the admin path (called inline) and the frontend path
+	 * (called from the `wp_footer` closure) so the dependency pin and the
+	 * idempotency guard cannot drift between the two.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param string $handle Style handle to register.
+	 * @param string $css    Rendered CSS payload.
+	 * @return void
+	 */
+	private static function register_gen_custom_css( string $handle, string $css ): void {
+		// IDEMPOTENCY: `enqueue_block_assets` can fire more than once per
+		// request — in admin it fires twice, via admin_enqueue_scripts and
+		// again inside _wp_get_iframed_editor_assets(), which copies the
+		// `registered` array of SHARED _WP_Dependency objects. wp_register_style()
+		// silently returns false on re-register but does NOT protect the inline
+		// data, so without this guard wp_add_inline_style() appends the same
+		// payload a second time to the same object (100KB+ on import-heavy
+		// pages). The CSS is already attached — just make sure it is enqueued.
+		if ( wp_style_is( $handle, 'registered' ) ) {
+			wp_enqueue_style( $handle );
+			return;
+		}
+
 		// DEPENDENCY IS LOAD-BEARING: the per-page payload must print AFTER
 		// every other (0,3,0) surface it can tie with — page owns ties by
 		// contract:
@@ -355,16 +486,27 @@ class Engine {
 		// (0,3,0) — live: google-map's 400px height default printed
 		// after the page sheet and beat the source's `height: 100%`
 		// class rule, +20px on the visit section at 390px).
+		//
+		// The pin is also why the frontend path prints late. Resolved and
+		// enqueued at head time, the dependency resolver printed
+		// `spectra-responsive-styles` in <head> EMPTY — it accumulates its
+		// per-block CSS DURING content render (render_block) — and marked it
+		// done, so every wp_add_inline_style() the blocks issued afterwards was
+		// silently dropped: the ENTIRE block-attr tier (307KB on the audit
+		// page) vanished from any page carrying a per-page payload
+		// (match_site / standalone imports; spectra-counter children lost
+		// their gap rules, +23px per counter — E2E audit 2026-07-10).
 		$deps = array();
 		foreach ( array( 'spectra-gs-utility-classes', 'spectra-responsive-styles' ) as $tie_surface ) {
 			if ( wp_style_is( $tie_surface, 'registered' ) || wp_style_is( $tie_surface, 'enqueued' ) ) {
 				$deps[] = $tie_surface;
 			}
 		}
+
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
 		wp_register_style( $handle, false, $deps, null );
+		wp_add_inline_style( $handle, $css );
 		wp_enqueue_style( $handle );
-		wp_add_inline_style( $handle, (string) $css );
 	}
 
 	/**
@@ -415,8 +557,15 @@ class Engine {
 		}
 
 		$handle = 'spectra-gen-sitewide-css';
+		// Depend on the utility-class surface so this prints after it and wins
+		// (0,3,0) source-order ties. Guarded: pinning an unregistered handle makes
+		// WP silently drop this whole style.
+		$deps = array();
+		if ( wp_style_is( 'spectra-gs-utility-classes', 'registered' ) || wp_style_is( 'spectra-gs-utility-classes', 'enqueued' ) ) {
+			$deps[] = 'spectra-gs-utility-classes';
+		}
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
-		wp_register_style( $handle, false, array(), null );
+		wp_register_style( $handle, false, $deps, null );
 		wp_enqueue_style( $handle );
 		wp_add_inline_style( $handle, $css );
 	}
@@ -489,6 +638,13 @@ class Engine {
 			if ( ! empty( $option[ $bucket ] ) && is_array( $option[ $bucket ] ) ) {
 				$payload[ $bucket ] = $option[ $bucket ];
 			}
+		}
+
+		// `remBase` is the one scalar bucket (the source's document-root
+		// font-size — see GenCssRenderer step 2a); the array-only copy above
+		// would drop it.
+		if ( ! empty( $option['remBase'] ) && is_string( $option['remBase'] ) ) {
+			$payload['remBase'] = $option['remBase'];
 		}
 
 		// Style Guide owns the colour palette: when a Style Guide config is saved,
@@ -649,6 +805,24 @@ class Engine {
 			}
 		}
 
+		// Classic Post Editor (post.php?post=987&action=edit) — its own URL
+		// param, `post` (NOT `postId`), was never read here, so the ONLY paths
+		// that ever resolved on this screen were get_the_ID()/global $post — and
+		// wp-admin doesn't run The Loop, so neither is reliable at the point
+		// enqueue_block_assets fires (found live 2026-07-14: freshly-saved
+		// content with a correctly-persisted, correctly-cached per-post JIT
+		// stylesheet still rendered unstyled in the editor canvas — the enqueue
+		// silently resolved to a different/no post and skipped the CSS entirely,
+		// even though the SAME content was byte-correct in JitCache and on the
+		// published frontend). Same validation shape as the Site Editor check
+		// above — this is the identical resolution gap for the other editor.
+		if ( is_admin() && isset( $_GET['post'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only asset enqueue, no state change.
+			$requested = absint( wp_unslash( $_GET['post'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $requested > 0 && in_array( get_post_type( $requested ), array( 'page', 'post' ), true ) ) {
+				return $requested;
+			}
+		}
+
 		global $post;
 		if ( $post instanceof \WP_Post ) {
 			return (int) $post->ID;
@@ -665,9 +839,11 @@ class Engine {
 	 * rules lose to utility output regardless of specificity/order.
 	 *
 	 * @since 1.0.0
+	 *
+	 * @param bool $is_editor Whether the stylesheet is being built for the block editor.
 	 * @return string
 	 */
-	private function build_stylesheet_css(): string {
+	private function build_stylesheet_css( bool $is_editor = false ): string {
 		$parts = array();
 
 		$user_css = get_option( self::OPTION_KEY_USER_CSS, array() );
@@ -685,7 +861,7 @@ class Engine {
 		// list and inline rationale per rule group.
 		$layer_parts[] = $this->build_preflight_css();
 
-		$utility_css = $this->render_utility_classes();
+		$utility_css = $this->render_utility_classes( $is_editor );
 		if ( '' !== $utility_css ) {
 			$layer_parts[] = $utility_css;
 		}
@@ -795,7 +971,15 @@ class Engine {
 		$rules[] = $resetScope . ' blockquote,' . $resetScope . ' dl,' . $resetScope . ' dd,' . $resetScope . ' h1,' . $resetScope . ' h2,' . $resetScope . ' h3,' . $resetScope . ' h4,' . $resetScope . ' h5,' . $resetScope . ' h6,' . $resetScope . ' hr,' . $resetScope . ' figure,' . $resetScope . ' p,' . $resetScope . ' pre,' . $resetScope . ' span{margin:0;}';
 
 		// Lists.
-		$rules[] = $scope . ' ol,' . $scope . ' ul,' . $scope . ' menu{list-style:none;margin:0;padding:0;}';
+		//
+		// Exclude core's List block (`.wp-block-list`) from the marker/indent
+		// strip. This reset is meant for bare layout lists (nav markup, Spectra
+		// list blocks that manage their own markers via scoped CSS); applying it
+		// to a core List block nested in a Spectra Container silently removes its
+		// bullets/numbers on the front end, since `:where()` contributes zero
+		// specificity yet `(0,0,1)` still beats the UA default. Core lists fall
+		// back to browser/theme defaults instead. See #508.
+		$rules[] = $scope . ' ol:not(.wp-block-list),' . $scope . ' ul:not(.wp-block-list),' . $scope . ' menu{list-style:none;margin:0;padding:0;}';
 		$rules[] = $scope . ' fieldset{margin:0;padding:0;}';
 		$rules[] = $scope . ' legend{padding:0;}';
 
@@ -832,10 +1016,17 @@ class Engine {
 	/**
 	 * Render the full ClassRegistry as CSS rules.
 	 *
-	 * @since 1.0.0
+	 * In the block editor, scope to `.is-root-container` so utility classes
+	 * cannot affect editor UI chrome (e.g. Astra's title-visibility wrapper
+	 * uses `invisible` as a state marker; without this guard the `:root` rule
+	 * hides the post title from the editing surface).
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param bool $is_editor Whether generating CSS for the block editor iframe.
 	 * @return string
 	 */
-	private function render_utility_classes(): string {
+	private function render_utility_classes( bool $is_editor = false ): string {
 		$all = ClassRegistry::get_all_classes();
 
 		if ( ! is_array( $all ) || empty( $all ) ) {
@@ -844,6 +1035,11 @@ class Engine {
 
 		$rules     = array();
 		$keyframes = array();
+
+		// In the editor scope to the blocks content wrapper so utility classes
+		// cannot bleed into editor UI chrome (title wrappers, toolbar, etc.).
+		// On the frontend the broader `:root` prefix gives the required specificity.
+		$base_selector = $is_editor ? ':root .is-root-container .' : ':root .';
 
 		foreach ( $all as $class_name => $entry ) {
 			if ( ! is_string( $class_name ) || ! is_array( $entry ) ) {
@@ -860,9 +1056,9 @@ class Engine {
 			// `:root ` prefix for specificity boost; see JitCompiler::compile_token.
 			// `&` in the declaration is a nesting placeholder — expand to the class selector.
 			if ( false !== strpos( $declaration, '&' ) ) {
-				$rules[] = str_replace( '&', ':root .' . $escaped, $declaration );
+				$rules[] = str_replace( '&', $base_selector . $escaped, $declaration );
 			} else {
-				$rules[] = ':root .' . $escaped . ' { ' . $declaration . ' }';
+				$rules[] = $base_selector . $escaped . ' { ' . $declaration . ' }';
 			}
 
 			if ( ! empty( $entry['keyframes'] ) && is_string( $entry['keyframes'] ) ) {

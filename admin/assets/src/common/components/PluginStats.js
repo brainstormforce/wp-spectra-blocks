@@ -89,7 +89,7 @@ const PluginStats = () => {
 					onClick={ activatePro }
 					onKeyDown={ activatePro }
 				>
-					{ __( 'Activate Spectra Pro', 'spectra-blocks' ) }
+					{ __( 'Activate Spectra Blocks Pro', 'spectra-blocks' ) }
 				</div>
 			)
 		) : (

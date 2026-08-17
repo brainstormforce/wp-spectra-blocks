@@ -28,7 +28,7 @@ const Learn = () => {
 
 							<Text size={14}>
 								{__(
-									'Edit your pages using Spectra Blocks with step-by-step guide and make them live with confidence.',
+									'Short, guided steps that take you from a blank page to a published one.',
 									'spectra-blocks'
 								)}
 							</Text>

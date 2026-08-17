@@ -1,0 +1,27 @@
+#spectra-blocks-popup-pro-note .astra-notice-container {
+	align-items: flex-start;
+}
+
+#spectra-blocks-popup-pro-note.notice {
+	display: block;
+	border: 1px solid #6828f3;
+	border-top-color: #fff;
+	border-bottom-color: #fff;
+	border-right-color: #fff;
+	border-left-width: 4px;
+	box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.32);
+}
+
+#spectra-blocks-popup-pro-note .spectra-blocks-review-notice {
+	background: #6828f3;
+	border-color: #6828f3;
+}
+
+#spectra-blocks-popup-pro-note .spectra-blocks-review-notice:hover {
+	background: #5300e0;
+}
+
+.post-type-spectra-blocks-popup .notice-dismiss,
+.post-type-spectra-popup .notice-dismiss {
+	color: #fff;
+}

@@ -518,9 +518,27 @@ class PopupBuilder {
 
 		$popup_post_types = array( 'spectra-blocks-popup', 'spectra-popup' );
 		if ( in_array( $screen->post_type, $popup_post_types, true ) && 'edit.php' === $pagenow ) {
-			// Suppress third-party admin notices on the popup list page so they don't clutter the UI.
-			remove_all_actions( 'admin_notices' );
-			remove_all_actions( 'all_admin_notices' );
+			// Notice suppression only applies to our own CPT — never touch UAGB's popup page.
+			if ( 'spectra-blocks-popup' === $screen->post_type ) {
+				// Suppress third-party admin notices on the popup list page so they don't clutter the UI.
+				remove_all_actions( 'admin_notices' );
+				remove_all_actions( 'all_admin_notices' );
+
+				// Re-add our own pro upgrade notice after clearing all others.
+				if ( ! function_exists( 'get_plugins' ) ) {
+					require_once ABSPATH . 'wp-admin/includes/plugin.php';
+				}
+				$installed_plugins = get_plugins();
+				if ( ! isset( $installed_plugins['spectra-blocks-pro/spectra-blocks-pro.php'] ) ) {
+					wp_enqueue_style(
+						'spectra-blocks-popup-upgrade-pro-css',
+						SPECTRA_BLOCKS_URL . 'assets/css/spectra-popup-builder-upgrade-pro.css',
+						array(),
+						SPECTRA_BLOCKS_VER
+					);
+					add_action( 'admin_notices', array( $this, 'render_pro_upgrade_notice' ) );
+				}
+			}
 
 			$extension = SCRIPT_DEBUG ? '' : '.min'; // DEV: Use minified files in production - check SCRIPT_DEBUG constant.
 			wp_register_script( // DEV: Register admin JavaScript file - update path/version as needed.
@@ -724,5 +742,46 @@ class PopupBuilder {
 			$where
 		);
 		return $where;
+	}
+	/**
+	 * Render the "upgrade to pro" notice on the Popup Builder CPT list page.
+	 *
+	 * Shown only when spectra-blocks-pro is not installed.
+	 *
+	 * @since 1.0.1
+	 *
+	 * @return void
+	 */
+	public function render_pro_upgrade_notice() {
+		$image_path   = SPECTRA_BLOCKS_URL . 'admin/assets/images/uag-logo.svg';
+		$base_url     = defined( 'SPECTRA_BLOCKS_URI' ) ? SPECTRA_BLOCKS_URI : 'https://wpspectra.com/';
+		$upgrade_url  = add_query_arg(
+			array(
+				'utm_source'   => 'free-plugin',
+				'utm_medium'   => 'popup-builder',
+				'utm_campaign' => 'popup-builder-banner',
+			),
+			trailingslashit( $base_url ) . 'pricing/'
+		);
+		$filtered_url = apply_filters( 'spectra_blocks_get_pro_url', $upgrade_url );
+		$upgrade_url  = esc_url( is_string( $filtered_url ) ? $filtered_url : $upgrade_url );
+		?>
+		<div id="spectra-blocks-popup-pro-note" class="notice notice-info is-dismissible">
+			<div class="astra-notice-container" style="display:flex;align-items:flex-start;gap:12px;padding:8px 0;">
+				<div class="notice-image">
+					<img src="<?php echo esc_url( $image_path ); ?>" style="max-width:40px;" alt="Spectra Blocks" />
+				</div>
+				<div class="notice-content">
+					<div class="notice-heading">
+						<strong><?php esc_html_e( 'Want to do more with Popup Builder?', 'spectra-blocks' ); ?></strong>
+					</div>
+					<p><?php esc_html_e( 'Maximize your popup potential with Spectra Blocks Pro. Unlock enhanced features, intuitive design options, and increased conversions!', 'spectra-blocks' ); ?></p>
+					<a href="<?php echo esc_url( $upgrade_url ); ?>" class="spectra-blocks-review-notice button-primary" target="_blank" rel="noreferrer noopener">
+						<?php esc_html_e( 'Upgrade Now', 'spectra-blocks' ); ?>
+					</a>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 } // DEV: End of PopupBuilder class - add new methods above this closing brace.

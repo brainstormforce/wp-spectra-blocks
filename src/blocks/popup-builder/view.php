@@ -26,13 +26,14 @@ $icon_props                          = array(
 );
 
 // Add the accessibility details based on the attributes.
+$accessibility_label = isset( $attributes['accessibilityLabel'] ) ? (string) $attributes['accessibilityLabel'] : '';
 switch ( $attributes['accessibilityMode'] ?? '' ) {
 	case 'svg':
 		// SVG based accessibility attributes.
 		$icon_props['role']        = 'graphics-symbol';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG icon. */
 				__( 'An icon named %s', 'spectra-blocks' ),
@@ -43,8 +44,8 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 		// Image based accessibility attributes.
 		$icon_props['role']        = 'img';
 		$icon_props['aria-hidden'] = 'false';
-		$icon_props['aria-label']  = ! empty( $attributes['accessibilityLabel'] )
-			? $attributes['accessibilityLabel']
+		$icon_props['aria-label']  = '' !== $accessibility_label
+			? $accessibility_label
 			: sprintf(
 				/* translators: %s: The name of the SVG image. */
 				__( 'An image named %s', 'spectra-blocks' ),
@@ -57,7 +58,7 @@ switch ( $attributes['accessibilityMode'] ?? '' ) {
 }
 
 // Generate close button aria label.
-$close_aria_label = ! empty( $attributes['accessibilityLabel'] ) ? $attributes['accessibilityLabel'] : sprintf(
+$close_aria_label = '' !== $accessibility_label ? $accessibility_label : sprintf(
 				/* translators: %s: The name of the SVG image. */
 	__( 'An image named %s', 'spectra-blocks' ),
 	Renderer::get_icon_name( $close_icon )

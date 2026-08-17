@@ -46,7 +46,7 @@ class ExtensionUsageTracker {
 		add_filter( 'bsf_core_stats', array( $this, 'add_extension_stats' ), 25 );
 
 		// Hook into settings changes to handle cleanup.
-		add_action( 'update_option_spectra_analytics_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
+		add_action( 'update_option_spectra_blocks_usage_optin', array( $this, 'handle_analytics_toggle' ), 10, 2 );
 
 		// Initialize usage data if not exists.
 		$this->init_extension_data();
@@ -119,8 +119,8 @@ class ExtensionUsageTracker {
 		$extensions_used = array();
 
 		foreach ( $blocks as $block ) {
-			// Only check Spectra blocks.
-			if ( strpos( $block['blockName'], 'spectra/' ) !== 0 ) {
+			// Only check Spectra blocks. blockName is null for raw-HTML / freeform passthrough blocks.
+			if ( empty( $block['blockName'] ) || strpos( $block['blockName'], 'spectra/' ) !== 0 ) {
 				if ( ! empty( $block['innerBlocks'] ) ) {
 					$inner_extensions = $this->extract_extension_usage( $block['innerBlocks'] );
 					$extensions_used  = array_merge( $extensions_used, $inner_extensions );
@@ -448,15 +448,15 @@ class ExtensionUsageTracker {
 		}
 
 		// Ensure the spectra plugin data container exists.
-		if ( empty( $stats['plugin_data']['spectra'] ) || ! is_array( $stats['plugin_data']['spectra'] ) ) {
-			$stats['plugin_data']['spectra'] = array();
+		if ( empty( $stats['plugin_data']['spectra_blocks'] ) || ! is_array( $stats['plugin_data']['spectra_blocks'] ) ) {
+			$stats['plugin_data']['spectra_blocks'] = array();
 		}
 
 		// Get comprehensive extension analytics with caching.
 		$extension_analytics = $this->get_cached_extension_analytics();
 
 		// Add extension usage data using SureForms structure.
-		$stats['plugin_data']['spectra']['spectra_3_extensions'] = array(
+		$stats['plugin_data']['spectra_blocks']['spectra_3_extensions'] = array(
 			'numeric_values'             => array(
 				'posts_with_extensions'           => $extension_analytics['posts_with_extensions'],
 				'total_extension_instances'       => $extension_analytics['total_extension_instances'],
@@ -475,7 +475,7 @@ class ExtensionUsageTracker {
 		);
 
 		// Add extension-specific analytics data.
-		$stats['plugin_data']['spectra']['spectra_3_extensions']['extension_specific_data'] = $this->get_extension_specific_analytics();
+		$stats['plugin_data']['spectra_blocks']['spectra_3_extensions']['extension_specific_data'] = $this->get_extension_specific_analytics();
 
 		return $stats;
 	}
@@ -668,7 +668,7 @@ class ExtensionUsageTracker {
 	 * @return bool True if analytics is enabled, false otherwise.
 	 */
 	private function is_analytics_enabled() {
-		$optin_status = \Spectra_Blocks_Settings::get( 'analytics_optin', 'no' );
+		$optin_status = get_site_option( 'spectra_blocks_usage_optin', 'no' );
 
 		return 'yes' === $optin_status;
 	}

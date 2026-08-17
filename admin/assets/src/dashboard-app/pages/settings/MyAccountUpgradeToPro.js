@@ -24,7 +24,7 @@ const classNames = ( ...classes ) => classes.filter( Boolean ).join( ' ' );
 
 const MyAccountUpgradeToPro = ( {
 	className = '',
-	title = __( 'Build Beyond Boundaries with Spectra Pro', 'spectra-blocks' ),
+	title = __( 'Build Beyond Boundaries', 'spectra-blocks' ),
 	description = __(
 		'Get access to advanced blocks and premium features.',
 		'spectra-blocks'

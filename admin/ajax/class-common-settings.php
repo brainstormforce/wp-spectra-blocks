@@ -61,13 +61,9 @@ class Common_Settings extends Ajax_Base {
 			'enable_animations_extension',
 			'enable_gbs_extension',
 			'blocks_activation_and_deactivation',
-			'load_select_font_globally',
 			'load_fse_font_globally',
 			'fse_font_globally',
 			'fse_font_globally_delete',
-			'select_font_globally',
-			'load_gfonts_locally',
-			'preload_local_fonts',
 			'recaptcha_site_key_v2',
 			'recaptcha_secret_key_v2',
 			'recaptcha_site_key_v3',
@@ -83,6 +79,9 @@ class Common_Settings extends Ajax_Base {
 			'enable_abilities',
 			'enable_edit_abilities',
 			'enable_mcp_server',
+			'visibility_mode',
+			'visibility_page',
+			'fetch_pages',
 		);
 
 		$this->init_ajax_events( $ajax_events );
@@ -226,17 +225,6 @@ class Common_Settings extends Ajax_Base {
 	/**
 	 * Save setting - Loads selected font globally.
 	 *
-	 * @return void
-	 */
-	public function load_select_font_globally() {
-		$this->check_permission_nonce( 'spectra_blocks_load_select_font_globally' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_load_select_font_globally', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Loads selected font globally.
-	 *
 	 * @since 2.5.1
 	 * @return void
 	 */
@@ -244,19 +232,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_load_fse_font_globally' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_load_fse_font_globally', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Saves selected font globally.
-	 *
-	 * @since 2.5.1
-	 * @return void
-	 */
-	public function select_font_globally() {
-		$this->check_permission_nonce( 'spectra_blocks_select_font_globally' );
-		$value = $this->check_post_value();
-		$value = json_decode( $value, true );
-		$this->save_admin_settings( 'spectra_blocks_select_font_globally', $this->sanitize_form_inputs( $value ) );
 	}
 
 	/**
@@ -295,17 +270,6 @@ class Common_Settings extends Ajax_Base {
 		$spectra_global_fse_fonts[] = $value;
 
 		$this->save_admin_settings( 'spectra_global_fse_fonts', $this->sanitize_form_inputs( $spectra_global_fse_fonts ) );
-	}
-
-	/**
-	 * Save setting - Loads gfonts locally.
-	 *
-	 * @return void
-	 */
-	public function load_gfonts_locally() {
-		$this->check_permission_nonce( 'spectra_blocks_load_gfonts_locally' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_load_gfonts_locally', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -382,17 +346,6 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_dynamic_content_mode' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_dynamic_content_mode', sanitize_text_field( $value ) );
-	}
-
-	/**
-	 * Save setting - Preloads local fonts.
-	 *
-	 * @return void
-	 */
-	public function preload_local_fonts() {
-		$this->check_permission_nonce( 'spectra_blocks_preload_local_fonts' );
-		$value = $this->check_post_value();
-		$this->save_admin_settings( 'spectra_blocks_preload_local_fonts', sanitize_text_field( $value ) );
 	}
 
 	/**
@@ -918,5 +871,64 @@ class Common_Settings extends Ajax_Base {
 		$this->check_permission_nonce( 'spectra_blocks_enable_mcp_server' );
 		$value = $this->check_post_value();
 		$this->save_admin_settings( 'spectra_blocks_enable_mcp_server', sanitize_text_field( $value ) );
+	}
+
+	/**
+	 * Save visibility mode (disabled | comingsoon | maintenance).
+	 *
+	 * @since 1.0.3
+	 * @return void
+	 */
+	public function visibility_mode() {
+		$this->check_permission_nonce( 'spectra_blocks_visibility_mode' );
+		$value         = $this->check_post_value();
+		$allowed_modes = array( 'disabled', 'comingsoon', 'maintenance' );
+		$mode          = in_array( $value, $allowed_modes, true ) ? $value : 'disabled';
+		$this->save_admin_settings( 'spectra_blocks_visibility_mode', $mode );
+	}
+
+	/**
+	 * Save the selected visibility page ID.
+	 *
+	 * @since 1.0.3
+	 * @return void
+	 */
+	public function visibility_page() {
+		$this->check_permission_nonce( 'spectra_blocks_visibility_page' );
+		$value   = $this->check_post_value();
+		$page_id = absint( $value );
+		$this->save_admin_settings( 'spectra_blocks_visibility_page', $page_id );
+	}
+
+	/**
+	 * Fetch published pages for the visibility page dropdown.
+	 *
+	 * @since 1.0.3
+	 * @return void
+	 */
+	public function fetch_pages() {
+		$this->check_permission_nonce( 'spectra_blocks_fetch_pages' );
+
+		// Nonce verified above; keyword is used only for a WP_Query title search.
+		$keyword = isset( $_POST['keyword'] ) ? sanitize_text_field( wp_unslash( $_POST['keyword'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce verified via check_permission_nonce above.
+
+		$query = new \WP_Query(
+			array(
+				'post_type'      => 'page',
+				'post_status'    => 'publish',
+				'posts_per_page' => 10,
+				's'              => $keyword,
+			)
+		);
+
+		$pages = array();
+		foreach ( $query->posts as $page ) {
+			$pages[] = array(
+				'value' => $page->ID,
+				'label' => $page->post_title,
+			);
+		}
+
+		wp_send_json_success( $pages );
 	}
 }

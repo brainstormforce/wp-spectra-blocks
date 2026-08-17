@@ -69,9 +69,34 @@ class AssetLoader {
 		add_filter( 'body_class', array( $this, 'add_zip_builder_body_class' ) );
 		add_filter( 'admin_body_class', array( $this, 'add_zip_builder_admin_body_class' ) );
 
+		// NOTE: the `<canvas>` KSES allowance is NOT registered here. It widens
+		// the allow-list for every `post`-context `wp_kses_post()` call on the
+		// request — comment text, widget text, any third party's — when only the
+		// content block's own call needs it. {@see self::with_canvas_allowed()}
+		// wraps that one call instead.
+
 		// Import-marker meta (the body-class detector's source of truth) —
 		// registered so the importer can set it over REST at page-write time.
 		add_action( 'init', array( $this, 'register_import_marker_meta' ) );
+
+		// Imported pages own ALL their spacing (the converter bakes the source's
+		// cascade into gs-* classes; undeclared axes must stay on the UA
+		// baseline the source rendered with). Core's layout support injects
+		// `is-layout-*` / `wp-container-*` classes whose global blockGap rules
+		// (`:root :where(.is-layout-flow) > *` at (0,1,0)) then re-margin every
+		// child — a channel that provably CANNOT be neutralized with a
+		// constant-value counter-rule, because authored reset lanes span
+		// (0,0,1) `body *` … (0,1,2) `body .card p`, overlapping every altitude
+		// a counter could take (measured both ways, 2026-08-16: zeroing cost
+		// UA-reliant sources their paragraph margins; `revert` re-inflated
+		// reset-based sources). Stripping the classes kills the injection at
+		// its source: the gap rules simply never match. Named block filters run
+		// AFTER core's generic `render_block` layout filter, so the classes
+		// exist by the time this runs; render-time, so already-imported pages
+		// heal without re-import. Scoped to spectra/container — the imported
+		// tree's structural mass — leaving core/post-content's constrained
+		// centering untouched.
+		add_filter( 'render_block_spectra/container', array( $this, 'strip_layout_classes_on_imported_pages' ), 20, 2 );
 
 		// Load utility functions for GT integration.
 		$this->load_gt_utils();
@@ -120,6 +145,194 @@ class AssetLoader {
 		}
 
 		return $classes;
+	}
+
+	/**
+	 * Frontend: allow the inert `<canvas>` tag through `wp_kses_post` while
+	 * rendering an imported (zip-built) singular view. WordPress' `post` KSES
+	 * context drops `<canvas>`, so the content block's `wp_kses_post( $text )`
+	 * strips a JS-drawn canvas (e.g. an imported hero visualization) before the
+	 * block's `spectraCustomJS` can draw on it. `<canvas>` is inert — no `src`,
+	 * no script, and `on*` handlers are stripped by KSES regardless — so this
+	 * only lets the element survive, adding no script-execution surface.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array<string, mixed>|mixed $tags    Allowed tags for this context.
+	 * @param string                     $context KSES context (e.g. `post`).
+	 * @return array<string, mixed>|mixed Possibly-extended tags.
+	 */
+	public static function allow_canvas_on_zip_built_pages( $tags, $context ) {
+		if ( 'post' !== $context || ! is_array( $tags ) ) {
+			return $tags;
+		}
+
+		// Frontend singular imported views only — the block editor / REST
+		// render never runs the drawing script, so a canvas would be blank.
+		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || ! is_singular() ) {
+			return $tags;
+		}
+
+		$post_id = get_queried_object_id();
+		if ( ! $post_id || ! self::is_zip_built_page( (int) $post_id ) ) {
+			return $tags;
+		}
+
+		$tags['canvas'] = array(
+			'id'          => true,
+			'class'       => true,
+			'style'       => true,
+			'width'       => true,
+			'height'      => true,
+			'role'        => true,
+			'aria-label'  => true,
+			'aria-hidden' => true,
+		);
+
+		return $tags;
+	}
+
+	/**
+	 * Run `wp_kses_post()` on imported block text with `<canvas>` permitted.
+	 *
+	 * The allowance is added and removed around THIS call only. Registering the
+	 * filter for the whole request widened the allow-list for every other
+	 * `post`-context `wp_kses_post()` on the page too — comments, widgets,
+	 * anything a third party sanitises — which is far more surface than the one
+	 * block that needs it.
+	 *
+	 * @since 1.0.4
+	 *
+	 * @param string $text Raw block text.
+	 * @return string Sanitised HTML.
+	 */
+	public static function with_canvas_allowed( string $text ): string {
+		$allow = array( self::class, 'allow_canvas_on_zip_built_pages' );
+
+		add_filter( 'wp_kses_allowed_html', $allow, 10, 2 );
+		$out = wp_kses_post( $text );
+		remove_filter( 'wp_kses_allowed_html', $allow, 10 );
+
+		return $out;
+	}
+
+	/**
+	 * The layout type WordPress will actually render for a block, resolved the
+	 * same way core does in `wp_render_layout_support_flag()`
+	 * (wp-includes/block-supports/layout.php): the block's own `attrs.layout`
+	 * when present, otherwise the block type's registered
+	 * `supports.layout.default` — which for `spectra/container` is FLEX. An
+	 * absent attribute is therefore NOT flow, and treating it as flow stripped
+	 * the layout off every container that never wrote one.
+	 *
+	 * `inherit`/`contentSize` force `constrained`, mirroring core, and a layout
+	 * array carrying no `type` falls to core's `default` (flow) classname.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param array<string,mixed> $block Parsed block.
+	 * @return string Resolved layout type ('default' when flow).
+	 */
+	private static function resolved_layout_type( $block ): string {
+		$attrs  = is_array( $block ) && isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+		$layout = isset( $attrs['layout'] ) && is_array( $attrs['layout'] ) ? $attrs['layout'] : null;
+
+		if ( null === $layout ) {
+			$name       = isset( $block['blockName'] ) && is_string( $block['blockName'] ) ? $block['blockName'] : '';
+			$registered = '' !== $name ? \WP_Block_Type_Registry::get_instance()->get_registered( $name ) : null;
+			$supports   = ( $registered instanceof \WP_Block_Type ) && is_array( $registered->supports ) ? $registered->supports : array();
+			$fallback   = $supports['layout']['default'] ?? ( $supports['__experimentalLayout']['default'] ?? array() );
+			$layout     = is_array( $fallback ) ? $fallback : array();
+		}
+
+		if ( ! empty( $layout['inherit'] ) || ! empty( $layout['contentSize'] ) ) {
+			return 'constrained';
+		}
+
+		return isset( $layout['type'] ) && is_string( $layout['type'] ) ? $layout['type'] : 'default';
+	}
+
+	/**
+	 * Frontend render: remove core layout-support classes from an imported
+	 * page's container markup, so the global blockGap margin/gap rules those
+	 * classes key on never apply. See the hook registration in {@see init()}
+	 * for the full why (the counter-rule impossibility measurement).
+	 *
+	 * Removes `is-layout-{type}`, `wp-block-…-is-layout-{type}` and generated
+	 * `wp-container-…` tokens from the FIRST tag only — that is the wrapper
+	 * core decorated; inner markup is the block's own children, each filtered
+	 * on its own render. Editor and non-imported pages are untouched, and so is
+	 * any container whose layout is flex/grid/constrained (see the body: those
+	 * classes ARE that container's layout).
+	 *
+	 * Known scope limit: importedness is decided from the QUERIED post, so a
+	 * flow container rendered from a shared template part or a query-loop item
+	 * is treated as imported while an imported page is being viewed. The blast
+	 * radius is one channel — core's flow blockGap margin — and the layout gate
+	 * above keeps every flex/grid/constrained part intact.
+	 *
+	 * @since x.x.x
+	 *
+	 * @param string              $block_content Rendered block HTML.
+	 * @param array<string,mixed> $block         Parsed block (attrs decide the layout gate).
+	 * @return string Block HTML with flow layout classes stripped on imported pages.
+	 */
+	public function strip_layout_classes_on_imported_pages( $block_content, $block = array() ) {
+		if ( is_admin() || ! is_singular() ) {
+			return $block_content;
+		}
+		$post_id = (int) get_queried_object_id();
+		if ( ! $post_id || ! self::is_zip_built_page( $post_id ) || ! is_string( $block_content ) || '' === $block_content ) {
+			return $block_content;
+		}
+
+		// FLOW containers only. The blockGap injection this strip exists to kill
+		// is the flow channel — core's global `:where(.is-layout-flow) > *
+		// { margin-block-start: … }`, which is keyed on the CLASS and therefore
+		// cannot be prevented through block attributes; removing the class is the
+		// only lever. But `spectra/container` takes its display/gap/direction from
+		// core layout support (`supports.layout.default` in block.json is FLEX; the
+		// block ships no `display:flex` of its own), so stripping these classes off
+		// a flex or grid container would delete its layout outright — a row would
+		// collapse to a stack and the authored gap would vanish. Converter output
+		// is mostly flow, but NOT always: `content.ts` emits a flex row precisely
+		// when the source has no flex of its own (so no gs-* class supplies
+		// `display`), and the anchor-button/navigation transforms emit flex too.
+		//
+		// The layout type is therefore resolved exactly as core resolves it in
+		// `wp_render_layout_support_flag()` (wp-includes/block-supports/layout.php):
+		// the block's own `attrs.layout` when present, otherwise the block type's
+		// registered `supports.layout.default` — an ABSENT attribute means FLEX for
+		// this block, not flow. Reading absent as flow stripped the layout off every
+		// container that never wrote the attribute.
+		$layout_type = self::resolved_layout_type( $block );
+		if ( 'default' !== $layout_type && 'flow' !== $layout_type ) {
+			return $block_content;
+		}
+
+		$processor = new \WP_HTML_Tag_Processor( $block_content );
+		if ( ! $processor->next_tag() ) {
+			return $block_content;
+		}
+
+		// `class_list()` normalises the tokens and handles tab/newline/multi-space
+		// separators a manual explode does not. Materialised first: removing while
+		// iterating the live attribute is not a supported traversal.
+		$tokens = array();
+		foreach ( $processor->class_list() as $token ) {
+			$tokens[] = $token;
+		}
+		foreach ( $tokens as $token ) {
+			if (
+				0 === strpos( $token, 'is-layout-' ) ||
+				0 === strpos( $token, 'wp-container-' ) ||
+				false !== strpos( $token, '-is-layout-' )
+			) {
+				$processor->remove_class( $token );
+			}
+		}
+
+		return $processor->get_updated_html();
 	}
 
 	/**
@@ -172,6 +385,34 @@ class AssetLoader {
 				},
 			)
 		);
+
+		// Run-scoped identity stamps the importer writes alongside the marker.
+		// Protected (underscore) keys are silently DROPPED by REST unless
+		// registered with show_in_rest, which would disable the importer's
+		// reclaim/dedup probes entirely. Subtype registration is inert when the
+		// post type is absent (e.g. SureForms not installed), so no guards.
+		$identity_keys = array(
+			'page'           => array( '_zipai_import_id' ),
+			'sureforms_form' => array( '_zipai_import_id', '_zipai_form_hash' ),
+			'wp_navigation'  => array( '_zipai_nav_hash' ),
+		);
+		foreach ( $identity_keys as $post_type => $keys ) {
+			foreach ( $keys as $key ) {
+				register_post_meta(
+					$post_type,
+					$key,
+					array(
+						'type'          => 'string',
+						'single'        => true,
+						'default'       => '',
+						'show_in_rest'  => true,
+						'auth_callback' => static function ( $allowed, $meta_key, $post_id ) {
+							return current_user_can( 'edit_post', $post_id );
+						},
+					)
+				);
+			}
+		}
 	}
 
 	/**

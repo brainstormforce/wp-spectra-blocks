@@ -46,7 +46,7 @@ const TemplatesButton = () => {
 			<SettingsItem
 				title={ __( 'Enable Templates Button', 'spectra-blocks' ) }
 				settingText={ __(
-					'Spectra Blocks comes with a stunning library of page templates and block patterns. This library is accessible with the Templates button while editing the page or post. Manage the visibility of that button with this option.',
+					'Show the Templates button in the editor so you can browse ready-made patterns and page templates.',
 					'spectra-blocks'
 				) }
 			>

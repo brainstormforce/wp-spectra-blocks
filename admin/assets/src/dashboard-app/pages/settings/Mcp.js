@@ -56,20 +56,20 @@ const Mcp = () => {
 				</Label>
 				<Label className="m-0" size="sm" tag="p" variant="help">
 					{ description }
-					{ learnMoreHref && (
-						<>
-							{ ' ' }
-							<a
-								href={ learnMoreHref }
-								target="_blank"
-								rel="noopener noreferrer"
-								className="cursor-pointer text-link-primary hover:text-link-primary-hover"
-							>
-								{ __( 'Learn more', 'spectra-blocks' ) }
-							</a>
-						</>
-					) }
 				</Label>
+				{ /* Kept outside the description Label: that Label lays its children out
+				     as flex items, so an inline link became a second column squeezed
+				     between the text and the toggle and wrapped onto two lines. */ }
+				{ learnMoreHref && (
+					<a
+						href={ learnMoreHref }
+						target="_blank"
+						rel="noopener noreferrer"
+						className="w-fit text-sm cursor-pointer text-link-primary hover:text-link-primary-hover"
+					>
+						{ __( 'Learn more', 'spectra-blocks' ) }
+					</a>
+				) }
 			</div>
 			<Switch value={ !! value } onChange={ onChange } size="md" className="uagb-remove-ring border-none" />
 		</div>
@@ -93,7 +93,7 @@ const Mcp = () => {
 			{ renderRow( {
 				title: __( 'Enable Edit Abilities', 'spectra-blocks' ),
 				description: __(
-					'When enabled, AI clients can create and configure Spectra Blocks blocks (containers, content, and more). When disabled, these abilities are unregistered and AI clients can only read data.',
+					'When enabled, AI clients can create and configure Spectra blocks (containers, content, and more). When disabled, these abilities are unregistered and AI clients can only read data.',
 					'spectra-blocks'
 				),
 				value: editAbilitiesOn,

@@ -138,9 +138,12 @@ class PreflightTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( ' p,', $this->css );
 		$this->assertStringContainsString( ' pre,', $this->css );
 		$this->assertStringContainsString( ' span{margin:0;}', $this->css );
-		$this->assertStringContainsString( ' ol,', $this->css );
-		$this->assertStringContainsString( ' ul,', $this->css );
+		$this->assertStringContainsString( ' ol:not(.wp-block-list),', $this->css );
+		$this->assertStringContainsString( ' ul:not(.wp-block-list),', $this->css );
 		$this->assertStringContainsString( 'list-style:none;margin:0;padding:0;', $this->css );
+		// Core's List block must be excluded so its bullets/numbers survive. See #508.
+		$this->assertStringNotContainsString( ' ul,' . ' menu{list-style:none', $this->css );
+		$this->assertStringContainsString( ':not(.wp-block-list)', $this->css );
 	}
 
 	/**

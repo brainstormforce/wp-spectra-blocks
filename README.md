@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.0  
 **Requires PHP:** 8.1  
-**Stable tag:** 1.0.0  
+**Stable tag:** 1.0.5  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -71,12 +71,17 @@ Every layout Zip AI produces is made entirely of Spectra Blocks. That means it's
 
 Spectra Blocks doesn't ship dozens of single-purpose blocks the way Spectra Legacy did. Instead, it gives you a focused set of flexible blocks, plus Extensions that add advanced design controls to WordPress's own core blocks.
 
-* **Text and Buttons** - Spectra's own content blocks. The Text block handles everything from headings (H1 to H6) to paragraphs, and the Buttons block creates fully customizable button groups.
-* **Extensions for core blocks** - advanced spacing, border, shadow, and responsive controls added to the core blocks you already use, like Image. You keep WordPress's own blocks and get more design power on top.
-* **Container** - the foundation for custom layouts; nest any block inside it, including core WordPress blocks and other plugins' blocks.
-* **Layout and content blocks** - Accordion, Tabs, Slider, List, Icon, Separator, and Google Map.
-* **Dynamic and engagement blocks** - Post (display posts in grid, masonry, or carousel layouts), Countdown, Counter, Modal, and Popup Builder.
-* **Design Library** - pre-built patterns for testimonials, info boxes, pricing tables, and comparisons, all built from Spectra Blocks.
+**Text and Buttons** are Spectra's own content blocks. The Text block handles everything from headings (H1 to H6) to paragraphs, and the Buttons block creates fully customizable button groups.
+
+**Extensions for core blocks** add advanced spacing, border, shadow, and responsive controls to the core blocks you already use, like Image. You keep WordPress's own blocks and get more design power on top.
+
+**Container** is the foundation for custom layouts — nest any block inside it, including core WordPress blocks and other plugins' blocks.
+
+**Layout and content blocks** include Accordion, Tabs, Slider, List, Icon, Separator, and Google Map.
+
+**Dynamic and engagement blocks** include Post (grid, masonry, and carousel layouts), Countdown, Counter, Modal, and Popup Builder.
+
+**Design Library** provides pre-built patterns for testimonials, info boxes, pricing tables, and comparisons, all built from Spectra Blocks.
 
 Missing a block you used in Spectra Legacy? It's probably not gone - it's just built differently now. A testimonial is a Container with an Image, Text, and Buttons inside it. A pricing table works the same way. If you'd rather use the original dedicated block exactly as it was, Spectra Legacy still has it.
 
@@ -219,16 +224,6 @@ Nothing's been removed - Spectra Legacy still has them, and your existing Legacy
 
 Please report security issues responsibly through our security disclosure process rather than posting them publicly. Details are available on the plugin's support page.
 
-## Screenshots ##
-
-1. Generate a full page draft from a text prompt using Zip AI.
-2. Refine an AI-generated layout using native Gutenberg blocks.
-3. Build a custom layout using the Container block and core WordPress blocks.
-4. Generate an individual section (e.g. pricing, FAQ) instead of a full page.
-5. Browse ready-made patterns in the Design Library.
-6. Global Styles controls for consistent colors, typography, and spacing site-wide.
-7. Popup Builder using native blocks.
-
 ## Source Code ##
 
 This plugin's JavaScript and CSS are built from source files using standard WordPress build tools.
@@ -270,86 +265,114 @@ This plugin connects to the following third-party services under certain conditi
 
 ### Google Maps (maps.google.com) ###
 The Google Map block embeds a map on the frontend using the public Google Maps embed URL (`https://maps.google.com/maps?q=...&output=embed`). No API key is required and no data is sent from the server. The request is made by the visitor's browser each time a page containing the block is rendered; the address entered in the block is included in the URL so Google can return the matching map tile.
-* Service URL: `https://maps.google.com/maps`
-* [Terms of Service](https://developers.google.com/maps/terms)
-* [Privacy Policy](https://policies.google.com/privacy)
+
+Service URL: https://maps.google.com/maps
+[Terms of Service](https://developers.google.com/maps/terms) | [Privacy Policy](https://policies.google.com/privacy)
 
 ### ZipWP API ###
 When the AI features are enabled and authorized, the plugin communicates with the ZipWP API for AI-powered content generation and template library features. User site URL and content prompts are sent to generate suggestions.
-* Service URL: `https://api.zipwp.com/`
-* [Terms of Service](https://zipwp.com/terms-and-conditions/)
-* [Privacy Policy](https://zipwp.com/privacy-policy/)
+
+Service URL: https://api.zipwp.com/
+[Terms of Service](https://zipwp.com/terms-and-conditions/) | [Privacy Policy](https://zipwp.com/privacy-policy/)
 
 ### ZipWP (app.zipwp.com) ###
-When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in the Spectra Blocks AI dashboard, the browser is redirected to the ZipWP web app for authentication, account management, or billing. The redirect is user-initiated; no plugin-originated data is sent until the user interacts with the linked pages.
-* Service URL: `https://app.zipwp.com/`
-* Data sent: only the data the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
-* When: only after the user clicks an authorization / billing link in the plugin's admin dashboard.
-* [Terms of Service](https://zipwp.com/terms-and-conditions/)
-* [Privacy Policy](https://zipwp.com/privacy-policy/)
+When the user clicks "Authorize", "Sign Up", "Manage Plan", or "Buy Credits" in the Spectra Blocks AI dashboard, the browser is redirected to the ZipWP web app for authentication, account management, or billing. The redirect is user-initiated; no plugin-originated data is sent until the user interacts with the linked pages. Data sent includes only what the user enters on the ZipWP web app itself (login credentials, billing details); the plugin passes a site identifier in the return URL so the ZipWP dashboard can complete the round-trip after sign-up.
+
+Service URL: https://app.zipwp.com/
+[Terms of Service](https://zipwp.com/terms-and-conditions/) | [Privacy Policy](https://zipwp.com/privacy-policy/)
 
 ### Starter Templates Credit Server ###
 When AI features are enabled, the plugin checks the credit balance for AI content generation features.
-* Service URL: `https://credits.startertemplates.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://startertemplates.com/privacy-policy/)
+
+Service URL: https://credits.startertemplates.com/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 ### Brainstorm Force Store ###
 When the "Get Spectra Blocks Pro" upsell is displayed in the admin dashboard, pricing information is fetched from the Brainstorm Force store. This request is made by the administrator's browser, not the plugin server.
-* Service URL: `https://store.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+Service URL: https://store.brainstormforce.com/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 ### Unsplash ###
 When using the AI-powered image library, images may be fetched from Unsplash. The bundled ZipWP Images library downloads free stock photos based on user-selected keywords. Image URLs and attribution data are retrieved from the Unsplash API.
-* Service URL: `https://unsplash.com/`
-* [Terms of Service](https://unsplash.com/terms)
-* [Privacy Policy](https://unsplash.com/privacy)
+
+Service URL: https://unsplash.com/
+[Terms of Service](https://unsplash.com/terms) | [Privacy Policy](https://unsplash.com/privacy)
 
 ### WordPress.org ###
 When installing recommended plugins or themes from the admin dashboard, the plugin uses the standard WordPress.org API to download packages.
-* Service URL: `https://downloads.wordpress.org/`
-* [Privacy Policy](https://wordpress.org/about/privacy/)
+
+Service URL: https://downloads.wordpress.org/
+[Privacy Policy](https://wordpress.org/about/privacy/)
 
 ### WebsiteDemos.net ###
 When the Starter Templates library is enabled, template data may be synced from the WebsiteDemos.net service.
-* Service URL: `https://websitedemos.net/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://startertemplates.com/privacy-policy/)
+
+Service URL: https://websitedemos.net/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://startertemplates.com/privacy-policy/)
 
 ### YouTube ###
 The admin dashboard settings page embeds tutorial videos from YouTube using the privacy-enhanced mode (youtube-nocookie.com). Videos are loaded only when a user clicks play on the admin dashboard. No user data is sent until playback is initiated.
-* Service URL: `https://www.youtube-nocookie.com/`
-* [Terms of Service](https://www.youtube.com/t/terms)
-* [Privacy Policy](https://policies.google.com/privacy)
+
+Service URL: https://www.youtube-nocookie.com/
+[Terms of Service](https://www.youtube.com/t/terms) | [Privacy Policy](https://policies.google.com/privacy)
 
 ### BSF Analytics ###
 When the user opts in to share anonymous usage data, the bundled BSF Analytics library sends non-personal site environment data (WordPress version, theme, active plugins) to help improve the plugin.
-* Service URL: `https://analytics.brainstormforce.com/`
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+Service URL: https://analytics.brainstormforce.com/
+[Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 ### BSF Metrics ###
 When the user submits an NPS (Net Promoter Score) survey response from the admin dashboard, the bundled NPS Survey library sends the feedback to the BSF Metrics service.
-* Service URL: `https://metrics.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+Service URL: https://metrics.brainstormforce.com/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 ### Brainstorm Force Support ###
 When verifying plugin license status, the bundled Starter Templates library may communicate with the Brainstorm Force support portal.
-* Service URL: `https://support.brainstormforce.com/`
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
+
+Service URL: https://support.brainstormforce.com/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://www.brainstormforce.com/privacy-policy/)
 
 ### Spectra Blocks News (wpspectra.com) ###
-The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made by the administrator's browser, not the plugin server.
-* Service URL: `https://wpspectra.com/whats-new/feed/`
-* Data sent: None (standard GET request with no user data)
-* [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/)
-* [Privacy Policy](https://wpspectra.com/privacy-policy/)
+The admin dashboard "What's New" panel fetches an RSS feed from wpspectra.com to display plugin announcements and release notes. This request is made by the administrator's browser, not the plugin server. No user data is sent.
+
+Service URL: https://wpspectra.com/whats-new/feed/
+[Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 ## Changelog ##
 
+### 1.0.5 - Monday, 17th August 2026 ###
+* Fix: Buttons and button-style links now output valid HTML markup.
+* Fix: Images using data URIs are no longer stripped from your content.
+
+### 1.0.4 - Thursday, 13th August 2026 ###
+* Improvement: Improved the onboarding wizard, including correct detection of an active Spectra Blocks Pro plan.
+* Improvement: Improved the Learn tab, including updated Global Styles guidance and visuals.
+* Fix: Buttons no longer receive a forced default border radius — your theme now controls button shape.
+* Fix: Resolved a PHP warning that could appear when using custom SVG icons.
+
+### 1.0.3 - Thursday, 6th August 2026 ###
+* New: Style Guide colours now stay in sync with your WordPress theme colours automatically.
+* Fix: Global Styles no longer affect elements outside your content area (such as the post title in the editor).
+* Fix: Popup content now scrolls correctly when taller than the screen; close button stays visible.
+* Fix: Modal content scrolls correctly when it exceeds the viewport height.
+* Fix: Image Mask extension now loads correctly in all configurations.
+
+### 1.0.2 - Thursday, 23rd July 2026 ###
+* New: Site Visibility — add a Coming Soon or Maintenance Mode page from Settings → Preferences.
+* Fix: Core List block bullets and numbering were missing when the block was placed inside a Spectra Container on free installs.
+* Fix: Generic `columns-*` CSS utility classes were unintentionally overriding layout on themes and plugins that use the same class names.
+
+### 1.0.1 - Friday, 17th July 2026 ###
+* New: Version rollback support — roll back to a previous version from the admin dashboard (Settings → Utilities → Version Control).
+* Fix: Button block — pasting label text with an inline link could result in invalid nested anchor markup on the frontend.
+
 ### 1.0.0 - Monday, 13th July 2026 ###
 * Initial release of Spectra Blocks.
+
+
+
 
 

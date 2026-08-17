@@ -21,9 +21,13 @@ $show = $attributes['show'] ?? true;
 // 2. Context value 'separatorType' from parent.
 // 3. Default fallback to ':'.
 $text = $attributes['text'] ?? $block->context['spectra/countdown/separatorType'] ?? ':';
+// `"0"` is falsy in PHP and `false` is not a string; normalise once so every
+// test below compares against a known string.
+$text = is_scalar( $text ) ? (string) $text : '';
 
 // If separator display is disabled globally or locally, or if text is empty, skip rendering.
-if ( ! $show_separator || ! $show || ! $text ) {
+// Strict compare: `! '0'` is true in PHP, so a separator of "0" was dropped.
+if ( ! $show_separator || ! $show || '' === $text ) {
 	return '';
 }
 

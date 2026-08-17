@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab2346231bcd973327510984872e65b6",
+    "content-hash": "5b4d0212305c95e6d8dece4f7bc3fb46",
     "packages": [
         {
             "name": "brainstormforce/astra-notices",
@@ -112,12 +112,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/gutenberg-templates.git",
-                "reference": "4a992bb3501bbb9f566800471882215050c45481"
+                "reference": "a1a90613440d8ce5138a3895e9907af68c71442b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/4a992bb3501bbb9f566800471882215050c45481",
-                "reference": "4a992bb3501bbb9f566800471882215050c45481",
+                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/a1a90613440d8ce5138a3895e9907af68c71442b",
+                "reference": "a1a90613440d8ce5138a3895e9907af68c71442b",
                 "shasum": ""
             },
             "require": {
@@ -176,7 +176,7 @@
                 "source": "https://github.com/brainstormforce/gutenberg-templates/tree/master",
                 "issues": "https://github.com/brainstormforce/gutenberg-templates/issues"
             },
-            "time": "2026-06-19T08:12:44+00:00"
+            "time": "2026-07-17T06:58:11+00:00"
         },
         {
             "name": "brainstormforce/nps-survey",
@@ -243,16 +243,16 @@
         },
         {
             "name": "brainstormforce/one-onboarding",
-            "version": "v1.0.3",
+            "version": "v1.0.7",
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/one-onboarding.git",
-                "reference": "c5d474a88d3ab920c3d49efe15a1441a32590d5a"
+                "reference": "be28daa9182f93481ef066a4e2cdc159ae815a48"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/one-onboarding/zipball/c5d474a88d3ab920c3d49efe15a1441a32590d5a",
-                "reference": "c5d474a88d3ab920c3d49efe15a1441a32590d5a",
+                "url": "https://api.github.com/repos/brainstormforce/one-onboarding/zipball/be28daa9182f93481ef066a4e2cdc159ae815a48",
+                "reference": "be28daa9182f93481ef066a4e2cdc159ae815a48",
                 "shasum": ""
             },
             "require": {
@@ -260,6 +260,7 @@
             },
             "require-dev": {
                 "automattic/vipwpcs": "^2.3",
+                "brainstormforce/bsf-phpcs-rules": "^1.0",
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
                 "nunomaduro/phpinsights": "^2.10",
                 "php-stubs/generator": "^0.8.2",
@@ -313,10 +314,10 @@
             ],
             "description": "One Onboarding is a comprehensive library designed to create seamless onboarding experiences for Brainstorm Force (BSF) products including Astra theme, Spectra plugin, and other WordPress products.",
             "support": {
-                "source": "https://github.com/brainstormforce/one-onboarding/tree/v1.0.3",
+                "source": "https://github.com/brainstormforce/one-onboarding/tree/v1.0.7",
                 "issues": "https://github.com/brainstormforce/one-onboarding/issues"
             },
-            "time": "2026-04-21T12:30:21+00:00"
+            "time": "2026-08-13T09:36:53+00:00"
         },
         {
             "name": "brainstormforce/zipwp-images",
@@ -2964,16 +2965,16 @@
         },
         {
             "name": "wp-coding-standards/wpcs",
-            "version": "3.3.0",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WordPress/WordPress-Coding-Standards.git",
-                "reference": "7795ec6fa05663d716a549d0b44e47ffc8b0d4a6"
+                "reference": "469c18ceab4d642b15bad4c65ebf3b307bfd55ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/7795ec6fa05663d716a549d0b44e47ffc8b0d4a6",
-                "reference": "7795ec6fa05663d716a549d0b44e47ffc8b0d4a6",
+                "url": "https://api.github.com/repos/WordPress/WordPress-Coding-Standards/zipball/469c18ceab4d642b15bad4c65ebf3b307bfd55ab",
+                "reference": "469c18ceab4d642b15bad4c65ebf3b307bfd55ab",
                 "shasum": ""
             },
             "require": {
@@ -2983,8 +2984,8 @@
                 "ext-xmlreader": "*",
                 "php": ">=7.2",
                 "phpcsstandards/phpcsextra": "^1.5.0",
-                "phpcsstandards/phpcsutils": "^1.1.0",
-                "squizlabs/php_codesniffer": "^3.13.4"
+                "phpcsstandards/phpcsutils": "^1.2.2",
+                "squizlabs/php_codesniffer": "^3.13.5"
             },
             "require-dev": {
                 "php-parallel-lint/php-console-highlighter": "^1.0.0",
@@ -3026,7 +3027,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2025-11-25T12:08:04+00:00"
+            "time": "2026-07-16T13:05:29+00:00"
         },
         {
             "name": "yoast/phpunit-polyfills",

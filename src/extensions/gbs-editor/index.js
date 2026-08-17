@@ -18,7 +18,8 @@ import { registerPlugin } from '@wordpress/plugins';
 import { useSelect } from '@wordpress/data';
 import apiFetch from '@wordpress/api-fetch';
 
-import { regeneratePageCSS, removeOtherPageSheets, regenerateSitewideCSS, refreshStyleGuidePalette } from './utils/liveVars.js';
+import { regeneratePageCSS, removeOtherPageSheets, regenerateSitewideCSS, refreshStyleGuidePalette, watchExternalPageCssSaves } from './utils/liveVars.js';
+import { useEditedPostId } from './hooks/useEditedPostId.js';
 import './style.scss';
 
 // ─── Plugin component (renders nothing — editor-side effects only) ───────────────
@@ -30,14 +31,7 @@ const GBSEditorPlugin = () => {
 	// (forcing a manual refresh). Track the edited page id and re-inject its
 	// CSS into the canvas on every change. Falls back to core/editor's current
 	// post for the classic page editor.
-	const pageId = useSelect( ( select ) => {
-		const site = select( 'core/edit-site' );
-		const type = site?.getEditedPostType?.();
-		if ( 'page' === type || 'post' === type ) {
-			return Number( site.getEditedPostId?.() ) || 0;
-		}
-		return Number( select( 'core/editor' )?.getCurrentPostId?.() ) || 0;
-	}, [] );
+	const pageId = useEditedPostId();
 
 	useEffect( () => {
 		if ( pageId <= 0 ) {
@@ -48,6 +42,14 @@ const GBSEditorPlugin = () => {
 		removeOtherPageSheets( pageId );
 		regeneratePageCSS( pageId );
 	}, [ pageId ] );
+
+	// Out-of-band writers (e.g. the ZIP AI editor's chat-driven style edits)
+	// save through the same REST route and repaint the `-inline-css` sheet
+	// live, but never refresh our overlay above — watch for those saves and
+	// refresh it. Registered once; an apiFetch middleware isn't per-page state.
+	useEffect( () => {
+		watchExternalPageCssSaves();
+	}, [] );
 
 	// Site-wide chrome (header/footer) — page-agnostic, handled independently of
 	// the per-page CSS above. Re-apply it whenever the Site Editor swaps the

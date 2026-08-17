@@ -161,7 +161,7 @@ Page request
         │     NOTE: when Pro is active this is skipped (Pro owns the stylesheet)
         │
         ├── Engine::enqueue_jit_for_current_post()
-        │     → <style id="spectra-gs-dynamic-styles">
+        │     → <style id="spectra-gs-jit-styles">
         │         @layer utilities { /* JIT-compiled tokens used on this post */ }
         │       </style>
         │
@@ -289,9 +289,11 @@ same schema-v1 option under a new top-level bucket.
 
 ### 6.3 Config Save Hook
 
-Pro hooks `spectra_style_guide_config_before_save` to merge its own palette fields
-(chromatics 4–7, neutral tint, typography pair, presets) before free's config
-endpoint writes. When adding Pro-only Style Guide fields:
+Free fires `spectra_style_guide_config_before_save` so Pro can merge its own fields
+into the Style Guide config before free's endpoint writes. The Style Guide is now
+**colours-only** — Typography and UI Styling were removed, so Pro currently registers
+no fields on this hook (the old `merge_pro_config_fields()` is gone). The hook point
+remains for future Pro-only Style Guide fields. When adding one:
 
 1. Handle them in `GlobalStyles.php` on `spectra_style_guide_config_before_save`.
 2. Do NOT add them to free's config schema or REST handler.

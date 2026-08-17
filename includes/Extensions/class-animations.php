@@ -106,32 +106,55 @@ class Animations {
 		// - `-anim` — DASH-anchored, matches any `-anim`/`-animate` compound class.
 		// - `-reveal` / `-fade` — common reveal suffixes as a safety net for
 		// imports that predate / don't follow the convention.
-		// All class tokens are DASH-anchored (`-token`) so they only fire on
+		// The `-token` entries above are DASH-anchored so they only fire on
 		// compound reveal classes (`hero-fade`, `mng-reveal`) and skip unrelated
 		// words (`faded`, `animation-wrapper`). NOTE: the reset also clears
 		// `transform` (the entrance OFFSET for a reveal — correct here), so tokens
 		// matching LAYOUT-transform elements (`slide`/`carousel`/`zoom`, bare
 		// `-in`) are deliberately EXCLUDED to avoid flattening slider positioning.
+		// - `[class~="reveal"]` / `~="fade"` / `~="animate"` — BARE tokens, matched
+		// with `~=` (whole space-delimited token) because imported templates author
+		// the reveal as its own class (`class="hero-fig reveal in"`), where the dash
+		// belongs to the sibling class and the DASH-anchored selectors above miss it.
+		// `~=` is used instead of `*=` so `faded`/`animation-wrapper` stay excluded
+		// and the exclusion rationale above still holds.
+		//
+		// Every target is ALSO applied to a `> img` child: authored reveals put the
+		// hidden start state on the image itself (`figure.reveal > img{opacity:0}`),
+		// which an element-only reset leaves untouched — the container un-hides
+		// while the image stays invisible. Scoped to `> img` rather than a
+		// descendant wildcard to keep slider/carousel positioning out of scope.
 		if ( is_admin() ) {
-			$reset_handle    = 'spectra-blocks-aos-editor-reset';
-			$reset_selectors = implode(
-				',',
-				array(
-					'[data-aos]',
-					'[data-animate]',
-					'[data-reveal]',
-					'[class*="-spectra-anim"]',
-					'[class*="-anim"]',
-					'[class*="-reveal"]',
-					'[class*="-fade"]',
-				)
+			$reset_handle  = 'spectra-blocks-aos-editor-reset';
+			$reset_targets = array(
+				'[data-aos]',
+				'[data-animate]',
+				'[data-reveal]',
+				'[class*="-spectra-anim"]',
+				'[class*="-anim"]',
+				'[class*="-reveal"]',
+				'[class*="-fade"]',
+				'[class~="reveal"]',
+				'[class~="fade"]',
+				'[class~="animate"]',
 			);
+
+			$reset_children = array_map(
+				static function ( $target ) {
+					return $target . ' > img';
+				},
+				$reset_targets
+			);
+
+			$reset_declarations = '{opacity:1 !important;transform:none !important;}';
+
 			// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
 			wp_register_style( $reset_handle, false, array(), null );
 			wp_enqueue_style( $reset_handle );
 			wp_add_inline_style(
 				$reset_handle,
-				$reset_selectors . '{opacity:1 !important;transform:none !important;}'
+				implode( ',', $reset_targets ) . $reset_declarations .
+				implode( ',', $reset_children ) . $reset_declarations
 			);
 
 			return;

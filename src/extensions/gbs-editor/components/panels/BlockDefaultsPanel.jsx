@@ -7,12 +7,14 @@
  * @since x.x.x
  */
 
-import { useState, useEffect, useCallback, useRef } from '@wordpress/element';
+import { useState, useEffect, useCallback, useRef, useMemo } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { dispatch } from '@wordpress/data';
 import Select from 'react-select';
 import getClassOptions from '../../data/class-options';
+import { useGBSConfig } from '../../hooks/useGBSConfig';
+import { useCustomClasses } from '../../hooks/useCustomClasses.js';
 import { regenerateEditorCSS } from '../../utils/liveVars.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -401,14 +403,31 @@ const BlockDefaultsPanel = () => {
 	const [ successMsg, setSuccessMsg ]               = useState( '' );
 	const [ errorMsg, setErrorMsg ]                   = useState( '' );
 
-	const [ availableClasses ] = useState( () => {
+	// The user's saved custom colours (config.custom_colors) — appended to the
+	// colour class groups so they're selectable as block defaults. Recomputed
+	// when the config loads/changes (a useState initializer would miss the async
+	// fetch and never show colours saved after mount).
+	const { config: sgConfig } = useGBSConfig();
+	const customColorSlugs = useMemo( () => Object.keys( sgConfig?.custom_colors ?? {} ), [ sgConfig ] );
+
+	// Live global custom classes — stays current when classes are created or
+	// deleted elsewhere this session (the hook re-fetches on the
+	// spectraGSClassesUpdated event). Until the first fetch SUCCEEDS we pass null so
+	// getClassOptions falls back to the PHP page-load snapshot; `loaded` (not
+	// `! loading`) is the gate, because a failed fetch also clears `loading` and
+	// would otherwise hand an empty {} to getClassOptions — which treats it as
+	// authoritative and drops the Custom Classes group entirely.
+	const { classes: liveCustomClasses, loaded: classesLoaded } = useCustomClasses( null, 0 );
+	const customClassesSource = classesLoaded ? liveCustomClasses : null;
+
+	const availableClasses = useMemo( () => {
 		// Strip default-{block} classes — they are the OUTPUT of block defaults, not valid inputs.
 		// Assigning them would create circular CSS aggregation.
-		return getClassOptions().map( ( group ) => ( {
+		return getClassOptions( customClassesSource, customColorSlugs ).map( ( group ) => ( {
 			...group,
 			options: ( group.options ?? [] ).filter( ( opt ) => ! /^default-/.test( opt.value ) ),
 		} ) ).filter( ( group ) => ( group.options ?? [] ).length > 0 );
-	} );
+	}, [ customColorSlugs, customClassesSource ] );
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -699,6 +718,10 @@ const BlockDefaultsPanel = () => {
 					delete window.spectraGSTemporaryStorage[ selectedBlock ];
 				}
 				window.dispatchEvent( new CustomEvent( 'spectraGSClassesUpdated' ) );
+				// Re-inject the block-defaults stylesheet into the editor (incl. the
+				// canvas iframe) so a newly-applied default's CSS shows immediately —
+				// the server stylesheet only regenerates on a full page reload.
+				regenerateEditorCSS();
 			} else {
 				showError( resp.data?.title || __( 'Save failed. Please try again.', 'spectra-blocks' ) );
 			}

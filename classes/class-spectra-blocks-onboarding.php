@@ -111,30 +111,33 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 			\One_Onboarding\Core\Register::register_product(
 				'spectra-blocks',
 				array(
-					'title'       => __( 'Spectra Blocks Onboarding', 'spectra-blocks' ),
-					'product'     => array(
+					'title'                   => __( 'Spectra Blocks Onboarding', 'spectra-blocks' ),
+					'product'                 => array(
 						'id'   => 'spectra-blocks',
 						'name' => __( 'Spectra Blocks', 'spectra-blocks' ),
 					),
-					'logo'        => $plugin_url . 'admin/assets/images/spectra-onboarding-logo.svg',
-					'screens'     => array(
+					'logo'                    => $plugin_url . 'admin/assets/images/spectra-blocks-wordmark.svg',
+					'screens'                 => array(
 						'welcome'   => array(
 							'heading'     => __( 'Welcome to Spectra Blocks', 'spectra-blocks' ),
-							'description' => __( 'Build a fast, beautiful WordPress site—effortlessly.', 'spectra-blocks' ),
+							'description' => __( 'Design your WordPress site with blocks that stay fast. Setup takes about two minutes.', 'spectra-blocks' ),
 							'banner'      => array(
 								'type'      => 'video',
-								'url'       => 'https://www.youtube-nocookie.com/embed/y_tsLWV6QRM?showinfo=0&autoplay=1&modestbranding=1&rel=0',
-								'title'     => __( 'Getting Started with Spectra Blocks', 'spectra-blocks' ),
+								'url'       => 'https://www.youtube-nocookie.com/embed/y_tsLWV6QRM?showinfo=0&modestbranding=1&rel=0',
+								'title'     => __( 'Getting Started with', 'spectra-blocks' ),
 								'thumbnail' => $plugin_url . 'assets/images/onboarding-video-bg.png',
 							),
 							'items'       => array(
-								__( 'Import ready-made patterns & templates', 'spectra-blocks' ),
-								__( 'Easy customization—no coding or design skills', 'spectra-blocks' ),
-								__( 'Drag & Drop blocks to build your layout', 'spectra-blocks' ),
+								__( 'Import ready-made patterns and templates in one click', 'spectra-blocks' ),
+								__( 'Full design control without writing code', 'spectra-blocks' ),
+								__( 'Works inside the WordPress editor you already know', 'spectra-blocks' ),
 							),
 						),
 						'user-info' => array(
-							'description'    => __( 'Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra Blocks.', 'spectra-blocks' ),
+							'description'    => __( 'Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra.', 'spectra-blocks' ),
+							'showSource'     => false,
+							'showNewUser'    => false,
+							'showBenefit'    => false,
 							'sourceOptions'  => array(
 								'wordpress' => __( 'WordPress Plugin Directory', 'spectra-blocks' ),
 								'google'    => __( 'Google Search', 'spectra-blocks' ),
@@ -144,56 +147,68 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 								'other'     => __( 'Other', 'spectra-blocks' ),
 							),
 							'benefitOptions' => array(
-								'design-flexibility'  => __( 'Advanced design flexibility without bloated builders', 'spectra-blocks' ),
+								'design-flexibility'  => __( 'Advanced design flexibility without a bloated builder', 'spectra-blocks' ),
 								'ai-and-templates'    => __( 'AI and templates help me design quickly', 'spectra-blocks' ),
-								'fast-loading'        => __( 'I need a fast-loading page builder', 'spectra-blocks' ),
+								'fast-loading'        => __( 'I need a page builder that loads fast', 'spectra-blocks' ),
 								'updates-and-support' => __( 'Regular updates and support from Brainstorm Force', 'spectra-blocks' ),
-								'other'               => __( 'Other (please specify)', 'spectra-blocks' ),
+								'other'               => __( 'Other', 'spectra-blocks' ),
 							),
 							'privacyPolicy'  => array(
-								'url'   => 'https://store.brainstormforce.com/usage-tracking/?utm_source=spectra_dashboard&utm_medium=onboarding&utm_campaign=link',
+								'url'   => 'https://store.brainstormforce.com/privacy-policy/?utm_source=spectra_blocks&utm_medium=onboarding&utm_campaign=link',
 								'label' => __( 'Privacy Policy', 'spectra-blocks' ),
 							),
 							'optIn'          => array(
 								'description'  => __( 'Stay in the loop and help shape Spectra Blocks! Get feature updates, and help us build a better Spectra Blocks by sharing how you use the plugin.', 'spectra-blocks' ),
-								'learnMoreUrl' => 'https://store.brainstormforce.com/usage-tracking/?utm_source=spectra_dashboard&utm_medium=onboarding&utm_campaign=link',
+								'learnMoreUrl' => 'https://store.brainstormforce.com/usage-tracking/?utm_source=spectra_blocks&utm_medium=onboarding&utm_campaign=link',
 							),
 						),
 						'features'  => array(
-							'description' => __( 'Enable the features you need to design faster and build better with Spectra Blocks.', 'spectra-blocks' ),
+							'heading'     => __( 'Spectra Blocks features', 'spectra-blocks' ),
+							'description' => __( 'Powerful features to design faster and build better with Spectra Blocks.', 'spectra-blocks' ),
 							'featureList' => self::get_feature_list(),
 							'upgradeUrl'  => 'https://wpspectra.com/pricing/?utm_source=spectra_dashboard&utm_medium=onboarding&utm_campaign=pro-features',
 						),
 						'add-ons'   => array(
-							'addonList' => self::get_addon_list(),
+							'heading'     => __( 'Add anything else you need', 'spectra-blocks' ),
+							'description' => __( 'Optional free plugins from the same team. Install them now or later. None of them are required for Spectra Blocks to work.', 'spectra-blocks' ),
+							'addonList'   => self::get_addon_list(),
 						),
 						'done'      => array(
-							'items' => array(
-								__( 'Create a Page', 'spectra-blocks' ),
-								__( 'Visit Dashboard', 'spectra-blocks' ),
-								__( 'View Documentation', 'spectra-blocks' ),
+							'heading'      => __( 'You are set up', 'spectra-blocks' ),
+							'description'  => __( 'Spectra Blocks is ready. The fastest way to see what it does is to build one page.', 'spectra-blocks' ),
+							'itemsHeading' => __( 'What to do next', 'spectra-blocks' ),
+							'items'        => array(
+								__( 'Create your first page', 'spectra-blocks' ),
+								__( 'Visit the dashboard', 'spectra-blocks' ),
+								__( 'Read the documentation', 'spectra-blocks' ),
 							),
-							'cta1'  => array(
+							'cta1'         => array(
 								'url'   => admin_url( 'post-new.php?post_type=page' ),
-								'label' => __( 'Create a Page', 'spectra-blocks' ),
+								'label' => __( 'Create your first page', 'spectra-blocks' ),
 							),
-							'cta2'  => array(
+							'cta2'         => array(
 								'url'   => admin_url( 'admin.php?page=spectra-blocks' ),
-								'label' => __( 'Visit Dashboard', 'spectra-blocks' ),
+								'label' => __( 'Visit the dashboard', 'spectra-blocks' ),
 							),
-							'cta3'  => array(
+							'cta3'         => array(
 								'url'   => 'https://wpspectra.com/docs/?utm_source=spectra_dashboard&utm_medium=onboarding',
-								'label' => __( 'Docs & Help Center', 'spectra-blocks' ),
+								'label' => __( 'Read the documentation', 'spectra-blocks' ),
 							),
 						),
 					),
-					'exit'        => array(
-						'url' => admin_url( 'admin.php?page=spectra-blocks' ),
+					'exit'                    => array(
+						'url'   => admin_url( 'admin.php?page=spectra-blocks' ),
+						'label' => __( 'Exit setup', 'spectra-blocks' ),
 					),
-					'colors'      => array(),
-					'option_name' => 'spectra_blocks_onboarding',
-					'pro_status'  => self::get_pro_status(),
-					'pro_slug'    => 'spectra-pro',
+					'colors'                  => array(
+						'primary-brand'   => '#6005FF',
+						'secondary-brand' => '#4D21CA',
+					),
+					'option_name'             => 'spectra_blocks_onboarding',
+					'pro_status'              => self::get_pro_status(),
+					'pro_slug'                => 'spectra-blocks-pro',
+					// Toggling any one Pro feature on the Features screen selects/clears the whole Pro set.
+					'select_all_pro_features' => true,
 				)
 			);
 
@@ -212,16 +227,16 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}
 
-			if ( is_plugin_active( 'spectra-pro/spectra-pro.php' ) ) {
-				return 'Activated';
+			if ( is_plugin_active( 'spectra-blocks-pro/spectra-blocks-pro.php' ) ) {
+				return 'active';
 			}
 
 			$all_plugins = get_plugins();
-			if ( isset( $all_plugins['spectra-pro/spectra-pro.php'] ) ) {
-				return 'Installed';
+			if ( isset( $all_plugins['spectra-blocks-pro/spectra-blocks-pro.php'] ) ) {
+				return 'inactive';
 			}
 
-			return 'Not Installed';
+			return 'not-installed';
 		}
 
 		/**
@@ -254,6 +269,8 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 				$optin     = ! empty( $user_info['optIn'] );
 
 				update_site_option( 'spectra_blocks_usage_optin', $optin ? 'yes' : 'no' );
+				// Mirror to the dashboard analytics setting so both consent sources stay coherent.
+				update_option( 'spectra_blocks_analytics_optin', $optin ? 'yes' : 'no' );
 
 				if ( $optin ) {
 					self::generate_lead( $user_info );
@@ -374,6 +391,7 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		 */
 		private static function get_addon_icons() {
 			return array(
+				// zip-ai uses a PNG logo via the 'logo' key in the addon list — no SVG entry needed.
 				'starter-templates' => '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="#6005FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 				'surerank'          => '<svg xmlns="http://www.w3.org/2000/svg" width="102" height="115" viewBox="0 0 102 115" fill="none"><path d="M101.177 42.6533C101.177 19.2953 82.3389 0.365723 59.094 0.365723H0.189453V114.516H10.088C27.2714 114.516 41.4519 101.621 43.5789 84.9269H43.6067L43.6762 67.2128H42.1887C30.2882 67.2128 20.6121 57.6852 20.2785 45.8106H20.2646V40.1666H25.895C33.7638 40.1666 40.7289 44.0783 44.9831 50.0575C49.0426 35.5984 62.2777 24.9951 77.9596 24.9951V30.639V38.2248C77.9596 54.1647 66.0174 67.101 50.1826 67.1988V84.9269C52.2401 101.663 66.4484 114.627 83.6735 114.627H101.204V80.694H77.4869C91.5284 73.8347 101.204 59.3756 101.204 42.6393L101.177 42.6533Z" fill="#4338CA"/></svg>',
 				'sureforms'         => '<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150" fill="none"><g clip-path="url(#sf)"><mask id="sfm" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="150" height="150"><path d="M150 0H0V150H150V0Z" fill="white"/></mask><g mask="url(#sfm)"><path d="M150 0H0V150H150V0Z" fill="#D54407"/><path d="M42.8579 32.1396H107.144V53.5683H53.5723L42.8579 64.2825V53.5683V32.1396Z" fill="white"/><path d="M42.8579 64.2839H96.4291V85.7124H53.5723L42.8579 96.4266V85.7124V64.2839Z" fill="white"/><path d="M42.8579 96.428H75.0007V117.856H42.8579V96.428Z" fill="white"/></g></g><defs><clipPath id="sf"><rect width="150" height="150" fill="white"/></clipPath></defs></svg>',
@@ -388,20 +406,28 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		 * @return array<int, array<string, string>>
 		 */
 		public static function get_addon_list() {
-			$icons = self::get_addon_icons();
+			$icons      = self::get_addon_icons();
+			$plugin_url = plugins_url( '/', SPECTRA_BLOCKS_FILE );
 
 			return array(
+				array(
+					'slug'            => 'zip-ai',
+					'title'           => __( 'ZIP AI', 'spectra-blocks' ),
+					'logo'            => $plugin_url . 'assets/images/zip-ai-logo.png',
+					'description'     => __( 'Describe your site in plain language and get a complete, editable layout built from Spectra blocks.', 'spectra-blocks' ),
+					'defaultSelected' => true,
+				),
 				array(
 					'slug'        => 'astra-sites',
 					'title'       => __( 'Starter Templates', 'spectra-blocks' ),
 					'logoSvg'     => $icons['starter-templates'],
-					'description' => __( 'Launch websites quickly with 300+ professionally designed templates.', 'spectra-blocks' ),
+					'description' => __( 'Launch a site quickly with hundreds of professionally designed templates.', 'spectra-blocks' ),
 				),
 				array(
 					'slug'        => 'sureforms',
 					'title'       => __( 'SureForms', 'spectra-blocks' ),
 					'logoSvg'     => $icons['sureforms'],
-					'description' => __( 'Create beautiful forms that feel conversational and keep users engaged.', 'spectra-blocks' ),
+					'description' => __( 'Create forms that feel conversational instead of like paperwork.', 'spectra-blocks' ),
 				),
 				array(
 					'slug'        => 'suremails',
@@ -498,7 +524,7 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		 */
 		public function register_data_exporter( $exporters ) {
 			$exporters['spectra-blocks-onboarding'] = array(
-				'exporter_friendly_name' => __( 'Spectra Onboarding Data', 'spectra-blocks' ),
+				'exporter_friendly_name' => __( 'Spectra Blocks Onboarding Data', 'spectra-blocks' ),
 				'callback'               => array( $this, 'export_personal_data' ),
 			);
 			return $exporters;
@@ -513,7 +539,7 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		 */
 		public function register_data_eraser( $erasers ) {
 			$erasers['spectra-blocks-onboarding'] = array(
-				'eraser_friendly_name' => __( 'Spectra Onboarding Data', 'spectra-blocks' ),
+				'eraser_friendly_name' => __( 'Spectra Blocks Onboarding Data', 'spectra-blocks' ),
 				'callback'             => array( $this, 'erase_personal_data' ),
 			);
 			return $erasers;
@@ -534,7 +560,7 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 			if ( ! empty( $user_info['email'] ) && $email_address === $user_info['email'] ) {
 				$data[] = array(
 					'group_id'    => 'spectra-blocks-onboarding',
-					'group_label' => __( 'Spectra Onboarding', 'spectra-blocks' ),
+					'group_label' => __( 'Spectra Blocks Onboarding', 'spectra-blocks' ),
 					'item_id'     => 'spectra-blocks-onboarding-details',
 					'data'        => array(
 						array(

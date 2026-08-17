@@ -179,7 +179,7 @@ const ClearV3Cache = () => {
 			<SettingsItem
 				title={ __( 'Clear Cached Styles', 'spectra-blocks' ) }
 				settingText={ __(
-					'Clear all cached responsive CSS for new Spectra blocks. This can help resolve styling issues and ensure the latest styles are loaded on your website.',
+					'Clear the cached CSS for all Spectra blocks. Useful if styling on your site looks out of date.',
 					'spectra-blocks'
 				) }
 			>
@@ -187,8 +187,6 @@ const ClearV3Cache = () => {
 					{ __( 'Clear Cache', 'spectra-blocks' ) }
 				</Button>
 			</SettingsItem>
-
-			<hr className="w-full border-b-0 border-x-0 border-t border-solid border-t-border-subtle" />
 
 			<ConfirmationPopup
 				{ ...{

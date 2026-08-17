@@ -13,6 +13,11 @@ import { dispatch, select } from '@wordpress/data';
 
 const CONFIG_PATH = '/spectra-blocks/v1/style-guide/config';
 
+// Session cache (module scope): the last fetched config. Seeds the hook on
+// re-mounts so reopening the Style Guide modal renders instantly from the
+// previous state while a background refetch revalidates it.
+let configCache = null;
+
 /**
  * Push an updated theme palette into the live block-editor settings store so
  * the color picker reflects the new names/colors without requiring a page reload.
@@ -81,14 +86,18 @@ function pushPaletteToEditor( palette ) {
  * }}
  */
 export function useGBSConfig() {
-	const [ config, setConfig ] = useState( null );
-	const [ loading, setLoading ] = useState( true );
+	// Stale-while-revalidate: seed from the session cache so a re-mount (the
+	// modal reopening) renders instantly; the mount fetch below still runs and
+	// replaces it with the fresh result.
+	const [ config, setConfig ] = useState( configCache );
+	const [ loading, setLoading ] = useState( ! configCache );
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ] = useState( null );
 
 	useEffect( () => {
 		apiFetch( { path: CONFIG_PATH } )
 			.then( ( data ) => {
+				configCache = data;
 				setConfig( data );
 				setLoading( false );
 			} )
@@ -116,6 +125,7 @@ export function useGBSConfig() {
 				method: 'POST',
 				data: updates,
 			} );
+			configCache = result.config;
 			setConfig( result.config );
 			pushPaletteToEditor( result.palette );
 			return result;

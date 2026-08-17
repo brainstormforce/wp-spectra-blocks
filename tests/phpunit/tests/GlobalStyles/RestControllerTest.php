@@ -634,6 +634,71 @@ class RestControllerTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Regression: the SaaS/editor authoring path emits CSS-in-JS lowerCamelCase
+	 * property names (`backgroundColor`, `zIndex`) and JS-toggled state classes
+	 * WITHOUT their leading dot (`is-open`, the bare class its JS toggles). Both
+	 * are invalid in the GBS store (renderers print keys/state suffixes verbatim,
+	 * so `backgroundColor:…` is dropped by the browser and a bare `is-open` state
+	 * resolves to no selector). The write choke point must canonicalize BOTH:
+	 * property keys → kebab-case, and `is-…`/`has-…` state keys → leading-dot
+	 * tails — while leaving pseudos, `default`, and `--` custom properties intact.
+	 *
+	 * @return void
+	 */
+	public function test_class_declarations_normalize_camelcase_props_and_toggle_state(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$request->set_param(
+			'payload',
+			array(
+				'v'       => '1',
+				'classes' => array(
+					'arn-overlay' => array(
+						// camelCase props + a --var (must stay) in the base state.
+						'default' => array(
+							'backgroundColor'      => 'rgba(0,0,0,0.7)',
+							'zIndex'               => '9999',
+							'justifyContent'       => 'center',
+							// Vendor prefix (no leading dash) — must regain it.
+							'WebkitBackgroundClip' => 'text',
+							'--myVar'              => '10px',
+							'opacity'              => '0',
+						),
+						// Bare JS-toggle state → must become `.is-open`.
+						'is-open' => array( 'opacity' => '1' ),
+						// A real pseudo → must stay `hover`.
+						'hover'   => array( 'backdropFilter' => 'blur(4px)' ),
+					),
+				),
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$cls    = $stored['classes']['arn-overlay'];
+
+		// Facet 1 — property keys kebab-cased; `--` custom prop untouched.
+		$this->assertArrayHasKey( 'background-color', $cls['default'] );
+		$this->assertArrayHasKey( 'z-index', $cls['default'] );
+		$this->assertArrayHasKey( 'justify-content', $cls['default'] );
+		$this->assertArrayHasKey( '--myVar', $cls['default'], 'CSS custom properties are case-sensitive — must NOT be hyphenated' );
+		$this->assertArrayHasKey( '-webkit-background-clip', $cls['default'], 'a camelCase vendor prefix must regain its leading dash' );
+		$this->assertArrayNotHasKey( 'webkit-background-clip', $cls['default'], 'a vendor prefix without the leading dash is an invalid, dropped declaration' );
+		$this->assertArrayNotHasKey( 'backgroundColor', $cls['default'] );
+		$this->assertArrayNotHasKey( 'zIndex', $cls['default'] );
+
+		// Facet 2 — bare `is-open` canonicalized to a leading-dot class tail; the
+		// pseudo `hover` state is left as a resolver-known key (its body kebabed).
+		$this->assertArrayHasKey( '.is-open', $cls, 'a bare JS-toggle state must gain its leading dot' );
+		$this->assertArrayNotHasKey( 'is-open', $cls );
+		$this->assertArrayHasKey( 'hover', $cls, 'a known pseudo state key must be left intact' );
+		$this->assertArrayHasKey( 'backdrop-filter', $cls['hover'] );
+	}
+
+	/**
 	 * Regression: class names are validated by SYNTAX + reserved-prefix
 	 * denylist, not a `gs-|animate-` prefix allowlist. The old allowlist
 	 * (letter-only first char after the prefix) silently dropped (a)
@@ -703,6 +768,56 @@ class RestControllerTest extends WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'wp-block-group', $stored['classes'], 'reserved wp- (core) prefix must be rejected' );
 		$this->assertArrayNotHasKey( 'is-style-rounded', $stored['classes'], 'reserved is- (core state) prefix must be rejected' );
 		$this->assertArrayNotHasKey( '1bad-class', $stored['classes'], 'syntactically invalid names must be rejected' );
+	}
+
+	/**
+	 * `remBase` (the source's document-root font-size, rendered verbatim by
+	 * GenCssRenderer into `:root { font-size: …; }`) must be shape-validated
+	 * at THIS write choke point, not only at render — `{`, `}`, `;` or a CSS comment
+	 * delimiter (slash-star / star-slash) would otherwise break out of (or comment
+	 * past) the declaration. A standalone slash/star stays valid (`calc()`).
+	 *
+	 * @return void
+	 */
+	public function test_update_sitewide_rejects_unsafe_rem_base_accepts_safe(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$request->set_param(
+			'payload',
+			array(
+				'v'       => '1',
+				'remBase' => '62.5%} body{background:url(evil)}/*',
+			)
+		);
+
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertArrayNotHasKey( 'remBase', $stored, 'a remBase value carrying { } ; must never reach the store' );
+
+		// A `/*`-only value (the brace check passes it) must be rejected — else
+		// `:root { font-size: 62.5%/*; }` opens a comment that swallows the sheet.
+		$comment_request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$comment_request->set_param( 'payload', array( 'v' => '1', 'remBase' => '62.5%/*' ) );
+		$this->assertSame( 200, $this->server->dispatch( $comment_request )->get_status() );
+		$this->assertArrayNotHasKey( 'remBase', get_option( Engine::OPTION_KEY_USER_CSS, array() ), 'a remBase value opening a CSS comment (/*) must never reach the store' );
+
+		$second_request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$second_request->set_param( 'payload', array( 'v' => '1', 'remBase' => '62.5%' ) );
+
+		$second_response = $this->server->dispatch( $second_request );
+		$this->assertSame( 200, $second_response->get_status() );
+
+		$stored_again = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame( '62.5%', $stored_again['remBase'], 'a safe remBase value must still be stored' );
+
+		// `calc()` uses `/` and `*` — only the comment SEQUENCES are rejected.
+		$calc_request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$calc_request->set_param( 'payload', array( 'v' => '1', 'remBase' => 'calc(16px / 1.6)' ) );
+		$this->assertSame( 200, $this->server->dispatch( $calc_request )->get_status() );
+		$this->assertSame( 'calc(16px / 1.6)', get_option( Engine::OPTION_KEY_USER_CSS, array() )['remBase'], 'a calc() remBase using / and * must still be stored' );
 	}
 
 	/**

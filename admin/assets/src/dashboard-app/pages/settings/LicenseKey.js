@@ -21,7 +21,7 @@ const LicenseKey = () => {
 			: __( 'Paste your license key here', 'spectra-blocks' );
 		const licenseMessage = licenseStatus
 			? __( 'License successfully validated!', 'spectra-blocks' )
-			: __( 'Please enter your valid license key below to activate Spectra Blocks Pro!', 'spectra-blocks' );
+			: __( 'Enter your license key to activate Spectra Blocks Pro.', 'spectra-blocks' );
 	
 		const activateHandler = () => {
 			if ( ! licenseKey ) {

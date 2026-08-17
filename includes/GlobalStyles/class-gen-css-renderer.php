@@ -88,6 +88,8 @@ class GenCssRenderer {
 	 * How each bucket is handled — scope depends on context (frontend vs editor):
 	 *   imports       → `@import url("…");`  (first, verbatim)
 	 *   scopeVars     → `<root> { … }`  (editor uses the WIDE content-size value)
+	 *   remBase       → `:root { font-size: … }`  (frontend only — the source's
+	 *                   own document-root font-size; the rem base, never body's)
 	 *   rootStyles    → `<root> { … }`
 	 *   presetLock    → `<root> { … }`
 	 *   variables     → `<root> { … }`  (user custom CSS vars from `/custom-vars`)
@@ -156,7 +158,20 @@ class GenCssRenderer {
 			$parts[] = $root_scope . ' { ' . self::vars_to_string( $vars ) . ' }';
 		}
 
-		// 2. Source root styling — the `:root`/`body` token graph AND base body
+		// 2a. Rem base — the source authored a font-size on its DOCUMENT root
+		// (`html`/`:root`, e.g. the 62.5% trick), so every rem length it wrote
+		// only means what the source meant if the same base lands on the real
+		// `:root` here (a theme's default 16px root rendered such content 11%
+		// short, measured). The converter routes ONLY document-root font-sizes
+		// into `remBase`; a `body` font-size is inheritance intent and stays in
+		// rootStyles — hoisting it moved the rem base to the site's preset
+		// value and rescaled every rem token ×1.25 (measured 2026-07-13).
+		$rem_base = isset( $payload['remBase'] ) && is_string( $payload['remBase'] ) ? trim( $payload['remBase'] ) : '';
+		if ( '' !== $rem_base && ! $is_editor && preg_match( '/^(?!.*(?:\/\*|\*\/))[^{};]+$/', $rem_base ) ) {
+			$parts[] = ':root { font-size: ' . $rem_base . '; }';
+		}
+
+		// 2b. Source root styling — the `:root`/`body` token graph AND base body
 		// declarations (font, color, background, margin, …) on the root.
 		$root_styles = self::assoc( $payload['rootStyles'] ?? array() );
 		if ( array() !== $root_styles ) {
@@ -282,19 +297,18 @@ class GenCssRenderer {
 			if ( ! is_string( $selector ) || '' === $selector ) {
 				continue;
 			}
-			// Skip bare element-tag resets (`button`, `img`, `svg`, `video`, …)
-			// captured from the source's Tailwind "Preflight" base layer. Emitted
-			// site-wide as `body button {…}` / `.editor-styles-wrapper button {…}`,
-			// they strip default chrome (border/padding/background) off EVERY
-			// button and media element on the site — native Spectra/core blocks
-			// included — not just the imported page. The gs-* utility classes
-			// already carry all the styling the imported design needs, so these
-			// blanket element resets are redundant and harmful. Only bare tag
-			// selectors are dropped; class/compound/descendant wrapper selectors
-			// (e.g. `.tdrx-hdr-nav a`) still render.
-			if ( self::is_bare_tag_selector( $selector ) ) {
-				continue;
-			}
+			// Bare element-tag selectors (`p`, `button`, `img`, …) RENDER like any
+			// other wrapper selector (2026-08-16). They used to be skipped as
+			// "Preflight reset noise" — but the universal reset (`*` → `body *`)
+			// was never skipped, so the render carried the destructive half of a
+			// source's element tier while dropping the constructive half:
+			// `* { margin: 0 }` applied and the source's own `p { margin: .8em 0 }`
+			// vanished, collapsing every paragraph. The source cascade only
+			// reproduces when the tier ships whole. Scoping already handles the
+			// old leak concern: per-page payloads render only on their own post
+			// (enqueue isolation), and the site-wide payload belongs to a
+			// replace_site import whose design owns the whole site — the same
+			// policy the universal reset has always lived under.
 			$decls = self::assoc( $decls );
 			$body  = self::decls_to_string( $decls );
 			if ( '' !== $body ) {
@@ -303,26 +317,6 @@ class GenCssRenderer {
 		}
 
 		return $out;
-	}
-
-	/**
-	 * Whether a wrapper-style selector targets only bare HTML element tags — a
-	 * single tag (`button`) or a comma-list of tags (`img, svg, video`) — with
-	 * no class, id, attribute, pseudo, or combinator. Such selectors come from
-	 * the source's Preflight/base reset and must not be applied site-wide.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $selector Wrapper-style selector.
-	 * @return bool True when every comma-part is a lone tag name.
-	 */
-	private static function is_bare_tag_selector( string $selector ): bool {
-		foreach ( explode( ',', $selector ) as $part ) {
-			if ( 1 !== preg_match( '/^[a-z][a-z0-9]*$/i', trim( $part ) ) ) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

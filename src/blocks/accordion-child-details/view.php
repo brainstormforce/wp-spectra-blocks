@@ -20,7 +20,6 @@ $wrapper_attributes = get_block_wrapper_attributes();
 ?>
 <div
 	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	data-wp-bind--hidden="spectra/accordion::!context.isExpanded"
 	data-wp-bind--id="spectra/accordion::context.detailsId"
 	data-wp-bind--aria-labelledby="spectra/accordion::context.headerId"
 	data-wp-style--display="spectra/accordion::context.detailsDisplay"

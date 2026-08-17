@@ -24,23 +24,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class ClassRegistry {
 
 	/**
-	 * Maps SG chromatic shade indices (1-11) to Tailwind shade labels (50-950).
+	 * Maps SG chromatic shade indices to Tailwind shade labels.
+	 *
+	 * Only the seed (`chromaticN-7` → `600`) exists — shade ramps are no longer
+	 * generated, so `bg-primary-600` is the one live chromatic shade per colour.
 	 *
 	 * @since 1.0.0
 	 * @var array<int, string>
 	 */
 	const CHROMATIC_SHADE_MAP = array(
-		1  => '50',
-		2  => '100',
-		3  => '200',
-		4  => '300',
-		5  => '400',
-		6  => '500',
-		7  => '600',
-		8  => '700',
-		9  => '800',
-		10 => '900',
-		11 => '950',
+		7 => '600',
 	);
 
 	/**
@@ -122,8 +115,10 @@ class ClassRegistry {
 	}
 
 	/**
-	 * Maps SG neutral shade indices (0-7) to Tailwind shade labels.
-	 * Gaps at 400, 700, 900 are filled via NEUTRAL_GAP_FILL.
+	 * Maps SG neutral shade indices to Tailwind shade labels.
+	 *
+	 * Only the six stored neutral stops exist — the interpolated stops 3 and 6
+	 * (old `base-300`/`base-800`) are no longer generated.
 	 *
 	 * @since 1.0.0
 	 * @var array<int, string>
@@ -132,23 +127,20 @@ class ClassRegistry {
 		0 => '50',
 		1 => '100',
 		2 => '200',
-		3 => '300',
 		4 => '500',
 		5 => '600',
-		6 => '800',
 		7 => '950',
 	);
 
 	/**
-	 * Fills neutral Tailwind shade gaps using the nearest available SG neutral token.
+	 * Fills neutral Tailwind shade gaps using the nearest available SG neutral
+	 * token. (Numeric-string keys are cast to int by PHP.)
 	 *
 	 * @since 1.0.0
-	 * @var array<string, string>
+	 * @var array<int, string>
 	 */
 	const NEUTRAL_GAP_FILL = array(
-		'400' => 'neutral-3',
 		'700' => 'neutral-5',
-		'900' => 'neutral-6',
 	);
 
 	/**
@@ -2242,7 +2234,10 @@ class ClassRegistry {
 			$slug = self::get_chromatic_slug( $index, $chromatic );
 
 			foreach ( self::CHROMATIC_SHADE_MAP as $sg_shade => $tw_shade ) {
-				$token = "chromatic{$index}-{$sg_shade}";
+				// The emitted CSS var is keyed by the seed's SEMANTIC slug
+				// (primary/secondary/accent/success/error/info/warning), the same
+				// name the engine sets — see ColorModel::CHROMATIC_SLUG.
+				$token = \SpectraBlocks\StyleGuide\ColorModel::chromatic_token( (int) $index );
 				$var   = "var(--spectra-{$token})";
 
 				self::register_color_for_all_prefixes(
@@ -2393,8 +2388,9 @@ class ClassRegistry {
 			$slug  = self::get_chromatic_slug( $index, $chromatic );
 			$label = $chromatic['name'] ?? "Chromatic {$index}";
 			foreach ( self::CHROMATIC_SHADE_MAP as $sg_shade => $tw_shade ) {
+				$token                            = \SpectraBlocks\StyleGuide\ColorModel::chromatic_token( (int) $index );
 				$sources[ "{$slug}-{$tw_shade}" ] = array(
-					'var'   => "var(--spectra-chromatic{$index}-{$sg_shade})",
+					'var'   => "var(--spectra-{$token})",
 					'label' => "{$label} {$tw_shade}",
 				);
 			}
@@ -4327,46 +4323,14 @@ class ClassRegistry {
 		);
 
 		// --- Columns ---
-		for ( $i = 1; $i <= 12; $i++ ) {
-			$classes[ "columns-{$i}" ] = array(
-				'css'         => "columns: {$i};",
-				'title'       => "Columns {$i}",
-				'description' => "Splits content into {$i} columns.",
-				'category'    => 'layout',
-				'tags'        => array( 'columns' ),
-			);
-		}
-		$classes['columns-auto'] = array(
-			'css'         => 'columns: auto;',
-			'title'       => 'Columns auto',
-			'description' => 'Uses automatic column count.',
-			'category'    => 'layout',
-			'tags'        => array( 'columns' ),
-		);
-		$columns_sizes           = array(
-			'3xs' => '16rem',
-			'2xs' => '18rem',
-			'xs'  => '20rem',
-			'sm'  => '24rem',
-			'md'  => '28rem',
-			'lg'  => '32rem',
-			'xl'  => '36rem',
-			'2xl' => '42rem',
-			'3xl' => '48rem',
-			'4xl' => '56rem',
-			'5xl' => '64rem',
-			'6xl' => '72rem',
-			'7xl' => '80rem',
-		);
-		foreach ( $columns_sizes as $key => $value ) {
-			$classes[ "columns-{$key}" ] = array(
-				'css'         => "columns: {$value};",
-				'title'       => "Columns {$key}",
-				'description' => "Uses {$value} as the ideal column width.",
-				'category'    => 'layout',
-				'tags'        => array( 'columns' ),
-			);
-		}
+		// Intentionally NOT registered as static utility classes. `columns-{n}`
+		// is too generic a class name — the static sheet ships site-wide in Free
+		// (no per-post filtering), so `:root .columns-4 { columns: 4 }` was being
+		// forced onto ANY element carrying a `columns-4` class (themes/other
+		// plugins use it for grid layouts), hijacking it into CSS multi-column.
+		// Arbitrary `columns-*` tokens authored on a Spectra block are still
+		// resolved on demand by the JIT compiler (PREFIX_MAP: `columns`).
+		// @since 1.0.3
 
 		$break_values = array( 'auto', 'avoid', 'all', 'avoid-page', 'page', 'left', 'right', 'column' );
 		foreach ( $break_values as $value ) {
@@ -5074,74 +5038,6 @@ class ClassRegistry {
 		return $classes;
 	}
 
-	/**
-	 * Component classes — curated `sg-*` pattern tokens.
-	 *
-	 * These are styled in `assets/css/component-tokens.css`, NOT generated by
-	 * the JIT. Registering them here makes them first-class citizens in the
-	 * class registry so validators, editor autocomplete, the cheatsheet UI,
-	 * and any GS-aware tooling see them alongside utility classes. The `css`
-	 * field is intentionally empty — `get_flat_classes()` filters empties so
-	 * the JIT doesn't emit duplicate / stub rules for them.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<string, array>
-	 */
-	public static function get_component_classes(): array {
-		return array(
-			'sg-section'        => array(
-				'css'         => '',
-				'title'       => 'Section',
-				'description' => 'Full-bleed section wrapper with vertical rhythm tokens (top/bottom padding).',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'section', 'layout' ),
-			),
-			'sg-card'           => array(
-				'css'         => '',
-				'title'       => 'Card',
-				'description' => 'Surface card with uniform padding, radius, and subtle shadow tokens.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'card', 'surface' ),
-			),
-			'sg-badge'          => array(
-				'css'         => '',
-				'title'       => 'Badge',
-				'description' => 'Inline badge / tag with padding + radius tokens.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'badge', 'tag' ),
-			),
-			'sg-icon-contained' => array(
-				'css'         => '',
-				'title'       => 'Icon (contained)',
-				'description' => 'Icon with a tinted container background and consistent sizing.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'icon' ),
-			),
-			'sg-overlay-light'  => array(
-				'css'         => '',
-				'title'       => 'Overlay (light)',
-				'description' => 'Light scrim overlay for contrast on bright imagery.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'overlay', 'scrim' ),
-			),
-			'sg-overlay-dark'   => array(
-				'css'         => '',
-				'title'       => 'Overlay (dark)',
-				'description' => 'Dark scrim overlay for contrast on photographic backdrops.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'overlay', 'scrim' ),
-			),
-			'sg-text-gradient'  => array(
-				'css'         => '',
-				'title'       => 'Text gradient',
-				'description' => 'Gradient fill applied to inline text.',
-				'category'    => 'component',
-				'tags'        => array( 'component', 'text', 'gradient' ),
-			),
-		);
-	}
-
 	// ─────────────────────────────────────────────────────────────
 	// MERGE + CACHE
 	// ─────────────────────────────────────────────────────────────
@@ -5181,8 +5077,7 @@ class ClassRegistry {
 			self::get_list_classes(),
 			self::get_extended_classes(),
 			self::get_parity_v3_classes(),
-			self::get_parity_v4_classes(),
-			self::get_component_classes()
+			self::get_parity_v4_classes()
 		);
 
 		// Dynamic classes — depend on SG config, WP object-cached.
@@ -5206,9 +5101,8 @@ class ClassRegistry {
 
 		foreach ( $all as $name => $data ) {
 			$css = $data['css'] ?? '';
-			// Component classes carry empty CSS — their visual rules live in
-			// `assets/css/component-tokens.css`. Skip them here so the JIT
-			// stylesheet doesn't emit empty or duplicate selectors.
+			// Defensive: an entry with no declarations would emit an empty
+			// selector into the JIT stylesheet.
 			if ( '' === $css ) {
 				continue;
 			}
@@ -5243,77 +5137,6 @@ class ClassRegistry {
 		}
 
 		return $list;
-	}
-
-	/**
-	 * Returns grouped options for the editor class dropdown (React Select format).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array<int, array{label: string, options: array}>
-	 */
-	public static function get_grouped_options_for_editor(): array {
-		$all = self::get_all_classes();
-
-		// Group definitions: group key => label.
-		$group_order = array(
-			'bg-color'      => 'Background: Color',
-			'text-color'    => 'Color: Text',
-			'border-color'  => 'Border: Color',
-			'overlay-color' => 'Overlay: Color',
-			'padding'       => 'Spacing: Padding',
-			'margin'        => 'Spacing: Margin',
-			'gap'           => 'Spacing: Gap',
-			'font-size'     => 'Typography: Font Size',
-			'font-weight'   => 'Typography: Font Weight',
-			'line-height'   => 'Typography: Line Height',
-			'text-align'    => 'Typography: Text Align',
-			'tracking'      => 'Typography: Letter Spacing',
-			'text-style'    => 'Typography: Text Style',
-			'display'       => 'Display',
-			'layout'        => 'Layout',
-			'sizing'        => 'Sizing',
-			'border'        => 'Border',
-			'shadow'        => 'Shadow',
-			'opacity'       => 'Opacity',
-			'filters'       => 'Filters',
-			'overflow'      => 'Overflow',
-			'position'      => 'Position',
-			'visibility'    => 'Visibility',
-			'cursor'        => 'Cursor',
-			'list-style'    => 'Lists',
-		);
-
-		$groups = array();
-		foreach ( array_keys( $group_order ) as $key ) {
-			$groups[ $key ] = array();
-		}
-
-		foreach ( $all as $class_name => $data ) {
-			$group = self::classify_for_editor_group( $class_name, $data );
-
-			if ( null === $group || ! isset( $groups[ $group ] ) ) {
-				continue;
-			}
-
-			$groups[ $group ][] = array(
-				'value' => $class_name,
-				'label' => $class_name,
-			);
-		}
-
-		// Build final grouped array, omitting empty groups.
-		$result = array();
-		foreach ( $group_order as $key => $label ) {
-			if ( ! empty( $groups[ $key ] ) ) {
-				$result[] = array(
-					'label'   => $label,
-					'options' => $groups[ $key ],
-				);
-			}
-		}
-
-		return $result;
 	}
 
 	/**
@@ -5615,83 +5438,5 @@ class ClassRegistry {
 			'category'    => 'colors',
 			'tags'        => array( 'ring', 'offset', $slug, 'color' ),
 		);
-	}
-
-	/**
-	 * Classifies a class into an editor group key.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $class_name The class name.
-	 * @param array  $data       The class data array.
-	 * @return string|null The group key, or null if it should be excluded.
-	 */
-	private static function classify_for_editor_group( string $class_name, array $data ): ?string {
-		$category = $data['category'] ?? '';
-
-		// Color classes — categorize by prefix.
-		if ( 'colors' === $category ) {
-			if ( 0 === strpos( $class_name, 'bg-' ) ) {
-				return 'bg-color';
-			}
-			if ( 0 === strpos( $class_name, 'text-' ) ) {
-				return 'text-color';
-			}
-			if ( 0 === strpos( $class_name, 'overlay-' ) ) {
-				return 'overlay-color';
-			}
-			if ( 0 === strpos( $class_name, 'border' ) ) {
-				return 'border-color';
-			}
-			return null;
-		}
-
-		// Spacing classes — categorize by prefix.
-		if ( 'spacing' === $category ) {
-			if ( 0 === strpos( $class_name, 'p' ) && ( 1 === strlen( $class_name ) || '-' === $class_name[1] || 't' === $class_name[1] || 'r' === $class_name[1] || 'b' === $class_name[1] || 'l' === $class_name[1] || 'x' === $class_name[1] || 'y' === $class_name[1] ) ) {
-				return 'padding';
-			}
-			if ( 0 === strpos( $class_name, 'm' ) && ( 1 === strlen( $class_name ) || '-' === $class_name[1] || 't' === $class_name[1] || 'r' === $class_name[1] || 'b' === $class_name[1] || 'l' === $class_name[1] || 'x' === $class_name[1] || 'y' === $class_name[1] ) ) {
-				return 'margin';
-			}
-			if ( 0 === strpos( $class_name, 'gap' ) ) {
-				return 'gap';
-			}
-			return null;
-		}
-
-		// Typography classes.
-		if ( 'typography' === $category ) {
-			if ( 0 === strpos( $class_name, 'text-' ) || 0 === strpos( $class_name, 'leading-' ) ) {
-				return 0 === strpos( $class_name, 'leading-' ) ? 'line-height' : 'font-size';
-			}
-			return null;
-		}
-
-		// Map remaining categories directly.
-		$category_map = array(
-			'display'     => 'display',
-			'layout'      => 'layout',
-			'sizing'      => 'sizing',
-			'border'      => 'border',
-			'filters'     => 'filters',
-			'font-weight' => 'font-weight',
-			'text-align'  => 'text-align',
-			'tracking'    => 'tracking',
-			'text-style'  => 'text-style',
-			'shadow'      => 'shadow',
-			'opacity'     => 'opacity',
-			'overflow'    => 'overflow',
-			'position'    => 'position',
-			'visibility'  => 'visibility',
-			'cursor'      => 'cursor',
-			'list-style'  => 'list-style',
-		);
-
-		if ( isset( $category_map[ $category ] ) ) {
-			return $category_map[ $category ];
-		}
-
-		return null;
 	}
 }

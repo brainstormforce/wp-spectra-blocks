@@ -30,7 +30,7 @@ const CATEGORIES = [
 	{
 		id: 'color-vars',
 		label: __( 'Color tokens', 'spectra-blocks' ),
-		match: ( k ) => /^(neutral|chromatic|opacity|white|transparent)/.test( k ),
+		match: ( k ) => /^(neutral|primary|secondary|accent|success|error|info|warning|opacity|white|transparent)/.test( k ),
 	},
 	{
 		id: 'spacing-vars',

@@ -17,7 +17,16 @@ import apiFetch from '@wordpress/api-fetch';
 
 const COMPUTE_PATH  = '/spectra-blocks/v1/style-guide/compute';
 const PREVIEW_PATH  = '/spectra-blocks/v1/style-guide/preview';
-const PREVIEW_DELAY = 300; // ms debounce
+// Debounce before a preview round-trips to the server. Every keystroke/drag
+// resets it, so it is pure added latency on the LAST edit — keep it just high
+// enough to swallow picker drags. The optimistic echo (StyleGuideContext)
+// paints the picked colour instantly, so this only delays the derived tokens.
+const PREVIEW_DELAY = 150; // ms debounce
+
+// Session cache (module scope): the last computed result. Seeds the hook on
+// re-mounts so reopening the Style Guide modal renders instantly from the
+// previous state while a background refetch revalidates it.
+let computedCache = null;
 
 /**
  * Hook for computed GBS tokens.
@@ -33,15 +42,20 @@ const PREVIEW_DELAY = 300; // ms debounce
  * }}
  */
 export function useGBSComputed() {
-	const [ computed, setComputed ] = useState( null );
-	const [ loading, setLoading ] = useState( true );
+	// Stale-while-revalidate: seed from the session cache so a re-mount (the
+	// modal reopening) renders instantly; the mount fetch below still runs and
+	// replaces it with the fresh result.
+	const [ computed, setComputed ] = useState( computedCache );
+	const [ loading, setLoading ] = useState( ! computedCache );
 	const [ previewing, setPreviewing ] = useState( false );
 	const debounceRef = useRef( null );
 
 	const fetchComputed = useCallback( () => {
 		return apiFetch( { path: COMPUTE_PATH } ).then( ( data ) => {
+			computedCache = data;
 			setComputed( data );
 			setLoading( false );
+			return data;
 		} );
 	}, [] );
 
@@ -54,7 +68,7 @@ export function useGBSComputed() {
 	 *
 	 * @since x.x.x
 	 *
-	 * @return {Promise<void>}
+	 * @return {Promise<Object>} Resolves to the saved computed result.
 	 */
 	const refresh = useCallback( () => {
 		setLoading( true );
