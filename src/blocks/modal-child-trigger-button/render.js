@@ -64,7 +64,7 @@ const Render = ( props ) => {
 
 	const iconHtml = useCallback(
 		( position ) => {
-			const finalIconPosition = iconPosition || 'after'; // Ensure a default value
+			const finalIconPosition = iconPosition === 'before' ? 'before' : 'after'; // Unknown or empty position must still paint, not vanish.
 			// If there's no icon, or if the position given does not match the required one, abandon ship.
 			if ( ! icon || position !== finalIconPosition ) {
 				return null;

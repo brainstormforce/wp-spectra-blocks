@@ -184,6 +184,16 @@ body .wp-block-spectra-counter-child-wrapper.spectra-no-block-gap {
 // selector would be (0,4,1) and would start OUTRANKING authored source spacing
 // — the neutralizer would win over the very gs-* gap it is meant to defer to.
 // The `h4, h5, h6` carve-out is identical for the reason documented above.
+// CANONICAL FORM (A32, 2026-08-24): `margin-block-start: revert` — as used by the
+// frontend twin in `imported-baseline.scss` — is the better of the two, and this
+// editor rule is the one that should converge on it. `revert` rolls core's
+// injected margin back to the UA value instead of flattening it to 0, so a <p>
+// keeps its 1em and a minor heading keeps its UA margin, which is exactly what the
+// `:not(h4, h5, h6)` carve-out below exists to hand-patch. Left as-is here
+// deliberately: swapping the editor canvas's neutralizer is a behaviour change on
+// a different surface and does not belong in the frontend fix. Whoever touches this
+// next: replace the declaration with `revert` and drop the carve-out, then re-pin
+// the editor contract test.
 body .wp-block-spectra-container.spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(:not(h4, h5, h6)) {
 	margin-block-start: 0;
 }

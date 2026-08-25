@@ -100,6 +100,9 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/remove-display-conditions',
 			// Content abilities.
 			'spectra-blocks/create-post',
+			// Style Guide colours.
+			'spectra-blocks/get-active-colors',
+			'spectra-blocks/set-active-colors',
 		);
 	}
 
@@ -255,6 +258,7 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/list-popups',
 			'spectra-blocks/get-popup',
 			'spectra-blocks/get-global-styles-config',
+			'spectra-blocks/get-active-colors',
 		);
 	}
 
@@ -296,6 +300,7 @@ class AbilitiesManagerTest extends WP_UnitTestCase {
 			'spectra-blocks/apply-display-conditions',
 			'spectra-blocks/remove-display-conditions',
 			'spectra-blocks/update-global-styles',
+			'spectra-blocks/set-active-colors',
 		);
 	}
 

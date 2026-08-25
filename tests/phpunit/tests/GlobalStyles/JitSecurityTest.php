@@ -117,25 +117,38 @@ class JitSecurityTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * `var(...)` references are rejected by the strict sanitizer path.
+	 * Well-formed `var(--name)` references are preserved by the strict sanitizer
+	 * path — a custom-property reference is not executable and is a legitimate,
+	 * common CSS value.
 	 *
 	 * @return void
 	 */
-	public function test_var_reference_is_rejected(): void {
+	public function test_wellformed_var_reference_is_preserved(): void {
 		$css = JitCompiler::compile( array( 'p-[var(--foo)]' ) );
 
-		$this->assertSame( '', $css );
+		$this->assertStringContainsString( 'var(--foo)', $css );
 	}
 
 	/**
-	 * `var(...)` inside a larger value (e.g. calc) is also rejected.
+	 * Well-formed `var(...)` inside a larger value (e.g. calc) is preserved.
 	 *
 	 * @return void
 	 */
-	public function test_var_inside_calc_is_rejected(): void {
+	public function test_wellformed_var_inside_calc_is_preserved(): void {
 		$css = JitCompiler::compile( array( 'w-[calc(100%_-_var(--pad))]' ) );
 
-		$this->assertSame( '', $css );
+		$this->assertStringContainsString( 'calc(100% - var(--pad))', $css );
+	}
+
+	/**
+	 * Malformed `var(...)` — anything whose first token is not a `--` custom
+	 * property — is still rejected by the strict sanitizer path.
+	 *
+	 * @return void
+	 */
+	public function test_malformed_var_reference_is_rejected(): void {
+		$this->assertSame( '', JitCompiler::compile( array( 'p-[var(url(#x))]' ) ) );
+		$this->assertSame( '', JitCompiler::compile( array( 'p-[var(10px)]' ) ) );
 	}
 
 	/**

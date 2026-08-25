@@ -16,7 +16,7 @@ import RenderSVG from '@spectra-helpers/render-svg';
  * The Editor Block render.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block.
  */
 const Render = ( props ) => {
@@ -87,7 +87,14 @@ const Render = ( props ) => {
 	// Set the icon and size to use based on the attribute or context.
 	const iconToUse = icon || tabsIcon;
 	const sizeToUse = size || tabsIconSize || '16px';
-	const positionToUse = iconPosition || tabsIconPosition;
+	// Normalize each SOURCE before the fallback, not the collapsed result: with
+	// `iconPosition || tabsIconPosition`, an INVALID child value still won the
+	// `||` and shadowed a valid parent. Child 'left' + parent 'before' painted
+	// right in the editor and left on the frontend, because core unsets the
+	// out-of-enum child and controller.php then reads the context. Same order
+	// here keeps the two surfaces agreeing.
+	const validPosition = ( v ) => ( [ 'before', 'after' ].includes( v ) ? v : '' );
+	const positionToUse = validPosition( iconPosition ) || validPosition( tabsIconPosition ) || 'after';
 	
 	// Get tab index and parent ID
 	const tabIndex = useSelect( ( select ) => {
@@ -171,7 +178,7 @@ const Render = ( props ) => {
 
 	// Render the icon HTML when any required attribute changes.
 	const iconHtml = useCallback( ( position ) => {
-		const finalIconPosition = positionToUse || 'after'; // Ensure a default value
+		const finalIconPosition = positionToUse; // Already normalized to 'before' | 'after' above.
 		// If there's no icon, or if the position given does not match the required one, abandon ship.
 		if ( ! iconToUse || position !== finalIconPosition ) {
 			return null;

@@ -33,8 +33,13 @@ if ( '' !== $text ) {
 	unset( $allowed_label_tags['a'] );
 	$text = wp_kses( $text, $allowed_label_tags );
 }
-$icon          = $attributes['icon'] ?? $block->context['spectra/tabs/icon'] ?? '';
-$icon_position = $attributes['iconPosition'] ?? $block->context['spectra/tabs/iconPosition'] ?? 'after';
+$icon = $attributes['icon'] ?? $block->context['spectra/tabs/icon'] ?? '';
+// `iconPosition` in this block's block.json carries an `enum` but DELIBERATELY
+// NO `default` — unlike its button / modal-trigger siblings. A default would make
+// core's prepare_attributes_for_render() refill the attribute on every render, so
+// the `??` below would never fall through and per-tabs inheritance from
+// `spectra/tabs/iconPosition` would break silently. Do not "harmonize" it.
+$icon_position = $attributes['iconPosition'] ?? $block->context['spectra/tabs/iconPosition'] ?? 'after'; // block.json enums validate both sources.
 $flip_for_rtl  = $attributes['flipForRTL'] ?? false;
 // Strict compare: an icon-only tab labelled "0" shipped with NO accessible
 // name, because `empty('0')` is true. The label itself is fixed above; this is

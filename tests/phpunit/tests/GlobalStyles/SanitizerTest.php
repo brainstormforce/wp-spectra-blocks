@@ -137,14 +137,26 @@ class SanitizerTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Strict mode rejects `var(...)` references entirely.
+	 * Strict mode rejects malformed `var(...)` — anything whose first token is not a `--` custom property.
 	 *
 	 * @return void
 	 */
-	public function test_value_strict_mode_rejects_var(): void {
-		$this->assertSame( '', Sanitizer::sanitize_css_value( 'var(--primary)', true ) );
-		$this->assertSame( '', Sanitizer::sanitize_css_value( 'calc(100% - var(--pad))', true ) );
-		$this->assertSame( '', Sanitizer::sanitize_css_value( 'VAR(--x)', true ) );
+	public function test_value_strict_mode_rejects_malformed_var(): void {
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'var()', true ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'var(url(#x))', true ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'var(10px)', true ) );
+	}
+
+	/**
+	 * Strict mode preserves well-formed custom-property references — `var(--name)` / `var(--name, fallback)`.
+	 *
+	 * @return void
+	 */
+	public function test_value_strict_mode_preserves_wellformed_var(): void {
+		$this->assertSame( 'var(--primary)', Sanitizer::sanitize_css_value( 'var(--primary)', true ) );
+		$this->assertSame( 'var(--x, 10px)', Sanitizer::sanitize_css_value( 'var(--x, 10px)', true ) );
+		$this->assertSame( 'calc(100% - var(--pad))', Sanitizer::sanitize_css_value( 'calc(100% - var(--pad))', true ) );
+		$this->assertSame( 'VAR(--x)', Sanitizer::sanitize_css_value( 'VAR(--x)', true ) );
 	}
 
 	/**

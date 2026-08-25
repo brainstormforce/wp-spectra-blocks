@@ -30,6 +30,14 @@ class AssetLoader {
 	const ZIP_BUILDER_BODY_CLASS = 'spectra-page-zip-builder';
 
 	/**
+	 * Marker the block-converter stamps on every container it emits, meaning
+	 * "the source owns this block's spacing". SSOT: block-converter's
+	 * `markers.ts`. Travels WITH the block, so it reaches converter-built
+	 * sections on pages the importer never wrote.
+	 */
+	const NO_BLOCK_GAP_MARKER = 'spectra-no-block-gap';
+
+	/**
 	 * Marker meta the ERA importer sets on every page it writes — the
 	 * explicit source of truth for "this page is imported" (drives the
 	 * zip-builder body class, frontend + editor). Detection previously
@@ -228,7 +236,7 @@ class AssetLoader {
 	 * `inherit`/`contentSize` force `constrained`, mirroring core, and a layout
 	 * array carrying no `type` falls to core's `default` (flow) classname.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.6
 	 *
 	 * @param array<string,mixed> $block Parsed block.
 	 * @return string Resolved layout type ('default' when flow).
@@ -271,18 +279,37 @@ class AssetLoader {
 	 * radius is one channel — core's flow blockGap margin — and the layout gate
 	 * above keeps every flex/grid/constrained part intact.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.6
 	 *
 	 * @param string              $block_content Rendered block HTML.
 	 * @param array<string,mixed> $block         Parsed block (attrs decide the layout gate).
 	 * @return string Block HTML with flow layout classes stripped on imported pages.
 	 */
 	public function strip_layout_classes_on_imported_pages( $block_content, $block = array() ) {
-		if ( is_admin() || ! is_singular() ) {
+		if ( is_admin() || ! is_string( $block_content ) || '' === $block_content ) {
 			return $block_content;
 		}
-		$post_id = (int) get_queried_object_id();
-		if ( ! $post_id || ! self::is_zip_built_page( $post_id ) || ! is_string( $block_content ) || '' === $block_content ) {
+
+		// TWO independent reasons to strip, either sufficient:
+		//
+		// 1. The PAGE is imported — the original gate. Whole-page fact, so it
+		// needs the singular query context.
+		// 2. This CONTAINER carries the converter's `spectra-no-block-gap`
+		// marker. A BLOCK-level fact that travels with the block, which is
+		// what reaches converter-built sections on pages the importer never
+		// wrote: the vibe editor inserts them into editor-created drafts, so
+		// reason 1 never fires and core re-margined them (measured
+		// 2026-08-21: `:root :where(.is-layout-flow) > *` put 17.81px on a
+		// flex button row's second button).
+		//
+		// Deliberately NOT a stylesheet counter-rule. Killing the injection at
+		// its source is the mechanism this file already proves; a constant-value
+		// counter cannot work here (see the filter registration comment), and a
+		// `revert` counter is worse still — at (0,1,0) it also outranks the
+		// theme's own top-level element styles, which core emits UNWRAPPED at
+		// (0,0,1) (`class-wp-theme-json.php`, `$element_only_selector`), so it
+		// would roll a themed h2/p back to the UA value on every marked section.
+		if ( ! self::has_no_block_gap_marker( $block ) && ! self::is_imported_singular() ) {
 			return $block_content;
 		}
 
@@ -346,6 +373,55 @@ class AssetLoader {
 	 *
 	 * @param int $post_id Post ID.
 	 * @return bool Whether the page is zip-built.
+	 */
+	/**
+	 * Whether the CURRENT request is a singular view of an imported page.
+	 *
+	 * @return bool True when the queried object is a zip-built page.
+	 */
+	private static function is_imported_singular(): bool {
+		if ( ! is_singular() ) {
+			return false;
+		}
+		$post_id = (int) get_queried_object_id();
+		return $post_id > 0 && self::is_zip_built_page( $post_id );
+	}
+
+	/**
+	 * Whether this container carries the converter's no-block-gap marker.
+	 *
+	 * The converter stamps `spectra-no-block-gap` unconditionally on every
+	 * container it emits — "the source owns this block's spacing". Read from the
+	 * block's OWN attributes, not the rendered class attribute: the marker is an
+	 * authoring fact, and reading attrs cannot be confused by a class some later
+	 * filter added. Matched on the whitespace-delimited token so a longer class
+	 * that merely starts with the same prefix cannot pass.
+	 *
+	 * @param array<string,mixed> $block Parsed block.
+	 * @return bool True when the marker is present.
+	 */
+	private static function has_no_block_gap_marker( $block ): bool {
+		if ( ! is_array( $block ) || ! isset( $block['attrs'] ) || ! is_array( $block['attrs'] ) ) {
+			return false;
+		}
+		$class_name = $block['attrs']['className'] ?? '';
+		if ( ! is_string( $class_name ) || '' === $class_name ) {
+			return false;
+		}
+		$tokens = preg_split( '/\s+/', $class_name );
+		return is_array( $tokens ) && in_array( self::NO_BLOCK_GAP_MARKER, $tokens, true );
+	}
+
+	/**
+	 * Whether a post was written by the importer.
+	 *
+	 * Result is memoised per post id — the strip filter runs once per container,
+	 * and a page carries many.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param int $post_id Post to test.
+	 * @return bool True when the importer marked this post.
 	 */
 	private static function is_zip_built_page( int $post_id ): bool {
 		static $cache = array();

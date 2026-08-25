@@ -614,7 +614,7 @@ class RestController {
 
 		// Class styles arrive unwrapped one level (`{bucket:{prop:value}}`), so
 		// the value sits at depth 1. Pass base_depth 1 so the CSS-aware value
-		// rules (var rejection, char whitelist, length cap) — which apply at
+		// rules (malformed-var rejection, char whitelist, length cap) — which apply at
 		// depth >= 2 — actually reach the declaration values.
 		$styles = $is_destructive ? array() : Sanitizer::sanitize_json( $styles_input, true, 1 );
 		if ( ! $is_destructive ) {

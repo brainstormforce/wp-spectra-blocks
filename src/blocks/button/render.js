@@ -149,7 +149,7 @@ const Render = ( props ) => {
 
 	const iconHtml = useCallback(
 		( position ) => {
-			const finalIconPosition = iconPosition || 'after'; // Ensure a default value.
+			const finalIconPosition = iconPosition === 'before' ? 'before' : 'after'; // Unknown or empty position must still paint, not vanish.
 			// If there's no icon, or if the position given does not match the required one, abandon ship.
 			if ( ! icon || position !== finalIconPosition ) {
 				return null;
@@ -183,7 +183,7 @@ const Render = ( props ) => {
 	// Hover icon rendering function.
 	const hoverIconHtml = useCallback(
 		( position ) => {
-			const finalHoverIconPosition = hoverIconPosition || 'right'; // Ensure a default value.
+			const finalHoverIconPosition = [ 'top', 'left', 'right', 'bottom' ].includes( hoverIconPosition ) ? hoverIconPosition : 'right'; // Unknown or empty position must still paint, not vanish.
 			// Only render if showIconOnHover is enabled, hoverIcon exists, and position matches.
 			if ( ! showIconOnHover || ! hoverIcon || position !== finalHoverIconPosition ) {
 				return null;

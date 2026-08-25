@@ -21,7 +21,7 @@ const ALLOWED_BLOCKS = [ 'spectra/slider-child' ];
  * The Editor Block render.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block.
  */
 const Render = memo( ( props ) => {
@@ -632,8 +632,11 @@ const Render = memo( ( props ) => {
 	// Handle slidesPerView changes efficiently.
 	useEffect( () => {
 		// Find the Swiper instance.
-		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
-		const swiperInstance = swiperEl?.__swiper;
+		// Use the Swiper instance stored at init ( sliderInstanceRef ) instead of
+		// reading a `.__swiper` prop that is never set and querying the top
+		// document, which misses the WP 7.1 iframed editor canvas.
+		const swiperInstance = sliderInstanceRef.current;
+		const swiperEl = swiperInstance?.el;
 		
 		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		
@@ -660,8 +663,10 @@ const Render = memo( ( props ) => {
 	// Handle spaceBetween changes.
 	useEffect( () => {
 		// Find the Swiper instance.
-		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
-		const swiperInstance = swiperEl?.__swiper;
+		// Use the Swiper instance stored at init ( sliderInstanceRef ) instead of
+		// reading a `.__swiper` prop that is never set and querying the top
+		// document, which misses the WP 7.1 iframed editor canvas.
+		const swiperInstance = sliderInstanceRef.current;
 		
 		if ( !swiperInstance || swiperInstance.destroyed ) {return;}
 		
@@ -688,8 +693,10 @@ const Render = memo( ( props ) => {
 	// Handle navigation and pagination updates when they change
 	useEffect( () => {
 		// Find the Swiper instance.
-		const swiperEl = document.querySelector( `.block-${clientId} .swiper` );
-		const swiperInstance = swiperEl?.__swiper;
+		// Use the Swiper instance stored at init ( sliderInstanceRef ) instead of
+		// reading a `.__swiper` prop that is never set and querying the top
+		// document, which misses the WP 7.1 iframed editor canvas.
+		const swiperInstance = sliderInstanceRef.current;
 		
 		if ( ! swiperInstance || swiperInstance.destroyed ) {return;}
 		

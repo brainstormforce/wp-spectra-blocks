@@ -25,7 +25,7 @@
 			}
 
 			.spectra-button__hover-icon {
-				display: flex;
+				display: inline-flex; // survives non-flex (imported) button display
 			}
 		}
 	}
@@ -35,14 +35,20 @@
 	}
 
 	:where(.spectra-button__icon) {
-		display: flex;
+		// inline-flex, not flex: inside the plugin's flex button the two are
+		// identical (flex items blockify), but an imported/authored button class
+		// legitimately wins display (block/inline-block) — a block-level icon
+		// there grabs its own line and stacks above/below the label.
+		display: inline-flex;
 		align-items: center;
+		vertical-align: middle;
 		font-size: inherit;
 	}
 
 	:where(.spectra-button__hover-icon) {
 		display: none; // Hidden by default.
 		align-items: center;
+		vertical-align: middle;
 		font-size: inherit;
 	}
 

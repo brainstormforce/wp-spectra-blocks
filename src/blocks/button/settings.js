@@ -34,7 +34,7 @@ import BlockControlLink from '@spectra-components/block-control-link';
  * Element Sub-settings: Border & Shadow settings.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const BorderSettings = memo( ( props ) => {
@@ -192,7 +192,7 @@ const BorderSettings = memo( ( props ) => {
  * Element Sub-settings: General settings, but based on the parent block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const BlockSettings = memo( ( props ) => {
@@ -356,11 +356,15 @@ const BlockSettings = memo( ( props ) => {
 						</ToolsPanelItem>
 					) }
 					{/* This tool panel item will require reset when any of these conditions are met:
-					- The iconPosition attribute is set. Default: undefined.
+					- The iconPosition attribute differs from the block.json default ('after').
+					  It is compared against the LITERAL, never against `undefined`: core's
+					  prepare_attributes_for_render() refills a defaulted attribute the moment
+					  it is unset, so `!! iconPosition` is permanently true and the panel would
+					  show "customised" on an untouched block that Reset could never clear.
 					*/}
 					{ ( icon && showText ) && (
 						<ToolsPanelItem
-							hasValue={ () => !! iconPosition }
+							hasValue={ () => !! iconPosition && 'after' !== iconPosition }
 							label={ __( 'Position', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( { iconPosition: undefined  } ) }
 							resetAllFilter={ () => ( {
@@ -432,7 +436,7 @@ const BlockSettings = memo( ( props ) => {
 					) }
 					{ showIconOnHover && hoverIcon && showText && (
 						<ToolsPanelItem
-							hasValue={ () => !! hoverIconPosition }
+							hasValue={ () => !! hoverIconPosition && 'right' !== hoverIconPosition }
 							label={ __( 'Position', 'spectra-blocks' ) }
 							onDeselect={ () => setAttributes( { hoverIconPosition: 'right' } ) }
 							resetAllFilter={ () => ( { hoverIconPosition: 'right' } ) }
@@ -516,7 +520,7 @@ const BlockSettings = memo( ( props ) => {
  * Element Sub-settings: Settings that are injected into Core's Color panel.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const ColorSettings = memo( ( props ) => {
@@ -603,7 +607,7 @@ const ColorSettings = memo( ( props ) => {
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const IconStyleSettings = memo( ( props ) => {
@@ -673,7 +677,7 @@ const IconStyleSettings = memo( ( props ) => {
  * The Editor settings for this block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered settings.
  */
 const Settings = ( props ) => {

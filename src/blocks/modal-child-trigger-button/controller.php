@@ -39,7 +39,7 @@ if ( '' === $text && ! isset( $icon ) ) {
 // Ensure attributes exist.
 $anchor        = $attributes['anchor'] ?? '';
 $show_text     = $attributes['showText'] ?? true;
-$icon_position = $attributes['iconPosition'] ?? 'after';
+$icon_position = $attributes['iconPosition'] ?? 'after'; // block.json enum+default — core resets an unknown value to 'after' before render.
 $size          = $attributes['size'] ?? '16px';
 $flip_for_rtl  = $attributes['flipForRTL'] ?? false;
 $modal_trigger = $attributes['modalTrigger'] ?? ( $block->context['spectra/modal/modalTrigger'] ?? '' );

@@ -32,7 +32,8 @@
  * rejected to avoid URL injection / variable bleed.
  *
  * All compiled values pass through {@see Sanitizer} in strict mode for
- * property allowlisting, `var(...)` rejection, and script/URL hardening.
+ * property allowlisting, malformed-`var(...)` rejection ( well-formed
+ * `var(--name)` references are preserved ), and script/URL hardening.
  *
  * @package Spectra\GlobalStyles
  * @since   1.0.0
@@ -2164,8 +2165,8 @@ class JitCompiler {
 	 * Sanitize an arbitrary bracket value used inside a gradient function.
 	 *
 	 * Applies Tailwind underscore decoding and strict value sanitization.
-	 * Strict mode rejects `var(...)` references — callers that need a var
-	 * in the final output should compose it outside this helper.
+	 * Strict mode preserves well-formed `var(--name)` references and rejects
+	 * malformed `var()` ( e.g. `var(url(...))` or an empty `var()` ).
 	 *
 	 * @since 1.0.0
 	 *

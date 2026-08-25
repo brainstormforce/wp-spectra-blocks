@@ -54,14 +54,17 @@ class Sanitizer {
 	 * injection patterns.
 	 *
 	 * When `$strict` is true (used for user-supplied payloads and JIT bracket
-	 * tokens), any `var()` usage is rejected. The engine's own colour utility
-	 * emission path — which legitimately emits `var(--spectra-chromatic1-7)`
-	 * et al. from the Style Guide palette — passes `$strict = false`.
+	 * tokens), only well-formed CSS custom-property references are allowed
+	 * ( `var(--name)` / `var(--name, fallback)` ); any other `var()` form
+	 * ( e.g. `var(url(...))` or an empty `var()` ) is rejected. The engine's own
+	 * colour utility emission path — which legitimately emits
+	 * `var(--spectra-chromatic1-7)` et al. from the Style Guide palette — passes
+	 * `$strict = false`.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param mixed $value  The CSS value to sanitize.
-	 * @param bool  $strict When true, rejects any `var(...)` usage.
+	 * @param bool  $strict When true, only well-formed `var(--...)` references are allowed.
 	 * @return string
 	 */
 	public static function sanitize_css_value( $value, bool $strict = false ): string {
@@ -90,7 +93,15 @@ class Sanitizer {
 			}
 		}
 
-		if ( $strict && preg_match( '/\bvar\s*\(/i', $value ) ) {
+		// In strict mode, allow well-formed CSS custom-property references
+		// ( var(--name) or var(--name, fallback) ) — these are legitimate,
+		// common values in user-authored Global Styles classes — but reject any
+		// var() whose first token is not a `--` custom property ( e.g.
+		// var(url(...)) or an empty var() ), which is never valid here. Matching
+		// `var(` not immediately followed by `--` flags the malformed form;
+		// well-formed values fall through to the character whitelist below,
+		// which preserves them intact.
+		if ( $strict && preg_match( '/\bvar\s*\((?!\s*--)/i', $value ) ) {
 			return '';
 		}
 
