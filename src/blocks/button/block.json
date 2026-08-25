@@ -90,7 +90,9 @@
 			"type": ["string", "object"]
 		},
 		"iconPosition": {
-			"type": "string"
+			"type": "string",
+			"enum": ["before", "after"],
+			"default": "after"
 		},
 		"size": {
 			"type": "string"
@@ -138,7 +140,9 @@
 			"type": ["string", "object"]
 		},
 		"hoverIconPosition": {
-			"type": "string"
+			"type": "string",
+			"enum": ["top", "left", "right", "bottom"],
+			"default": "right"
 		},
 		"hoverIconRotation": {
 			"type": "number",

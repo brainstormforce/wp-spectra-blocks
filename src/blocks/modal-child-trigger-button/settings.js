@@ -29,7 +29,7 @@ import InspectorColor from '@spectra-components/inspector-color';
  * Element Sub-settings: General settings, but based on the parent block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const BlockSettings = memo( ( props ) => {
@@ -144,11 +144,14 @@ const BlockSettings = memo( ( props ) => {
 					</VStack>
 				</ToolsPanelItem>
 				{/* This tool panel item will require reset when any of these conditions are met:
-				- The iconPosition attribute is set. Default: undefined.
+				- The iconPosition attribute differs from the block.json default ('after').
+				  Compared against the LITERAL, never `undefined`: core refills a defaulted
+				  attribute as soon as it is unset, so `!! iconPosition` is permanently true
+				  and Reset could never clear the "customised" indicator.
 				*/}
 				{ ( icon && showText ) && (
 					<ToolsPanelItem
-						hasValue={ () => !! iconPosition }
+						hasValue={ () => !! iconPosition && 'after' !== iconPosition }
 						label={ __( 'Position', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { iconPosition: undefined  } ) }
 						resetAllFilter={ () => ( {
@@ -179,7 +182,7 @@ const BlockSettings = memo( ( props ) => {
  * Element Sub-settings: Settings that are injected into Core's Color panel.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const ColorSettings = memo( ( props ) => {
@@ -255,7 +258,7 @@ const ColorSettings = memo( ( props ) => {
  * Element Sub-settings: Settings that are injected into Core's Dimensions panel.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered block settings.
  */
 const IconStyleSettings = memo( ( props ) => {
@@ -325,7 +328,7 @@ const IconStyleSettings = memo( ( props ) => {
  * The Editor settings for this block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.6
  * @return {Element} The rendered settings.
  */
 const Settings = ( props ) => {

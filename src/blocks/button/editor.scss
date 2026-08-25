@@ -5,6 +5,38 @@ $default-text-icon-gap: 10px;
 .wp-block-spectra-button:where(div, button) {
 	gap: var(--spectra-gap, $default-text-icon-gap);
 
+	// Text align styles.
+	// The wrapper is a flex row, so `text-align` cannot move the inner
+	// `.spectra-button__link`, which is a content sized flex item. On the frontend
+	// `ResponsiveControls::is_flex_text_align_block()` converts the authored
+	// `style.typography.textAlign` into `justify-content` in the generated per
+	// block CSS, but that runs at render time only. Map core's editor side
+	// `has-text-align-*` class here so the canvas matches the frontend.
+	// Use the logical `flex-start` / `flex-end` values, not physical `left` /
+	// `right`. `process_typography_styles()` emits the logical pair, and those
+	// flip with the writing direction while the physical pair does not, so
+	// physical values would put the editor and the frontend on opposite sides
+	// of the button in an RTL locale.
+	&.has-text-align-right {
+		justify-content: flex-end;
+	}
+
+	&.has-text-align-left {
+		justify-content: flex-start;
+	}
+
+	&.has-text-align-center {
+		justify-content: center;
+	}
+
+	// No authored alignment. `process_typography_styles()` falls back to
+	// `justify-content: center` for flex text align blocks, so match it here.
+	// Each class is excluded by name rather than with a `[class*=]` substring
+	// match, which any custom class containing `has-text-align-` would trip.
+	&:not(.has-text-align-right):not(.has-text-align-left):not(.has-text-align-center) {
+		justify-content: center;
+	}
+
 	// Styles for the spectra button in this block.
 	.spectra-button {
 		// The icon styling.

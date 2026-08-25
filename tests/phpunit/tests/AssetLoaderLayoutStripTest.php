@@ -65,13 +65,12 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * @param string $layout_type Value for `attrs.layout.type` ('' = attribute absent).
 	 * @return string Filtered markup.
 	 */
-	private function render( string $layout_type ): string {
-		$block = '' === $layout_type
-			? array( 'blockName' => 'spectra/container', 'attrs' => array() )
-			: array(
-				'blockName' => 'spectra/container',
-				'attrs'     => array( 'layout' => array( 'type' => $layout_type ) ),
-			);
+	private function render( string $layout_type, string $class_name = '' ): string {
+		$attrs = '' === $layout_type ? array() : array( 'layout' => array( 'type' => $layout_type ) );
+		if ( '' !== $class_name ) {
+			$attrs['className'] = $class_name;
+		}
+		$block = array( 'blockName' => 'spectra/container', 'attrs' => $attrs );
 
 		// Through the REAL hook, not the method: the filter is registered with
 		// `, 2` so it receives $block, and calling the method directly would
@@ -194,5 +193,65 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 
 		$this->assertSame( self::CONTAINER_HTML, $this->render( 'default' ) );
 		$this->assertSame( self::CONTAINER_HTML, $this->render( 'flex' ) );
+	}
+
+	/**
+	 * The A32 case: a converter-built section the VIBE EDITOR inserted into an
+	 * editor-created draft. The page carries no importer marker, so the page gate
+	 * never fires — but the block carries the converter's marker, which travels
+	 * WITH it. Without this, core's flow blockGap re-margined the section
+	 * (measured 2026-08-21: 17.81px on a flex button row's second button).
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function test_marked_flow_container_is_stripped_on_a_non_imported_page(): void {
+		$this->go_to_page( false );
+
+		foreach ( array( 'default', 'flow' ) as $layout_type ) {
+			$out = $this->render( $layout_type, 'spectra-no-block-gap' );
+			// Every layout class core injected is gone...
+			$this->assertStringNotContainsString( 'is-layout-flow', $out, $layout_type );
+			$this->assertStringNotContainsString( 'wp-container-core-group-is-layout-1', $out, $layout_type );
+			// ...and nothing else was touched. The marker itself rides in
+			// attrs.className, not the rendered markup, so it is not asserted here.
+			$this->assertStringContainsString( 'wp-block-spectra-container', $out, $layout_type );
+			$this->assertStringContainsString( 'gs-hero', $out, $layout_type );
+		}
+	}
+
+	/**
+	 * The marker does not widen the LAYOUT gate. Stripping the classes off a flex
+	 * container would delete its layout outright — the block takes display and
+	 * gap from core layout support, so a row would collapse to a stack.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function test_marked_flex_container_keeps_its_layout_classes(): void {
+		$this->go_to_page( false );
+
+		$this->assertSame( self::CONTAINER_HTML, $this->render( 'flex', 'spectra-no-block-gap' ) );
+	}
+
+	/**
+	 * Whitespace-delimited token match: a longer class that merely starts with the
+	 * marker's text is NOT the marker.
+	 *
+	 * @since x.x.x
+	 *
+	 * @return void
+	 */
+	public function test_a_class_that_only_prefixes_the_marker_does_not_qualify(): void {
+		$this->go_to_page( false );
+
+		$this->assertSame( self::CONTAINER_HTML, $this->render( 'flow', 'spectra-no-block-gap-x' ) );
+		// ...and the marker still qualifies beside other classes.
+		$this->assertStringNotContainsString(
+			'is-layout-flow',
+			$this->render( 'flow', 'gs-abc123 spectra-no-block-gap wp-block' )
+		);
 	}
 }

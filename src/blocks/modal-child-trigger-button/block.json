@@ -82,7 +82,9 @@
 			"type": ["string", "object"]
 		},
 		"iconPosition": {
-			"type": "string"
+			"type": "string",
+			"enum": ["before", "after"],
+			"default": "after"
 		},
 		"size": {
 			"type": "string"

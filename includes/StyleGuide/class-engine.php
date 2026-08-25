@@ -1196,6 +1196,79 @@ class Engine {
 	}
 
 	/**
+	 * The nine core colours currently in effect (slug => hex).
+	 *
+	 * Reads the canonical stored config — or the theme-inherited default on an
+	 * unsaved site — so this is exactly what a save would round-trip and what the
+	 * front end renders. Never empty. Programmatic accessor for the
+	 * `spectra-blocks/get-active-colors` ability.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @return array<string, string> slug => hex (nine core roles).
+	 */
+	public function active_colors(): array {
+		return $this->colors_from_config( $this->get_stored_config() );
+	}
+
+	/**
+	 * Ready-to-inject live-preview CSS for a (partial) colour map, WITHOUT
+	 * persisting. Merges the map over the current palette, computes tokens with
+	 * `persist = false`, builds the two-layer preview CSS (identical to
+	 * {@see self::rest_preview}'s `css_full`), and restores the live token
+	 * registry so a later reader in the same request sees the site's own tokens.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param array<string, string> $colors Partial slug => hex map (nine core roles).
+	 * @return string Combined preview CSS, or '' when tokens are unavailable.
+	 */
+	public function preview_css_for( array $colors ): string {
+		$registry = $this->token_registry;
+
+		$config = $this->build_config_from_request( array( 'colors' => $colors ), new \WP_REST_Request() );
+		$this->compute( $config, false );
+
+		$css = $this->build_preview_css( ColorModel::semantic_map(), $this->preview_overrides( $config ) );
+
+		$this->token_registry = $registry;
+
+		return $css;
+	}
+
+	/**
+	 * Apply a (partial) colour map to the SITE Style Guide and recompute — the
+	 * same merge/persist/compute pipeline as a site-scoped POST /style-guide/config.
+	 * A partial `$colors` map merges over the current palette; unknown slugs are
+	 * ignored. An explicit `$custom_colors` map FULL-REPLACES the custom layer
+	 * (pass an empty array to clear it, null to leave it untouched) — the same
+	 * contract the REST route uses. Returns the resulting core colours plus
+	 * ready-to-inject preview CSS. Programmatic writer for the
+	 * `spectra-blocks/set-active-colors` ability.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param array<string, string>                  $colors        Partial slug => hex map (core roles).
+	 * @param array<string, array{hex: string}>|null $custom_colors Optional full-replace custom layer.
+	 * @return array{colors: array<string, string>, preview_css: string}
+	 */
+	public function apply_colors( array $colors, ?array $custom_colors = null ): array {
+		$body = array( 'colors' => $colors );
+		if ( null !== $custom_colors ) {
+			$body['custom_colors'] = $custom_colors;
+		}
+
+		$config = $this->build_config_from_request( $body, new \WP_REST_Request() );
+		$this->save_config( $config );
+		$this->compute();
+
+		return array(
+			'colors'      => $this->colors_from_config( $config ),
+			'preview_css' => $this->build_preview_css( ColorModel::semantic_map(), $this->preview_overrides( $config ) ),
+		);
+	}
+
+	/**
 	 * Register REST API routes for the Style Guide.
 	 *
 	 * @since 1.0.0
@@ -1581,19 +1654,39 @@ class Engine {
 				'css'             => $this->token_registry ? $this->token_registry->get_css_string() : '',
 				// Ready-to-inject combined CSS for a live editor preview (Layer A
 				// token ramps + Layer B --wp--preset--color--*), so a consumer can
-				// inject ONE string with no client-side token math. The semantic map
-				// is the ColorModel constant; overrides derive from custom_colors
-				// (build_config_from_request returns canonical keys only).
-				'css_full'        => $this->build_preview_css(
-					ColorModel::semantic_map(),
-					$this->custom_colors_as_overrides(
-						isset( $config['custom_colors'] ) && is_array( $config['custom_colors'] ) ? $config['custom_colors'] : array()
-					)
-				),
+				// inject ONE string with no client-side token math. Overrides carry
+				// the derived tones (surface-2 / overlay) PLUS the custom_colors pins,
+				// matching what the front end renders — see preview_overrides().
+				'css_full'        => $this->build_preview_css( ColorModel::semantic_map(), $this->preview_overrides( $config ) ),
 				// Layout-aware Astra slot map — see rest_get_computed(). The preview
 				// path needs it too: the editor mirrors the Astra aliases live while
 				// the user drags a colour, before anything is saved.
 				'astra_shade_map' => GlobalStylesBridge::astra_shade_map(),
+			)
+		);
+	}
+
+	/**
+	 * The full semantic-override map for a config: the DERIVED tones
+	 * ({@see self::derived_var_defaults} — surface-2 / overlay) PLUS the
+	 * `custom_colors` pins. This mirrors what the live front end resolves via
+	 * {@see GlobalStylesBridge::managed_preset_map} (semantic_map ∪ derived ∪ pins),
+	 * so preview CSS built with it matches exactly what the site renders — the pins
+	 * alone left `surface-2` / `overlay` out of the preview.
+	 *
+	 * Shared by {@see self::preview_css_for}, {@see self::apply_colors} and
+	 * {@see self::rest_preview}, which all want the identical override set.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @param array<string, mixed> $config Canonical config (colors + custom_colors).
+	 * @return array<string, string> slug => hex.
+	 */
+	private function preview_overrides( array $config ): array {
+		return array_merge(
+			$this->derived_var_defaults( $this->colors_from_config( $config ) ),
+			$this->custom_colors_as_overrides(
+				isset( $config['custom_colors'] ) && is_array( $config['custom_colors'] ) ? $config['custom_colors'] : array()
 			)
 		);
 	}

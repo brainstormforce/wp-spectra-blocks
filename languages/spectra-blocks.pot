@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spectra Blocks 1.0.5\n"
+"Project-Id-Version: Spectra Blocks 1.0.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/spectra-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-15T07:53:49+00:00\n"
+"POT-Creation-Date: 2026-08-24T13:26:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spectra-blocks\n"
@@ -8484,7 +8484,9 @@ msgid "Security check failed."
 msgstr ""
 
 #: includes/Abilities/class-abstract-ability.php:162
+#: includes/Abilities/class-get-active-colors.php:97
 #: includes/Abilities/class-get-global-styles-config.php:91
+#: includes/Abilities/class-set-active-colors.php:104
 #: includes/Abilities/class-update-global-styles.php:93
 msgid "You do not have permission to perform this action."
 msgstr ""
@@ -9370,6 +9372,30 @@ msgstr ""
 msgid "Maximum block nesting depth exceeded (10 levels)."
 msgstr ""
 
+#: includes/Abilities/class-get-active-colors.php:60
+msgid "Get Active Colors"
+msgstr ""
+
+#: includes/Abilities/class-get-active-colors.php:70
+msgid "Read the site's current Style Guide colour palette: the core roles (primary, secondary, accent, heading, body, neutral, outline, surface, background, foreground), whether a palette has been saved, and ready-to-inject live-preview CSS."
+msgstr ""
+
+#: includes/Abilities/class-get-active-colors.php:135
+msgid "The core colour roles (slug => hex)."
+msgstr ""
+
+#: includes/Abilities/class-get-active-colors.php:139
+msgid "The stored custom colour layer (slug => { hex, name }) — user pins/overrides outside the core roles. Round-trippable: post it back via set-active-colors' `custom_colors` to replace the layer."
+msgstr ""
+
+#: includes/Abilities/class-get-active-colors.php:143
+msgid "True when the user has saved a palette (false = inherited theme colours)."
+msgstr ""
+
+#: includes/Abilities/class-get-active-colors.php:147
+msgid "Ready-to-inject CSS for a live editor preview of the active palette (includes the derived surface-2 / overlay tones)."
+msgstr ""
+
 #: includes/Abilities/class-get-analytics-summary.php:42
 msgid "Get Spectra Analytics Summary"
 msgstr ""
@@ -9740,6 +9766,46 @@ msgstr ""
 msgid "The block name to search for (e.g. \"container\", \"spectra-pro/mega-menu\"). The spectra/ prefix is added automatically if no namespace is given."
 msgstr ""
 
+#: includes/Abilities/class-set-active-colors.php:67
+msgid "Set Active Colors"
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:77
+msgid "Apply a colour palette to the site Style Guide. Provide a partial map of the core roles (primary, secondary, accent, heading, body, neutral, outline, surface, background, foreground); provided roles merge over the current palette. A bare hex is accepted (normalised to #rrggbb); roles with an unusable value are returned in `ignored`, and non-core slugs in `unknown`. Persists and syncs to the active theme."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:121
+msgid "Partial map of core colour roles (slug => hex) to apply. Only known roles are stored; a partial map merges over the current palette."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:125
+msgid "Optional custom colour layer (slug => { hex }). FULL-REPLACES the current custom layer; omit to leave it untouched. Do NOT feed back the `semantic_overrides` from get-active-colors here — those are DERIVED tones; pinning them stops them tracking the palette."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:145
+msgid "True when the palette was applied."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:149
+msgid "The core colour roles after the merge (slug => hex)."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:154
+msgid "Core role slugs whose supplied value was not a valid hex and was skipped."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:159
+msgid "Supplied slugs that are not core roles (typos / invented names), skipped — they belong in custom_colors."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:163
+msgid "Ready-to-inject CSS for a live editor preview of the applied palette."
+msgstr ""
+
+#: includes/Abilities/class-set-active-colors.php:208
+msgid "No valid colour roles were provided."
+msgstr ""
+
 #: includes/Abilities/class-toggle-block-activation.php:42
 msgid "Toggle Block Activation"
 msgstr ""
@@ -10011,47 +10077,47 @@ msgstr ""
 msgid "Upgrade Now"
 msgstr ""
 
-#: includes/class-abilities-manager.php:110
+#: includes/class-abilities-manager.php:112
 msgid "Spectra Blocks — Discovery"
 msgstr ""
 
-#: includes/class-abilities-manager.php:111
+#: includes/class-abilities-manager.php:113
 msgid "Discover available blocks, read post content, search for blocks across the site, and view analytics."
 msgstr ""
 
-#: includes/class-abilities-manager.php:114
+#: includes/class-abilities-manager.php:116
 msgid "Spectra Blocks — Content"
 msgstr ""
 
-#: includes/class-abilities-manager.php:115
+#: includes/class-abilities-manager.php:117
 msgid "Create, update, move, duplicate, and remove blocks and popups in posts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:118
+#: includes/class-abilities-manager.php:120
 msgid "Spectra Blocks — Layout"
 msgstr ""
 
-#: includes/class-abilities-manager.php:119
+#: includes/class-abilities-manager.php:121
 msgid "Create containers, modals, sliders, and generate full page layouts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:122
+#: includes/class-abilities-manager.php:124
 msgid "Spectra Blocks — Configuration"
 msgstr ""
 
-#: includes/class-abilities-manager.php:123
+#: includes/class-abilities-manager.php:125
 msgid "Manage plugin settings, block activation, and Google Fonts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:126
+#: includes/class-abilities-manager.php:128
 msgid "Spectra Blocks — Extensions"
 msgstr ""
 
-#: includes/class-abilities-manager.php:127
+#: includes/class-abilities-manager.php:129
 msgid "Apply and remove block extensions like animations, sticky, responsive conditions, z-index, and image masks."
 msgstr ""
 
-#: includes/class-asset-loader.php:241
+#: includes/class-asset-loader.php:455
 msgid "Set by the ERA importer on imported pages; drives the zip-builder body class."
 msgstr ""
 
@@ -10124,40 +10190,40 @@ msgstr ""
 msgid "Inner Medium"
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1222
+#: includes/StyleGuide/class-engine.php:1295
 msgid "Save into this page's own Style Guide instead of the site-wide one."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1227
+#: includes/StyleGuide/class-engine.php:1300
 msgid "With post_id, delete that page's Style Guide so it inherits the site-wide one again."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1231
+#: includes/StyleGuide/class-engine.php:1304
 msgid "The nine core roles as slug => hex. Partial maps merge."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1235
+#: includes/StyleGuide/class-engine.php:1308
 msgid "Additional colours as slug => { hex, name }. Replaces the whole layer."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1274
+#: includes/StyleGuide/class-engine.php:1347
 msgid "You do not have permission to manage the Style Guide."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1307
+#: includes/StyleGuide/class-engine.php:1380
 msgid "Unknown post."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1315
+#: includes/StyleGuide/class-engine.php:1388
 msgid "You cannot edit this post."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1325
+#: includes/StyleGuide/class-engine.php:1398
 msgid "Unsupported post type."
 msgstr ""
 
-#: includes/StyleGuide/class-engine.php:1369
-#: includes/StyleGuide/class-engine.php:1567
+#: includes/StyleGuide/class-engine.php:1442
+#: includes/StyleGuide/class-engine.php:1640
 msgid "Invalid configuration data."
 msgstr ""
 
@@ -10452,7 +10518,7 @@ msgstr ""
 #: src/blocks/accordion/settings.js:151
 #: src/blocks/button/settings.js:277
 #: src/blocks/button/settings.js:295
-#: src/blocks/button/settings.js:575
+#: src/blocks/button/settings.js:579
 #: src/blocks/icon/settings.js:100
 #: src/blocks/icon/settings.js:117
 #: src/blocks/icon/settings.js:294
@@ -10466,7 +10532,7 @@ msgstr ""
 #: src/blocks/modal-child-popup-close-icon/settings.js:273
 #: src/blocks/modal-child-trigger-button/settings.js:87
 #: src/blocks/modal-child-trigger-button/settings.js:105
-#: src/blocks/modal-child-trigger-button/settings.js:236
+#: src/blocks/modal-child-trigger-button/settings.js:239
 #: src/blocks/modal-child-trigger-icon/settings.js:81
 #: src/blocks/modal-child-trigger-icon/settings.js:98
 #: src/blocks/modal-child-trigger-icon/settings.js:273
@@ -10513,7 +10579,7 @@ msgstr ""
 #: src/blocks/accordion/settings.js:200
 #: src/blocks/button/settings.js:342
 #: src/blocks/button/settings.js:350
-#: src/blocks/button/settings.js:458
+#: src/blocks/button/settings.js:462
 #: src/blocks/icon/settings.js:148
 #: src/blocks/icon/settings.js:156
 #: src/blocks/list-child-icon/settings.js:96
@@ -10746,7 +10812,7 @@ msgid "Show Text"
 msgstr ""
 
 #: src/blocks/button/settings.js:319
-#: src/blocks/button/settings.js:494
+#: src/blocks/button/settings.js:498
 #: src/blocks/modal-child-trigger-button/settings.js:129
 #: src/blocks/tabs-child-tab-button/settings.js:158
 msgid "Aria Label"
@@ -10756,13 +10822,13 @@ msgstr ""
 msgid "It's best to have an aria label if your button is just an icon."
 msgstr ""
 
-#: src/blocks/button/settings.js:364
-#: src/blocks/button/settings.js:375
-#: src/blocks/button/settings.js:436
+#: src/blocks/button/settings.js:368
+#: src/blocks/button/settings.js:379
+#: src/blocks/button/settings.js:440
 #: src/blocks/container/settings.js:889
 #: src/blocks/container/settings.js:937
-#: src/blocks/modal-child-trigger-button/settings.js:152
-#: src/blocks/modal-child-trigger-button/settings.js:163
+#: src/blocks/modal-child-trigger-button/settings.js:155
+#: src/blocks/modal-child-trigger-button/settings.js:166
 #: src/blocks/popup-builder/settings.js:282
 #: src/blocks/popup-builder/settings.js:296
 #: src/blocks/popup-builder/settings.js:431
@@ -10776,72 +10842,72 @@ msgstr ""
 msgid "Position"
 msgstr ""
 
-#: src/blocks/button/settings.js:389
-#: src/blocks/button/settings.js:427
+#: src/blocks/button/settings.js:393
+#: src/blocks/button/settings.js:431
 msgid "Hover Icon"
 msgstr ""
 
-#: src/blocks/button/settings.js:404
+#: src/blocks/button/settings.js:408
 msgid "Enable Hover Icon"
 msgstr ""
 
-#: src/blocks/button/settings.js:412
+#: src/blocks/button/settings.js:416
 msgid "Show icon on hover"
 msgstr ""
 
-#: src/blocks/button/settings.js:414
+#: src/blocks/button/settings.js:418
 msgid "Shows an icon when the button is hovered."
 msgstr ""
 
-#: src/blocks/button/settings.js:420
+#: src/blocks/button/settings.js:424
 msgid "Icon Selection"
 msgstr ""
 
-#: src/blocks/button/settings.js:445
+#: src/blocks/button/settings.js:449
 msgid "Hover Icon Position"
 msgstr ""
 
-#: src/blocks/button/settings.js:450
+#: src/blocks/button/settings.js:454
 #: src/blocks/post/settings/pagination-settings.js:187
 #: src/blocks/separator/settings.js:120
 msgid "Left"
 msgstr ""
 
-#: src/blocks/button/settings.js:451
+#: src/blocks/button/settings.js:455
 #: src/blocks/post/settings/pagination-settings.js:197
 #: src/blocks/separator/settings.js:122
 msgid "Right"
 msgstr ""
 
-#: src/blocks/button/settings.js:465
+#: src/blocks/button/settings.js:469
 msgid "Hover Icon Rotation"
 msgstr ""
 
-#: src/blocks/button/settings.js:476
+#: src/blocks/button/settings.js:480
 msgid "RTL Support"
 msgstr ""
 
-#: src/blocks/button/settings.js:485
+#: src/blocks/button/settings.js:489
 msgid "Flip Hover Icon for Right-To-Left"
 msgstr ""
 
-#: src/blocks/button/settings.js:487
+#: src/blocks/button/settings.js:491
 msgid "Enable this for your RTL visitors if you are using a direction-specific hover icon. Like \"Arrow Right\", \"Chart Line\", etc."
 msgstr ""
 
-#: src/blocks/button/settings.js:501
+#: src/blocks/button/settings.js:505
 msgid "Hover Icon Aria Label"
 msgstr ""
 
-#: src/blocks/button/settings.js:504
+#: src/blocks/button/settings.js:508
 msgid "Provide a descriptive label for the hover icon when text is disabled to improve accessibility."
 msgstr ""
 
-#: src/blocks/button/settings.js:505
+#: src/blocks/button/settings.js:509
 msgid "e.g., Learn more"
 msgstr ""
 
-#: src/blocks/button/settings.js:545
+#: src/blocks/button/settings.js:549
 #: src/blocks/container/settings.js:424
 #: src/blocks/content/settings.js:105
 #: src/blocks/countdown-child-day/settings.js:36
@@ -10853,7 +10919,7 @@ msgstr ""
 #: src/blocks/countdown/settings.js:807
 #: src/blocks/list/settings.js:308
 #: src/blocks/modal-child-popup-content/settings.js:203
-#: src/blocks/modal-child-trigger-button/settings.js:207
+#: src/blocks/modal-child-trigger-button/settings.js:210
 #: src/blocks/modal-child-trigger-content/settings.js:112
 #: src/blocks/tabs-child-tab-button/settings.js:297
 #: src/blocks/tabs-child-tab-trigger/settings.js:252
@@ -10861,7 +10927,7 @@ msgstr ""
 msgid "Text Hover"
 msgstr ""
 
-#: src/blocks/button/settings.js:557
+#: src/blocks/button/settings.js:561
 #: src/blocks/buttons/settings.js:37
 #: src/blocks/container/settings.js:454
 #: src/blocks/content/settings.js:112
@@ -10880,7 +10946,7 @@ msgstr ""
 #: src/blocks/list/settings.js:315
 #: src/blocks/modal-child-popup-close-icon/settings.js:266
 #: src/blocks/modal-child-popup-content/settings.js:221
-#: src/blocks/modal-child-trigger-button/settings.js:219
+#: src/blocks/modal-child-trigger-button/settings.js:222
 #: src/blocks/modal-child-trigger-content/settings.js:119
 #: src/blocks/modal-child-trigger-icon/settings.js:266
 #: src/blocks/popup-builder/settings.js:881
@@ -10890,29 +10956,29 @@ msgstr ""
 msgid "Background Hover"
 msgstr ""
 
-#: src/blocks/button/settings.js:589
+#: src/blocks/button/settings.js:593
 #: src/blocks/icon/settings.js:300
 #: src/blocks/list-child-icon/settings.js:206
 #: src/blocks/modal-child-popup-close-icon/settings.js:279
-#: src/blocks/modal-child-trigger-button/settings.js:242
+#: src/blocks/modal-child-trigger-button/settings.js:245
 #: src/blocks/modal-child-trigger-icon/settings.js:279
 #: src/blocks/tabs-child-tab-button/settings.js:411
 msgid "Icon Hover"
 msgstr ""
 
-#: src/blocks/button/settings.js:630
-#: src/blocks/button/settings.js:640
-#: src/blocks/modal-child-trigger-button/settings.js:282
-#: src/blocks/modal-child-trigger-button/settings.js:292
+#: src/blocks/button/settings.js:634
+#: src/blocks/button/settings.js:644
+#: src/blocks/modal-child-trigger-button/settings.js:285
+#: src/blocks/modal-child-trigger-button/settings.js:295
 #: src/blocks/tabs-child-tab-button/settings.js:504
 #: src/blocks/tabs-child-tab-button/settings.js:514
 msgid "Icon size"
 msgstr ""
 
-#: src/blocks/button/settings.js:650
-#: src/blocks/button/settings.js:660
-#: src/blocks/modal-child-trigger-button/settings.js:302
-#: src/blocks/modal-child-trigger-button/settings.js:312
+#: src/blocks/button/settings.js:654
+#: src/blocks/button/settings.js:664
+#: src/blocks/modal-child-trigger-button/settings.js:305
+#: src/blocks/modal-child-trigger-button/settings.js:315
 #: src/blocks/tabs-child-tab-button/settings.js:524
 #: src/blocks/tabs-child-tab-button/settings.js:534
 msgid "Text-Icon Gap"

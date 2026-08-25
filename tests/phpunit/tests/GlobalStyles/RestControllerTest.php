@@ -279,11 +279,14 @@ class RestControllerTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * POST rejects declaration values containing `var(...)` via strict sanitizer.
+	 * POST preserves well-formed `var(--name)` declaration values via the strict
+	 * sanitizer. Custom-property references are legitimate, common values in
+	 * user-authored classes and are not stripped ( regression test for the bug
+	 * where saving a class silently dropped its `var()` value ).
 	 *
 	 * @return void
 	 */
-	public function test_post_class_strips_var_references(): void {
+	public function test_post_class_preserves_var_references(): void {
 		wp_set_current_user( $this->admin_id );
 
 		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/custom-classes' );
@@ -300,16 +303,10 @@ class RestControllerTest extends WP_UnitTestCase {
 		$this->server->dispatch( $request );
 
 		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
-		// REST controller normalises every persisted class to Spectra's
-		// canonical flat-object shape. Either the class should not be stored
-		// at all (sanitizer dropped the value), or the persisted value must
-		// be stripped.
-		if ( isset( $stored['classes']['my-card']['default']['color'] ) ) {
-			$this->assertNotSame(
-				'var(--spectra-chromatic1-6)',
-				$stored['classes']['my-card']['default']['color']
-			);
-		}
+		$this->assertSame(
+			'var(--spectra-chromatic1-6)',
+			$stored['classes']['my-card']['default']['color']
+		);
 	}
 
 	/**

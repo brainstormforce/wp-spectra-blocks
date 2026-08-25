@@ -61,6 +61,8 @@ use SpectraBlocks\Abilities\ApplyDisplayConditions;
 use SpectraBlocks\Abilities\RemoveDisplayConditions;
 use SpectraBlocks\Abilities\GetGlobalStylesConfig;
 use SpectraBlocks\Abilities\UpdateGlobalStyles;
+use SpectraBlocks\Abilities\GetActiveColors;
+use SpectraBlocks\Abilities\SetActiveColors;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -186,6 +188,8 @@ class AbilitiesManager {
 			RemoveGoogleFont::class,
 			GetGlobalStylesConfig::class,
 			UpdateGlobalStyles::class,
+			GetActiveColors::class,
+			SetActiveColors::class,
 
 			// Popup Management.
 			CreatePopup::class,

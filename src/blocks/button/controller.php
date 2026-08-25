@@ -40,7 +40,7 @@ if ( '' === $text && empty( $icon ) ) {
 // Ensure attributes exist.
 $anchor        = $attributes['anchor'] ?? '';
 $show_text     = $attributes['showText'] ?? true;
-$icon_position = $attributes['iconPosition'] ?? 'after';
+$icon_position = $attributes['iconPosition'] ?? 'after'; // block.json enum+default — core resets an unknown value to 'after' before render.
 $flip_for_rtl  = $attributes['flipForRTL'] ?? false;
 $size          = $attributes['size'] ?? null; // Icon size attribute.
 
@@ -52,7 +52,7 @@ $text_color_hover = $attributes['textColorHover'] ?? '';
 // Hover icon attributes.
 $show_icon_on_hover      = $attributes['showIconOnHover'] ?? false;
 $hover_icon              = $attributes['hoverIcon'] ?? '';
-$hover_icon_position     = $attributes['hoverIconPosition'] ?? 'right';
+$hover_icon_position     = $attributes['hoverIconPosition'] ?? 'right'; // block.json enum+default — core validates.
 $hover_icon_rotation     = $attributes['hoverIconRotation'] ?? 0;
 $hover_icon_flip_for_rtl = $attributes['hoverIconFlipForRTL'] ?? false;
 $hover_icon_aria_label   = $attributes['hoverIconAriaLabel'] ?? '';

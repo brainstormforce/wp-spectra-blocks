@@ -62,6 +62,7 @@ class Spectra_Blocks_Loader {
 		Spectra_Blocks_Visibility::get_instance();
 		add_action( 'init', array( 'Spectra_Blocks_Helper', 'init' ) );
 		add_action( 'admin_init', array( __CLASS__, 'maybe_track_version_update' ) );
+		add_action( 'admin_init', array( __CLASS__, 'maybe_inherit_bsf_analytics_consent' ) );
 
 		// Shared BSF libraries — use class_exists / global version negotiation
 		// to avoid conflicts when UAGB (or another BSF plugin) is also active.
@@ -215,6 +216,33 @@ class Spectra_Blocks_Loader {
 			update_option( 'spectra_blocks_version', $current );
 			do_action( 'spectra_blocks_update_after' );
 		}
+	}
+
+	/**
+	 * Inherit BSF Analytics consent from UAGB when Spectra Blocks opt-in is undecided.
+	 *
+	 * The BSF Analytics notice is suppressed site-wide if any BSF plugin already has
+	 * consent (is_tracking_enabled() returns true). On sites with UAGB already opted
+	 * in, Spectra Blocks' own opt-in is never prompted, leaving spectra_blocks_usage_optin
+	 * permanently unset and all analytics silently dropped.
+	 *
+	 * This one-time migration runs until the site explicitly opts in or out. Once
+	 * spectra_blocks_usage_optin is set to any value the condition no longer matches.
+	 *
+	 * @since 1.0.6
+	 * @return void
+	 */
+	public static function maybe_inherit_bsf_analytics_consent() {
+		if ( false !== get_site_option( 'spectra_blocks_usage_optin', false ) ) {
+			return;
+		}
+
+		if ( 'yes' !== get_site_option( 'spectra_usage_optin' ) ) {
+			return;
+		}
+
+		update_site_option( 'spectra_blocks_usage_optin', 'yes' );
+		update_option( 'spectra_blocks_analytics_optin', 'yes' );
 	}
 
 	/**
