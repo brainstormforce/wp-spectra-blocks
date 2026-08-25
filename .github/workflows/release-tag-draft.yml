@@ -22,18 +22,18 @@ jobs:
       current_version: ${{ steps.get_version.outputs.current_version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: master
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: 'npm'
 
       - name: Cache admin node_modules
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: admin/node_modules
           key: ${{ runner.os }}-admin-npm-${{ hashFiles('admin/package-lock.json') }}
@@ -43,7 +43,7 @@ jobs:
         id: composer-cache
         run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -81,7 +81,7 @@ jobs:
         run: bash ./bin/build-zip.sh
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.PLUGIN_SLUG }}-plugin
           path: ./artifact/${{ env.PLUGIN_SLUG }}.zip
@@ -98,12 +98,12 @@ jobs:
         run: echo "version=$(echo $VERSION | cut -d / -f 3 | sed 's/-rc./ RC/' )" >> $GITHUB_OUTPUT
 
       - name: Download Plugin Zip Artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ env.PLUGIN_SLUG }}-plugin
 
       - name: Create Release Draft
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
