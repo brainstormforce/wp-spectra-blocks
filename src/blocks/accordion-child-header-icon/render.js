@@ -2,6 +2,7 @@
  * External dependencies.
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
 import { memo, useState, useEffect } from '@wordpress/element';
 
 /**
@@ -10,6 +11,12 @@ import { memo, useState, useEffect } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
+import {
+	getResponsivePreviewCss,
+	iconDimensionStyles,
+	inheritResponsiveKey,
+	resolveInheritedResponsiveValue,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -25,10 +32,12 @@ const Render = ( props ) => {
 			'spectra/accordion/icon': accordionIcon,
 			'spectra/accordion/iconSecondary': accordionIconSecondary,
 			'spectra/accordion/size': accordionIconSize,
+			'spectra/accordion/style': accordionStyle,
 			'spectra/accordion/rotation': accordionIconRotation,
 			'spectra/accordion/item/isActiveInEditor': isActiveInEditor,
 		},
 		attributes,
+		clientId,
 	} = props;
 
 	const {
@@ -80,10 +89,28 @@ const Render = ( props ) => {
 		className: spectraClassNames( classNames ),
 	} );
 
-	const iconSize = size || accordionIconSize || '24px';
+	/*
+	 * The inherited size comes from block context, which carries the parent's
+	 * ROOT attribute — the last-edited device's value — so an inheriting icon
+	 * previewed that one value at every breakpoint. Resolve it from the parent's
+	 * `style` for the previewed device, and let the bands the icon does not size
+	 * itself inherit the parent's bands in the preview CSS.
+	 */
+	const previewDevice = useSelect( ( select ) => select( 'core/editor' )?.getDeviceType?.(), [] );
+	const inheritedSize = resolveInheritedResponsiveValue( accordionStyle, 'size', previewDevice, accordionIconSize );
+	const iconSize = size || inheritedSize || '24px';
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'size', accordionStyle, 'size' ) },
+		blockName: 'spectra/accordion-child-header-icon',
+		producers: [ ( attrs ) => iconDimensionStyles( attrs.size || '24px' ) ],
+	} );
 
 	return (
 		<span { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<RenderSVG
 				svg={ editorIcon }
 				needsRTL={ editorIconFlipForRTL }

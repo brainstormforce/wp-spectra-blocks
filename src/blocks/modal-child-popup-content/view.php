@@ -16,7 +16,7 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 >
 	<?php
 		// Render the background video element if needed.
-		Renderer::background_video( $background );
+		Renderer::background_video( $background, Renderer::video_on_every_band( $attributes ) );
 		HtmlSanitizer::render( $content );
 	?>
 </div>

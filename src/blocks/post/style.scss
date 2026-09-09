@@ -275,13 +275,16 @@
 		--spectra-carousel-gap: var(--spectra-carousel-gap-lg, 30px);
 		--spectra-arrow-opacity: var(--spectra-arrow-opacity-lg, 0);
 
-		@media ( max-width: 1024px ) {
+		// Pre-init bands use WordPress core's default viewport bounds (mobile
+		// 480px, tablet 782px), the defaults the resolver also hands Swiper's
+		// breakpoint keys; static CSS cannot follow a theme's own viewport.
+		@media ( max-width: 782px ) {
 			--spectra-carousel-slides: var(--spectra-carousel-slides-md, 2);
 			--spectra-carousel-gap: var(--spectra-carousel-gap-md, 20px);
 			--spectra-arrow-opacity: var(--spectra-arrow-opacity-md, 0);
 		}
 
-		@media ( max-width: 768px ) {
+		@media ( max-width: 480px ) {
 			--spectra-carousel-slides: var(--spectra-carousel-slides-sm, 1);
 			--spectra-carousel-gap: var(--spectra-carousel-gap-sm, 10px);
 			--spectra-arrow-opacity: var(--spectra-arrow-opacity-sm, 0);

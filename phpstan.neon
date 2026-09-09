@@ -15,6 +15,11 @@ parameters:
 	ignoreErrors:
 		-
 			identifier: missingType.generics
+		# WP_Theme_JSON::get_viewport_media_queries() ships in WordPress 7.1; the
+		# bundled stubs are older. The call site guards with is_callable().
+		-
+			message: '#^Call to an undefined static method WP_Theme_JSON::get_viewport_media_queries\(\)\.$#'
+			path: includes/Extensions/class-responsive-controls.php
 		-
 			message: '#^Function astra_(get_option|update_option|clear_all_assets_cache) not found\.$#'
 			path: includes/StyleGuide/Sync/Astra/class-astra-palette-adapter.php

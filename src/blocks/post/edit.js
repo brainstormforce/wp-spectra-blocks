@@ -45,17 +45,24 @@ const Edit = ( props ) => {
 		return <RenderBlockPreview blockName="post" />;
 	}
 
-	if ( ! variationSelected ) {
-		return (
-			<VariationPicker
-				{ ...props }
-				label={ __( 'Select Layout', 'spectra-blocks' ) }
-				instructions={ __( 'Choose a predefined layout for your posts.', 'spectra-blocks' ) }
-				variations={ variations }
-			/>
-		);
-	}
-
+	/*
+	 * The inspector fills mount with the block, not with the variation.
+	 *
+	 * `InspectorControls` is a slot fill, and a slot orders its fills by the
+	 * order they registered. The extensions that wrap this block (Global
+	 * Styles, Animation, Display Conditions, Z-Index, Motion Effects) register
+	 * theirs the moment the block is selected. While the variation picker was
+	 * returned early, this block's own fills did not exist yet, so choosing a
+	 * variation registered them LAST and every panel the block owns — Carousel
+	 * Layout, Settings, Carousel, Filters — appeared below the extension
+	 * panels. Measured on 7.0.4: Carousel Layout landed 1576px down a 767px
+	 * sidebar, out of sight, until a Settings/Styles tab switch remounted every
+	 * fill and restored the intended order.
+	 *
+	 * Keeping the settings components mounted across the variation choice keeps
+	 * their registration — and so their position — from the start. Only the
+	 * canvas swaps between the picker and the rendered block.
+	 */
 	return (
 		<>
 			{ isSelected && (
@@ -67,7 +74,16 @@ const Edit = ( props ) => {
 					<PaginationColorSettings { ...props } />
 				</>
 			) }
-			<Render { ...props } />
+			{ variationSelected ? (
+				<Render { ...props } />
+			) : (
+				<VariationPicker
+					{ ...props }
+					label={ __( 'Select Layout', 'spectra-blocks' ) }
+					instructions={ __( 'Choose a predefined layout for your posts.', 'spectra-blocks' ) }
+					variations={ variations }
+				/>
+			) }
 		</>
 	);
 };

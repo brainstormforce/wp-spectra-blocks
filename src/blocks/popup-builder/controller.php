@@ -54,7 +54,7 @@ $has_video_background   = false;
 $has_responsive_image   = false;
 $video_background       = null;
 $has_responsive_overlay = false;
-foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
 		if ( 'video' === $responsive_controls[ $device ]['background']['type'] ) {
 			$has_video_background = true;
@@ -238,6 +238,16 @@ if ( ! function_exists( 'spectra_get_popup_id' ) ) {
 			}
 		}
 
+		// Method 2: the render pipeline knows which popup it is rendering —
+		// display-rule delivery and the shortcode both run outside a loop for the
+		// popup, so `get_the_ID()` below would be the page.
+		if ( class_exists( '\\SpectraBlocks\\Blocks\\PopupBuilder' ) ) {
+			$rendering_id = \SpectraBlocks\Blocks\PopupBuilder::get_rendering_popup_id();
+			if ( $rendering_id > 0 ) {
+				return $rendering_id;
+			}
+		}
+
 		// Fallback - use current page ID.
 		return get_the_ID();
 	}
@@ -295,34 +305,38 @@ $popup_context = array(
 
 // Wrapper attributes for V3 interactivity.
 $wrapper_config = array(
-	'id'                       => 'spectra-popup-builder-' . $popup_id,
-	'data-block-id'            => $block_id,
-	'data-variant-type'        => $variant_type,
-	'data-has-overlay'         => $has_overlay ? 'true' : 'false',
-	'data-dismissable'         => $is_dismissable ? 'true' : 'false',
-	'data-close-overlay'       => $close_overlay_click ? 'true' : 'false',
-	'data-close-escape'        => $close_escape_press ? 'true' : 'false',
-	'data-halt-interaction'    => $halt_background_interaction ? 'true' : 'false',
-	'data-push-content'        => $will_push_content ? 'true' : 'false',
-	'data-has-fixed-height'    => $has_fixed_height ? 'true' : 'false',
-	'data-popup-context'       => wp_json_encode( $popup_context ),
-	'data-responsive-controls' => wp_json_encode( $responsive_controls ),
-	'aria-modal'               => 'popup' === $variant_type ? 'true' : 'false',
-	'role'                     => 'popup' === $variant_type ? 'dialog' : 'banner',
-	'aria-hidden'              => 'true',
-	'data-repetition'          => $repetition_value,
-	'data-repeat-infinitely'   => $repeat_infinitely ? 'true' : 'false',
-	'data-popup-id'            => $popup_id,
+	'id'                     => 'spectra-popup-builder-' . $popup_id,
+	'data-block-id'          => $block_id,
+	'data-variant-type'      => $variant_type,
+	'data-has-overlay'       => $has_overlay ? 'true' : 'false',
+	'data-dismissable'       => $is_dismissable ? 'true' : 'false',
+	'data-close-overlay'     => $close_overlay_click ? 'true' : 'false',
+	'data-close-escape'      => $close_escape_press ? 'true' : 'false',
+	'data-halt-interaction'  => $halt_background_interaction ? 'true' : 'false',
+	'data-push-content'      => $will_push_content ? 'true' : 'false',
+	'data-has-fixed-height'  => $has_fixed_height ? 'true' : 'false',
+	'data-popup-context'     => wp_json_encode( $popup_context ),
+	'aria-modal'             => 'popup' === $variant_type ? 'true' : 'false',
+	'role'                   => 'popup' === $variant_type ? 'dialog' : 'banner',
+	'aria-hidden'            => 'true',
+	'data-repetition'        => $repetition_value,
+	'data-repeat-infinitely' => $repeat_infinitely ? 'true' : 'false',
+	'data-popup-id'          => $popup_id,
 );
 
 // Add responsive video data as data attribute for JavaScript.
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
-	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
 		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
+		} elseif ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
+			// This band has a background that is not a video: say so explicitly,
+			// or the front-end script falls back to base and plays the desktop
+			// video at a width whose background is an image or none.
+			$responsive_video_data[ $device ] = '';
 		}
 	}
 }

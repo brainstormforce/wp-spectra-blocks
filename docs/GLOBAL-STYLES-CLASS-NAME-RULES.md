@@ -11,7 +11,11 @@
 > by `includes/GlobalStyles/class-engine.php`. (The per-page **post meta** of the same key
 > string is a different surface — see "Related surfaces" at the end.)
 
-**Last verified against code:** 2026-06-12
+**Last verified against code:** 2026-08-26, `dev` @ 1.0.6 (rules unchanged since
+2026-06-12 — `CLASS_NAME_PATTERN`, `RESERVED_CLASS_PREFIXES`,
+`is_allowed_class_name()` and `KEYFRAME_NAME_PATTERN` all re-checked against
+`class-rest-controller.php`; the 1.0.6 diff touches one comment line in that file
+and nothing in the validator)
 
 ---
 
@@ -111,7 +115,7 @@ descendant selector — i.e. selector injection through the name field).
 | Call site: legacy bulk endpoint | `update_bulk()` (`POST /spectra-blocks/v1/global-styles/bulk`) — reports skips |
 | Call site: import sitewide endpoint | `update_sitewide()` (`POST /spectra-blocks/v1/global-styles/sitewide`) — **silent** skips |
 | NOT validated here | `update_custom_class()` (Style Guide UI single-class POST) — accepts any non-empty name; **no prefix/denylist check**. The import endpoints are the strict ones. |
-| Declaration sanitization (separate layer) | `class-sanitizer.php` → `Sanitizer::sanitize_json()` — property/value-level; runs *after* the name check |
+| Declaration sanitization (separate layer) | `class-sanitizer.php` → `Sanitizer::sanitize_json()` — property/value-level; runs *after* the name check. Since free PR #735 its strict mode **keeps** well-formed `var(--name)` / `var(--name, fallback)` and rejects only a `var()` whose first token is not a `--` custom property. Value rules are unrelated to the name rules on this page. |
 | Permission gate | all CRUD routes require `edit_theme_options` |
 | Render (why hijack matters) | `class-engine.php` → `render_user_classes()` / `enqueue_gen_sitewide_css()` → `class-gen-css-renderer.php` `GenCssRenderer::render()` |
 | Regression test | `tests/phpunit/tests/GlobalStyles/RestControllerTest.php` → `test_update_sitewide_validates_names_by_syntax_and_denylist` |
@@ -167,6 +171,12 @@ the option until **re-imported** (the import merge never deletes, so re-import i
   `RESERVED_CLASS_PREFIXES`** (one array) if a new family proves problematic in practice.
 - If a *legitimate* need arises to register a reserved-family name, carve the exception in
   `is_allowed_class_name()` — don't widen the prefix list semantics ad hoc.
+- **The two write surfaces disagree.** `update_custom_class()` (the UI's
+  single-class POST) enforces neither the syntax pattern nor the denylist — a name
+  the import path rejects can still be created by hand through the editor. That is
+  historical, not designed: the strictness was added to the import routes when
+  CHG-006 landed and never backfilled to the UI route. Anything that hardens class
+  naming should start by making these two agree.
 
 ---
 
@@ -175,8 +185,26 @@ the option until **re-imported** (the import merge never deletes, so re-import i
 | Surface | Store | Name validation |
 |---|---|---|
 | Site-wide class registry (THIS doc) | option `spectra_blocks_pro_gs_user_css` | `is_allowed_class_name()` (syntax + denylist) |
-| Per-page imported payload | **post meta** `spectra_blocks_pro_gs_user_css` (same string, different table) | **none** — `zip-ai` `SetPageCustomCss` stores the decoded array verbatim; rendered per-post only |
+| Per-page imported payload | **post meta** `spectra_blocks_pro_gs_user_css` (same string, different table; `GenCssOrphanStripper::META_KEY`) | **none** — `zip-ai` `SetPageCustomCss` and `POST /save` with `scope=page` store the sanitized payload; rendered per-post only |
 | Authoring-service CSS | `wp_global_styles.styles.css` (sentinel blocks) | **none** — raw CSS, written by the SaaS |
 
 The cross-plugin big picture (generation → routing → save → render) lives in
 `zipwp-credits-saas/docs/STYLE-SYSTEM.md`.
+
+---
+
+## 8. Doc audit — 2026-08-26
+
+Re-verified end to end against the code; **no rule changed**. `CLASS_NAME_PATTERN`,
+the nine `RESERVED_CLASS_PREFIXES`, `is_allowed_class_name()`, the `/bulk`
+skip-reporting, the silent `/sitewide` skips, and the post-meta key string are all
+exactly as described above.
+
+Two things worth carrying forward as work items rather than doc edits:
+
+1. **`/sitewide` still reports nothing** when it drops an entry (§6, first bullet).
+   `/bulk` returns both `skipped_classes` and `skipped_keyframes`; `/sitewide`
+   returns neither. This is the same blind spot that let CHG-006 run undetected,
+   and the SaaS sender is still fire-and-forget.
+2. **`update_custom_class()` is unvalidated** (§4, §6). The UI route accepts any
+   non-empty name, so the registry can hold names the import layer would refuse.

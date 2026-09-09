@@ -10,7 +10,8 @@ import { createBlock } from '@wordpress/blocks';
  * Internal dependencies
  */
 import { spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The render function for the Counter block.
@@ -44,8 +45,6 @@ const Render = ( props ) => {
 		backgroundColor,
 		backgroundGradient,
 		totalNumber = 100,
-		prefixRightMargin,
-		suffixLeftMargin,
 		prefixColor,
 		suffixColor,
 		style: blockStyle,
@@ -220,8 +219,21 @@ const Render = ( props ) => {
 // 	// Get typography classes and styles for progress bar text.
 // 	const typographyProps = getTypographyClassesAndStyles( attributes );
 
-	// Configuration for the useSpectraStyles hook.
-	const config = [
+	/*
+	 * A FACTORY rather than a fixed array, because the responsive entries pin an
+	 * explicit `value`.
+	 *
+	 * `buildSpectraStyles()` prefers `value` over `attributes[key]`, so a value
+	 * captured from the base would make every band derive the base number: the
+	 * band and the base would agree, the emitter would find nothing to emit, and
+	 * the wiring would look done while doing nothing. Taking the attributes as an
+	 * argument keeps the per-band value honest.
+	 *
+	 * @since 1.0.7
+	 * @param {Object} a The attributes to build from.
+	 * @return {Array} The style config.
+	 */
+	const buildConfig = ( a = {} ) => [
 		{ key: 'textColor', className: 'spectra-text-color', value: textColor || wpTextColor },
 		{ key: 'backgroundColor', className: 'spectra-background-color', value: backgroundColor || wpBackgroundColor },
 		{ key: 'backgroundGradient', className: 'spectra-background-gradient', value: backgroundGradient },
@@ -229,17 +241,27 @@ const Render = ( props ) => {
 			key: 'prefixRightMargin', 
 			cssVar: '--spectra-prefix-right-margin', 
 			className: null,
-			value: prefixRightMargin !== undefined ? `${prefixRightMargin}px` : undefined
+			value: a.prefixRightMargin !== undefined ? `${a.prefixRightMargin}px` : undefined
 		},
 		{ 
 			key: 'suffixLeftMargin', 
 			cssVar: '--spectra-suffix-left-margin', 
 			className: null,
-			value: suffixLeftMargin !== undefined ? `${suffixLeftMargin}px` : undefined
+			value: a.suffixLeftMargin !== undefined ? `${a.suffixLeftMargin}px` : undefined
 		},
 		{ key: 'prefixColor', cssVar: '--spectra-prefix-color', className: null, value: prefixColor },
 		{ key: 'suffixColor', cssVar: '--spectra-suffix-color', className: null, value: suffixColor },
 	];
+
+	const config = buildConfig( attributes );
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/counter',
+		producers: [ ( attrs ) => buildSpectraStyles( attrs, buildConfig( attrs ) ).style ],
+	} );
 
 
 	// Generate styles and class names.
@@ -315,6 +337,7 @@ const Render = ( props ) => {
 
 		return (
 			<div { ...wrapperProps }>
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 				<div className="spectra-counter-circular-wrapper">
 					<div
 						className="spectra-counter-progress"
@@ -404,7 +427,10 @@ const Render = ( props ) => {
 		);
 
 		return (
+			<>
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<div { ...barContentWrapperProps } />
+			</>
 		);
 	}
 
@@ -422,7 +448,10 @@ const Render = ( props ) => {
 	);
 
 	return (
+		<>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 		<div { ...simpleContentWrapperProps } />
+		</>
 	);
 };
 

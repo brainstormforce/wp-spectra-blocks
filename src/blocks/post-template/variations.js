@@ -51,34 +51,18 @@ const variations = [
 					overflow: 'hidden',
 					height: '100%',
 					backgroundColor: '#F6F6F6',
-					layout: {
-						type: 'default',
-					},
 					style: {
 						spacing: {
 							padding: '0',
-							blockGap: '0',
+							blockGap: '0'
 						},
 						border: {
-							radius: '0.5rem',
+							radius: '0.5rem'
 						},
+						height: '100%'
 					},
-					responsiveControls: {
-						lg: {
-							height: '100%',
-							layout: {
-								type: 'default',
-							},
-							style: {
-								spacing: {
-									padding: '0',
-									blockGap: '0',
-								},
-								border: {
-									radius: '0.5rem',
-								},
-							},
-						},
+					layout: {
+						type: 'default'
 					},
 				},
 				[
@@ -88,36 +72,19 @@ const variations = [
 						{
 							variationSelected: true,
 							width: '100%',
+							style: {
+								spacing: {
+									padding: 'var:preset|spacing|40',
+									blockGap: 'var:preset|spacing|20'
+								},
+								width: '100%'
+							},
 							layout: {
 								type: 'flex',
 								flexWrap: 'nowrap',
 								justifyContent: 'stretch',
 								verticalAlignment: 'top',
-								orientation: 'vertical',
-							},
-							style: {
-								spacing: {
-									padding: 'var:preset|spacing|40',
-									blockGap: 'var:preset|spacing|20',
-								},
-							},
-							responsiveControls: {
-								lg: {
-									width: '100%',
-									layout: {
-										type: 'flex',
-										flexWrap: 'nowrap',
-										justifyContent: 'stretch',
-										verticalAlignment: 'top',
-										orientation: 'vertical',
-									},
-									style: {
-										spacing: {
-											padding: 'var:preset|spacing|40',
-											blockGap: 'var:preset|spacing|20',
-										},
-									},
-								},
+								orientation: 'vertical'
 							},
 						},
 						[
@@ -129,35 +96,18 @@ const variations = [
 								'spectra/container',
 								{
 									variationSelected: true,
+									style: {
+										spacing: {
+											padding: '0',
+											blockGap: 'var:preset|spacing|20'
+										}
+									},
 									layout: {
 										type: 'flex',
 										flexWrap: 'nowrap',
 										justifyContent: 'left',
 										verticalAlignment: 'center',
-										orientation: 'horizontal',
-									},
-									style: {
-										spacing: {
-											padding: '0',
-											blockGap: 'var:preset|spacing|20',
-										},
-									},
-									responsiveControls: {
-										lg: {
-											layout: {
-												type: 'flex',
-												flexWrap: 'nowrap',
-												justifyContent: 'left',
-												verticalAlignment: 'center',
-												orientation: 'horizontal',
-											},
-											style: {
-												spacing: {
-													padding: '0',
-													blockGap: 'var:preset|spacing|20',
-												},
-											},
-										},
+										orientation: 'horizontal'
 									},
 								},
 								[
@@ -197,37 +147,20 @@ const variations = [
 					variationSelected: true,
 					height: '100%',
 					fontSize: 'small',
+					style: {
+						spacing: {
+							padding: '0',
+							blockGap: 'var:preset|spacing|20'
+						},
+						height: '100%',
+						fontSize: 'small'
+					},
 					layout: {
 						type: 'flex',
 						flexWrap: 'nowrap',
 						justifyContent: 'space-between',
 						verticalAlignment: 'center',
-						orientation: 'horizontal',
-					},
-					style: {
-						spacing: {
-							padding: '0',
-							blockGap: 'var:preset|spacing|20',
-						},
-					},
-					responsiveControls: {
-						lg: {
-							height: '100%',
-							fontSize: 'small',
-							layout: {
-								type: 'flex',
-								flexWrap: 'nowrap',
-								justifyContent: 'space-between',
-								verticalAlignment: 'center',
-								orientation: 'horizontal',
-							},
-							style: {
-								spacing: {
-									padding: '0',
-									blockGap: 'var:preset|spacing|20',
-								},
-							},
-						},
+						orientation: 'horizontal'
 					},
 				},
 				[
@@ -237,36 +170,19 @@ const variations = [
 						{
 							variationSelected: true,
 							width: '100%',
+							style: {
+								spacing: {
+									padding: '0',
+									blockGap: 'var:preset|spacing|20'
+								},
+								width: '100%'
+							},
 							layout: {
 								type: 'flex',
 								flexWrap: 'nowrap',
 								justifyContent: 'left',
 								verticalAlignment: 'top',
-								orientation: 'vertical',
-							},
-							style: {
-								spacing: {
-									padding: '0',
-									blockGap: 'var:preset|spacing|20',
-								},
-							},
-							responsiveControls: {
-								lg: {
-									width: '100%',
-									layout: {
-										type: 'flex',
-										flexWrap: 'nowrap',
-										justifyContent: 'left',
-										verticalAlignment: 'top',
-										orientation: 'vertical',
-									},
-									style: {
-										spacing: {
-											padding: '0',
-											blockGap: 'var:preset|spacing|20',
-										},
-									},
-								},
+								orientation: 'vertical'
 							},
 						},
 						[
@@ -274,35 +190,18 @@ const variations = [
 								'spectra/container',
 								{
 									variationSelected: true,
+									style: {
+										spacing: {
+											padding: '0',
+											blockGap: 'var:preset|spacing|20'
+										}
+									},
 									layout: {
 										type: 'flex',
 										flexWrap: 'nowrap',
 										justifyContent: 'left',
 										verticalAlignment: 'center',
-										orientation: 'horizontal',
-									},
-									style: {
-										spacing: {
-											padding: '0',
-											blockGap: 'var:preset|spacing|20',
-										},
-									},
-									responsiveControls: {
-										lg: {
-											layout: {
-												type: 'flex',
-												flexWrap: 'nowrap',
-												justifyContent: 'left',
-												verticalAlignment: 'center',
-												orientation: 'horizontal',
-											},
-											style: {
-												spacing: {
-													padding: '0',
-													blockGap: 'var:preset|spacing|20',
-												},
-											},
-										},
+										orientation: 'horizontal'
 									},
 								},
 								[

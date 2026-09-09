@@ -12,6 +12,7 @@
 import { useInnerBlocksProps, useBlockProps } from '@wordpress/block-editor';
 import { useEffect, useMemo } from '@wordpress/element';
 import { useInstanceId } from '@wordpress/compose';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * Render component for the Post block editor preview.
@@ -24,8 +25,64 @@ import { useInstanceId } from '@wordpress/compose';
  * @param {Function} props.setAttributes Function to update block attributes.
  * @return {Element} The rendered block preview.
  */
+/**
+ * The carousel metrics the post block paints as custom properties.
+ *
+ * Only the three responsive ones are re-derived per band; the colours beside them
+ * in `inlineStyles` are not responsive keys, so a band that repeated them would
+ * emit declarations identical to the base and be discarded anyway.
+ *
+ * `slidesPerView` and `spaceBetween` are declared responsive but are Swiper
+ * PARAMETERS rather than CSS, so no stylesheet can preview them per device —
+ * they are out of this mechanism's reach. Defaults mirror the inline paint.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Object} A React style object of custom properties.
+ */
+export const getCarouselMetricStyles = ( attrs = {} ) => ( {
+	'--spectra-carousel-arrow-size': attrs.arrowSize || '20px',
+	'--spectra-carousel-arrow-distance': attrs.arrowDistance || '-20px',
+	'--spectra-carousel-pagination-margin-top': attrs.paginationTopMargin || '-15px',
+} );
+
+/**
+ * The grid metrics — columns and gaps — for the per-device preview.
+ *
+ * The Post Template child paints these variables inline from block context,
+ * which carries the parent's ROOT attributes (the last-edited device's value),
+ * so switching the device changed nothing on a grid layout: authoring Columns
+ * at Tablet was blind. The band rule targets the child from the parent and
+ * wins over the inline paint because preview declarations are `!important`.
+ * Defaults mirror the child's own.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Array} One rule group for the template element.
+ */
+export const getGridMetricStyles = ( attrs = {} ) => [
+	{
+		selector: ' .wp-block-spectra-post-template',
+		styles: {
+			'--spectra-post-columns': String( attrs.columns || 3 ),
+			// The 20px gap default lives in style.scss ( var( --…, 20px ) ); omit
+			// the variable when unset so the stylesheet default applies.
+			...( attrs.columnGap && { '--spectra-post-column-gap': attrs.columnGap } ),
+			...( attrs.rowGap && { '--spectra-post-row-gap': attrs.rowGap } ),
+		},
+	},
+];
+
 const Render = ( props ) => {
-	const { attributes, setAttributes } = props;
+	const { attributes, setAttributes, clientId } = props;
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/post',
+		producers: [ getCarouselMetricStyles, getGridMetricStyles ],
+	} );
 	const {
 		queryId,
 		layoutType,
@@ -67,9 +124,7 @@ const Render = ( props ) => {
 			...( arrowColor && { '--spectra-carousel-arrow-color': arrowColor } ),
 			...( arrowBackgroundColor && { '--spectra-carousel-arrow-bg-color': arrowBackgroundColor } ),
 			...( dotColor && { '--spectra-carousel-dot-color': dotColor } ),
-			'--spectra-carousel-arrow-size': arrowSize || '20px',
-			'--spectra-carousel-arrow-distance': arrowDistance || '-20px',
-			'--spectra-carousel-pagination-margin-top': paginationTopMargin || '-15px',
+			...getCarouselMetricStyles( attributes ),
 			...( paginationColor && { '--spectra-pagination-color': paginationColor } ),
 			...( paginationBackgroundColor && { '--spectra-pagination-bg-color': paginationBackgroundColor } ),
 			...( paginationHoverColor && { '--spectra-pagination-color-hover': paginationHoverColor } ),
@@ -187,6 +242,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<div { ...innerBlocksProps }>
 				{ innerBlocksProps.children }
 				{ paginationPreview }

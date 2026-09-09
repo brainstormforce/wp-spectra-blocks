@@ -9,12 +9,12 @@ import {
 	ToggleControl,
 	TextControl,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalVStack as VStack,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	AnglePickerControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies

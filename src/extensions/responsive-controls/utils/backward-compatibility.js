@@ -12,19 +12,20 @@
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies.
  */
 import { BACKWARD_COMPATIBILITY_ATTRIBUTES } from './constants';
-import { hasValue } from './helpers';
+import { hasValue, isObject } from './helpers';
 
 /**
  * Higher-order component that handles backward compatibility of legacy attributes in the editor.
  *
  * When a block is loaded, it checks if legacy attributes exist at the root level
  * and if they are missing from all responsive breakpoints. If so, it maps
- * them to the 'lg' (desktop) breakpoint for backward compatibility.
+ * them to the 'base' layer for backward compatibility.
  *
  * @since x.x.x
  * @param {Function} BlockEdit Original block edit component.
@@ -37,14 +38,18 @@ export const withBackwardCompatibility = createHigherOrderComponent( ( BlockEdit
 		// Check if this block has any registered legacy attributes for backward compatibility.
 		const attributesToMaintain = BACKWARD_COMPATIBILITY_ATTRIBUTES[ name ];
 
+		// From the component's own registry — the global `dispatch()` would mark
+		// the MAIN editor's next change inside a nested registry (pattern
+		// previews, Style Book) and silently merge an unrelated undo step.
+		const { __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
+
 		useEffect( () => {
 			if ( ! attributesToMaintain || attributesToMaintain.length === 0 ) {
 				return;
 			}
 
-			const { responsiveControls = {} } = attributes;
-			let modified = false;
-			let newLg = null;
+			const { responsiveControls = {}, style } = attributes;
+			const mapped = {};
 
 			attributesToMaintain.forEach( ( attr ) => {
 				const val = attributes[ attr ];
@@ -53,29 +58,49 @@ export const withBackwardCompatibility = createHigherOrderComponent( ( BlockEdit
 					return;
 				}
 
-				// Check if this attribute is already defined in ANY responsive device.
-				const existsResponsively = [ 'lg', 'md', 'sm' ].some( ( device ) => {
-					return hasValue( responsiveControls?.[ device ]?.[ attr ] );
-				} );
+				/*
+				 * Already present anywhere in the responsive system? `style` is
+				 * where values live now — the parse-time migration empties the
+				 * store, so checking only the store re-mapped the attribute on
+				 * EVERY open: the write refilled the store, the next parse
+				 * emptied it again, and the post opened dirty forever.
+				 */
+				const inStyle = [ style, style?.[ '@tablet' ], style?.[ '@mobile' ] ].some(
+					( layer ) => hasValue( layer?.[ attr ] )
+				);
+				const inStore = [ 'base', '@tablet', '@mobile' ].some( ( device ) =>
+					hasValue( responsiveControls?.[ device ]?.[ attr ] )
+				);
 
-				// If root exists but it's not used in any responsive device, map it to LG (Desktop).
-				if ( ! existsResponsively ) {
-					if ( ! newLg ) {
-						newLg = { ...( responsiveControls.lg || {} ) };
-					}
-					newLg[ attr ] = val;
-					modified = true;
+				if ( ! inStyle && ! inStore ) {
+					mapped[ attr ] = val;
 				}
 			} );
 
-			if ( modified ) {
-				setAttributes( {
-					responsiveControls: {
-						...responsiveControls,
-						lg: newLg,
-					},
-				} );
+			if ( ! Object.keys( mapped ).length ) {
+				return;
 			}
+
+			/*
+			 * Map into the base layer where the system reads it now — the root
+			 * of `style`, not the retired store — and clear the source
+			 * attributes in the same patch, so a value the user later resets
+			 * cannot resurrect from the untouched root on the next open. Like
+			 * the parse-time migration, this is a representation change rather
+			 * than an edit: it is not marked persistent, so opening the post
+			 * stays clean, and the shape persists whenever the user saves for
+			 * their own reasons.
+			 */
+			const cleared = {};
+			Object.keys( mapped ).forEach( ( attr ) => {
+				cleared[ attr ] = undefined;
+			} );
+
+			__unstableMarkNextChangeAsNotPersistent();
+			setAttributes( {
+				...cleared,
+				style: { ...( isObject( style ) ? style : {} ), ...mapped },
+			} );
 		}, [] ); // Run only once on block load.
 
 		return <BlockEdit { ...props } />;

@@ -9,8 +9,9 @@ import { memo, useCallback, useMemo } from '@wordpress/element';
  * Internal dependencies.
  */
 import { spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 import { getMultiStateShadowStyles } from '@spectra-helpers/shadow';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
 import { useHtmlTagToolbar, DEFAULT_TAG_NAME, VOID_TAGS } from './toolbar';
@@ -24,19 +25,39 @@ import shapes from './shapes';
  * @param {Object} props The element props.
  * @return {Element} The rendered block.
  */
+/**
+ * The size, overflow and overlay-opacity styles the container paints inline.
+ *
+ * Named rather than inlined so the per-device preview emitter can run the SAME
+ * derivation once per viewport band. These are direct CSS properties, not custom
+ * properties, and nothing else emits them in the editor — the generator that
+ * bands them for the front end runs on `render_block`.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Object} A React style object.
+ */
+export const getContainerSizeStyles = ( attrs = {} ) => {
+	const { align, width, height, minWidth, minHeight, maxWidth, maxHeight, overflow, dimRatio } = attrs;
+
+	return {
+		...( ( ! align || align === 'none' ) && width ? { width } : {} ),
+		...( height && height !== 'auto' ? { height } : {} ),
+		...( minWidth ? { minWidth } : {} ),
+		...( minHeight ? { minHeight } : {} ),
+		...( maxWidth ? { maxWidth } : {} ),
+		...( maxHeight ? { maxHeight } : {} ),
+		...( overflow && overflow !== 'visible' ? { overflow } : {} ),
+		...( typeof dimRatio === 'number' && ! isNaN( dimRatio ) ? { '--spectra-overlay-opacity': ( dimRatio / 100 ) } : {} ),
+	};
+};
+
 const Render = ( props ) => {
 	const { attributes, clientId, setAttributes } = props;
 
 	const {
 		htmlTag = 'div',
-		overflow,
 		background,
-		width,
-		height,
-		minWidth,
-		minHeight,
-		maxWidth,
-		maxHeight,
 		backgroundColor,
 		backgroundGradient,
 		backgroundGradientHover,
@@ -51,7 +72,6 @@ const Render = ( props ) => {
 		advBgGradientHoverLocation1,
 		advBgGradientHoverLocation2,
 		enableAdvGradients,
-		dimRatio,
 		isBlockRootParent,
 		align,
 		overlayType,
@@ -179,6 +199,31 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style: generatedStyle, classNames } = useSpectraStyles( attributes, config, customClassNames );
 
+	/*
+	 * Per-device preview for the canvas.
+	 *
+	 * The inline paint above carries the layer an EDIT belongs to, which with
+	 * core's "Responsive styles" off is the base layer whatever device is
+	 * previewed. That is right for the panel and wrong for the canvas, so the
+	 * narrow bands are served as CSS instead — the same way font size, spacing
+	 * and layout already preview, through core's own banded state CSS.
+	 *
+	 * The producers are the block's OWN painters, run again per band, so the
+	 * bands cannot derive a declaration differently from the base. Editor-only:
+	 * this module is imported by `edit.js` alone, never by `save.js`, so no
+	 * front-end markup changes.
+	 */
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/container',
+		producers: [
+			( attrs ) => buildSpectraStyles( attrs, config ).style,
+			getBackgroundImageStyles,
+			getContainerSizeStyles,
+		],
+	} );
+
 
 	// Background styles handling with overlay CSS variables for editor.
 	const getBackgroundStyles = useMemo( () => {
@@ -271,14 +316,7 @@ const Render = ( props ) => {
 		'className': spectraClassNames( classNames ),
 		'data-orientation': layout?.orientation || 'vertical',
 		'style': {
-			...( ( !align || align === 'none' ) && width ? { width } : {} ),
-			...( height && height !== 'auto' ? { height } : {} ),
-			...( minWidth ? { minWidth } : {} ),
-			...( minHeight ? { minHeight } : {} ),
-			...( maxWidth ? { maxWidth } : {} ),
-			...( maxHeight ? { maxHeight } : {} ),
-			...( overflow && overflow !== 'visible' ? { overflow } : {} ),
-			...( typeof dimRatio === 'number' && ! isNaN( dimRatio ) ? { '--spectra-overlay-opacity': ( dimRatio / 100 ) } : {} ),
+			...getContainerSizeStyles( attributes ),
 			...getBackgroundStyles,
 		},
 	} );
@@ -330,6 +368,7 @@ const Render = ( props ) => {
 		return (
 			<>
 				{ toolbarControls }
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 				<CustomTag { ...blockProps } />
 			</>
 		);
@@ -338,6 +377,7 @@ const Render = ( props ) => {
 	return (
 		<>
 			{ toolbarControls }
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<CustomTag { ...blockProps }>
 				<VideoBackground { ...{ background } } />
 				{ topDividerHtml }

@@ -56,11 +56,14 @@ class HtmlSanitizer {
 				'class'           => true,
 				'title'           => true,
 				'allowfullscreen' => true,
+				'allow'           => true,
 				'loading'         => true,
 				'referrerpolicy'  => true,
 				'frameborder'     => true,
 				'scrolling'       => true,
 				'sandbox'         => true,
+				'name'            => true,
+				'id'              => true,
 			),
 			/**
 			 * Embed tag for embedded content like Google Maps.
@@ -78,14 +81,22 @@ class HtmlSanitizer {
 				'type'            => true,
 			),
 			/**
-			 * Source tag for video/audio elements.
+			 * Picture tag for responsive images (wraps <source> + <img>).
+			 */
+			'picture'       => array(
+				'class' => true,
+				'style' => true,
+			),
+			/**
+			 * Source tag for responsive <picture> and video/audio elements.
 			 */
 			'source'        => array(
-				'src'   => true,
-				'type'  => true,
-				'media' => true,
-				'sizes' => true,
-				'class' => true,
+				'src'    => true,
+				'srcset' => true,
+				'type'   => true,
+				'media'  => true,
+				'sizes'  => true,
+				'class'  => true,
 			),
 			'svg'           => array(
 				'aria-controls'       => true,
@@ -779,12 +790,23 @@ class HtmlSanitizer {
 				'aria-activedescendant' => true,
 			),
 			/**
-			 * Script tag for structured data (JSON-LD only). kses validates this
-			 * `type` when present but cannot REQUIRE it, so the JSON-LD-only part
-			 * is enforced after sanitization by strip_disallowed_scripts().
+			 * Script tag — allows external scripts (src) for third-party embeds
+			 * (Twitter, Instagram, etc.) and JSON-LD structured data. Inline scripts
+			 * without src are restricted to JSON-LD by strip_disallowed_scripts().
 			 */
 			'script'        => array(
-				'type' => array( 'application/ld+json' ),
+				'type'           => true,
+				'src'            => true,
+				'async'          => true,
+				'defer'          => true,
+				'crossorigin'    => true,
+				'integrity'      => true,
+				'nomodule'       => true,
+				'referrerpolicy' => true,
+				'id'             => true,
+				'class'          => true,
+				'charset'        => true,
+				'data-*'         => true,
 			),
 
 			/**
@@ -837,7 +859,127 @@ class HtmlSanitizer {
 			$merged['a'] = array_merge( $svg_tags['a'] ?? array(), $allowed_tags['a'] );
 		}
 
+		// WordPress core's post `img` allowlist carries no `srcset`/`sizes`, so
+		// kses strips them and a responsive image inside a wrapper block falls back
+		// to the low-resolution `src` and renders blurry. Restore the responsive
+		// attributes every content image relies on ( #890 ).
+		if ( isset( $merged['img'] ) && is_array( $merged['img'] ) ) {
+			$merged['img']['srcset']   = true;
+			$merged['img']['sizes']    = true;
+			$merged['img']['decoding'] = true;
+		}
+
+		// Custom tags do not inherit kses' global attributes, so a `<picture>` /
+		// `<source>` loses its `id`, `data-*`, `role` and `aria-*` — breaking
+		// anchor/jump links, lazy-load hooks and accessibility. Grant them the same
+		// global set every standard element carries.
+		$global_attributes = self::global_attributes();
+		foreach ( array( 'picture', 'source' ) as $tag ) {
+			if ( isset( $merged[ $tag ] ) && is_array( $merged[ $tag ] ) ) {
+				$merged[ $tag ] = array_merge( $merged[ $tag ], $global_attributes );
+			}
+		}
+
 		return $merged;
+	}
+
+	/**
+	 * The global HTML attributes every element may carry.
+	 *
+	 * WordPress adds these to the standard tags in `wp_kses_allowed_html()`, but
+	 * tags this class defines itself do not get them, so they are shared here.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @return array<string, bool> Attribute name => allowed.
+	 */
+	private static function global_attributes(): array {
+		return array(
+			'id'                    => true,
+			'class'                 => true,
+			'style'                 => true,
+			'title'                 => true,
+			'role'                  => true,
+			'lang'                  => true,
+			'dir'                   => true,
+			'hidden'                => true,
+			'data-*'                => true,
+			// ARIA states and properties.
+			'aria-activedescendant' => true,
+			'aria-atomic'           => true,
+			'aria-autocomplete'     => true,
+			'aria-busy'             => true,
+			'aria-checked'          => true,
+			'aria-controls'         => true,
+			'aria-current'          => true,
+			'aria-describedby'      => true,
+			'aria-details'          => true,
+			'aria-disabled'         => true,
+			'aria-expanded'         => true,
+			'aria-haspopup'         => true,
+			'aria-hidden'           => true,
+			'aria-invalid'          => true,
+			'aria-keyshortcuts'     => true,
+			'aria-label'            => true,
+			'aria-labelledby'       => true,
+			'aria-level'            => true,
+			'aria-live'             => true,
+			'aria-modal'            => true,
+			'aria-orientation'      => true,
+			'aria-owns'             => true,
+			'aria-placeholder'      => true,
+			'aria-posinset'         => true,
+			'aria-pressed'          => true,
+			'aria-readonly'         => true,
+			'aria-relevant'         => true,
+			'aria-required'         => true,
+			'aria-roledescription'  => true,
+			'aria-selected'         => true,
+			'aria-setsize'          => true,
+			'aria-sort'             => true,
+			'aria-valuemax'         => true,
+			'aria-valuemin'         => true,
+			'aria-valuenow'         => true,
+			'aria-valuetext'        => true,
+		);
+	}
+
+	/**
+	 * Neutralise script-bearing URL schemes inside every `srcset` attribute.
+	 *
+	 * WordPress' kses leaves `srcset` unfiltered and cannot safely filter it — a
+	 * srcset is a comma-separated list of `URL descriptor` candidates, and running
+	 * a single-URL protocol check over the whole value corrupts it. This walks each
+	 * `srcset` value and rewrites only a `javascript:` / `vbscript:` /
+	 * `livescript:` / `mocha:` scheme that starts a candidate (at the value start
+	 * or after a comma) to a harmless `blocked:`. Every `http`/`https`/relative/
+	 * `data:` candidate, its descriptor, and the commas are left untouched.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @param string $html Sanitised HTML.
+	 * @return string HTML with dangerous srcset schemes neutralised.
+	 */
+	private static function neutralize_srcset_schemes( string $html ): string {
+		if ( false === stripos( $html, 'srcset' ) ) {
+			return $html;
+		}
+
+		$neutralised = preg_replace_callback(
+			'/\ssrcset\s*=\s*(["\'])(.*?)\1/is',
+			static function ( array $matches ): string {
+				$value = preg_replace(
+					'/(^|[\s,])\s*(?:javascript|vbscript|livescript|mocha)\s*:/i',
+					'${1}blocked:',
+					$matches[2]
+				) ?? $matches[2];
+
+				return ' srcset=' . $matches[1] . $value . $matches[1];
+			},
+			$html
+		);
+
+		return $neutralised ?? $html;
 	}
 
 	/**
@@ -1006,6 +1148,31 @@ class HtmlSanitizer {
 	}
 
 	/**
+	 * Reads a named attribute off a `<script>` opening tag's attribute string.
+	 *
+	 * The raw attribute string is parsed with the core HTML tag processor rather
+	 * than a regex: an attribute *value* can itself contain `src=` or
+	 * `type=application/ld+json`, and no boundary-anchored pattern can tell that
+	 * apart from a real attribute without tracking quote state — parsing does.
+	 * The tag is rebuilt closed because `<script>` is a raw-text element the
+	 * processor will not resolve while it is left open.
+	 *
+	 * @since 1.0.7
+	 *
+	 * @param string $attrs The raw attribute string from the opening tag.
+	 * @param string $name  The attribute name to read.
+	 * @return string|true|null String value, true for a valueless boolean
+	 *                          attribute, or null when the attribute is absent.
+	 */
+	private static function script_attribute( string $attrs, string $name ) {
+		$processor = new \WP_HTML_Tag_Processor( '<script' . $attrs . '></script>' );
+		if ( ! $processor->next_tag( array( 'tag_name' => 'SCRIPT' ) ) ) {
+			return null;
+		}
+		return $processor->get_attribute( $name );
+	}
+
+	/**
 	 * Tells whether a `<script>` opening tag's attributes mark it as JSON-LD.
 	 *
 	 * @since 1.0.5
@@ -1014,20 +1181,36 @@ class HtmlSanitizer {
 	 * @return bool True when `type` is `application/ld+json`.
 	 */
 	private static function is_json_ld_script( string $attrs ): bool {
-		// The optional-quote backreference accepts `type=application/ld+json`,
-		// `type="…"` and `type='…'` — kses normalises quoting, but this helper
-		// also runs over content kses left as-is (see strip_disallowed_scripts).
-		return 1 === preg_match( '#\btype\s*=\s*(["\']?)application/ld\+json\1#i', $attrs );
+		$type = self::script_attribute( $attrs, 'type' );
+		return is_string( $type ) && 'application/ld+json' === strtolower( trim( $type ) );
 	}
 
 	/**
-	 * Drops `<script>` elements that are not JSON-LD.
+	 * Tells whether a `<script>` opening tag loads an external resource via src.
 	 *
-	 * The allowlist above declares `script` with `type` constrained to
-	 * `application/ld+json`, but kses only validates an attribute's VALUE when
-	 * the attribute is present — it cannot REQUIRE one. A bare `<script>` is
-	 * therefore an allowed element and survives `wp_kses()` intact, so the
-	 * "JSON-LD only" intent was documented but never enforced.
+	 * External scripts (src=) are legitimate for third-party embeds (Twitter,
+	 * Instagram, Spotify widgets, etc.) — they load from a remote URL and have
+	 * no inline execution vector. Inline scripts without src are the risky case
+	 * and are restricted to JSON-LD by strip_disallowed_scripts().
+	 *
+	 * @since 1.0.7
+	 *
+	 * @param string $attrs The raw attribute string from the opening tag.
+	 * @return bool True when a non-empty `src` attribute is present.
+	 */
+	private static function is_external_script( string $attrs ): bool {
+		// A valueless or empty `src` loads nothing, so it is not an embed.
+		$src = self::script_attribute( $attrs, 'src' );
+		return is_string( $src ) && '' !== trim( $src );
+	}
+
+	/**
+	 * Drops inline `<script>` elements that are not JSON-LD.
+	 *
+	 * External scripts (with `src`) are passed through — they load from a
+	 * remote URL and power legitimate third-party embeds (Twitter, Instagram,
+	 * Spotify, etc.). Inline scripts without `src` are restricted to JSON-LD
+	 * structured data; all others are stripped.
 	 *
 	 * Runs BEFORE the data: URI restore: at that point every shielded value is
 	 * an inert https placeholder, so any `<script>` still present is a real
@@ -1037,7 +1220,7 @@ class HtmlSanitizer {
 	 * @since 1.0.5
 	 *
 	 * @param string $html Kses-sanitized HTML.
-	 * @return string HTML with non-JSON-LD script elements removed.
+	 * @return string HTML with non-JSON-LD inline script elements removed.
 	 */
 	private static function strip_disallowed_scripts( string $html ): string {
 		if ( false === stripos( $html, '<script' ) ) {
@@ -1048,6 +1231,10 @@ class HtmlSanitizer {
 		$html = preg_replace_callback(
 			'#<script\b([^>]*)>.*?</script\s*>#is',
 			static function ( $matches ) {
+				// External scripts (src=) are always allowed — third-party embeds.
+				if ( self::is_external_script( $matches[1] ) ) {
+					return $matches[0];
+				}
 				return self::is_json_ld_script( $matches[1] ) ? $matches[0] : '';
 			},
 			$html
@@ -1060,6 +1247,9 @@ class HtmlSanitizer {
 		return preg_replace_callback(
 			'#<script\b([^>]*)>#i',
 			static function ( $matches ) {
+				if ( self::is_external_script( $matches[1] ) ) {
+					return $matches[0];
+				}
 				return self::is_json_ld_script( $matches[1] ) ? $matches[0] : '';
 			},
 			$html
@@ -1107,6 +1297,15 @@ class HtmlSanitizer {
 		// Enforce the allowlist's "JSON-LD only" intent for `script`, which kses
 		// itself cannot express ({@see strip_disallowed_scripts}).
 		$sanitized = self::strip_disallowed_scripts( $sanitized );
+
+		// kses does not protocol-check `srcset` (it is not a URI attribute), and it
+		// cannot: `kses_bad_protocol()` splits on the first colon, so it corrupts a
+		// multi-candidate value (dropping the first URL, or leaving a later
+		// `javascript:` untouched) and strips `data:` images. Neutralise only the
+		// script-bearing schemes per attribute, leaving every http/https/relative/
+		// data: candidate — and the comma-separated structure — intact
+		// ({@see neutralize_srcset_schemes}).
+		$sanitized = self::neutralize_srcset_schemes( $sanitized );
 
 		// Restore them verbatim: the same bytes that were removed, so the value
 		// is no less escaped than it arrived. strtr() replaces in a single pass,

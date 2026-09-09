@@ -10,6 +10,19 @@ $default-padding: var(--wp--preset--spacing--30, 0.67rem);
 	background: #fff;
 	padding: $default-padding;
 
+	// The background overlay is painted on `::before` at `z-index: -1` by the
+	// per-block responsive CSS. `position: relative` alone does not establish a
+	// stacking context, so that pseudo-element was painted in the ANCESTOR's
+	// negative layer — underneath this block's own opaque `background: #fff`,
+	// which covered it completely. The colour was there and simply never seen:
+	// on the front end the computed `::before` background read as the chosen
+	// colour while the block still rendered white.
+	// Isolating makes this block the stacking context, so the overlay paints
+	// directly above its background and below its content (the children below
+	// already sit at `z-index: 0`). Container never hit this because its own
+	// background is transparent, so a pseudo behind it still showed through.
+	isolation: isolate;
+
 	// Ensure all ::before pseudo-elements inherit border-radius for overlay effects
 	&::before {
 		border-radius: inherit;

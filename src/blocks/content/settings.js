@@ -5,12 +5,12 @@ import { getBlockSupport } from '@wordpress/blocks';
 import { InspectorControls, useSettings, useSetting } from '@wordpress/block-editor';
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	ToggleControl,
 	SelectControl,
 	__experimentalVStack as VStack,
 	ColorPalette,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { memo } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 
@@ -242,15 +242,13 @@ const TextShadowSettings = memo( ( props ) => {
 					textShadowOffsetY: undefined,
 					textShadowBlur: undefined 
 				} ) }
-				resetAllFilter={ () =>
-					setAttributes( {
-						enableTextShadow: undefined,
-						textShadowColor: undefined,
-						textShadowOffsetX: undefined,
-						textShadowOffsetY: undefined,
-						textShadowBlur: undefined,
-					} )
-				}
+				resetAllFilter={ () => ( {
+					enableTextShadow: undefined,
+					textShadowColor: undefined,
+					textShadowOffsetX: undefined,
+					textShadowOffsetY: undefined,
+					textShadowBlur: undefined,
+				} ) }
 				isShownByDefault={ true }
 				panelId={ clientId }
 			>

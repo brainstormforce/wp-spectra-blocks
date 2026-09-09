@@ -14,7 +14,6 @@ import {
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalGrid as Grid,
@@ -22,6 +21,7 @@ import {
 	AnglePickerControl,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { useSelect } from '@wordpress/data';
 import { useEntityProp } from '@wordpress/core-data';
 
@@ -29,6 +29,7 @@ import { useEntityProp } from '@wordpress/core-data';
  * Internal dependencies.
  */
 import Background from '@spectra-components/background';
+import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import IconPicker from '@spectra-components/icon-picker';
 import InspectorColor from '@spectra-components/inspector-color';
 import { getIconName, spectraClassNames } from '@spectra-helpers';
@@ -173,7 +174,6 @@ const PopupGeneralSettings = memo( ( props ) => {
 	const { attributes, setAttributes, clientId } = props;
 	const {
 		variantType,
-		popupWidth,
 		hasFixedHeight,
 		popupPositionV,
 		popupContentAlignmentV,
@@ -182,10 +182,6 @@ const PopupGeneralSettings = memo( ( props ) => {
 		willPushContent,
 	} = attributes;
 
-	const [ availableUnits ] = useSettings( 'spacing.units' );
-	const units = useCustomUnits( {
-		availableUnits: availableUnits || [ 'px', '%', 'vw', 'em', 'rem' ],
-	} );
 
 	return (
 		<InspectorControls group="settings">
@@ -193,8 +189,6 @@ const PopupGeneralSettings = memo( ( props ) => {
 				label={ __( 'Popup', 'spectra-blocks' ) }
 				onDeselect={ () =>
 					setAttributes( {
-						popupWidth: 700,
-						popupHeight: 50,
 						hasFixedHeight: false,
 						popupPositionV: 'top',
 						popupContentAlignmentV: 'center',
@@ -205,8 +199,6 @@ const PopupGeneralSettings = memo( ( props ) => {
 					} )
 				}
 				resetAllFilter={ () => ( {
-					popupWidth: undefined,
-					popupHeight: undefined,
 					hasFixedHeight: false,
 					popupPositionV: 'top',
 					popupContentAlignmentV: 'center',
@@ -217,37 +209,6 @@ const PopupGeneralSettings = memo( ( props ) => {
 				} ) }
 				panelId={ clientId }
 			>
-				{ variantType === 'popup' && (
-					<>
-						<ToolsPanelItem
-							hasValue={ () => !! popupWidth }
-							label={ __(
-								'Popup Width',
-								'spectra-blocks'
-							) }
-							panelId={ clientId }
-							onDeselect={ () =>
-								setAttributes( { popupWidth: undefined } )
-							}
-							resetAllFilter={ () => ( {
-								popupWidth: undefined,
-							} ) }
-						>
-							<UnitControl
-								__next40pxDefaultSize
-								label={ __(
-									'Width',
-									'spectra-blocks'
-								) }
-								value={ popupWidth }
-								onChange={ ( value ) =>
-									setAttributes( { popupWidth: value } )
-								}
-								units={ units }
-							/>
-						</ToolsPanelItem>
-					</>
-				) }
 				<ToolsPanelItem
 					hasValue={ () => hasFixedHeight !== undefined }
 					label={ __(
@@ -1075,13 +1036,19 @@ const PopupBlockStyles = memo( ( props ) => {
 		dimRatio,
 	} = attributes;
 
+	const { group, isHosted } = useInspectorStyleGroup();
+
 	return (
-		<InspectorControls group="styles">
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { background: undefined } ) }
+		>
 			<Background
 				{ ...{
 					clientId,
 					attributes,
 					setAttributes,
+					isHosted,
 					background: {
 						label: 'background',
 						value: background,

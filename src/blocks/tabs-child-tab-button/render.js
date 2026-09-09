@@ -8,9 +8,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 /**
  * Internal dependencies.
  */
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import RenderSVG from '@spectra-helpers/render-svg';
+import {
+	getResponsivePreviewCss,
+	iconDimensionStyles,
+	inheritResponsiveKey,
+	resolveInheritedResponsiveValue,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -19,6 +25,22 @@ import RenderSVG from '@spectra-helpers/render-svg';
  * @since 1.0.6
  * @return {Element} The rendered block.
  */
+/**
+ * The icon dimensions, painted on the icon children.
+ *
+ * Both the icon and the hover icon take the same size, so one entry per child
+ * covers them. Named so the per-device preview emitter can re-derive per band —
+ * see `helpers/responsive-preview.js`. The fallback mirrors the inline paint.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Array} Selector-scoped style entries.
+ */
+export const getButtonIconStyles = ( attrs = {} ) => [
+	...iconDimensionStyles( attrs.size || '16px', ' .spectra-button__icon' ),
+	...iconDimensionStyles( attrs.size || '16px', ' .spectra-button__hover-icon' ),
+];
+
 const Render = ( props ) => {
 	const {
 		clientId,
@@ -86,7 +108,16 @@ const Render = ( props ) => {
 
 	// Set the icon and size to use based on the attribute or context.
 	const iconToUse = icon || tabsIcon;
-	const sizeToUse = size || tabsIconSize || '16px';
+	/*
+	 * The inherited icon size comes from block context, which carries the
+	 * parent's ROOT attribute — the last-edited device's value — so an
+	 * inheriting tab previewed that one value at every breakpoint. Resolve it
+	 * from the parent's `style` for the previewed device instead, like the
+	 * front end does.
+	 */
+	const previewDevice = useSelect( ( select ) => select( 'core/editor' )?.getDeviceType?.(), [] );
+	const inheritedSize = resolveInheritedResponsiveValue( inheritedStyleColorText, 'size', previewDevice, tabsIconSize );
+	const sizeToUse = size || inheritedSize || '16px';
 	// Normalize each SOURCE before the fallback, not the collapsed result: with
 	// `iconPosition || tabsIconPosition`, an INVALID child value still won the
 	// `||` and shadowed a valid parent. Child 'left' + parent 'before' painted
@@ -171,6 +202,15 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config, customClassNames );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		// Bands the tab does not size itself inherit the parent's band.
+		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'size', inheritedStyleColorText, 'size' ) },
+		blockName: 'spectra/tabs-child-tab-button',
+		producers: [ getButtonIconStyles, ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+	} );
+
 	const blockProps = useBlockProps( {
 		style,
 		className: spectraClassNames( classNames ),
@@ -249,6 +289,7 @@ const Render = ( props ) => {
 	// Note, the tab will render as a div in the editor, but it is rendered as a button in the front-end.
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			{ iconHtml( 'before' ) }
 			{ btnText() }
 			{ iconHtml( 'after' ) }

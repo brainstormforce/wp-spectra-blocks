@@ -32,17 +32,6 @@ export const DEFAULT_RESPONSIVE_CONDITIONS = {
 };
 
 /**
- * Media query breakpoints (matching Spectra's responsive controls system).
- *
- * @since x.x.x
- */
-export const MEDIA_QUERIES = {
-	DESKTOP: '(min-width: 1024px)', // lg - desktop
-	TABLET: '(min-width: 768px) and (max-width: 1023.98px)', // md - tablet
-	MOBILE: '(max-width: 767.98px)', // sm - mobile
-};
-
-/**
  * Array of blocks that should be excluded from responsive conditions.
  *
  * This can be extended by third-party developers using the WordPress filter system.

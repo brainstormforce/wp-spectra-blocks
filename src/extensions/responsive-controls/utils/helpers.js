@@ -2,8 +2,9 @@
  * External dependencies.
  */
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { useDispatch, useSelect, select as dataSelect, subscribe as dataSubscribe } from '@wordpress/data';
-import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
+import { useDispatch, useSelect, select as dataSelect } from '@wordpress/data';
+import { useCallback, useEffect, useMemo } from '@wordpress/element';
+import { getBlockSupport, getBlockType } from '@wordpress/blocks';
 import { applyFilters } from '@wordpress/hooks';
 
 /**
@@ -11,22 +12,28 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import {
 	DESKTOP,
-	DEVICE_FALLBACK_ORDER,
 	EXCLUDED_BLOCKS,
 	SUPPORTED_BLOCKS,
 	RESPONSIVE_KEYS,
-	PROPERTIES_TO_MERGE,
 	BREAKPOINT_TYPE_MAP,
 	ALLOWED_PREFIXES,
 	MUTUALLY_EXCLUSIVE_ATTR_PAIRS,
 	BLOCK_RESPONSIVE_KEYS,
 	STYLE_RESPONSIVE_KEYS,
-	BACKGROUND_INNER_PROPERTIES,
-	TABLET,
-	MOBILE,
-	DEVICE_SWITCH_BATCH_SIZE,
+	BUCKET_TOP_LEVEL_STYLE_KEYS,
+	SCRATCH_ROOT_ATTRIBUTE_KEYS,
+	ROOT_ATTRIBUTE_PRESET_REFS,
+	coreViewportStatesAreIndependent,
 } from './constants';
+import {
+	DEVICE_TO_STYLE_STATE,
+	readBucketFromStyle,
+	readLegacyBucket,
+	writeBucketToStyle,
+	mergeBuckets,
+} from './style-store';
 import { getResetInProgress } from '..';
+import { useResponsiveEditing } from './use-responsive-editing';
 
 /**
  * ===================================================================
@@ -58,46 +65,6 @@ export const deepClone = ( obj ) => {
 	return JSON.parse( JSON.stringify( obj ) );
 };
 
-/**
- * Performs deep equality comparison between two values.
- * Handles all data types including nested objects and arrays.
- *
- * @since x.x.x
- *
- * @param {*} a - First value to compare.
- * @param {*} b - Second value to compare.
- * @return {boolean} True if values are deeply equal, false otherwise.
- */
-const isEqual = ( a, b ) => {
-	if ( a === b ) {return true;}
-
-	if ( a === null || a === undefined || b === null || b === undefined ) {
-		return a === b;
-	}
-
-	if ( typeof a !== typeof b ) {return false;}
-
-	// Add Date comparison.
-	if ( a instanceof Date && b instanceof Date ) {
-		return a.getTime() === b.getTime();
-	}
-
-	if ( Array.isArray( a ) && Array.isArray( b ) ) {
-		if ( a.length !== b.length ) {return false;}
-		return a.every( ( val, i ) => isEqual( val, b[ i ] ) );
-	}
-
-	if ( typeof a === 'object' && typeof b === 'object' ) {
-		const keysA = Object.keys( a );
-		const keysB = Object.keys( b );
-
-		if ( keysA.length !== keysB.length ) {return false;}
-
-		return keysA.every( ( key ) => keysB.includes( key ) && isEqual( a[ key ], b[ key ] ) );
-	}
-
-	return a === b;
-};
 
 /**
  * Gets a nested value from an object using a dot-notation path.
@@ -334,36 +301,6 @@ const deepMerge = ( target, source ) => {
  * @param {Object} updated - Updated data object
  * @return {boolean} True if objects are different, false if same
  */
-const shouldUpdateData = ( current, updated ) => {
-	// Fast reference check first.
-	if ( current === updated ) {return false;}
-
-	// Performance hack: Direct comparison without creating intermediate objects.
-	// Iterate through keys once and compare directly.
-	const currentKeys = Object.keys( current );
-	const updatedKeys = Object.keys( updated );
-
-	// Quick length check first.
-	if ( currentKeys.length !== updatedKeys.length ) {return true;}
-
-	// Check all current keys exist in updated and values are equal.
-	for ( const key of currentKeys ) {
-		const currentVal = current[ key ];
-		const updatedVal = updated[ key ];
-
-		// Skip functions and undefined values.
-		const currentHasValue = ! isFunction( currentVal ) && ! isUndefined( currentVal );
-		const updatedHasValue = ! isFunction( updatedVal ) && ! isUndefined( updatedVal );
-
-		// If value presence differs, objects are different.
-		if ( currentHasValue !== updatedHasValue ) {return true;}
-
-		// If both have values, compare them.
-		if ( currentHasValue && ! isEqual( currentVal, updatedVal ) ) {return true;}
-	}
-
-	return false;
-};
 
 /**
  * Checks if a responsive breakpoint data object is empty or has no meaningful values.
@@ -373,20 +310,6 @@ const shouldUpdateData = ( current, updated ) => {
  * @param {Object} breakpointData - The breakpoint data to check.
  * @return {boolean} True if the breakpoint data is empty, false otherwise.
  */
-const isBreakpointDataEmpty = ( breakpointData ) => {
-	if ( ! breakpointData || typeof breakpointData !== 'object' ) {
-		return true;
-	}
-
-	// Check if object has any keys.
-	const keys = Object.keys( breakpointData );
-	if ( keys.length === 0 ) {
-		return true;
-	}
-
-	// Check if any key has a meaningful value.
-	return ! keys.some( ( key ) => hasValue( breakpointData[ key ] ) );
-};
 
 /**
  * Checks if the device update from `from` to `to` should be skipped.
@@ -400,25 +323,6 @@ const isBreakpointDataEmpty = ( breakpointData ) => {
  * @param {Object} controls - The responsive controls object.
  * @return {boolean} True if the device update should be skipped, false otherwise.
  */
-function shouldSkipDeviceUpdate( from, to, controls ) {
-	const lg = controls?.lg;
-	const md = controls?.md;
-	const sm = controls?.sm;
-
-	// Desktop → Tablet when md is empty.
-	if ( from === DESKTOP && to === TABLET && isBreakpointDataEmpty( md ) ) {return true;}
-
-	// Tablet → Mobile when sm is empty.
-	if ( from === TABLET && to === MOBILE && isBreakpointDataEmpty( sm ) ) {return true;}
-
-	// Tablet → Desktop when both lg and md are empty.
-	if ( from === TABLET && to === DESKTOP && isBreakpointDataEmpty( lg ) && isBreakpointDataEmpty( md ) ) {return true;}
-
-	// Mobile → Tablet when both sm and md are empty.
-	if ( from === MOBILE && to === TABLET && isBreakpointDataEmpty( sm ) && isBreakpointDataEmpty( md ) ) {return true;}
-
-	return false;
-}
 
 /**
  * Enhanced comparison for deeply nested responsive control structures.
@@ -460,221 +364,121 @@ const shouldUpdateResponsiveData = ( a, b ) => {
 };
 
 /**
- * Checks if any breakpoint in responsive controls has mixed radius format.
+ * Drop undefined leaves and the empty objects they leave behind.
+ *
+ * See the call site in wrappedSetAttributes(): a cleared control sends an
+ * explicit `undefined` leaf, and writing it verbatim serialises hollow groups
+ * (`typography: {}`) into a viewport state forever.
  *
  * @since x.x.x
  *
- * @param {Object} responsiveControls - The responsive controls object.
- * @return {boolean} True if any breakpoint has mixed radius format.
+ * @param {Object} obj - Object to prune, mutated in place.
+ * @return {void}
  */
-const hasMixedRadiusInAnyBreakpoint = ( responsiveControls ) => {
-	const breakpoints = [ 'lg', 'md', 'sm' ];
-
-	return breakpoints.some( ( bp ) => {
-		const breakpointData = responsiveControls[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return false;}
-
-		return (
-			has( breakpointData, 'style.border.radius.topLeft' ) ||
-			has( breakpointData, 'style.border.radius.topRight' ) ||
-			has( breakpointData, 'style.border.radius.bottomLeft' ) ||
-			has( breakpointData, 'style.border.radius.bottomRight' )
-		);
-	} );
-};
-
-/**
- * Converts single radius to mixed radius format.
- *
- * @since x.x.x
- *
- * @param {string|number} singleRadius - The single radius value.
- * @return {Object} Mixed radius object with all corners set to the single value.
- */
-const convertSingleRadiusToMixed = ( singleRadius ) => {
-	return {
-		topLeft: singleRadius,
-		topRight: singleRadius,
-		bottomLeft: singleRadius,
-		bottomRight: singleRadius,
-	};
-};
-
-/**
- * Normalizes radius format across all breakpoints to ensure consistency.
- * If any breakpoint has mixed radius, convert all single radius to mixed format.
- *
- * @since x.x.x
- *
- * @param {Object} responsiveControls - The responsive controls object to normalize.
- * @return {Object} Normalized responsive controls with consistent radius format.
- */
-const normalizeRadiusFormat = ( responsiveControls ) => {
-	// Check if any breakpoint has mixed radius
-	if ( ! hasMixedRadiusInAnyBreakpoint( responsiveControls ) ) {
-		return responsiveControls; // No mixed radius found, return as-is
+const pruneHollowValues = ( obj ) => {
+	if ( ! isObject( obj ) ) {
+		return;
 	}
 
-	// Clone to avoid mutation
-	const normalized = deepClone( responsiveControls );
-	const breakpoints = [ 'lg', 'md', 'sm' ];
-
-	breakpoints.forEach( ( bp ) => {
-		const breakpointData = normalized[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return;}
-
-		// Check if this breakpoint has single radius
-		if ( has( breakpointData, 'style.border.radius' ) && typeof breakpointData.style.border.radius !== 'object' ) {
-			// Convert single to mixed
-			const singleValue = breakpointData.style.border.radius;
-			const mixedRadius = convertSingleRadiusToMixed( singleValue );
-
-			// Clean up: remove the single radius property first
-			deleteNested( normalized, `${ bp }.style.border.radius` );
-
-			// Then set the mixed radius
-			setNested( normalized, `${ bp }.style.border.radius`, mixedRadius );
+	Object.keys( obj ).forEach( ( key ) => {
+		if ( undefined === obj[ key ] ) {
+			delete obj[ key ];
+			return;
 		}
-	} );
 
-	return normalized;
-};
+		if ( isObject( obj[ key ] ) ) {
+			pruneHollowValues( obj[ key ] );
 
-/**
- * Checks if any breakpoint in responsive controls has individual border format.
- *
- * @since x.x.x
- *
- * @param {Object} responsiveControls - The responsive controls object.
- * @return {boolean} True if any breakpoint has individual border format.
- */
-const hasIndividualBorderInAnyBreakpoint = ( responsiveControls ) => {
-	const breakpoints = [ 'lg', 'md', 'sm' ];
-
-	return breakpoints.some( ( bp ) => {
-		const breakpointData = responsiveControls[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return false;}
-
-		return (
-			has( breakpointData, 'style.border.top' ) ||
-			has( breakpointData, 'style.border.right' ) ||
-			has( breakpointData, 'style.border.bottom' ) ||
-			has( breakpointData, 'style.border.left' )
-		);
-	} );
-};
-
-/**
- * Converts shorthand border to individual border format.
- *
- * @since x.x.x
- *
- * @param {Object} shorthandBorder   - The shorthand border object with width, style, color.
- * @param {string} borderColorPreset - Optional borderColor preset value.
- * @return {Object} Individual border object with top, right, bottom, left properties.
- */
-const convertShorthandBorderToIndividual = ( shorthandBorder, borderColorPreset = null ) => {
-	const individualBorder = {};
-
-	[ 'top', 'right', 'bottom', 'left' ].forEach( ( side ) => {
-		// Only create border object if there are actual border properties
-		const sideProperties = {};
-
-		if ( shorthandBorder.width ) {
-			sideProperties.width = shorthandBorder.width;
-		}
-		if ( shorthandBorder.style ) {
-			sideProperties.style = shorthandBorder.style;
-		}
-		// Priority: shorthand color > borderColor preset
-		if ( shorthandBorder.color ) {
-			sideProperties.color = shorthandBorder.color;
-		} else if ( borderColorPreset && ( shorthandBorder.width || shorthandBorder.style ) ) {
-			// Apply borderColor preset only if there's width or style (actual border)
-			// Handle both formats: preset name only or already formatted variable
-			if ( borderColorPreset.startsWith( 'var:preset|color|' ) ) {
-				sideProperties.color = borderColorPreset;
-			} else {
-				sideProperties.color = `var:preset|color|${ borderColorPreset }`;
+			if ( ! Object.keys( obj[ key ] ).length ) {
+				delete obj[ key ];
 			}
 		}
-
-		// Only add if there are properties to add
-		if ( Object.keys( sideProperties ).length > 0 ) {
-			individualBorder[ side ] = sideProperties;
-		}
 	} );
-
-	return individualBorder;
 };
 
 /**
- * Normalizes border format across all breakpoints to ensure consistency.
- * If any breakpoint has individual borders, convert all shorthand borders to individual format.
+ * Turn every emptied leaf inside a `style` patch into an explicit `undefined`.
+ *
+ * Number and unit controls send `''` when their field is emptied, and the
+ * clear-as-deletion path downstream fires only on `undefined`. The top-level
+ * conversion beside `clearableKeys` catches a block's own flat keys, but a core
+ * control's value is NESTED: emptying padding-top at Tablet arrives as
+ * `{ style: { spacing: { padding: { top: '' } } } }`. That `''` was merged as
+ * though it were a value, and `pruneHollowValues()` drops only `undefined`, so
+ * the state kept a hollow override — `style['@tablet'].spacing.padding.top = ''`
+ * — instead of losing the override entirely.
+ *
+ * It also split the editor from the site: PHP tests values with
+ * `has_actual_value()`, which reads `''` as absent and inherits the base, while
+ * the editor's own overlay resolves the state over the base and showed the empty
+ * value. The site was right and the panel was wrong.
+ *
+ * Nothing is mutated in place: a node with an emptied leaf below it is rebuilt,
+ * and a node with none is returned as it came, so an untouched group keeps its
+ * identity all the way up. Called only on the routed `style` groups — see `clearEmptiedStyleLeaves()` for why the walk stops
+ * there — so a block's text attributes, where an empty string is a legitimate
+ * value, are untouched.
  *
  * @since x.x.x
- *
- * @param {Object} responsiveControls - The responsive controls object to normalize.
- * @return {Object} Normalized responsive controls with consistent border format.
+ * @param {*} value A node of the incoming `style` patch.
+ * @return {*} The node with its emptied leaves replaced by `undefined`.
  */
-const normalizeBorderFormat = ( responsiveControls ) => {
-	// Check if any breakpoint has individual borders
-	if ( ! hasIndividualBorderInAnyBreakpoint( responsiveControls ) ) {
-		return responsiveControls; // No individual borders found, return as-is
+const emptiedLeavesAsUndefined = ( value ) => {
+	if ( '' === value ) {
+		return undefined;
 	}
 
-	// Clone to avoid mutation
-	const normalized = deepClone( responsiveControls );
-	const breakpoints = [ 'lg', 'md', 'sm' ];
+	if ( ! isObject( value ) || isArray( value ) || isDate( value ) ) {
+		return value;
+	}
 
-	breakpoints.forEach( ( bp ) => {
-		const breakpointData = normalized[ bp ];
-		if ( ! breakpointData || typeof breakpointData !== 'object' ) {return;}
+	const next = {};
+	let changed = false;
 
-		// Check if this breakpoint has shorthand border properties
-		const hasShorthandBorder =
-			has( breakpointData, 'style.border.width' ) ||
-			has( breakpointData, 'style.border.style' ) ||
-			has( breakpointData, 'style.border.color' ) ||
-			hasValue( breakpointData?.borderColor );
+	Object.keys( value ).forEach( ( key ) => {
+		next[ key ] = emptiedLeavesAsUndefined( value[ key ] );
+		changed = changed || next[ key ] !== value[ key ];
+	} );
 
-		if ( hasShorthandBorder ) {
-			// Extract shorthand border properties
-			const shorthandBorder = {};
-			if ( has( breakpointData, 'style.border.width' ) ) {
-				shorthandBorder.width = breakpointData.style.border.width;
-			}
-			if ( has( breakpointData, 'style.border.style' ) ) {
-				shorthandBorder.style = breakpointData.style.border.style;
-			}
-			if ( has( breakpointData, 'style.border.color' ) ) {
-				shorthandBorder.color = breakpointData.style.border.color;
-			}
+	return changed ? next : value;
+};
 
-			// Get borderColor preset if it exists
-			const borderColorPreset = normalized[ bp ]?.borderColor || null;
+/**
+ * Apply that rule to the `style` groups this extension actually routes.
+ *
+ * The walk is scoped to `STYLE_RESPONSIVE_KEYS` because those are the only
+ * groups a viewport state can hold — `remove_conflicting_core_attributes()`
+ * draws the same line in PHP. Everywhere else in `style` an empty string is
+ * nobody's deletion signal: it is a value core wrote and core reads back, and
+ * turning it into `undefined` here would hand the block a deletion its own
+ * control never asked for. `style.background.backgroundImage.title` is the
+ * plain case — an untitled image legitimately carries `''`.
+ *
+ * Returns the same object when nothing changed, so an unrelated `style` write
+ * does not become a new object and does not perturb the identity checks
+ * downstream.
+ *
+ * @since x.x.x
+ * @param {Object} style The incoming `style` patch.
+ * @return {Object} The patch with its routed groups' emptied leaves cleared.
+ */
+const clearEmptiedStyleLeaves = ( style ) => {
+	let next = style;
 
-			// Convert to individual format, applying borderColor if needed
-			const individualBorder = convertShorthandBorderToIndividual( shorthandBorder, borderColorPreset );
+	STYLE_RESPONSIVE_KEYS.forEach( ( group ) => {
+		if ( ! ( group in style ) ) {
+			return;
+		}
 
-			// Clean up: remove shorthand properties
-			deleteNested( normalized, `${ bp }.style.border.width` );
-			deleteNested( normalized, `${ bp }.style.border.style` );
-			deleteNested( normalized, `${ bp }.style.border.color` );
+		const cleared = emptiedLeavesAsUndefined( style[ group ] );
 
-			// Set individual border properties
-			Object.keys( individualBorder ).forEach( ( side ) => {
-				setNested( normalized, `${ bp }.style.border.${ side }`, individualBorder[ side ] );
-			} );
-
-			// Remove borderColor preset only if we successfully applied it to individual borders
-			if ( borderColorPreset && has( normalized[ bp ], 'borderColor' ) ) {
-				delete normalized[ bp ].borderColor;
-			}
+		if ( cleared !== style[ group ] ) {
+			next = next === style ? { ...style } : next;
+			next[ group ] = cleared;
 		}
 	} );
 
-	return normalized;
+	return next;
 };
 
 /**
@@ -691,8 +495,16 @@ const normalizeBorderFormat = ( responsiveControls ) => {
  */
 const resolveMutualExclusivity = ( target, source, pairs ) => {
 	pairs.forEach( ( [ presetKey, customPath ] ) => {
-		const presetPathExists = has( source, presetKey );
-		const customPathExists = has( source, customPath );
+		/*
+		 * A key can be PRESENT with an undefined value — core's patches carry
+		 * registered attributes that way, and a routed clear adds the key
+		 * deliberately. Presence alone is not the user "setting" that side of
+		 * the pair: reading it as such deleted a block's custom font size on
+		 * every colour change, because the patch merely mentioned `fontSize`.
+		 * Only an actual value counts.
+		 */
+		const presetPathExists = hasValue( getNested( source, presetKey ) );
+		const customPathExists = hasValue( getNested( source, customPath ) );
 
 		// Handle layout conflicts: When source and target both have layout settings but they differ,
 		// remove the layout from target to prevent conflicting layout configurations.
@@ -781,70 +593,13 @@ const resolveMutualExclusivity = ( target, source, pairs ) => {
 };
 
 /**
- * Generates all nested paths for spacing, typography, border and other complex properties.
+ * Whether a value is a plain object (not null, not an array).
  *
  * @since x.x.x
- *
- * @param {string} basePath - The base path like 'style.spacing'
- * @param {Object} obj      - The object to traverse
- * @param {Array}  paths    - Array to collect paths
- * @param {number} maxDepth - Maximum depth to traverse
+ * @param {*} value The value.
+ * @return {boolean} True for plain objects.
  */
-const generateNestedPaths = ( basePath, obj, paths = [], maxDepth = 3 ) => {
-	if ( maxDepth <= 0 || ! obj || typeof obj !== 'object' ) {
-		return paths;
-	}
-
-	Object.keys( obj ).forEach( ( key ) => {
-		const currentPath = basePath ? `${ basePath }.${ key }` : key;
-		paths.push( currentPath );
-
-		// Recursively generate paths for nested objects.
-		if ( obj[ key ] && typeof obj[ key ] === 'object' && ! Array.isArray( obj[ key ] ) ) {
-			generateNestedPaths( currentPath, obj[ key ], paths, maxDepth - 1 );
-		}
-	} );
-
-	return paths;
-};
-
-/**
- * Cleans up stale nested keys in responsive attributes.
- *
- * This function identifies and marks for removal any properties that exist in the base.
- * attributes but are being removed in the responsive attributes. This ensures CSS variables
- * are properly cleared when values are removed at specific breakpoints.
- *
- * @since x.x.x
- *
- * @param {Object}        result        - The original attributes object.
- * @param {Object}        valuesToApply - The object containing values to be applied.
- * @param {Array<string>} keysToCleanup - Flat dot-notation paths to clean.
- */
-const cleanupStaleNestedKeys = ( result, valuesToApply, keysToCleanup ) => {
-	// Generate comprehensive paths including all nested properties.
-	const allPaths = [];
-	keysToCleanup.forEach( ( path ) => {
-		// Add the path itself.
-		allPaths.push( path );
-
-		// If path points to an object in result, generate all nested paths.
-		const baseObj = getNested( result, path );
-		if ( baseObj && typeof baseObj === 'object' && ! Array.isArray( baseObj ) ) {
-			generateNestedPaths( path, baseObj, allPaths );
-		}
-	} );
-
-	// Clean up all paths.
-	allPaths.forEach( ( path ) => {
-		const baseVal = getNested( result, path );
-		const applyVal = getNested( valuesToApply, path );
-
-		if ( hasValue( baseVal ) && ! hasValue( applyVal ) ) {
-			setNested( valuesToApply, path, undefined );
-		}
-	} );
-};
+const isPlainObjectValue = ( value ) => Boolean( value ) && 'object' === typeof value && ! Array.isArray( value );
 
 /**
  * Checks if a value is set (not null or empty string), and if it is an object,
@@ -873,6 +628,93 @@ export const hasValue = ( value ) => {
 	// All other values are considered valid.
 	return true;
 };
+
+/**
+ * Whether a reset wrote the attribute's DEFAULT instead of clearing it.
+ *
+ * `processReset()` learns what the author reset by diffing the block before and
+ * after core's reset ran, and calls a property reset when it HAD a value and no
+ * longer does. That misses every control whose `onDeselect` writes a sentinel
+ * rather than `undefined`. The Container's overlay is one:
+ *
+ *     onDeselect={ () => setAttributes( { overlayType: 'none' } ) }
+ *
+ * `hasValue( 'none' )` is true, so `overlayType: 'image' → 'none'` looked like
+ * an ordinary edit, the path was never added to the reset list, and
+ * `style.overlayType` kept the image. Root said "none" while the authoritative
+ * layer said "image": the overlay went on painting, and Reset looked broken —
+ * on the canvas and, once saved, on the site.
+ *
+ * The reset target is the attribute's registered default, so that is what this
+ * compares against. Top-level attributes only: nested style paths have no
+ * defaults to write.
+ *
+ * @since 1.0.7
+ * @param {string} blockName   The block name.
+ * @param {string} key         Attribute name.
+ * @param {*}      beforeValue The value before the reset.
+ * @param {*}      afterValue  The value after it.
+ * @return {boolean} True when the reset replaced a value with its default.
+ */
+export const resetWroteTheDefault = ( blockName, key, beforeValue, afterValue ) => {
+	if ( ! blockName || ! key || ! hasValue( beforeValue ) ) {
+		return false;
+	}
+
+	const defaultValue = getBlockType( blockName )?.attributes?.[ key ]?.default;
+
+	if ( undefined === defaultValue || isObject( defaultValue ) ) {
+		return false;
+	}
+
+	return afterValue === defaultValue && beforeValue !== defaultValue;
+};
+
+/**
+ * Guarantee a layout object carries a `type`.
+ *
+ * `attributes.layout` is what WordPress core's editor layout support renders the
+ * canvas from, and it resolves the layout type like this:
+ *
+ *     const usedLayout = … : layout || defaultBlockLayout || {};
+ *     getLayoutType( usedLayout?.type || 'default' )
+ *
+ * The `defaultBlockLayout` fallback only fires when `layout` is absent entirely.
+ * A PARTIAL layout is therefore worse than none: `{ justifyContent: 'right' }` is
+ * truthy, so core uses it as-is, finds no `type`, and falls back to the `default`
+ * (flow) layout — which has no justification at all. The block silently stops
+ * being a flex container in the editor.
+ *
+ * Core's own controls do write partial objects: on a block whose `supports.layout`
+ * sets `allowSwitching: false` there is no type control, so `type` never comes
+ * from the panel. Core gets away with it because it merges over
+ * `supports.layout.default`; anything that writes `attributes.layout` here has to
+ * do the same.
+ *
+ * Mirrors the fallback merge in `ResponsiveControls::generate_layout_css()`, so the
+ * editor canvas and the front end resolve a layout the same way.
+ *
+ * @since 1.0.7
+ *
+ * @param {Object} layout    A layout object, possibly partial.
+ * @param {string} blockName The block name, for its `supports.layout.default`.
+ * @return {Object} The layout, with `type` and any other default properties filled in.
+ */
+export const withLayoutType = ( layout, blockName ) => {
+	if ( ! isObject( layout ) || layout.type ) {
+		return layout;
+	}
+
+	const layoutSupport = getBlockSupport( blockName, 'layout' );
+	const defaultLayout = isObject( layoutSupport?.default ) ? layoutSupport.default : null;
+
+	if ( ! defaultLayout?.type ) {
+		return layout;
+	}
+
+	return { ...defaultLayout, ...layout };
+};
+
 
 /**
  * Extracts responsive attributes from a given set of attributes.
@@ -910,7 +752,30 @@ export const extractResponsiveAttributes = ( attributes, blockName ) => {
 		}
 	}
 
-	// Performance hack: Process other attributes with fast Set lookup.
+	/*
+	 * Process other attributes with fast Set lookup.
+	 *
+	 * An explicitly-undefined value is carried through, because a DELETION is
+	 * as responsive as a value. It used to be dropped here and left to the
+	 * verbatim pass-through, on the reasoning that clearing a control should
+	 * clear the attribute — which is true at Desktop, where the root attribute
+	 * IS the base layer, and wrong at every other device, where the value lives
+	 * in a viewport state.
+	 *
+	 * Dropped, the deletion never reached the router: the patch looked
+	 * non-responsive, the write loop never ran, and the state kept the old
+	 * value while the root cleared and the control went empty. Measured on 7.1,
+	 * emptying a Container's Height at Tablet — `root=300px base=undefined
+	 * tablet=300px` became `root=undefined base=undefined tablet=300px`, so the
+	 * site kept a height the panel no longer showed and emptying the field
+	 * again could not remove it.
+	 *
+	 * Carried through, `deepMerge()` keeps the undefined leaf, `pruneHollowValues()`
+	 * drops it, and `writeBucketToStyle()` then sees the key as absent and
+	 * deletes it from the state — the path a cleared control was always meant
+	 * to take. `Object.entries()` only yields keys the patch actually carries,
+	 * so an attribute nobody touched is still never mentioned.
+	 */
 	for ( const [ key, value ] of Object.entries( attributes ) ) {
 		if ( key !== 'style' && blockResponsiveKeysSet.has( key ) ) {
 			responsiveAttrs[ key ] = value;
@@ -958,125 +823,55 @@ export const isAllowedBlock = ( block ) => {
 };
 
 /**
- * Global Device Change Listener
+ * Mirror base-layer flat values from `style` into the root attributes at parse.
  *
- * Single centralized listener that detects device changes and triggers
- * the batch processing system. Replaces 400+ individual useEffect listeners
- * that would cause browser performance issues.
+ * The system's canonical storage for flat responsive keys is `style` (its root
+ * for the base layer, the viewport states for narrower devices) — but every
+ * block-local reader, and core's own preset controls (`fontSize`), read the
+ * ROOT ATTRIBUTE. Content migrated from the legacy store, or saved by the
+ * current editor after a device-routed edit, holds those values only inside
+ * `style`, so a 7.0 user opening their post saw text shadow (and any other
+ * flat setting) presented as OFF while the front end rendered it fine.
  *
- * Architecture Benefits:
- * - ONE listener instead of 400+ individual listeners
- * - Immediate batch processing trigger
- * - Optimal memory usage and performance
- * - Compatible with WordPress data store patterns
+ * Runs on `blocks.getBlockAttributes`: parsing is not a change, so the post is
+ * not marked dirty. Only fills attributes the block does not already carry —
+ * an existing root value is the editing session's scratch and stays.
  *
- * @type {Function|null} Unsubscribe function from WordPress data store
  * @since x.x.x
+ * @param {Object} attributes Block attributes as parsed from post content.
+ * @param {Object} blockType  The block type being parsed.
+ * @return {Object} Attributes with base flat values mirrored to the root.
  */
-let globalDeviceListener = null;
+export const mirrorBaseValuesToAttributes = ( attributes, blockType ) => {
+	const name = blockType?.name || '';
 
-/**
- * Cleanup function for the global device listener.
- * Ensures proper memory cleanup in all scenarios.
- *
- * @since x.x.x
- */
-const cleanupGlobalDeviceListener = () => {
-	if ( globalDeviceListener ) {
-		try {
-			globalDeviceListener();
-		} catch ( e ) {
-			// Silent error handling for cleanup
-		} finally {
-			globalDeviceListener = null;
-		}
+	if ( ! name || ! isAllowedBlock( { name } ) ) {
+		return attributes;
 	}
-	// Also cleanup the update manager
-	GlobalDeviceUpdateManager.cleanup();
-};
 
-/**
- * Initialize the global device change detection system.
- *
- * Creates a single WordPress data store subscriber that monitors
- * device type changes and triggers optimized batch processing.
- *
- * @since x.x.x
- */
-const initGlobalDeviceListener = () => {
-	if ( globalDeviceListener ) {return;} // Already initialized.
+	const style = attributes?.style;
 
-	// Use imported WordPress data functions.
-	if ( ! dataSubscribe || ! dataSelect ) {return;}
-
-	let previousDevice = dataSelect( 'core/editor' )?.getDeviceType?.() || DESKTOP;
-
-	// Trigger initial device state on page load to ensure desktop values are reflected.
-	const initialTimeout = setTimeout( () => {
-		GlobalDeviceUpdateManager.processDeviceChange( previousDevice );
-	}, 0 );
-
-	globalDeviceListener = dataSubscribe( () => {
-		const currentDevice = dataSelect( 'core/editor' )?.getDeviceType?.() || DESKTOP;
-		if ( currentDevice !== previousDevice ) {
-			// Device changed - trigger batch update.
-			GlobalDeviceUpdateManager.processDeviceChange( currentDevice );
-			previousDevice = currentDevice;
-		}
-	} );
-
-	// Enhanced cleanup on multiple events to prevent memory leaks
-	if ( typeof window !== 'undefined' ) {
-		window.addEventListener( 'beforeunload', cleanupGlobalDeviceListener, { once: true } );
-		window.addEventListener( 'pagehide', cleanupGlobalDeviceListener, { once: true } );
-
-		// Cleanup the initial timeout if page unloads before it executes
-		const originalCleanup = () => {
-			if ( globalDeviceListener ) {
-				try {
-					globalDeviceListener();
-				} catch ( e ) {
-					// Silent error handling for cleanup
-				} finally {
-					globalDeviceListener = null;
-				}
-			}
-			// Also cleanup the update manager
-			GlobalDeviceUpdateManager.cleanup();
-		};
-
-		const enhancedCleanup = () => {
-			clearTimeout( initialTimeout );
-			originalCleanup();
-		};
-
-		// Replace the cleanup function with enhanced version
-		window.removeEventListener( 'beforeunload', cleanupGlobalDeviceListener );
-		window.removeEventListener( 'pagehide', cleanupGlobalDeviceListener );
-		window.addEventListener( 'beforeunload', enhancedCleanup, { once: true } );
-		window.addEventListener( 'pagehide', enhancedCleanup, { once: true } );
+	if ( ! isObject( style ) ) {
+		return attributes;
 	}
-};
 
-// Initialize the global device change detection system.
-function whenEditorIsReady() {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = dataSubscribe( () => {
-			if ( dataSelect( 'core/block-editor' ).getBlockCount() > 0 ) {
-				unsubscribe();
-				resolve();
+	let next = attributes;
+
+	getBlockResponsiveKeys( name ).forEach( ( key ) => {
+		if ( 'layout' === key || 'style' === key ) {
+			return;
+		}
+
+		if ( undefined === next[ key ] && undefined !== style[ key ] ) {
+			if ( next === attributes ) {
+				next = { ...attributes };
 			}
-		} );
-	} );
-}
-
-wp.domReady( () => {
-	whenEditorIsReady().then( () => {
-		if ( typeof window !== 'undefined' ) {
-			initGlobalDeviceListener();
+			next[ key ] = style[ key ];
 		}
 	} );
-} );
+
+	return next;
+};
 
 /**
  * Gets the block-specific responsive keys based on block name.
@@ -1124,6 +919,36 @@ export const getBlockResponsiveKeys = ( blockName, onlyBlockAttrs = false ) => {
 };
 
 /**
+ * Whether a patch does nothing but clear this block's own flat keys.
+ *
+ * The shape a Spectra control's "Reset" sends: one or more of the block's flat
+ * attributes set to `undefined`, and nothing else. It is deliberately strict —
+ * a `style` group, a sibling attribute or a real value alongside means the
+ * patch is doing something a reset router should not be guessing at, and it
+ * takes the ordinary path instead.
+ *
+ * @since 1.0.7
+ * @param {Object} newAttributes The patch handed to `setAttributes()`.
+ * @param {string} blockName     The block name.
+ * @return {boolean} True when every key in the patch is a flat key being cleared.
+ */
+export const clearsOnlyFlatKeys = ( newAttributes, blockName ) => {
+	if ( ! isObject( newAttributes ) ) {
+		return false;
+	}
+
+	const keys = Object.keys( newAttributes );
+
+	if ( ! keys.length ) {
+		return false;
+	}
+
+	const flatKeys = new Set( getBlockResponsiveKeys( blockName, true ) );
+
+	return keys.every( ( key ) => flatKeys.has( key ) && undefined === newAttributes[ key ] );
+};
+
+/**
  * ===================================================================
  * ATTRIBUTE MANAGEMENT
  * ===================================================================
@@ -1134,30 +959,35 @@ export const getBlockResponsiveKeys = ( blockName, onlyBlockAttrs = false ) => {
  */
 
 /**
- * Extends block attributes with responsive controls.
+ * Extend block attributes with the identifier the CSS generator targets.
  *
- * Adds the responsiveControls attribute to block settings for blocks.
- * that should support responsive behavior.
+ * `spectraId` is permanent — every generated rule is scoped by it, on every
+ * WordPress version and in both storage models.
+ *
+ * The `responsiveControls` store is registered separately, by `../legacy/`. It
+ * is not permanent: it is the ACTIVE store on a WordPress without core's
+ * viewport states and a legacy input where they exist, so it outlives this
+ * extension's current shape but not the plugin. Keeping its registration beside
+ * the code that owns it means removing that folder removes the attribute — and,
+ * just as important, that it CANNOT be removed sooner, because an attribute the
+ * parser does not know about is dropped from post content on load. Anything that
+ * deletes this registration while a single post still carries the store deletes
+ * that post's per-device values.
  *
  * @since x.x.x
  *
  * @param {Object} settings - The block settings object.
  * @param {string} name     - The block name.
- * @return {Object} Modified settings with responsive controls attribute.
+ * @return {Object} Modified settings with the Spectra identifier attribute.
  */
 export const extendBlockAttributes = ( settings, name ) => {
 	// Skip blocks that shouldn't have responsive controls.
 	if ( ! isAllowedBlock( { name } ) ) {return settings;}
 
-	// Add the responsiveControls attribute to the block.
 	return {
 		...settings,
 		attributes: {
 			...settings.attributes,
-			responsiveControls: {
-				type: 'object',
-				default: {},
-			},
 			spectraId: {
 				type: 'string',
 			},
@@ -1182,9 +1012,9 @@ export const extendBlockAttributes = ( settings, name ) => {
  * @since x.x.x
  *
  * @param {string} deviceType - The device type (e.g., 'Desktop', 'Tablet').
- * @return {string} The breakpoint type (e.g., 'lg', 'md', 'sm').
+ * @return {string} The breakpoint type (e.g., 'base', '@tablet', '@mobile').
  */
-const getBreakpointType = ( deviceType ) => BREAKPOINT_TYPE_MAP[ deviceType ] || 'lg';
+const getBreakpointType = ( deviceType ) => BREAKPOINT_TYPE_MAP[ deviceType ] || 'base';
 
 /**
  * ===================================================================
@@ -1198,277 +1028,6 @@ const getBreakpointType = ( deviceType ) => BREAKPOINT_TYPE_MAP[ deviceType ] ||
  * CSS variables are generated based on these merged attributes following.
  * the naming convention --spectra-attribute-name.
  */
-
-/**
- * Deep merges responsive attributes into the base attributes.
- *
- * Takes responsive values for the current device type and merges.
- * them into the base attributes. Handles mutually exclusive attribute pairs
- * like preset values vs custom style values according to WordPress conventions.
- *
- * @since x.x.x
- *
- * @param {Object} baseResponsiveAttrs - The baseResponsiveAttrs attributes to merge into.
- * @param {Object} responsive          - The responsive attributes to merge from.
- * @param {string} deviceType          - The device type to get the responsive attributes for.
- * @param {string} blockName           - The name of the block.
- *
- * @return {Object} The merged attributes with properly handled responsive values.
- */
-export const deepMergeAttributes = ( baseResponsiveAttrs, responsive, deviceType, blockName ) => {
-	// SAFETY FIRST: Always deep clone to prevent data corruption.
-	// setNested() modifies nested objects in-place, making shallow cloning unsafe
-	const result = deepClone( baseResponsiveAttrs );
-
-	// RADIUS FORMAT NORMALIZATION: Ensure consistent radius format across breakpoints
-	// If any breakpoint has mixed radius, convert all single radius to mixed format
-	let normalizedResponsive = normalizeRadiusFormat( responsive );
-
-	// Also normalize the base attributes if mixed radius exists anywhere
-	if (
-		hasMixedRadiusInAnyBreakpoint( responsive ) &&
-		has( result, 'style.border.radius' ) &&
-		typeof result.style.border.radius !== 'object'
-	) {
-		// Convert single radius in base attributes to mixed format
-		const singleValue = result.style.border.radius;
-		const mixedRadius = convertSingleRadiusToMixed( singleValue );
-		setNested( result, 'style.border.radius', mixedRadius );
-	}
-
-	// BORDER FORMAT NORMALIZATION: Ensure consistent border format across breakpoints
-	// If any breakpoint has individual borders, convert all shorthand borders to individual format
-	normalizedResponsive = normalizeBorderFormat( normalizedResponsive );
-
-	// Also normalize the base attributes if individual borders exist anywhere
-	if ( hasIndividualBorderInAnyBreakpoint( responsive ) ) {
-		const hasShorthandBorderInBase =
-			has( result, 'style.border.width' ) ||
-			has( result, 'style.border.style' ) ||
-			has( result, 'style.border.color' ) ||
-			hasValue( result.borderColor );
-
-		if ( hasShorthandBorderInBase ) {
-			// Extract shorthand border properties from base
-			const shorthandBorder = {};
-			if ( has( result, 'style.border.width' ) ) {
-				shorthandBorder.width = result.style.border.width;
-			}
-			if ( has( result, 'style.border.style' ) ) {
-				shorthandBorder.style = result.style.border.style;
-			}
-			if ( has( result, 'style.border.color' ) ) {
-				shorthandBorder.color = result.style.border.color;
-			}
-
-			// Get borderColor preset if it exists in base
-			const borderColorPreset = result?.borderColor || null;
-
-			// Convert to individual format, applying borderColor if needed
-			const individualBorder = convertShorthandBorderToIndividual( shorthandBorder, borderColorPreset );
-
-			// Clean up: remove shorthand properties from base
-			deleteNested( result, 'style.border.width' );
-			deleteNested( result, 'style.border.style' );
-			deleteNested( result, 'style.border.color' );
-
-			// Set individual border properties in base
-			Object.keys( individualBorder ).forEach( ( side ) => {
-				setNested( result, `style.border.${ side }`, individualBorder[ side ] );
-			} );
-
-			// Remove borderColor preset only if we successfully applied it to individual borders
-			if ( borderColorPreset && has( result, 'borderColor' ) ) {
-				delete result.borderColor;
-			}
-		}
-	}
-
-	// Get the responsive keys for this block type.
-	const blockKeys = getBlockResponsiveKeys( blockName, true );
-	const allPaths = [ ...blockKeys, ...PROPERTIES_TO_MERGE ];
-
-	// Check if this block supports background attribute.
-	const supportsBackground = blockKeys.includes( 'background' );
-
-	// If background is supported, add inner background properties to the paths to merge.
-	if ( supportsBackground ) {
-		BACKGROUND_INNER_PROPERTIES.forEach( ( prop ) => {
-			allPaths.push( `background.${ prop }` );
-		} );
-	}
-
-	// Get the fallback order for the current device type.
-	const fallbackOrder = DEVICE_FALLBACK_ORDER[ deviceType ] || [ 'lg' ];
-
-	// Get the current breakpoint and its data.
-	const currentBreakpoint = fallbackOrder[ 0 ];
-	const currentData = normalizedResponsive[ currentBreakpoint ] || {};
-
-	// Object to collect all values that should be applied.
-	const valuesToApply = {};
-
-	/**
-	 * Step 2: Apply normal paths — with clean inheritance for all properties.
-	 */
-	allPaths.forEach( ( path ) => {
-		// Check if the path exists and has a meaningful value in current breakpoint data.
-		if ( has( currentData, path ) ) {
-			const currentVal = getNested( currentData, path );
-			if ( hasValue( currentVal ) ) {
-				setNested( valuesToApply, path, currentVal );
-				return;
-			}
-		}
-
-		// Special handling for background.media - only inherit if background type matches.
-		if ( path === 'background.media' && supportsBackground ) {
-			const currentType = getNested( currentData, 'background.type' );
-
-			// Look for values in fallback breakpoints, but only if type matches.
-			for ( const bp of fallbackOrder.slice( 1 ) ) {
-				const fallbackType = getNested( normalizedResponsive[ bp ] || {}, 'background.type' );
-				const val = getNested( normalizedResponsive[ bp ] || {}, path );
-
-				// Only inherit media if the background types match or current device has no type set.
-				if ( hasValue( val ) && ( ! hasValue( currentType ) || currentType === fallbackType ) ) {
-					setNested( valuesToApply, path, val );
-					break;
-				}
-			}
-			return;
-		}
-
-		// For all other paths, use standard inheritance.
-		for ( const bp of fallbackOrder.slice( 1 ) ) {
-			const val = getNested( normalizedResponsive[ bp ] || {}, path );
-			if ( hasValue( val ) ) {
-				setNested( valuesToApply, path, val );
-				break;
-			}
-		}
-	} );
-
-	/**
-	 * Step 3: Cleanup stale nested keys.
-	 * Only clean up keys that are in the RESPONSIVE_KEYS and STYLE_RESPONSIVE_KEYS lists.
-	 * Border properties are handled dynamically.
-	 */
-	const keysToCleanup = [];
-	RESPONSIVE_KEYS.forEach( ( key ) => {
-		if ( key === 'style' ) {
-			STYLE_RESPONSIVE_KEYS.forEach( ( styleKey ) => {
-				keysToCleanup.push( `style.${ styleKey }` );
-			} );
-		} else {
-			keysToCleanup.push( key );
-		}
-	} );
-
-	blockKeys.forEach( ( key ) => {
-		if ( ! keysToCleanup.includes( key ) ) {keysToCleanup.push( key );}
-
-		// If it's the background key, also add inner properties for cleanup.
-		if ( key === 'background' && supportsBackground ) {
-			BACKGROUND_INNER_PROPERTIES.forEach( ( prop ) => {
-				keysToCleanup.push( `background.${ prop }` );
-			} );
-		}
-	} );
-
-	cleanupStaleNestedKeys( result, valuesToApply, keysToCleanup );
-
-	// Apply all collected values to the result object.
-	deepMerge( result, valuesToApply );
-
-	// Ensure border visibility when width is set but style is "none"
-	const borderData = getNested( result, 'style.border' ) || {};
-	if ( hasValue( borderData.width ) && Number.parseInt( borderData.width, 10 ) > 0 ) {
-		// If style is missing or "none", default to undefined for visibility.
-		if ( borderData.style === 'none' ) {
-			setNested( result, 'style.border.style', undefined );
-		}
-	}
-
-	// Final cleanup: ensure mutually exclusive attributes don't coexist in the final result.
-	MUTUALLY_EXCLUSIVE_ATTR_PAIRS.forEach( ( [ presetKey, customPath ] ) => {
-		const presetValue = result[ presetKey ];
-		const customValue = getNested( result, customPath );
-		const currentHasPreset = has( currentData, presetKey );
-		const currentHasCustom = has( currentData, customPath );
-
-		// If both exist, determine which one to keep based on what was explicitly set for current device.
-		if ( hasValue( presetValue ) && hasValue( customValue ) ) {
-			if ( currentHasPreset ) {
-				// Current device has preset, remove custom.
-				setNested( result, customPath, undefined );
-			} else if ( currentHasCustom ) {
-				// Current device has custom, remove preset.
-				result[ presetKey ] = undefined;
-			} else {
-				// Neither set on current device, prefer preset (fallback priority).
-				setNested( result, customPath, undefined );
-			}
-		}
-		// Only populate the path that the current device actually uses for input compatibility.
-		else if ( hasValue( presetValue ) && ! hasValue( customValue ) && ! currentHasCustom ) {
-			// Only clear custom if current device doesn't explicitly use custom.
-			setNested( result, customPath, undefined );
-		}
-	} );
-
-	// Check if result has 'layout' and all inner values are undefined
-	if ( has( result, 'layout' ) ) {
-		const layout = getNested( result, 'layout' ) || {};
-
-		const isLayoutEmpty = ! Object.values( layout ).some( ( value ) => hasValue( value ) );
-
-		if ( isLayoutEmpty ) {
-			result.layout = undefined;
-		}
-	}
-
-	// FINAL CLEANUP: Remove borderColor if individual border colors exist in final result
-	// This ensures mutual exclusivity regardless of how attributes got there (inheritance, base, etc.)
-
-	// Get individual border colors once (avoid duplication)
-	const topColor = getNested( result, 'style.border.top.color' );
-	const rightColor = getNested( result, 'style.border.right.color' );
-	const bottomColor = getNested( result, 'style.border.bottom.color' );
-	const leftColor = getNested( result, 'style.border.left.color' );
-
-	const hasIndividualBorderColorsInResult =
-		hasValue( topColor ) || hasValue( rightColor ) || hasValue( bottomColor ) || hasValue( leftColor );
-
-	// SMART BORDER COLOR OPTIMIZATION: Convert individual colors to shorthand when all same
-	if ( hasIndividualBorderColorsInResult ) {
-		// Check if all sides have the same color
-		const allColorsAreSame =
-			hasValue( topColor ) &&
-			hasValue( rightColor ) &&
-			hasValue( bottomColor ) &&
-			hasValue( leftColor ) &&
-			topColor === rightColor &&
-			rightColor === bottomColor &&
-			bottomColor === leftColor;
-
-		if ( allColorsAreSame ) {
-			// All sides have same color - ADD shorthand (keep individual for settings)
-			if ( ! result.style.border ) {result.style.border = {};}
-			result.style.border.color = topColor;
-
-			// Keep individual colors for settings controls
-			// Don't delete them - they're needed for block settings display
-
-			// Remove borderColor preset if it exists
-			if ( has( result, 'borderColor' ) ) {
-				result.borderColor = undefined;
-			}
-		}
-	}
-
-	return result;
-};
 
 /**
  * ===================================================================
@@ -1517,16 +1076,276 @@ export const withResponsiveControls = createHigherOrderComponent( ( BlockEdit ) 
 		// Get the current device type from the editor.
 		const deviceType = useSelect( ( select ) => select( 'core/editor' )?.getDeviceType?.() || DESKTOP, [] );
 
-		// Convert device type to breakpoint type (lg, md, sm) and memoize the result.
-		const breakpoint = useMemo( () => getBreakpointType( deviceType ), [ deviceType ] );
+		/*
+		 * Whether core is actually editing a viewport state, not merely
+		 * previewing one. See ./use-responsive-editing.js for why this cannot be
+		 * a selector.
+		 */
+		const { isResponsiveEditingActive, ResponsiveEditingProbes } =
+			useResponsiveEditing( deviceType, props.clientId );
 
-		// Get the current data for this breakpoint, ensuring it's an object (not an array).
-		const currentData =
-			typeof responsiveControls[ breakpoint ] === 'object' &&
-			responsiveControls[ breakpoint ] !== null &&
-			! Array.isArray( responsiveControls[ breakpoint ] )
-				? responsiveControls[ breakpoint ]
-				: {};
+		/*
+		 * The layer this block's edits belong to.
+		 *
+		 * BOTH signals decide it, never the device alone. With Responsive styles
+		 * OFF the device switcher is a PREVIEW: core writes every edit to the
+		 * base layer, so routing by device sent root edits into
+		 * `style['@tablet']` while core put its own in the base — the two
+		 * disagreeing about the same edit. Core's Typography panel was the
+		 * clearest casualty on `spectra/button`, which has no typography
+		 * attributes of its own: changing a font size while previewing Tablet
+		 * looked inert on the canvas, because core renders state CSS there only
+		 * when the mode is on, and left behind a tablet override the user never
+		 * asked for and could not see.
+		 *
+		 * Desktop needs no special case — `getBreakpointType()` already maps it
+		 * to 'base'.
+		 *
+		 * This governs Spectra's OWN controls too, which is the part with a
+		 * user-visible consequence. The device buttons in a Spectra panel header
+		 * no longer decide storage by themselves: with Responsive styles off,
+		 * picking Tablet there previews tablet and edits the base, exactly as it
+		 * does for a core control. Per-device values require the mode to be on.
+		 * That is the alignment, not a side effect of it — a control that stores
+		 * per-device while core stores globally is the bug — and it is what the
+		 * "Turn On" hint in control-injection.js exists to shorten.
+		 */
+		const breakpoint = useMemo( () => {
+			/*
+			 * Below 7.1 the device is the only signal there is.
+			 *
+			 * Those versions have no viewport style states and no Responsive
+			 * styles mode, so Spectra's own device buttons ARE the mechanism and
+			 * routing by device is correct. `isResponsiveEditingActive` is false
+			 * there — necessarily, since the mode does not exist — and treating
+			 * that false as "editing the base" would send every per-device edit
+			 * to the base layer and break responsive controls outright on every
+			 * pre-7.1 site.
+			 *
+			 * Capability-checked rather than version-checked: PHP measures core
+			 * once and exports the answer, so a 7.0 site running the Gutenberg
+			 * plugin is treated as having the states it actually has.
+			 */
+			if ( ! coreViewportStatesAreIndependent() ) {
+				return getBreakpointType( deviceType );
+			}
+
+			return isResponsiveEditingActive ? getBreakpointType( deviceType ) : 'base';
+		}, [ deviceType, isResponsiveEditingActive ] );
+
+		/*
+		 * Keep the ROOT attributes pointed at the previewed device.
+		 *
+		 * `fontSize`, `fontFamily` and `borderColor` are responsive properties core
+		 * reads from a block ATTRIBUTE rather than from `style`. Nothing updated
+		 * those on a device switch, so a per-device value was stored and rendered
+		 * correctly but invisible in the editor: at Tablet the Font Size control
+		 * read the root `fontSize`, still on the base preset, while
+		 * `style['@tablet'].fontSize` held the tablet one.
+		 *
+		 * These three only mis-DISPLAY, and PHP strips all of them before render
+		 * (they are listed in `$core_attributes`), so they are scratch by design —
+		 * as the router below says. The write is marked not-persistent, so it adds
+		 * no undo step and no dirty post, and the stored `style[state]` is never
+		 * touched.
+		 *
+		 * `layout` is NOT here, and that is the point. Core needs no help with it:
+		 * measured on 7.1, core reads `style[state].layout` itself for BOTH the
+		 * canvas and its own Layout panel, so a block whose `@mobile` layout
+		 * justifies center is drawn centred at Mobile and its Justification control
+		 * reads center — with the root attribute left at the authored base.
+		 *
+		 * Writing it was actively harmful. `layout` is the one member of
+		 * `BUCKET_TOP_LEVEL_STYLE_KEYS` that PHP keeps for `spectra/container`
+		 * (`remove_conflicting_core_attributes()`), so scratch written there reached
+		 * the front end — and because a save serialises the whole block tree, editing
+		 * any one block persisted the previewed device's layout as the BASE of every
+		 * container on the page, in blocks the author never touched. Marking the
+		 * change not-persistent does not help: that keeps it out of the undo history,
+		 * not out of the post.
+		 *
+		 * Note `setAttributes` here is the RAW prop, not `wrappedSetAttributes`
+		 * (defined below). Routing this patch would write scratch back into
+		 * storage, which is the bug it exists to avoid.
+		 *
+		 * Resolution follows core's model: the state over the base, base alone at
+		 * Desktop.
+		 */
+		const { __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
+
+		useEffect( () => {
+			const stateKey = DEVICE_TO_STYLE_STATE[ breakpoint ];
+			const base = attributes?.style;
+			const state = stateKey ? attributes?.style?.[ stateKey ] : undefined;
+
+			// Nothing in the store to follow: the root attributes are core's.
+			if ( ! isObject( base ) && ! isObject( state ) ) {
+				return;
+			}
+
+			const patch = {};
+
+			/*
+			 * `layout` is deliberately absent — core reads its own viewport states
+			 * for it, and writing scratch there corrupted saved content. See the
+			 * note above and `SCRATCH_ROOT_ATTRIBUTE_KEYS`.
+			 */
+			SCRATCH_ROOT_ATTRIBUTE_KEYS.forEach( ( key ) => {
+				/*
+				 * The rest are scalar presets, so a state's value replaces the
+				 * base's rather than merging with it. Each also has a NESTED
+				 * counterpart in the same layer — a `var:preset|…` reference, or
+				 * a custom value — and the two are mutually exclusive: when the
+				 * layer that wins carries the nested one, the root attribute has
+				 * to be CLEARED, or core resolves the leftover preset and
+				 * out-specifies what the state actually says. That clear is also
+				 * what makes the migration's output readable to core's panels,
+				 * since inside a state core reads only the nested form.
+				 */
+				const presetRef = ROOT_ATTRIBUTE_PRESET_REFS[ key ];
+				const customPath = presetRef?.path;
+
+				/**
+				 * The slug inside a `var:preset|<namespace>|<slug>` reference.
+				 *
+				 * @param {*} value The stored nested value.
+				 * @return {string|undefined} The slug, or `undefined` when the value
+				 *                            is anything else — i.e. custom.
+				 */
+				const slugFromReference = ( value ) => {
+					if ( ! presetRef || 'string' !== typeof value ) {
+						return undefined;
+					}
+
+					const prefix = `var:preset|${ presetRef.preset }|`;
+
+					return value.startsWith( prefix ) ? value.slice( prefix.length ) : undefined;
+				};
+
+				const readLayer = ( layer ) => ( {
+					preset: isObject( layer ) ? layer[ key ] : undefined,
+					custom: customPath && isObject( layer ) ? getNested( layer, customPath ) : undefined,
+				} );
+
+				const fromState = readLayer( state );
+				const fromBase = readLayer( base );
+
+				let resolved;
+
+				/*
+				 * A nested `var:preset|…` reference RESOLVES to its slug rather than
+				 * clearing the root attribute, and only a genuinely custom value
+				 * clears it.
+				 *
+				 * Clearing unconditionally is what shipped, and it broke the mode it
+				 * was not measured in. Core's panels bind to the previewed STATE
+				 * while "Responsive styles" is on and to the BASE layer while it is
+				 * off, so with it off the root attribute is the only thing they read.
+				 * Since the migration writes states in the nested form, clearing left
+				 * the Font Size control EMPTY at Tablet and Mobile on migrated
+				 * content. Resolving to the slug is what keeps that control filled.
+				 *
+				 * The toggle is still not a trigger, and cannot be: it is a DOM class
+				 * that flips with no attribute change, so this effect does not re-run
+				 * on it — measured, the root attribute stays on its previous value
+				 * until a device switch or an edit runs the effect again. What the
+				 * gate below uses is `breakpoint`, which already encodes the toggle
+				 * and is correct whenever the effect DOES run. That leaves a window
+				 * where these attributes are stale after a bare toggle; it predates
+				 * the gate and is tracked separately.
+				 */
+				/*
+				 * The root attribute mirrors the BASE layer, never a state's.
+				 *
+				 * These three are single, viewport-less block attributes, and core
+				 * renders them in the canvas from the attribute alone — `fontFamily`
+				 * as `has-<slug>-font-family`, `fontSize` as `has-<slug>-font-size`.
+				 * Putting a STATE's value there therefore paints every viewport with
+				 * it: setting a font on Mobile changed Desktop too, while core's own
+				 * blocks left Desktop alone. Measured on `spectra/content` against
+				 * `core/paragraph` with identical input — Spectra wrote
+				 * `fontFamily: 'inter'`, core wrote nothing.
+				 *
+				 * With "Responsive styles" ON there is nothing to gain from writing
+				 * it: core's panels bind to the previewed STATE and read the nested
+				 * `var:preset|…` form, which this never touches, so the control still
+				 * shows the state's value with the attribute empty.
+				 *
+				 * With the option OFF, `breakpoint` is `base` — as it is at Desktop in
+				 * either mode — so `state` IS the base layer and the resolution below
+				 * is unchanged. That preserves what this code was written for: core's
+				 * panels read only the root attribute in that mode, and on migrated
+				 * content, whose states hold the nested form, clearing it left the
+				 * Font Size control empty at Tablet and Mobile.
+				 *
+				 * Clearing rather than leaving a stale value is deliberate — it is
+				 * what lets content that already carries a leaked attribute correct
+				 * itself the next time the block renders.
+				 *
+				 * `layout` is excluded, and handled above: it is merged base-over-
+				 * state on purpose, because the canvas draws flex and grid from
+				 * `attributes.layout` and a state-less merge would stop the previewed
+				 * device laying out correctly.
+				 *
+				 * Capability-gated as well as breakpoint-gated. Below 7.1 `breakpoint`
+				 * is the previewed DEVICE with no toggle in the picture, so a bare
+				 * `breakpoint !== 'base'` would fire at Tablet and Mobile there — and
+				 * since those sites keep per-device values in `responsiveControls`
+				 * rather than in `style` states, the base layer read here is usually
+				 * empty and the clear below would wipe a root attribute the classic
+				 * path is still using. Requiring core's viewport states leaves
+				 * pre-7.1 behaviour exactly as it was.
+				 */
+				const mirrorsBaseOnly = coreViewportStatesAreIndependent() && 'base' !== breakpoint;
+
+				if ( ! mirrorsBaseOnly && hasValue( fromState.preset ) ) {
+					resolved = fromState.preset;
+				} else if ( ! mirrorsBaseOnly && hasValue( fromState.custom ) ) {
+					resolved = slugFromReference( fromState.custom );
+				} else if ( hasValue( fromBase.preset ) ) {
+					resolved = fromBase.preset;
+				} else if ( hasValue( fromBase.custom ) ) {
+					resolved = slugFromReference( fromBase.custom );
+				} else if ( mirrorsBaseOnly ) {
+					// Base says nothing, so neither may the attribute — otherwise a
+					// value the author set for one viewport keeps painting the rest.
+					resolved = undefined;
+				} else {
+					// Neither layer stores this key, so whatever core put in the
+					// root attribute is the only value there is. Leave it.
+					return;
+				}
+
+				if ( attributes?.[ key ] !== resolved ) {
+					patch[ key ] = resolved;
+				}
+			} );
+
+			if ( ! Object.keys( patch ).length ) {
+				return;
+			}
+
+			__unstableMarkNextChangeAsNotPersistent();
+			setAttributes( patch );
+			// The deps are the exact reads above. Listing `attributes` whole, as
+			// the rule wants, would re-run this on every unrelated edit.
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ breakpoint, attributes?.style, attributes?.layout, attributes?.fontSize, attributes?.fontFamily, attributes?.borderColor, name, setAttributes, __unstableMarkNextChangeAsNotPersistent ] );
+
+		// Block-specific attributes sit flat inside a state; the shared style
+		// groups nest by name. The store helpers translate between the two.
+		const flatKeys = useMemo( () => getBlockResponsiveKeys( name, true ), [ name ] );
+
+		/*
+		 * `style` is the source of truth. `responsiveControls` is only read so
+		 * that posts saved before the move still open with their values intact;
+		 * anything `style` declares wins, because that is what the current
+		 * editor wrote.
+		 */
+		const currentData = useMemo(
+			() => mergeBuckets( readLegacyBucket( responsiveControls, breakpoint ), readBucketFromStyle( attributes?.style, breakpoint, flatKeys ) ),
+			[ responsiveControls, attributes?.style, breakpoint, flatKeys ]
+		);
 
 		/**
 		 * Custom setAttributes function that handles responsive attributes.
@@ -1536,14 +1355,308 @@ export const withResponsiveControls = createHigherOrderComponent( ( BlockEdit ) 
 		 */
 		const wrappedSetAttributes = useCallback(
 			( newAttributes ) => {
-				// Skip responsive controls processing during reset operations.
-				if ( getResetInProgress() ) {
+				/*
+				 * Complete a partial layout before anything else, because three of the
+				 * exits below hand `newAttributes` straight to `setAttributes()`.
+				 *
+				 * Core's Layout panel writes only the properties it owns, and on a block
+				 * whose `supports.layout` sets `allowSwitching: false` there is no type
+				 * control — so `type` never comes from the panel. Core compensates by
+				 * merging over `supports.layout.default`; anything writing
+				 * `attributes.layout` has to do the same, or core resolves
+				 * `layout || default` against a truthy partial object, finds no `type`,
+				 * and falls back to the `default` (flow) layout. The block stops being a
+				 * flex container in the canvas and the justification control has nothing
+				 * to drive.
+				 *
+				 * Completing it only on the main path left the early exits — reset in
+				 * progress, nothing responsive in the change, or a resolved bucket that
+				 * did not differ — persisting the raw partial. The last of those fires
+				 * routinely, which is why a typeless root kept reappearing.
+				 */
+				if ( undefined !== newAttributes?.layout ) {
+					newAttributes = {
+						...newAttributes,
+						layout: withLayoutType( newAttributes.layout, name ),
+					};
+				}
+
+				/*
+				 * An emptied control means CLEAR, so say so in the shape the rest of
+				 * this function understands.
+				 *
+				 * Number controls send `''` when the field is emptied, not
+				 * `undefined`. The clear-as-deletion path below fires only on an
+				 * explicit `undefined`, so `''` was stored as though it were a
+				 * value: clearing the Icon size at Tablet wrote
+				 * `style['@tablet'].size = ''`, which overrode the base with
+				 * nothing instead of removing the override. The panel then showed
+				 * an empty field and the canvas fell to the stylesheet default,
+				 * while the FRONT END — which tests values with `hasValue()` and
+				 * so reads `''` as absent — correctly inherited the base. Editor
+				 * and site disagreed, and `"size":""` was persisted into post
+				 * content.
+				 *
+				 * Scoped to the keys whose values are CSS-ish and for which empty
+				 * can only mean cleared. Text attributes are untouched, where an
+				 * empty string is a legitimate value.
+				 */
+				const clearableKeys = [ ...getBlockResponsiveKeys( name ), ...BUCKET_TOP_LEVEL_STYLE_KEYS ];
+				const emptied = clearableKeys.filter(
+					( key ) => 'layout' !== key && key in newAttributes && '' === newAttributes[ key ]
+				);
+
+				if ( emptied.length ) {
+					newAttributes = { ...newAttributes };
+					emptied.forEach( ( key ) => {
+						newAttributes[ key ] = undefined;
+					} );
+				}
+
+				/*
+				 * The same rule, applied to the nested values core's own controls
+				 * write. `clearableKeys` above only sees the patch's top level, so
+				 * an emptied padding or font size — `{ style: { spacing: { padding:
+				 * { top: '' } } } }` — slipped through and was stored as a hollow
+				 * override. See `emptiedLeavesAsUndefined()`.
+				 */
+				if ( isObject( newAttributes?.style ) ) {
+					const clearedStyle = clearEmptiedStyleLeaves( newAttributes.style );
+
+					if ( clearedStyle !== newAttributes.style ) {
+						newAttributes = { ...newAttributes, style: clearedStyle };
+					}
+				}
+
+				/*
+				 * Skip responsive controls processing during reset operations —
+				 * except for a reset that ONLY clears this block's own flat keys.
+				 *
+				 * The raw pass-through exists for core's style groups, whose
+				 * layers `processReset()` cleans up afterwards by diffing the
+				 * block before and after core's reset. That diff reads the block
+				 * out of the STORE, and for a flat key the store is not what the
+				 * panel was showing: `deviceAttributes` below resolves the key
+				 * from `style` for display, so a control can legitimately show
+				 * the base value while the root attribute holds nothing. The
+				 * reset then writes `undefined` over an already-undefined root,
+				 * the diff sees no change, no layer is cleared, and the value the
+				 * author just reset is still there — measured on a container
+				 * whose Mobile background had been reset first, leaving
+				 * `background` absent at the root and `style.background` intact:
+				 * "Background Type reset to default" was announced and nothing
+				 * changed, at Desktop and at Tablet both.
+				 *
+				 * Routing the clear instead makes it delete the key from the
+				 * layer the matching EDIT would have written, which is what the
+				 * reset means, and needs no signal from the store to do it.
+				 * Anything else in the patch — a `style` group, another attribute
+				 * — keeps the pass-through, so core's own resets are untouched.
+				 */
+				if ( getResetInProgress() && ! clearsOnlyFlatKeys( newAttributes, name ) ) {
 					setAttributes( newAttributes );
 					return;
 				}
 
-				// Extract responsive attributes using the common function.
-				const responsiveAttrs = extractResponsiveAttributes( newAttributes, name );
+				/*
+				 * Decide which layer this edit belongs to before reading anything.
+				 *
+				 * A state that differs from the stored one can only have been written
+				 * by core's per-viewport control in this same call — then it is the
+				 * authored value. A state that is unchanged is not part of this edit.
+				 */
+				const stateKey = DEVICE_TO_STYLE_STATE[ breakpoint ];
+
+				/*
+				 * Compare against the style this change actually carries. Core often
+				 * sends `{ layout: … }` with no `style` at all, and reading the state
+				 * out of an absent object reported a change that had not happened.
+				 */
+				const incomingStyle = newAttributes?.style ?? attributes?.style;
+				const stateEdited =
+					undefined !== stateKey &&
+					'' !== stateKey &&
+					shouldUpdateResponsiveData( attributes?.style?.[ stateKey ], incomingStyle?.[ stateKey ] );
+
+				/*
+				 * The edit is one of two shapes, and each names its own source.
+				 *
+				 * When the viewport state changed, the state bucket IS the edit. The
+				 * root groups riding along in the same style object are the block's
+				 * base styling, not part of this change — reading them here swept
+				 * every base group into the device state on any tablet or mobile
+				 * edit, silently pinning inheritance against later base changes; and
+				 * when the edit CLEARED the state's last value, the root-only reading
+				 * resurrected it from stale data. Taking the state bucket alone fixes
+				 * both: a cleared or unchanged state produces no responsive delta,
+				 * so the patch passes through untouched below and the deletion
+				 * persists.
+				 *
+				 * Otherwise the edit went to the root — Spectra's own controls, or
+				 * core at Desktop — and the root groups are the candidates. But only
+				 * the groups this patch actually changed count: `style` always
+				 * arrives whole, so untouched groups are passengers, not edits, and
+				 * merging them into the device bucket pinned base styling exactly
+				 * the same way.
+				 */
+				let responsiveAttrs;
+
+				if ( stateEdited ) {
+					responsiveAttrs = readBucketFromStyle( incomingStyle, breakpoint, flatKeys );
+
+					/*
+					 * Complete `layout` from the base layer.
+					 *
+					 * With core's Responsive Styles mode on, core writes the viewport
+					 * state itself and writes ONLY the property the control changed.
+					 * Changing Orientation at Tablet therefore stores
+					 * `{ orientation: 'horizontal' }` with no `justifyContent` — and
+					 * for layout a missing property is not "inherit", it is the CSS
+					 * initial value. The tablet band then emits no `justify-content`
+					 * and flex falls back to `flex-start`, so a block set to centre
+					 * on Desktop silently renders left-aligned on tablet while the
+					 * control still shows centre. Measured on 7.1 with Responsive
+					 * Styles on: one click on Orientation produced
+					 * `@tablet.layout = { type, orientation }`.
+					 *
+					 * Every other group survives a partial write, because a missing
+					 * `padding.top` or `typography.fontSize` genuinely means "take the
+					 * base value" and the generator resolves it that way. `layout` is
+					 * the exception, so it is the only group completed here — filling
+					 * the others would pin base styling into the state and defeat
+					 * inheritance, which is the bug the comment above describes.
+					 *
+					 * Base wins nothing: the state's own values are kept and only the
+					 * keys it does not carry come from base.
+					 *
+					 * The state's OWN previous layout has to be a layer of its own,
+					 * because core does not send it. Core replaces the state's layout
+					 * with just the property the control changed, so by the time the
+					 * incoming style arrives the state's other values are already
+					 * gone from it. Completing from base alone therefore overwrote
+					 * them: with Desktop centre + vertical and Tablet set to left,
+					 * one click on Orientation at Tablet stored
+					 * `{ type, orientation }`, base filled `justifyContent` back to
+					 * centre, and the tablet's left was lost while the control
+					 * snapped back to centre. Layered base → previous state →
+					 * incoming, each only filling what the next does not carry.
+					 */
+					const baseLayout     = incomingStyle?.layout;
+					const previousLayout = readBucketFromStyle( attributes?.style, breakpoint, flatKeys )?.layout;
+
+					if ( ( isObject( baseLayout ) || isObject( previousLayout ) ) && isObject( responsiveAttrs?.layout ) ) {
+						responsiveAttrs = {
+							...responsiveAttrs,
+							layout: {
+								...( isObject( baseLayout ) ? baseLayout : {} ),
+								...( isObject( previousLayout ) ? previousLayout : {} ),
+								...responsiveAttrs.layout,
+							},
+						};
+					}
+				} else {
+					responsiveAttrs = extractResponsiveAttributes( newAttributes, name );
+
+					const changed = {};
+					const oldStyle = attributes?.style;
+					const sentStyle = newAttributes?.style;
+
+					if ( isObject( responsiveAttrs.style ) ) {
+						Object.keys( responsiveAttrs.style ).forEach( ( group ) => {
+							if (
+								shouldUpdateResponsiveData(
+									oldStyle?.[ group ],
+									responsiveAttrs.style[ group ]
+								)
+							) {
+								changed[ group ] = responsiveAttrs.style[ group ];
+							}
+						} );
+					}
+
+					/*
+					 * Core sends the WHOLE style object, so a tracked group present
+					 * before but absent from a style the patch actually carries is a
+					 * routed DELETION, not an omission. Marking it undefined lets the
+					 * merge-and-prune below clear it from the current device's
+					 * bucket — clearing a font size while previewing Tablet clears
+					 * the tablet value, and the base layer is restored by the write
+					 * loop instead of silently losing its value to the pass-through.
+					 */
+					if ( undefined !== sentStyle ) {
+						STYLE_RESPONSIVE_KEYS.forEach( ( group ) => {
+							if (
+								undefined !== oldStyle?.[ group ] &&
+								( ! isObject( sentStyle ) || undefined === sentStyle[ group ] )
+							) {
+								changed[ group ] = undefined;
+							}
+						} );
+					}
+
+					responsiveAttrs = { ...responsiveAttrs };
+
+					if ( Object.keys( changed ).length ) {
+						responsiveAttrs.style = changed;
+					} else {
+						delete responsiveAttrs.style;
+					}
+
+					/*
+					 * Top-level responsive keys (fontSize, fontFamily, borderColor)
+					 * and the block's flat keys clear as explicitly-undefined
+					 * attributes, but their copies inside `style` — planted by the
+					 * write loop below on an earlier edit — would survive and PHP
+					 * would keep rendering the cleared value forever. Route the
+					 * clear as a deletion, UNLESS this same patch deliberately
+					 * (re)writes the style copy — the backward-compatibility
+					 * mapping sends exactly that shape.
+					 */
+					getBlockResponsiveKeys( name ).forEach( ( key ) => {
+						if ( 'layout' === key || 'style' === key ) {
+							return;
+						}
+
+						if ( ! ( key in newAttributes ) || undefined !== newAttributes[ key ] ) {
+							return;
+						}
+
+						// Nothing stored for this key means nothing to clear — adding
+						// the key regardless made every patch that merely mentions
+						// it look like an edit to it.
+						if ( undefined === ( isObject( oldStyle ) ? oldStyle[ key ] : undefined ) ) {
+							return;
+						}
+
+						/*
+						 * "Deliberate" means this patch SUPPLIES a value for the key
+						 * inside `style` — the backward-compatibility mapping sends
+						 * exactly that shape and must not have it undone here.
+						 *
+						 * It previously asked only whether the patch's style DIFFERED
+						 * from the stored one at this key, which is true whenever the
+						 * patch simply does not mention the key: `undefined` vs the
+						 * stored value reads as a difference. Any clear arriving
+						 * alongside a `style` object was therefore treated as a
+						 * deliberate rewrite and dropped, so `style.size` survived and
+						 * only the root attribute cleared — emptying Icon size at
+						 * Desktop left the base at its old value and reset did nothing.
+						 * Require an actual value before believing the patch means to
+						 * keep the key.
+						 */
+						const deliberate =
+							isObject( sentStyle ) &&
+							hasValue( sentStyle[ key ] ) &&
+							shouldUpdateResponsiveData(
+								isObject( oldStyle ) ? oldStyle[ key ] : undefined,
+								sentStyle[ key ]
+							);
+
+						if ( ! deliberate ) {
+							responsiveAttrs[ key ] = undefined;
+						}
+					} );
+				}
 
 				// If there are no responsive-specific updates, apply attributes directly.
 				if ( Object.keys( responsiveAttrs ).length === 0 ) {
@@ -1553,7 +1666,20 @@ export const withResponsiveControls = createHigherOrderComponent( ( BlockEdit ) 
 
 				// Create a working copy of the current breakpoint's data.
 				// Deep clone needed since resolveMutualExclusivity and deepMerge modify nested objects.
-				const updateData = Array.isArray( currentData ) ? {} : deepClone( currentData );
+				/*
+				 * Seed from the style THIS patch carries, not the stored one. A
+				 * patch can legitimately arrive with a style the block never had —
+				 * the variation picker applies `variation.attributes` wholesale —
+				 * and seeding from the stored attributes rebuilt every layer from
+				 * stale data: the incoming states were wiped by the write loop
+				 * below and incoming flat keys (`height`) deleted from the base.
+				 * The stored `currentData` remains the comparison baseline only.
+				 */
+				const incomingBucket = mergeBuckets(
+					readLegacyBucket( responsiveControls, breakpoint ),
+					readBucketFromStyle( incomingStyle, breakpoint, flatKeys )
+				);
+				const updateData = Array.isArray( incomingBucket ) ? {} : deepClone( incomingBucket );
 
 				// Handle mutual exclusivity between preset and custom values.
 				resolveMutualExclusivity( updateData, responsiveAttrs, MUTUALLY_EXCLUSIVE_ATTR_PAIRS );
@@ -1561,25 +1687,260 @@ export const withResponsiveControls = createHigherOrderComponent( ( BlockEdit ) 
 				// Merge the responsive attributes into the current breakpoint data.
 				deepMerge( updateData, responsiveAttrs );
 
+				/*
+				 * A cleared control arrives as an explicit `undefined` leaf —
+				 * `{ typography: { fontSize: undefined } }` — which deepMerge keeps
+				 * so that deletions propagate. Written as-is it serialises a hollow
+				 * `typography: {}` into the state forever. Dropping the undefined
+				 * leaves and the empty objects they leave behind lets
+				 * writeBucketToStyle() see the group as absent and delete it, so a
+				 * state whose last value was cleared disappears entirely.
+				 */
+				pruneHollowValues( updateData );
+
 				// Use optimized comparison that filters out functions and undefined values.
 				const shouldUpdate = shouldUpdateResponsiveData( currentData, updateData );
 
-				setAttributes(
-					shouldUpdate
-						? {
-								...newAttributes,
-								responsiveControls: {
-									...responsiveControls,
-									[ breakpoint ]: updateData,
-								},
-						  }
-						: newAttributes
-				);
+				if ( ! shouldUpdate ) {
+					setAttributes( newAttributes );
+					return;
+				}
+
+				/*
+				 * Write every breakpoint, not just the edited one. A block still
+				 * carrying a legacy `responsiveControls` is migrated wholesale on
+				 * its first responsive edit, so it never ends up half in each
+				 * store — which is the state that made the two disagree.
+				 */
+				let nextStyle = newAttributes?.style ?? attributes?.style;
+
+				Object.keys( DEVICE_TO_STYLE_STATE ).forEach( ( device ) => {
+					/*
+					 * The non-edited STATES read from the incoming style, so a patch
+					 * carrying its own states — a variation pick — keeps them; a
+					 * control's patch carries them unchanged, which is the same data.
+					 *
+					 * The BASE is ambiguous when the edit belongs to a narrower
+					 * device: a root-writing control (Spectra's own) puts the routed
+					 * value at the root of the patch, so reading the incoming root
+					 * would copy a tablet keystroke into the base layer. Only when
+					 * the state itself was edited is the incoming root a genuine
+					 * base payload rather than routing scratch.
+					 */
+					const styleSource =
+						'base' === device && 'base' !== breakpoint && ! stateEdited
+							? attributes?.style
+							: incomingStyle;
+					const bucket =
+						device === breakpoint
+							? updateData
+							: mergeBuckets( readLegacyBucket( responsiveControls, device ), readBucketFromStyle( styleSource, device, flatKeys ) );
+
+					/*
+					 * Pre-store content (v3-era container/slider/separator) keeps its
+					 * base flat values in ROOT ATTRIBUTES only — nothing in `style`,
+					 * nothing in a legacy store. The first narrower-device edit used
+					 * to leave base empty while the routed value overwrote the root
+					 * attribute's scratch copy, so a single mobile edit destroyed the
+					 * desktop value on save. Seed the base from the root attribute —
+					 * but only for a key NO viewport state carries: once any state
+					 * has it, the root attribute is this session's routing scratch,
+					 * not base truth, and must never be promoted.
+					 */
+					if ( 'base' === device && 'base' !== breakpoint && ! stateEdited ) {
+						const blockDefaults = getBlockType( name )?.attributes ?? {};
+
+						flatKeys.forEach( ( key ) => {
+							if ( undefined !== bucket[ key ] || undefined === attributes?.[ key ] ) {
+								return;
+							}
+
+							const oldStyle = attributes?.style;
+							const stateHasKey = [ '@tablet', '@mobile' ].some(
+								( state ) => undefined !== oldStyle?.[ state ]?.[ key ]
+							);
+
+							if ( stateHasKey || attributes[ key ] === blockDefaults[ key ]?.default ) {
+								return;
+							}
+
+							bucket[ key ] = attributes[ key ];
+						} );
+					}
+
+					nextStyle = writeBucketToStyle( nextStyle, device, bucket, flatKeys );
+				} );
+
+				const nextAttributes = {
+					...newAttributes,
+					style: nextStyle,
+					// Reset to the attribute default so it stops being serialised.
+					responsiveControls: undefined,
+				};
+
+				/*
+				 * `attributes.layout` is a scratch surface, not storage. PHP strips it
+				 * (it is listed in `$core_attributes`) so it never reaches the front
+				 * end, while the base layer lives in the store. In the editor it is
+				 * what core's Layout panel shows as the control's current value and
+				 * what `useLayoutSupport` renders the canvas from — and the canvas is
+				 * sized to the selected device, so the selected device's value is
+				 * exactly what belongs there.
+				 *
+				 * It only has to carry a `type`: core resolves `layout || default`, so
+				 * a partial object is used as-is, resolves to the `default` layout type
+				 * and drops the block out of flex entirely.
+				 */
+				setAttributes( nextAttributes );
 			},
-			[ breakpoint, responsiveControls, currentData, name, setAttributes ]
+			[ breakpoint, responsiveControls, currentData, name, setAttributes, attributes?.style, flatKeys ]
 		);
 
-		return <BlockEdit { ...props } setAttributes={ wrappedSetAttributes } />;
+		/*
+		 * Show each control the value that applies at the SELECTED device.
+		 *
+		 * A block's own controls read flat attributes off `props.attributes` —
+		 * `textShadowColor`, `size`, `gap`, the overlay family — but those hold
+		 * the base value only: per-device values live in `style`'s viewport
+		 * states, which is why the front end was right while the panel kept
+		 * showing the desktop number at Tablet and Mobile.
+		 *
+		 * The overlay is display-only and never persisted; writes still travel
+		 * through wrappedSetAttributes, which routes them to the selected
+		 * device. Falling back to the base value matches what actually renders
+		 * there — core's model resolves each viewport over base.
+		 *
+		 * It runs at Desktop too, not only at the narrower devices. The root
+		 * attribute is NOT a trustworthy base: the router leaves the
+		 * last-edited device's value there, and a save persists it, so a post
+		 * whose last edit was at Mobile reopened at Desktop showed the mobile
+		 * number in the panel AND in the canvas while `style` held the real
+		 * base. Measured on a saved button — base 30px/20px, root 16px/6px,
+		 * Desktop displaying 16/6. `style` is authoritative, which is what PHP
+		 * already assumes when it renders the bands, so the editor reads it the
+		 * same way.
+		 *
+		 * Only the block's own flat keys are overlaid. `style` itself is left
+		 * untouched, because core's panels read their viewport states directly
+		 * and manage that display themselves.
+		 */
+		const deviceAttributes = useMemo( () => {
+			if ( ! flatKeys.length ) {
+				return attributes;
+			}
+
+			/*
+			 * Why this overlay stops at flat keys.
+			 *
+			 * Core's own style panels — Dimensions, Border, Typography — do not
+			 * read `props.attributes`. They select
+			 * `getBlockAttributes( clientId )?.style` straight from the store
+			 * (see `DimensionsPanel` in block-editor's hooks), and there is no
+			 * filter on that read. So no transformation of props can change what
+			 * those panels DISPLAY. Their WRITES do arrive through props, which is
+			 * why per-device routing works for them regardless.
+			 *
+			 * Making their displayed values follow the previewed device therefore
+			 * requires mutating the store on every device switch. That is exactly
+			 * what the pre-7.1 module does, and it is the right answer THERE
+			 * because that WordPress offers nothing else. It is the wrong answer
+			 * here: #732 removed it from this path (b2da4f56) after it corrupted
+			 * content — `layout.type` wiped on a Tablet-to-Mobile switch, partial
+			 * keystrokes persisted, Desktop edits discarded, every post opening
+			 * dirty. On 7.1 core reads the states itself, so nothing needs
+			 * projecting and this overlay only has to serve Spectra's own flat
+			 * keys.
+			 */
+			const stateBucket = readBucketFromStyle( attributes?.style, breakpoint, flatKeys );
+			const baseBucket  = readBucketFromStyle( attributes?.style, 'base', flatKeys );
+			let next = attributes;
+
+			flatKeys.forEach( ( key ) => {
+				/*
+				 * The state's own value wins; otherwise the base copy in `style`
+				 * beats the root attribute, which holds the last-edited device's
+				 * scratch — without this, a block edited at Mobile showed the
+				 * mobile number in the Tablet panel, and after a save in the
+				 * Desktop one too.
+				 *
+				 * At Desktop `stateBucket` IS the base bucket, so this resolves
+				 * to the base value and falls through to the root attribute only
+				 * when `style` holds nothing for the key — content that never
+				 * had a per-device value written, where the root attribute is
+				 * the only copy there is.
+				 */
+				/*
+				 * `hasValue()` rather than `??`, so that a stored `''` inherits
+				 * instead of blanking the control. New edits no longer write `''`
+				 * (see the normalisation at the top of wrappedSetAttributes), but
+				 * content saved before that fix still carries it, and this is the
+				 * same test the front end applies — so both agree on what an empty
+				 * string means.
+				 */
+				const stateValue = stateBucket[ key ];
+				const baseValue = baseBucket[ key ];
+				let shown = [ stateValue, baseValue ].find( ( value ) => hasValue( value ) );
+
+				/*
+				 * An object-valued key (`background`) resolves per PROPERTY, the
+				 * way PHP hydrates it: a band that stores only `backgroundSize`
+				 * keeps the base's type and media. Replacing the whole object
+				 * made the panel show "no image" for a band that only changed
+				 * the size, while the front end kept painting the image.
+				 */
+				if ( isPlainObjectValue( stateValue ) && isPlainObjectValue( baseValue ) ) {
+					shown = { ...baseValue, ...stateValue };
+				}
+
+				if ( undefined === shown ) {
+					/*
+					 * Nothing stored for this device or for base. The root
+					 * attribute is this session's routing scratch — it holds
+					 * whatever device was edited last — so it must not be shown
+					 * as this device's value when SOME other device authored the
+					 * key: a Tablet-only size read as 40 at Mobile and Desktop
+					 * while nothing was stored for either. Clear it here so the
+					 * control shows its default. When no device ever authored the
+					 * key, the root is the only copy there is and stays.
+					 */
+					const authoredElsewhere = Object.keys( DEVICE_TO_STYLE_STATE ).some(
+						( device ) => hasValue( readBucketFromStyle( attributes?.style, device, [ key ] )[ key ] )
+					);
+
+					if ( authoredElsewhere && undefined !== attributes[ key ] ) {
+						if ( next === attributes ) {
+							next = { ...attributes };
+						}
+						next[ key ] = undefined;
+					}
+					return;
+				}
+
+				if ( shown === attributes[ key ] ) {
+					return;
+				}
+
+				if ( next === attributes ) {
+					next = { ...attributes };
+				}
+
+				next[ key ] = shown;
+			} );
+
+			return next;
+		}, [ attributes, breakpoint, flatKeys ] );
+
+		return (
+			<>
+				{ /*
+				  * Required for the detection above: the hook reports what these
+				  * mount into, so without them `isResponsiveEditingActive` is
+				  * permanently false and the routing never changes.
+				  */ }
+				<ResponsiveEditingProbes />
+				<BlockEdit { ...props } attributes={ deviceAttributes } setAttributes={ wrappedSetAttributes } />
+			</>
+		);
 	};
 }, 'withResponsiveControls' );
 
@@ -1600,141 +1961,6 @@ export const withResponsiveControls = createHigherOrderComponent( ( BlockEdit ) 
  * @since x.x.x
  */
 
-const GlobalDeviceUpdateManager = {
-	/** @type {Map<string, {clientId: string, updateFn: Function}>} Queue of registered block update functions */
-	updateQueue: new Map(),
-
-	/** @type {boolean} Flag to prevent overlapping processing cycles */
-	isProcessing: false,
-
-	/** @type {string|null} Current device being processed for change detection */
-	currentDevice: null,
-
-	/** @type {Set<number>} Track scheduled timeouts for immediate cancellation */
-	processingTimeouts: new Set(),
-
-	/**
-	 * Register a block for device update processing.
-	 *
-	 * @param {string}   clientId - Unique WordPress block identifier.
-	 * @param {Function} updateFn - Block-specific device update function.
-	 * @since x.x.x
-	 */
-	register( clientId, updateFn ) {
-		// Safety valve: prevent runaway growth (rare but possible)
-		if ( this.updateQueue.size > 1000 ) {
-			const entries = Array.from( this.updateQueue.keys() );
-			for ( let i = 0; i < 200; i++ ) {
-				this.updateQueue.delete( entries[ i ] );
-			}
-		}
-
-		this.updateQueue.set( clientId, { clientId, updateFn } );
-	},
-
-	/**
-	 * Unregister a block from device update processing.
-	 *
-	 * Called during block unmounting to prevent memory leaks and
-	 * avoid processing non-existent blocks.
-	 * Fixed to properly remove items without iteration issues.
-	 *
-	 * @param {string} clientId - Unique WordPress block identifier to remove.
-	 * @since x.x.x
-	 */
-	unregister( clientId ) {
-		this.updateQueue.delete( clientId );
-	},
-
-	/**
-	 * Cancel all pending batch processing immediately.
-	 *
-	 * Critical for responsive device switching - when user rapidly switches
-	 * from Desktop→Tablet→Mobile, this ensures Tablet processing stops
-	 * immediately and Mobile processing starts fresh.
-	 *
-	 * @since x.x.x
-	 */
-	cancelPendingProcessing() {
-		this.processingTimeouts.forEach( ( timeoutId ) => clearTimeout( timeoutId ) );
-		this.processingTimeouts.clear();
-		this.isProcessing = false;
-	},
-
-	/**
-	 * Complete cleanup of all resources to prevent memory leaks.
-	 *
-	 * @since x.x.x
-	 */
-	cleanup() {
-		this.cancelPendingProcessing();
-		this.updateQueue.clear();
-		this.currentDevice = null;
-	},
-
-	/**
-	 * Process device change for all registered blocks in optimized batches.
-	 * CLEAN SLATE APPROACH: Clear everything before starting to prevent memory accumulation.
-	 *
-	 * @param {string} newDevice - Target device type ('Desktop', 'Tablet', 'Mobile').
-	 * @since x.x.x
-	 */
-	processDeviceChange( newDevice ) {
-		// Immediate cancellation for rapid switching
-		if ( this.isProcessing && this.currentDevice !== newDevice ) {
-			this.cancelPendingProcessing();
-		}
-
-		// Prevent duplicate processing of same device
-		if ( this.currentDevice === newDevice ) {return;}
-
-		// CLEAN SLATE: Clear everything before starting batch processing
-		this.cancelPendingProcessing();
-
-		this.isProcessing = true;
-		this.currentDevice = newDevice;
-
-		// Get current snapshot of blocks (they may register/unregister during processing)
-		const batchSize = DEVICE_SWITCH_BATCH_SIZE;
-		const items = Array.from( this.updateQueue.values() );
-		let index = 0;
-
-		const processBatch = () => {
-			// Safety check: ensure device hasn't changed during async processing
-			if ( this.currentDevice !== newDevice ) {
-				return; // Clean exit, no cleanup needed since we clear at start
-			}
-
-			// Process current batch of blocks
-			const endIndex = Math.min( index + batchSize, items.length );
-			for ( let i = index; i < endIndex; i++ ) {
-				const { updateFn } = items[ i ];
-				if ( updateFn ) {
-					try {
-						updateFn( newDevice );
-					} catch ( e ) {
-						// Continue processing other blocks if one fails
-					}
-				}
-			}
-
-			// Move to next batch
-			index = endIndex;
-			if ( index < items.length ) {
-				// Schedule next batch
-				const timeoutId = setTimeout( processBatch, 1 );
-				this.processingTimeouts.add( timeoutId );
-			} else {
-				// All blocks processed - mark complete and clear
-				this.isProcessing = false;
-				this.processingTimeouts.clear();
-			}
-		};
-
-		// Start processing immediately
-		processBatch();
-	},
-};
 
 /**
  * Higher-order component that updates block attributes based on the current device view.
@@ -1749,10 +1975,9 @@ const GlobalDeviceUpdateManager = {
  *
  * @since x.x.x
  */
-export const withDeviceViewUpdate = createHigherOrderComponent( ( BlockEdit ) => {
+export const withContainerVariationSync = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const { attributes, name, clientId } = props;
-		const { responsiveControls = {} } = attributes;
 
 		// Get dispatch functions for updating block attributes.
 		const { __unstableMarkNextChangeAsNotPersistent, updateBlockAttributes } = useDispatch( 'core/block-editor' );
@@ -1763,9 +1988,6 @@ export const withDeviceViewUpdate = createHigherOrderComponent( ( BlockEdit ) =>
 		if ( ! isResponsive ) {
 			return <BlockEdit { ...props } />;
 		}
-
-		// Track previous device to conditionally skip.
-		const prevDevice = useRef( DESKTOP ); // Initialize with default device.
 
 		// Initialize responsiveControls on first load (runs once).
 		useEffect( () => {
@@ -1789,129 +2011,8 @@ export const withDeviceViewUpdate = createHigherOrderComponent( ( BlockEdit ) =>
 			}
 		}, [] ); // Empty dependency array ensures this runs only on mount.
 
-		// Store current values in refs to avoid effect re-runs.
-		const attributesRef = useRef( attributes );
-		const responsiveControlsRef = useRef( responsiveControls );
-
-		// Update refs on every render.
-		attributesRef.current = attributes;
-		responsiveControlsRef.current = responsiveControls;
-
-		// Device update function for this specific block - memoized with latest refs.
-		const handleDeviceUpdate = useCallback(
-			( newDeviceType ) => {
-				// Use the latest values from refs to avoid stale closures
-				const currentAttributes = attributesRef.current;
-				const currentResponsiveControls = responsiveControlsRef.current;
-
-				if ( Object.keys( currentResponsiveControls ).length === 0 ) {
-					prevDevice.current = newDeviceType;
-					return;
-				}
-
-				// Extract responsive attributes first to check if there's anything to process
-				const responsiveAttrs = extractResponsiveAttributes( currentAttributes, name );
-
-				// Skip if switching between devices within different scenarios.
-				const from = prevDevice.current;
-				const to = newDeviceType;
-
-				// Also check for block-specific responsive keys that exist in responsiveControls
-				// but not in currentAttributes (attributes without defaults in block.json).
-				const blockResponsiveKeys = getBlockResponsiveKeys( name );
-				const breakpoints = [ 'lg', 'md', 'sm' ];
-				for ( const key of blockResponsiveKeys ) {
-					if ( ! ( key in responsiveAttrs ) ) {
-						// Check if this key exists in any breakpoint of responsiveControls
-						for ( const bp of breakpoints ) {
-							if ( currentResponsiveControls[ bp ]?.[ key ] !== undefined ) {
-								// Initialize with undefined so deepMergeAttributes can fill it from responsiveControls
-								responsiveAttrs[ key ] = undefined;
-								break;
-							}
-						}
-					}
-				}
-
-				// Early exit if no responsive attributes to process
-				if ( Object.keys( responsiveAttrs ).length === 0 ) {
-					prevDevice.current = to;
-					return;
-				}
-
-				// Skip device updates using optimized logic (only if we have responsive controls)
-				if ( shouldSkipDeviceUpdate( from, to, currentResponsiveControls ) ) {
-					prevDevice.current = to;
-					return;
-				}
-
-				// Merge responsive attributes based on the current device type.
-				const mergedResponsiveAttributes = deepMergeAttributes(
-					responsiveAttrs,
-					currentResponsiveControls,
-					to,
-					name
-				);
-
-				// Use optimized comparison that filters out functions and undefined values.
-				const mergedDiffers = shouldUpdateData( responsiveAttrs, mergedResponsiveAttributes );
-
-				if ( ! mergedDiffers ) {
-					prevDevice.current = to;
-					return;
-				}
-
-				// Update block attributes with responsive changes while preserving non-responsive properties.
-				// The style object contains both responsive keys (spacing, border, typography, etc.)
-				// and non-responsive keys (color, etc.) that must be preserved.
-				const mergedAttributes = {
-					...currentAttributes,
-					...mergedResponsiveAttributes,
-				};
-
-				// Safely merge style objects if they exist
-				if ( currentAttributes.style || mergedResponsiveAttributes.style ) {
-					mergedAttributes.style = {
-						...( currentAttributes.style || {} ),
-						...( mergedResponsiveAttributes.style || {} ),
-					};
-				}
-
-				// Critical check: Only update if merged attributes actually differ from current attributes.
-				// This prevents unnecessary updates that trigger the save button on initial load.
-				const attributesChanged = shouldUpdateData( currentAttributes, mergedAttributes );
-
-				if ( attributesChanged ) {
-					__unstableMarkNextChangeAsNotPersistent();
-					updateBlockAttributes( clientId, mergedAttributes );
-				}
-
-				prevDevice.current = to;
-			},
-			[ name, clientId, __unstableMarkNextChangeAsNotPersistent, updateBlockAttributes ]
-		);
-
-		// Register this block with global device manager.
-		useEffect( () => {
-			// Initialize prevDevice with current device when registering.
-			const currentDevice = dataSelect( 'core/editor' )?.getDeviceType?.() || DESKTOP;
-			prevDevice.current = currentDevice;
-
-			GlobalDeviceUpdateManager.register( clientId, handleDeviceUpdate );
-
-			// Trigger initial update to ensure desktop values are reflected on load (critical for FSE).
-			// Use requestAnimationFrame to defer until after initial render to minimize save button activation.
-			const rafId = requestAnimationFrame( () => {
-				handleDeviceUpdate( currentDevice );
-			} );
-
-			return () => {
-				cancelAnimationFrame( rafId );
-				GlobalDeviceUpdateManager.unregister( clientId );
-			};
-		}, [ clientId, handleDeviceUpdate ] );
 
 		// Render the original block edit component with the same props.
 		return <BlockEdit { ...props } />;
 	};
-}, 'withDeviceViewUpdate' );
+}, 'withContainerVariationSync' );

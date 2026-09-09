@@ -92,9 +92,15 @@ $valid_tag_names = array(
 );
 $tag_name        = ( ! empty( $attributes['tagName'] ) && in_array( $attributes['tagName'], $valid_tag_names, true ) ) ? $attributes['tagName'] : 'p';
 
-$anchor        = $attributes['anchor'] ?? '';
-$drop_cap      = $attributes['dropCap'] ?? false;
-$align         = $attributes['style']['typography']['textAlign'] ?? '';
+$anchor   = $attributes['anchor'] ?? '';
+$drop_cap = $attributes['dropCap'] ?? false;
+// The responsive extension moves `style.typography` into the store's base
+// bucket before this runs, so the root is empty here and the alignment gate
+// below never fired on the front end: a centred paragraph rendered a drop cap
+// the editor refuses to offer for centred text. Read the base bucket too.
+$align         = $attributes['style']['typography']['textAlign']
+	?? $attributes['responsiveControls']['base']['style']['typography']['textAlign']
+	?? '';
 $is_root_block = $attributes['isRootBlock'] ?? true;
 
 

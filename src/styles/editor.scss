@@ -206,3 +206,49 @@ button[id^="/blocks/spectra"].css-1cyk0hg:hover {
 		}
 	}
 }
+
+// The media picker's filtered extensions. See the note in
+// `components/background`: an extension that brings its own ToolsPanel is not
+// a ToolsPanelItem, so it never gets core's `grid-column: 1 / -1` and was
+// squeezed into one column of the inspector group's two-column grid.
+.spectra-background-extensions {
+	grid-column: 1 / -1;
+}
+
+// A hosted Spectra style panel's wrapper. It exists only so that controls
+// appearing in response to an edit are placed inside their own panel rather
+// than appended to the end of the shared slot container — see the note in
+// `components/style-panel`. `display: contents` keeps it from generating a
+// box, so the heading and items stay grid children of core's panel.
+.spectra-hosted-style-panel {
+	display: contents;
+}
+
+// A Spectra style panel hosted inside one of core's own ToolsPanels.
+// On Tablet and Mobile, WordPress 7.1's responsive inspector renders no
+// unlabelled `styles` slot, so panels such as Overlay Settings and Shape
+// Dividers fill the labelled `background` slot instead and lose their own
+// panel chrome. This heading keeps each group identifiable inside the host
+// panel; it mirrors the ToolsPanel header's own type scale.
+.spectra-hosted-style-panel__heading {
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-transform: uppercase;
+	color: #757575;
+	margin: 16px 0 0;
+	grid-column: span 2;
+}
+
+// When Spectra's style panels are hosted inside one of core's ToolsPanels
+// (the WP 7.1 responsive view), their controls stack in flow. Some controls
+// use `__nextHasNoMarginBottom`, so two consecutive ToolsPanelItems with no
+// heading between them (e.g. Shape Divider Type -> Top Type) sit flush. Give
+// adjacent items an even rhythm — scoped to panels that host a Spectra
+// heading, so the normal (Desktop) tab is untouched.
+.components-tools-panel:has(.spectra-hosted-style-panel__heading) {
+
+	.components-tools-panel-item + .components-tools-panel-item {
+		margin-top: 16px;
+	}
+}

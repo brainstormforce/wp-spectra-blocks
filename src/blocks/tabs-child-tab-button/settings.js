@@ -12,7 +12,6 @@ import {
 	__experimentalInputControl as InputControl,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
@@ -22,6 +21,7 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { createBlock } from '@wordpress/blocks';
 import { select, dispatch } from '@wordpress/data';
 

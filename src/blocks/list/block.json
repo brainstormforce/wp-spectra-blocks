@@ -38,6 +38,7 @@
 		"spectra/list/textColor": "textColor",
 		"spectra/list/textColorHover": "textColorHover",
 		"spectra/list/iconSize": "iconSize",
+		"spectra/list/style": "style",
 		"spectra/list/iconName": "icon",
 		"spectra/list/flipForRTL": "flipForRTL",
 		"spectra/list/rotation": "rotation",

@@ -62,51 +62,6 @@
 		"popupContentAlignmentV": {
 			"type": "string"
 		},
-		"popupWidth": {
-			"type": "number"
-		},
-		"popupWidthTablet": {
-			"type": "number"
-		},
-		"popupWidthMobile": {
-			"type": "number"
-		},
-		"popupWidthUnit": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupWidthUnitTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupWidthUnitMobile": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupHeight": {
-			"type": "string"
-		},
-		"popupMaxHeight": {
-			"type": "number"
-		},
-		"popupMaxHeightTablet": {
-			"type": "number"
-		},
-		"popupMaxHeightMobile": {
-			"type": "number"
-		},
-		"popupHeightUnit": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupHeightUnitTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupHeightUnitMobile": {
-			"type": "string",
-			"default": "px"
-		},
 		"hasFixedHeight": {
 			"type": "boolean",
 			"default": false
@@ -192,45 +147,9 @@
 			"type": "number",
 			"default": ""
 		},
-		"xPositionTablet": {
-			"type": "number"
-		},
-		"xPositionMobile": {
-			"type": "number"
-		},
-		"xPositionType": {
-			"type": "string",
-			"default": "px"
-		},
-		"xPositionTypeTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"xPositionTypeMobile": {
-			"type": "string",
-			"default": "px"
-		},
 		"yPositionDesktop": {
 			"type": "number",
 			"default": ""
-		},
-		"yPositionTablet": {
-			"type": "number"
-		},
-		"yPositionMobile": {
-			"type": "number"
-		},
-		"yPositionType": {
-			"type": "string",
-			"default": "px"
-		},
-		"yPositionTypeTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"yPositionTypeMobile": {
-			"type": "string",
-			"default": "px"
 		},
 		"popupOverlayColor": {
 			"type": "string"
@@ -238,12 +157,6 @@
 		"closeIconSize": {
 			"type": "number",
 			"default": 25
-		},
-		"closeIconSizeTablet": {
-			"type": "number"
-		},
-		"closeIconSizeMobile": {
-			"type": "number"
 		},
 		"closeIconColor": {
 			"type": "string",
@@ -300,161 +213,13 @@
 			"type": "string",
 			"default": "outset"
 		},
-		"popupPaddingTop": {
-			"type": "number",
-			"default": 32
-		},
-		"popupPaddingRight": {
-			"type": "number",
-			"default": 32
-		},
-		"popupPaddingBottom": {
-			"type": "number",
-			"default": 32
-		},
-		"popupPaddingLeft": {
-			"type": "number",
-			"default": 32
-		},
-		"popupPaddingTopTablet": {
-			"type": "number"
-		},
-		"popupPaddingRightTablet": {
-			"type": "number"
-		},
-		"popupPaddingBottomTablet": {
-			"type": "number"
-		},
-		"popupPaddingLeftTablet": {
-			"type": "number"
-		},
-		"popupPaddingTopMobile": {
-			"type": "number"
-		},
-		"popupPaddingRightMobile": {
-			"type": "number"
-		},
-		"popupPaddingBottomMobile": {
-			"type": "number"
-		},
-		"popupPaddingLeftMobile": {
-			"type": "number"
-		},
-		"popupPaddingUnit": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupPaddingUnitTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupPaddingUnitMobile": {
-			"type": "string",
-			"default": "px"
-		},
 		"popupPaddingLink": {
 			"type": "boolean",
 			"default": true
 		},
-		"popupMarginTop": {
-			"type": "number"
-		},
-		"popupMarginRight": {
-			"type": "number"
-		},
-		"popupMarginBottom": {
-			"type": "number"
-		},
-		"popupMarginLeft": {
-			"type": "number"
-		},
-		"popupMarginTopTablet": {
-			"type": "number"
-		},
-		"popupMarginRightTablet": {
-			"type": "number"
-		},
-		"popupMarginBottomTablet": {
-			"type": "number"
-		},
-		"popupMarginLeftTablet": {
-			"type": "number"
-		},
-		"popupMarginTopMobile": {
-			"type": "number"
-		},
-		"popupMarginRightMobile": {
-			"type": "number"
-		},
-		"popupMarginBottomMobile": {
-			"type": "number"
-		},
-		"popupMarginLeftMobile": {
-			"type": "number"
-		},
-		"popupMarginUnit": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupMarginUnitTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"popupMarginUnitMobile": {
-			"type": "string",
-			"default": "px"
-		},
 		"popupMarginLink": {
 			"type": "boolean",
 			"default": true
-		},
-		"closePaddingTop": {
-			"type": "number"
-		},
-		"closePaddingRight": {
-			"type": "number"
-		},
-		"closePaddingBottom": {
-			"type": "number"
-		},
-		"closePaddingLeft": {
-			"type": "number"
-		},
-		"closePaddingTopTablet": {
-			"type": "number"
-		},
-		"closePaddingRightTablet": {
-			"type": "number"
-		},
-		"closePaddingBottomTablet": {
-			"type": "number"
-		},
-		"closePaddingLeftTablet": {
-			"type": "number"
-		},
-		"closePaddingTopMobile": {
-			"type": "number"
-		},
-		"closePaddingRightMobile": {
-			"type": "number"
-		},
-		"closePaddingBottomMobile": {
-			"type": "number"
-		},
-		"closePaddingLeftMobile": {
-			"type": "number"
-		},
-		"closePaddingUnit": {
-			"type": "string",
-			"default": "px"
-		},
-		"closePaddingUnitTablet": {
-			"type": "string",
-			"default": "px"
-		},
-		"closePaddingUnitMobile": {
-			"type": "string",
-			"default": "px"
 		},
 		"closePaddingLink": {
 			"type": "boolean",

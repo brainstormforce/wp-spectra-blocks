@@ -19,7 +19,7 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { select, dispatch, subscribe } from '@wordpress/data';
 import { applyFilters } from '@wordpress/hooks';
-import { MOBILE, TABLET, DESKTOP } from './utils/constants';
+import { MOBILE, TABLET, DESKTOP, coreViewportStatesAreIndependent, coreResponsiveEditingAvailable, coreResponsiveEditingActive } from './utils/constants';
 import { isAllowedBlock } from './utils/helpers';
 
 /**
@@ -80,6 +80,9 @@ const RESPONSIVE_CONTROLS_PANELS = Object.freeze( [
 	'Grid & Masonry',
 	'Shape Dividers',
 	'Separator',
+	'Carousel Layout',
+	'Grid Layout',
+	'Separator Layout',
 ] );
 
 /**
@@ -88,12 +91,32 @@ const RESPONSIVE_CONTROLS_PANELS = Object.freeze( [
  * Structure: { blockName: [ panelNames ] }.
  * This allows specific blocks to have responsive controls in panels that are not in RESPONSIVE_CONTROLS_PANELS.
  *
+ * `Background image` is core's OWN heading for the `background` inspector group
+ * before WordPress 7.1, where it reads `Background`. Since 1.0.7 the blocks
+ * listed with it fill that group and are hosted by the panel core renders
+ * (`useInspectorStyleGroup`), instead of bringing panels of their own titled
+ * "Background", "Overlay Settings" and "Shape Dividers" — titles
+ * RESPONSIVE_CONTROLS_PANELS matches. So on 7.1 the hosting panel is
+ * recognised and on 7.0 it was not, and the whole group lost its device
+ * switcher and its indicators below 7.1 — including the divider's width and
+ * height, which really are per-device. Measured on 7.0.4: Typography,
+ * Dimensions and Border were enhanced, "Background image" was not.
+ *
+ * Listed per block rather than in RESPONSIVE_CONTROLS_PANELS because that list
+ * is matched for every block: core's own "Background image" panel on, say, a
+ * core/group would then be given a device switcher for keys this extension
+ * does not route.
+ *
  * @type {Object}
  */
 const BLOCK_PANEL_INCLUSIONS = Object.freeze( {
-	'spectra/slider': Object.freeze( [ 'General' ] ),
+	'spectra/slider': Object.freeze( [ 'General', 'Background image' ] ),
 	'core/image': Object.freeze( [ 'Settings' ] ),
 	'spectra/post': Object.freeze( [ 'Carousel' ] ),
+	'spectra/container': Object.freeze( [ 'Background image' ] ),
+	'spectra/slider-child': Object.freeze( [ 'Background image' ] ),
+	'spectra/popup-builder': Object.freeze( [ 'Background image' ] ),
+	'spectra/modal-child-popup-content': Object.freeze( [ 'Background image' ] ),
 } );
 
 /**
@@ -161,6 +184,13 @@ class ControlInjectionManager {
 		this.maxCacheSize = 50; // Reduced for memory safety
 		this.cachedScrollContainer = null; // Cache the scrollable container for performance.
 
+		// Controls we have marked `spectra-enhanced-control`. React rewrites a
+		// control's `className` on every re-render and drops the class, which blanks
+		// the CSS device indicator until the debounced pass re-adds it (~100ms) — a
+		// visible flicker. The observer re-asserts the class synchronously for the
+		// controls in this set, so the indicator never blinks.
+		this.enhancedControls = new WeakSet();
+
 		// Track core/image attributes that affect control visibility
 		this.lastImageAttributes = {};
 		this.maxImageAttributesCacheSize = 10; // Limit memory usage.
@@ -217,8 +247,10 @@ class ControlInjectionManager {
 
 					// Setup listeners first for maximum responsiveness.
 					this.setupDeviceListener();
+					this.setupResponsiveStylesListener();
 					this.setupTabObserver();
 					this.setupPanelClickHandler();
+					this.attachResponsiveStylesHintHandler();
 
 					this.immediateInject();
 
@@ -309,9 +341,30 @@ class ControlInjectionManager {
 			return false;
 		}
 
-		// Check if it's missing essential attributes that would normally be set after variation selection
-		// Use direct property access for better performance
-		return ! attributes.htmlTag && ! attributes.background && ! attributes.responsiveControls;
+		/*
+		 * Missing the attributes a variation would have set — and carrying no
+		 * authored data in EITHER storage model.
+		 *
+		 * Both stores are checked because which one holds a container's values
+		 * depends on the WordPress it is running on: `responsiveControls` without
+		 * core's viewport states, `style` with them. Testing only one would call
+		 * a configured container "stabilizing" on the other version and defer its
+		 * controls indefinitely.
+		 *
+		 * The test is for CONTENT, not for the key's existence. 1.0.6 asked
+		 * `! attributes.responsiveControls`, but that attribute is registered with
+		 * a default of `{}` — always truthy — so the condition could never be
+		 * satisfied and the whole function always returned false. Reading it as
+		 * emptiness is what the comment above always claimed it did, and it gives
+		 * both versions the same answer for the same block.
+		 */
+		const isEmptyStore = ( value ) =>
+			! value || typeof value !== 'object' || 0 === Object.keys( value ).length;
+
+		return ! attributes.htmlTag
+			&& ! attributes.background
+			&& isEmptyStore( attributes.responsiveControls )
+			&& isEmptyStore( attributes.style );
 	}
 
 	/**
@@ -436,6 +489,52 @@ class ControlInjectionManager {
 		}.bind( this );
 
 		this.observer = new MutationObserver( ( mutations ) => {
+			// Synchronously restore the marker class the instant React strips it,
+			// before the browser paints — the debounced pass below is 100ms too late
+			// and leaves the CSS device indicator blinking on every re-render.
+			for ( const mutation of mutations ) {
+				// Case 1: React updated the node in place and rewrote `className`,
+				// dropping the marker from a control we already enhanced.
+				if (
+					mutation.type === 'attributes' &&
+					mutation.attributeName === 'class' &&
+					this.enhancedControls.has( mutation.target ) &&
+					! mutation.target.classList.contains( 'spectra-enhanced-control' )
+				) {
+					mutation.target.classList.add( 'spectra-enhanced-control' );
+				}
+
+				// Case 2: React REPLACED the control's node outright (older
+				// reconciliation replaces items when their siblings mount/unmount).
+				// The tracked node is gone and the fresh one carries no marker until
+				// the 100ms debounced pass — the same blink. Re-detect and mark any
+				// freshly-inserted responsive control in place.
+				if ( mutation.type === 'childList' && mutation.addedNodes.length ) {
+					for ( const node of mutation.addedNodes ) {
+						if ( node.nodeType !== 1 ) {
+							continue;
+						}
+
+						let items = [];
+						if ( node.classList?.contains( 'components-tools-panel-item' ) ) {
+							items = [ node ];
+						} else if ( node.querySelectorAll ) {
+							items = node.querySelectorAll( '.components-tools-panel-item' );
+						}
+
+						for ( const item of items ) {
+							if (
+								! item.classList.contains( 'spectra-enhanced-control' ) &&
+								this.isResponsiveControl( item )
+							) {
+								item.classList.add( 'spectra-enhanced-control' );
+								this.enhancedControls.add( item );
+							}
+						}
+					}
+				}
+			}
+
 			// Add mutations to batch.
 			mutationBatch.push( ...mutations );
 
@@ -588,6 +687,7 @@ class ControlInjectionManager {
 					if ( action === 'enhance' ) {
 						control.classList.add( 'spectra-enhanced-control' );
 						control.classList.remove( 'spectra-excluded-control' );
+						this.enhancedControls.add( control );
 					}
 				}
 
@@ -834,9 +934,11 @@ class ControlInjectionManager {
 						if ( type === 'enhance' ) {
 							control.classList.add( 'spectra-enhanced-control' );
 							control.classList.remove( 'spectra-excluded-control' );
+							this.enhancedControls.add( control );
 						} else {
 							control.classList.add( 'spectra-excluded-control' );
 							control.classList.remove( 'spectra-enhanced-control' );
+							this.enhancedControls.delete( control );
 						}
 					}
 
@@ -1161,16 +1263,23 @@ class ControlInjectionManager {
 				if ( panelTitle === lowerIncludedPanel ) {
 					return true;
 				}
-				// Check translated version - use appropriate textdomain based on block type.
-				// Core blocks (like core/image) use WordPress core textdomain 'default'.
-				// Spectra blocks use 'spectra-blocks' textdomain.
-				const isCore = currentBlock.name?.startsWith( 'core/' );
+				/*
+				 * Check the translated version, in both textdomains.
+				 *
+				 * The domain used to be chosen from who owns the BLOCK, but it
+				 * is the PANEL whose title is being matched, and an included
+				 * panel can be core's whoever owns the block: `Background
+				 * image` is core's heading for the `background` group, listed
+				 * above for Spectra blocks. Picking `spectra-blocks` for those
+				 * looked up a core string in the wrong domain, so on a
+				 * translated site the title never matched.
+				 */
 				// eslint-disable-next-line @wordpress/i18n-text-domain, @wordpress/i18n-no-variables
-				const translatedName = __(
-					includedPanel,
-					isCore ? 'default' : 'spectra-blocks'
-				).toLowerCase();
-				return panelTitle === translatedName;
+				const coreName = __( includedPanel, 'default' ).toLowerCase();
+				// eslint-disable-next-line @wordpress/i18n-no-variables
+				const spectraName = __( includedPanel, 'spectra-blocks' ).toLowerCase();
+
+				return panelTitle === coreName || panelTitle === spectraName;
 			} );
 		}
 
@@ -1229,25 +1338,66 @@ class ControlInjectionManager {
 		if ( this.currentDevice === TABLET ) {
 			helpText = sprintf(
 				// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
-				__( '%1$sNote:%2$s Inherits from Desktop on reset.', 'spectra-blocks' ),
+				__( '%1$sNote:%2$s Values inherits from Desktop on reset.', 'spectra-blocks' ),
 				'<b>',
 				'</b>'
 			);
 		} else if ( this.currentDevice === MOBILE ) {
-			helpText = sprintf(
-				// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
-				__( '%1$sNote:%2$s Inherits from Tablet or Desktop on reset.', 'spectra-blocks' ),
-				'<b>',
-				'</b>'
-			);
+			/*
+			 * What Mobile falls back to depends on the WordPress underneath, so
+			 * this sentence has to as well.
+			 *
+			 * With core's viewport states each state is an independent override
+			 * of the base layer — `array_replace( base, state )`, and the bands
+			 * are mutually exclusive — so clearing a Mobile value reveals
+			 * Desktop's, never Tablet's.
+			 *
+			 * Without them the pre-7.1 generator resolves `sm -> md -> lg`, and
+			 * legacy content keeps that behaviour on every version because the
+			 * store normaliser bakes the old cascade (the tablet bucket is copied
+			 * under the mobile one). Verified on 7.0.4: a block carrying only a
+			 * tablet value renders that value in the mobile band too. Telling
+			 * those users "inherits from Desktop" would describe something the
+			 * generator does not do for them.
+			 */
+			helpText = coreViewportStatesAreIndependent()
+				? sprintf(
+					// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
+					__( '%1$sNote:%2$s Values inherits from Desktop on reset.', 'spectra-blocks' ),
+					'<b>',
+					'</b>'
+				)
+				: sprintf(
+					// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
+					__( '%1$sNote:%2$s Inherits from Tablet or Desktop on reset.', 'spectra-blocks' ),
+					'<b>',
+					'</b>'
+				);
 		}
 
 		if ( ! helpText ) {return '';}
+
+		/*
+		 * Core renders per-viewport styles on the canvas only while its
+		 * "Responsive styles" view option is on; without it the canvas keeps
+		 * showing the base layer and a per-device edit looks like it did
+		 * nothing. Prompt for it wherever the option exists — its live state is
+		 * private to core, so it cannot be read to hide the hint again.
+		 */
+		const previewHint = ( coreResponsiveEditingAvailable() && ! coreResponsiveEditingActive() )
+			? sprintf(
+				// Translators: %1$s: The opening bold tag; %2$s: The closing bold tag;
+				__( 'Enable Responsive Styles from %1$sView%2$s in the top toolbar.', 'spectra-blocks' ),
+				'&lsquo;',
+				'&rsquo;'
+			)
+			: '';
 
 		// Use WordPress core notice structure
 		return `
 			<div class="components-notice is-info spectra-responsive-help-notice" role="status">
 				<div class="components-notice__content">
+					${ previewHint ? `<p>${ previewHint } <button type="button" class="components-button is-link is-small spectra-enable-responsive-styles">${ __( 'Turn On', 'spectra-blocks' ) }</button></p>` : '' }
 					<p>${ helpText }</p>
 				</div>
 			</div>
@@ -1349,6 +1499,162 @@ class ControlInjectionManager {
 	 * @param {HTMLElement} container - The icons container.
 	 * @return {void}
 	 */
+	/**
+	 * Turn on core's "Responsive styles" view option on the user's behalf.
+	 *
+	 * The state lives in the block-editor store behind core's private API, so
+	 * neither reading nor setting it is available to a plugin. Core's own View
+	 * options menu is: the routine opens it, reads the checkbox's `aria-checked`
+	 * BEFORE acting — so an already-enabled option is never toggled back off —
+	 * clicks it only when it is off, and closes the menu again.
+	 *
+	 * @since 1.0.7
+	 * @return {boolean} True when the option ends up enabled.
+	 */
+	async enableResponsiveStyles() {
+		const headerButtons = Array.from(
+			document.querySelectorAll( '.editor-header button, .edit-post-header button' )
+		);
+
+		// Core labels the trigger "View"; match the translated label too, since the
+		// string belongs to core's textdomain.
+		// eslint-disable-next-line @wordpress/i18n-text-domain
+		const viewLabels = [ 'View', __( 'View', 'default' ) ].map( ( label ) => label.toLowerCase() );
+		const viewButton = headerButtons.find( ( button ) => {
+			const label = ( button.getAttribute( 'aria-label' ) || button.textContent || '' ).trim().toLowerCase();
+			return viewLabels.includes( label );
+		} );
+
+		if ( ! viewButton ) {
+			return false;
+		}
+
+		const wasOpen = 'true' === viewButton.getAttribute( 'aria-expanded' );
+
+		if ( ! wasOpen ) {
+			viewButton.click();
+		}
+
+		// eslint-disable-next-line @wordpress/i18n-text-domain
+		const translatedToggle = __( 'Responsive styles', 'default' );
+		const toggleLabels = [ 'Responsive styles', translatedToggle ].map( ( label ) => label.toLowerCase() );
+		const findToggle = () =>
+			Array.from( document.querySelectorAll( '[role="menuitemcheckbox"]' ) ).find( ( item ) => {
+				const text = ( item.textContent || '' ).trim().toLowerCase();
+				return toggleLabels.some( ( label ) => text.startsWith( label ) );
+			} );
+
+		// Core's popover mounts asynchronously, so poll briefly rather than
+		// reading the DOM in the same tick as the click that opens it.
+		let toggle = findToggle();
+
+		for ( let attempt = 0; ! toggle && attempt < 20; attempt++ ) {
+			await new Promise( ( resolve ) => {
+				window.requestAnimationFrame( () => setTimeout( resolve, 25 ) );
+			} );
+			toggle = findToggle();
+		}
+
+		if ( ! toggle ) {
+			if ( ! wasOpen ) {
+				viewButton.click();
+			}
+			return false;
+		}
+
+		// Only ever switch it ON — clicking an enabled option would disable it.
+		const alreadyOn = 'true' === toggle.getAttribute( 'aria-checked' );
+
+		if ( ! alreadyOn ) {
+			toggle.click();
+		} else if ( ! wasOpen ) {
+			viewButton.click();
+		}
+
+		/*
+		 * Nothing is done to the notices here on purpose. Flipping the option
+		 * replaces core's panels, and `setupResponsiveStylesListener()` reacts
+		 * to that for every route into it — this button included.
+		 */
+		return true;
+	}
+
+	/**
+	 * Re-inject when core's "Responsive Styles" option is toggled.
+	 *
+	 * Flipping the option replaces core's inspector panels outright — measured
+	 * on 7.1: eight tools panels present, none of them carrying the device
+	 * buttons, the notice or even the `spectra-enhanced-panel` marker. The main
+	 * observer does not treat that churn as relevant, so nothing re-injected
+	 * and the panels stayed bare until a device switch rebuilt them. The notice
+	 * disappearing was the visible half of it; the device buttons went too.
+	 *
+	 * The option's state lives in a class on core's View dropdown, so watching
+	 * the header for class changes catches it however it was flipped — from
+	 * core's own menu as much as from the hint's button.
+	 *
+	 * Injection is idempotent, so it runs again on the next frame and shortly
+	 * after: the class flips before core has finished mounting the replacement
+	 * panels, and a single pass at that instant would find nothing to enhance.
+	 *
+	 * @since 1.0.7
+	 * @return {void}
+	 */
+	setupResponsiveStylesListener() {
+		const header = document.querySelector( '.editor-header' ) || document.body;
+
+		this.lastResponsiveStylesActive = coreResponsiveEditingActive();
+
+		this.responsiveStylesObserver = new MutationObserver( () => {
+			const active = coreResponsiveEditingActive();
+
+			if ( active === this.lastResponsiveStylesActive ) {
+				return;
+			}
+
+			this.lastResponsiveStylesActive = active;
+
+			this.immediateInject();
+			requestAnimationFrame( () => this.immediateInject() );
+			setTimeout( () => this.immediateInject(), 200 );
+		} );
+
+		this.responsiveStylesObserver.observe( header, {
+			subtree: true,
+			attributes: true,
+			attributeFilter: [ 'class' ],
+		} );
+	}
+
+	/**
+	 * Delegate clicks on the hint's "Turn on" button.
+	 *
+	 * Registered once on the document because the notice markup is injected as
+	 * a string into core's panels and replaced whenever they re-render.
+	 *
+	 * @since 1.0.7
+	 * @return {void}
+	 */
+	attachResponsiveStylesHintHandler() {
+		if ( this.boundHandleHintClick ) {
+			return;
+		}
+
+		this.boundHandleHintClick = ( e ) => {
+			const button = e.target.closest( '.spectra-enable-responsive-styles' );
+
+			if ( ! button ) {
+				return;
+			}
+
+			e.preventDefault();
+			e.stopPropagation();
+			this.enableResponsiveStyles();
+		};
+
+		document.addEventListener( 'click', this.boundHandleHintClick, true );
+	}
+
 	attachDeviceButtonHandlers( container ) {
 		container.addEventListener( 'click', ( e ) => {
 			e.preventDefault();
@@ -1470,16 +1776,22 @@ class ControlInjectionManager {
 			} )
 			.filter( Boolean );
 
-		// Trigger WordPress device preview change.
-		// Try post editor first, then site editor (FSE).
-		const postEditorDispatch = dispatch( 'core/edit-post' );
-		if ( postEditorDispatch?.__experimentalSetPreviewDeviceType ) {
-			postEditorDispatch.__experimentalSetPreviewDeviceType( device );
+		// Trigger WordPress device preview change. Prefer the stable editor
+		// API; the __experimental shims are deprecated and can be dropped by a
+		// future core release.
+		const editorDispatch = dispatch( 'core/editor' );
+		if ( editorDispatch?.setDeviceType ) {
+			editorDispatch.setDeviceType( device );
 		} else {
-			// Try site editor (FSE context).
-			const siteEditorDispatch = dispatch( 'core/edit-site' );
-			if ( siteEditorDispatch?.__experimentalSetPreviewDeviceType ) {
-				siteEditorDispatch.__experimentalSetPreviewDeviceType( device );
+			const postEditorDispatch = dispatch( 'core/edit-post' );
+			if ( postEditorDispatch?.__experimentalSetPreviewDeviceType ) {
+				postEditorDispatch.__experimentalSetPreviewDeviceType( device );
+			} else {
+				// Try site editor (FSE context).
+				const siteEditorDispatch = dispatch( 'core/edit-site' );
+				if ( siteEditorDispatch?.__experimentalSetPreviewDeviceType ) {
+					siteEditorDispatch.__experimentalSetPreviewDeviceType( device );
+				}
 			}
 		}
 		this.currentDevice = device;
@@ -1862,6 +2174,11 @@ class ControlInjectionManager {
 		// Disconnect MutationObserver.
 		if ( this.observer ) {
 			this.observer.disconnect();
+		}
+
+		if ( this.responsiveStylesObserver ) {
+			this.responsiveStylesObserver.disconnect();
+			this.responsiveStylesObserver = null;
 			this.observer = null;
 		}
 
@@ -1896,6 +2213,10 @@ class ControlInjectionManager {
 		if ( this.boundHandlePanelClick ) {
 			document.removeEventListener( 'click', this.boundHandlePanelClick, true );
 			this.boundHandlePanelClick = null;
+		}
+		if ( this.boundHandleHintClick ) {
+			document.removeEventListener( 'click', this.boundHandleHintClick, true );
+			this.boundHandleHintClick = null;
 		}
 
 		// Clear DOM-related cache and internal state.

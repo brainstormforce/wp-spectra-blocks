@@ -260,7 +260,11 @@
 				background-blend-mode: var(--spectra-overlay-blend-mode, normal);
 			}
 
-			> *:not(.spectra-container__shape) {
+			// The video wrapper is a direct child as well, and it belongs BEHIND
+			// the content on `absolute; inset: 0`. Lifting it to `relative`
+			// collapsed it to height 0. Its twins above and in the per-band CSS
+			// exclude it for the same reason.
+			> *:not(.spectra-container__shape):not(.spectra-background-video__wrapper) {
 				position: relative;
 				z-index: 2;
 			}

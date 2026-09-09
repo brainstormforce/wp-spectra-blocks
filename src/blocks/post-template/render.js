@@ -28,6 +28,7 @@ import { memo, useMemo, useState, useRef, useCallback, useEffect } from '@wordpr
  */
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import Swiper from 'swiper';
+import { resolveInheritedResponsiveValue } from '@spectra-helpers/responsive-preview';
 
 /**
  * Internal dependencies
@@ -154,13 +155,37 @@ const Render = ( props ) => {
 	const { clientId, context, __unstableLayoutClassNames } = props;
 
 	const layoutType = context?.[ 'spectra/post/layoutType' ] || 'grid';
-	const columns = context?.[ 'spectra/post/columns' ] || 3;
-	const columnGap = context?.[ 'spectra/post/columnGap' ] || '20px';
-	const rowGap = context?.[ 'spectra/post/rowGap' ] || '20px';
-	const responsiveControls = context?.[ 'spectra/post/responsiveControls' ] || {};
 
-	const slidesPerView = context?.[ 'spectra/post/slidesPerView' ] || 3;
-	const spaceBetween = context?.[ 'spectra/post/spaceBetween' ] || 30;
+	/*
+	 * Every per-device metric here is resolved for the previewed device.
+	 *
+	 * Block context carries the parent's ROOT attribute — the routing scratch,
+	 * i.e. whatever device was edited last — so building from it showed the
+	 * Mobile value at Desktop whenever Mobile was edited last. The parent also
+	 * publishes its `style` through context, so the canvas resolves each key
+	 * from that the way the front end does, and falls back to the block's
+	 * default when no layer has authored it.
+	 *
+	 * `slidesPerView` and `spaceBetween` are Swiper parameters, out of reach of
+	 * banded CSS, and the params-update effect below applies them to the live
+	 * instance on every device switch.
+	 *
+	 * The grid metrics reach the canvas as CSS variables instead, and the
+	 * narrow bands come from the preview stylesheet. Only the BASE value comes
+	 * from here, which is why the scratch showed through at Desktop alone:
+	 * columns set to 3 / 2 / 1 across the devices rendered one column at
+	 * Desktop while the panel still read 3, because no band matched there and
+	 * the base variable carried Mobile's 1.
+	 */
+	const previewDevice = useSelect( ( select ) => select( 'core/editor' )?.getDeviceType?.(), [] );
+	const postStyle = context?.[ 'spectra/post/style' ];
+	const columns = resolveInheritedResponsiveValue( postStyle, 'columns', previewDevice, context?.[ 'spectra/post/columns' ] ) || 3;
+	// Leave gap undefined when unset so buildSpectraStyles omits the CSS variable
+	// and style.scss's var( --…, 20px ) fallback supplies the default.
+	const columnGap = resolveInheritedResponsiveValue( postStyle, 'columnGap', previewDevice, context?.[ 'spectra/post/columnGap' ] );
+	const rowGap = resolveInheritedResponsiveValue( postStyle, 'rowGap', previewDevice, context?.[ 'spectra/post/rowGap' ] );
+	const slidesPerView = resolveInheritedResponsiveValue( postStyle, 'slidesPerView', previewDevice, context?.[ 'spectra/post/slidesPerView' ] ) || 3;
+	const spaceBetween = resolveInheritedResponsiveValue( postStyle, 'spaceBetween', previewDevice, context?.[ 'spectra/post/spaceBetween' ] ) || 30;
 	const loop = context?.[ 'spectra/post/loop' ] ?? true;
 	const speed = context?.[ 'spectra/post/speed' ] ?? 500;
 	const autoplay = context?.[ 'spectra/post/autoplay' ] ?? true;
@@ -176,7 +201,6 @@ const Render = ( props ) => {
 		columns,
 		columnGap,
 		rowGap,
-		responsiveControls,
 	};
 
 	const config = [

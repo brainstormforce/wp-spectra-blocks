@@ -10,13 +10,13 @@ import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalVStack as VStack,
 	ToggleControl,
 	Notice,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { select, dispatch } from '@wordpress/data';
 import { memo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';

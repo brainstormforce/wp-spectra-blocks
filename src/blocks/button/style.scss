@@ -83,10 +83,6 @@
 		// Variable based CSS - Text Color.
 		&.spectra-text-color {
 			color: var(--spectra-text-color, inherit);
-
-			.spectra-button__link {
-				color: var(--spectra-text-color, inherit);
-			}
 		}
 
 		// Variable based CSS - Gap.

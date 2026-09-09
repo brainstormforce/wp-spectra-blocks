@@ -3,11 +3,12 @@
  */
 import { memo, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import useLayoutInspectorGroup from '@spectra-hooks/useLayoutInspectorGroup';
+import StylePanel from '@spectra-components/style-panel';
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
 import { applyFilters } from '@wordpress/hooks';
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalVStack as VStack,
@@ -17,6 +18,7 @@ import {
 	ToggleControl,
 	RangeControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.
@@ -24,6 +26,7 @@ import {
 import IconPicker from '@spectra-components/icon-picker';
 import InspectorColor from '@spectra-components/inspector-color';
 import Background from '@spectra-components/background';
+import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient-control';
 
@@ -109,13 +112,19 @@ const BlockStyle = memo( ( props ) => {
 		backgroundGradient
 	} = attributes;
 
+    const { group, isHosted } = useInspectorStyleGroup();
+
     return (
-		<InspectorControls group="styles">
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { background: undefined } ) }
+		>
 			<Background
 				{ ...{
 					clientId,
 					attributes,
 					setAttributes,
+					isHosted,
 					background: {
 						label: 'background',
 						value: background,
@@ -192,16 +201,56 @@ const BlockSettings = memo( ( props ) => {
 	// Simple ternary function to return the space between if it's numeric.
 	const getSpaceBetween = () => ( 'number' === typeof( spaceBetween ) && spaceBetween !== undefined ? spaceBetween : 30 );
 
+	const { group: layoutGroup, isHosted: layoutHosted } = useLayoutInspectorGroup();
+
 	return (
 		<>
+			{ /* Responsive slider controls hosted in a surviving core group so
+			     they stay reachable on Tablet/Mobile in WP 7.1 style-state. */ }
+			<InspectorControls group={ layoutGroup }>
+				<StylePanel isHosted={ layoutHosted } label={ __( 'Carousel Layout', 'spectra-blocks' ) } resetAll={ () => setAttributes( { slidesPerView: undefined, spaceBetween: undefined } ) } panelId={ clientId } showHostedHeading={ false }>
+				<ToolsPanelItem
+					hasValue={ () => !! slidesPerView }
+					label={ __( 'Slides Per View', 'spectra-blocks' ) }
+					onDeselect={ () => setAttributes( { slidesPerView: undefined } ) }
+					resetAllFilter={ () => ( { slidesPerView: undefined } ) }
+					isShownByDefault
+					panelId={ clientId }
+				>
+					{ slidesPerViewControlContent }
+				</ToolsPanelItem>
+				<ToolsPanelItem
+					hasValue={ () => !! spaceBetween }
+					label={ __( 'Space Between Slides', 'spectra-blocks' ) }
+					onDeselect={ () => setAttributes( { spaceBetween: undefined } ) }
+					resetAllFilter={ () => ( { spaceBetween: undefined } ) }
+					isShownByDefault
+					panelId={ clientId }
+				>
+					<DebouncedRangeControl
+						label={ __( 'Space Between Slides', 'spectra-blocks' ) }
+						value={ getSpaceBetween() }
+						onChange={ ( value ) => setAttributes( { spaceBetween: value } ) }
+						min={ 0 }
+						max={ 100 }
+						withInputField
+						marks={ [
+							{ value: 0, label: '0' },
+							{ value: 50, label: '50' },
+							{ value: 100, label: '100' }
+						] }
+						debounceDelay={ 200 }
+						__nextHasNoMarginBottom
+					/>
+				</ToolsPanelItem>
+							</StylePanel>
+			</InspectorControls>
 			{ /* General Settings Panel */ }
 			<InspectorControls group="settings">
 				<ToolsPanel
 					label={ __( 'General', 'spectra-blocks' ) }
 					resetAll={ () => {
 						setAttributes( {
-							slidesPerView: undefined,
-							spaceBetween: undefined,
 							autoplay: undefined,
 							loop: undefined,
 							autoplaySpeed: undefined,
@@ -211,59 +260,6 @@ const BlockSettings = memo( ( props ) => {
 					panelId={ clientId }
 				>
 					{ /* Slider Settings */ }
-					{/* Individual tool panel item for slides per view */}
-					<ToolsPanelItem
-						hasValue={ () => !! slidesPerView }
-						label={ __(
-							'Slides Per View',
-							'spectra-blocks'
-						) }
-						onDeselect={ () =>
-							setAttributes( {
-								slidesPerView: undefined,
-							} )
-						}
-						isShownByDefault
-						panelId={ clientId }
-					>
-						{ slidesPerViewControlContent }
-					</ToolsPanelItem>
-
-					{/* Individual tool panel item for space between slides */}
-					<ToolsPanelItem
-						hasValue={ () => !! spaceBetween }
-						label={ __(
-							'Space Between Slides',
-							'spectra-blocks'
-						) }
-						onDeselect={ () =>
-							setAttributes( {
-								spaceBetween: undefined,
-							} )
-						}
-						isShownByDefault
-						panelId={ clientId }
-					>
-						<DebouncedRangeControl
-							label={ __(
-								'Space Between Slides',
-								'spectra-blocks'
-							) }
-							value={ getSpaceBetween() }
-							onChange={ ( value ) => setAttributes( { spaceBetween: value } ) }
-							min={ 0 }
-							max={ 100 }
-							withInputField
-							marks={ [ 
-								{ value: 0, label: '0' },
-								{ value: 50, label: '50' },
-								{ value: 100, label: '100' }
-							] }
-							debounceDelay={ 200 }
-							__nextHasNoMarginBottom
-						/>
-					</ToolsPanelItem>
-
 					{/* Individual tool panel item for autoplay and loop settings */}
 					<ToolsPanelItem
 						hasValue={ () =>
@@ -925,7 +921,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'spectra-blocks' )}
+				label={__( 'Background Color Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -935,7 +931,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'spectra-blocks' )}
+					label={__( 'Background Color Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}

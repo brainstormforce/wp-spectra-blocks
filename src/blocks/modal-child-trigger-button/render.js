@@ -8,13 +8,31 @@ import { memo, useCallback, useMemo } from '@wordpress/element';
  * Internal dependencies.
  */
 import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
+import { getResponsivePreviewCss, iconDimensionStyles } from '@spectra-helpers/responsive-preview';
+
+/**
+ * The icon dimensions, painted on the icon children.
+ *
+ * Both the icon and the hover icon take the same size, so one entry per child
+ * covers them. Named so the per-device preview emitter can re-derive per band —
+ * see `helpers/responsive-preview.js`. The fallback mirrors the inline paint.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Array} Selector-scoped style entries.
+ */
+export const getButtonIconStyles = ( attrs = {} ) => [
+	...iconDimensionStyles( attrs.size || '16px', ' .spectra-button__icon' ),
+	...iconDimensionStyles( attrs.size || '16px', ' .spectra-button__hover-icon' ),
+];
 
 const Render = ( props ) => {
 	const {
 		setAttributes,
 		attributes,
+		clientId,
 		context: {
 			'spectra/modal/modalTrigger': modalTrigger,
 		}
@@ -43,6 +61,14 @@ const Render = ( props ) => {
 
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config, customClassNames );
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/modal-child-button',
+		producers: [ getButtonIconStyles, ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+	} );
 
 	// Compute aria-label for accessibility - prioritize user-defined ariaLabel, fallback to text content.
 	const computedAriaLabel = useMemo( () => {
@@ -103,7 +129,6 @@ const Render = ( props ) => {
 				tagName="div"
 				onChange={ ( value ) => setAttributes( { text: removeAnchorTag( value ) } ) }
 				className="spectra-button__link"
-				keepPlaceholderOnFocus
 				withoutInteractiveFormatting
 			/>
 		);
@@ -111,6 +136,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			{ iconHtml( 'before' ) }
 			{ btnText() }
 			{ iconHtml( 'after' ) }

@@ -14,6 +14,10 @@
 namespace SpectraBlocks\Extensions;
 
 use SpectraBlocks\Extensions\ResponsiveControls\ResponsiveAttributeCSS;
+use SpectraBlocks\Extensions\ResponsiveControls\Legacy\LegacyStore;
+use SpectraBlocks\Extensions\ResponsiveControls\Pre71\StorePrecedence;
+use SpectraBlocks\Extensions\ResponsiveControls\Pre71\ViewportStatesFallback;
+use SpectraBlocks\Extensions\ResponsiveControls\ViewportSupport;
 use SpectraBlocks\Helpers\Core;
 use SpectraBlocks\Traits\Singleton;
 use WP_HTML_Tag_Processor;
@@ -69,16 +73,439 @@ class ResponsiveControls {
 	);
 
 	/**
+	 * Store device keys mapped to their location inside the `style` attribute.
+	 *
+	 * An empty string means the ROOT of `style`, which is where the base layer
+	 * lives. That is core's own arrangement — its device map is
+	 * `{ Desktop: 'default', Tablet: '@tablet', Mobile: '@mobile' }`, so Desktop IS
+	 * the root and there is no `@desktop` state. Core never reads or writes one.
+	 *
+	 * Spectra used to keep the base in a `@desktop` key of its own, because the root
+	 * was the surface the editor projected the selected device into and a base
+	 * stored there would be overwritten on every device switch. That projection is
+	 * gone, so the root is free to be what core already treats it as.
+	 *
+	 * Keep in sync with `DEVICE_TO_STYLE_STATE` in style-store.js.
+	 *
+	 * @var array<string, string>
+	 * @since 1.0.7
+	 */
+	const DEVICE_TO_STYLE_STATE = array(
+		'base'    => '',
+		'@tablet' => '@tablet',
+		'@mobile' => '@mobile',
+	);
+
+	/**
+	 * Style groups that live at the top level of a store bucket, not under `style`.
+	 *
+	 * Inside a `style` state object every value is keyed by name at one level.
+	 * In the store bucket these sit beside the block-specific keys instead of
+	 * under `style` — which is where `process_responsive_attributes()`, the CSS
+	 * generator and the block controllers all read them from. Writing them under
+	 * `style` left them invisible to every one of them: the block fell back to
+	 * its default layout at every breakpoint, and a preset border colour or font
+	 * size was dropped entirely.
+	 *
+	 * This is `$responsive_keys`, and WordPress core draws the same line —
+	 * `layout`, `fontSize`, `fontFamily` and `borderColor` are each their own
+	 * block attribute and are never nested inside `style`.
+	 *
+	 * Keep in sync with `BUCKET_TOP_LEVEL_STYLE_KEYS` in constants.js.
+	 *
+	 * @var array<string>
+	 * @since 1.0.7
+	 */
+	const BUCKET_TOP_LEVEL_STYLE_KEYS = array( 'layout', 'fontSize', 'fontFamily', 'borderColor' );
+
+	/**
+	 * Core's child-layout keys — how a block sits inside its PARENT's flex or
+	 * grid container. Core stores them in the same `style.layout` object as the
+	 * container layout and splits them on read (`wp_get_layout_child_values()`
+	 * vs `wp_get_layout_container_values()`). The store keeps them apart too:
+	 * container keys at the bucket's top level for `generate_layout_css()`,
+	 * child keys under `style.layout` for `generate_style_layout_css()`.
+	 *
+	 * Keep in sync with `CORE_CHILD_LAYOUT_KEYS` in `utils/style-store.js`.
+	 *
+	 * @var array<string>
+	 * @since 1.0.7
+	 */
+	const CORE_CHILD_LAYOUT_KEYS = array( 'selfStretch', 'flexSize', 'columnStart', 'columnSpan', 'rowStart', 'rowSpan' );
+
+	/**
+	 * WordPress core's default viewport breakpoints.
+	 *
+	 * Spectra does NOT publish breakpoints of its own — it reads whatever
+	 * WordPress has in force so that a block's Spectra-generated CSS and its
+	 * core-generated CSS always band identically. These values exist only as
+	 * the fallback for WordPress versions older than 7.1, where there is no
+	 * `settings.viewport` to read; they are copied from
+	 * `WP_Theme_JSON::DEFAULT_VIEWPORT_BREAKPOINTS` so both eras agree.
+	 *
+	 * A site that wants different breakpoints sets `settings.viewport` in its
+	 * theme.json (or filters it) — WordPress's own mechanism, which this
+	 * extension follows.
+	 *
+	 * @var array<string, string>
+	 * @since 1.0.7
+	 */
+	const DEFAULT_VIEWPORT_BREAKPOINTS = array(
+		'mobile' => '480px',
+		'tablet' => '782px',
+	);
+
+	/**
 	 * Media queries for different screen sizes.
 	 *
-	 * @var array $media_queries Media queries for different screen sizes.
+	 * @var array<string, string>|null Resolved lazily by get_media_queries().
 	 * @since 3.0.0
 	 */
-	private $media_queries = array(
-		'sm' => '(max-width: 767.98px)',                 // Scoped to only mobile.
-		'md' => '(min-width: 768px) and (max-width: 1023.98px)', // Scoped to tablet.
-		'lg' => '(min-width: 1024px)',                   // Scoped to desktop.
-	);
+	private $media_queries = null;
+
+	/**
+	 * The media queries this generator emits.
+	 *
+	 * Spectra does not decide the breakpoints — WordPress does. A single block is
+	 * rendered by both halves at once (this extension emits spacing, typography,
+	 * border, shadow and layout; core emits the rest), so if the two disagreed on
+	 * where a band starts, one block would get core's tablet colour together with
+	 * Spectra's mobile spacing. Delegating to core's own resolver is what makes
+	 * that impossible rather than merely unlikely: same breakpoints, same
+	 * sanitization, same boundary arithmetic, including whatever a theme declares
+	 * in `settings.viewport`.
+	 *
+	 * `base` is the DESKTOP layer and deliberately carries no media query, so it
+	 * applies at every width and the narrower bands override it — exactly how
+	 * core treats its `default` viewport. Gating it behind a `min-width` left
+	 * widths covered by nothing, and a viewport landing in such a gap — routine
+	 * once browser zoom or a fractional device pixel ratio puts the CSS width on
+	 * a non-integer — lost the block's styling entirely.
+	 *
+	 * ORDER MATTERS. These rules all share one selector, so specificity cannot
+	 * separate them and source order decides. Base is emitted first; the banded
+	 * overrides follow and win inside their ranges. Moving `base` later would
+	 * have it override both.
+	 *
+	 * @since 1.0.7
+	 * @return array<string, string> Media query conditions keyed by device, base first.
+	 */
+	public function get_media_queries() {
+		if ( is_array( $this->media_queries ) ) {
+			return $this->media_queries;
+		}
+
+		$bands = array( 'base' => '' ) + $this->resolve_viewport_bands();
+
+		// Mobile last: see `resolve_viewport_bands()` on the shared edge.
+		uksort(
+			$bands,
+			static function ( $a, $b ) {
+				$order = array(
+					'base'     => 0,
+					'@desktop' => 1,
+					'@tablet'  => 2,
+					'@mobile'  => 3,
+				);
+
+				return ( $order[ $a ] ?? 9 ) <=> ( $order[ $b ] ?? 9 );
+			}
+		);
+
+		$this->media_queries = $bands;
+
+		return $this->media_queries;
+	}
+
+	/**
+	 * Make generated CSS safe to place inside a `<style>` element.
+	 *
+	 * NOT `wp_strip_all_tags()`. That function is an HTML tag stripper, and CSS
+	 * legitimately contains `<`: core's own viewport media queries use range
+	 * syntax, so `@media (480px < width <= 782px) { ... }` reads as an unclosed
+	 * tag and everything from the `<` to the next `>` is deleted — which silently
+	 * removed every tablet and mobile rule from the page while the generator
+	 * itself was producing them correctly. The same trap already cost this
+	 * codebase its SVG data URLs; see `GlobalStyles\Sanitizer::sanitize_value()`.
+	 *
+	 * The only thing that actually needs neutralising in a style element is a
+	 * sequence that could close it early, so that is what this removes.
+	 *
+	 * @since 1.0.7
+	 * @param string $css Generated CSS.
+	 * @return string CSS that cannot terminate its own style element.
+	 */
+	public static function sanitize_inline_css( $css ) {
+		return str_ireplace( array( '</', '<!--' ), '', (string) $css );
+	}
+
+	/**
+	 * Viewport bands including desktop, for features that switch on device rather
+	 * than override a base value.
+	 *
+	 * The style generator has no use for a desktop band — its base layer already
+	 * applies everywhere. Device VISIBILITY does: hiding a block on desktop means
+	 * a rule that fires above the tablet ceiling and nowhere else. These bands
+	 * come from the same resolver, so "hide on mobile" and "restyle on mobile"
+	 * can never disagree about where mobile ends.
+	 *
+	 * @since 1.0.7
+	 * @return array<string, string> Media conditions keyed by `@mobile`/`@tablet`/`@desktop`.
+	 */
+	public function get_device_media_queries() {
+		return $this->resolve_viewport_bands( true );
+	}
+
+	/**
+	 * Viewport bands as bare media conditions, keyed by core's state names.
+	 *
+	 * WordPress 7.1+ answers this itself, so the breakpoints, the `px`/`em`/`rem`
+	 * validation, the "tablet must exceed mobile" rule and the "fall back to the
+	 * defaults when nothing valid is declared" rule are all core's, not a second
+	 * implementation that can drift from them. Core returns fully-formed
+	 * `@media (...)` strings; callers here wrap the condition themselves, so the
+	 * prefix is stripped.
+	 *
+	 * @since 1.0.7
+	 * @param bool $include_desktop Whether to include the desktop band.
+	 * @return array<string, string> Media conditions keyed by `@mobile`/`@tablet`/`@desktop`.
+	 */
+	private function resolve_viewport_bands( $include_desktop = false ) {
+		$viewport = $this->resolved_viewport();
+
+		if ( is_callable( array( '\WP_Theme_JSON', 'get_viewport_media_queries' ) ) ) {
+			// The bundled stubs predate WordPress 7.1, where this method was added,
+			// so static analysis cannot see it; the is_callable() guard above is
+			// what makes the call safe at runtime. Ignored in phpstan.neon.
+			$core  = \WP_Theme_JSON::get_viewport_media_queries( $viewport, array( 'include_desktop' => $include_desktop ) );
+			$bands = array();
+
+			foreach ( (array) $core as $state => $query ) {
+				$bands[ $state ] = trim( (string) preg_replace( '/^@media\s*/', '', (string) $query ) );
+			}
+
+			return $bands;
+		}
+
+		return $this->viewport_bands_fallback( $viewport, $include_desktop );
+	}
+
+	/**
+	 * The viewport breakpoints WordPress has in force, or null when it has none.
+	 *
+	 * `settings.viewport` (mobile / tablet upper bounds) from the merged
+	 * theme.json — a theme's own values, else WordPress's defaults. Below 7.1
+	 * the setting does not exist and this returns null, which every caller
+	 * turns into `DEFAULT_VIEWPORT_BREAKPOINTS`.
+	 *
+	 * @since 1.0.7
+	 * @return array<string, string>|null Keyed `mobile` / `tablet`, or null.
+	 */
+	private function resolved_viewport() {
+		$viewport = null;
+
+		if ( function_exists( 'wp_get_global_settings' ) ) {
+			$setting = wp_get_global_settings( array( 'viewport' ) );
+
+			/*
+			 * `wp_get_global_settings()` returns the ENTIRE settings tree when the
+			 * requested path is absent, which is the normal case — no theme
+			 * declares `settings.viewport`. Passing that tree on happens to
+			 * survive, because core's sanitizer finds no valid breakpoint in it
+			 * and falls back to the defaults, but it is the right answer by
+			 * accident. Narrow it to the two keys that are actually breakpoints.
+			 */
+			$viewport = is_array( $setting )
+				? array_intersect_key( $setting, array_flip( array( 'mobile', 'tablet' ) ) )
+				: null;
+		}
+
+		return $viewport;
+	}
+
+	/**
+	 * The band upper bounds in CSS pixels: mobile ends at `mobile`, tablet at `tablet`.
+	 *
+	 * The same source the media queries come from, as numbers, for code that
+	 * cannot consume a media query: Swiper's `breakpoints` keys, the localised
+	 * editor values. Non-pixel breakpoints are converted at 16px/em. Falls back
+	 * to `DEFAULT_VIEWPORT_BREAKPOINTS` exactly as the queries do, so a number
+	 * and the query it accompanies never describe different widths.
+	 *
+	 * @since 1.0.7
+	 * @return array{mobile: float, tablet: float} Upper bounds in px.
+	 */
+	public function get_viewport_breakpoint_pixels() {
+		$viewport = $this->resolved_viewport();
+		$pixels   = array();
+
+		foreach ( array( 'mobile', 'tablet' ) as $device ) {
+			$value = is_array( $viewport ) ? ( $viewport[ $device ] ?? null ) : null;
+			$px    = self::breakpoint_in_pixels( $value );
+
+			if ( null === $px ) {
+				$px = self::breakpoint_in_pixels( self::DEFAULT_VIEWPORT_BREAKPOINTS[ $device ] );
+			}
+
+			$pixels[ $device ] = (float) $px;
+		}
+
+		if ( $pixels['tablet'] <= $pixels['mobile'] ) {
+			$pixels['tablet'] = (float) self::breakpoint_in_pixels( self::DEFAULT_VIEWPORT_BREAKPOINTS['tablet'] );
+		}
+
+		return $pixels;
+	}
+
+	/**
+	 * The smallest whole pixel width of each band, for `min-width` consumers.
+	 *
+	 * Swiper's `breakpoints` are inclusive `min-width` keys. A band starts at
+	 * the first whole pixel above its neighbour's upper bound — `481px` after a
+	 * `480px` mobile bound, `768px` after `767.98px` — which is where the
+	 * generated CSS starts it too.
+	 *
+	 * @since 1.0.7
+	 * @return array{mobile: int, tablet: int, desktop: int} Min widths in px.
+	 */
+	public function get_viewport_min_widths() {
+		$pixels = $this->get_viewport_breakpoint_pixels();
+
+		return array(
+			'mobile'  => 0,
+			'tablet'  => (int) floor( $pixels['mobile'] ) + 1,
+			'desktop' => (int) floor( $pixels['tablet'] ) + 1,
+		);
+	}
+
+	/**
+	 * Core's viewport banding, reproduced for WordPress older than 7.1.
+	 *
+	 * Mirrors `WP_Theme_JSON::sanitize_viewport_settings()`: only `px`/`em`/`rem`
+	 * lengths count, a `tablet` that does not exceed `mobile` is dropped, a lone
+	 * valid breakpoint becomes a single `max-width` band, and nothing valid means
+	 * the defaults. The bands are emitted in classic `min-width`/`max-width` form
+	 * rather than core's `(mobile < width <= tablet)` range syntax, which older
+	 * browsers ignore outright — on these versions there is no core output to
+	 * match, so the wider-support form costs nothing.
+	 *
+	 * The lower edge of each band sits a hair ABOVE the breakpoint
+	 * (`min-width: 480.02px`), so the bands are disjoint the way core's ranges
+	 * are (`480px < width`). An earlier build let them touch at exactly the
+	 * breakpoint, reasoning that overlap was safe because the caller emits mobile
+	 * last and so wins that single width. That holds for merged property rules,
+	 * where both bands set the same property — but not for rules keyed on a
+	 * device class with `!important`: those target different selectors, nothing
+	 * competes, and both apply. Measured on 7.0.4: at exactly 782 px both
+	 * "hide on desktop" and "hide on tablet" blocks were hidden, and a
+	 * container's desktop `orientationReverse` reversed inside the tablet band.
+	 * The 0.02 px step is the same one the plugin's pre-7.1 stylesheet used
+	 * (`767.98px` / `1023.98px`); a viewport width landing inside it is not
+	 * something browsers produce for integer or half-pixel zoom levels.
+	 *
+	 * @since 1.0.7
+	 * @param mixed $viewport        Raw `settings.viewport` value, if any.
+	 * @param bool  $include_desktop Whether to include the desktop band.
+	 * @return array<string, string> Media conditions keyed by state.
+	 */
+	private function viewport_bands_fallback( $viewport, $include_desktop ) {
+		$breakpoints = self::DEFAULT_VIEWPORT_BREAKPOINTS;
+
+		if ( is_array( $viewport ) ) {
+			$valid = array();
+
+			foreach ( array_keys( self::DEFAULT_VIEWPORT_BREAKPOINTS ) as $device ) {
+				$pixels = self::breakpoint_in_pixels( $viewport[ $device ] ?? null );
+
+				if ( null !== $pixels ) {
+					$valid[ $device ] = array(
+						'value'  => trim( (string) $viewport[ $device ] ),
+						'pixels' => $pixels,
+					);
+				}
+			}
+
+			if ( array() !== $valid ) {
+				if ( ! isset( $valid['mobile'] ) ) {
+					$breakpoints = array( 'tablet' => $valid['tablet']['value'] );
+				} elseif ( ! isset( $valid['tablet'] ) || $valid['tablet']['pixels'] <= $valid['mobile']['pixels'] ) {
+					$breakpoints = array( 'mobile' => $valid['mobile']['value'] );
+				} else {
+					$breakpoints = array(
+						'mobile' => $valid['mobile']['value'],
+						'tablet' => $valid['tablet']['value'],
+					);
+				}
+			}
+		}
+
+		$mobile = $breakpoints['mobile'] ?? null;
+		$tablet = $breakpoints['tablet'] ?? null;
+		$bands  = array();
+
+		if ( null !== $tablet ) {
+			$bands['@tablet'] = null !== $mobile
+				? '(min-width: ' . self::exclusive_lower_edge( $mobile ) . ') and (max-width: ' . $tablet . ')'
+				: '(max-width: ' . $tablet . ')';
+		}
+
+		if ( null !== $mobile ) {
+			$bands['@mobile'] = '(max-width: ' . $mobile . ')';
+		}
+
+		if ( $include_desktop ) {
+			$floor = $tablet ?? $mobile;
+
+			if ( null !== $floor ) {
+				$bands['@desktop'] = '(min-width: ' . self::exclusive_lower_edge( $floor ) . ')';
+			}
+		}
+
+		return $bands;
+	}
+
+	/**
+	 * The `min-width` that starts a band just above a breakpoint another band ends at.
+	 *
+	 * Core's range syntax expresses this as `480px < width`; the classic form has
+	 * no strict inequality, so the edge moves up by 0.02 px — added directly for
+	 * pixel values, through `calc()` for `em` / `rem` so the unit is preserved.
+	 *
+	 * @since 1.0.7
+	 * @param string $breakpoint A validated `px` / `em` / `rem` length.
+	 * @return string The length the next band starts at.
+	 */
+	private static function exclusive_lower_edge( $breakpoint ) {
+		$breakpoint = trim( $breakpoint );
+
+		if ( 1 === preg_match( '/^(\d+|\d*\.\d+)px$/', $breakpoint, $matches ) ) {
+			// Format without trailing zeros so `480px` becomes `480.02px`, not `480.020000px`.
+			return rtrim( rtrim( number_format( (float) $matches[1] + 0.02, 2, '.', '' ), '0' ), '.' ) . 'px';
+		}
+
+		return 'calc(' . $breakpoint . ' + 0.02px)';
+	}
+
+	/**
+	 * A breakpoint length in pixels, or null when it is not one core would accept.
+	 *
+	 * Mirrors core's validation and its 16px base for `em`/`rem`. The pixel value
+	 * only orders `mobile` against `tablet`; emitted bands keep the original unit.
+	 *
+	 * @since 1.0.7
+	 * @param mixed $value Candidate breakpoint value.
+	 * @return float|null Length in pixels, or null when invalid.
+	 */
+	private static function breakpoint_in_pixels( $value ) {
+		if ( ! is_string( $value ) || 1 !== preg_match( '/^(?:\d+|\d*\.\d+)(px|em|rem)$/', trim( $value ), $matches ) ) {
+			return null;
+		}
+
+		$number = (float) trim( $value );
+
+		return 'px' === $matches[1] ? $number : $number * 16;
+	}
+
 
 	/**
 	 * Handle for the responsive styles stylesheet.
@@ -103,7 +530,7 @@ class ResponsiveControls {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	const CSS_GENERATOR_VERSION = '10';
+	const CSS_GENERATOR_VERSION = '29';
 
 	/**
 	 * Add inline responsive CSS only once per request.
@@ -147,9 +574,9 @@ class ResponsiveControls {
 	 * @since 3.0.0
 	 */
 	private $device_fallback_order = array(
-		'sm' => array( 'sm', 'md', 'lg' ), // Mobile: try mobile -> tablet -> desktop for values.
-		'md' => array( 'md', 'lg' ),       // Tablet: try tablet -> desktop for values.
-		'lg' => array( 'lg' ),             // Desktop: desktop only for values.
+		'@mobile' => array( '@mobile', 'base' ), // Mobile: mobile over base — core's model, no tablet inheritance.
+		'@tablet' => array( '@tablet', 'base' ), // Tablet: tablet over base.
+		'base'    => array( 'base' ),            // Desktop: the base layer itself.
 	);
 
 	/**
@@ -166,31 +593,22 @@ class ResponsiveControls {
 	private $responsive_keys = array( 'layout', 'fontSize', 'fontFamily', 'borderColor' );
 
 	/**
-	 * List of blocks and their attributes to maintain for backward compatibility.
+	 * Extra root attributes to bridge, beyond the ones the block declares.
+	 *
+	 * `backward_compatibility_block_attributes()` bridges every attribute the
+	 * block registers with `ResponsiveAttributeCSS`, so nothing in
+	 * `ATTR_DEFINITIONS` needs listing here. This is only for root attributes
+	 * the per-device CSS pipeline reads WITHOUT declaring them there — the
+	 * separator's style and alignment, which its renderer takes straight from
+	 * the store.
 	 *
 	 * @var array<string, array<string>> Block name => List of attributes.
 	 * @since 1.0.0
 	 */
 	private $backward_compatibility_attributes = array(
-		'spectra/separator'    => array(
+		'spectra/separator' => array(
 			'separatorStyle',
 			'separatorAlign',
-		),
-		// Old container/slider blocks stored these at root level before responsive controls
-		// fully adopted the responsiveControls structure. Without this mapping the
-		// root value never reaches the per-device CSS pipeline: `background` makes
-		// format_background return null (display:none video wrapper), and a
-		// root-level `height` is dropped entirely (container falls back to content
-		// height instead of the authored value). Map them into responsiveControls.lg.
-		'spectra/container'    => array(
-			'background',
-			'height',
-		),
-		'spectra/slider'       => array(
-			'background',
-		),
-		'spectra/slider-child' => array(
-			'background',
 		),
 	);
 
@@ -446,6 +864,9 @@ class ResponsiveControls {
 		// Register responsive stylesheet early to ensure it's available for all blocks.
 		add_action( 'init', array( $this, 'register_responsive_style' ) );
 
+		// Publish the resolved viewport bands to front-end scripts, before anything enqueues.
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_viewport_bands_script' ), 5 );
+
 		// Register and enqueue responsive videos script for frontend.
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_responsive_videos_script' ) );
 
@@ -455,11 +876,24 @@ class ResponsiveControls {
 		// Process responsive attributes during block rendering to generate CSS.
 		add_filter( 'render_block_data', array( $this, 'process_responsive_attributes' ), 10, 1 );
 
-		// Scalable backward compatibility for legacy block attributes to handle legacy non-responsive values.
+		add_filter( 'render_block_data', array( $this, 'build_store_from_style' ), 4, 1 );
+
+		/*
+		 * Pre-1.0.6 content support. Self-contained in
+		 * `ResponsiveControls/Legacy/` — delete that folder and this line to remove
+		 * legacy compatibility entirely. Nothing on the current path calls into it.
+		 */
+		LegacyStore::init();
+
 		add_filter( 'render_block_data', array( $this, 'backward_compatibility_block_attributes' ), 5, 1 );
 
 		// Add unique block identifier for CSS targeting and generate responsive styles.
 		add_filter( 'render_block', array( $this, 'process_block_and_add_responsive_styles' ), 10, 2 );
+		// Pre-7.1 front-end support for core's viewport states. Self-contained
+		// in `ResponsiveControls/Pre71/` and inert on 7.1 — see that folder.
+		if ( class_exists( ViewportStatesFallback::class ) ) {
+			ViewportStatesFallback::init();
+		}
 
 		// Remove layout support flag to prevent core from injecting layout classes that conflict.
 		remove_filter( 'render_block', 'wp_render_layout_support_flag', 10 );
@@ -536,25 +970,107 @@ class ResponsiveControls {
 	 * This handles dynamic video source switching based on viewport size.
 	 *
 	 * @since 3.0.0
+	 * @param bool $force Enqueue even when `has_block()` finds nothing, for
+	 *                    markup rendered from outside the post content.
 	 * @return void
 	 */
-	public function enqueue_responsive_videos_script() {
+	public function enqueue_responsive_videos_script( $force = false ) {
 		// Only enqueue on frontend requests (excluding AJAX and admin).
 		if ( wp_doing_ajax() || is_admin() ) {
 			return;
 		}
 
-		// Only enqueue if container, slider, or modal blocks are present.
-		if ( ! has_block( 'spectra/container' ) && ! has_block( 'spectra/slider' ) && ! has_block( 'spectra/modal' ) && ! has_block( 'spectra/slider-child' ) ) {
+		/*
+		 * Only enqueue if container, slider, or modal blocks are present.
+		 *
+		 * `$force` exists for the markup `has_block()` cannot see. A popup lives
+		 * in its own post and is pre-rendered into the page from
+		 * `PopupBuilder::enqueue_popup_scripts()`, so this test is false for a
+		 * page that shows one — and without the script a deferred video has
+		 * nobody to attach its source and start it. A popup with an image at
+		 * Desktop and a video at Mobile therefore rendered the `<video>` with
+		 * the right `data-responsive-videos`, and it sat at `readyState: 0`
+		 * for ever. The caller passes true only when the pre-rendered markup
+		 * actually carries a per-device video.
+		 */
+		if ( ! $force && ! has_block( 'spectra/container' ) && ! has_block( 'spectra/slider' ) && ! has_block( 'spectra/modal' ) && ! has_block( 'spectra/slider-child' ) ) {
 			return;
 		}
+
+		// The dependency must exist before it is named: this runs from any
+		// enqueue path (including block renders outside `wp_enqueue_scripts`),
+		// and WordPress 6.9.1+ flags a dependency that is not registered.
+		$this->register_viewport_bands_script();
 
 		wp_enqueue_script(
 			'spectra-responsive-videos',
 			SPECTRA_BLOCKS_URL . 'assets/js/responsive-videos.js',
-			array(),
+			array( self::VIEWPORT_BANDS_HANDLE ),
 			filemtime( SPECTRA_BLOCKS_DIR . 'assets/js/responsive-videos.js' ),
 			true
+		);
+	}
+
+	/**
+	 * Script handle that carries the resolved viewport bands to the front end.
+	 *
+	 * @since 1.0.7
+	 * @var string
+	 */
+	public const VIEWPORT_BANDS_HANDLE = 'spectra-blocks-viewport-bands';
+
+	/**
+	 * The viewport bands as media-query strings, keyed for scripts.
+	 *
+	 * Every per-device decision the front end makes in CSS comes out of
+	 * `resolve_viewport_bands()` — the banded attributes, the `uag-hide-*`
+	 * classes, orientation reverse. A script that decides "which device is
+	 * this" from `window.innerWidth` against its own numbers can disagree with
+	 * that CSS wherever the two sets of numbers differ, and on WordPress 7.1
+	 * they do differ by default: core resolves the bands (480/782 unless a
+	 * theme or #797 declares otherwise) while the scripts carried Spectra's
+	 * historical 768/1024. A popup marked "hide on tablet" was hidden by CSS at
+	 * 481–782px and by its own script at 769–1024px.
+	 *
+	 * This hands scripts the same queries the CSS uses, so `matchMedia()` on
+	 * them agrees with the stylesheet by construction — whatever the numbers
+	 * are, wherever they come from.
+	 *
+	 * @since 1.0.7
+	 * @return array{desktop: string, tablet: string, mobile: string} Media queries without the `@media` prefix.
+	 */
+	public function get_viewport_bands_for_script() {
+		$bands = $this->get_device_media_queries();
+
+		return array(
+			'desktop' => (string) ( $bands['@desktop'] ?? '' ),
+			'tablet'  => (string) ( $bands['@tablet'] ?? '' ),
+			'mobile'  => (string) ( $bands['@mobile'] ?? '' ),
+		);
+	}
+
+	/**
+	 * Register the inline script that publishes the bands.
+	 *
+	 * Registered, not enqueued: it prints only when a script that needs it
+	 * lists it as a dependency (the responsive video handlers here and in Pro,
+	 * Pro's motion effects), or when a renderer enqueues it explicitly (Pro's
+	 * popup builder). It has no file of its own; the data is the script.
+	 *
+	 * @since 1.0.7
+	 * @return void
+	 */
+	public function register_viewport_bands_script() {
+		if ( wp_script_is( self::VIEWPORT_BANDS_HANDLE, 'registered' ) ) {
+			return;
+		}
+
+		wp_register_script( self::VIEWPORT_BANDS_HANDLE, false, array(), SPECTRA_BLOCKS_VER, true );
+
+		wp_add_inline_script(
+			self::VIEWPORT_BANDS_HANDLE,
+			'window.spectraBlocksViewportBands = ' . wp_json_encode( $this->get_viewport_bands_for_script() ) . ';',
+			'before'
 		);
 	}
 
@@ -573,9 +1089,275 @@ class ResponsiveControls {
 	}
 
 	/**
-	 * Processes responsive attributes for a given block.
+	 * `render_block_data` bridge into `hydrate_store_from_style()`.
 	 *
-	 * This is the main entry point for responsive control processing:
+	 * Runs right after the legacy rename, so the store every later filter and
+	 * the CSS generator read is already canonical and hydrated from `style`.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $block Block data.
+	 * @return array<string, mixed> Block data with a hydrated store.
+	 */
+	public function build_store_from_style( $block ) {
+		// Same gate the rest of the pipeline uses. Without it every core block on
+		// the page would have a Spectra store built onto its attributes — wasted
+		// work, and an attribute other extensions can see that means nothing.
+		if ( ! $this->should_apply_responsive_controls( $block ) ) {
+			return $block;
+		}
+
+		$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+		// Runs for every block, not only those carrying a store: a block authored
+		// after the move to `style` has no `responsiveControls` at all.
+		$block_name = isset( $block['blockName'] ) && is_string( $block['blockName'] ) ? $block['blockName'] : '';
+
+		$this->hydrate_store_from_style( $attrs, $block_name );
+
+		$block['attrs'] = $attrs;
+
+		return $block;
+	}
+
+
+	/**
+	 * Every key that can appear directly inside a `style` state object.
+	 *
+	 * The union of the shared style groups and the top-level responsive
+	 * attributes. Iterating only `$style_responsive_keys` never visited
+	 * `fontSize`, `fontFamily` or `borderColor`, so they were neither read from
+	 * nor written to a state.
+	 *
+	 * @since 1.0.7
+	 * @return array<string> Keys a state object may hold.
+	 */
+	private function state_keys() {
+		return array_values( array_unique( array_merge( $this->style_responsive_keys, self::BUCKET_TOP_LEVEL_STYLE_KEYS ) ) );
+	}
+
+	/**
+	 * Build the internal responsive store from the block's `style` attribute.
+	 *
+	 * `style` is where per-breakpoint values now live. It is WordPress core's
+	 * own attribute, registered on every block through block supports, and on
+	 * 7.1+ core already understands `style['@tablet']` / `style['@mobile']`.
+	 * Keeping one object means the editor writes to one place, core renders
+	 * what it recognises, and Spectra renders the rest from the same source —
+	 * instead of two stores that have to be reconciled on every read.
+	 *
+	 * Core ignores keys it does not know rather than rejecting them, so
+	 * Spectra-only values (`size`, `gap`, the container's overlay family, …)
+	 * ride along inside the same state objects. Verified on 7.1-RC4: such keys
+	 * survive parse, re-serialise byte-identically, and persist through
+	 * `wp_insert_post`.
+	 *
+	 * `responsiveControls` is still read, because every post saved before this
+	 * change has one. It is a legacy input only — `style` wins wherever both
+	 * describe the same property, since that is what the current editor wrote.
+	 * The store is rebuilt rather than removed so the CSS generator, the block
+	 * controllers and the Style Guide bridge keep their existing shape; the
+	 * change is to where the data comes from, not how it is generated.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $attrs      Block attributes, modified by reference.
+	 * @param string               $block_name The block name.
+	 * @return void
+	 */
+	private function hydrate_store_from_style( &$attrs, $block_name ) {
+		$style = isset( $attrs['style'] ) && is_array( $attrs['style'] ) ? $attrs['style'] : array();
+
+		if ( empty( $style ) ) {
+			return;
+		}
+
+		$store = isset( $attrs['responsiveControls'] ) && is_array( $attrs['responsiveControls'] )
+			? $attrs['responsiveControls']
+			: array();
+
+		/*
+		 * Snapshot the store before hydration. On content saved before the move
+		 * to `style`, the root of `style` is a scratch surface — a projection of
+		 * whichever device was selected at the last save — so a group this store
+		 * holds at ANY breakpoint marks the root's copy of that group as scratch,
+		 * never as an authored base value. A mobile-only legacy padding would
+		 * otherwise be promoted to the base layer and render on desktop. Content
+		 * re-saved by the current editor arrives with an empty store, so every
+		 * root group there fills the base as authored.
+		 */
+		$authored = $store;
+
+		// Flat, block-specific keys (`size`, `gap`, `minWidth`, …) sit directly
+		// on the state object; the shared style groups nest under it by name.
+		$flat_keys = ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
+
+		foreach ( self::DEVICE_TO_STYLE_STATE as $device => $state ) {
+			// An empty state key means the base layer, which is the root of `style`.
+			if ( '' === $state ) {
+				$source = $style;
+			} else {
+				$source = isset( $style[ $state ] ) && is_array( $style[ $state ] ) ? $style[ $state ] : array();
+			}
+
+			$bucket = isset( $store[ $device ] ) && is_array( $store[ $device ] ) ? $store[ $device ] : array();
+
+			// A malformed store can carry `style` as a string; writing a group
+			// under a string offset is fatal. Drop it rather than crash.
+			if ( isset( $bucket['style'] ) && ! is_array( $bucket['style'] ) ) {
+				unset( $bucket['style'] );
+			}
+
+			/*
+			 * A `@tablet` / `@mobile` state outranks whatever the store already
+			 * holds. The base is different: its source is the ROOT of `style`, and
+			 * on content saved before the move the root is a scratch surface holding
+			 * whichever device happened to be selected — frequently the mobile
+			 * value. There it must fill gaps only, so a legacy `lg` bucket still
+			 * wins. On content authored since, the bucket is empty at this point and
+			 * filling gaps yields the root, so the two cases converge.
+			 */
+			$fill_gaps_only = '' === $state;
+
+			/*
+			 * Below 7.1 a state gets the same treatment — see `Pre71\StorePrecedence`,
+			 * which explains why and is removable with the rest of that folder. The
+			 * guard is what makes it removable; on 7.1 the call answers false.
+			 */
+			if ( ! $fill_gaps_only && class_exists( StorePrecedence::class ) ) {
+				$fill_gaps_only = StorePrecedence::state_fills_gaps_only();
+			}
+
+			foreach ( $this->state_keys() as $group ) {
+				if ( ! isset( $source[ $group ] ) ) {
+					continue;
+				}
+
+				if ( 'layout' === $group ) {
+					$this->hydrate_layout_group( $bucket, $source[ $group ], $fill_gaps_only, $authored );
+					continue;
+				}
+
+				if ( in_array( $group, self::BUCKET_TOP_LEVEL_STYLE_KEYS, true ) ) {
+					if ( ! $fill_gaps_only || ! $this->store_has_key( $authored, $group ) ) {
+						$bucket[ $group ] = $source[ $group ];
+					}
+					continue;
+				}
+
+				if ( ! $fill_gaps_only || ! $this->store_has_key( $authored, $group, true ) ) {
+					$bucket['style'][ $group ] = $source[ $group ];
+				}
+			}
+
+			foreach ( $flat_keys as $key ) {
+				if ( ! isset( $source[ $key ] ) ) {
+					continue;
+				}
+
+				if ( ! $fill_gaps_only || ! $this->store_has_key( $authored, $key ) ) {
+					$bucket[ $key ] = $source[ $key ];
+				}
+			}
+
+			/*
+			 * `layout` is core's own block attribute, so it sits beside `style`
+			 * rather than inside it and the loops above cannot see it. It is the
+			 * last resort for the base layer: a block whose layout was only ever
+			 * written there — by core's Layout panel — has nowhere else to recover
+			 * it from, and without this it silently falls back to its default.
+			 */
+			if ( 'base' === $device && ! isset( $bucket['layout'] ) && isset( $attrs['layout'] ) && is_array( $attrs['layout'] ) ) {
+				$bucket['layout'] = $attrs['layout'];
+			}
+
+			if ( ! empty( $bucket ) ) {
+				$store[ $device ] = $bucket;
+			}
+		}
+
+		if ( ! empty( $store ) ) {
+			$attrs['responsiveControls'] = $store;
+		}
+	}
+
+	/**
+	 * Fold one state's `layout` object into the store, split the way core is.
+	 *
+	 * Core stores two different things in `style[state].layout`: the block's
+	 * own container layout, and the child keys describing how the block sits
+	 * inside its PARENT's flex or grid container. The store separates them —
+	 * container keys at the bucket's top level for `generate_layout_css()`,
+	 * child keys under `style.layout` for `generate_style_layout_css()`.
+	 * Dumping the object whole into the container slot dropped every child
+	 * value (the `flex-grow` of a "Grow" button, grid column/row spans) and
+	 * could shadow the `attrs['layout']` recovery with an object holding no
+	 * `type` at all, degrading a flex container to flow layout.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $bucket         Device bucket, modified by reference.
+	 * @param mixed                $layout         The state's `layout` value.
+	 * @param bool                 $fill_gaps_only Whether the store outranks this source.
+	 * @param array<string, mixed> $authored       The store as it was before hydration.
+	 * @return void
+	 */
+	private function hydrate_layout_group( &$bucket, $layout, $fill_gaps_only, $authored ) {
+		if ( ! is_array( $layout ) || empty( $layout ) ) {
+			return;
+		}
+
+		$child     = array_intersect_key( $layout, array_flip( self::CORE_CHILD_LAYOUT_KEYS ) );
+		$container = array_diff_key( $layout, $child );
+
+		if ( ! empty( $container ) && ( ! $fill_gaps_only || ! $this->store_has_key( $authored, 'layout' ) ) ) {
+			$bucket['layout'] = $container;
+		}
+
+		if ( ! empty( $child ) && ( ! $fill_gaps_only || ! $this->store_has_key( $authored, 'layout', true ) ) ) {
+			$style_bucket           = isset( $bucket['style'] ) && is_array( $bucket['style'] ) ? $bucket['style'] : array();
+			$style_bucket['layout'] = $child;
+			$bucket['style']        = $style_bucket;
+		}
+	}
+
+	/**
+	 * Whether any device bucket of the pre-hydration store carries a key.
+	 *
+	 * Used when the base layer is filled from the root of `style`: a key the
+	 * legacy store holds at ANY breakpoint marks the root's copy as a scratch
+	 * projection rather than an authored base value, so the root must not be
+	 * promoted. See the snapshot note in `hydrate_store_from_style()`.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $store  The store as it was before hydration.
+	 * @param string               $key    Group or flat key to look for.
+	 * @param bool                 $nested Whether the key nests under the bucket's `style`.
+	 * @return bool True when any device bucket holds the key.
+	 */
+	private function store_has_key( $store, $key, $nested = false ) {
+		foreach ( array_keys( self::DEVICE_TO_STYLE_STATE ) as $device ) {
+			$bucket = isset( $store[ $device ] ) && is_array( $store[ $device ] ) ? $store[ $device ] : array();
+
+			if ( $nested ) {
+				$style = isset( $bucket['style'] ) && is_array( $bucket['style'] ) ? $bucket['style'] : array();
+
+				if ( isset( $style[ $key ] ) ) {
+					return true;
+				}
+				continue;
+			}
+
+			if ( isset( $bucket[ $key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Process responsive attributes for a block.
+	 *
+	 * This is the main entry point for the responsive controls system.
+	 * It performs the following operations:
 	 * 1. Checks if the block should be processed
 	 * 2. Ensures the block has a unique ID
 	 * 3. Removes conflicting core attributes
@@ -594,9 +1376,9 @@ class ResponsiveControls {
 		}
 
 		// Get block attributes or initialize empty array if none exist.
-		$attrs                  = $block['attrs'] ?? array();
-		$responsive_controls    = $attrs['responsiveControls'] ?? array();
-		$responsive_controls_lg = $responsive_controls['lg'] ?? array();
+		$attrs                    = $block['attrs'] ?? array();
+		$responsive_controls      = $attrs['responsiveControls'] ?? array();
+		$responsive_controls_base = $responsive_controls['base'] ?? array();
 
 		// If no responsive controls exist yet, map standard attributes to responsive format.
 		if ( empty( $responsive_controls ) ) {
@@ -607,23 +1389,23 @@ class ResponsiveControls {
 					if ( 'style' === $key && is_array( $attrs[ $key ] ) ) {
 
 						// If responsive controls (Lg) style is empty, copy all properties.
-						if ( empty( $responsive_controls_lg['style'] ) ) {
-							$responsive_controls_lg['style'] = $attrs[ $key ];
+						if ( empty( $responsive_controls_base['style'] ) ) {
+							$responsive_controls_base['style'] = $attrs[ $key ];
 						} else {
-							$responsive_controls_lg[ $key ] = array();
+							$responsive_controls_base[ $key ] = array();
 							foreach ( $this->style_responsive_keys as $style_key ) {
 								if ( isset( $attrs[ $key ][ $style_key ] ) ) {
 									// For border property, copy all properties dynamically.
 									if ( 'border' === $style_key && is_array( $attrs[ $key ][ $style_key ] ) ) {
-										$responsive_controls_lg[ $key ][ $style_key ] = $attrs[ $key ][ $style_key ];
+										$responsive_controls_base[ $key ][ $style_key ] = $attrs[ $key ][ $style_key ];
 									} else {
-										$responsive_controls_lg[ $key ][ $style_key ] = $attrs[ $key ][ $style_key ];
+										$responsive_controls_base[ $key ][ $style_key ] = $attrs[ $key ][ $style_key ];
 									}
 								}
 							}
 						}
 					} else {
-						$responsive_controls_lg[ $key ] = $attrs[ $key ];
+						$responsive_controls_base[ $key ] = $attrs[ $key ];
 					}
 				}
 			}
@@ -632,7 +1414,7 @@ class ResponsiveControls {
 			$block_specific_attrs = ResponsiveAttributeCSS::get_responsive_attributes( $block['blockName'] );
 			foreach ( $block_specific_attrs as $attr ) {
 				if ( isset( $attrs[ $attr ] ) ) {
-					$responsive_controls_lg[ $attr ] = $attrs[ $attr ];
+					$responsive_controls_base[ $attr ] = $attrs[ $attr ];
 				}
 			}
 		}
@@ -660,24 +1442,24 @@ class ResponsiveControls {
 
 		// If no layout is defined, use the default layout for the block.
 		if (
-			empty( $responsive_controls_lg['layout'] )
+			empty( $responsive_controls_base['layout'] )
 			&& ! $is_explicit_default
 			&& isset( $this->blocks_default_layout[ $block['blockName'] ] )
 		) {
-			$responsive_controls_lg['layout'] = $this->blocks_default_layout[ $block['blockName'] ]['layout'];
+			$responsive_controls_base['layout'] = $this->blocks_default_layout[ $block['blockName'] ]['layout'];
 		}
 
-		// Preserve the SaaS opt-out marker into responsiveControls.lg so it survives
+		// Preserve the SaaS opt-out marker into the store's base layer so it survives
 		// `remove_conflicting_core_attributes()` (which strips `layout` from $attrs because
 		// it's listed in $core_attributes). Without this carry-over the downstream
 		// `generate_responsive_css()` short-circuit can't see the marker and the WP-core
 		// `wp_get_layout_style()` block-gap (~1em margin between siblings) leaks through.
-		if ( $is_explicit_default && empty( $responsive_controls_lg['layout'] ) ) {
-			$responsive_controls_lg['layout'] = $top_level_layout;
+		if ( $is_explicit_default && empty( $responsive_controls_base['layout'] ) ) {
+			$responsive_controls_base['layout'] = $top_level_layout;
 		}
 
 		// Correctly assign updated lg-specific controls back into the block.
-		$block['attrs']['responsiveControls']['lg'] = $responsive_controls_lg;
+		$block['attrs']['responsiveControls']['base'] = $responsive_controls_base;
 
 		// Remove any core attributes that would conflict with our responsive controls.
 		$this->remove_conflicting_core_attributes( $block['attrs'], $block['blockName'] ?? '' );
@@ -686,10 +1468,42 @@ class ResponsiveControls {
 	}
 
 	/**
-	 * Scalable backward compatibility for legacy block attributes.
+	 * Backward compatibility for values a block keeps in its ROOT attributes.
 	 *
-	 * Dynamically maps root-level legacy attributes to the responsiveControls format
-	 * based on the blocks registered in $this->backward_compatibility_attributes.
+	 * Content authored before the per-device store existed holds its values as
+	 * plain root attributes — `{"sliderHeight":"500px"}` — with no
+	 * `responsiveControls` and no `style` viewport states. Nothing rewrites post
+	 * content on upgrade (see `LegacyStore`: "content is normalised as it is
+	 * read rather than migrated in the database"), so the render path has to
+	 * read that shape, and `get_device_attributes()` resolves each device from
+	 * the store alone. A root-only value therefore never reached the CSS
+	 * pipeline and the generator fell back to the attribute default: a slider
+	 * authored at 500px rendered `height: auto`, arrows moved from 30px to 1px,
+	 * a Content block's text shadow produced no rule at all. Measured against
+	 * 1.0.6, which read root attributes directly.
+	 *
+	 * This used to be driven by a hand-written list of four blocks and six
+	 * attributes, extended one bug report at a time — which is why a slider's
+	 * `background` survived while `sliderHeight` on the same block did not. The
+	 * list is now the block's OWN declaration: every attribute it registers with
+	 * `ResponsiveAttributeCSS` is bridged, so all 95 unbridged keys across 22
+	 * blocks are covered by one rule instead of 22 map entries. The same rule
+	 * already existed for the preview path in
+	 * `convert_attrs_to_responsive_controls()`; this is the render path catching
+	 * up with it.
+	 *
+	 * The per-ATTRIBUTE guard below is what makes it safe, and it must stay per
+	 * attribute rather than "only when the store is empty" — the shape the
+	 * preview helper uses. On 7.1 the root attribute is the editor's routing
+	 * scratch, holding whatever device was edited last, so promoting it when
+	 * some viewport already authored the key would write a mobile keystroke into
+	 * the desktop layer. Asking per key means a viewport override always wins
+	 * and the root is consulted only where no device has an opinion.
+	 *
+	 * Ordering matters and is already correct: this runs on `render_block_data`
+	 * at priority 5, after `LegacyStore::normalize_device_keys()` at 3 and
+	 * `build_store_from_style()` at 4, so the guard sees the `lg`/`md`/`sm`
+	 * buckets and core's viewport states before it decides.
 	 *
 	 * @since 1.0.0
 	 * @param array $block Block data.
@@ -697,15 +1511,30 @@ class ResponsiveControls {
 	 */
 	public function backward_compatibility_block_attributes( $block ) {
 		$block_name = $block['blockName'] ?? '';
-		if ( ! isset( $this->backward_compatibility_attributes[ $block_name ] ) ) {
+
+		if ( '' === $block_name ) {
+			return $block;
+		}
+
+		/*
+		 * What the block itself says is responsive, plus the few keys its
+		 * renderer reads without declaring. `get_responsive_attributes()` runs
+		 * through the `spectra_blocks_responsive_attr_definitions` filter, so a
+		 * Pro block's attributes are bridged by the same pass.
+		 */
+		$attributes_to_maintain = array_unique(
+			array_merge(
+				ResponsiveAttributeCSS::get_responsive_attributes( $block_name ),
+				$this->backward_compatibility_attributes[ $block_name ] ?? array()
+			)
+		);
+
+		if ( empty( $attributes_to_maintain ) ) {
 			return $block;
 		}
 
 		$attrs    = $block['attrs'] ?? array();
 		$modified = false;
-
-		// Get attributes to maintain for backward compatibility for this specific block.
-		$attributes_to_maintain = $this->backward_compatibility_attributes[ $block_name ];
 
 		foreach ( $attributes_to_maintain as $attr ) {
 			// Only map if root attribute exists.
@@ -715,7 +1544,7 @@ class ResponsiveControls {
 
 			// Check if this attribute is already defined in ANY responsive device.
 			$exists_responsively = false;
-			foreach ( array( 'sm', 'md', 'lg' ) as $device ) {
+			foreach ( array( '@mobile', '@tablet', 'base' ) as $device ) {
 				if ( isset( $attrs['responsiveControls'][ $device ][ $attr ] ) ) {
 					$exists_responsively = true;
 					break;
@@ -727,11 +1556,11 @@ class ResponsiveControls {
 				if ( ! isset( $attrs['responsiveControls'] ) ) {
 					$attrs['responsiveControls'] = array();
 				}
-				if ( ! isset( $attrs['responsiveControls']['lg'] ) ) {
-					$attrs['responsiveControls']['lg'] = array();
+				if ( ! isset( $attrs['responsiveControls']['base'] ) ) {
+					$attrs['responsiveControls']['base'] = array();
 				}
-				$attrs['responsiveControls']['lg'][ $attr ] = $attrs[ $attr ];
-				$modified                                   = true;
+				$attrs['responsiveControls']['base'][ $attr ] = $attrs[ $attr ];
+				$modified                                     = true;
 			}
 		}
 
@@ -795,9 +1624,38 @@ class ResponsiveControls {
 			$block_content = $processor->get_updated_html();
 		}
 
-		// For core/image blocks, remove conflicting inline styles from img elements.
 		if ( 'core/image' === $block_name && ! empty( $responsive_controls ) ) {
-			$block_content = $this->remove_core_image_inline_styles( $block_content, $responsive_controls );
+			/*
+			 * The figure's inline MARGIN is core's base output for a property
+			 * this extension owns, so it has to go on every version.
+			 *
+			 * `remove_conflicting_core_attributes()` strips `spacing` out of
+			 * the viewport states precisely so core's states renderer will not
+			 * re-emit it, which leaves core rendering NO banded margin at all —
+			 * verified on 7.1, where the only banded margin rules on the page
+			 * came from the theme. This extension emits all three bands
+			 * instead, and an inline declaration outranks every one of them
+			 * whatever their specificity, so the desktop value applied at every
+			 * width. `core/image` is a static block, so its inline style is
+			 * baked into the saved markup and stripping attributes on
+			 * `render_block_data` cannot reach it — only the rendered HTML can.
+			 *
+			 * This ran below 7.1 already, through the dimensions gate below;
+			 * that gate is false on 7.1, which is how the margin strip came to
+			 * be switched off there along with it.
+			 */
+			$block_content = $this->remove_core_image_inline_spacing( $block_content );
+
+			/*
+			 * The img's inline style is core's DIMENSION output — width,
+			 * height, aspect ratio, object fit. Where core renders viewport
+			 * states it bands those itself with `!important` and this extension
+			 * paints none of them, so the base it wrote must stay. See
+			 * `paints_core_image_dimensions()`.
+			 */
+			if ( $this->paints_core_image_dimensions() ) {
+				$block_content = $this->remove_core_image_inline_dimensions( $block_content );
+			}
 		}
 
 		// Only generate and add inline CSS once per unique spectraId.
@@ -819,8 +1677,7 @@ class ResponsiveControls {
 				wp_enqueue_style( $this->style_handle );
 
 				// Add our generated CSS as inline styles.
-				$safe_css = wp_strip_all_tags( $combined_css );
-				wp_add_inline_style( $this->style_handle, $safe_css );
+				wp_add_inline_style( $this->style_handle, self::sanitize_inline_css( $combined_css ) );
 
 				// Mark as added to avoid duplicates.
 				$this->inline_css_added[ $spectra_id ] = true;
@@ -955,8 +1812,20 @@ class ResponsiveControls {
 
 		$block_name = $block['blockName'];
 
+		/**
+		 * Filters the blocks excluded from responsive controls.
+		 *
+		 * Mirror of the JS `spectra.excludedResponsiveControlsBlocks` filter —
+		 * a block added there gets editor UI but no front-end CSS unless it is
+		 * excluded/included here as well.
+		 *
+		 * @since 1.0.7
+		 * @param array<string> $excluded_blocks Excluded block names.
+		 */
+		$excluded_blocks = apply_filters( 'spectra_blocks_responsive_excluded_blocks', $this->excluded_blocks );
+
 		// Skip excluded blocks.
-		if ( in_array( $block_name, $this->excluded_blocks, true ) ) {
+		if ( is_array( $excluded_blocks ) && in_array( $block_name, $excluded_blocks, true ) ) {
 			return false;
 		}
 
@@ -967,8 +1836,54 @@ class ResponsiveControls {
 			}
 		}
 
+		/**
+		 * Filters the blocks explicitly supported by responsive controls.
+		 *
+		 * Mirror of the JS `spectra.supportedResponsiveControlsBlocks` filter.
+		 *
+		 * @since 1.0.7
+		 * @param array<string> $supported_blocks Supported block names.
+		 */
+		$supported_blocks = apply_filters( 'spectra_blocks_responsive_supported_blocks', $this->supported_blocks );
+
 		// Check if block is explicitly supported.
-		return in_array( $block_name, $this->supported_blocks, true );
+		return is_array( $supported_blocks ) && in_array( $block_name, $supported_blocks, true );
+	}
+
+	/**
+	 * Prepare raw block attributes for CSS generation outside the render pipeline.
+	 *
+	 * The render path normalises legacy device keys and folds core's viewport
+	 * states into the store through `render_block_data`. Consumers that parse
+	 * content directly — pattern previews, the comprehensive CSS generator —
+	 * skip those filters, so their attributes may still carry `lg` / `md` /
+	 * `sm` keys or hold their values only inside `style`. This applies the
+	 * same two steps to a raw attribute array.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $attrs      Block attributes.
+	 * @param string               $block_name The block name.
+	 * @return array<string, mixed> Attributes with a hydrated canonical store.
+	 */
+	public function normalize_render_attributes( $attrs, $block_name ) {
+		if ( ! is_array( $attrs ) ) {
+			return array();
+		}
+
+		// Guarded so deleting the Legacy folder needs no change here.
+		if ( class_exists( LegacyStore::class ) ) {
+			$block = LegacyStore::normalize_device_keys(
+				array(
+					'blockName' => $block_name,
+					'attrs'     => $attrs,
+				)
+			);
+			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : $attrs;
+		}
+
+		$this->hydrate_store_from_style( $attrs, $block_name );
+
+		return $attrs;
 	}
 
 	/**
@@ -990,6 +1905,36 @@ class ResponsiveControls {
 			foreach ( $this->style_responsive_keys as $property ) {
 				// Remove all properties including border (which is now handled dynamically).
 				unset( $attrs['style'][ $property ] );
+			}
+
+			/*
+			 * The viewport states hold the same groups, and on 7.1 core's own
+			 * states renderer re-emits them with `!important` — duplicating
+			 * every declaration this extension generates and defeating the
+			 * deliberate differences: the left/right margins stripped from
+			 * full and wide containers came back through core, and a flex
+			 * block's textAlign (mapped to justify-content here) received a
+			 * competing `text-align !important`. The store was hydrated from
+			 * these states earlier in the pipeline, so the values are already
+			 * captured; only the groups this extension renders are stripped —
+			 * everything else (color, background, dimensions, layout) stays
+			 * core's to render.
+			 */
+			foreach ( array( '@tablet', '@mobile' ) as $state ) {
+				if ( ! isset( $attrs['style'][ $state ] ) || ! is_array( $attrs['style'][ $state ] ) ) {
+					continue;
+				}
+
+				foreach ( $this->style_responsive_keys as $property ) {
+					if ( 'layout' === $property ) {
+						continue;
+					}
+					unset( $attrs['style'][ $state ][ $property ] );
+				}
+
+				if ( empty( $attrs['style'][ $state ] ) ) {
+					unset( $attrs['style'][ $state ] );
+				}
 			}
 
 			// Remove the entire style attribute if it's now empty.
@@ -1080,10 +2025,17 @@ class ResponsiveControls {
 		// between dev builds).
 		$cache_key = 'spectra_blocks_responsive_css_' . $spectra_id . '_' . SPECTRA_BLOCKS_VER . '_g' . self::CSS_GENERATOR_VERSION;
 
-		// Generate hash fingerprint including block name for proper cache invalidation.
+		/*
+		 * Generate hash fingerprint including block name for proper cache
+		 * invalidation. The bands are part of it because they are no longer
+		 * fixed: switching to a theme that declares its own `settings.viewport`
+		 * changes the media queries without touching a single attribute, and
+		 * cached output would otherwise keep the previous theme's breakpoints.
+		 */
 		$cache_data    = array(
 			'controls'   => $responsive_controls,
 			'block_name' => $block_name,
+			'bands'      => $this->get_media_queries(),
 		);
 		$controls_hash = md5( wp_json_encode( $cache_data ) );
 
@@ -1291,9 +2243,9 @@ class ResponsiveControls {
 		// this short-circuit is a no-op for them.
 		//
 		// `attrs.layout` is stripped earlier by remove_conflicting_core_attributes(), so the
-		// marker actually arrives via responsiveControls.lg.layout (preserved in
+		// marker actually arrives via the store's base layout (preserved in
 		// process_responsive_attributes()). We check both locations defensively.
-		$top_level_layout  = $attrs['layout'] ?? ( $responsive_controls['lg']['layout'] ?? array() );
+		$top_level_layout  = $attrs['layout'] ?? ( $responsive_controls['base']['layout'] ?? array() );
 		$is_default_layout = is_array( $top_level_layout ) && isset( $top_level_layout['type'] ) && 'default' === $top_level_layout['type'];
 
 		// A full/wide-aligned container's horizontal position is owned by the
@@ -1308,7 +2260,7 @@ class ResponsiveControls {
 		$strip_x_margin = 'spectra/container' === $block_name && in_array( $block_align, array( 'full', 'wide' ), true );
 
 		// Generate CSS for each device breakpoint (mobile, tablet, desktop).
-		foreach ( $this->media_queries as $device => $media ) {
+		foreach ( $this->get_media_queries() as $device => $media ) {
 			// Get compiled styles for this device with proper fallback.
 			$device_styles = $this->get_device_styles( $responsive_controls, $device, $block_name );
 
@@ -1341,23 +2293,35 @@ class ResponsiveControls {
 			// Extract text alignment for special handling.
 			$text_align = $device_styles['typography']['textAlign'] ?? '';
 
-			// For spectra/popup-builder blocks, separate popup_builder_spacing styles from other styles.
+			// Extract justify-content for flex blocks.
+			$justify_content = $device_styles['spectra_flex']['justifyContent'] ?? '';
+
+			/*
+			 * Use WordPress Style Engine to generate standard CSS.
+			 *
+			 * ONE chain, deliberately. The popup arm used to stand in a chain of its
+			 * own a few lines above this one, and the `core/image` chain below
+			 * reassigned `$css_array` unconditionally — so a popup's redirected
+			 * spacing was computed and then thrown away, and its padding went to the
+			 * block element after all. That element is the full-viewport overlay,
+			 * which `style.scss` zeroes with `padding: 0 !important`, so the visible
+			 * box fell back to the 32px default of
+			 * `var( --spectra-popup-padding, 32px )` on every device.
+			 */
 			if ( 'spectra/popup-builder' === $block_name && isset( $device_styles['spacing'] ) ) {
-				// Separate popup_builder_spacing styles and other styles.
-				$popup_builder_spacing_styles = array( 'spacing' => $device_styles['spacing'] );
-				$other_styles                 = array_diff_key( $device_styles, array( 'spacing' => '' ) );
+				/*
+				 * The popup's spacing belongs to the visible box, not to the overlay
+				 * the block element is. Everything else stays on the block.
+				 */
+				$popup_spacing_styles = array( 'spacing' => $device_styles['spacing'] );
+				$other_styles         = array_diff_key( $device_styles, array( 'spacing' => '' ) );
 
-				// Generate popup_builder_spacing CSS with img selector.
-				$popup_builder_spacing_css = '';
-				if ( ! empty( $popup_builder_spacing_styles ) ) {
-					$popup_builder_spacing_css_array = wp_style_engine_get_styles(
-						$popup_builder_spacing_styles,
-						array( 'selector' => $selector . ' .spectra-popup-builder__container' )
-					);
-					$popup_builder_spacing_css       = is_array( $popup_builder_spacing_css_array ) ? $popup_builder_spacing_css_array['css'] ?? '' : '';
-				}
+				$popup_spacing_css_array = wp_style_engine_get_styles(
+					$popup_spacing_styles,
+					array( 'selector' => $selector . ' .spectra-popup-builder__container' )
+				);
+				$popup_spacing_css       = is_array( $popup_spacing_css_array ) ? $popup_spacing_css_array['css'] ?? '' : '';
 
-				// Generate other styles CSS with figure selector.
 				$other_css = '';
 				if ( ! empty( $other_styles ) ) {
 					$other_css_array = wp_style_engine_get_styles(
@@ -1367,22 +2331,10 @@ class ResponsiveControls {
 					$other_css       = is_array( $other_css_array ) ? $other_css_array['css'] ?? '' : '';
 				}
 
-				// Combine both CSS strings.
-				$combined_css = trim( $popup_builder_spacing_css . ' ' . $other_css );
+				$combined_css = trim( $popup_spacing_css . ' ' . $other_css );
 				$css_array    = ! empty( $combined_css ) ? array( 'css' => $combined_css ) : false;
-			} else {
-				$css_array = wp_style_engine_get_styles(
-					$device_styles,
-					array( 'selector' => $selector )
-				);
-			}
-
-			// Extract justify-content for flex blocks.
-			$justify_content = $device_styles['spectra_flex']['justifyContent'] ?? '';
-
-			// Use WordPress Style Engine to generate standard CSS.
-			// For core/image blocks, separate border styles from other styles.
-			if ( 'core/image' === $block_name && isset( $device_styles['border'] ) ) {
+			} elseif ( 'core/image' === $block_name && isset( $device_styles['border'] ) ) {
+				// For core/image blocks, separate border styles from other styles.
 				// Separate border styles and other styles.
 				$border_styles = array( 'border' => $device_styles['border'] );
 				$other_styles  = array_diff_key( $device_styles, array( 'border' => '' ) );
@@ -1422,7 +2374,9 @@ class ResponsiveControls {
 
 			// Generate block-specific attribute CSS using ResponsiveAttributeCSS.
 			// Use low-specificity selector for background CSS, high-specificity for others.
-			$attr_css = ResponsiveAttributeCSS::generate_css( $block_name, $device_attrs, $selector, $background_specificity_selector, $attrs );
+			$attr_css = 'core/image' === $block_name && ! $this->paints_core_image_dimensions()
+				? ''
+				: ResponsiveAttributeCSS::generate_css( $block_name, $device_attrs, $selector, $background_specificity_selector, $attrs );
 
 			// Add overflow handling for containers with border-radius and backgrounds.
 			$overflow_css = '';
@@ -1447,6 +2401,27 @@ class ResponsiveControls {
 				}
 			}
 
+			/*
+			 * The style engine resolves `shadow` into a `box-shadow`
+			 * declaration but does not serialise it into its `css` string —
+			 * the same omission it makes for `column-count`. Since `shadow` is
+			 * one of the groups stripped from the block's attributes so only
+			 * one renderer emits it, reading `css` alone dropped drop shadows
+			 * entirely, at every breakpoint. Take the declaration the engine
+			 * produced (it resolves `var:preset|shadow|…` for us) and emit the
+			 * rule alongside the other raw declarations.
+			 */
+			$shadow_css = '';
+
+			if ( isset( $device_styles['shadow'] ) && $this->has_actual_value( $device_styles['shadow'] ) ) {
+				$shadow_styles = wp_style_engine_get_styles( array( 'shadow' => $device_styles['shadow'] ) );
+				$box_shadow    = $shadow_styles['declarations']['box-shadow'] ?? '';
+
+				if ( '' !== $box_shadow && ( ! isset( $css_array['css'] ) || false === strpos( (string) $css_array['css'], 'box-shadow' ) ) ) {
+					$shadow_css = $selector . '{box-shadow:' . $box_shadow . ';}';
+				}
+			}
+
 			// Build complete CSS for this device, including media queries.
 			$css = $this->build_css_for_device(
 				$css_array,
@@ -1454,7 +2429,7 @@ class ResponsiveControls {
 				$style_layout_css,
 				$text_align,
 				$justify_content,
-				$attr_css . ' ' . $overflow_css,
+				trim( $attr_css . ' ' . $overflow_css . ' ' . $shadow_css ),
 				$selector,
 				$media
 			);
@@ -1516,6 +2491,28 @@ class ResponsiveControls {
 	}
 
 	/**
+	 * Whether Spectra paints core/image's dimensions (width, height, aspect
+	 * ratio, object-fit) per device.
+	 *
+	 * Where WordPress renders viewport states itself (7.1+), the image's
+	 * per-device dimensions live in core's own `style['@tablet'].dimensions`
+	 * shape and core emits them, banded, with `!important`. Spectra's flat
+	 * `width` / `height` / `aspectRatio` / `scale` keys never receive a
+	 * per-device value there, so painting them wrote the DESKTOP dimensions into
+	 * the tablet and mobile bands — a duplicate of core's work that was also
+	 * wrong, and only invisible because core's `!important` won. On those
+	 * installs Spectra paints nothing for the image and leaves core's inline
+	 * base style alone; on installs without viewport states the flat keys are
+	 * the only per-device store and Spectra paints them exactly as before.
+	 *
+	 * @since 1.0.7
+	 * @return bool True when Spectra owns the image's dimension CSS.
+	 */
+	private function paints_core_image_dimensions() {
+		return ! ViewportSupport::renders_states();
+	}
+
+	/**
 	 * Get device-specific attributes with proper fallback.
 	 *
 	 * Extracts attributes for a specific device following the fallback hierarchy:
@@ -1530,7 +2527,7 @@ class ResponsiveControls {
 	 *
 	 * @param string $block_name          The name of the block.
 	 * @param array  $responsive_controls The responsive controls data.
-	 * @param string $device              The target device ('sm', 'md', 'lg').
+	 * @param string $device              The target device ('@mobile', '@tablet', 'base').
 	 * @return array Device-specific attributes with fallback values.
 	 */
 	private function get_device_attributes( $block_name, $responsive_controls, $device ) {
@@ -1538,7 +2535,7 @@ class ResponsiveControls {
 		$block_attrs = ResponsiveAttributeCSS::get_responsive_attributes( $block_name );
 
 		// Get fallback device order for the target device.
-		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'lg' );
+		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'base' );
 		$device_attrs     = array();
 
 		// Resolve normal attributes.
@@ -1756,13 +2753,13 @@ class ResponsiveControls {
 	 * @since 3.0.0
 	 *
 	 * @param array  $responsive_controls Complete responsive controls data from block attributes.
-	 * @param string $device              Target device key ('sm', 'md', 'lg').
+	 * @param string $device              Target device key ('@mobile', '@tablet', 'base').
 	 * @param string $block_name          The block name for flex text alignment handling.
 	 * @return array Processed style array ready for WordPress Style Engine.
 	 */
 	private function get_device_styles( $responsive_controls, $device, $block_name = '' ) {
 		// Get fallback device order for the target device.
-		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'lg' );
+		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'base' );
 
 		// Initialize the final compiled styles.
 		$compiled_styles = array();
@@ -1810,7 +2807,6 @@ class ResponsiveControls {
 			isset( $current_data['style']['border']['left'] )
 		);
 
-		// If current has any border config (excluding radius), use it exclusively (no inheritance).
 		if ( $current_has_single_border || $current_has_mixed_border ) {
 			// Apply current's border config.
 			if ( isset( $current_data['borderColor'] ) ) {
@@ -1819,6 +2815,48 @@ class ResponsiveControls {
 
 			if ( isset( $current_data['style']['border'] ) ) {
 				$this->apply_border_data( $current_data['style']['border'], $compiled_styles );
+			}
+
+			/*
+			 * Fill the properties this breakpoint did not declare from the fallback
+			 * chain, rather than treating border as one indivisible unit.
+			 *
+			 * Typography and spacing already resolve property by property — each has
+			 * its own walk down the chain — and core does the same, merging a viewport
+			 * over the base with `array_replace()`. Border was the one group that did
+			 * not: declaring any border property here took the whole config
+			 * "exclusively", so a breakpoint that set only `width` silently dropped the
+			 * base's colour. Authoring a 10px tablet width on a block whose colour came
+			 * from the base left tablet with no border colour at all.
+			 *
+			 * Only for the single-border shape. When this breakpoint uses per-side
+			 * borders the two shapes cannot be interleaved, so its config stands alone.
+			 */
+			if ( ! $current_has_mixed_border ) {
+				foreach ( array( 'color', 'width', 'style' ) as $border_property ) {
+					if ( isset( $compiled_styles['border'][ $border_property ] ) ) {
+						continue;
+					}
+
+					foreach ( array_slice( $fallback_devices, 1 ) as $parent_device ) {
+						$parent_data = $responsive_controls[ $parent_device ] ?? array();
+
+						// The preset attribute only ever carries a colour.
+						if ( 'color' === $border_property && isset( $parent_data['borderColor'] ) ) {
+							$compiled_styles['border']['color'] = "var(--wp--preset--color--{$parent_data['borderColor']})";
+							break;
+						}
+
+						$parent_border = isset( $parent_data['style']['border'] ) && is_array( $parent_data['style']['border'] )
+							? $parent_data['style']['border']
+							: array();
+
+						if ( isset( $parent_border[ $border_property ] ) && $this->has_actual_value( $parent_border[ $border_property ] ) ) {
+							$this->apply_border_data( array( $border_property => $parent_border[ $border_property ] ), $compiled_styles );
+							break;
+						}
+					}
+				}
 			}
 		} else {
 			// Current has no border config - inherit from parent breakpoint.
@@ -2166,7 +3204,7 @@ class ResponsiveControls {
 			}
 		}
 
-		// Process font family with fallback.
+		// Process font family with fallback: preset first, then a custom family.
 		foreach ( $fallback_devices as $device ) {
 			if (
 				isset( $responsive_controls[ $device ]['fontFamily'] ) &&
@@ -2174,6 +3212,15 @@ class ResponsiveControls {
 			) {
 				$compiled_styles['typography']['fontFamily'] =
 					"var(--wp--preset--font-family--{$responsive_controls[$device]['fontFamily']})";
+				break;
+			}
+
+			if (
+				isset( $responsive_controls[ $device ]['style']['typography']['fontFamily'] ) &&
+				$this->has_actual_value( $responsive_controls[ $device ]['style']['typography']['fontFamily'] )
+			) {
+				$compiled_styles['typography']['fontFamily'] =
+					$responsive_controls[ $device ]['style']['typography']['fontFamily'];
 				break;
 			}
 		}
@@ -2187,6 +3234,8 @@ class ResponsiveControls {
 			'textDecoration',
 			'textTransform',
 			'textAlign',
+			'textColumns',
+			'textIndent',
 			'writingMode',
 		);
 
@@ -2211,8 +3260,15 @@ class ResponsiveControls {
 						// Store in a custom section for manual CSS generation.
 						$compiled_styles['spectra_flex']['justifyContent'] = $justify_content_value;
 					} else {
-						$compiled_styles['typography'][ $property ] =
-							$responsive_controls[ $device ]['style']['typography'][ $property ];
+						$value = $responsive_controls[ $device ]['style']['typography'][ $property ];
+
+						/*
+						 * Core's UI stores textColumns as a number, and the style
+						 * engine's CSS compiler silently drops non-string values —
+						 * it resolves `column-count` into the declarations but not
+						 * into the css string. Hand it over as a string.
+						 */
+						$compiled_styles['typography'][ $property ] = is_scalar( $value ) ? (string) $value : $value;
 					}
 					break;
 				}
@@ -2360,14 +3416,14 @@ class ResponsiveControls {
 	 *
 	 * @since 3.0.0
 	 * @param array  $responsive_controls The responsive controls data.
-	 * @param string $device              The target device key ('sm', 'md', 'lg').
+	 * @param string $device              The target device key ('@mobile', '@tablet', 'base').
 	 * @param string $selector            The CSS selector for the block.
 	 * @param string $child_reset_selector The selector for child margin resets.
 	 * @return string The generated layout CSS string.
 	 */
 	private function generate_layout_css( $responsive_controls, $device, $selector, $child_reset_selector ) {
 		// Get fallback device order for the target device.
-		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'lg' );
+		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'base' );
 		$layout_css       = '';
 
 		$gap = null;
@@ -2379,18 +3435,51 @@ class ResponsiveControls {
 			}
 		}
 
-		// Find the first layout definition in the fallback chain.
-		foreach ( $fallback_devices as $fallback_device ) {
-			if (
-				! isset( $responsive_controls[ $fallback_device ]['layout'] ) ||
-				! $this->has_actual_value( $responsive_controls[ $fallback_device ]['layout'] )
-			) {
+		/*
+		 * Resolve the layout by MERGING the fallback chain, least specific first,
+		 * rather than taking the first definition whole.
+		 *
+		 * Core's Layout panel writes only the properties it owns. On a block whose
+		 * `supports.layout` sets `allowSwitching: false` there is no type control,
+		 * so the panel never writes `type` — core supplies it from
+		 * `supports.layout.default` and merges what the user authored over it.
+		 *
+		 * Taking one breakpoint's object whole reproduced none of that. A tablet
+		 * layout of `{ justifyContent: 'center' }` arrived with no `type`, so
+		 * `generate_custom_layout_css()` fell through to its `default` branch:
+		 * the justification was never emitted AND the container was given
+		 * `display: block`, dropping out of flex entirely below desktop.
+		 *
+		 * Merging also makes the documented cascade true for layout — a tablet
+		 * that sets only `flexWrap` keeps the desktop justification instead of
+		 * discarding it. The base bucket always carries a `type`, because
+		 * `process_responsive_attributes()` seeds it from `$blocks_default_layout`
+		 * when the store has none.
+		 */
+		$layout = array();
+		foreach ( array_reverse( $fallback_devices ) as $fallback_device ) {
+			$device_layout = $responsive_controls[ $fallback_device ]['layout'] ?? null;
+
+			if ( ! is_array( $device_layout ) || ! $this->has_actual_value( $device_layout ) ) {
 				continue;
 			}
 
-			// Get layout and gap values.
-			$layout = $responsive_controls[ $fallback_device ]['layout'];
+			$layout = array_merge( $layout, $device_layout );
+		}
 
+		/*
+		 * A blockGap with no layout at all still has to render. Two blocks
+		 * (`spectra/modal`, `spectra/post-no-results`) support blockGap without
+		 * layout support, and core's own layout rendering is skipped for
+		 * processed blocks — so a per-device gap on them reached no renderer.
+		 * Core treats a missing type as flow; synthesising that here lets
+		 * `wp_get_layout_style()` emit its flow-gap rules.
+		 */
+		if ( empty( $layout ) && $this->has_actual_value( $gap ) ) {
+			$layout = array( 'type' => 'default' );
+		}
+
+		if ( ! empty( $layout ) ) {
 			// Generate layout CSS using WordPress core function with a temporary ID.
 			// We use a temporary ID to avoid conflicts with WordPress core selectors.
 			$layout_css = wp_get_layout_style( $selector . '-temp-id', $layout, true, $gap );
@@ -2403,8 +3492,6 @@ class ResponsiveControls {
 
 			// Merge core and custom CSS without duplicates.
 			$layout_css = $this->merge_layout_css( $core_css, $custom_css );
-
-			break;
 		}
 
 		// Always return a string, even if empty.
@@ -2472,43 +3559,58 @@ class ResponsiveControls {
 				$flex_wrap          = $layout['flexWrap'] ?? $layout['wrap'] ?? 'wrap';
 				$justify            = $layout['justifyContent'] ?? 'flex-start';
 				$orientation        = $layout['orientation'] ?? 'horizontal';
-				$vertical_alignment = $layout['verticalAlignment'] ?? 'center';
-
-				// Convert WordPress justify values to CSS values.
-				switch ( $justify ) {
-					case 'left':
-						$justify = 'flex-start';
-						break;
-					case 'right':
-						$justify = 'flex-end';
-						break;
-					case 'center':
-						$justify = 'center';
-						break;
-					case 'stretch':
-						$justify = 'space-between';
-						break;
-				}
-
-				// Convert vertical alignment values.
-				switch ( $vertical_alignment ) {
-					case 'top':
-						$align_items = 'flex-start';
-						break;
-					case 'bottom':
-						$align_items = 'flex-end';
-						break;
-					case 'stretch':
-						$align_items = 'stretch';
-						break;
-					case 'center':
-					default:
-						$align_items = 'center';
-						break;
-				}
+				$vertical_alignment = $layout['verticalAlignment'] ?? null;
 
 				// Set direction based on orientation.
 				$direction = ( 'vertical' === $orientation ) ? 'column' : 'row';
+
+				/*
+				 * Which CSS property each control drives depends on the orientation,
+				 * because the flex axes swap. Mirror WordPress core exactly — see the
+				 * option maps in `wp_get_layout_style()`:
+				 *
+				 *   horizontal  justifyContent -> justify-content   verticalAlignment -> align-items
+				 *   vertical    justifyContent -> align-items       verticalAlignment -> justify-content
+				 *
+				 * The value sets differ too. `space-between` is only offered on the main
+				 * axis and `stretch` only on the cross axis, so which control accepts
+				 * which keyword flips with the orientation. Mapping them from a single
+				 * table produced `align-items: space-between` — not a valid value, so
+				 * browsers dropped the declaration and "Space Between" silently did
+				 * nothing on a vertical block.
+				 */
+				$justify_options = array(
+					'left'   => 'flex-start',
+					'right'  => 'flex-end',
+					'center' => 'center',
+				);
+
+				$align_options = array(
+					'top'    => 'flex-start',
+					'center' => 'center',
+					'bottom' => 'flex-end',
+				);
+
+				if ( 'row' === $direction ) {
+					$justify_options['space-between'] = 'space-between';
+					$align_options['stretch']         = 'stretch';
+				} else {
+					$justify_options['stretch']     = 'stretch';
+					$align_options['space-between'] = 'space-between';
+				}
+
+				$justify_value = $justify_options[ $justify ] ?? 'flex-start';
+
+				/*
+				 * Only an explicitly authored verticalAlignment produces a declaration,
+				 * as in core. The horizontal branch keeps its long-standing
+				 * `align-items: center` default so existing rows are unaffected; the
+				 * vertical branch emits nothing, because defaulting there would start
+				 * distributing children along the main axis on every existing block.
+				 */
+				$align_value = null !== $vertical_alignment
+					? ( $align_options[ $vertical_alignment ] ?? null )
+					: null;
 
 				// Start building the flex container CSS.
 				$css .= "{$selector} { display: flex;";
@@ -2521,11 +3623,16 @@ class ResponsiveControls {
 
 				if ( 'column' === $direction ) {
 					$css .= ' flex-direction: column;';
-					$css .= " align-items: {$justify};"; // In column, justify becomes align-items.
+					// Axes are swapped: justification is the cross axis, alignment the main one.
+					$css .= " align-items: {$justify_value};";
+
+					if ( null !== $align_value ) {
+						$css .= " justify-content: {$align_value};";
+					}
 				} else {
 					$css .= ' flex-direction: row;';
-					$css .= " justify-content: {$justify};";
-					$css .= " align-items: {$align_items};";
+					$css .= " justify-content: {$justify_value};";
+					$css .= ' align-items: ' . ( $align_value ?? 'center' ) . ';';
 				}
 
 				$css .= ' }';
@@ -2601,7 +3708,7 @@ class ResponsiveControls {
 	 *
 	 * @since 3.0.0
 	 * @param array  $responsive_controls Responsive controls data containing style.layout properties.
-	 * @param string $device              Device type to generate CSS for ('lg', 'md', 'sm').
+	 * @param string $device              Device type to generate CSS for ('base', '@tablet', '@mobile').
 	 * @param string $selector            CSS selector to target with the generated CSS.
 	 * @return string Generated CSS for grid positioning.
 	 */
@@ -2612,7 +3719,7 @@ class ResponsiveControls {
 		}
 
 		// Get fallback device order for the target device.
-		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'lg' );
+		$fallback_devices = $this->device_fallback_order[ $device ] ?? array( 'base' );
 		$layout_css       = '';
 
 		// Find the first layout definition in the fallback chain.
@@ -2628,15 +3735,35 @@ class ResponsiveControls {
 			// Initialize array to hold CSS declarations.
 			$css_declarations = array();
 
-			// Process self-stretch property.
+			// Process self-stretch property — core's child-layout "Width": Fit / Fill / Fixed.
 			$self_stretch = isset( $layout['selfStretch'] ) ? $layout['selfStretch'] : null;
 
-			// Set flex-basis and box-sizing properties based on self-stretch value.
-			if ( 'fixed' === $self_stretch && isset( $layout['flexSize'] ) ) {
-				$css_declarations['flex-basis'] = $layout['flexSize'];
-				$css_declarations['box-sizing'] = 'border-box';
+			/*
+			 * Each choice sets BOTH flex properties. A band used to emit only the
+			 * property its own choice needed — `flex-basis` for Fixed, `flex-grow`
+			 * for Fill, nothing at all for Fit — so a breakpoint that changed the
+			 * choice inherited the wider band's other property: Fixed 120px on
+			 * Desktop and Fit on Mobile still rendered 120px on phones, because
+			 * the mobile band said nothing. Fit now resets both, Fill resets the
+			 * basis, Fixed resets the grow.
+			 */
+			if ( in_array( $self_stretch, array( 'fixed', 'fixedNoShrink' ), true ) && isset( $layout['flexSize'] ) ) {
+				// WordPress 7.1's Width control writes `fixedNoShrink` for "Fixed"
+				// (core's layout support: basis + no shrink); `fixed` is the older
+				// value. Only `fixed` was recognised, so a width fixed in the 7.1
+				// editor rendered as Fit on the front end.
+				$css_declarations['flex-basis']  = $layout['flexSize'];
+				$css_declarations['flex-grow']   = '0';
+				$css_declarations['flex-shrink'] = 'fixedNoShrink' === $self_stretch ? '0' : '1';
+				$css_declarations['box-sizing']  = 'border-box';
 			} elseif ( 'fill' === $self_stretch ) {
-				$css_declarations['flex-grow'] = '1';
+				$css_declarations['flex-grow']   = '1';
+				$css_declarations['flex-shrink'] = '1';
+				$css_declarations['flex-basis']  = 'auto';
+			} elseif ( 'fit' === $self_stretch ) {
+				$css_declarations['flex-grow']   = '0';
+				$css_declarations['flex-shrink'] = '1';
+				$css_declarations['flex-basis']  = 'auto';
 			}
 
 			// Process grid column positioning.
@@ -2677,6 +3804,12 @@ class ResponsiveControls {
 				$layout_css = wp_style_engine_get_stylesheet_from_css_rules(
 					array(
 						array(
+							// Core reads this with `?? null`, so an empty group is the
+							// same as none at runtime; it is stated because the style
+							// engine's signature declares the key, and D1 narrowed the
+							// declarations to literal types precise enough for static
+							// analysis to check the rule shape against it.
+							'rules_group'  => '',
 							'selector'     => $selector,
 							'declarations' => $css_declarations,
 						),
@@ -2757,21 +3890,21 @@ class ResponsiveControls {
 	}
 
 	/**
-	 * Remove conflicting inline styles from core/image block elements.
+	 * Remove core's inline spacing from a core/image figure.
 	 *
-	 * Removes CSS properties that conflict with our responsive controls from both
-	 * the figure element and img elements.
+	 * The margin this extension emits, banded, is defeated by the base value
+	 * core writes inline — see the note at the call site. Only the spacing
+	 * declarations are touched; anything else core put in that attribute stays.
 	 *
 	 * @since 3.0.0
 	 * @param string $block_content The block's HTML content.
-	 * @param array  $responsive_controls The responsive controls data (unused but kept for signature).
-	 * @return string Modified HTML content with inline styles removed.
+	 * @return string Modified HTML content with the inline margin removed.
 	 */
-	private function remove_core_image_inline_styles( $block_content, $responsive_controls ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	private function remove_core_image_inline_spacing( $block_content ) {
 		// Use WordPress HTML Tag Processor to safely modify elements.
 		$processor = new WP_HTML_Tag_Processor( $block_content );
 
-		// First, remove spacing properties from figure elements.
+		// Remove spacing properties from figure elements.
 		while ( $processor->next_tag( 'figure' ) ) {
 			$style_attr = $processor->get_attribute( 'style' );
 			if ( empty( $style_attr ) ) {
@@ -2811,10 +3944,23 @@ class ResponsiveControls {
 			}
 		}
 
-		// Reset processor to start from the beginning for img elements.
-		$processor = new WP_HTML_Tag_Processor( $processor->get_updated_html() );
+		return $processor->get_updated_html();
+	}
 
-		// Then, remove entire style attribute from img elements.
+	/**
+	 * Remove core's inline dimensions from a core/image img element.
+	 *
+	 * Called only where this extension paints the image's dimensions itself,
+	 * which is where core renders no viewport states of its own. See
+	 * `paints_core_image_dimensions()`.
+	 *
+	 * @since 3.0.0
+	 * @param string $block_content The block's HTML content.
+	 * @return string Modified HTML content with the img's inline style removed.
+	 */
+	private function remove_core_image_inline_dimensions( $block_content ) {
+		$processor = new WP_HTML_Tag_Processor( $block_content );
+
 		while ( $processor->next_tag( 'img' ) ) {
 			// Simply remove the entire style attribute from img elements.
 			$processor->remove_attribute( 'style' );
@@ -2881,7 +4027,6 @@ class ResponsiveControls {
 		return implode( ';', $declarations );
 	}
 
-
 	/**
 	 * Generate orientation reverse CSS for container blocks.
 	 *
@@ -2902,7 +4047,7 @@ class ResponsiveControls {
 		// Check if any breakpoint has orientation reverse enabled.
 		$has_orientation_reverse = $orientation_reverse;
 		if ( ! $has_orientation_reverse && ! empty( $responsive_controls ) ) {
-			foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+			foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 				if ( isset( $responsive_controls[ $device ]['orientationReverse'] ) && $responsive_controls[ $device ]['orientationReverse'] ) {
 					$has_orientation_reverse = true;
 					break;
@@ -2921,70 +4066,98 @@ class ResponsiveControls {
 		$orientation_devices = array();
 		$default_orientation = $layout['orientation'] ?? 'horizontal';
 
-		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+		foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 			if ( isset( $responsive_controls[ $device ]['layout']['orientation'] ) ) {
 				$orientation_devices[ $device ] = $responsive_controls[ $device ]['layout']['orientation'];
 			}
 		}
 
 		// Desktop orientation.
-		$desktop_orientation = $orientation_devices['lg'] ?? $default_orientation;
+		$desktop_orientation = $orientation_devices['base'] ?? $default_orientation;
 
 		// Calculate inherited orientation reverse values with proper inheritance chain.
 		// Desktop: Use base attribute or explicit desktop setting.
-		$desktop_reverse = $orientation_reverse || ( isset( $responsive_controls['lg']['orientationReverse'] ) && ! empty( $responsive_controls['lg']['orientationReverse'] ) );
+		$desktop_reverse = $orientation_reverse || ( isset( $responsive_controls['base']['orientationReverse'] ) && ! empty( $responsive_controls['base']['orientationReverse'] ) );
 
 		// Tablet: Check if explicitly set (including false), otherwise inherit from desktop.
-		if ( array_key_exists( 'orientationReverse', $responsive_controls['md'] ?? array() ) ) {
+		if ( array_key_exists( 'orientationReverse', $responsive_controls['@tablet'] ?? array() ) ) {
 			// Explicit tablet setting exists (could be true or false) - use it.
-			$tablet_reverse = ! empty( $responsive_controls['md']['orientationReverse'] );
+			$tablet_reverse = ! empty( $responsive_controls['@tablet']['orientationReverse'] );
 		} else {
 			// No explicit tablet setting - inherit from desktop.
 			$tablet_reverse = $desktop_reverse;
 		}
 
-		// Mobile: Check if explicitly set (including false), otherwise inherit from tablet.
-		if ( array_key_exists( 'orientationReverse', $responsive_controls['sm'] ?? array() ) ) {
+		// Mobile: check if explicitly set (including false), otherwise inherit
+		// from the BASE layer — core's model, no tablet inheritance. Legacy
+		// content that relied on the old cascade is covered by the baked
+		// cascade in LegacyStore, which copies the tablet bucket under mobile.
+		if ( array_key_exists( 'orientationReverse', $responsive_controls['@mobile'] ?? array() ) ) {
 			// Explicit mobile setting exists (could be true or false) - use it.
-			$mobile_reverse = ! empty( $responsive_controls['sm']['orientationReverse'] );
+			$mobile_reverse = ! empty( $responsive_controls['@mobile']['orientationReverse'] );
 		} else {
-			// No explicit mobile setting - inherit from tablet (which may have inherited from desktop).
-			$mobile_reverse = $tablet_reverse;
+			// No explicit mobile setting - inherit from the base layer.
+			$mobile_reverse = $desktop_reverse;
 		}
 
-		// Desktop rules (min-width: 1024px).
-		if ( $desktop_reverse ) {
-			$desktop_flex_direction = ( 'vertical' === $desktop_orientation ) ? 'column-reverse' : 'row-reverse';
-			$css_rules[]            = '@media (min-width: 1024px) {';
-			$css_rules[]            = "  {$selector}.is-{$desktop_orientation}-desktop {";
-			$css_rules[]            = "    flex-direction: {$desktop_flex_direction} !important;";
-			$css_rules[]            = '  }';
-			$css_rules[]            = '}';
-		}
+		/*
+		 * These rules are keyed on a device CLASS (`.is-vertical-tablet`), not on
+		 * the base-plus-overrides layering the rest of the generator uses, so each
+		 * device needs its own band — including desktop, which is why this is the
+		 * one place here that asks for `@desktop`.
+		 *
+		 * The bands come from the same resolver as every other rule this class
+		 * emits. They used to be written out by hand as 1024+ / 768-1023.98 /
+		 * <=767.98, and once Spectra stopped imposing its own breakpoints that
+		 * left a container reversing at widths where none of its other responsive
+		 * styling applied: at 700px the block's spacing and typography resolved as
+		 * tablet while its flex-direction resolved as mobile. The hand-written
+		 * desktop floor was a second bug on its own — nothing at all matched
+		 * between the tablet ceiling and 1024px.
+		 */
+		$bands = $this->get_device_media_queries();
 
-		// Tablet rules (768px to 1023px).
-		if ( $tablet_reverse ) {
-			$tablet_orientation    = $orientation_devices['md'] ?? $desktop_orientation;
-			$tablet_flex_direction = ( 'vertical' === $tablet_orientation ) ? 'column-reverse' : 'row-reverse';
-			$css_rules[]           = '@media (min-width: 768px) and (max-width: 1023px) {';
-			$css_rules[]           = "  {$selector}.is-{$tablet_orientation}-tablet,";
-			$css_rules[]           = "  {$selector}.is-{$tablet_orientation}-tablet-from-desktop {";
-			$css_rules[]           = "    flex-direction: {$tablet_flex_direction} !important;";
-			$css_rules[]           = '  }';
-			$css_rules[]           = '}';
-		}
+		$devices = array(
+			'@desktop' => array(
+				'reverse'     => $desktop_reverse,
+				'orientation' => $desktop_orientation,
+				'selectors'   => array( '.is-%s-desktop' ),
+			),
+			'@tablet'  => array(
+				'reverse'     => $tablet_reverse,
+				'orientation' => $orientation_devices['@tablet'] ?? $desktop_orientation,
+				'selectors'   => array( '.is-%s-tablet', '.is-%s-tablet-from-desktop' ),
+			),
+			'@mobile'  => array(
+				'reverse'     => $mobile_reverse,
+				'orientation' => $orientation_devices['@mobile'] ?? $desktop_orientation,
+				'selectors'   => array( '.is-%s-mobile', '.is-%s-mobile-from-tablet', '.is-%s-mobile-from-desktop' ),
+			),
+		);
 
-		// Mobile rules (max-width: 767px).
-		if ( $mobile_reverse ) {
-			$mobile_orientation    = $orientation_devices['sm'] ?? ( $orientation_devices['md'] ?? $desktop_orientation );
-			$mobile_flex_direction = ( 'vertical' === $mobile_orientation ) ? 'column-reverse' : 'row-reverse';
-			$css_rules[]           = '@media (max-width: 767px) {';
-			$css_rules[]           = "  {$selector}.is-{$mobile_orientation}-mobile,";
-			$css_rules[]           = "  {$selector}.is-{$mobile_orientation}-mobile-from-tablet,";
-			$css_rules[]           = "  {$selector}.is-{$mobile_orientation}-mobile-from-desktop {";
-			$css_rules[]           = "    flex-direction: {$mobile_flex_direction} !important;";
-			$css_rules[]           = '  }';
-			$css_rules[]           = '}';
+		foreach ( $devices as $state => $device ) {
+			/*
+			 * A band can legitimately be missing: a theme declaring only one
+			 * breakpoint leaves core with only that state, and inventing a band
+			 * here would put this rule outside every range the rest of the block
+			 * renders in.
+			 */
+			if ( empty( $device['reverse'] ) || empty( $bands[ $state ] ) ) {
+				continue;
+			}
+
+			$flex_direction = ( 'vertical' === $device['orientation'] ) ? 'column-reverse' : 'row-reverse';
+			$targets        = array();
+
+			foreach ( $device['selectors'] as $pattern ) {
+				$targets[] = '  ' . $selector . sprintf( $pattern, $device['orientation'] );
+			}
+
+			$css_rules[] = '@media ' . $bands[ $state ] . ' {';
+			$css_rules[] = implode( ",\n", $targets ) . ' {';
+			$css_rules[] = "    flex-direction: {$flex_direction} !important;";
+			$css_rules[] = '  }';
+			$css_rules[] = '}';
 		}
 
 		return implode( "\n", $css_rules );

@@ -40,10 +40,10 @@ export default function GridDimensionSettings( { attributes, setAttributes, clie
 	return (
 		<InspectorControls group="dimensions">
 			<ToolsPanelItem
-				hasValue={ () => columnGap !== '20px' }
+				hasValue={ () => !! columnGap }
 				label={ __( 'Column Gap', 'spectra-blocks' ) }
-				onDeselect={ () => setAttributes( { columnGap: '20px' } ) }
-				resetAllFilter={ () => ( { columnGap: '20px' } ) }
+				onDeselect={ () => setAttributes( { columnGap: undefined } ) }
+				resetAllFilter={ () => ( { columnGap: undefined } ) }
 				isShownByDefault
 				panelId={ clientId }
 			>
@@ -57,10 +57,10 @@ export default function GridDimensionSettings( { attributes, setAttributes, clie
 			</ToolsPanelItem>
 
 			<ToolsPanelItem
-				hasValue={ () => rowGap !== '20px' }
+				hasValue={ () => !! rowGap }
 				label={ __( 'Row Gap', 'spectra-blocks' ) }
-				onDeselect={ () => setAttributes( { rowGap: '20px' } ) }
-				resetAllFilter={ () => ( { rowGap: '20px' } ) }
+				onDeselect={ () => setAttributes( { rowGap: undefined } ) }
+				resetAllFilter={ () => ( { rowGap: undefined } ) }
 				isShownByDefault
 				panelId={ clientId }
 			>

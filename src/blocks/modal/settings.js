@@ -8,11 +8,11 @@ import {
 	InspectorControls,
 } from '@wordpress/block-editor';
 import {
-	__experimentalToolsPanelItem as ToolsPanelItem,
     __experimentalToolsPanel as ToolsPanel,
     SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.

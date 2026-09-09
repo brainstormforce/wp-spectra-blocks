@@ -14,12 +14,9 @@ use SpectraBlocks\Helpers\Core;
 $current_tab = $attributes['currentTab'] ?? 0;
 $anchor      = $attributes['anchor'] ?? '';
 $overflow    = $attributes['overflow'] ?? 'visible';
-$height      = $attributes['height'] ?? 'auto';
-$width       = $attributes['width'] ?? '';
-$min_width   = $attributes['minWidth'] ?? '';
-$min_height  = $attributes['minHeight'] ?? '';
-$max_width   = $attributes['maxWidth'] ?? '';
-$max_height  = $attributes['maxHeight'] ?? '';
+// width/height/min/max are per-device (responsive-controls) — the responsive
+// CSS extension emits their base + per-breakpoint rules, so they must NOT be
+// applied inline here (an inline base would beat the extension's overrides).
 
 $background_gradient       = $attributes['backgroundGradient'] ?? $block->context['spectra/tabs/backgroundGradient'] ?? '';
 $background_gradient_hover = $attributes['backgroundGradientHover'] ?? $block->context['spectra/tabs/backgroundGradientHover'] ?? '';
@@ -51,42 +48,6 @@ $tab_contexts = array(
 
 // Style and class configurations.
 $config = array(
-	array(
-		'key'        => 'width',
-		'css_var'    => 'width',
-		'class_name' => null,
-		'value'      => $width,
-	),
-	array(
-		'key'        => 'height',
-		'css_var'    => 'height',
-		'class_name' => null,
-		'value'      => $height,
-	),
-	array(
-		'key'        => 'minWidth',
-		'css_var'    => 'min-width',
-		'class_name' => null,
-		'value'      => $min_width,
-	),
-	array(
-		'key'        => 'minHeight',
-		'css_var'    => 'min-height',
-		'class_name' => null,
-		'value'      => $min_height,
-	),
-	array(
-		'key'        => 'maxWidth',
-		'css_var'    => 'max-width',
-		'class_name' => null,
-		'value'      => $max_width,
-	),
-	array(
-		'key'        => 'maxHeight',
-		'css_var'    => 'max-height',
-		'class_name' => null,
-		'value'      => $max_height,
-	),
 	array(
 		'key'        => 'overflow',
 		'css_var'    => 'overflow',

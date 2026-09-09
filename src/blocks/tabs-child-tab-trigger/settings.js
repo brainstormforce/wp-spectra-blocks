@@ -10,12 +10,12 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalGrid as Grid,
 	SelectControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { dispatch, select } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';

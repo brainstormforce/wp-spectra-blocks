@@ -17,6 +17,7 @@ import { useCountdownStyles } from './use-countdown-styles';
 import TEMPLATE from './template';
 import { areTimesEqual, calculateRemainingTime, formatDateForPicker } from '@spectra-helpers/countdown';
 import timerManager from './timer-manager';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -25,6 +26,30 @@ import timerManager from './timer-manager';
  * @param {Object} props The element props.
  * @return {Element} The rendered block.
  */
+/**
+ * The size styles the countdown paints on its own wrapper.
+ *
+ * Named so the per-device preview emitter can run the SAME derivation per
+ * viewport band — see `helpers/responsive-preview.js`.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Object} A React style object.
+ */
+export const getCountdownSizeStyles = ( attrs = {} ) => {
+	const { width, height, minWidth, minHeight, maxWidth, maxHeight, overflow } = attrs;
+
+	return {
+		...( width ? { width } : {} ),
+		...( height ? { height } : {} ),
+		...( minWidth ? { minWidth } : {} ),
+		...( minHeight ? { minHeight } : {} ),
+		...( maxWidth ? { maxWidth } : {} ),
+		...( maxHeight ? { maxHeight } : {} ),
+		...( overflow ? { overflow } : {} ),
+	};
+};
+
 const Render = ( props ) => {
 	const { attributes, setAttributes, clientId } = props;
 
@@ -53,13 +78,6 @@ const Render = ( props ) => {
 		editorInnerBlocksPreview = false, // Determines whether the preview is live or expired.
 		layout = {},
 		style: attributeStyle = {},
-		width,
-		height,
-		minWidth,
-		minHeight,
-		maxWidth,
-		maxHeight,
-		overflow,
 		timerEndAction
 	} = attributes;
 
@@ -285,19 +303,21 @@ const Render = ( props ) => {
 	// Use the block props with dimension styles applied directly like container block.
 	// Note: aria-live is added to individual countdown number elements (via context in countdown-child-number/controller.php)
 	// following v2's pattern where each time unit announces independently when it changes.
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/countdown',
+		producers: [ getCountdownSizeStyles ],
+	} );
+
 	const blockProps = useBlockProps( {
 		// eslint-disable-next-line quote-props
 		className: spectraClassNames( classNames ),
 		// eslint-disable-next-line quote-props
 		style: {
-			width,
-			height,
-			minWidth,
-			minHeight,
-			maxWidth,
-			maxHeight,
+			...getCountdownSizeStyles( attributes ),
 			position: 'relative',
-			overflow,
 			...style,
 		},
 		'aria-label': ariaLiveType !== 'off' ? __( 'Countdown timer', 'spectra-blocks' ) : undefined,
@@ -353,6 +373,7 @@ const Render = ( props ) => {
 	// Main render with context provider for inner blocks.
 	return (
 		<BlockContextProvider value={ blockContext }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<div { ...innerBlocksProps } />
 		</BlockContextProvider>
 	);

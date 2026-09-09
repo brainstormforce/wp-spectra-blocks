@@ -188,8 +188,10 @@
 		}
 	}
 
-	// Responsive adjustments
-	@media (max-width: 768px) {
+	// Responsive adjustments. Static CSS cannot read a theme's viewport
+	// settings, so this uses WordPress core's default mobile bound (480px),
+	// which the generated per-device CSS also uses unless the theme overrides.
+	@media (max-width: 480px) {
 
 		&.spectra-counter--circular {
 

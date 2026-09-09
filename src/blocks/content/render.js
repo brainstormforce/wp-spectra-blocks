@@ -2,7 +2,7 @@
  * External dependencies.
  */
 import { RichText, useBlockEditingMode, useBlockProps, BlockControls } from '@wordpress/block-editor';
-import { select } from '@wordpress/data';
+import { select, useDispatch } from '@wordpress/data';
 import { memo, useEffect, useMemo, useCallback } from '@wordpress/element';
 import { __, isRTL } from '@wordpress/i18n';
 import { 
@@ -15,8 +15,9 @@ import { helperIcons } from '@spectra-helpers/block-icons';
  * Internal dependencies.
  */
 import { spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 // Static tag configuration - single source of truth.
 // Mirrors $valid_tag_names in controller.php. Icons fall back to the
@@ -82,6 +83,33 @@ export { TAG_CONFIG, DEFAULT_TAG_NAME };
  * @param {Object} props The element props.
  * @return {Element} The rendered block.
  */
+/**
+ * The text-shadow value, assembled from its five attributes.
+ *
+ * All five are responsive keys, and the block combines them into ONE declaration
+ * before handing it to `useSpectraStyles` as a synthetic `textShadow` attribute.
+ * A band therefore has to re-assemble the whole shadow rather than override one
+ * part of it, which is why this is a function of the attributes and not a lookup.
+ *
+ * Defaults mirror the destructure, so an unset offset or blur resolves the same
+ * per band as it does at base.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {string} A CSS text-shadow value, empty when disabled.
+ */
+export const buildTextShadow = ( attrs = {} ) => {
+	if ( ! attrs.enableTextShadow || ! attrs.textShadowColor ) {
+		return '';
+	}
+
+	const x = attrs.textShadowOffsetX ?? 1;
+	const y = attrs.textShadowOffsetY ?? 1;
+	const blur = attrs.textShadowBlur ?? 2;
+
+	return `${ x }px ${ y }px ${ blur }px ${ attrs.textShadowColor }`;
+};
+
 const Render = ( props ) => {
 	const { clientId, mergeBlocks, onReplace, setAttributes, attributes } = props;
 
@@ -89,11 +117,7 @@ const Render = ( props ) => {
 		tagName,
 		text,
 		dropCap,
-		enableTextShadow = false,
 		textShadowColor,
-		textShadowBlur = 2,
-		textShadowOffsetX = 1,
-		textShadowOffsetY = 1,
 		style: blockStyle,
 		textColor,
 	} = attributes;
@@ -131,13 +155,20 @@ const Render = ( props ) => {
 	];
 
 	// Generate text shadow CSS
-	const textShadowCSS = useMemo( () => {
-		if ( ! enableTextShadow || ! textShadowColor ) {
-			return '';
-		}
+	const textShadowCSS = useMemo(
+		() => buildTextShadow( attributes ),
+		[ attributes ]
+	);
 
-		return `${textShadowOffsetX}px ${textShadowOffsetY}px ${textShadowBlur}px ${textShadowColor}`;
-	}, [ enableTextShadow, textShadowColor, textShadowOffsetX, textShadowOffsetY, textShadowBlur ] );
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/content',
+		producers: [
+			( attrs ) => buildSpectraStyles( { ...attrs, textShadow: buildTextShadow( attrs ) }, config ).style,
+		],
+	} );
 
 	// Update attributes with text shadow CSS for CSS variable generation.
 	const attributesWithTextShadow = useMemo( () => ( {
@@ -165,6 +196,8 @@ const Render = ( props ) => {
 		className: spectraClassNames( classNames ),
 	} );
 
+	const { __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
+
 	// Determine if we need an extra wrapper for root-level span tags.
 	const needsSpanWrapper = tagName === 'span' && isRootBlock;
 
@@ -174,6 +207,10 @@ const Render = ( props ) => {
 			return;
 		}
 
+		// A derived value, not an edit — writing it persistently made every
+		// post containing a content block open dirty. It still persists
+		// whenever the user saves for their own reasons.
+		__unstableMarkNextChangeAsNotPersistent();
 		setAttributes( { isRootBlock } );
 	}, [ isRootBlock ] );
 
@@ -241,6 +278,7 @@ const Render = ( props ) => {
 	return (
 		<>
 			{ toolbarControls }
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<RichText { ...blockProps } { ...richTextConfig } />
 		</>
 	);

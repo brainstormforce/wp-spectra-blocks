@@ -18,14 +18,16 @@ $flip_for_rtl = ( isset( $attributes['flipForRTL'] ) && true === $attributes['fl
 	: ( $block->context['spectra/list/flipForRTL'] ?? false );
 $item_index   = $attributes['index'] ?? $block->context['spectra/list-child-item/index'] ?? 1;
 
-// Define text and background colors with three-level inheritance: Icon > List-child-item > List.
-$text_color = $attributes['textColor'] ??
-	$block->context['spectra/list-child-item/textColor'] ??
-	$block->context['spectra/list/textColor'] ?? '';
-
-$text_color_hover = $attributes['textColorHover'] ??
-	$block->context['spectra/list-child-item/textColorHover'] ??
-	$block->context['spectra/list/textColorHover'] ?? '';
+/*
+ * Colour is not resolved here.
+ *
+ * A three-level inheritance — icon, then list-child-item, then list — used to be
+ * computed at this point and then never read: `$config` below takes the icon's
+ * own `textColor` attribute, and both parents are DOM ancestors, so the cascade
+ * delivers their colour and their per-device colour with it. Copying a parent's
+ * value onto the icon would paint an explicit colour and stop that inheritance,
+ * which is exactly what the editor did until it was aligned with this file.
+ */
 
 $background_color                = $attributes['backgroundColor'] ?? '';
 $background_color_hover          = $attributes['backgroundColorHover'] ?? '';

@@ -9,6 +9,13 @@ const AdminHeader = ( props ) => {
 
 	const { children } = props;
 
+	// When white label is enabled with a custom icon, swap the Spectra logo.
+	const whiteLabelSettings = spectra_blocks_react.white_label_settings || {};
+	const whiteLabelIcon =
+		whiteLabelSettings.hide_branding && whiteLabelSettings.plugin_icon
+			? whiteLabelSettings.plugin_icon
+			: '';
+
 	const [ clicked, setClicked ] = useState( false );
 	const [ isDropOpen1, setIsDropOpen1 ] = useState( false );
 	const [ showHeader, setShowHeader ] = useState( true );
@@ -78,7 +85,13 @@ const AdminHeader = ( props ) => {
 							} }
 							className="flex-shrink-0 flex items-center justify-start"
 						>
-							{
+							{ whiteLabelIcon ? (
+								<img
+									className="h-8 w-auto"
+									src={ whiteLabelIcon }
+									alt=""
+								/>
+							) : (
 								<svg
 									className="h-8"
 									xmlns="http://www.w3.org/2000/svg"
@@ -110,7 +123,7 @@ const AdminHeader = ( props ) => {
 										</clipPath>
 									</defs>
 								</svg>
-							}
+							) }
 						</Link>
 					</Topbar.Item>
 				</Topbar.Left>

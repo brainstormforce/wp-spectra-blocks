@@ -7,8 +7,8 @@
  *
  * Features:
  * - Hide/show blocks on desktop (1024px+)
- * - Hide/show blocks on tablet (768px - 1023px)
- * - Hide/show blocks on mobile (767px and below)
+ * - Hide/show blocks on tablet (767.98px - 1023.98px)
+ * - Hide/show blocks on mobile (767.98px and below)
  * - CSS-based implementation for optimal performance
  * - Integrates with Gutenberg's ToolsPanel UI
  *
