@@ -74,7 +74,7 @@ $has_responsive_overlay = false;
 
 // Check for video and image backgrounds in responsive controls.
 $responsive_overlay_data = null;
-foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
 		if ( 'video' === $responsive_controls[ $device ]['background']['type'] ) {
 			$has_video_background = true;
@@ -173,7 +173,7 @@ if ( $has_link ) {
 // responsive controls extension's per-breakpoint CSS take over.
 $flex_wrap_inline_value = $layout['flexWrap'] ?? null;
 if ( null !== $flex_wrap_inline_value ) {
-	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 		if ( isset( $responsive_controls[ $device ]['layout']['flexWrap'] ) ) {
 			$flex_wrap_inline_value = null;
 			break;
@@ -321,7 +321,7 @@ if ( 'flex' === $layout_type ) {
 
 	// Check for responsive orientation reverse.
 	if ( ! $has_orientation_reverse && ! empty( $responsive_controls ) ) {
-		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+		foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 			if ( isset( $responsive_controls[ $device ]['orientationReverse'] ) && $responsive_controls[ $device ]['orientationReverse'] ) {
 				$has_orientation_reverse = true;
 				break;
@@ -342,14 +342,14 @@ if ( 'flex' === $layout_type ) {
 		$orientation_devices = array();
 		$default_orientation = $layout['orientation'] ?? 'horizontal';
 
-		foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+		foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 			if ( isset( $responsive_controls[ $device ]['layout']['orientation'] ) ) {
 				$orientation_devices[ $device ] = $responsive_controls[ $device ]['layout']['orientation'];
 			}
 		}
 
 		// Desktop orientation (lg) - use responsive control or fallback to default.
-		$desktop_orientation = $orientation_devices['lg'] ?? $default_orientation;
+		$desktop_orientation = $orientation_devices['base'] ?? $default_orientation;
 		if ( 'vertical' === $desktop_orientation ) {
 			$orientation_classes[] = 'is-vertical-desktop';
 		} else {
@@ -357,8 +357,8 @@ if ( 'flex' === $layout_type ) {
 		}
 
 		// Tablet orientation (md) - use responsive control or fallback to desktop.
-		if ( isset( $orientation_devices['md'] ) ) {
-			if ( 'vertical' === $orientation_devices['md'] ) {
+		if ( isset( $orientation_devices['@tablet'] ) ) {
+			if ( 'vertical' === $orientation_devices['@tablet'] ) {
 				$orientation_classes[] = 'is-vertical-tablet';
 			} else {
 				$orientation_classes[] = 'is-horizontal-tablet';
@@ -371,15 +371,15 @@ if ( 'flex' === $layout_type ) {
 		}
 
 		// Mobile orientation (sm) - use responsive control or fallback to tablet/desktop.
-		if ( isset( $orientation_devices['sm'] ) ) {
-			if ( 'vertical' === $orientation_devices['sm'] ) {
+		if ( isset( $orientation_devices['@mobile'] ) ) {
+			if ( 'vertical' === $orientation_devices['@mobile'] ) {
 				$orientation_classes[] = 'is-vertical-mobile';
 			} else {
 				$orientation_classes[] = 'is-horizontal-mobile';
 			}
-		} elseif ( isset( $orientation_devices['md'] ) ) {
+		} elseif ( isset( $orientation_devices['@tablet'] ) ) {
 			// Mobile uses tablet value if no mobile-specific value.
-			if ( 'vertical' === $orientation_devices['md'] ) {
+			if ( 'vertical' === $orientation_devices['@tablet'] ) {
 				$orientation_classes[] = 'is-vertical-mobile-from-tablet';
 			} else {
 				$orientation_classes[] = 'is-horizontal-mobile-from-tablet';
@@ -409,11 +409,16 @@ if ( 'flex' === $layout_type ) {
 // Add responsive video data as data attribute for JavaScript.
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
-	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
 		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
+		} elseif ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
+			// This band has a background that is not a video: say so explicitly,
+			// or the front-end script falls back to base and plays the desktop
+			// video at a width whose background is an image or none.
+			$responsive_video_data[ $device ] = '';
 		}
 	}
 }
@@ -425,8 +430,8 @@ if ( ! empty( $responsive_video_data ) ) {
 // Add layout orientation data attribute for CSS targeting.
 // Use desktop orientation from responsive controls if available, otherwise use base layout orientation.
 $desktop_orientation_for_data = $layout['orientation'] ?? 'horizontal';
-if ( ! empty( $responsive_controls['lg']['layout']['orientation'] ) ) {
-	$desktop_orientation_for_data = $responsive_controls['lg']['layout']['orientation'];
+if ( ! empty( $responsive_controls['base']['layout']['orientation'] ) ) {
+	$desktop_orientation_for_data = $responsive_controls['base']['layout']['orientation'];
 }
 $additional_attributes['data-orientation'] = $desktop_orientation_for_data;
 

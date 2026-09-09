@@ -13,24 +13,6 @@
  */
 
 /**
- * Batch size for device switching processing.
- *
- * Controls how many blocks are processed per batch during device switching.
- * Smaller values = faster initial feedback, lower memory usage.
- * Reduced to 1 for maximum memory efficiency and browser responsiveness.
- *
- * Performance tuning:
- * - 1 block: Maximum memory efficiency, prevents browser freezing
- * - 2 blocks: Minimal memory footprint, excellent for small batches
- * - 3-5 blocks: Good for medium projects
- * - 10+ blocks: Risk of memory issues with many blocks
- *
- * @since x.x.x
- * @type {number}
- */
-export const DEVICE_SWITCH_BATCH_SIZE = 1;
-
-/**
  * External dependencies.
  */
 import { applyFilters } from '@wordpress/hooks';
@@ -80,23 +62,6 @@ export const TABLET = 'Tablet';
 export const DESKTOP = 'Desktop';
 
 /**
- * Device fallback order for responsive attribute resolution.
- *
- * This defines the cascade order when looking for responsive values:
- * - Mobile view: First check mobile settings, then tablet, then desktop
- * - Tablet view: First check tablet settings, then desktop
- * - Desktop view: Only check desktop settings
- *
- * @since x.x.x
- * @type {Object}
- */
-export const DEVICE_FALLBACK_ORDER = {
-	[ MOBILE ]: [ 'sm', 'md', 'lg' ], // First try mobile, then tablet, then desktop.
-	[ TABLET ]: [ 'md', 'lg' ], // First try tablet, then desktop.
-	[ DESKTOP ]: [ 'lg' ], // Only desktop.
-};
-
-/**
  * Attribute keys that should be tracked for responsive behavior.
  *
  * These are the top-level attributes that can have different values
@@ -116,33 +81,28 @@ export const RESPONSIVE_KEYS = Object.freeze( [ 'style', 'layout', 'fontSize', '
 export const STYLE_RESPONSIVE_KEYS = Object.freeze( [ 'spacing', 'border', 'typography', 'shadow', 'layout' ] );
 
 /**
- * Specific property paths that should be merged for responsive controls.
+ * Responsive attributes that live at the top level of a bucket, not under `.style`.
  *
- * These dot-notation paths define exactly which nested properties within attributes
- * should be tracked and merged when switching between device views.
+ * Two shapes meet in this extension. Inside a `style` state object every value is
+ * keyed by name at one level. In the bucket shape the rest of the extension passes
+ * around, the shared style groups nest under `.style` while these sit beside the
+ * block-specific keys — which is where the CSS generator, the block controllers
+ * and `process_responsive_attributes()` all read them from.
+ *
+ * This is `RESPONSIVE_KEYS` without `style`: the top-level block attributes that
+ * are tracked per breakpoint. WordPress core draws the same line — `layout`,
+ * `fontSize`, `fontFamily` and `borderColor` are each their own block attribute
+ * and are never nested inside `style`.
+ *
+ * Reading only the nested position dropped all four on migration, which took a
+ * preset border colour or font size with it.
+ *
+ * Keep in sync with `ResponsiveControls::BUCKET_TOP_LEVEL_STYLE_KEYS`.
  *
  * @since x.x.x
  * @type {Array}
  */
-export const PROPERTIES_TO_MERGE = Object.freeze( [
-	'style.spacing.padding',
-	'style.spacing.margin',
-	'style.spacing.blockGap',
-	'style.border.top',
-	'style.border.right',
-	'style.border.bottom',
-	'style.border.left',
-	'style.border.width',
-	'style.border.color',
-	'style.border.style',
-	'style.border.radius',
-	'style.border.radius.topLeft',
-	'style.border.radius.topRight',
-	'style.border.radius.bottomLeft',
-	'style.border.radius.bottomRight',
-	'style.typography',
-	'style.shadow',
-	'style.layout',
+export const BUCKET_TOP_LEVEL_STYLE_KEYS = Object.freeze( [
 	'layout',
 	'fontSize',
 	'fontFamily',
@@ -150,42 +110,62 @@ export const PROPERTIES_TO_MERGE = Object.freeze( [
 ] );
 
 /**
- * Inner properties of the background attribute that should have individual fallback support.
+ * The root attributes the editor may point at the previewed device.
  *
- * These properties within the background object can inherit independently from parent devices.
+ * `BUCKET_TOP_LEVEL_STYLE_KEYS` minus `layout`. The other three are display
+ * scratch in the strict sense — PHP strips every one of them before render, and
+ * nothing but a control reads them — so pointing them at the previewed device
+ * costs nothing even if a save serialises them.
+ *
+ * `layout` is not like them on either count. PHP keeps it for
+ * `spectra/container` (`remove_conflicting_core_attributes()`), because core's
+ * `wp_render_layout_support_flag` reads the real config from there, so scratch
+ * written into it renders on the site. And a save serialises the whole block
+ * tree, so one edit anywhere persisted the previewed device's layout as the
+ * base of every container on the page — blocks the author never touched.
+ *
+ * Nor does it need pointing anywhere: measured on 7.1, core reads
+ * `style[state].layout` itself for both the canvas and its own Layout panel.
+ *
+ * @since 1.0.7
+ * @type {Array}
+ */
+export const SCRATCH_ROOT_ATTRIBUTE_KEYS = Object.freeze(
+	BUCKET_TOP_LEVEL_STYLE_KEYS.filter( ( key ) => 'layout' !== key )
+);
+
+/**
+ * Every key that can appear directly inside a `style` state object.
+ *
+ * The union of the shared style groups and the top-level responsive attributes.
+ * Iterating only `STYLE_RESPONSIVE_KEYS` never visited `fontSize`, `fontFamily`
+ * or `borderColor`, so they were neither read from nor written to a state.
  *
  * @since x.x.x
  * @type {Array}
  */
-export const BACKGROUND_INNER_PROPERTIES = Object.freeze( [
-	'type',
-	'media',
-	'useOverlay',
-	'backgroundSize',
-	'backgroundWidth',
-	'backgroundRepeat',
-	'backgroundPosition',
-	'backgroundAttachment',
-	'positionMode',
-	'positionCentered',
-	'positionX',
-	'positionY',
+export const STATE_KEYS = Object.freeze( [
+	...new Set( [ ...STYLE_RESPONSIVE_KEYS, ...BUCKET_TOP_LEVEL_STYLE_KEYS ] ),
 ] );
 
 /**
  * Mapping between device type names and their corresponding breakpoint codes.
  *
- * - lg: Large screens (Desktop)
- * - md: Medium screens (Tablet)
- * - sm: Small screens (Mobile)
+ * - base:    applies at every width unless a narrower state overrides it
+ * - @tablet: tablet band only
+ * - @mobile: mobile band only
+ *
+ * These are WordPress core's viewport state names, adopted so that Spectra's
+ * store and core's `style` attribute describe breakpoints identically.
  *
  * @since x.x.x
  * @type {Object}
  */
+
 export const BREAKPOINT_TYPE_MAP = Object.freeze( {
-	[ MOBILE ]: 'sm',
-	[ TABLET ]: 'md',
-	[ DESKTOP ]: 'lg',
+	[ MOBILE ]: '@mobile',
+	[ TABLET ]: '@tablet',
+	[ DESKTOP ]: 'base',
 } );
 
 /**
@@ -200,10 +180,153 @@ export const BREAKPOINT_TYPE_MAP = Object.freeze( {
  * @since x.x.x
  * @type {Array}
  */
+/**
+ * Whether core resolves each viewport state against the base layer alone.
+ *
+ * WordPress 7.1 introduced per-viewport block styles and made the two states
+ * independent overrides of the base: `get_viewport_media_queries()` emits
+ * mutually exclusive bands — `@tablet` is `(mobile < width <= tablet)`, so it
+ * does not match at mobile widths — and every state is resolved with
+ * `array_replace( base, state )`, never against a wider state. Mobile
+ * therefore falls back to Desktop, not to Tablet.
+ *
+ * Below 7.1 neither the storage nor that renderer exists, and Spectra's own
+ * generator is the only thing resolving breakpoints, so the older
+ * tablet-then-desktop wording still describes what a reset does there.
+ *
+ * CAPABILITY-based, not version-based. PHP measures this once — with
+ * `function_exists()` and `is_callable()` against core itself — and exports the
+ * answer as `spectra_blocks_info.viewport_support`, so the editor and the
+ * renderer can never disagree about which implementation a site is running.
+ * See `Extensions\ResponsiveControls\ViewportSupport`.
+ *
+ * The version string is only a fallback for the case where that data is absent
+ * (a stale cached script, a context that never enqueued the plugin's inline
+ * data). It is deliberately the weaker signal: a 7.0 site running the Gutenberg
+ * plugin has viewport states while its version says otherwise, and a partially
+ * updated 7.0 install can carry core's states file on disk without ever loading
+ * it — both were observed while building this.
+ *
+ * @since 1.0.7
+ * @return {boolean} True when core's independent-viewport model applies.
+ */
+export const coreViewportStatesAreIndependent = () => {
+	const support = window?.spectra_blocks_info?.viewport_support;
+
+	if ( support && typeof support.hasViewportStates === 'boolean' ) {
+		return support.hasViewportStates;
+	}
+
+	const version = window?.spectra_blocks_info?.wp_version;
+
+	if ( typeof version !== 'string' ) {
+		// Unknown core: assume the current model rather than describing a
+		// cascade the generator no longer performs for new content.
+		return true;
+	}
+
+	const parts = version.split( '.' );
+	const major = parseInt( parts[ 0 ], 10 );
+
+	if ( ! Number.isFinite( major ) ) {
+		return true;
+	}
+
+	if ( major !== 7 ) {
+		return major > 7;
+	}
+
+	const minor = parseInt( parts[ 1 ], 10 );
+
+	return Number.isFinite( minor ) && minor >= 1;
+};
+
+/**
+ * Whether this core build offers the responsive-styles view option.
+ *
+ * 7.1 exposes `responsiveEditingEnabled` on the editor settings; that is the
+ * same flag core's own View menu uses to decide whether to offer the
+ * "Responsive styles" toggle. The toggle's live on/off state lives in the
+ * block-editor store behind core's private API and is not readable from a
+ * plugin, so the hint is shown wherever the option EXISTS rather than only
+ * while it is off — better a redundant hint than none on the version that
+ * needs it. Falls back to the version check when the setting is absent.
+ *
+ * @since 1.0.7
+ * @return {boolean} True when the responsive-styles view option exists.
+ */
+export const coreResponsiveEditingAvailable = () => {
+	try {
+		const settings = window.wp?.data?.select( 'core/editor' )?.getEditorSettings?.();
+
+		if ( settings && undefined !== settings.responsiveEditingEnabled ) {
+			return Boolean( settings.responsiveEditingEnabled );
+		}
+	} catch ( e ) {
+		// Editor store unavailable — fall through to the version check.
+	}
+
+	return coreViewportStatesAreIndependent();
+};
+
+/**
+ * Whether core's "Responsive styles" view option is currently ON.
+ *
+ * The state itself lives in the block-editor store behind core's private API,
+ * but core's View dropdown renders it: the wrapper carries
+ * `is-responsive-editing` while the option is enabled
+ * (`editor-preview-dropdown` in core's PreviewDropdown). Reading that class is
+ * public, needs no menu interaction, and stays correct when the user toggles
+ * the option themselves.
+ *
+ * @since 1.0.7
+ * @return {boolean} True while per-viewport editing is active.
+ */
+export const coreResponsiveEditingActive = () =>
+	Boolean( document.querySelector( '.editor-preview-dropdown.is-responsive-editing' ) );
+
 export const MUTUALLY_EXCLUSIVE_ATTR_PAIRS = [
 	[ 'fontSize', 'style.typography.fontSize' ],
 	[ 'borderColor', 'style.border.color' ],
 ];
+
+/**
+ * How a root attribute's value is expressed NESTED inside a `style` layer.
+ *
+ * The four `BUCKET_TOP_LEVEL_STYLE_KEYS` are block ATTRIBUTES, and they hold
+ * preset slugs (`x-large`, `vivid-red`). Core has a second, equivalent way to
+ * say the same thing inside `style` — a `var:preset|…` reference at a nested
+ * path — and inside a viewport state that nested form is the ONLY one core
+ * reads. Measured on 7.1: with "Responsive styles" on, a state holding
+ * `fontSize: 'medium'` flat leaves the Font Size control showing nothing at
+ * all, while the same state holding
+ * `typography.fontSize: 'var:preset|font-size|medium'` selects Medium.
+ *
+ * So this map is what makes a per-device preset visible to core's own panels.
+ * Two consumers share it, which is why it lives here rather than in either:
+ *
+ *   - the legacy migration, which writes states in this form
+ *   - the root-attribute sync, which reads these paths to know when a state has
+ *     already said something and the root attribute must be cleared rather than
+ *     left on a stale preset
+ *
+ * `path` is relative to the layer, so it suits the root of `style` and a state
+ * equally — a state holds the same groups at its own root.
+ *
+ * `layout` is absent: it is an object with no preset form, and core reads it
+ * from the attribute in every mode. The `fontSize` and `borderColor` paths also
+ * appear in `MUTUALLY_EXCLUSIVE_ATTR_PAIRS` as the custom counterpart of the
+ * same attribute; the two must stay in step.
+ *
+ * @since 1.0.7
+ * @type {Object}
+ */
+export const ROOT_ATTRIBUTE_PRESET_REFS = Object.freeze( {
+	fontSize: Object.freeze( { path: 'typography.fontSize', preset: 'font-size' } ),
+	fontFamily: Object.freeze( { path: 'typography.fontFamily', preset: 'font-family' } ),
+	borderColor: Object.freeze( { path: 'border.color', preset: 'color' } ),
+} );
+
 
 // ===================================================================
 // Block-Specific Constants
@@ -268,6 +391,7 @@ export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
 	'spectra/accordion-child-header-icon': [ 'size' ],
 	'spectra/tabs': [ 'size' ],
 	'spectra/tabs-child-tab-button': [ 'size', 'gap' ],
+	'spectra/tabs-child-tab-trigger': [ 'width', 'height', 'minWidth', 'minHeight', 'maxWidth', 'maxHeight' ],
 	'spectra/countdown': [ 'minWidth', 'minHeight', 'maxWidth', 'maxHeight', 'width', 'height' ],
 	'spectra/list': [ 'iconSize' ],
 	'spectra/list-child-icon': [ 'iconSize' ],
@@ -352,6 +476,27 @@ export const RESPONSIVE_CONTROLS_PANELS = [
 	// Core Image block - needed for reset handling.
 	'Settings',
 ];
+
+/**
+ * Text domains a panel name may have been translated under.
+ *
+ * The reset handler recognises a panel by its label, and on a translated site
+ * the label is whatever `__()` produced for the plugin that rendered it. The
+ * list above is spelled in English; matching it against the DOM therefore has
+ * to translate each entry under every domain a matching panel can come from.
+ *
+ * Core's panels (Dimensions, Typography, …) translate under `default`, this
+ * plugin's under `spectra-blocks`. Spectra Pro renders panels with the same
+ * English names under its own domain — a site whose Pro translation of
+ * "General" differs from the free plugin's would otherwise have its resets
+ * silently skipped there. Pro appends its domain through the
+ * `spectra.responsive-controls.reset-panel-text-domains` filter; the panel
+ * list itself is filterable as `spectra.responsive-controls.reset-panels`.
+ *
+ * @since 1.0.7
+ * @type {Array<string>}
+ */
+export const RESPONSIVE_CONTROLS_PANEL_TEXT_DOMAINS = [ 'default', 'spectra-blocks' ];
 
 /**
  * Global constants for DOM selectors and comparison values.

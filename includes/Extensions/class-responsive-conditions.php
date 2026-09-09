@@ -266,7 +266,45 @@ class ResponsiveConditions {
 				filemtime( $css_file ),
 				'all'
 			);
+
+			wp_add_inline_style( 'spectra-blocks-responsive-conditions', $this->build_visibility_css() );
 		}
+	}
+
+	/**
+	 * The device visibility rules, banded exactly as the style generator bands.
+	 *
+	 * Generated rather than shipped as static CSS because the breakpoints are
+	 * WordPress's, not Spectra's: a theme can move them through
+	 * `settings.viewport`, and a hardcoded copy then hides a block at a width
+	 * where its mobile styling has not started yet.
+	 *
+	 * @since 1.0.7
+	 * @return string The visibility CSS, or an empty string when no band resolved.
+	 */
+	private function build_visibility_css() {
+		$responsive = ResponsiveControls::instance();
+		$css        = '';
+
+		if ( ! $responsive instanceof ResponsiveControls ) {
+			return $css;
+		}
+
+		$bands = $responsive->get_device_media_queries();
+
+		foreach ( array(
+			'@mobile'  => 'spectra-hide-mobile',
+			'@tablet'  => 'spectra-hide-tablet',
+			'@desktop' => 'spectra-hide-desktop',
+		) as $state => $class ) {
+			if ( empty( $bands[ $state ] ) ) {
+				continue;
+			}
+
+			$css .= '@media ' . $bands[ $state ] . '{.' . $class . '{display:none !important;}}';
+		}
+
+		return $css;
 	}
 
 	/**
@@ -297,5 +335,8 @@ class ResponsiveConditions {
 	 */
 	public function enqueue_editor_assets() {
 		wp_enqueue_style( 'spectra-blocks-extensions-responsive-conditions' );
+
+		// The editor canvas needs the same runtime bands as the front end.
+		wp_add_inline_style( 'spectra-blocks-extensions-responsive-conditions', $this->build_visibility_css() );
 	}
 }

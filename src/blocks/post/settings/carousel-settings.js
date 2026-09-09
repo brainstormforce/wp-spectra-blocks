@@ -29,8 +29,6 @@ import DebouncedRangeControl from '@spectra-components/debounced-range-control';
  */
 export default function CarouselSettings( { attributes, setAttributes, clientId } ) {
 	const {
-		slidesPerView,
-		spaceBetween,
 		loop,
 		speed,
 		autoplay,
@@ -45,8 +43,6 @@ export default function CarouselSettings( { attributes, setAttributes, clientId 
 			label={ __( 'Carousel', 'spectra-blocks' ) }
 			resetAll={ () => {
 				setAttributes( {
-					slidesPerView: undefined,
-					spaceBetween: undefined,
 					loop: true,
 					speed: 500,
 					autoplay: true,
@@ -58,40 +54,6 @@ export default function CarouselSettings( { attributes, setAttributes, clientId 
 			} }
 			panelId={ clientId }
 		>
-			<ToolsPanelItem
-				hasValue={ () => !! slidesPerView }
-				label={ __( 'Slides Per View', 'spectra-blocks' ) }
-				onDeselect={ () => setAttributes( { slidesPerView: undefined } ) }
-				isShownByDefault
-				panelId={ clientId }
-			>
-				<DebouncedRangeControl
-					label={ __( 'Slides Per View', 'spectra-blocks' ) }
-					value={ slidesPerView ?? 3 }
-					onChange={ ( value ) => setAttributes( { slidesPerView: value } ) }
-					min={ 1 }
-					max={ 6 }
-					step={ 1 }
-				/>
-			</ToolsPanelItem>
-
-			<ToolsPanelItem
-				hasValue={ () => !! spaceBetween }
-				label={ __( 'Space Between', 'spectra-blocks' ) }
-				onDeselect={ () => setAttributes( { spaceBetween: undefined } ) }
-				isShownByDefault
-				panelId={ clientId }
-			>
-				<DebouncedRangeControl
-					label={ __( 'Space Between', 'spectra-blocks' ) }
-					value={ spaceBetween ?? 30 }
-					onChange={ ( value ) => setAttributes( { spaceBetween: value } ) }
-					min={ 1 }
-					max={ 100 }
-					step={ 1 }
-				/>
-			</ToolsPanelItem>
-
 			<ToolsPanelItem
 				hasValue={ () => attributes.equalHeight }
 				label={ __( 'Equal Height', 'spectra-blocks' ) }

@@ -20,7 +20,44 @@
 	background-attachment: var(--spectra-background-attachment, scroll);
 }
 
-.wp-block-spectra-popup-builder {
+/*
+ * The canvas body measures itself the way it did below 7.1.
+ *
+ * Themes pad the editor canvas — Astra sets `padding: 0 10px` on
+ * `.wp-embed-responsive.editor-styles-wrapper`, which IS the body — while core
+ * sizes it with `.block-editor-iframe__body { width: 100% }`. Whether those two
+ * add up depends entirely on the body's `box-sizing`, and in this post type's
+ * editor 7.1 leaves it at `content-box`: 100% of the canvas PLUS 20px of
+ * padding, so the body overflowed its own canvas by 20px and the Mobile
+ * preview grew a horizontal scrollbar. Below 7.1 the same theme and the same
+ * core rule produced a 459px body inside a 479px canvas — border-box — and no
+ * scrollbar.
+ *
+ * Scoped to the popup post type, whose canvas this plugin owns.
+ */
+body.block-editor-iframe__body.post-type-spectra-blocks-popup {
+	box-sizing: border-box;
+}
+
+/*
+ * The popup's own element is the full-viewport overlay, and it carries no
+ * padding: the padding belongs to the visible box inside it, which reads it
+ * from `--spectra-popup-padding`. That is where the front end puts it too —
+ * the CSS generator redirects the block's `spacing` onto
+ * `.spectra-popup-builder__container`.
+ *
+ * The class is repeated to raise specificity, which WordPress 7.1 made
+ * necessary. Below 7.1 core applied `style.spacing.padding` to this element as
+ * an INLINE declaration, and a stylesheet `!important` beats a plain inline
+ * one, so a single class was enough. 7.1 has per-viewport spacing, which
+ * cannot be expressed inline, so core emits `.wp-elements-N { padding: … !important }`
+ * instead — one class, `!important`, and later in source order than this file.
+ * That tie went to core, the overlay took the padding on top of its `width:
+ * 100%`, and with `box-sizing: content-box` the block measured wider than the
+ * canvas: the editor grew a horizontal scrollbar at Tablet and Mobile that the
+ * front end never had. Two classes settle it on specificity instead of order.
+ */
+.wp-block-spectra-popup-builder.wp-block-spectra-popup-builder {
 	display: flex;
 	opacity: 1;
 	// Important is added to override the theme's CSS in the Editor.

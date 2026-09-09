@@ -29,54 +29,37 @@ export const variations = [
 			closeIconSize: 20,
 			closeIconColor: '#000000',
 			style: {
-				spacing: {
+				'spacing': {
 					padding: {
 						top: '8px',
 						right: '8px',
 						bottom: '8px',
-						left: '8px',
-					},
+						left: '8px'
+					}
 				},
-			},
-			responsiveControls: {
-				lg: {
-					style: {
-						spacing: {
-							padding: {
-								top: '8px',
-								right: '8px',
-								bottom: '8px',
-								left: '8px',
-							},
-						},
+				'height': '50px',
+				'@tablet': {
+					spacing: {
+						padding: {
+							top: '8px',
+							right: '8px',
+							bottom: '8px',
+							left: '8px'
+						}
 					},
-					height: '50px',
+					height: '50px'
 				},
-				md: {
-					style: {
-						spacing: {
-							padding: {
-								top: '8px',
-								right: '8px',
-								bottom: '8px',
-								left: '8px',
-							},
-						},
+				'@mobile': {
+					spacing: {
+						padding: {
+							top: '16px',
+							right: '16px',
+							bottom: '16px',
+							left: '16px'
+						}
 					},
-					height: '50px',
-				},
-				sm: {
-					style: {
-						spacing: {
-							padding: {
-								top: '16px',
-								right: '16px',
-								bottom: '16px',
-								left: '16px',
-							},
-						},
-					},
-				},
+					height: '50px'
+				}
 			},
 			borderStyle: 'none',
 		},
@@ -87,273 +70,192 @@ export const variations = [
 				'spectra/container',
 				{
 					align: 'none',
-					layout: {
-						type: 'grid',
-						minimumColumnWidth: null,
-						columnCount: 3,
-					},
 					variationSelected: true,
 					width: '1100px',
 					isBlockRootParent: true,
 					style: {
-						spacing: {
+						'spacing': {
 							padding: {
 								top: '0px',
 								right: '0px',
 								bottom: '0px',
-								left: '0px',
+								left: '0px'
 							},
 							margin: {
 								top: '0',
-								bottom: '0',
+								bottom: '0'
 							},
-							blockGap: '50px',
+							blockGap: '50px'
 						},
+						'width': '1100px',
+						'@tablet': {
+							spacing: {
+								padding: {
+									top: '0px',
+									right: '0px',
+									bottom: '0px',
+									left: '0px'
+								},
+								blockGap: '50px'
+							},
+							layout: {
+								type: 'grid',
+								minimumColumnWidth: null,
+								columnCount: 3
+							},
+							width: '700px'
+						},
+						'@mobile': {
+							spacing: {
+								padding: {
+									top: '0px',
+									right: '0px',
+									bottom: '0px',
+									left: '0px'
+								},
+								blockGap: '20px',
+								margin: {
+									top: '0',
+									bottom: '0'
+								}
+							},
+							layout: {
+								type: 'grid',
+								minimumColumnWidth: null,
+								columnCount: 1
+							},
+							width: '300px'
+						}
 					},
-					responsiveControls: {
-						lg: {
-							layout: {
-								type: 'grid',
-								minimumColumnWidth: null,
-								columnCount: 3,
-							},
-							width: '1100px',
-							style: {
-								spacing: {
-									padding: {
-										top: '0px',
-										right: '0px',
-										bottom: '0px',
-										left: '0px',
-									},
-									margin: {
-										top: '0',
-										bottom: '0',
-									},
-									blockGap: '50px',
-								},
-							},
-						},
-						md: {
-							layout: {
-								type: 'grid',
-								minimumColumnWidth: null,
-								columnCount: 3,
-							},
-							width: '700px',
-							style: {
-								spacing: {
-									padding: {
-										top: '0px',
-										right: '0px',
-										bottom: '0px',
-										left: '0px',
-									},
-									blockGap: '50px',
-								},
-							},
-						},
-						sm: {
-							layout: {
-								type: 'grid',
-								minimumColumnWidth: null,
-								columnCount: 1,
-							},
-							width: '300px',
-							style: {
-								spacing: {
-									padding: {
-										top: '0px',
-										right: '0px',
-										bottom: '0px',
-										left: '0px',
-									},
-									blockGap: '20px',
-									margin: {
-										top: '0',
-										bottom: '0',
-									},
-								},
-							},
-						},
+					layout: {
+						type: 'grid',
+						minimumColumnWidth: null,
+						columnCount: 3
 					},
 				},
 				[
 					[
 						'spectra/container',
 						{
-							layout: {
-								type: 'grid',
-								minimumColumnWidth: null,
-							},
 							variationSelected: true,
 							style: {
-								layout: {
-									flexSize: null,
-								},
-								spacing: {
+								'spacing': {
 									padding: {
 										top: '0',
 										right: '0',
 										bottom: '0',
-										left: '0',
-									},
+										left: '0'
+									}
 								},
-							},
-							responsiveControls: {
-								lg: {
-									style: {
-										spacing: {
-											padding: {
-												top: '0',
-												right: '0',
-												bottom: '0',
-												left: '0',
-											},
-										},
-										layout: {
-											flexSize: null,
-										},
-									},
-									layout: {
-										type: 'grid',
-									},
+								'layout': {
+									flexSize: null
 								},
-								md: {
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
+								'@tablet': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
 									},
 									layout: {
 										type: 'grid',
 										minimumColumnWidth: null,
-										columnCount: 1,
-									},
+										columnCount: 1
+									}
 								},
-								sm: {
+								'@mobile': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
+									},
 									layout: {
 										type: 'flex',
-										justifyContent: 'center',
-									},
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-									},
-								},
+										minimumColumnWidth: null,
+										columnCount: 1,
+										justifyContent: 'center'
+									}
+								}
+							},
+							layout: {
+								type: 'grid',
+								minimumColumnWidth: null
 							},
 						},
 						[
 							[
 								'spectra/countdown',
 								{
-									layout: {
-										type: 'grid',
-										columnCount: 4,
-										minimumColumnWidth: null,
-									},
 									endDateTime: '2025-09-30T07:21:21.674Z',
 									displayEndDateTime: '2025-09-30 07:21:21',
 									width: '',
 									style: {
-										color: {
-											text: '#000000',
+										'typography': {
+											fontSize: '12px'
 										},
-										layout: {
+										'layout': {
 											selfStretch: 'fit',
-											flexSize: null,
+											flexSize: null
 										},
-										spacing: {
+										'spacing': {
 											blockGap: '0px',
 											padding: {},
-											margin: {},
+											margin: {}
 										},
-										typography: {
-											fontSize: '12px',
-										},
-									},
-									responsiveControls: {
-										sm: {
-											layout: {
-												type: 'grid',
-												columnCount: 4,
-												minimumColumnWidth: null,
+										'@tablet': {
+											spacing: {
+												blockGap: '0px'
 											},
-											width: '',
-											style: {
-												spacing: {
-													blockGap: '2px',
-													padding: {
-														top: '0px',
-														bottom: '0px',
-														left: '0px',
-														right: '0px',
-													},
-													margin: {
-														top: '0px',
-														bottom: '0px',
-														left: '0px',
-														right: '0px',
-													},
-												},
-												typography: {
-													fontSize: '12px',
-												},
-												layout: {
-													selfStretch: 'fit',
-													flexSize: null,
-												},
+											typography: {
+												fontSize: '12px'
 											},
-										},
-										lg: {
-											style: {
-												typography: {
-													fontSize: '12px',
-												},
-												layout: {
-													selfStretch: 'fit',
-													flexSize: null,
-												},
-												spacing: {
-													blockGap: '0px',
-												},
-											},
-											layout: {
-												type: 'grid',
-												minimumColumnWidth: null,
-												columnCount: 4,
-											},
-										},
-										md: {
 											layout: {
 												type: 'flex',
 												justifyContent: 'center',
-												flexWrap: 'nowrap',
-											},
-											style: {
-												spacing: {
-													blockGap: '0px',
-												},
-												typography: {
-													fontSize: '12px',
-												},
-												layout: {
-													selfStretch: 'fit',
-													flexSize: null,
-												},
-											},
+												flexWrap: 'nowrap'
+											}
 										},
+										'@mobile': {
+											spacing: {
+												blockGap: '2px',
+												padding: {
+													top: '0px',
+													bottom: '0px',
+													left: '0px',
+													right: '0px'
+												},
+												margin: {
+													top: '0px',
+													bottom: '0px',
+													left: '0px',
+													right: '0px'
+												}
+											},
+											typography: {
+												fontSize: '12px'
+											},
+											layout: {
+												type: 'grid',
+												justifyContent: 'center',
+												flexWrap: 'nowrap',
+												columnCount: 4,
+												minimumColumnWidth: null
+											},
+											width: ''
+										},
+										'color': {
+											text: '#000000'
+										}
+									},
+									layout: {
+										type: 'grid',
+										minimumColumnWidth: null,
+										columnCount: 4
 									},
 								},
 								[
@@ -362,64 +264,61 @@ export const variations = [
 										{
 											lock: { move: true, remove: true },
 											style: {
-												spacing: {
+												'spacing': {
 													blockGap: '0rem',
 													padding: {
 														top: '8px',
 														right: '8px',
 														bottom: '8px',
-														left: '8px',
+														left: '8px'
+													}
+												},
+												'typography': {
+													fontSize: 'medium'
+												},
+												'@tablet': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
 													},
+													layout: {
+														type: 'flex',
+														flexWrap: 'nowrap',
+														orientation: 'vertical',
+														justifyContent: 'center'
+													}
 												},
-												color: {
-													text: '#000000',
+												'@mobile': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													},
+													layout: {
+														type: 'flex',
+														flexWrap: 'nowrap',
+														orientation: 'vertical',
+														justifyContent: 'center'
+													}
 												},
-												typography: {
-													fontSize: 'medium',
-												},
+												'color': {
+													text: '#000000'
+												}
 											},
-											responsiveControls: {
-												lg: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-														typography: {
-															fontSize: 'medium',
-														},
-													},
-													layout: {
-														type: 'flex',
-														flexWrap: 'nowrap',
-														orientation: 'vertical',
-														justifyContent: 'center',
-													},
-												},
-												md: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-													},
-													layout: {
-														type: 'flex',
-														flexWrap: 'nowrap',
-														orientation: 'vertical',
-														justifyContent: 'center',
-													},
-												},
+											layout: {
+												type: 'flex',
+												flexWrap: 'nowrap',
+												orientation: 'vertical',
+												justifyContent: 'center'
 											},
 										},
 										[
@@ -431,14 +330,17 @@ export const variations = [
 														move: true,
 														remove: true,
 													},
-													responsiveControls: {
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+													style: {
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -454,25 +356,19 @@ export const variations = [
 														remove: true,
 													},
 													style: {
-														typography: {
-															fontSize: '12px',
+														'typography': {
+															fontSize: '12px'
 														},
-													},
-													responsiveControls: {
-														lg: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
-														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -483,52 +379,43 @@ export const variations = [
 										{
 											lock: { move: true, remove: true },
 											style: {
-												spacing: {
+												'spacing': {
 													blockGap: '0rem',
 													padding: {
 														top: '8px',
 														right: '8px',
 														bottom: '8px',
-														left: '8px',
-													},
+														left: '8px'
+													}
 												},
-												color: {
-													text: '#000000',
+												'typography': {
+													fontSize: 'medium'
 												},
-												typography: {
-													fontSize: 'medium',
+												'@tablet': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-											},
-											responsiveControls: {
-												lg: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-														typography: {
-															fontSize: 'medium',
-														},
-													},
+												'@mobile': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-												md: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-													},
-												},
+												'color': {
+													text: '#000000'
+												}
 											},
 										},
 										[
@@ -540,14 +427,17 @@ export const variations = [
 														move: true,
 														remove: true,
 													},
-													responsiveControls: {
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+													style: {
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -563,25 +453,19 @@ export const variations = [
 														remove: true,
 													},
 													style: {
-														typography: {
-															fontSize: '12px',
+														'typography': {
+															fontSize: '12px'
 														},
-													},
-													responsiveControls: {
-														lg: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
-														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -592,52 +476,43 @@ export const variations = [
 										{
 											lock: { move: true, remove: true },
 											style: {
-												spacing: {
+												'spacing': {
 													blockGap: '0rem',
 													padding: {
 														top: '8px',
 														right: '8px',
 														bottom: '8px',
-														left: '8px',
-													},
+														left: '8px'
+													}
 												},
-												color: {
-													text: '#000000',
+												'typography': {
+													fontSize: 'medium'
 												},
-												typography: {
-													fontSize: 'medium',
+												'@tablet': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-											},
-											responsiveControls: {
-												lg: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-														typography: {
-															fontSize: 'medium',
-														},
-													},
+												'@mobile': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-												md: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-													},
-												},
+												'color': {
+													text: '#000000'
+												}
 											},
 										},
 										[
@@ -649,14 +524,17 @@ export const variations = [
 														move: true,
 														remove: true,
 													},
-													responsiveControls: {
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+													style: {
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -672,25 +550,19 @@ export const variations = [
 														remove: true,
 													},
 													style: {
-														typography: {
-															fontSize: '12px',
+														'typography': {
+															fontSize: '12px'
 														},
-													},
-													responsiveControls: {
-														lg: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
-														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -701,52 +573,43 @@ export const variations = [
 										{
 											lock: { move: true, remove: true },
 											style: {
-												spacing: {
+												'spacing': {
 													blockGap: '0rem',
 													padding: {
 														top: '8px',
 														right: '8px',
 														bottom: '8px',
-														left: '8px',
-													},
+														left: '8px'
+													}
 												},
-												color: {
-													text: '#000000',
+												'typography': {
+													fontSize: 'medium'
 												},
-												typography: {
-													fontSize: 'medium',
+												'@tablet': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-											},
-											responsiveControls: {
-												lg: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-														typography: {
-															fontSize: 'medium',
-														},
-													},
+												'@mobile': {
+													spacing: {
+														blockGap: '0rem',
+														padding: {
+															top: '8px',
+															right: '8px',
+															bottom: '8px',
+															left: '8px'
+														}
+													}
 												},
-												md: {
-													style: {
-														spacing: {
-															blockGap: '0rem',
-															padding: {
-																top: '8px',
-																right: '8px',
-																bottom: '8px',
-																left: '8px',
-															},
-														},
-													},
-												},
+												'color': {
+													text: '#000000'
+												}
 											},
 										},
 										[
@@ -758,14 +621,17 @@ export const variations = [
 														move: true,
 														remove: true,
 													},
-													responsiveControls: {
-														md: {
-															style: {
-																typography: {
-																	fontSize: '16px',
-																},
-															},
+													style: {
+														'@tablet': {
+															typography: {
+																fontSize: '16px'
+															}
 														},
+														'@mobile': {
+															typography: {
+																fontSize: '16px'
+															}
+														}
 													},
 												},
 											],
@@ -781,25 +647,19 @@ export const variations = [
 														remove: true,
 													},
 													style: {
-														typography: {
-															fontSize: '12px',
+														'typography': {
+															fontSize: '12px'
 														},
-													},
-													responsiveControls: {
-														lg: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
+														'@tablet': {
+															typography: {
+																fontSize: '12px'
+															}
 														},
-														md: {
-															style: {
-																typography: {
-																	fontSize: '12px',
-																},
-															},
-														},
+														'@mobile': {
+															typography: {
+																fontSize: '12px'
+															}
+														}
 													},
 												},
 											],
@@ -812,84 +672,59 @@ export const variations = [
 					[
 						'spectra/container',
 						{
-							layout: {
-								type: 'flex',
-								justifyContent: 'center',
-							},
 							variationSelected: true,
 							style: {
-								layout: {
-									flexSize: null,
-								},
-								spacing: {
+								'spacing': {
 									padding: {
 										top: '0px',
 										right: '0px',
 										bottom: '0px',
-										left: '0px',
+										left: '0px'
+									}
+								},
+								'typography': {
+									textAlign: 'center'
+								},
+								'@tablet': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
 									},
+									typography: {
+										textAlign: 'center'
+									},
+									layout: {
+										type: 'flex'
+									}
 								},
-								typography: {
-									textAlign: 'center',
+								'@mobile': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
+									},
+									typography: {
+										textAlign: 'center'
+									},
+									layout: {
+										type: 'flex',
+										justifyContent: 'center'
+									}
 								},
+								'layout': {
+									flexSize: null
+								}
 							},
-							responsiveControls: {
-								lg: {
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-										typography: {
-											textAlign: 'center',
-										},
-									},
-									layout: {
-										type: 'flex',
-										justifyContent: 'center',
-									},
-								},
-								md: {
-									layout: {
-										type: 'flex',
-									},
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-										typography: {
-											textAlign: 'center',
-										},
-									},
-								},
-								sm: {
-									layout: {
-										type: 'flex',
-										justifyContent: 'center',
-									},
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-										typography: {
-											textAlign: 'center',
-										},
-									},
-								},
+							layout: {
+								type: 'flex',
+								justifyContent: 'center'
 							},
 						},
 						[
@@ -902,12 +737,10 @@ export const variations = [
 										'spectra-blocks'
 									),
 									isRootBlock: false,
-									responsiveControls: {
-										sm: {
-											style: {
-												typography: {},
-											},
-										},
+									style: {
+										'@mobile': {
+											typography: {}
+										}
 									},
 								},
 							],
@@ -916,72 +749,50 @@ export const variations = [
 					[
 						'spectra/container',
 						{
-							layout: {
-								type: 'flex',
-								justifyContent: 'center',
-							},
 							variationSelected: true,
 							style: {
-								layout: {
-									flexSize: null,
-								},
-								spacing: {
+								'spacing': {
 									padding: {
 										top: '0px',
 										right: '0px',
 										bottom: '0px',
-										left: '0px',
-									},
+										left: '0px'
+									}
 								},
+								'@tablet': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
+									},
+									layout: {
+										type: 'flex'
+									}
+								},
+								'@mobile': {
+									spacing: {
+										padding: {
+											top: '0px',
+											right: '0px',
+											bottom: '0px',
+											left: '0px'
+										}
+									},
+									layout: {
+										type: 'flex',
+										justifyContent: 'center'
+									}
+								},
+								'layout': {
+									flexSize: null
+								}
 							},
-							responsiveControls: {
-								lg: {
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-									},
-									layout: {
-										type: 'flex',
-										justifyContent: 'center',
-									},
-								},
-								md: {
-									layout: {
-										type: 'flex',
-									},
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-									},
-								},
-								sm: {
-									layout: {
-										type: 'flex',
-										justifyContent: 'center',
-									},
-									style: {
-										spacing: {
-											padding: {
-												top: '0px',
-												right: '0px',
-												bottom: '0px',
-												left: '0px',
-											},
-										},
-									},
-								},
+							layout: {
+								type: 'flex',
+								justifyContent: 'center'
 							},
 						},
 						[
@@ -1012,63 +823,41 @@ export const variations = [
 												'Call To Action',
 												'spectra-blocks'
 											),
-											style: {
-												border: {
-													radius: '8px',
-												},
-												typography: {
-													fontSize: '12px',
-												},
-												color: {
-													background: '#5733ff',
-												},
-												spacing: {
-													padding: {
-														left: '48px',
-														right: '48px',
-														top: '10px',
-														bottom: '10px',
-													},
-												},
-											},
 											textColor: 'white',
-											responsiveControls: {
-												lg: {
-													style: {
-														spacing: {
-															padding: {
-																top: '10px',
-																right: '48px',
-																bottom: '10px',
-																left: '48px',
-															},
-														},
-														border: {
-															radius: '8px',
-														},
-														typography: {
-															fontSize: '12px',
-														},
-													},
+											style: {
+												'spacing': {
+													padding: {
+														top: '10px',
+														right: '48px',
+														bottom: '10px',
+														left: '48px'
+													}
 												},
-												sm: {
-													style: {
-														spacing: {
-															padding: {
-																top: '10px',
-																bottom: '10px',
-																left: '32px',
-																right: '32px',
-															},
-														},
-														border: {
-															radius: '8px',
-														},
-														typography: {
-															fontSize: '12px',
-														},
-													},
+												'border': {
+													radius: '8px'
 												},
+												'typography': {
+													fontSize: '12px'
+												},
+												'@mobile': {
+													spacing: {
+														padding: {
+															top: '10px',
+															bottom: '10px',
+															left: '32px',
+															right: '32px'
+														}
+													},
+													border: {
+														radius: '8px'
+													},
+													typography: {
+														fontSize: '12px'
+													}
+												},
+												'color': {
+													background: '#5733ff'
+												}
 											},
 										},
 									],
@@ -1113,54 +902,36 @@ export const variations = [
 				left: 4,
 			},
 			style: {
-				spacing: {
+				'spacing': {
 					padding: {
 						top: '28px',
 						right: '28px',
 						bottom: '28px',
-						left: '28px',
-					},
+						left: '28px'
+					}
 				},
-			},
-			responsiveControls: {
-				lg: {
-					style: {
-						spacing: {
-							padding: {
-								top: '28px',
-								right: '28px',
-								bottom: '28px',
-								left: '28px',
-							},
-						},
-					},
-					width: '500px',
-					height: '320px',
+				'width': '500px',
+				'height': '320px',
+				'@tablet': {
+					spacing: {
+						padding: {
+							top: '28px',
+							right: '28px',
+							bottom: '28px',
+							left: '28px'
+						}
+					}
 				},
-				sm: {
-					style: {
-						spacing: {
-							padding: {
-								top: '14px',
-								right: '14px',
-								bottom: '14px',
-								left: '14px',
-							},
-						},
-					},
-				},
-				md: {
-					style: {
-						spacing: {
-							padding: {
-								top: '28px',
-								right: '28px',
-								bottom: '28px',
-								left: '28px',
-							},
-						},
-					},
-				},
+				'@mobile': {
+					spacing: {
+						padding: {
+							top: '14px',
+							right: '14px',
+							bottom: '14px',
+							left: '14px'
+						}
+					}
+				}
 			},
 		},
 		isDefault: true,
@@ -1248,39 +1019,22 @@ export const variations = [
 								'Call To Action',
 								'spectra-blocks'
 							),
+							textColor: 'white',
 							style: {
-								border: {
-									radius: '8px',
-								},
 								spacing: {
 									padding: {
 										top: '8px',
 										right: '24px',
 										bottom: '8px',
-										left: '24px',
-									},
+										left: '24px'
+									}
+								},
+								border: {
+									radius: '8px'
 								},
 								color: {
-									background: '#5733ff',
-								},
-							},
-							textColor: 'white',
-							responsiveControls: {
-								lg: {
-									style: {
-										spacing: {
-											padding: {
-												top: '8px',
-												right: '24px',
-												bottom: '8px',
-												left: '24px',
-											},
-										},
-										border: {
-											radius: '8px',
-										},
-									},
-								},
+									background: '#5733ff'
+								}
 							},
 						},
 					],

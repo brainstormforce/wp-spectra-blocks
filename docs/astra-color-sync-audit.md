@@ -8,7 +8,7 @@ stale swatches.
 
 **Audited theme:** `wp-content/themes/astra` (free theme).
 **Related code:** `includes/StyleGuide/Sync/Astra/class-astra-palette-adapter.php`.
-**Date:** 2026-07-23.
+**Date:** 2026-07-23. **Last verified against code:** 2026-08-26 (`dev` @ 1.0.6 — the 1.0.6 diff touches only `@since` tags in `AstraPaletteAdapter` and `GlobalStylesBridge`; nothing in this doc's scope changed behaviour).
 
 > ℹ️ **Style-Guide side (v2 storage).** The Style Guide uses the v2 colour storage
 > (see [`style-guide-color-rewrite.md`](./style-guide-color-rewrite.md)). The key
@@ -18,11 +18,15 @@ stale swatches.
 >   `register_reverse_hooks()` — core never names the option.
 > - On reverse sync, every pulled slot maps token → owning core slug
 >   (`ColorModel::slug_for_token()`) and writes **`config['colors'][slug]`**.
-> - **The 7 managed slots are two-way**, each mapping to a stored core role.
->   Slots 7 ("Subtle background") and 8 ("Other supporting") are **unmanaged**:
->   their old tokens were the interpolated ramp stops (`neutral-3`/`neutral-6`),
->   which are no longer generated. The sync neither pushes nor pulls them —
->   which stored colour (if any) should own them is an open product decision.
+> - **All 9 slots are managed and two-way**, each mapping to a stored core role.
+>   Slots 7 ("Subtle background") and 8 ("Other supporting") were briefly
+>   unmanaged — their old tokens were the interpolated ramp stops
+>   (`neutral-3`/`neutral-6`), which are no longer generated. They now resolve to
+>   stored colours: slot 7 → `neutral-4` (the **Neutral** role) and slot 8 →
+>   `accent`.
+> - Tokens are named by **semantic slug** now (`primary`, `secondary`, `accent`,
+>   `success`, …). The legacy `chromaticN-7` token names are gone —
+>   see `ColorModel::CHROMATIC_SLUG`.
 
 ---
 
@@ -66,21 +70,92 @@ Read every row left-to-right: **this Astra colour becomes this Style Guide colou
 
 | Astra colour (label) | Astra variable | Astra default | Sync | → Style Guide colour | SG token | SG default |
 | --- | --- | --- | :--: | --- | --- | --- |
-| Brand | `--ast-global-color-0` | `#046bd2` | ⇄ | **Primary** | `chromatic1-7` | `#6431f6` |
-| Alternate Brand | `--ast-global-color-1` | `#045cb4` | ⇄ | **Secondary** | `chromatic2-7` | `#7345f7` |
-| Headings | `--ast-global-color-2` | `#1e293b` | ⇄ | **Heading text** | `neutral-7` | computed |
-| Text | `--ast-global-color-3` | `#334155` | ⇄ | **Body text** | `neutral-5` | computed |
+| Brand | `--ast-global-color-0` | `#046bd2` | ⇄ | **Primary** | `primary` | `#6431f6` |
+| Alternate Brand | `--ast-global-color-1` | `#045cb4` | ⇄ | **Secondary** | `secondary` | `#7345f7` |
+| Headings | `--ast-global-color-2` | `#1e293b` | ⇄ | **Heading text** | `neutral-7` | `#09081b` |
+| Text | `--ast-global-color-3` | `#334155` | ⇄ | **Body text** | `neutral-5` | `#464757` |
 | Primary Background | `--ast-global-color-4` | `#FFFFFF` | ⇄ | **Background** (page) | `neutral-0` | `#ffffff` |
-| Secondary Background | `--ast-global-color-5` | `#F0F5FA` | ⇄ | **Surface** | `neutral-1` | computed |
-| Alternate Background | `--ast-global-color-6` | `#111111` | ⇄ | **Border / Outline** | `neutral-2` | computed |
-| Subtle Background | `--ast-global-color-7` | `#D1D5DB` | — | *unmanaged* | — | — |
-| Other Supporting | `--ast-global-color-8` | `#111111` | — | *unmanaged* | — | — |
+| Secondary Background | `--ast-global-color-5` | `#F0F5FA` | ⇄ | **Surface** | `neutral-1` | `#f0f1f1` |
+| Alternate Background | `--ast-global-color-6` | `#111111` | ⇄ | **Border / Outline** | `neutral-2` | `#d4d5d8` |
+| Subtle Background | `--ast-global-color-7` | `#D1D5DB` | ⇄ | **Neutral (Muted)** | `neutral-4` | `#767884` |
+| Other Supporting | `--ast-global-color-8` | `#111111` | ⇄ | **Accent** | `accent` | `#f59e0b` |
 
-The 7 mapped slots are **two-way** (⇄). The mapping is 1:1 — every managed Astra
-slot has its own Style Guide token — so each round-trips independently. Slots 7
-and 8 are **unmanaged** (their old tokens were the interpolated `neutral-3`/
-`neutral-6`, which are no longer generated); Astra keeps its own values for them.
+**All 9 slots are two-way** (⇄). The mapping is 1:1 — every Astra slot has its own
+Style Guide token — so each round-trips independently. Slots 7 and 8 were
+unmanaged for one release cycle (their old tokens were the interpolated
+`neutral-3`/`neutral-6`, removed with the colour auto-generation); they are now
+allotted to the **Neutral** role and **Accent** respectively.
 See [§2.4](#24-notes-on-the-values).
+
+The map itself is `AstraPaletteAdapter::SEMANTIC_TOKENS` resolved through
+`semantic_index()`, exposed as the single `shade_map()` — see [§2.4](#24-notes-on-the-values).
+
+#### Reading the "SG token" column
+
+The **SG token** column is not a second colour — it is the **CSS variable name**
+the Style Guide colour on that row is emitted under. Every Style Guide colour
+carries two names:
+
+| | What it is | Where you meet it |
+| --- | --- | --- |
+| **Role** — `heading`, `body`, `background`, `primary` … | The colour's *job*. What the user picks in the Style Guide UI, and what is stored in `colors`. | `--wp--preset--color--heading` |
+| **Token** — `neutral-7`, `neutral-5`, `primary` … | The *palette slot* that role feeds. What the engine emits CSS under. | `--spectra-neutral-7` |
+
+The pairing is declared once, in `ColorModel::CORE_ROLES`:
+
+```php
+'heading'    => array( 'kind' => 'neutral', 'stop' => 7, 'token' => 'neutral-7' ),
+'body'       => array( 'kind' => 'neutral', 'stop' => 5, 'token' => 'neutral-5' ),
+'background' => array( 'kind' => 'neutral', 'stop' => 0, 'token' => 'neutral-0' ),
+'primary'    => array( 'kind' => 'brand',   'chromatic' => 1, 'token' => 'primary' ),
+```
+
+**`neutral-N` is a lightness scale** — `0` lightest, `7` darkest. The six neutral
+roles are just names for six positions on it:
+
+| Token | Role | SG default | Position |
+| --- | --- | --- | --- |
+| `neutral-0` | Background | `#ffffff` | lightest |
+| `neutral-1` | Surface | `#f0f1f1` | |
+| `neutral-2` | Border / Outline | `#d4d5d8` | |
+| `neutral-4` | Neutral (Muted) | `#767884` | |
+| `neutral-5` | Body text | `#464757` | |
+| `neutral-7` | Heading text | `#09081b` | darkest |
+
+**Stops 3 and 6 do not exist.** They used to be interpolated between their
+neighbours and were removed with the colour auto-generation — which is exactly why
+slots 7 and 8 were unmanaged for one release cycle: they had pointed at
+`neutral-3` / `neutral-6`. See [§2.4](#24-notes-on-the-values).
+
+The brand colours sit on no scale, so their token is simply their own name —
+`primary`, `secondary`, `accent`. (They were numbered once, `chromatic1-7` /
+`chromatic2-7`; that scheme is retired — see [§10](#10-doc-audit--2026-08-26).)
+
+**Why the tables carry the token and not just the role:** the adapter maps to
+*tokens*. `SEMANTIC_TOKENS` is literally `'headings' => 'neutral-7'`, and that
+value lands verbatim inside the emitted alias
+(`GlobalStylesBridge::get_astra_compat_css()`):
+
+```css
+--ast-global-color-2: var(--spectra-neutral-7, #09081b);
+```
+
+So on an Astra site one colour answers to three variable names, all resolving to
+the same hex:
+
+```css
+--spectra-neutral-7            /* the token  — Spectra's own palette */
+--wp--preset--color--heading   /* the preset — role-named, feeds the block picker */
+--ast-global-color-2           /* Astra's alias — var(--spectra-neutral-7, …) */
+```
+
+Which one you meet depends on where you are standing: block markup uses the
+preset, the theme uses the Astra variable, Spectra's own CSS uses the token.
+
+One more family: `sg-heading`, `sg-body`, `sg-border` … in
+`ColorModel::SEMANTIC_MAP` are a *third*, role-side set of names — Astra-compat
+preset slugs kept for older saved content. They collapse onto the same tokens
+(`sg-heading → neutral-7`), so they are aliases, not extra colours.
 
 #### B. Other named Astra colours (they inherit a global colour above, so they land on the same Style Guide colour)
 
@@ -90,20 +165,23 @@ sync needed.
 
 | Astra colour | Astra setting (key) | Astra default (references) | → inherits global | → Style Guide colour | SG token |
 | --- | --- | --- | --- | --- | --- |
-| Accent | `theme-color` | `var(--ast-global-color-0)` | Brand | **Primary** | `chromatic1-7` |
-| Links — normal | `link-color` | `var(--ast-global-color-0)` | Brand | **Primary** | `chromatic1-7` |
-| Links — hover | `link-h-color` | `var(--ast-global-color-1)` | Alternate Brand | **Secondary** | `chromatic2-7` |
+| Accent | `theme-color` | `var(--ast-global-color-0)` | Brand | **Primary** | `primary` |
+| Links — normal | `link-color` | `var(--ast-global-color-0)` | Brand | **Primary** | `primary` |
+| Links — hover | `link-h-color` | `var(--ast-global-color-1)` | Alternate Brand | **Secondary** | `secondary` |
 | Heading (H1–H6) | `heading-base-color` | `var(--ast-global-color-2)` | Headings | **Heading text** | `neutral-7` |
 | Body Text | `text-color` | `var(--ast-global-color-3)` | Text | **Body text** | `neutral-5` |
-| Borders | `border-color` | `var(--ast-global-color-7)` * | Subtle Background | *(unmanaged slot)* | — |
+| Borders | `border-color` | `var(--ast-global-color-7)` * | Subtle Background | **Neutral (Muted)** | `neutral-4` |
 
-\* Fresh installs reference slot 7 (Subtle Background — unmanaged). **Legacy** installs
-reference slot 6 (Alternate Background → **Border / Outline**, `neutral-2`).
+\* Fresh installs reference slot 7 (Subtle Background → **Neutral**, `neutral-4`).
+**Legacy** installs reference slot 6 (Alternate Background → **Border / Outline**,
+`neutral-2`). Either way the setting now tracks a Style Guide colour, which it did
+not while slot 7 was unmanaged.
 
 **Sync direction legend**
 - `⇄` **two-way** — a Style Guide save updates Astra, *and* editing that colour in
-  Astra updates the Style Guide. **The 7 managed global colours are two-way.**
-- `—` **unmanaged** — slots 7/8: the sync neither pushes nor pulls them.
+  Astra updates the Style Guide. **All 9 global colours are two-way.**
+- `—` **unmanaged** — no slot is unmanaged any more; the symbol is retained for
+  future rows.
 - `→` **push-only** — Style Guide → Astra only. (No global colour is push-only;
   the legend is kept for the derived/inherited settings in §2.2 that have no
   reverse path.)
@@ -134,7 +212,7 @@ which likewise resolve to one of the 9, so to a Style Guide colour — are:
 | `header-menu1-color-responsive` / `-h-` / `-a-` | Primary menu normal / hover / active | `-3` → Body text · `-1` → Secondary · `-1` → Secondary |
 | `header-mobile-menu-color-responsive` … | Mobile menu normal / hover / active | `-3` → Body text · `-1` → Secondary · `-1` → Secondary |
 | `content-bg-obj-responsive`, `site-layout-outside-bg-obj-responsive` | Content / site background | `-5` (reorg `-4`) → **Surface** / **Background** |
-| `hb-header-main-sep-color`, `hbb-footer-top-border-color`, … | Header/footer separators & borders | subtle-bg `-7` → *(unmanaged slot — keeps Astra's value)* |
+| `hb-header-main-sep-color`, `hbb-footer-top-border-color`, … | Header/footer separators & borders | subtle-bg `-7` → **Neutral (Muted)** |
 | `footer-copyright-color` | Footer copyright | `-3` Text → **Body text** |
 
 **The only colours that do NOT track the palette** are a few settings with
@@ -164,23 +242,22 @@ intentionally left out of the sync (Astra has no equivalent to map them to):
 
 | Style Guide colour | SG token | SG default |
 | --- | --- | --- |
-| Accent | `accent` | `#f59e0b` |
-| Neutral (Muted) | `neutral-4` | `#767884` |
 | Foreground | `foreground` | `#ffffff` |
 | Success | `success` | `#10b981` |
 | Error | `error` | `#ef4444` |
 | Info | `info` | `#8b5cf6` |
 | Warning | `warning` | `#d97706` |
 
-**Neutral** and **Foreground** were previously missing from this list even though
-neither is synced. Astra's nine slots consume `neutral-0/1/2/5/7` and skip
-`neutral-4`: it has no "muted / placeholder text" role, and no foreground slot
-either. Both keep the Style Guide's own value on an Astra site — they render via
-`--spectra-neutral-4` / `--spectra-foreground` and their `--wp--preset--color--*`
-slugs, they simply have no Astra twin to push to or pull from.
+**Accent** and **Neutral (Muted)** used to sit in this list. They no longer do:
+slot 8 ("Other supporting") now carries **Accent** and slot 7 ("Subtle
+background") carries **Neutral**, so Astra's nine slots consume
+`neutral-0/1/2/4/5/7` plus both brand seeds and `accent`.
 
-The token column above also used the retired `chromaticN-7` names; the emitted
-tokens are keyed by semantic slug ({@see ColorModel::CHROMATIC_SLUG}).
+**Foreground** stays unmapped — Astra has no "text on a filled surface" slot. It
+keeps the Style Guide's own value on an Astra site: it renders via
+`--spectra-foreground` and `--wp--preset--color--foreground`, it simply has no
+Astra twin to push to or pull from. The four status colours are likewise
+Spectra-only.
 
 ### 2.4 Notes on the values
 
@@ -191,19 +268,31 @@ tokens are keyed by semantic slug ({@see ColorModel::CHROMATIC_SLUG}).
   (`AstraPaletteAdapter::semantic_index()`), so the *mapping* (e.g. Page Background
   → `neutral-0`) always holds — only which raw `--ast-global-color-N` index it
   lands on differs.
-- **SG defaults are fixed literals.** The nine default colours are hard-coded in
+- **SG defaults are fixed literals.** The ten default colours are hard-coded in
   `ColorModel::default_colors()` (brand seeds + six neutral literals frozen from
   the retired OKLCH derivation). Nothing is generated.
-- **SG "-7" is the brand seed token.** `chromaticN-7` is the raw stored colour
-  (Primary = `chromatic1-7`, Secondary = `chromatic2-7`); no other shades exist.
+- **Brand tokens are named by slug.** The raw stored colour is emitted as
+  `primary` / `secondary` / `accent` (CSS `--spectra-primary`, …); the legacy
+  `chromaticN-7` names are gone (`ColorModel::CHROMATIC_SLUG`). No other shades
+  exist — there is no ramp behind a seed any more.
+- **One slot map, not three.** `AstraPaletteAdapter::shade_map()` (built from
+  `SEMANTIC_TOKENS` + the flag-aware `semantic_index()`) is the single source for
+  "which Astra slot carries which Style Guide colour". The push
+  (`resolve_patch()`), the reverse map, `Engine::inherited_default_colors()`, and
+  the render-time aliases (`GlobalStylesBridge::astra_shade_map()`, localized to
+  the editor as `astra_shade_map`) all read it, so no consumer can drift. Do
+  **not** hardcode slot indices anywhere — including in JS.
 - **How the round-trip works.** `SyncOrchestrator::apply_reverse_colors()` maps
   every pulled token to the core role slug that owns it
   (`ColorModel::slug_for_token()`) and writes **`config['colors'][slug]`**
-  directly: the two brand slots (0/1 → `primary`/`secondary`) and five neutral
-  slots (2/3/4/5/6 → `heading`, `body`, `background`, `surface`, `outline`).
-  Slots 7/8 are **unmanaged** — their old tokens were the interpolated
-  `neutral-3`/`neutral-6`, which are no longer generated, so the sync skips
-  them entirely (no push, no pull, no pins).
+  directly: the two brand slots (0/1 → `primary`/`secondary`), the five neutral
+  slots (2/3/4/5/6 → `heading`, `body`, `background`, `surface`, `outline`),
+  slot 7 → `neutral` and slot 8 → `accent`. No pins, no intermediate layers.
+- **Two profiles, two jobs.** `MappingResolver::CURATED['astra']` maps only the
+  two brand slots — it drives the *generic* reverse path. The full 9-slot,
+  flag-aware push and the Astra-specific reverse hook belong to
+  `AstraPaletteAdapter`. Reading the curated profile as "what Astra syncs" will
+  under-count by seven slots.
 
 ### 2.5 Future mappings
 
@@ -366,10 +455,48 @@ when `astra-settings` is already correct — no colour change required.
    `global-color-palette` control drives the rendered CSS. Keep both in sync,
    index-for-index, exactly as Astra's own updater does
    (`inc/abilities/customizer/globals/colors/class-astra-update-global-palette.php:276`).
-5. **Slots 7/8 allotment (open decision):** the sync no longer manages Astra's
-   "Subtle background" (slot 7) and "Other supporting" (slot 8) — their old
-   sources (the interpolated `neutral-3`/`neutral-6`) were removed with the
-   colour auto-generation. Decide which stored colour (if any) should own each
-   slot, then add the two rows back to
-   `AstraPaletteAdapter::SEMANTIC_TOKENS`/`semantic_index()` and the two
-   `ASTRA_SHADE_MAP` copies (bridge + liveVars.js).
+5. ~~**Slots 7/8 allotment (open decision)**~~ — **closed.** Slot 7 → `neutral-4`
+   (Neutral) and slot 8 → `accent`, added back to
+   `AstraPaletteAdapter::SEMANTIC_TOKENS`/`semantic_index()`. The two duplicate
+   `ASTRA_SHADE_MAP` copies were removed at the same time: the bridge now calls
+   `AstraPaletteAdapter::shade_map()`, and `liveVars.js` reads the resolved map
+   off the REST payload (`astra_shade_map`) instead of keeping its own.
+6. **The reorganize flag defaults to the MODERN layout.**
+   `uses_reorganized_slots()` reports the legacy order only when Astra is present
+   *and* explicitly sets the compat flag — because the slot map is now read on
+   non-Astra themes too (the render-time `--ast-global-color-*` aliases are
+   emitted regardless of the active theme), where deriving `false` from a merely
+   absent Astra class would silently hand those consumers the legacy order.
+
+---
+
+## 10. Doc audit — 2026-08-26
+
+Corrections applied in this revision, and the open issues left behind.
+
+**Corrected (doc was stale, code had moved):**
+
+| Was documented | Actual code |
+|---|---|
+| Slots 7/8 unmanaged; "7 managed slots" | all **9** slots managed and two-way (`SEMANTIC_TOKENS`) |
+| Accent + Neutral listed as "not mapped to Astra" (§2.3) | both mapped — slot 8 → `accent`, slot 7 → `neutral-4` |
+| Borders / header-footer separators track an unmanaged slot | they track **Neutral** |
+| Tokens named `chromatic1-7` / `chromatic2-7` | semantic slugs `primary` / `secondary` |
+| "two `ASTRA_SHADE_MAP` copies (bridge + liveVars.js)" | one SSOT — `AstraPaletteAdapter::shade_map()`, localized to JS |
+
+**Open issues identified during the audit:**
+
+1. **Foreground has no Astra home.** Every other stored role now round-trips with
+   Astra; `foreground` does not, because Astra has no "text on a filled surface"
+   slot. On an Astra site a user editing Foreground in the Style Guide sees it
+   affect Spectra blocks only. Worth a note in the UI, or an explicit decision
+   that the role is Spectra-scoped.
+2. **The curated Astra profile and the adapter disagree in scope.**
+   `MappingResolver::CURATED['astra']` maps two slots; `AstraPaletteAdapter` maps
+   nine. Both are correct for their own path, but the asymmetry is easy to
+   misread as a bug — a comment on the curated rows (or a rename) would help.
+3. **Stale `customize_changeset` auto-drafts** remain un-garbage-collected
+   (§6, recommendation 2). Still low priority, still unimplemented.
+4. **The regression evidence in §7/§8 predates the slot 7/8 remap.** The
+   independent-reconcile fix was verified as described; the *nine-slot* push has
+   not been re-verified against a live Customizer round-trip.

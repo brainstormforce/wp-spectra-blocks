@@ -10,6 +10,7 @@ import { memo } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import renderCustomSVG from './separator-svg';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -18,8 +19,47 @@ import renderCustomSVG from './separator-svg';
  * @since x.x.x
  * @return {Element} The rendered block.
  */
+/**
+ * The separator's line and wrapper styles.
+ *
+ * Two selectors, because the block splits them: alignment becomes
+ * `justify-content` on the WRAPPER while the dimensions and appearance land on
+ * the `.spectra-separator-line` CHILD. A single style object could not express
+ * that, which is why producers may return selector-scoped entries — see
+ * `helpers/responsive-preview.js`.
+ *
+ * `processedColor` is resolved outside the band, so it is passed in.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs          The block's attributes, or a band's merge.
+ * @param {string} processedColor The resolved separator colour.
+ * @return {Array} Selector-scoped style entries.
+ */
+export const getSeparatorStyles = ( attrs = {}, processedColor ) => {
+	const { separatorWidth, separatorHeight, separatorStyle, separatorAlign } = attrs;
+
+	const justifyContent = 'left' === separatorAlign ? 'flex-start' : ( 'right' === separatorAlign ? 'flex-end' : 'center' ); // eslint-disable-line no-nested-ternary
+	const appearance = 'solid' === separatorStyle
+		? { backgroundColor: processedColor }
+		: { borderTop: `${ separatorHeight || '3px' } ${ separatorStyle } ${ processedColor }`, backgroundColor: 'transparent' };
+
+	return [
+		{ selector: '', styles: { justifyContent } },
+		{
+			selector: ' .spectra-separator-line',
+			styles: {
+				width: separatorWidth || '100%',
+				height: separatorHeight || '3px',
+				...appearance,
+				marginLeft: 'left' === separatorAlign ? '0' : 'auto',
+				marginRight: 'right' === separatorAlign ? '0' : 'auto',
+			},
+		},
+	];
+};
+
 const Render = ( props ) => {
-	const { attributes } = props;
+	const { attributes, clientId } = props;
 
 	const {
 		separatorStyle = 'solid',
@@ -104,6 +144,14 @@ const Render = ( props ) => {
 		marginRight: getMarginRight(),
 	};
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/separator',
+		producers: [ ( attrs ) => getSeparatorStyles( attrs, processedColor ) ],
+	} );
+
 	// Use the block props
 	const blockProps = useBlockProps( {
 		style,
@@ -112,6 +160,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<div 
 				className="spectra-separator-line"
 				style={ separatorStyles }

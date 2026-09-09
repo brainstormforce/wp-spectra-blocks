@@ -3,19 +3,20 @@
  */
 import { memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import useLayoutInspectorGroup from '@spectra-hooks/useLayoutInspectorGroup';
+import StylePanel from '@spectra-components/style-panel';
 import {
 	InspectorControls,
 	useSettings,
 } from '@wordpress/block-editor';
 import {
-	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	SelectControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.
@@ -40,24 +41,17 @@ const BlockSettings = memo( ( props ) => {
 	} = attributes;
 
 	// Render the settings.
+	const { group: layoutGroup, isHosted: layoutHosted } = useLayoutInspectorGroup();
+
 	return (
 		<>
-			<InspectorControls group="settings">
-				<ToolsPanel
-					label={ __( 'Separator', 'spectra-blocks' ) }
-					resetAll={ () => {
-						setAttributes( {
-							separatorStyle: undefined,
-							separatorAlign: undefined,
-
-						} );
-					} }
-					panelId={ clientId }
-				>
+			<InspectorControls group={ layoutGroup }>
+				<StylePanel isHosted={ layoutHosted } label={ __( 'Separator Layout', 'spectra-blocks' ) } resetAll={ () => setAttributes( { separatorStyle: undefined, separatorAlign: undefined } ) } panelId={ clientId } showHostedHeading={ false }>
 					<ToolsPanelItem
 						hasValue={ () => !! separatorStyle }
 						label={ __( 'Style', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorStyle: undefined } ) }
+						resetAllFilter={ () => ( { separatorStyle: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -106,6 +100,7 @@ const BlockSettings = memo( ( props ) => {
 						hasValue={ () => !! separatorAlign }
 						label={ __( 'Alignment', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { separatorAlign: undefined } ) }
+						resetAllFilter={ () => ( { separatorAlign: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
@@ -122,8 +117,7 @@ const BlockSettings = memo( ( props ) => {
 							<ToggleGroupControlOption value="right" label={ __( 'Right', 'spectra-blocks' ) } />
 						</ToggleGroupControl>
 					</ToolsPanelItem>
-
-				</ToolsPanel>
+							</StylePanel>
 			</InspectorControls>
 		</>
 	);

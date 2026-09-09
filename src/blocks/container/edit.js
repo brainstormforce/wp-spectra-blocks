@@ -81,7 +81,7 @@ const Edit = ( props ) => {
 	// Initialize with current length to avoid auto-selection on mount/remount (e.g. switching device views)
 	const previousChildrenCount = useRef( blockChildren ? blockChildren.length : 0 );
 
-	const { updateBlockAttributes, selectBlock } = useDispatch( 'core/block-editor' );
+	const { updateBlockAttributes, selectBlock, __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	// Mount-once sentinel for the isBlockRootParent write-back below. Without
@@ -113,6 +113,10 @@ const Edit = ( props ) => {
 				updates.align = undefined;
 			}
 
+			// A derived value, not an edit: writing it persistently made every
+			// post containing a container open dirty. It still persists
+			// whenever the user saves for their own reasons.
+			__unstableMarkNextChangeAsNotPersistent();
 			setAttributes( updates );
 		}
 		hasSetRootParent.current = true;
@@ -126,7 +130,12 @@ const Edit = ( props ) => {
 
 		// If custom boxShadow is used and old style.shadow exists, remove it
 		if ( ( boxShadow || boxShadowHover ) && style?.shadow ) {
-			setAttributes( {
+			// Representation cleanup, not an edit — see the note above. Written
+			// directly (not through the wrapped setter): the explicit undefined
+			// would otherwise read as a deletion routed to the CURRENT preview
+			// device, collaterally clearing a tablet/mobile shadow override.
+			__unstableMarkNextChangeAsNotPersistent();
+			updateBlockAttributes( clientId, {
 				style: {
 					...style,
 					shadow: undefined
@@ -141,6 +150,8 @@ const Edit = ( props ) => {
 			blockChildren.forEach( ( child ) => {
 				// Mark this child as the default selected variation if it is a container.
 				if ( 'spectra/container' === child.name ) {
+					// Derived marker, not an edit — must not dirty the post on open.
+					__unstableMarkNextChangeAsNotPersistent();
 					updateBlockAttributes( child.clientId, { variationSelected: true } );
 				}
 			} );
@@ -205,7 +216,11 @@ const Edit = ( props ) => {
 		// For nested objects like 'layout' and 'style', WordPress replaces them entirely
 		// This ensures switching between grid/flex layouts works correctly
 		if ( nextVariation.attributes ) {
-			setAttributes( {
+			// Verbatim, bypassing the responsive wrapper: container variations
+			// are stateless root payloads, and routed through the wrapper a
+			// pick made while previewing Tablet/Mobile would land the payload
+			// in that device's state and empty the base layer.
+			updateBlockAttributes( clientId, {
 				...nextVariation.attributes,
 				variationSelected: true,
 			} );

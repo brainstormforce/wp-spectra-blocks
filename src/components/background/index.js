@@ -10,7 +10,6 @@ import {
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	__experimentalToolsPanel as ToolsPanel,
 	__experimentalToolsPanelItem as ToolsPanelItem,
 	Button,
 	SelectControl,
@@ -19,10 +18,72 @@ import {
 	FocalPointPicker,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
-	ToggleControl
+	ToggleControl,
+	createSlotFill,
 } from '@wordpress/components';
-import { useEffect, useState } from '@wordpress/element';
+import { Children, useEffect, useState } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies.
+ */
+import StylePanel from '@spectra-components/style-panel';
+
+/**
+ * Where the media picker's extensions render.
+ *
+ * The extensions a filter contributes — Pro's Dynamic Image among them — are
+ * built here, because only this component holds the media state they need
+ * (`setShowPreview` above all). Where they BELONG on screen is the caller's
+ * business: the container, for one, wants Dynamic Image after its Overlay and
+ * Shape Divider sections, which are separate inspector fills rendered after
+ * this one, so an element rendered inline here can only ever land above them.
+ *
+ * A slot separates the two. This component fills it wherever it is built; a
+ * caller passing `deferExtensions` renders the slot at the position it wants
+ * and owns the placement. Without that prop the slot is rendered right here,
+ * which is where the extensions have always appeared.
+ *
+ * @since x.x.x
+ */
+const { Fill: BackgroundExtensionsFill, Slot: ExtensionsSlot } =
+	createSlotFill( 'SpectraBackgroundMediaPickerExtensions' );
+
+/**
+ * The media picker's extensions, in a box that spans the panel.
+ *
+ * An inspector group's body is a two-column grid, and core gives every
+ * `ToolsPanelItem` `grid-column: 1 / -1` so it spans the row. An extension
+ * that brings a panel of its own — Pro's Dynamic Image does — is not such an
+ * item, so it landed in the grid as a plain child at `grid-column: auto` and
+ * was squeezed into ONE column: measured at 116px of a 248px panel, its own
+ * controls reflowing into 34px columns. Spanning the row here fixes it for
+ * every caller, wherever the slot is rendered.
+ *
+ * @since x.x.x
+ * @return {Element} The slot, wrapped.
+ */
+export const BackgroundExtensionsSlot = () => (
+	<ExtensionsSlot>
+		{ ( fills ) => {
+			/*
+			 * No wrapper unless something fills the slot.
+			 *
+			 * The wrapper carries `grid-column: 1 / -1`, so an empty one is
+			 * still a grid item: it takes a row of core's panel and the
+			 * `row-gap` above it. With no extension active — the free plugin
+			 * on its own — that was a measured 16px of dead space at the foot
+			 * of every Background panel. Rendering `{ Extensions }` inline,
+			 * as this did before the slot existed, cost nothing when null.
+			 */
+			const filled = Children.toArray( fills ).length > 0;
+
+			return filled
+				? <div className="spectra-background-extensions">{ fills }</div>
+				: null;
+		} }
+	</ExtensionsSlot>
+);
 
 const Background = ( props ) => {
 	// Show/hide the media preview.
@@ -40,6 +101,12 @@ const Background = ( props ) => {
 		backgroundColorHover,
 		backgroundGradient,
 		backgroundGradientHover,
+		// Set while a core ToolsPanel already surrounds this fill (the responsive
+		// view), in which case this must not render a panel of its own.
+		isHosted = false,
+		// Set when the caller renders `BackgroundExtensionsSlot` itself, to place
+		// the filtered extensions somewhere other than directly below this panel.
+		deferExtensions = false,
 	} = props;
 
 	// Destructure the background attribute.
@@ -128,8 +195,11 @@ const Background = ( props ) => {
 	// Render the background component Tools Panel.
 	return (
 		<>
-			<ToolsPanel
+			<StylePanel
+				isHosted={ isHosted }
 				label={ __( 'Background', 'spectra-blocks' ) }
+				// Core's host slot is already labelled "Background".
+				showHostedHeading={ false }
 				resetAll={ () => {
 					setAttributes( { [ attributeLabel ]: undefined } );
 				} }
@@ -143,22 +213,15 @@ const Background = ( props ) => {
 				<ToolsPanelItem
 					hasValue={ () => ( !! type || !! media ) }
 					label={ __( 'Background Type', 'spectra-blocks' ) }
+					// Reset clears the whole object for this device. Clearing only
+					// `type` and `media` left `backgroundSize` / `backgroundRepeat`
+					// behind, and a band holding just those still overrode the base:
+					// after "reset" the tablet rendered the desktop image with the
+					// tablet's contain/repeat-y instead of the desktop's cover.
 					onDeselect={ () => {
-						setAttributes( {
-							[ attributeLabel ]: {
-								...attributeValue,
-								type: undefined,
-								media: undefined,
-							}
-						} );
+						setAttributes( { [ attributeLabel ]: undefined } );
 					} }
-					resetAllFilter={ () => ( {
-						[ attributeLabel ]: {
-							...attributeValue,
-							type: undefined,
-							media: undefined,
-						}
-					} ) }
+					resetAllFilter={ () => ( { [ attributeLabel ]: undefined } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
@@ -617,10 +680,11 @@ const Background = ( props ) => {
 						) }
 					</>
 				) }
-			</ToolsPanel>
+			</StylePanel>
 
 			{ /* Allow extensions to add custom UI below the media selector. */ }
-			{ Extensions }
+			<BackgroundExtensionsFill>{ Extensions }</BackgroundExtensionsFill>
+			{ ! deferExtensions && <BackgroundExtensionsSlot /> }
 		</>
 	);
 };

@@ -5,14 +5,19 @@
 	"version": "3.0.0",
 	"title": "Template",
 	"category": "spectra",
-	"ancestor": [ "spectra/post" ],
+	"ancestor": [
+		"spectra/post"
+	],
 	"description": "Template for post items",
 	"textdomain": "spectra-blocks",
 	"supports": {
 		"interactivity": true,
 		"html": false,
 		"reusable": false,
-		"align": [ "wide", "full" ],
+		"align": [
+			"wide",
+			"full"
+		],
 		"shadow": true,
 		"typography": {
 			"fontSize": true,
@@ -56,10 +61,10 @@
 		"spectra/post/query",
 		"spectra/post/queryId",
 		"spectra/post/pageKey",
-		"spectra/post/responsiveControls",
 		"spectra/post/postsToShow",
 		"spectra/post/slidesPerView",
 		"spectra/post/spaceBetween",
+		"spectra/post/style",
 		"spectra/post/loop",
 		"spectra/post/speed",
 		"spectra/post/autoplay",

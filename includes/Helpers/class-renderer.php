@@ -157,11 +157,22 @@ class Renderer {
 	/**
 	 * Render the background video component if required.
 	 *
+	 * The element is rendered once for the block and shown or hidden per band
+	 * by CSS, so it exists at widths whose background is not a video at all.
+	 * With `autoplay` the browser fetched and decoded the file at every one of
+	 * those widths — a phone visitor paid for a desktop-only video. When any
+	 * band resolves to something other than a video the element is rendered
+	 * with `preload="none"` and no `autoplay`, and `responsive-videos.js`
+	 * starts or stops it for the band actually in view. `autoplay` stays where
+	 * every band is a video, so nothing changes for those blocks.
+	 *
 	 * @since 3.0.0
 	 * @param array $background The background attribute.
+	 * @param bool  $autoplay   Optional. Whether every band shows a video, so the
+	 *                          browser may start it itself. Default true.
 	 * @return void
 	 */
-	public static function background_video( $background ) {
+	public static function background_video( $background, $autoplay = true ) {
 
 		// Get the required data from the background attribute.
 		$background_type = $background['type'] ?? '';
@@ -195,11 +206,44 @@ class Renderer {
 		// Create a separate element that appears before the actual children of this wrapper.
 		?>
 			<div class="<?php echo esc_attr( $background_video_classes ); ?>">
-				<video role="presentation" aria-hidden="true" autoPlay loop muted playsinline>
+				<video role="presentation" aria-hidden="true" loop muted playsinline<?php echo $autoplay ? ' autoPlay' : ' preload="none" data-spectra-deferred="1"'; ?>>
 					<source src="<?php echo esc_url( $sanitized_url ); ?>" type="video/mp4" />
 				</video>
 			</div>
 		<?php
+	}
+
+	/**
+	 * Whether every viewport band of a block resolves to a video background.
+	 *
+	 * Reads the per-device store the way the CSS generator does — each band
+	 * over base, nothing else — so the answer matches what the bands paint.
+	 * The store is the hydrated one: `ResponsiveControls` rebuilds it from
+	 * `style` before a block renders, so `@tablet`/`@mobile` are populated on
+	 * 7.1 content as well as on legacy content.
+	 *
+	 * EVERY band, deliberately: the answer decides whether the browser may
+	 * autoplay the file. Where some band shows an image or nothing, the element
+	 * renders deferred — `preload="none"`, no `autoplay` — and
+	 * `assets/js/responsive-videos.js` attaches the source and starts it for
+	 * the band in view, so a phone visitor never pays for a desktop-only video.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $attributes The block attributes.
+	 * @return bool True when base, tablet and mobile all show a video.
+	 */
+	public static function video_on_every_band( $attributes ) {
+		$store = isset( $attributes['responsiveControls'] ) && is_array( $attributes['responsiveControls'] ) ? $attributes['responsiveControls'] : array();
+		$base  = $store['base']['background'] ?? ( $attributes['background'] ?? null );
+
+		foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
+			$band = $store[ $device ]['background'] ?? $base;
+			if ( 'video' !== ( is_array( $band ) ? ( $band['type'] ?? '' ) : '' ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

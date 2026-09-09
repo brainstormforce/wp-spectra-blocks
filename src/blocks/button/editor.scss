@@ -3,7 +3,7 @@ $default-icon-size: 16px;
 $default-text-icon-gap: 10px;
 
 .wp-block-spectra-button:where(div, button) {
-	gap: var(--spectra-gap, $default-text-icon-gap);
+	gap: var(--spectra-icon-gap, $default-text-icon-gap);
 
 	// Text align styles.
 	// The wrapper is a flex row, so `text-align` cannot move the inner

@@ -2,9 +2,9 @@
 Contributors: brainstormforce
 Tags: ai website builder, gutenberg blocks, page builder, block editor, website builder
 Requires at least: 6.6
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,12 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.7 - Tuesday, 8th September 2026 =
+* Improvement: WordPress 7.1 compatibility — responsive ( viewport ) editing now follows core's breakpoints across the editor and front end.
+* Improvement: Added White Label settings Features.
+* Fix: Third-party embeds that load from a URL ( such as Calendly, Trustindex and booking widgets ) now work inside Spectra blocks.
+* Fix: Responsive images keep their srcset, sizes and decoding attributes inside Spectra blocks, so the right image size is served on each device.
 
 = 1.0.6 - Tuesday, 25th August 2026 =
 * Fix: Global Styles now correctly preserve CSS variable ( var() ) values in custom classes.

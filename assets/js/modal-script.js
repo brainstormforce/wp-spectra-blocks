@@ -95,28 +95,35 @@ function attachKeyboardHandlersToDocument( doc ) {
 	
 	// Global keyboard handler for modal triggers and close buttons
 	doc.addEventListener( 'keydown', ( e ) => {
+		// Only element targets carry classList/getAttribute. A keydown dispatched
+		// on the document itself (or a text node) has neither and used to throw here.
+		const target = e.target;
+		if ( ! target || typeof target.getAttribute !== 'function' || ! target.classList ) {
+			return;
+		}
+
 		// 1. Handle modal trigger elements (Enter/Space to open)
-		if ( ( e.target.classList.contains( 'modal-trigger-element' ) || 
-			   e.target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.toggle' ||
-			   e.target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.open' ) ) {
-			
+		if ( ( target.classList.contains( 'modal-trigger-element' ) ||
+			   target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.toggle' ||
+			   target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.open' ) ) {
+
 			if ( e.key === 'Enter' || e.key === ' ' ) {
 				e.preventDefault();
-				
+
 				// Just trigger a click event - let the existing click handler do the work
-				e.target.click();
+				target.click();
 			}
 		}
-		
+
 		// 2. Handle close button elements (Enter/Space to close)
-		else if ( e.target.classList.contains( 'spectra-modal-popup-close' ) || 
-				  e.target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.close' ) {
-			
+		else if ( target.classList.contains( 'spectra-modal-popup-close' ) ||
+				  target.getAttribute( 'data-wp-on--click' ) === 'spectra/modal::actions.close' ) {
+
 			if ( e.key === 'Enter' || e.key === ' ' ) {
 				e.preventDefault();
-				
+
 				// Just trigger a click event
-				e.target.click();
+				target.click();
 			}
 		}
 	} );

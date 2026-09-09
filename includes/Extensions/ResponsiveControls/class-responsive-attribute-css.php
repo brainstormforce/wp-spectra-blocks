@@ -211,6 +211,27 @@ class ResponsiveAttributeCSS {
 				'property' => 'max-height',
 			),
 		),
+		'spectra/tabs-child-tab-trigger'       => array(
+			'width'     => array(
+				'property' => 'width',
+			),
+			'height'    => array(
+				'property' => 'height',
+				'default'  => 'auto',
+			),
+			'minWidth'  => array(
+				'property' => 'min-width',
+			),
+			'minHeight' => array(
+				'property' => 'min-height',
+			),
+			'maxWidth'  => array(
+				'property' => 'max-width',
+			),
+			'maxHeight' => array(
+				'property' => 'max-height',
+			),
+		),
 		'spectra/counter'                      => array(
 			'prefixRightMargin' => array(
 				'property'  => 'margin-right',
@@ -263,6 +284,13 @@ class ResponsiveAttributeCSS {
 			'background'          => array(
 				'formatter' => 'format_background',
 			),
+			// CSS-less: read per device by the slider controller for the swiper
+			// config, not rendered as CSS. Registering them here is what lets
+			// hydration copy their `@tablet` / `@mobile` values from `style`
+			// back into the store — the editor-side list already has both, and
+			// the mismatch silently dropped them on the front end.
+			'slidesPerView'       => array(),
+			'spaceBetween'        => array(),
 		),
 		'spectra/slider-child'                 => array(
 			'background' => array(
@@ -394,6 +422,30 @@ class ResponsiveAttributeCSS {
 	}
 
 	/**
+	 * Whether any band of the block configures an overlay image.
+	 *
+	 * Mirrors the controller's `has-container-overlay` condition, read from the
+	 * per-device store so the answer is the same at every band.
+	 *
+	 * @since 1.0.7
+	 * @param array<string, mixed> $block_attrs The block's full attributes.
+	 * @return bool True when some band has Overlay Type "image" with an image.
+	 */
+	private static function has_overlay_on_any_band( array $block_attrs ): bool {
+		$store    = isset( $block_attrs['responsiveControls'] ) && is_array( $block_attrs['responsiveControls'] ) ? $block_attrs['responsiveControls'] : array();
+		$layers   = array_values( array_filter( $store, 'is_array' ) );
+		$layers[] = $block_attrs;
+
+		foreach ( $layers as $layer ) {
+			if ( 'image' === ( $layer['overlayType'] ?? '' ) && ! empty( $layer['overlayImage']['url'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Generate CSS for a block's attributes.
 	 *
 	 * @since 3.0.0
@@ -426,10 +478,47 @@ class ResponsiveAttributeCSS {
 		$css_rules = array();
 		$defs      = $attr_definitions[ $block_name ];
 
+		/*
+		 * Turning text shadow OFF for one device has to emit an explicit reset.
+		 * The base layer is unqueried — it applies at every width — so a band
+		 * that simply generates nothing leaves the wider shadow showing, and
+		 * "disable on mobile" appeared to do nothing at all. The reset is only
+		 * needed when some other layer actually enables a shadow.
+		 */
+		if ( 'spectra/content' === $block_name && empty( $attrs['enableTextShadow'] ) ) {
+			$store = isset( $block_attrs['responsiveControls'] ) && is_array( $block_attrs['responsiveControls'] )
+				? $block_attrs['responsiveControls']
+				: array();
+
+			foreach ( $store as $device_bucket ) {
+				if ( is_array( $device_bucket ) && ! empty( $device_bucket['enableTextShadow'] ) ) {
+					$css_rules[] = array(
+						'selector'   => '',
+						'style_attr' => 'text-shadow: none;',
+					);
+					break;
+				}
+			}
+		}
+
 		// Special handling for spectra/content text shadow.
 		if ( 'spectra/content' === $block_name && isset( $attrs['enableTextShadow'] ) && $attrs['enableTextShadow'] ) {
 			// Text shadow settings.
+
+			/*
+			 * A shadow with no colour is the text's own colour, not no shadow.
+			 *
+			 * Blur and the offsets have always defaulted, but the colour was
+			 * required: with it empty this emitted nothing at all. The panel
+			 * offers the toggle and the three sliders without asking for a
+			 * colour, so "enable Text Shadow, drag X / Y / Blur" — the obvious
+			 * way to use it — produced no CSS on any device, and the shadow
+			 * looked broken on Desktop and Mobile alike. Defaulting to
+			 * `currentColor` makes every state the panel can express
+			 * renderable, and matches what the offsets already do.
+			 */
 			$text_shadow_color    = $attrs['textShadowColor'] ?? '';
+			$text_shadow_color    = '' !== $text_shadow_color ? $text_shadow_color : 'currentColor';
 			$text_shadow_blur     = $attrs['textShadowBlur'] ?? 2;
 			$text_shadow_offset_x = $attrs['textShadowOffsetX'] ?? 1;
 			$text_shadow_offset_y = $attrs['textShadowOffsetY'] ?? 1;
@@ -458,11 +547,28 @@ class ResponsiveAttributeCSS {
 			$max_container_height = $attrs['maxContainerHeight'] ?? '';
 
 			$declarations = array(
-				'width'      => $container_width ? $container_width : '600px',
-				'max-width'  => '100%',
-				'height'     => 'custom' === $content_height ? $container_height : '',
-				'max-height' => 'auto' === $content_height ? $max_container_height : '',
+				'width'     => $container_width ? $container_width : '600px',
+				'max-width' => '100%',
 			);
+
+			/*
+			 * Content Height is per device, so a band that switches to Auto must
+			 * SAY so. This used to emit `height => ''` for Auto, which the style
+			 * engine drops — the band then contributed no height at all and the
+			 * base band's fixed height kept applying, so a popup set to Custom
+			 * 500px on Desktop and Auto on Mobile stayed 500px tall on phones.
+			 * `height: auto` is the reset the band needs; the base band emits it
+			 * too, harmlessly, when the popup is Auto everywhere.
+			 */
+			if ( 'custom' === $content_height ) {
+				$declarations['height'] = $container_height ? $container_height : 'auto';
+			} else {
+				$declarations['height'] = 'auto';
+
+				if ( '' !== $max_container_height ) {
+					$declarations['max-height'] = $max_container_height;
+				}
+			}
 
 			$css_rules[] = array(
 				'selector'     => $selector,
@@ -755,6 +861,58 @@ class ResponsiveAttributeCSS {
 		// Separate rules with style_attr from regular rules.
 		$style_attr_css = '';
 		$regular_rules  = array();
+
+		/*
+		 * Container overlay image, per band.
+		 *
+		 * The stylesheet paints the overlay with
+		 * `.has-container-overlay:not(.has-video-background)::after`. Those
+		 * classes are emitted once per ELEMENT from the union of every band's
+		 * background type, so a video at any one breakpoint carries
+		 * `.has-video-background` at every width and the overlay never paints —
+		 * including at breakpoints whose background is an image. The overlay
+		 * is a per-band concern, so the band paints it: a non-video band gets
+		 * the overlay rules directly, a video band hides the pseudo-element.
+		 * The variables (`--spectra-overlay-*`) are already emitted per band.
+		 */
+		if ( 'spectra/container' === $block_name && self::has_overlay_on_any_band( $block_attrs ) ) {
+			$band_background = isset( $attrs['background'] ) && is_array( $attrs['background'] ) ? $attrs['background'] : array();
+
+			if ( 'video' === ( $band_background['type'] ?? '' ) ) {
+				$css_rules[] = array(
+					'selector'   => '::after',
+					'style_attr' => 'display: none;',
+				);
+			} else {
+				$css_rules[] = array(
+					'selector'   => '',
+					'style_attr' => 'position: relative; isolation: isolate;',
+				);
+				$css_rules[] = array(
+					'selector'   => '::after',
+					'style_attr' => 'content: ""; display: block; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: var(--spectra-overlay-image, none); background-position: var(--spectra-overlay-position, center); background-attachment: var(--spectra-overlay-attachment, scroll); background-repeat: var(--spectra-overlay-repeat, no-repeat); background-size: var(--spectra-overlay-size, cover); opacity: var(--spectra-overlay-opacity-value, 0); pointer-events: none; z-index: 1; border-radius: inherit; mix-blend-mode: var(--spectra-overlay-blend-mode, normal); background-blend-mode: var(--spectra-overlay-blend-mode, normal);',
+				);
+
+				/*
+				 * Lift the container's own children above the overlay — but NOT
+				 * the video wrapper, which belongs BEHIND them.
+				 *
+				 * The wrapper is a direct child too, and it is positioned by
+				 * `absolute; inset: 0` so it fills the container. Sweeping it up
+				 * with the content made it `position: relative`, which collapsed
+				 * it to height 0: a container with an image at base and a video
+				 * at Mobile played that video at 290x0 and showed nothing on
+				 * phones. Only breakpoints carrying the overlay emitted this, so
+				 * the failure looked mobile-specific while the cause sat in the
+				 * base band. The static twin of this rule and the two in
+				 * `format_background()` all exclude it; this one did not.
+				 */
+				$css_rules[] = array(
+					'selector'   => ' > *:not(.spectra-container__shape):not(.spectra-background-video__wrapper)',
+					'style_attr' => 'position: relative; z-index: 2;',
+				);
+			}
+		}
 
 		/* @var array<int, array<string, mixed>> $css_rules */ // phpcs:ignore Squiz.Commenting.InlineComment.InvalidEndChar
 		foreach ( $css_rules as $rule ) {
@@ -1068,6 +1226,48 @@ class ResponsiveAttributeCSS {
 	}
 
 	/**
+	 * The band rule that removes an inherited background image.
+	 *
+	 * A breakpoint whose Background Type is None or Video must SAY that it has
+	 * no image: the base band's `background-image: url(…)` is unbanded and keeps
+	 * applying until a narrower band overrides the property. This branch used to
+	 * emit only the video-wrapper hide and the colour/gradient variable resets,
+	 * so "remove the background on tablet" left the desktop image painting at
+	 * 768 px, and migrated 7.0.4 content whose cascade baked `@mobile { type:
+	 * none }` showed the desktop image on phones. Same selector as the image
+	 * rule, so the band wins on source order alone.
+	 *
+	 * @since 1.0.7
+	 * @param string $selector The selector the image rule uses for this block.
+	 * @return array{selector: string, style_attr: string} The reset rule.
+	 */
+	private static function background_image_reset( $selector ): array {
+		return array(
+			'selector'   => $selector,
+			'style_attr' => 'background-image: none;',
+		);
+	}
+
+	/**
+	 * The selector the non-popup image rule targets for a block.
+	 *
+	 * Mirrors the computation inside `format_background()` so a reset lands on
+	 * exactly the selector the image was painted with.
+	 *
+	 * @since 1.0.7
+	 * @param string               $background_selector The low-specificity selector, or ''.
+	 * @param array<string, mixed> $attrs               The block attributes.
+	 * @return string The selector suffix.
+	 */
+	private static function image_rule_selector( $background_selector, $attrs ): string {
+		if ( isset( $attrs['variantType'] ) && 'popup' === $attrs['variantType'] ) {
+			return ' .spectra-popup-builder__wrapper--popup ';
+		}
+
+		return ! empty( $background_selector ) ? $background_selector : '';
+	}
+
+	/**
 	 * Format background attribute for CSS.
 	 *
 	 * Generates actual background CSS properties for frontend, since style.scss no longer contains them.
@@ -1093,7 +1293,7 @@ class ResponsiveAttributeCSS {
 			if ( is_null( $val ) ) {
 				// For null backgrounds, explicitly hide the video wrapper with !important.
 				$rules[] = array(
-					'selector'   => '.has-video-background ' . $background_selector . '  .spectra-background-video__wrapper',
+					'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 					'style_attr' => 'display: none !important;',
 				);
 				// For background type null and background set to some color. We need to add a opacity for it.
@@ -1133,8 +1333,9 @@ class ResponsiveAttributeCSS {
 					$has_video = true;
 				} elseif ( 'none' === $val['type'] ) {
 					// For 'none' type, we still need to hide the video wrapper.
+					$rules[] = self::background_image_reset( $background_selector );
 					$rules[] = array(
-						'selector'   => '.has-video-background ' . $background_selector . '  .spectra-background-video__wrapper',
+						'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 						'style_attr' => 'display: none !important;',
 					);
 					// For background type none and background set to some color. We need to add a opacity for it.
@@ -1177,6 +1378,7 @@ class ResponsiveAttributeCSS {
 			if ( $has_image || $has_video ) {
 				if ( $has_video ) {
 					// For video backgrounds, create overlay directly on wrapper::after when needed.
+					$rules[] = self::background_image_reset( $background_selector );
 					// Apply the background color/gradient to the overlay.
 					$rules[] = array(
 						'selector'   => $background_selector . ' > .spectra-background-video__wrapper::after',
@@ -1308,10 +1510,27 @@ class ResponsiveAttributeCSS {
 				);
 
 			} else {
-				// Hide video wrapper for non-video breakpoints.
-				// This is crucial - we MUST generate this CSS even if there's an image/color/gradient.
+				/*
+				 * Hide the video wrapper for non-video breakpoints.
+				 *
+				 * This is crucial — the rule has to be generated even when the band
+				 * carries an image, colour or gradient, because a later band may show
+				 * the wrapper and the cascade needs something to override.
+				 *
+				 * The selector must MATCH the show rule above, character for character.
+				 * Both declarations are `!important`, and among `!important` rules the
+				 * winner is decided by SPECIFICITY, not source order — so a hide rule
+				 * carrying one extra class (this used to be prefixed with
+				 * `.has-video-background`) outranked the show rule at every width,
+				 * including inside the band that asked for the video. A popup with an
+				 * image at base and a video at Mobile therefore rendered the `<video>`
+				 * element, gave it the right `src`, and then kept its wrapper at
+				 * `display: none` on the front end at every viewport. Symmetric
+				 * selectors put the bands back in charge, which is what the generic
+				 * (non-popup) branch below already does.
+				 */
 				$rules[] = array(
-					'selector'   => '.has-video-background ' . $background_selector . ' .spectra-background-video__wrapper',
+					'selector'   => $background_selector . ' > .spectra-background-video__wrapper',
 					'style_attr' => 'display: none !important;',
 				);
 			}
@@ -1540,6 +1759,7 @@ class ResponsiveAttributeCSS {
 				$has_video = true;
 			} elseif ( 'none' === $val['type'] ) {
 				// For 'none' type, we still need to hide the video wrapper.
+				$rules[] = self::background_image_reset( self::image_rule_selector( $background_selector, $attrs ) );
 				// Use direct-child selector (>) so this rule only hides the CURRENT block's
 				// own wrapper — not wrappers inside nested child blocks.
 				$rules[] = array(
@@ -1589,6 +1809,7 @@ class ResponsiveAttributeCSS {
 		// For responsive controls, we create the overlay dynamically per breakpoint.
 		if ( $has_image || $has_video ) {
 			if ( $has_video ) {
+				$rules[] = self::background_image_reset( self::image_rule_selector( $background_selector, $attrs ) );
 				// Reset inherited background-color/gradient on this device's viewport so that
 				// a colour set on an outer/ancestor container does not leak through as an
 				// opaque overlay covering the video. The reset is intentionally in dynamic

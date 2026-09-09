@@ -18,6 +18,7 @@ import BSFAnalyticsOption from '@DashboardApp/pages/settings/BSFAnalyticsOption'
 import Mcp from '@DashboardApp/pages/settings/Mcp';
 import RollBack from '@DashboardApp/pages/settings/RollBack';
 import Visibility from '@DashboardApp/pages/settings/Visibility';
+import WhiteLabel from '@DashboardApp/pages/settings/WhiteLabel';
 
 // Import Editor Enhancements.
 import TemplatesButton from '@DashboardApp/pages/settings/editor-enhancements/TemplatesButton';
@@ -99,6 +100,16 @@ const Settings = () => {
 				},
 			],
 		},
+		{
+			name: __( 'White Label', 'spectra-blocks' ),
+			children: [
+				{
+					name: __( 'White Label', 'spectra-blocks' ),
+					slug: 'white-label',
+					icon: SettingsIcons[ 'white-label' ],
+				},
+			],
+		},
 	];
 
 	const tabTitles = {
@@ -110,6 +121,7 @@ const Settings = () => {
 		'mcp': __( 'MCP Server', 'spectra-blocks' ),
 		'visibility': __( 'Site Visibility', 'spectra-blocks' ),
 		'version-control': __( 'Version Control', 'spectra-blocks' ),
+		'white-label': __( 'White Label', 'spectra-blocks' ),
 	};
 
 	if ( spectraIsBlockTheme ) {
@@ -209,6 +221,7 @@ const Settings = () => {
 						{ 'fse-support' === currentTab && spectraIsBlockTheme && <FSEFontFamilies /> }
 						{ 'mcp' === currentTab && <Mcp /> }
 						{ 'visibility' === currentTab && <Visibility /> }
+						{ 'white-label' === currentTab && <WhiteLabel /> }
 						{ 'version-control' === currentTab && spectra_blocks_react.global_data.spectra_blocks_previous_versions?.length > 0 && <RollBack /> }
 						{ 'license' === currentTab && (
 							<>

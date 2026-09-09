@@ -6,9 +6,9 @@ import { memo } from '@wordpress/element';
 import { InspectorControls } from '@wordpress/block-editor';
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	ToggleControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.

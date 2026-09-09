@@ -68,7 +68,7 @@ $close_aria_label = '' !== $accessibility_label ? $accessibility_label : sprintf
 <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<?php
 	if ( 'popup' !== $variant_type ) :
-		Renderer::background_video( $background );
+		Renderer::background_video( ( $has_video_background && null !== $video_background ) ? $video_background : $background, Renderer::video_on_every_band( $attributes ) );
 	endif;
 	?>
 	<?php if ( $has_overlay && 'popup' === $variant_type ) : ?>
@@ -95,7 +95,7 @@ $close_aria_label = '' !== $accessibility_label ? $accessibility_label : sprintf
 	>
 	<?php
 	if ( 'banner' !== $variant_type ) :
-		Renderer::background_video( $background );
+		Renderer::background_video( ( $has_video_background && null !== $video_background ) ? $video_background : $background, Renderer::video_on_every_band( $attributes ) );
 	endif;
 	?>
 		<div class="spectra-popup-builder__container spectra-popup-builder__container--<?php echo esc_attr( $variant_type ); ?>">

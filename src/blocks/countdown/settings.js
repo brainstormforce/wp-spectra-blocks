@@ -4,7 +4,6 @@
 import { InspectorControls, useSettings } from '@wordpress/block-editor';
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalUnitControl as UnitControl,
@@ -15,6 +14,7 @@ import {
 	TextControl,
 	BaseControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { getSettings as getDateSettings } from '@wordpress/date';
 import { memo, useCallback, useMemo } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';

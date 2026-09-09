@@ -9,6 +9,7 @@
 
 namespace SpectraBlocks\Blocks; // DEV: Namespace for V3 blocks - modify if restructuring block organization.
 
+use SpectraBlocks\Extensions\ResponsiveControls;
 use SpectraBlocks\Traits\Singleton; // DEV: Import singleton pattern trait - ensures single instance.
 use WP_Query; // DEV: WordPress query class for fetching popup posts.
 
@@ -71,6 +72,52 @@ class PopupBuilder {
 		$this->post_id             = 0;
 		$this->popup_ids           = array();
 		$this->popup_rendered_html = array();
+	}
+
+	/**
+	 * The popup post whose content is being rendered right now, or 0.
+	 *
+	 * A popup's blocks are rendered outside any loop for that popup — from
+	 * `wp_enqueue_scripts` for display-rule delivery, from a shortcode for
+	 * explicit placement — so `get_the_ID()` inside the block's controller is
+	 * the PAGE, not the popup. Content saved by the editor carries the popup in
+	 * its `popupId` attribute; content that does not (created through the REST
+	 * API or the abilities) used to fall back to the page id, so its
+	 * repetition / cookie settings were read from the wrong post and two such
+	 * popups on one page shared a DOM id. The render pipeline knows which popup
+	 * it is rendering; this is how it tells the controller.
+	 *
+	 * @since 1.0.7
+	 * @var int
+	 */
+	private static $rendering_popup_id = 0;
+
+	/**
+	 * The popup post currently being rendered through the pipeline, or 0.
+	 *
+	 * @since 1.0.7
+	 * @return int Popup post ID, 0 when no popup is being rendered.
+	 */
+	public static function get_rendering_popup_id() {
+		return self::$rendering_popup_id;
+	}
+
+	/**
+	 * Render a popup post's content with the popup id known to its blocks.
+	 *
+	 * @since 1.0.7
+	 * @param \WP_Post $popup The popup post.
+	 * @return string Rendered HTML.
+	 */
+	private function render_popup_content( \WP_Post $popup ) {
+		$previous                 = self::$rendering_popup_id;
+		self::$rendering_popup_id = (int) $popup->ID;
+
+		try {
+			return do_blocks( $popup->post_content );
+		} finally {
+			self::$rendering_popup_id = $previous;
+		}
 	}
 
 	/**
@@ -186,7 +233,33 @@ class PopupBuilder {
 			if ( 'publish' !== $popup->post_status ) {
 				continue;
 			}
-			$this->popup_rendered_html[ $popup_id ] = do_blocks( $popup->post_content );
+			$this->popup_rendered_html[ $popup_id ] = $this->render_popup_content( $popup );
+
+			/*
+			 * A popup's per-device video needs the script that drives it.
+			 *
+			 * `ResponsiveControls::enqueue_responsive_videos_script()` gates on
+			 * `has_block()`, which reads the CURRENT post — and a popup lives in
+			 * its own post, pre-rendered into the page right here. So the gate was
+			 * always false for a page showing a popup, the script never loaded, and
+			 * a deferred `<video>` (rendered without `autoplay` whenever some band
+			 * shows an image or nothing) had nobody to attach its source and start
+			 * it: it sat at `readyState: 0` at every width, including the one whose
+			 * band asked for the video.
+			 *
+			 * Forced only when this popup's own markup carries per-device video
+			 * data, so a popup without one costs nothing.
+			 */
+			if ( is_string( $this->popup_rendered_html[ $popup_id ] ) && false !== strpos( $this->popup_rendered_html[ $popup_id ], 'data-responsive-videos' ) ) {
+				// `Singleton::instance()` is documented as returning `object`, so the
+				// call has to be narrowed before the method is reached — the same
+				// `instanceof` the other callers of this singleton use.
+				$responsive_controls = ResponsiveControls::instance();
+
+				if ( $responsive_controls instanceof ResponsiveControls ) {
+					$responsive_controls->enqueue_responsive_videos_script( true );
+				}
+			}
 		}
 
 		// The pre-rendering above may have enqueued 'spectra-responsive-styles' via
@@ -334,7 +407,7 @@ class PopupBuilder {
 
 		$popup = get_post( $popup_id );
 
-		if ( ! $popup || ! in_array( $popup->post_type, array( 'spectra-blocks-popup', 'spectra-popup' ), true ) ) {
+		if ( ! $popup instanceof \WP_Post || ! in_array( $popup->post_type, array( 'spectra-blocks-popup', 'spectra-popup' ), true ) ) {
 			return '';
 		}
 
@@ -346,7 +419,7 @@ class PopupBuilder {
 		// Render the popup post content through the blocks pipeline so the
 		// spectra/popup-builder block (and any inner blocks) execute their
 		// render callbacks and produce the final HTML.
-		return do_blocks( $popup->post_content );
+		return $this->render_popup_content( $popup );
 	}
 
 	/**

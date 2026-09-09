@@ -3811,7 +3811,7 @@ parameters:
 			path: includes/StyleGuide/class-engine.php
 
 		-
-			message: "#^Cannot access offset 'lg'\\|'md'\\|'sm' on mixed\\.$#"
+			message: "#^Cannot access offset '@mobile'\\|'@tablet'\\|'base' on mixed\\.$#"
 			count: 6
 			path: includes/StyleGuide/class-engine.php
 

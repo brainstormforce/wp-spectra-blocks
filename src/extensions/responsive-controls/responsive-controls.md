@@ -16,7 +16,7 @@ Responsive Controls let you design your blocks differently for Desktop, Tablet, 
 
 - **Device-specific design:** Tweak spacing, typography, layout, and more per device.
 - **Live preview:** Instantly see changes in WordPress' device preview.
-- **Smart inheritance:** Smaller devices inherit from larger ones unless you override.
+- **Smart inheritance:** Each viewport resolves over the base layer only (core’s model); tablet does not cascade into mobile unless you override.
 
 ---
 
@@ -35,11 +35,20 @@ Responsive Controls let you design your blocks differently for Desktop, Tablet, 
 
 ## Device Buttons & Breakpoints
 
-| Device | Icon | Breakpoint (px) | Inherits From |
+Spectra does not define breakpoints — WordPress does, and Spectra reads them.
+The values below are WordPress' defaults; a theme that declares
+`settings.viewport` in its theme.json moves all of them together, because both
+the style generator and the device-visibility rules resolve through core's own
+`WP_Theme_JSON::get_viewport_media_queries()`.
+
+| Device | Icon | Band (WordPress default) | Inherits From |
 |---|---|---:|---|
-| Desktop | 🖥️ | ≥ 1024 | — |
-| Tablet | 📱 | 768–1023 | Desktop (if unset) |
-| Mobile | 📱 | ≤ 767 | Tablet → Desktop (if unset) |
+| Desktop (base) | 🖥️ | applies at every width | — |
+| Tablet | 📱 | 480 < width ≤ 782 | Base (if unset) |
+| Mobile | 📱 | width ≤ 480 | Base (if unset) |
+
+Desktop is the base layer and carries no media query at all, so the two narrower
+bands override it inside their ranges.
 
 - Device buttons appear **in panel headers** when that panel contains responsive controls.
 - Buttons **synchronize** with WordPress' core device preview—clicking either updates both.

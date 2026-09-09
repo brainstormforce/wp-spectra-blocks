@@ -1,4 +1,4 @@
-import { User, Settings, LayoutTemplate, PackageCheck, GitCompare, Zap, Eye, Blocks, Type, Bot } from 'lucide-react';
+import { User, Settings, LayoutTemplate, PackageCheck, GitCompare, Zap, Eye, Blocks, Type, Bot, BadgeCheck } from 'lucide-react';
 
 const SettingsIcons = {
     'asset-generation' : (
@@ -30,6 +30,9 @@ const SettingsIcons = {
     ),
     'mcp' : (
         <Bot />
+    ),
+    'white-label' : (
+        <BadgeCheck />
     )
 };
 

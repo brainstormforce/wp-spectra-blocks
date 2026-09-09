@@ -8,10 +8,11 @@ import { memo, useCallback } from '@wordpress/element';
  * Internal dependencies.
  */
 import { spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
 import { getAdvancedGradientValue } from '@spectra-helpers/get-advanced-gradient-value';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import { useSpectraStyles } from '@spectra-hooks';
 
 /**
  * The render component for the slider-child block.
@@ -68,6 +69,20 @@ const Render = memo( ( props ) => {
 	// Determine the overflow value - use 'clip' when video background with border radius
 	const computedOverflow = ( hasVideoBackground || hasImageBackground ) && hasBorderRadius ? 'clip' : overflow;
 	// Performance optimization: Memoize block props
+	/*
+	 * Per-device preview for the canvas. `finalBackgroundGradient` is resolved
+	 * outside the band, so the producer mirrors the same call the inline paint
+	 * makes — see `helpers/responsive-preview.js`.
+	 */
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/slider-child',
+		producers: [
+			( attrs ) => getBackgroundImageStyles( { ...attrs, backgroundGradient: finalBackgroundGradient } ),
+		],
+	} );
+
 	const blockProps = useBlockProps( {
 		className: spectraClassNames( classNames ),
 		style: {
@@ -90,6 +105,7 @@ const Render = memo( ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<VideoBackground { ...{ background } } />
 			<div { ...innerBlocksProps } />
 		</div>

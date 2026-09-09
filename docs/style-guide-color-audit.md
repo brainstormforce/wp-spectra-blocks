@@ -1,13 +1,25 @@
 # Style Guide & Colors — System Audit (pre-rewrite, HISTORICAL)
 
-> ⚠️ **SUPERSEDED.** This is the frozen snapshot of the **v1** system as it stood
-> before the v2 rewrite. The v2 rewrite has since shipped: storage is now the
-> 9-colour `colors` map + `custom_colors` (chromatics/neutral-tint/semantic_map/
-> semantic_overrides/token_overrides are gone from storage), the DNA presets and
-> the free colours UI were removed, and the theme mappers moved to `Sync/Astra/` /
-> `Sync/SpectraOne/`. **For the current architecture read
+> ⚠️ **SUPERSEDED — do not use as a reference for current behaviour.** This is the
+> frozen snapshot of the **v1** system as it stood before the v2 rewrite. Its body
+> is deliberately left unedited; only this banner is maintained.
+>
+> Everything below describes a system that no longer exists. Since it was written:
+> storage became the **10**-colour `colors` map + `custom_colors`
+> (chromatics/neutral-tint/semantic_map/semantic_overrides/token_overrides are all
+> gone from storage); the shade generation, schemes and contrast engine were
+> deleted, so there are no ramps, no interpolated neutrals and no opacity tokens;
+> tokens are named by **semantic slug** (`primary`, `success`, …) rather than
+> `chromaticN-7`; `foreground` became a stored role; the DNA presets and the free
+> colours UI were removed; and the theme mappers moved to `Sync/Astra/` /
+> `Sync/SpectraOne/`, where all 9 Astra slots and all 10 Spectra One curated roles
+> now sync two-way.
+>
+> **For the current architecture read
 > [`style-guide-color-rewrite.md`](./style-guide-color-rewrite.md).** This file
-> stays as the record of what v1 was and why each dependency existed.
+> stays only as the record of what v1 was and why each dependency existed.
+>
+> **Frozen:** 2026-08-15. **Banner last checked:** 2026-08-26 (`dev` @ 1.0.6).
 > Companion docs: [`astra-color-sync-audit.md`](./astra-color-sync-audit.md),
 > [`spectra-one-color-sync-audit.md`](./spectra-one-color-sync-audit.md),
 > [`GBS-ARCHITECTURE.md`](./GBS-ARCHITECTURE.md).

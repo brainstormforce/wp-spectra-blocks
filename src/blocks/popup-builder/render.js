@@ -16,6 +16,7 @@ import {
 } from '@spectra-helpers/background';
 import RenderSVG from '@spectra-helpers/render-svg';
 import { select } from '@wordpress/data';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -23,6 +24,26 @@ import { select } from '@wordpress/data';
  * @param {Object} props The element props.
  * @return {Element} Element to render.
  */
+/**
+ * The popup's own dimensions, painted as custom properties on the block.
+ *
+ * Named so the per-device preview emitter can re-derive them per band — see
+ * `helpers/responsive-preview.js`. Mirrors the expressions the inline paint uses,
+ * `fixedHeight` included, since that decides which of the two height variables a
+ * value lands in.
+ *
+ * @since 1.0.7
+ * @param {Object}  attrs       The block's attributes, or a band's merge.
+ * @param {boolean} fixedHeight Whether the popup has a fixed height.
+ * @return {Object} A React style object.
+ */
+export const getPopupDimensionStyles = ( attrs = {}, fixedHeight ) => ( {
+	...( attrs.height ? { height: attrs.height } : {} ),
+	...( attrs.minWidth ? { minWidth: attrs.minWidth } : {} ),
+	'--spectra-popup-width': attrs.width,
+	'--spectra-popup-max-height': ! fixedHeight && attrs.height ? attrs.height : 'none',
+} );
+
 const Render = ( props ) => {
 	const { attributes, clientId } = props;
 
@@ -37,9 +58,6 @@ const Render = ( props ) => {
 		closeIconColor,
 		closeIconColorHover,
 		closeIconBgColor,
-		width,
-		height,
-		minWidth,
 		minHeight,
 		maxWidth,
 		maxHeight,
@@ -142,18 +160,64 @@ const Render = ( props ) => {
 		bottom: style?.spacing?.padding?.bottom ? style.spacing.padding.bottom : '8px',
 		left: style?.spacing?.padding?.left ? style.spacing.padding.left : '8px'
 	};
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/popup-builder',
+		producers: [
+			( attrs ) => getPopupDimensionStyles( attrs, fixedHeight ),
+			( attrs ) => getBackgroundImageStyles( { ...attrs, backgroundGradient, backgroundGradientHover } ),
+		],
+	} );
+
 	const paddingValue = `${paddingObject.top} ${paddingObject.right} ${paddingObject.bottom} ${paddingObject.left}`;
+
+	/*
+	 * Per-device padding for the canvas.
+	 *
+	 * `--spectra-popup-padding` is painted inline below, from the ROOT of `style`
+	 * — one value, so every device previewed the base padding. It cannot come
+	 * from `getResponsivePreviewCss()` either: that bands a block's FLAT keys,
+	 * and padding is one of the groups core owns.
+	 *
+	 * Core does emit its own per-state spacing, but onto the block element, which
+	 * here is the full-viewport overlay — `editor.scss` zeroes its padding on
+	 * purpose, because on 7.1 the overlay took that padding on top of its own
+	 * `width: 100%` and grew a horizontal scrollbar the front end never had. So
+	 * the states are re-expressed as the variable the visible box actually reads.
+	 *
+	 * `!important` is required, not defensive: the base value is applied INLINE
+	 * on this same element, and an inline declaration beats a stylesheet rule of
+	 * any specificity.
+	 *
+	 * A side absent from a state falls back to base, which is how the front end
+	 * resolves it too.
+	 */
+	const paddingPreviewCss = Object.entries(
+		window?.spectra_blocks_info?.viewport_media_queries || {}
+		)
+		.map( ( [ state, query ] ) => {
+			const statePadding = style?.[ state ]?.spacing?.padding;
+
+			// `base` has no query — it is the inline paint, already applied.
+			if ( ! query || ! statePadding ) {
+				return '';
+			}
+
+			const side = ( key ) => statePadding[ key ] || paddingObject[ key ];
+			const value = `${ side( 'top' ) } ${ side( 'right' ) } ${ side( 'bottom' ) } ${ side( 'left' ) }`;
+
+			return `@media ${ query }{[data-block="${ clientId }"]{--spectra-popup-padding:${ value } !important;}}`;
+		} )
+		.join( '' );
 	// Additional inline styles for dimensions and layout
 	const additionalStyles = {
 		...style,
-		height,
-		minWidth,
+		...getPopupDimensionStyles( attributes, fixedHeight ),
 		'min-height': minHeight,
 		'max-width': maxWidth,
 		'max-height': maxHeight,
-		'--spectra-popup-width': width,
-		// '--spectra-popup-height': fixedHeight && height ? height : 'auto',
-		'--spectra-popup-max-height': ! fixedHeight && height ? height : 'none',
 		'--spectra-close-icon-size': `${ closeIconSize }px`,
 		'--spectra-close-icon-color': closeIconColor,
 		'--spectra-close-icon-color-hover': closeIconColorHover,
@@ -180,6 +244,8 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			{ paddingPreviewCss && <style>{ paddingPreviewCss }</style> }
 			{ variantType !== 'popup' && (
 				<VideoBackground { ...{ background } } />
 			) }

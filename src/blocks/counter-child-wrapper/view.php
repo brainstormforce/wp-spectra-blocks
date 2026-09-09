@@ -12,8 +12,7 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 <div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 	<?php
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Content is sanitized via HtmlSanitizer::render() which uses wp_kses() internally.
-	echo HtmlSanitizer::render( $content );
+	HtmlSanitizer::render( $content );
 	?>
 </div>
 

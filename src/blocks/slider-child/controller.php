@@ -39,7 +39,7 @@ $responsive_controls    = $attributes['responsiveControls'] ?? array();
 $video_background       = null;
 $has_responsive_overlay = false;
 
-foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
 		if ( 'video' === $responsive_controls[ $device ]['background']['type'] ) {
 			$has_video_background = true;
@@ -126,11 +126,16 @@ if ( ! empty( $overflow ) ) {
 // Add responsive video data as data attribute for JavaScript.
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
-	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
 		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
+		} elseif ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
+			// This band has a background that is not a video: say so explicitly,
+			// or the front-end script falls back to base and plays the desktop
+			// video at a width whose background is an image or none.
+			$responsive_video_data[ $device ] = '';
 		}
 	}
 }

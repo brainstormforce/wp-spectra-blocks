@@ -30,14 +30,13 @@ export const VariationPicker = ( props ) => {
 		variations,
 		defaultVariation,
 		iconSize,
-		setAttributes,
 		shouldSetAttributes = true,
 		shouldReplaceInnerBlocks = true,
 		onSelect,
 	} = props;
 
 	// Get the required methods.
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
+	const { replaceInnerBlocks, updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	// Function to update the variation when run.
 	const blockVariationPickerOnSelect = ( nextVariation = defaultVariation ) => {
@@ -48,9 +47,13 @@ export const VariationPicker = ( props ) => {
 		}
 		
 		// Otherwise use default behavior
-		// Set the attributes if required.
+		// Set the attributes if required. A variation payload is a complete
+		// authored attribute set meant verbatim, so it bypasses the responsive
+		// wrapper — routed through it, a stateless payload picked while a
+		// Tablet/Mobile preview is active would land in that device's state
+		// and empty the base layer.
 		if ( nextVariation.attributes && shouldSetAttributes ) {
-			setAttributes( nextVariation.attributes );
+			updateBlockAttributes( clientId, nextVariation.attributes );
 		}
 
 		// Set the innerblocks if required.

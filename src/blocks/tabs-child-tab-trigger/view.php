@@ -29,7 +29,6 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 	data-wp-on--keydown="spectra/tabs::actions.switchTabs"
 >
 	<?php
-		// Render the inner content.
 		HtmlSanitizer::render( $content );
 	?>
 </div>

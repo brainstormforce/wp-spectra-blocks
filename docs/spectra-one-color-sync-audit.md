@@ -8,7 +8,7 @@ palette or Customizer.
 
 **Audited theme:** `wp-content/themes/spectra-one` (v1.2.2, text domain `spectra-one`, prefix `swt`, namespace `Swt\`).
 **Related code:** `includes/StyleGuide/Sync/SpectraOne/class-spectra-one-compat.php`, `includes/StyleGuide/class-global-styles-bridge.php`, `includes/StyleGuide/Sync/class-fse-global-styles-adapter.php`.
-**Date:** 2026-07-24.
+**Date:** 2026-07-24. **Last verified against code:** 2026-08-26 (`dev` @ 1.0.6 — `SpectraOneCompat`, `FseGlobalStylesAdapter` and `MappingResolver` are untouched by the 1.0.6 diff).
 
 > ℹ️ **Style-Guide side (v2 storage).** The Style Guide uses the v2 colour storage
 > (see [`style-guide-color-rewrite.md`](./style-guide-color-rewrite.md)). The key
@@ -20,8 +20,11 @@ palette or Customizer.
 >   owning core slug (`ColorModel::slug_for_token()`) and writes
 >   **`config['colors'][slug]`** — the pulled hex simply becomes the stored role
 >   colour.
-> - The palette PULL covers **every mapped role** (all 9 in the curated profile —
->   brand + neutrals).
+> - The palette PULL covers **every mapped role** — all **10** in the curated
+>   profile (3 brand + 6 neutrals + `foreground`).
+> - Tokens are named by **semantic slug** (`primary`, `secondary`, `accent`,
+>   `success`, …); the legacy `chromaticN-7` names are gone
+>   (`ColorModel::CHROMATIC_SLUG`).
 > - The slug → token mapping in §2 lives as the `ColorModel::SEMANTIC_MAP` code
 >   constant (never stored in the config).
 
@@ -48,8 +51,8 @@ patterns. There is no "stale Customizer" problem like Astra; the analogue is the
 **user layer (`wp_global_styles`)** shadowing the theme layer, which the bridge
 reconciles at runtime (see §6).
 
-**Two-way:** every **palette swatch in the curated mapping** (all 9 roles — brand +
-neutrals) round-trips, **and** all the Site-Editor **element colour settings**
+**Two-way:** every **palette swatch in the curated mapping** (all 10 roles — brand +
+neutrals + foreground) round-trips, **and** all the Site-Editor **element colour settings**
 (Text/Background/Link/Heading/Button/Captions) round-trip — each pulled value is
 written to the stored colour that owns its token, `config['colors'][slug]` (§2.3).
 
@@ -68,24 +71,25 @@ Read every row left-to-right: **this Spectra One colour becomes this Style Guide
 
 | Spectra One slug | Label | Theme default | Sync | → Style Guide colour | SG token | SG default |
 | --- | --- | --- | :--: | --- | --- | --- |
-| `primary` | Primary | `#6431F6` | ⇄ | **Primary** | `chromatic1-7` | `#6431f6` |
-| `secondary` | Secondary | `#7345F7` | ⇄ | **Secondary** | `chromatic2-7` | `#7345f7` |
-| `accent` \* | Accent | *(injected)* | ⇄ | **Accent** | `chromatic3-7` | `#f59e0b` |
+| `primary` | Primary | `#6431F6` | ⇄ | **Primary** | `primary` | `#6431f6` |
+| `secondary` | Secondary | `#7345F7` | ⇄ | **Secondary** | `secondary` | `#7345f7` |
+| `accent` \* | Accent | *(injected)* | ⇄ | **Accent** | `accent` | `#f59e0b` |
 
 \* `accent` is **not** a native `theme.json` slug — the Style Guide adds it to the
-palette. It is still two-way because it maps to a brand seed (`chromatic3`). This is
-the key difference from Astra, which has no accent slot at all.
+palette. It is still two-way because it maps to a brand seed (chromatic 3). Astra
+reaches Accent differently: it has no dedicated accent control, so the sync routes
+Accent through slot 8 ("Other supporting").
 
 #### B. Neutrals + Foreground (two-way ⇄) & tints (unmanaged —)
 
 | Spectra One slug | Label | Theme default | Sync | → Style Guide colour | SG token | SG default |
 | --- | --- | --- | :--: | --- | --- | --- |
-| `heading` | Heading | `#1F2937` | ⇄ | **Heading text** | `neutral-7` | computed |
-| `body` | Body | `#4B5563` | ⇄ | **Body text** | `neutral-5` | computed |
+| `heading` | Heading | `#1F2937` | ⇄ | **Heading text** | `neutral-7` | `#09081b` |
+| `body` | Body | `#4B5563` | ⇄ | **Body text** | `neutral-5` | `#464757` |
 | `background` | Background | `#FFFFFF` | ⇄ | **Background** (page) | `neutral-0` | `#ffffff` |
-| `surface` | Surface | `#F8FAFC` | ⇄ | **Surface** | `neutral-1` | computed |
-| `outline` | Outline | `#E6E9EF` | ⇄ | **Border / Outline** | `neutral-2` | computed |
-| `neutral` | Neutral | `#6E7787` | ⇄ | **Muted** | `neutral-4` | computed |
+| `surface` | Surface | `#F8FAFC` | ⇄ | **Surface** | `neutral-1` | `#f0f1f1` |
+| `outline` | Outline | `#E6E9EF` | ⇄ | **Border / Outline** | `neutral-2` | `#d4d5d8` |
+| `neutral` | Neutral | `#6E7787` | ⇄ | **Muted** | `neutral-4` | `#767884` |
 | `tertiary` | Tertiary | `#F6EBFE` | — | *unmanaged* (was a primary tint — tint shades are no longer generated) | — | — |
 | `quaternary` | Quaternary | `#FFFBEB` | — | *unmanaged* (was a secondary tint) | — | — |
 | `foreground` | Foreground | `#6431F7` | ⇄ | **Foreground** | `foreground` | `#ffffff` |
@@ -94,10 +98,35 @@ Spectra One's `primary`/`secondary` theme defaults (`#6431F6` / `#7345F7`) match
 Style Guide seeds exactly — it's the sibling theme. `heading`/`body` are the theme's
 own values; the Style Guide's `neutral-7`/`neutral-5` are stored colours and may differ.
 
+#### Reading the "SG token" column
+
+Same convention as the Astra audit: the **SG token** is a *CSS variable name*, not
+a second colour. A **role** (`heading`, `body`, `background`) is what the user picks
+and what gets stored in `colors`; a **token** (`neutral-7`, `neutral-5`,
+`neutral-0`) is the palette slot that role feeds and the name CSS is emitted
+under — `--spectra-neutral-7` vs `--wp--preset--color--heading`. `neutral-N` is a
+lightness scale, `0` lightest → `7` darkest, and stops 3 and 6 no longer exist.
+Full version, with the pairing table and the `ColorModel::CORE_ROLES` declaration:
+[`astra-color-sync-audit.md` → *Reading the "SG token" column*](./astra-color-sync-audit.md#reading-the-sg-token-column).
+
+**Spectra One makes this easier to misread than Astra does.** Astra's slugs
+(`--ast-global-color-2`) look nothing like a role name, so nobody confuses the two
+columns. Spectra One names its palette slugs **after the roles** — `heading`,
+`body`, `background`, `surface`, `outline`, `neutral`, `foreground` — so the first
+and fifth columns of the tables above read almost identically, and the SG token
+column is the only one telling you which variable actually carries the value. In
+the `heading` row, the theme slug `heading`, the Style Guide role **Heading text**
+and the token `neutral-7` are three names for one colour.
+
+That overlap is not a coincidence — it is the sibling theme, built to the same
+vocabulary. It is also why `foreground` round-trips here but has no Astra twin:
+Spectra One ships a palette slug with that exact name, and Astra has no "text on a
+filled surface" slot at all.
+
 **Sync direction legend**
 - `⇄` **two-way** — a Style Guide save updates the theme, *and* editing that colour
-  in the Site Editor updates the Style Guide. All **9 curated palette swatches**
-  (3 brand + 6 neutrals) are two-way, **and** all the **element colour settings**
+  in the Site Editor updates the Style Guide. All **10 curated palette swatches**
+  (3 brand + 6 neutrals + foreground) are two-way, **and** all the **element colour settings**
   (Text/Background/Link/Heading/Button/Captions) are two-way — see §2.3.
 - `—` **unmanaged** — `tertiary`/`quaternary` kept the theme's own values: they were
   driven by generated tint shades, which no longer exist.
@@ -113,11 +142,11 @@ the full semantic set from the config's `semantic_map`, so these resolve as
 
 | Injected slug | → Style Guide colour | SG token | Two-way? |
 | --- | --- | --- | --- |
-| `accent` | Accent | `chromatic3-7` | ⇄ (brand) |
-| `success` | Success | `chromatic4-7` | → |
-| `error` | Error | `chromatic5-7` | → |
-| `info` | Info | `chromatic6-7` | → |
-| `warning` | Warning | `chromatic7-7` | → |
+| `accent` | Accent | `accent` | ⇄ (brand) |
+| `success` | Success | `success` | → |
+| `error` | Error | `error` | → |
+| `info` | Info | `info` | → |
+| `warning` | Warning | `warning` | → |
 | `sg-accent` / `sg-heading` / `sg-body` / `sg-surface` / `sg-background` / `sg-border` / `sg-muted` | migration-compat aliases | (mirror of the above) | → |
 
 (`sg-secondary` and `sg-neutral` are no longer injected — their tokens were the
@@ -139,12 +168,12 @@ inherits the palette `var()` again (Style Guide stays the single source of truth
 | --- | --- | --- | --- |
 | **Text** | `var(--…--body)` | `neutral-5` | `colors['body']` |
 | **Background** | `var(--…--background)` | `neutral-0` | `colors['background']` |
-| **Link** | `var(--…--primary)` | `chromatic1-7` | `colors['primary']` |
-| **Link — hover** | `var(--…--secondary)` | `chromatic2-7` | `colors['secondary']` |
+| **Link** | `var(--…--primary)` | `primary` | `colors['primary']` |
+| **Link — hover** | `var(--…--secondary)` | `secondary` | `colors['secondary']` |
 | **Heading** | `var(--…--heading)` | `neutral-7` | `colors['heading']` |
-| **Button — background** | `var(--…--primary)` | `chromatic1-7` | `colors['primary']` |
+| **Button — background** | `var(--…--primary)` | `primary` | `colors['primary']` |
 | **Button — text** | `var(--…--background)` | `neutral-0` | `colors['background']` |
-| **Button — hover bg** | `var(--…--secondary)` | `chromatic2-7` | `colors['secondary']` |
+| **Button — hover bg** | `var(--…--secondary)` | `secondary` | `colors['secondary']` |
 | **Captions** | inherits Text | `neutral-5` | `colors['body']` |
 
 Mechanics (`SpectraOneCompat::pull_element_colors`, `save_post_wp_global_styles`@20):
@@ -174,9 +203,12 @@ hardcoded pair `#1F2937`/`#fff`) are unaffected.
   Rain Forest, Ultra Marine, Aquamarine, Dark, Easter Green, Sweet Corn). Each
   overrides the **same slug set** with different hexes. The mapping above is
   slug-based, so it holds for every variation — only the raw defaults differ.
-- **SG neutral defaults are computed** (OKLCH-derived from the brand seed); only
-  `neutral-0` = `#ffffff` is a fixed literal. Neutral rows describe the value rather
-  than pin a hex.
+- **SG neutral defaults are fixed literals** now, not computed. The OKLCH
+  derivation was retired and its exact output frozen into
+  `ColorModel::default_colors()`, so a fresh site keeps the same look with no
+  generation code. (On a Spectra One site those literals are then overwritten by
+  the theme's own colours until the guide is saved — see
+  `Engine::inherited_default_colors()`.)
 - **`foreground` is its own stored role**, not a mirror of Primary. It used to be a
   DERIVED variable recomputed as `contrast('#ffffff', primary) >= 4.5 ? '#ffffff' :
   heading`, and because that override layer is applied AFTER the semantic map, the
@@ -269,14 +301,15 @@ runtime. A diff-check skips the write when nothing changed.
 **MappingResolver — Spectra One curated profile** (role → slug):
 `primary→primary, secondary→secondary, accent→accent, page-background→background,
 surface→surface, body-text→body, heading-text→heading, border→outline,
-muted→neutral`. `link` is intentionally omitted (the theme routes links through
-`primary`).
+muted→neutral, foreground→foreground`. `link` is intentionally omitted — the
+theme's own styles already route links through `primary`, so mapping it would
+double-book that slug.
 
 ### PULL (Spectra One → Style Guide)
 Two handlers fire on `save_post_wp_global_styles` (a real Site-Editor save):
 1. **Palette swatches** — `SyncOrchestrator::pull_from_theme()` (@10) reads the FSE
-   palette and pulls **every role in the curated mapping** (all 9 — brand +
-   neutrals, via `$mapping->mapped_roles()`).
+   palette and pulls **every role in the curated mapping** (all 10 — brand +
+   neutrals + foreground, via `$mapping->mapped_roles()`).
 2. **Element settings** — `SpectraOneCompat::pull_element_colors()` (@20) reads
    `styles.color`/`styles.elements.*`; each element left as a literal custom hex is
    pulled to its token and its override stripped (§2.3).
@@ -331,10 +364,46 @@ recomputes and re-pushes the harmonized palette.
 | UI surface | Customizer (stateful; changeset caveats) | Site Editor / Styles (FSE) |
 | Accent | no slot (unmapped) | `accent` slug (injected) — **two-way** |
 | Element settings two-way | n/a (option-based) | **yes** — Text/Background/Link/Heading/Button/Captions (§2.3) |
-| Neutral **palette swatches** two-way | **yes** for the 7 managed slots (7/8 unmanaged) | **yes** (all 9 curated roles write `colors[slug]` directly) |
+| Neutral **palette swatches** two-way | **yes** — all 9 slots (7/8 now allotted to Neutral / Accent) | **yes** (all 10 curated roles write `colors[slug]` directly) |
+| Foreground | no slot — Spectra-only | native `foreground` swatch — **two-way** |
 | Theme-side cache | per-request static + generated CSS (Pro) | none |
 
-**Remaining gap / follow-up:** `tertiary`/`quaternary` are unmanaged (they were
-driven by generated tint shades, removed with the colour auto-generation) and the
-`foreground` mirror is push-only. Managing the tints again would require deciding
-which stored colour should own each slug.
+**Remaining gap / follow-up:** `tertiary`/`quaternary` are unmanaged — they were
+driven by generated tint shades, removed with the colour auto-generation.
+Managing them again means deciding which stored colour should own each slug.
+(`foreground` is no longer part of this gap: it is a stored role and round-trips
+in its own right.)
+
+---
+
+## 9. Doc audit — 2026-08-26
+
+**Corrected in this revision:**
+
+| Was documented | Actual code |
+|---|---|
+| Curated profile = 9 roles | **10** — `ColorRoles::FOREGROUND => 'foreground'` is mapped |
+| §8 "the `foreground` mirror is push-only" | two-way — contradicted the doc's own §2.1 |
+| Tokens `chromatic1-7` … `chromatic7-7` | semantic slugs (`primary`, `success`, …) |
+| "SG neutral defaults are computed (OKLCH)" | fixed literals; the derivation was retired and frozen |
+| Astra comparison row: "7 managed slots (7/8 unmanaged)" | all 9 Astra slots managed |
+
+**Open issues identified during the audit:**
+
+1. **`tertiary` / `quaternary` are still orphaned.** The theme ships them, the
+   Style Guide ignores them, so they keep whatever the active style variation set
+   — visibly out of step once a user retunes the palette. They were primary and
+   secondary *tints*; with the ramp generation gone, either a stored colour has to
+   own them or the theme should stop shipping them as palette swatches.
+2. **Shared-role element edits are lossy and silent** (§2.3). Editing **Button
+   text** moves the page **Background** because both bind to the same slug, and on
+   a shared role the last element processed wins. Faithful to the theme's own
+   `var()` bindings, but the Site Editor gives the user no hint that one edit will
+   move another colour.
+3. **The element round-trip evidence is stale.** §7's last live verification ran
+   against the pre-v2 implementation; it has not been re-run under v2 storage, nor
+   since `foreground` joined the curated map.
+4. **`PaletteCleanup` is load-bearing for this theme.** Sites that ran an older
+   build still carry Spectra shade ramps inside `wp_global_styles`. The cleanup is
+   one-time and self-flagging, so a site that somehow misses it keeps the bloat
+   silently — there is no re-run path and no diagnostic.

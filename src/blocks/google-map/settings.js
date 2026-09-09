@@ -9,7 +9,6 @@ import {
 } from '@wordpress/block-editor';
 import {
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalInputControl as InputControl,
 	__experimentalVStack as VStack,
 	__experimentalUnitControl as UnitControl,
@@ -17,6 +16,7 @@ import {
 	ToggleControl,
 	SelectControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.

@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The render function for the Google Map block.
@@ -19,6 +20,19 @@ import { useSpectraStyles } from '@spectra-hooks';
  * @since x.x.x
  * @return {Element} Element to render.
  */
+/**
+ * The map's height, painted on the block element.
+ *
+ * Named so the per-device preview emitter can re-derive it per band — see
+ * `helpers/responsive-preview.js`. The default matches the destructured one, so a
+ * band and the base cannot disagree.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Object} A React style object.
+ */
+export const getMapHeightStyles = ( attrs = {} ) => ( { height: attrs.height || '400px' } );
+
 const Render = memo( ( props ) => {
 	const {
 		attributes,
@@ -28,7 +42,6 @@ const Render = memo( ( props ) => {
 	const {
 		address,
 		enableSatelliteView,
-		height = '400px',
 		language,
 		zoom,
 	} = attributes;
@@ -47,6 +60,14 @@ const Render = memo( ( props ) => {
 		clientId,
 	} );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/google-map',
+		producers: [ getMapHeightStyles ],
+	} );
+
 	// Generate block props.
 	const blockProps = useBlockProps( {
 		className: spectraClassNames( [
@@ -54,7 +75,7 @@ const Render = memo( ( props ) => {
 		] ),
 		style: {
 			...blockStyles,
-			height
+			...getMapHeightStyles( attributes ),
 		},
 	} );
 
@@ -90,6 +111,7 @@ const Render = memo( ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<embed
 				className="spectra-google-map__iframe"
 				title={ __( 'Google Map for', 'spectra-blocks' ) + address }

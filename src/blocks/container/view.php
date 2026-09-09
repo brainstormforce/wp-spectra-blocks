@@ -31,7 +31,7 @@ if ( $is_void_tag ) {
 >
 	<?php
 		// Render the background video element if needed.
-		Renderer::background_video( $background );
+		Renderer::background_video( $background, Renderer::video_on_every_band( $attributes ) );
 
 		// Define allowed SVG tags and attributes for shape dividers.
 		$svg_kses_args = array(

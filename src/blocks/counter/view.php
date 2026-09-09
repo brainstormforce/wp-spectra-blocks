@@ -67,7 +67,6 @@ if ( 'circular' === $counter_style ) :
 	</div>
 	<?php
 else :
-	// Simple and bar styles - render content directly (includes counter-child-wrapper).
 	?>
 	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
 		<?php HtmlSanitizer::render( $content ); ?>

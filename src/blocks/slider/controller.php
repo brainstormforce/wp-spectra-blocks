@@ -63,9 +63,9 @@ $get_effective_slides_per_view = function ( $slides_per_view ) use ( $is_pro_act
  */
 $spectra_slider_get_responsive_attr = function ( $device, $attribute ) use ( &$responsive_controls, &$attributes, $get_effective_slides_per_view ) {
 	$fallback_order = array(
-		'sm' => array( 'sm', 'md', 'lg' ),
-		'md' => array( 'md', 'lg' ),
-		'lg' => array( 'lg' ),
+		'@mobile' => array( '@mobile', 'base' ), // Core's model: each viewport over base only.
+		'@tablet' => array( '@tablet', 'base' ),
+		'base'    => array( 'base' ),
 	);
 
 	foreach ( $fallback_order[ $device ] as $fallback_device ) {
@@ -142,12 +142,12 @@ $video_background       = null;
 $has_responsive_overlay = false;
 
 // The responsive-controls extension strips root-level 'background' from attrs and moves it
-// to responsiveControls.lg. Fall back to lg so downstream logic (background type, classes) still works.
+// to the store's base layer. Fall back to it so downstream logic (background type, classes) still works.
 if ( null === $background ) {
-	$background = $responsive_controls['lg']['background'] ?? null;
+	$background = $responsive_controls['base']['background'] ?? null;
 }
 
-foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 	if ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
 		if ( 'video' === $responsive_controls[ $device ]['background']['type'] ) {
 			$has_video_background = true;
@@ -214,9 +214,9 @@ $config = array(
 		'css_var'    => null,
 		'class_name' => 'spectra-has-slider-height',
 		'value'      => ! empty( $attributes['sliderHeight'] ) ||
-						! empty( $responsive_controls['lg']['sliderHeight'] ) ||
-						! empty( $responsive_controls['md']['sliderHeight'] ) ||
-						! empty( $responsive_controls['sm']['sliderHeight'] ),
+						! empty( $responsive_controls['base']['sliderHeight'] ) ||
+						! empty( $responsive_controls['@tablet']['sliderHeight'] ) ||
+						! empty( $responsive_controls['@mobile']['sliderHeight'] ),
 	),
 	array(
 		'key'        => 'navigationColor',
@@ -292,17 +292,17 @@ if ( ! empty( $overflow ) ) {
 
 // Prepare responsive values for frontend initialization.
 $responsive_values = array(
-	'sm' => array(
-		'slidesPerView' => $spectra_slider_get_responsive_attr( 'sm', 'slidesPerView' ),
-		'spaceBetween'  => $spectra_slider_get_responsive_attr( 'sm', 'spaceBetween' ),
+	'@mobile' => array(
+		'slidesPerView' => $spectra_slider_get_responsive_attr( '@mobile', 'slidesPerView' ),
+		'spaceBetween'  => $spectra_slider_get_responsive_attr( '@mobile', 'spaceBetween' ),
 	),
-	'md' => array(
-		'slidesPerView' => $spectra_slider_get_responsive_attr( 'md', 'slidesPerView' ),
-		'spaceBetween'  => $spectra_slider_get_responsive_attr( 'md', 'spaceBetween' ),
+	'@tablet' => array(
+		'slidesPerView' => $spectra_slider_get_responsive_attr( '@tablet', 'slidesPerView' ),
+		'spaceBetween'  => $spectra_slider_get_responsive_attr( '@tablet', 'spaceBetween' ),
 	),
-	'lg' => array(
-		'slidesPerView' => $spectra_slider_get_responsive_attr( 'lg', 'slidesPerView' ),
-		'spaceBetween'  => $spectra_slider_get_responsive_attr( 'lg', 'spaceBetween' ),
+	'base'    => array(
+		'slidesPerView' => $spectra_slider_get_responsive_attr( 'base', 'slidesPerView' ),
+		'spaceBetween'  => $spectra_slider_get_responsive_attr( 'base', 'spaceBetween' ),
 	),
 );
 
@@ -310,9 +310,10 @@ $responsive_values = array(
 // Use desktop values as base to minimize flickering for majority of users.
 // Even though Swiper uses min-width breakpoints, we start with desktop values
 // to reduce FOUC (Flash of Unstyled Content) for desktop users.
-$swiper_params = array(
-	'slidesPerView'  => $responsive_values['lg']['slidesPerView'],
-	'spaceBetween'   => $responsive_values['lg']['spaceBetween'],
+$viewport_min_widths = \SpectraBlocks\Extensions\ResponsiveControls::instance()->get_viewport_min_widths();
+$swiper_params       = array(
+	'slidesPerView'  => $responsive_values['base']['slidesPerView'],
+	'spaceBetween'   => $responsive_values['base']['spaceBetween'],
 	'loop'           => $loop,
 	'navigation'     => array(
 		'enabled' => $navigation,
@@ -334,20 +335,20 @@ $swiper_params = array(
 	// Since we're starting with desktop values to reduce flickering,
 	// we need to include all breakpoints including mobile.
 	'breakpoints'    => array(
-		// Mobile breakpoint (0-767px) - explicitly set mobile values.
-		0    => array(
-			'slidesPerView' => $responsive_values['sm']['slidesPerView'],
-			'spaceBetween'  => $responsive_values['sm']['spaceBetween'],
+		// Keys are the bands' min widths from the free resolver (core's viewport
+		// settings, or the plugin fallback), so the carousel switches where the
+		// generated CSS does.
+		$viewport_min_widths['mobile']  => array(
+			'slidesPerView' => $responsive_values['@mobile']['slidesPerView'],
+			'spaceBetween'  => $responsive_values['@mobile']['spaceBetween'],
 		),
-		// Tablet breakpoint (768-1023px).
-		768  => array(
-			'slidesPerView' => $responsive_values['md']['slidesPerView'],
-			'spaceBetween'  => $responsive_values['md']['spaceBetween'],
+		$viewport_min_widths['tablet']  => array(
+			'slidesPerView' => $responsive_values['@tablet']['slidesPerView'],
+			'spaceBetween'  => $responsive_values['@tablet']['spaceBetween'],
 		),
-		// Desktop breakpoint (1024px+).
-		1024 => array(
-			'slidesPerView' => $responsive_values['lg']['slidesPerView'],
-			'spaceBetween'  => $responsive_values['lg']['spaceBetween'],
+		$viewport_min_widths['desktop'] => array(
+			'slidesPerView' => $responsive_values['base']['slidesPerView'],
+			'spaceBetween'  => $responsive_values['base']['spaceBetween'],
 		),
 	),
 );
@@ -359,11 +360,16 @@ $swiper_modules = apply_filters( 'spectra_slider_modules', array(), $attributes 
 // Add responsive video data as data attribute for JavaScript.
 $responsive_video_data = array();
 if ( ! empty( $responsive_controls ) ) {
-	foreach ( array( 'lg', 'md', 'sm' ) as $device ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
 		if ( isset( $responsive_controls[ $device ]['background'], $responsive_controls[ $device ]['background']['type'] ) &&
 		'video' === $responsive_controls[ $device ]['background']['type'] &&
 		! empty( $responsive_controls[ $device ]['background']['media']['url'] ) ) {
 			$responsive_video_data[ $device ] = $responsive_controls[ $device ]['background']['media']['url'];
+		} elseif ( isset( $responsive_controls[ $device ]['background']['type'] ) ) {
+			// This band has a background that is not a video: say so explicitly,
+			// or the front-end script falls back to base and plays the desktop
+			// video at a width whose background is an image or none.
+			$responsive_video_data[ $device ] = '';
 		}
 	}
 }

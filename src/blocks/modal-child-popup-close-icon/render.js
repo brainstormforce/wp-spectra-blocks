@@ -10,6 +10,7 @@ import { memo } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
+import { getResponsivePreviewCss, iconDimensionStyles } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -20,7 +21,15 @@ import RenderSVG from '@spectra-helpers/render-svg';
  */
 const Render = ( props ) => {
 
-	const { attributes } = props;
+	const { attributes, clientId } = props;
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/modal-child-popup-close-icon',
+		producers: [ ( attrs ) => iconDimensionStyles( attrs.size || '25px' ) ],
+	} );
 
 	const {
 		context: {
@@ -61,6 +70,7 @@ const Render = ( props ) => {
 	return (
 		<div { ...blockProps }   data-wp-interactive="spectra/modal"
 		data-wp-on--click="actions.updateToggle">
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<RenderSVG svg={ icon || 'xmark' } extraProps={ {
 				width: size || '25px',
 				height: size || '25px',

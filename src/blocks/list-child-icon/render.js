@@ -2,6 +2,7 @@
  * WordPress dependencies
  */
 import { useBlockProps } from '@wordpress/block-editor';
+import { useSelect } from '@wordpress/data';
 import { memo, useMemo } from '@wordpress/element';
 
 /**
@@ -10,6 +11,12 @@ import { memo, useMemo } from '@wordpress/element';
 import { useSpectraStyles } from '@spectra-hooks';
 import { spectraClassNames } from '@spectra-helpers';
 import RenderSVG from '@spectra-helpers/render-svg';
+import {
+	getResponsivePreviewCss,
+	iconDimensionStyles,
+	inheritResponsiveKey,
+	resolveInheritedResponsiveValue,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The render function for the List Icon block.
@@ -21,17 +28,15 @@ import RenderSVG from '@spectra-helpers/render-svg';
 const Render = ( props ) => {
 	const {
 		attributes,
+		clientId,
 		context: {
 			'spectra/list/listType': listType,
-			'spectra/list/textColor': inheritedListColor,
-			'spectra/list/textColorHover': inheritedListColorHover,
 			'spectra/list/iconSize': inheritedIconSize,
+			'spectra/list/style': listStyleAttr,
 			'spectra/list/iconName': inheritedIcon,
 			'spectra/list/flipForRTL': inheritedFlipForRTL,
 			'spectra/list/rotation': inheritedRotation,
 			'spectra/list-child-item/index': contextItemIndex,
-			'spectra/list-child-item/textColor': inheritedItemColor,
-			'spectra/list-child-item/textColorHover': inheritedItemColorHover,
 			'spectra/list/listStyle': listStyle,
 			'spectra/list/start': startValue,
 			'spectra/list/reversed': isReversed,
@@ -43,8 +48,6 @@ const Render = ( props ) => {
 		itemIndex,
 		icon,
 		iconSize,
-		textColor,
-		textColorHover,
 		backgroundColor,
 		backgroundColorHover,
 		backgroundGradient,
@@ -53,29 +56,29 @@ const Render = ( props ) => {
 		rotation,
 	} = attributes;
 
-	// Configuration for the useSpectraStyles hook.
-	// Three-level inheritance: Icon > List-child-item > List
-	let finalTextColor;
-	if ( textColor !== undefined ) {
-		finalTextColor = textColor;
-	} else if ( inheritedItemColor !== undefined ) {
-		finalTextColor = inheritedItemColor;
-	} else {
-		finalTextColor = inheritedListColor;
-	}
-	
-	let finalTextColorHover;
-	if ( textColorHover !== undefined ) {
-		finalTextColorHover = textColorHover;
-	} else if ( inheritedItemColorHover !== undefined ) {
-		finalTextColorHover = inheritedItemColorHover;
-	} else {
-		finalTextColorHover = inheritedListColorHover;
-	}
-	
+	/*
+	 * Configuration for the useSpectraStyles hook.
+	 *
+	 * The icon paints its OWN colour only. It used to resolve a three-level
+	 * inheritance — icon, then list-child-item, then list — and paint the result
+	 * as `--spectra-text-color`, which carried `.spectra-text-color` with it. That
+	 * class sets an explicit `color`, so an icon that had merely INHERITED a
+	 * colour stopped inheriting: the value it copied was the parent's ROOT
+	 * attribute, which holds one colour and no viewport states, so a list with
+	 * `@tablet`/`@mobile` colours moved everything except its icons. Measured on
+	 * a list coloured error/info/vivid-green-cyan: at Tablet and Mobile the list
+	 * text followed and the icon stayed on the base colour.
+	 *
+	 * Both parents are DOM ancestors of the icon, so the cascade delivers their
+	 * colour — including their per-device colour, and the hover colour through
+	 * the `:not(.spectra-text-color)` rule in this block's stylesheet, which the
+	 * copied class used to switch off. `controller.php` has always read the
+	 * icon's own attribute here, which is why the front end was already right;
+	 * this makes the editor agree with it.
+	 */
 	const config = [
-		{ key: 'textColor', value: finalTextColor },
-		{ key: 'textColorHover', value: finalTextColorHover },
+		{ key: 'textColor' },
+		{ key: 'textColorHover' },
 		{ key: 'backgroundColor', value: backgroundColor},
 		{ key: 'backgroundColorHover', value: backgroundColorHover },
 		{ key: 'backgroundGradient', value: backgroundGradient },
@@ -84,7 +87,24 @@ const Render = ( props ) => {
 	
 	// Use block attributes if set, otherwise fall back to inherited context
 	const finalIcon = icon || inheritedIcon || 'circle';
-	const finalIconSize = iconSize || inheritedIconSize || '10px';
+	/*
+	 * The inherited size comes from block context, which carries the parent's
+	 * ROOT attribute — the last-edited device's value — so an inheriting icon
+	 * previewed that one value at every breakpoint. Resolve it from the parent's
+	 * `style` for the previewed device, and let the bands the icon does not size
+	 * itself inherit the parent's bands in the preview CSS.
+	 */
+	const previewDevice = useSelect( ( select ) => select( 'core/editor' )?.getDeviceType?.(), [] );
+	const resolvedInheritedSize = resolveInheritedResponsiveValue( listStyleAttr, 'iconSize', previewDevice, inheritedIconSize );
+	const finalIconSize = iconSize || resolvedInheritedSize || '10px';
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'iconSize', listStyleAttr, 'iconSize' ) },
+		blockName: 'spectra/list-child-icon',
+		producers: [ ( attrs ) => iconDimensionStyles( attrs.iconSize || '10px' ) ],
+	} );
 	const finalFlipForRTL = ( flipForRTL !== undefined && flipForRTL !== false ) ? flipForRTL : inheritedFlipForRTL;
 	const finalRotation = rotation !== undefined ? rotation : inheritedRotation;
 
@@ -245,6 +265,7 @@ const Render = ( props ) => {
 	// Render the icon
 	return (
 		<span {...blockProps}>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			{IconContent}
 		</span>
 	);

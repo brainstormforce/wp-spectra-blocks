@@ -14,6 +14,7 @@ import {
 } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
+import { getResponsivePreviewCss, iconDimensionStyles } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -23,12 +24,23 @@ import RenderSVG from '@spectra-helpers/render-svg';
  * @return {Element} The rendered block.
  */
 const Render = ( props ) => {
-	const { attributes, context } = props;
+	const { attributes, context, clientId } = props;
 	const {
 		icon,
 		size,
 		rotation,
 	} = attributes;
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	// The trigger button and close icon got this in the same round; this block
+	// was left out (the directory name differs from the block name), so its Size
+	// stayed frozen on the base value while the device switched.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/modal-child-icon',
+		producers: [ ( attrs ) => iconDimensionStyles( attrs.size || '30px' ) ],
+	} );
 
 	const modalTrigger = context['spectra/modal/modalTrigger'];
 
@@ -58,6 +70,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<RenderSVG svg={ icon || 'up-right-from-square' } extraProps={ {
 				width: size || '30px',
 				height: size || '30px',

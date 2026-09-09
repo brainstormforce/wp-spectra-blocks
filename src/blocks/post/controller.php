@@ -7,6 +7,8 @@
  * @package Spectra\Blocks\Post
  */
 
+$viewport_min_widths = \SpectraBlocks\Extensions\ResponsiveControls::instance()->get_viewport_min_widths();
+
 use SpectraBlocks\Helpers\BlockAttributes;
 
 // Retrieve block attributes.
@@ -66,9 +68,9 @@ $attr_responsive_controls = $attributes['responsiveControls'] ?? array();
 $get_responsive_value = function ( $device, $key, $fallback ) use ( $attr_responsive_controls ) {
 	// Define fallback order for each device.
 	$fallback_order = array(
-		'sm' => array( 'sm', 'md', 'lg' ), // Mobile: try mobile → tablet → desktop.
-		'md' => array( 'md', 'lg' ),       // Tablet: try tablet → desktop.
-		'lg' => array( 'lg' ),             // Desktop: only desktop.
+		'@mobile' => array( '@mobile', 'base' ), // Core's model: mobile over base, no tablet inheritance.
+		'@tablet' => array( '@tablet', 'base' ),       // Tablet: try tablet → desktop.
+		'base'    => array( 'base' ),             // Desktop: only desktop.
 	);
 
 	// Get the fallback chain for this device.
@@ -91,13 +93,13 @@ global $spectra_current_query;
 // Build Swiper config for carousel layout.
 $swiper_config = array();
 if ( 'carousel' === $layout_type ) {
-	$sm_slides_per_view = $get_responsive_value( 'sm', 'slidesPerView', $slides_per_view );
-	$md_slides_per_view = $get_responsive_value( 'md', 'slidesPerView', $slides_per_view );
-	$lg_slides_per_view = $get_responsive_value( 'lg', 'slidesPerView', $slides_per_view );
+	$sm_slides_per_view = $get_responsive_value( '@mobile', 'slidesPerView', $slides_per_view );
+	$md_slides_per_view = $get_responsive_value( '@tablet', 'slidesPerView', $slides_per_view );
+	$lg_slides_per_view = $get_responsive_value( 'base', 'slidesPerView', $slides_per_view );
 
-	$sm_space_between = $get_responsive_value( 'sm', 'spaceBetween', $space_between );
-	$md_space_between = $get_responsive_value( 'md', 'spaceBetween', $space_between );
-	$lg_space_between = $get_responsive_value( 'lg', 'spaceBetween', $space_between );
+	$sm_space_between = $get_responsive_value( '@mobile', 'spaceBetween', $space_between );
+	$md_space_between = $get_responsive_value( '@tablet', 'spaceBetween', $space_between );
+	$lg_space_between = $get_responsive_value( 'base', 'spaceBetween', $space_between );
 
 	// Auto-disable loop if insufficient posts to prevent empty slides.
 	// Loop needs at least 3 full groups for smooth operation.
@@ -130,18 +132,20 @@ if ( 'carousel' === $layout_type ) {
 		) : false,
 		'navigation'           => $navigation,
 		'pagination'           => $pagination,
+		// Keys are the bands' min widths from the free resolver, so the carousel
+		// switches where the generated CSS does.
 		'breakpoints'          => array(
-			'0'    => array(
+			(string) $viewport_min_widths['mobile']  => array(
 				'slidesPerView'  => $sm_slides_per_view,
 				'slidesPerGroup' => 1,
 				'spaceBetween'   => $sm_space_between,
 			),
-			'768'  => array(
+			(string) $viewport_min_widths['tablet']  => array(
 				'slidesPerView'  => $md_slides_per_view,
 				'slidesPerGroup' => 1,
 				'spaceBetween'   => $md_space_between,
 			),
-			'1024' => array(
+			(string) $viewport_min_widths['desktop'] => array(
 				'slidesPerView'  => $lg_slides_per_view,
 				'slidesPerGroup' => 1,
 				'spaceBetween'   => $lg_space_between,

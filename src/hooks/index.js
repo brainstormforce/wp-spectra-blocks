@@ -107,32 +107,51 @@ const convertWordPressPreset = ( value ) => {
  *   - style: { [string]: string } - Generated styles object with CSS variable names as keys.
  *   - classNames: string[] - Generated class names array.
  */
-export const useSpectraStyles = ( attributes, config = [], customClassNames = [], customStyles = {} ) => {
-	return useMemo( () => {
-		const classNames = [ ...customClassNames ]; // Merge custom class names into the base array.
-		const style = { ...customStyles }; // Merge custom styles into the base object.
+/**
+ * Map a block's attributes onto CSS custom properties and class names.
+ *
+ * The pure half of `useSpectraStyles()`, extracted so that callers which are not
+ * components can reuse it — specifically the per-device preview emitter, which
+ * has to run this same mapping once per viewport band.
+ *
+ * Sharing the implementation is the point. The alternative was a second mapping
+ * for the editor's banded CSS, and two functions deriving the same declarations
+ * from the same attributes drift: the front end already has its own map in
+ * `ResponsiveAttributeCSS` with sixteen formatters, and a third copy in JS would
+ * be a standing invitation for the editor to disagree with the site.
+ *
+ * @since 1.0.7
+ * @param {Object} attributes       The block's attributes.
+ * @param {Array}  config           Mappings of `{ key, cssVar, className, value }`.
+ * @param {Array}  customClassNames Class names to merge in.
+ * @param {Object} customStyles     Styles to merge in.
+ * @return {{style: Object, classNames: Array}} The derived styles and classes.
+ */
+export const buildSpectraStyles = ( attributes, config = [], customClassNames = [], customStyles = {} ) => {
+	const classNames = [ ...customClassNames ]; // Merge custom class names into the base array.
+	const style = { ...customStyles }; // Merge custom styles into the base object.
 
-		config.forEach( ( mapping ) => {
-			// Extract configuration details, only 'key' is required.
-			const {
-				key, // Required: Attribute key (e.g., 'textColor').
-				cssVar, // Optional: CSS variable (e.g., '--spectra-text-color').
-				className, // Optional: Class name (e.g., 'spectra-text-color').
-				value, // Optional: Explicit value (e.g., '#fff').
-			} = mapping;
+	config.forEach( ( mapping ) => {
+		// Extract configuration details, only 'key' is required.
+		const {
+			key, // Required: Attribute key (e.g., 'textColor').
+			cssVar, // Optional: CSS variable (e.g., '--spectra-text-color').
+			className, // Optional: Class name (e.g., 'spectra-text-color').
+			value, // Optional: Explicit value (e.g., '#fff').
+		} = mapping;
 
-			// If both cssVar and className are explicitly null, skip this mapping entirely.
-			if ( cssVar === null && className === null ) {
-				return;
-			}
+		// If both cssVar and className are explicitly null, skip this mapping entirely.
+		if ( cssVar === null && className === null ) {
+			return;
+		}
 
-			// Generate defaults if not provided (and not explicitly null).
-			const defaultCssVar = `--spectra-${ convertToKebabCase( key ) }`;
-			const defaultClassName = `spectra-${ convertToKebabCase( key ) }`;
+		// Generate defaults if not provided (and not explicitly null).
+		const defaultCssVar = `--spectra-${ convertToKebabCase( key ) }`;
+		const defaultClassName = `spectra-${ convertToKebabCase( key ) }`;
 
-			// Use provided values or fall back to defaults, unless explicitly null.
-			const finalCssVar = cssVar !== undefined ? cssVar : defaultCssVar;
-			const finalClassName = className !== undefined ? className : defaultClassName;
+		// Use provided values or fall back to defaults, unless explicitly null.
+		const finalCssVar = cssVar !== undefined ? cssVar : defaultCssVar;
+		const finalClassName = className !== undefined ? className : defaultClassName;
 
 		// Determine the value: explicit value takes precedence over attribute.
 		const attrValue = attributes[ key ] || ''; // Fallback to empty string if undefined.
@@ -146,13 +165,19 @@ export const useSpectraStyles = ( attributes, config = [], customClassNames = []
 			style[ finalCssVar ] = finalValue;
 		}
 
-			// Add class if a value exists and className is not null.
-			if ( finalValue && finalClassName !== null ) {
-				classNames.push( finalClassName );
-			}
-		} );
+		// Add class if a value exists and className is not null.
+		if ( finalValue && finalClassName !== null ) {
+			classNames.push( finalClassName );
+		}
+	} );
 
-		// Return the generated styles and class names.
-		return { style, classNames };
-	}, [ attributes, config, customClassNames, customStyles ] );
+	// Return the generated styles and class names.
+	return { style, classNames };
+};
+
+export const useSpectraStyles = ( attributes, config = [], customClassNames = [], customStyles = {} ) => {
+	return useMemo(
+		() => buildSpectraStyles( attributes, config, customClassNames, customStyles ),
+		[ attributes, config, customClassNames, customStyles ]
+	);
 };

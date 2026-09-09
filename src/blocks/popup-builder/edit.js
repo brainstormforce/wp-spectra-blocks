@@ -34,6 +34,7 @@ const Edit = ( props ) => {
 		attributes: {
 			isPreview,
 			blockId,
+			popupId,
 			isOpen,
 			variationSelected,
 			variantType,
@@ -58,7 +59,7 @@ const Edit = ( props ) => {
 		};
 	} );
 
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	const { updateBlockAttributes, __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
 
 	// Propagate variation selection to inner blocks when required.
 	useEffect( () => {
@@ -85,21 +86,41 @@ const Edit = ( props ) => {
 		selector( 'core/editor' ).getCurrentPostId()
 	);
 	const [ meta, setMeta ] = useEntityProp( 'postType', postType, 'meta' );
-	// Generate unique block ID if not set
+	/*
+	 * Fill in the identifiers only when they are missing or wrong. These two
+	 * effects used to write unconditionally on mount; `blockId` derives from the
+	 * clientId, which is new on every load, so every popup post opened dirty
+	 * with no edit made — the browser's unsaved-changes prompt on leaving, and
+	 * a "save" that rewrote content nobody touched. Content saved by the editor
+	 * already carries both values, so a real change only happens for content
+	 * that never had them.
+	 */
 	useEffect( () => {
-		setAttributes( { blockId: `popup-${ clientId.substring( 0, 8 ) }` } );
-	}, [ blockId, clientId, setAttributes ] );
+		if ( ! blockId ) {
+			// `blockId` is not a saved attribute — it is derived from the clientId
+			// on every load — so writing it must never count as an edit.
+			__unstableMarkNextChangeAsNotPersistent();
+			setAttributes( { blockId: `popup-${ clientId.substring( 0, 8 ) }` } );
+		}
+	}, [ blockId, clientId, setAttributes, __unstableMarkNextChangeAsNotPersistent ] );
 
 	useEffect( () => {
-		setAttributes( { popupId: `popup-${ postId }` } );
-	}, [ postId, setAttributes ] );
+		const nextPopupId = `popup-${ postId }`;
+		if ( postId && popupId !== nextPopupId ) {
+			// Derived from the post, not authored: filling it in is not an edit.
+			__unstableMarkNextChangeAsNotPersistent();
+			setAttributes( { popupId: nextPopupId } );
+		}
+	}, [ postId, popupId, setAttributes, __unstableMarkNextChangeAsNotPersistent ] );
 
 	// Always show popup in editor for editing
 	useEffect( () => {
 		if ( ! isOpen && isSelected ) {
+			// Editor-only display state; opening the popup to edit it is not an edit.
+			__unstableMarkNextChangeAsNotPersistent();
 			setAttributes( { isOpen: true } );
 		}
-	}, [ isSelected, isOpen, setAttributes ] );
+	}, [ isSelected, isOpen, setAttributes, __unstableMarkNextChangeAsNotPersistent ] );
 
 	useEffect( () => {
 		const isLegacyPopup = 'spectra-popup' === postType;
@@ -108,20 +129,20 @@ const Edit = ( props ) => {
 		}
 		const typeKey    = isLegacyPopup ? 'spectra-popup-type' : 'spectra-blocks-popup-type';
 		const enabledKey = isLegacyPopup ? 'spectra-popup-enabled' : 'spectra-blocks-popup-enabled';
-		setMeta(
-			! variationSelected
-				? {
-						...meta,
-						[ typeKey ]: 'unset',
-						[ enabledKey ]: false,
-				  }
-				: {
-						...meta,
-						[ typeKey ]: variantType,
-						[ enabledKey ]: true,
-				  }
-		);
-	}, [ variationSelected, variantType ] );
+		const nextType    = variationSelected ? variantType : 'unset';
+		const nextEnabled = variationSelected;
+
+		// Writing meta marks the post dirty; only do it when it actually changes.
+		if ( meta?.[ typeKey ] === nextType && meta?.[ enabledKey ] === nextEnabled ) {
+			return;
+		}
+
+		setMeta( {
+			...meta,
+			[ typeKey ]: nextType,
+			[ enabledKey ]: nextEnabled,
+		} );
+	}, [ variationSelected, variantType, meta, postType, setMeta ] );
 
 	// Early return if not in popup post type context
 	if ( 'spectra-blocks-popup' !== window.typenow && 'spectra-popup' !== window.typenow ) {

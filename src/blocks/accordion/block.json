@@ -107,6 +107,7 @@
 		"spectra/accordion/flipForRTL": "flipForRTL",
 		"spectra/accordion/flipForRTLSecondary": "flipForRTLSecondary",
 		"spectra/accordion/size": "size",
+		"spectra/accordion/style": "style",
 		"spectra/accordion/rotation": "rotation",
 		"spectra/accordion/textColor": "textColor",
 		"spectra/accordion/textColorHover": "textColorHover",

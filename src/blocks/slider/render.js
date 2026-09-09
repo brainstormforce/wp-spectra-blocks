@@ -10,10 +10,11 @@ import { memo, useEffect, useRef, } from '@wordpress/element';
  */
 import RenderSVG from '@spectra-helpers/render-svg';
 import { spectraClassNames } from '@spectra-helpers';
-import { useSpectraStyles } from '@spectra-hooks';
+import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
 import { getAdvancedGradientValue } from '@spectra-helpers/get-advanced-gradient-value';
 import { SliderRootToolbar } from './helper';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 const ALLOWED_BLOCKS = [ 'spectra/slider-child' ];
 
@@ -131,6 +132,19 @@ const Render = memo( ( props ) => {
 
 	// Generate styles and class names.
 	const { style: generatedStyle, classNames } = useSpectraStyles( attributes, config, additionalClassNames );
+
+	/*
+	 * `slidesPerView` and `spaceBetween` are declared responsive but are Swiper
+	 * PARAMETERS, not CSS — no stylesheet can preview them per device, so they are
+	 * out of this mechanism's reach and are left to Swiper's own breakpoints.
+	 */
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/slider',
+		producers: [ ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+	} );
 
 	// Background styles handling.
 	const getBackgroundStyles = () => {
@@ -761,6 +775,7 @@ const Render = memo( ( props ) => {
 		<>
 			{ isSelected && <RenderToolbar /> }
 			<div { ...blockProps }>
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 				<VideoBackground { ...{ background } } />
 				<div className={ `spectra-slider-container block-${ clientId }` }>
 					<div

@@ -2,6 +2,7 @@
  * External dependencies.
  */
 import { useEffect } from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
 /**
  * Internal dependencies.
  */
@@ -29,6 +30,8 @@ const Edit = ( props ) => {
 		}
 	} = props;
 
+	const { __unstableMarkNextChangeAsNotPersistent } = useDispatch( 'core/block-editor' );
+
 	// Set the slider ID.
 	useEffect( () => {
 		initializeSliderId();
@@ -40,6 +43,10 @@ const Edit = ( props ) => {
 	 */
 	const initializeSliderId = () => {
 		if ( ! sliderId ) {
+			// A derived value, not an edit: writing it persistently made every
+			// post containing a slider open dirty. It still persists whenever
+			// the user saves for their own reasons.
+			__unstableMarkNextChangeAsNotPersistent();
 			setAttributes( {
 				sliderId: clientId.split( '-' )[ 0 ],
 			} );

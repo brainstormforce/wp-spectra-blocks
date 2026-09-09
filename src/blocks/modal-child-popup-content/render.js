@@ -8,6 +8,7 @@ import {
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
+import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -16,14 +17,41 @@ import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appe
  * @since x.x.x
  * @return {Element} Element to render.
  */
+/**
+ * The popup content's own dimensions, painted on the block element.
+ *
+ * Named so the per-device preview emitter can re-derive them per band — see
+ * `helpers/responsive-preview.js`. `maxContainerHeight` is resolved outside the
+ * band, so it is passed in rather than read from the band's attributes.
+ *
+ * @since 1.0.7
+ * @param {Object} attrs              The block's attributes, or a band's merge.
+ * @param {string} maxContainerHeight The resolved max height.
+ * @return {Object} A React style object.
+ */
+export const getPopupContentSizeStyles = ( attrs = {}, maxContainerHeight ) => {
+	// `contentHeight` defaults to 'custom' — the block.json default and what the
+	// PHP painter assumes (`?? 'custom'`). The canvas used to fall back to 'auto'
+	// here, so a band that stored no Content Height previewed as auto while the
+	// front end rendered the fixed height; the two surfaces now read a missing
+	// value the same way.
+	const containerWidth = attrs.containerWidth || '600px';
+	const containerHeight = attrs.containerHeight || '100%';
+	const contentHeight = attrs.contentHeight || 'custom';
+
+	return {
+		width: containerWidth,
+		height: 'custom' === contentHeight ? containerHeight : 'auto',
+		maxHeight: 'auto' === contentHeight ? maxContainerHeight : undefined,
+	};
+};
+
 const Render = ( props ) => {
 	const { attributes, clientId } = props;
 
 	const {
 		background,
-		containerWidth = '600px',
-		containerHeight = '100%',
-		contentHeight = 'auto',
+		contentHeight = 'custom',
 		maxContainerHeight = '100%',
 		backgroundGradient,
 		backgroundGradientHover,
@@ -72,16 +100,27 @@ const Render = ( props ) => {
 		return styles;
 	};
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/modal-popup-content',
+		producers: [
+			( attrs ) => getPopupContentSizeStyles( attrs, maxContainerHeight ),
+			( attrs ) => getBackgroundImageStyles( { ...attrs, backgroundGradient, backgroundGradientHover } ),
+		],
+	} );
+
 	// Parent block properties.
 	const blockProps = useBlockProps( {
 		className: spectraClassNames( classNames ),
 		style: {
-			'width': containerWidth,
+			...getPopupContentSizeStyles( attributes, maxContainerHeight ),
 			'maxWidth': '100%',
-			'height': contentHeight === 'custom' ? containerHeight : 'auto',
-			'maxHeight': contentHeight === 'auto' ? maxContainerHeight : undefined,
 			...getBackgroundStyles(),
-			'--spectra-overlay-opacity': ( dimRatio / 100 ),
+			// An unset dimRatio used to produce `NaN` here — an invalid value on
+			// every popup in the canvas. PHP falls back to fully opaque; match it.
+			'--spectra-overlay-opacity': 'number' === typeof dimRatio ? dimRatio / 100 : 1,
 			'overflow': computedOverflow,
 		}
 	} );
@@ -95,6 +134,7 @@ const Render = ( props ) => {
 	return (
         <>
 			<div { ...blockProps }>
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 				{/* Modal Content Block */}
 				<VideoBackground { ...{ background } }/>
 				<div className="spectra-modal-popup-content">

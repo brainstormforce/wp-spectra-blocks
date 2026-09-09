@@ -10,17 +10,17 @@ import {
 import {
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
-    __experimentalToolsPanel as ToolsPanel,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.
  */
 import InspectorColor from '@spectra-components/inspector-color';
 import Background from '@spectra-components/background';
+import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 
 /**
@@ -50,74 +50,65 @@ const BlockSettings = memo( ( props ) => {
 	} );
 
 	return (
-		<InspectorControls group="settings">
-            <ToolsPanel
-				label={ __( 'Content', 'spectra-blocks' ) }
-				resetAll={ () => {
-					setAttributes( {
-						containerWidth: undefined,
-						containerHeight: undefined,
-						contentHeight: undefined,
-					} );
-				} }
+		<InspectorControls group="dimensions">
+			<ToolsPanelItem
+				hasValue={ () => !! containerWidth }
+				label={ __( 'width', 'spectra-blocks' ) }
+				onDeselect={ () => setAttributes( { containerWidth: undefined } ) }
+				resetAllFilter={ () => ( { containerWidth: undefined } ) }
+				isShownByDefault
 				panelId={ clientId }
 			>
-				<ToolsPanelItem
-					hasValue={ () => !! containerWidth }
-					label={ __( 'width', 'spectra-blocks' ) }
-					onDeselect={ () => setAttributes( { containerWidth: undefined } ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<UnitControl
-						__next40pxDefaultSize
-						label={ __( 'Width', 'spectra-blocks' ) }
-						labelPosition="top"
-						value={ containerWidth }
-						min={ 0 }
-						onChange={ ( value ) => setAttributes( { containerWidth: value } ) }
-						units={ units }
-					/>
-				</ToolsPanelItem>
-				<ToolsPanelItem
-					hasValue={ () => !! contentHeight }
+				<UnitControl
+					__next40pxDefaultSize
+					label={ __( 'Width', 'spectra-blocks' ) }
+					labelPosition="top"
+					value={ containerWidth }
+					min={ 0 }
+					onChange={ ( value ) => setAttributes( { containerWidth: value } ) }
+					units={ units }
+				/>
+			</ToolsPanelItem>
+			<ToolsPanelItem
+				hasValue={ () => !! contentHeight }
+				label={ __( 'Content Height', 'spectra-blocks' ) }
+				onDeselect={ () => setAttributes( { contentHeight: undefined } ) }
+				resetAllFilter={ () => ( { contentHeight: undefined } ) }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<ToggleGroupControl
+					__nextHasNoMarginBottom
+					__next40pxDefaultSize
 					label={ __( 'Content Height', 'spectra-blocks' ) }
-					onDeselect={ () => setAttributes( { contentHeight: undefined } ) }
-					isShownByDefault
-					panelId={ clientId }
+					value={ contentHeight }
+					onChange={ ( value ) => setAttributes( { contentHeight: value } ) }
+					isBlock
 				>
-					<ToggleGroupControl
-						__nextHasNoMarginBottom
-						__next40pxDefaultSize
-						label={ __( 'Content Height', 'spectra-blocks' ) }
-						value={ contentHeight }
-						onChange={ ( value ) => setAttributes( { contentHeight: value } ) }
-						isBlock
-					>
-						<ToggleGroupControlOption value="auto" label="Auto" />
-						<ToggleGroupControlOption value="custom" label="Custom" />
-					</ToggleGroupControl>
-				</ToolsPanelItem>
-				{ 'auto' !== contentHeight && (
-				<ToolsPanelItem
-					hasValue={ () => !! containerHeight }
+					<ToggleGroupControlOption value="auto" label="Auto" />
+					<ToggleGroupControlOption value="custom" label="Custom" />
+				</ToggleGroupControl>
+			</ToolsPanelItem>
+			{ 'auto' !== contentHeight && (
+			<ToolsPanelItem
+				hasValue={ () => !! containerHeight }
+				label={ __( 'Height', 'spectra-blocks' ) }
+				onDeselect={ () => setAttributes( { containerHeight: undefined } ) }
+				resetAllFilter={ () => ( { containerHeight: undefined } ) }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<UnitControl
+					__next40pxDefaultSize
 					label={ __( 'Height', 'spectra-blocks' ) }
-					onDeselect={ () => setAttributes( { containerHeight: undefined } ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<UnitControl
-						__next40pxDefaultSize
-						label={ __( 'Height', 'spectra-blocks' ) }
-						labelPosition="top"
-						value={ containerHeight }
-						min={ 0 }
-						onChange={ ( value ) => setAttributes( { containerHeight: value } ) }
-						units={ units }
-					/>
-				</ToolsPanelItem>
-				) }
-            </ToolsPanel>
+					labelPosition="top"
+					value={ containerHeight }
+					min={ 0 }
+					onChange={ ( value ) => setAttributes( { containerHeight: value } ) }
+					units={ units }
+				/>
+			</ToolsPanelItem>
+			) }
 		</InspectorControls>
 	);
 } );
@@ -149,13 +140,19 @@ const BackgroundSettings = memo( ( props ) => {
 		dimRatio
 	} = attributes;
 
+	const { group, isHosted } = useInspectorStyleGroup();
+
 	return (
-		<InspectorControls group="styles">
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { background: undefined } ) }
+		>
 			<Background
 				{ ...{
 					clientId,
 					attributes,
 					setAttributes,
+					isHosted,
 					background: {
 						label: 'background',
 						value: background,
@@ -252,7 +249,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'spectra-blocks' )}
+				label={__( 'Background Color Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -262,7 +259,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'spectra-blocks' )}
+					label={__( 'Background Color Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}

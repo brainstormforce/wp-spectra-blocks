@@ -5,13 +5,14 @@ import { memo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import {
-	__experimentalToolsPanelItem as ToolsPanelItem,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.
  */
 import Background from '@spectra-components/background';
+import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient-control';
@@ -33,13 +34,19 @@ const BlockStyle = memo( ( props ) => {
 		backgroundGradient
 	} = attributes;
 
+    const { group, isHosted } = useInspectorStyleGroup();
+
     return (
-		<InspectorControls group="styles">
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { background: undefined } ) }
+		>
 			<Background
 				{ ...{
 					clientId,
 					attributes,
 					setAttributes,
+					isHosted,
 					background: {
 						label: 'background',
 						value: background,
@@ -141,7 +148,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !!dimRatio}
-				label={__( 'Overlay Opacity', 'spectra-blocks' )}
+				label={__( 'Background Color Opacity', 'spectra-blocks' )}
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -151,7 +158,7 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'spectra-blocks' )}
+					label={__( 'Background Color Opacity', 'spectra-blocks' )}
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}

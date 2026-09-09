@@ -39,7 +39,7 @@ body.spectra-page-zip-builder
 	height: auto;
 }
 
-// A17 — theme.json sizes h1–h6 via element rules (size/weight/family/line-height), and the
+// A17 — theme.json sizes h1–h6 via element rules (size/weight/line-height), and the
 // host's global-styles USER layer (Style-Guide-synced wp_global_styles) adds text-transform /
 // letter-spacing at the same (0,0,1) tier: a source relying on the UA baseline gets host
 // typography it never declared (measured 2026-08-16: 125 of 142 visible headings across an
@@ -47,6 +47,13 @@ body.spectra-page-zip-builder
 // (0,0,1), printed after global-styles-inline-css so equal specificity resolves to us.
 // `revert` returns each axis to inheritance/UA; authored headings ride gs classes (0,3,0)
 // and win regardless.
+// NOT font-family: the imported design's global heading/body font is now THEME-OWNED — the
+// build writes it to wp_global_styles typography (styles.elements.heading.typography.fontFamily)
+// deliberately, and the GBS gs classes no longer carry it. Reverting font-family here would
+// strip that intended global font and drop every heading to the inherited body font (measured:
+// all headings rendered the body font instead of the theme's heading font). A deliberate
+// per-element accent font still rides its gs class (0,3,0) and wins, so font-family stays out
+// of this reset.
 :where(body.spectra-page-zip-builder)
 :where(.entry-content, .wp-block-template-part)
 h1,
@@ -65,7 +72,6 @@ h5,
 :where(body.spectra-page-zip-builder)
 :where(.entry-content, .wp-block-template-part)
 h6 {
-	font-family: revert;
 	font-size: revert;
 	font-weight: revert;
 	line-height: revert;

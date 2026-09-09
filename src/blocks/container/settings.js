@@ -2,7 +2,10 @@
  * External dependencies.
  */
 import { memo, useState, useEffect, useMemo } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import useLayoutInspectorGroup from '@spectra-hooks/useLayoutInspectorGroup';
+import StylePanel from '@spectra-components/style-panel';
 import {
 	InspectorControls,
 	useSettings,
@@ -15,7 +18,6 @@ import {
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
 	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalGrid as Grid,
 	SelectControl,
 	Notice,
@@ -29,17 +31,28 @@ import {
 	ColorPalette,
 	BaseControl,
 } from '@wordpress/components';
+import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
 /**
  * Internal dependencies.
  */
-import Background from '@spectra-components/background';
+import Background, { BackgroundExtensionsSlot } from '@spectra-components/background';
 import BlockControlLink from '@spectra-components/block-control-link';
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient-control';
 import ShadowControl from '@spectra-components/shadow-control';
+import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import { TAG_CONFIG } from './toolbar';
+/*
+ * `constants` only, deliberately: the extension's `utils/helpers.js` imports
+ * its entry point, so reaching it from here would close a cycle.
+ */
+import {
+	DESKTOP,
+	coreResponsiveEditingActive,
+	coreViewportStatesAreIndependent,
+} from '../../extensions/responsive-controls/utils/constants';
 
 // Derive SelectControl options from TAG_CONFIG (SSOT).
 const TAG_OPTIONS = Object.entries( TAG_CONFIG ).map( ( [ value, { label } ] ) => ( { value, label } ) );
@@ -94,6 +107,8 @@ const BlocksSettings = memo( ( props ) => {
 		}
 	}, [ htmlTag, previousTag ] );
 
+	const { group: layoutGroup, isHosted: layoutHosted } = useLayoutInspectorGroup();
+
 	return (
 		<>
 			{ 'a' === htmlTag && (
@@ -114,39 +129,33 @@ const BlocksSettings = memo( ( props ) => {
 				} }
 			/>
 			)   }
-			<InspectorControls>
 			{ layout?.type === 'flex' && (
-					<ToolsPanel
-						label={ __( 'Flex Direction', 'spectra-blocks' ) }
-						resetAll={ () => {
-							setAttributes( {
-								orientationReverse: undefined,
-							} )
-						} }
+				<InspectorControls group={ layoutGroup }>
+					<StylePanel isHosted={ layoutHosted } label={ __( 'Flex Direction', 'spectra-blocks' ) } resetAll={ () => setAttributes( { orientationReverse: undefined } ) } panelId={ clientId } showHostedHeading={ false }>
+					<ToolsPanelItem
+						hasValue={ () => !! orientationReverse }
+						label={ __( 'Orientation Reverse', 'spectra-blocks' ) }
 						panelId={ clientId }
+						onDeselect={ () => setAttributes( {
+							orientationReverse: undefined,
+						} ) }
+						resetAllFilter={ () => ( {
+							orientationReverse: undefined,
+						} ) }
+						isShownByDefault
 					>
-						<ToolsPanelItem
-							hasValue={ () => !! orientationReverse }
+						<ToggleControl
+							__nextHasNoMarginBottom
 							label={ __( 'Orientation Reverse', 'spectra-blocks' ) }
-							panelId={ clientId }
-							onDeselect={ () => setAttributes( {
-								orientationReverse: undefined,
-							} ) }
-							resetAllFilter={ () => ( {
-								orientationReverse: undefined,
-							} ) }
-							isShownByDefault
-						>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								label={ __( 'Orientation Reverse', 'spectra-blocks' ) }
-								checked={ !! orientationReverse }
-								onChange={ ( value ) => setAttributes( { orientationReverse: value } ) }
-								help={ __( 'When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block.', 'spectra-blocks' ) }
-							/>
-						</ToolsPanelItem>
-					</ToolsPanel>
-				) }
+							checked={ !! orientationReverse }
+							onChange={ ( value ) => setAttributes( { orientationReverse: value } ) }
+							help={ __( 'When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block.', 'spectra-blocks' ) }
+						/>
+					</ToolsPanelItem>
+									</StylePanel>
+				</InspectorControls>
+			) }
+			<InspectorControls>
 				<ToolsPanel
 					label={ __( 'Container', 'spectra-blocks' ) }
 					resetAll={ () => {
@@ -266,13 +275,24 @@ const BlockStyles = memo( ( props ) => {
 		dimRatio
 	} = attributes;
 
+	// On Tablet/Mobile core drops its unlabelled `styles` slot, so this fills
+	// the surviving `background` slot instead and lets core's panel host it.
+	const { group, isHosted } = useInspectorStyleGroup();
+
     return (
-		<InspectorControls group="styles">
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { background: undefined } ) }
+		>
 			<Background
 				{ ...{
 					clientId,
 					attributes,
 					setAttributes,
+					isHosted,
+					// Dynamic Image renders after the Shape Dividers section, so
+					// the slot is placed there rather than below this panel.
+					deferExtensions: true,
 					background: {
 						label: 'background',
 						value: background,
@@ -552,7 +572,7 @@ const OpacitySettings = memo( ( props ) => {
 		<InspectorControls group="color">
 			<ToolsPanelItem
 				hasValue={() => !! dimRatio }
-				label={__( 'Overlay Opacity', 'spectra-blocks' ) }
+				label={__( 'Background Color Opacity', 'spectra-blocks' ) }
 				onDeselect={() => setAttributes( { dimRatio: undefined } )}
 				resetAllFilter={() => ( {
 					dimRatio: undefined,
@@ -562,7 +582,8 @@ const OpacitySettings = memo( ( props ) => {
 			>
 				<DebouncedRangeControl
 					__nextHasNoMarginBottom
-					label={__( 'Overlay Opacity', 'spectra-blocks' ) }
+					label={__( 'Background Color Opacity', 'spectra-blocks' ) }
+					help={__( 'Opacity of the background colour or gradient. The overlay image has its own opacity under Overlay Settings.', 'spectra-blocks' ) }
 					value={dimRatio}
 					onChange={( value ) => setAttributes( { dimRatio: value } )}
 					min={0}
@@ -752,13 +773,13 @@ const OverlaySettings = memo( ( props ) => {
 		availableUnits: availableUnits || [ 'px', '%', 'vw', 'vh', 'em', 'rem' ],
 	} );
 
-	return (
-		<>
-			<ToolsPanel
-				label={ __( 'Overlay Settings', 'spectra-blocks' ) }
-				resetAll={ () => {
-					// Clear all overlay-related attributes when switching to 'none'
-					setAttributes( {
+	// Overlay is part of the background family, so on Tablet/Mobile — where core
+	// drops the `styles` slot — it is hosted inside core's Background panel.
+	const { group, isHosted } = useInspectorStyleGroup();
+
+	// The reset shape is shared: as a panel it runs through `resetAll`, and while
+	// hosted it runs through the fill's `resetAllFilter` instead.
+	const overlayResetAttributes = {
 						overlayType: 'none',
 						overlayImage: undefined,
 						overlayPosition: undefined,
@@ -772,7 +793,19 @@ const OverlaySettings = memo( ( props ) => {
 						overlayCustomWidth: undefined,
 						overlayBlendMode: undefined,
 						overlayOpacity: undefined,
-					} );
+	};
+
+	return (
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { ...overlayResetAttributes } ) }
+		>
+			<StylePanel
+				isHosted={ isHosted }
+				label={ __( 'Overlay Settings', 'spectra-blocks' ) }
+				resetAll={ () => {
+					// Clear all overlay-related attributes when switching to 'none'
+					setAttributes( { ...overlayResetAttributes } );
 				} }
 				panelId={ clientId }
 		>
@@ -1141,14 +1174,14 @@ const OverlaySettings = memo( ( props ) => {
 
 					<ToolsPanelItem
 						hasValue={ () => !! overlayOpacity }
-						label={ __( 'Opacity', 'spectra-blocks' ) }
+						label={ __( 'Overlay Image Opacity', 'spectra-blocks' ) }
 						onDeselect={ () => setAttributes( { overlayOpacity: undefined } ) }
 						resetAllFilter={ () => ( { overlayOpacity: undefined } ) }
 						isShownByDefault
 						panelId={ clientId }
 					>
 						<RangeControl
-							label={ __( 'Opacity', 'spectra-blocks' ) }
+							label={ __( 'Overlay Image Opacity', 'spectra-blocks' ) }
 							value={ overlayOpacity !== undefined ? overlayOpacity : 50 }
 							onChange={ ( value ) => setAttributes( { overlayOpacity: value } ) }
 							min={ 0 }
@@ -1158,13 +1191,144 @@ const OverlaySettings = memo( ( props ) => {
 					</ToolsPanelItem>
 				</>
 			) }
-			</ToolsPanel>
-		</>
+			</StylePanel>
+		</InspectorControls>
 	);
 } );
 
 /**
+ * The controls for one side's shape divider.
+ *
+ * Both sides carry the same settings under different attribute names, so
+ * they are rendered from one component rather than two near-identical branches
+ * — which is how the sides came to drift in the first place.
+ *
+ * @param {Object}   props               The element props.
+ * @param {Object}   props.values        The side's current values, keyed by role.
+ * @param {Function} props.onChange      Called with the attributes to set.
+ * @param {string}   props.typeLabel     Label for the shape select.
+ * @param {Array}    props.options       The shape options.
+ * @param {Array}    props.units         The units for width and height.
+ * @param {boolean}  props.perDeviceOnly Whether to render only the per-device
+ *                                       controls, i.e. width and height.
+ * @since x.x.x
+ * @return {Element} The rendered controls.
+ */
+const DividerControls = ( {
+	values,
+	onChange,
+	typeLabel,
+	options,
+	units,
+	perDeviceOnly = false,
+} ) => {
+	const { type, flip, invert, contentAboveShape, width, height } = values;
+	const isActive = type && type !== 'none';
+
+	return (
+		<VStack spacing={ 4 }>
+			{/*
+			  * Only the divider's width and height are per-device. Everything
+			  * else here holds one value for every device, so it is rendered at
+			  * Desktop alone — see `perDeviceOnly` at the call site — and while
+			  * it IS rendered it carries the class that opts its label out of the
+			  * responsive indicator the enhanced panel adds to every label it
+			  * contains.
+			  */}
+			{ ! perDeviceOnly && (
+				<SelectControl
+					__nextHasNoMarginBottom
+					className="spectra-not-per-device-control"
+					label={ typeLabel }
+					value={ type || 'none' }
+					options={ options }
+					onChange={ ( value ) => onChange( { type: value } ) }
+				/>
+			) }
+
+			{ isActive && (
+				<>
+					{ ! perDeviceOnly && (
+						<>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								className="spectra-not-per-device-control"
+								label={ __( 'Flip', 'spectra-blocks' ) }
+								checked={ !! flip }
+								onChange={ ( value ) => onChange( { flip: value } ) }
+							/>
+
+							<ToggleControl
+								__nextHasNoMarginBottom
+								className="spectra-not-per-device-control"
+								label={ __( 'Invert', 'spectra-blocks' ) }
+								checked={ !! invert }
+								onChange={ ( value ) => onChange( { invert: value } ) }
+							/>
+
+							<ToggleControl
+								__nextHasNoMarginBottom
+								className="spectra-not-per-device-control"
+								label={ __( 'Bring To Front', 'spectra-blocks' ) }
+								checked={ !! contentAboveShape }
+								onChange={ ( value ) =>
+									onChange( { contentAboveShape: value } )
+								}
+							/>
+						</>
+					) }
+
+					<UnitControl
+						__next40pxDefaultSize
+						label={ __( 'Shape Divider Width', 'spectra-blocks' ) }
+						labelPosition="top"
+						value={ width }
+						min={ 0 }
+						onChange={ ( value ) => onChange( { width: value } ) }
+						units={ units }
+					/>
+
+					<UnitControl
+						__next40pxDefaultSize
+						label={ __( 'Shape Divider Height', 'spectra-blocks' ) }
+						labelPosition="top"
+						value={ height }
+						min={ 0 }
+						onChange={ ( value ) => onChange( { height: value } ) }
+						units={ units }
+					/>
+				</>
+			) }
+		</VStack>
+	);
+};
+
+/**
  * Element Sub-settings: Shape Divider style settings.
+ *
+ * ONE ToolsPanelItem, deliberately.
+ *
+ * The section used to render four: the Top/Bottom switch, the active side's
+ * settings, then Width and Height once that side had a shape. Every one of
+ * those but the first mounts only under a condition, and that is what broke
+ * the panel's order.
+ *
+ * Each inspector group is one `bubblesVirtually` slot, and every fill portals
+ * its content into that slot's single container node. React tracks each
+ * portal's children separately, so a node appended to an EARLIER portal after
+ * mount lands at the end of the container — behind everything the later
+ * portals have already put there. Measured on 7.1: choosing a shape with the
+ * panel open sent Width and Height below Pro's Dynamic Image section, and
+ * switching to Bottom sent "Bottom Type" there too, while a fresh render of
+ * the same state was correctly ordered because then every portal mounted in
+ * turn.
+ *
+ * Keeping the fill's top-level children fixed removes the whole class of
+ * problem: everything conditional now lives INSIDE this item, where it is
+ * ordinary subtree work that React places correctly. It also retires the
+ * `hasValue: () => false` item the switch used to need — a control that stores
+ * nothing had no business in the panel's options menu, where hiding it left
+ * the other side unreachable.
  *
  * @param {Object} props The element props.
  * @since x.x.x
@@ -1179,19 +1343,33 @@ const ShapeDividerSettings = memo( ( props ) => {
 			topFlip,
 			topInvert,
 			topContentAboveShape,
+			topWidth,
+			topHeight,
 			bottomType,
 			bottomFlip,
 			bottomInvert,
 			bottomContentAboveShape,
-			topWidth,
-			topHeight,
 			bottomWidth,
 			bottomHeight,
 		},
 	} = props;
 
-	// Local state to control which divider settings are visible (UI only).
-	const [ visibleDivider, setVisibleDivider ] = useState( 'top' );
+	// Check if dividers are active.
+	const hasTopDivider = topType && topType !== 'none';
+	const hasBottomDivider = bottomType && bottomType !== 'none';
+
+	/*
+	 * Which side's settings are on screen (UI only).
+	 *
+	 * Seeded from the side that actually has a divider. This used to open on
+	 * `top` unconditionally, and the inspector remounts whenever the block is
+	 * reselected — so an author who had configured a BOTTOM divider came back
+	 * to a panel reading "Top Type: None", with no sign anywhere that their
+	 * divider still existed.
+	 */
+	const [ visibleDivider, setVisibleDivider ] = useState(
+		() => ( ! hasTopDivider && hasBottomDivider ? 'bottom' : 'top' )
+	);
 
 	// Shape divider type options.
 	const shapeOptions = [
@@ -1224,271 +1402,202 @@ const ShapeDividerSettings = memo( ( props ) => {
 		availableUnits: availableUnits || [ 'px', '%', 'vw', 'em', 'rem' ],
 	} );
 
-	// Check if dividers are active.
-	const hasTopDivider = topType && topType !== 'none';
-	const hasBottomDivider = bottomType && bottomType !== 'none';
+	// `topWidth`/`topHeight`/`bottomWidth`/`bottomHeight` are per-device
+	// attributes, so this panel has to stay reachable on Tablet and Mobile,
+	// where core renders no `styles` slot to host it.
+	const { group, isHosted } = useInspectorStyleGroup();
+
+	const shapeDividerResetAttributes = {
+		topType: 'none',
+		topWidth: undefined,
+		topHeight: undefined,
+		topFlip: false,
+		topInvert: false,
+		topContentAboveShape: false,
+		bottomType: 'none',
+		bottomWidth: undefined,
+		bottomHeight: undefined,
+		bottomFlip: false,
+		bottomInvert: false,
+		bottomContentAboveShape: false,
+	};
+
+	/*
+	 * The two sides, described rather than duplicated. `DividerControls` speaks
+	 * in roles — type, flip, width — and this maps them onto the attribute names
+	 * each side stores under.
+	 */
+	const sides = {
+		top: {
+			typeLabel: __( 'Top Type', 'spectra-blocks' ),
+			values: {
+				type: topType,
+				flip: topFlip,
+				invert: topInvert,
+				contentAboveShape: topContentAboveShape,
+				width: topWidth,
+				height: topHeight,
+			},
+		},
+		bottom: {
+			typeLabel: __( 'Bottom Type', 'spectra-blocks' ),
+			values: {
+				type: bottomType,
+				flip: bottomFlip,
+				invert: bottomInvert,
+				contentAboveShape: bottomContentAboveShape,
+				width: bottomWidth,
+				height: bottomHeight,
+			},
+		},
+	};
+
+	/*
+	 * Whether the panel is editing a viewport NARROWER than Desktop.
+	 *
+	 * The device alone does not settle it. On 7.1 with core's "Responsive
+	 * styles" off, previewing Tablet still edits the base layer, so every
+	 * control there is live and hiding one would take away a setting the author
+	 * can legitimately change. Below 7.1 the legacy projection always scopes an
+	 * edit to the previewed device, so the device is the whole answer.
+	 *
+	 * The same pairing `ToolsPanelItem` uses to decide which layer it resets.
+	 */
+	const deviceType = useSelect(
+		( select ) => select( 'core/editor' )?.getDeviceType?.(),
+		[]
+	);
+
+	const editsNarrowerViewport =
+		!! deviceType &&
+		DESKTOP !== deviceType &&
+		( ! coreViewportStatesAreIndependent() || coreResponsiveEditingActive() );
+
+	const side = sides[ visibleDivider ];
+
+	// Roles back to the attribute names for the side on screen.
+	const setSideAttributes = ( changed ) => {
+		const prefix = visibleDivider;
+		const named = {};
+
+		Object.entries( changed ).forEach( ( [ role, value ] ) => {
+			named[ prefix + role.charAt( 0 ).toUpperCase() + role.slice( 1 ) ] = value;
+		} );
+
+		setAttributes( named );
+	};
+
+	/*
+	 * Nothing to offer on a narrower viewport until a divider exists.
+	 *
+	 * Only width and height are per-device, and those render only for a side
+	 * whose shape is set — so with no divider anywhere, Tablet and Mobile would
+	 * show a "Shape Dividers" heading over an empty body. The shape, flip,
+	 * invert and bring-to-front are chosen once at Desktop; the narrower
+	 * viewports are for tuning the size afterwards.
+	 *
+	 * Every hook above has already run, so this return changes no hook order.
+	 */
+	if ( editsNarrowerViewport && ! hasTopDivider && ! hasBottomDivider ) {
+		return null;
+	}
 
 	return (
-		<InspectorControls group="styles">
-			<ToolsPanel
+		<InspectorControls
+			group={ group }
+			resetAllFilter={ () => ( { ...shapeDividerResetAttributes } ) }
+		>
+			<StylePanel
+				isHosted={ isHosted }
 				label={ __( 'Shape Dividers', 'spectra-blocks' ) }
 				resetAll={ () => {
-					setAttributes( {
-						topType: 'none',
-						topWidth: undefined,
-						topHeight: undefined,
-						topFlip: false,
-						topInvert: false,
-						topContentAboveShape: false,
-						bottomType: 'none',
-						bottomWidth: undefined,
-						bottomHeight: undefined,
-						bottomFlip: false,
-						bottomInvert: false,
-						bottomContentAboveShape: false,
-					} );
+					setAttributes( { ...shapeDividerResetAttributes } );
 				} }
 				panelId={ clientId }
 			>
-				{/* Divider Position Selector */}
 				<ToolsPanelItem
-					hasValue={ () => false }
-					label={ __( 'Divider Position', 'spectra-blocks' ) }
+					hasValue={ () => !! ( hasTopDivider || hasBottomDivider ) }
+					label={ __( 'Shape Dividers', 'spectra-blocks' ) }
+					onDeselect={ () => setAttributes( { ...shapeDividerResetAttributes } ) }
+					resetAllFilter={ () => ( { ...shapeDividerResetAttributes } ) }
 					isShownByDefault
 					panelId={ clientId }
 				>
-					<ToggleGroupControl
-						__nextHasNoMarginBottom
-						label={ __( 'Shape Divider Type', 'spectra-blocks' ) }
-						value={ visibleDivider }
-						onChange={ setVisibleDivider }
-						isBlock
-					>
-						<ToggleGroupControlOption
-							value="top"
-							label={ __( 'Top', 'spectra-blocks' ) }
+					<VStack spacing={ 4 }>
+						<VStack spacing={ 2 }>
+							{/*
+							  * Wrapped rather than given the class directly:
+							  * `ToggleGroupControl` puts `className` on its inner
+							  * control and renders its label in an outer wrapper,
+							  * so the label is not a descendant of the element
+							  * that carries it and the opt-out never applied.
+							  */}
+							<div className="spectra-not-per-device-control">
+								<ToggleGroupControl
+									__nextHasNoMarginBottom
+									label={ __( 'Shape Divider Type', 'spectra-blocks' ) }
+									value={ visibleDivider }
+									onChange={ setVisibleDivider }
+									isBlock
+								>
+									<ToggleGroupControlOption
+										value="top"
+										label={ __( 'Top', 'spectra-blocks' ) }
+									/>
+									<ToggleGroupControlOption
+										value="bottom"
+										label={ __( 'Bottom', 'spectra-blocks' ) }
+									/>
+								</ToggleGroupControl>
+							</div>
+							{ ( hasTopDivider || hasBottomDivider ) && (
+								<Notice status="info" isDismissible={ false }>
+									{ sprintf(
+										/* translators: %s: the sides that have a shape divider, e.g. "Top, Bottom". */
+										__( 'Divider set on: %s', 'spectra-blocks' ),
+										[
+											hasTopDivider && __( 'Top', 'spectra-blocks' ),
+											hasBottomDivider && __( 'Bottom', 'spectra-blocks' ),
+										].filter( Boolean ).join( ', ' )
+									) }
+								</Notice>
+							) }
+						</VStack>
+
+						<DividerControls
+							values={ side.values }
+							onChange={ setSideAttributes }
+							typeLabel={ side.typeLabel }
+							options={ shapeOptions }
+							units={ units }
+							perDeviceOnly={ editsNarrowerViewport }
 						/>
-						<ToggleGroupControlOption
-							value="bottom"
-							label={ __( 'Bottom', 'spectra-blocks' ) }
-						/>
-					</ToggleGroupControl>
+					</VStack>
 				</ToolsPanelItem>
+			</StylePanel>
+		</InspectorControls>
+	);
+} );
 
-				{/* Top Shape Divider Settings */}
-				{ visibleDivider === 'top' && (
-					<>
-						<ToolsPanelItem
-							hasValue={ () => hasTopDivider }
-							label={ __( 'Top Shape Divider', 'spectra-blocks' ) }
-							onDeselect={ () => setAttributes( {
-								topType: 'none',
-								topWidth: undefined,
-								topHeight: undefined,
-								topFlip: false,
-								topInvert: false,
-								topContentAboveShape: false,
-							} ) }
-							resetAllFilter={ () => ( {
-								topType: 'none',
-								topWidth: undefined,
-								topHeight: undefined,
-								topFlip: false,
-								topInvert: false,
-								topContentAboveShape: false,
-							} ) }
-							isShownByDefault
-							panelId={ clientId }
-						>
-							<VStack spacing={ 4 }>
-								<SelectControl
-									__nextHasNoMarginBottom
-									label={ __( 'Top Type', 'spectra-blocks' ) }
-									value={ topType || 'none' }
-									options={ shapeOptions }
-									onChange={ ( value ) => setAttributes( { topType: value } ) }
-								/>
+/**
+ * Element Sub-settings: the media picker's filtered extensions.
+ *
+ * `Background` defers these (`deferExtensions`) so Pro's Dynamic Image section
+ * lands here — after Overlay Settings and Shape Dividers — instead of directly
+ * below the background media controls, where it separated those two sections
+ * from the panel they belong to. The section itself is unchanged; only where
+ * the slot is rendered decides where it appears.
+ *
+ * @param {Object} props The element props.
+ * @since x.x.x
+ * @return {Element} The rendered extensions.
+ */
+const MediaPickerExtensions = memo( () => {
+	const { group } = useInspectorStyleGroup();
 
-								{ hasTopDivider && (
-									<>
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Flip', 'spectra-blocks' ) }
-											checked={ !! topFlip }
-											onChange={ ( value ) => setAttributes( { topFlip: value } ) }
-										/>
-
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Invert', 'spectra-blocks' ) }
-											checked={ !! topInvert }
-											onChange={ ( value ) => setAttributes( { topInvert: value } ) }
-										/>
-
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Bring To Front', 'spectra-blocks' ) }
-											checked={ !! topContentAboveShape }
-											onChange={ ( value ) => setAttributes( { topContentAboveShape: value } ) }
-										/>
-									</>
-								) }
-							</VStack>
-						</ToolsPanelItem>
-						{ hasTopDivider && (
-							<>
-								<ToolsPanelItem
-									hasValue={ () => !! topWidth }
-									label={ __( 'Top Shape Width', 'spectra-blocks' ) }
-									onDeselect={ () => setAttributes( { topWidth: undefined } ) }
-									resetAllFilter={ () => ( {
-										topWidth: undefined,
-									} ) }
-									isShownByDefault
-									panelId={ clientId }
-								>
-									<UnitControl
-										__next40pxDefaultSize
-										label={ __( 'Width', 'spectra-blocks' ) }
-										labelPosition="top"
-										value={ topWidth }
-										min={ 0 }
-										onChange={ ( value ) => setAttributes( { topWidth: value } ) }
-										units={ units }
-									/>
-								</ToolsPanelItem>
-								<ToolsPanelItem
-									hasValue={ () => !! topHeight }
-									label={ __( 'Top Shape Height', 'spectra-blocks' ) }
-									onDeselect={ () => setAttributes( { topHeight: undefined } ) }
-									resetAllFilter={ () => ( {
-										topHeight: undefined,
-									} ) }
-									isShownByDefault
-									panelId={ clientId }
-								>
-									<UnitControl
-										__next40pxDefaultSize
-										label={ __( 'Height', 'spectra-blocks' ) }
-										labelPosition="top"
-										value={ topHeight }
-										min={ 0 }
-										onChange={ ( value ) => setAttributes( { topHeight: value } ) }
-										units={ units }
-									/>
-								</ToolsPanelItem>
-							</>
-						) }
-					</>
-				) }
-
-				{/* Bottom Shape Divider Settings */}
-				{ visibleDivider === 'bottom' && (
-					<>
-						<ToolsPanelItem
-							hasValue={ () => hasBottomDivider }
-							label={ __( 'Bottom Shape Divider', 'spectra-blocks' ) }
-							onDeselect={ () => setAttributes( {
-								bottomType: 'none',
-								bottomWidth: undefined,
-								bottomHeight: undefined,
-								bottomFlip: false,
-								bottomInvert: false,
-								bottomContentAboveShape: false,
-							} ) }
-							resetAllFilter={ () => ( {
-								bottomType: 'none',
-								bottomWidth: undefined,
-								bottomHeight: undefined,
-								bottomFlip: false,
-								bottomInvert: false,
-								bottomContentAboveShape: false,
-							} ) }
-							isShownByDefault
-							panelId={ clientId }
-						>
-							<VStack spacing={ 4 }>
-								<SelectControl
-									__nextHasNoMarginBottom
-									label={ __( 'Bottom Type', 'spectra-blocks' ) }
-									value={ bottomType || 'none' }
-									options={ shapeOptions }
-									onChange={ ( value ) => setAttributes( { bottomType: value } ) }
-								/>
-
-								{ hasBottomDivider && (
-									<>
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Flip', 'spectra-blocks' ) }
-											checked={ !! bottomFlip }
-											onChange={ ( value ) => setAttributes( { bottomFlip: value } ) }
-										/>
-
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Invert', 'spectra-blocks' ) }
-											checked={ !! bottomInvert }
-											onChange={ ( value ) => setAttributes( { bottomInvert: value } ) }
-										/>
-
-										<ToggleControl
-											__nextHasNoMarginBottom
-											label={ __( 'Bring To Front', 'spectra-blocks' ) }
-											checked={ !! bottomContentAboveShape }
-											onChange={ ( value ) => setAttributes( { bottomContentAboveShape: value } ) }
-										/>
-									</>
-								) }
-							</VStack>
-						</ToolsPanelItem>
-						{ hasBottomDivider && (
-							<>
-								<ToolsPanelItem
-									hasValue={ () => !! bottomWidth }
-									label={ __( 'Bottom Shape Width', 'spectra-blocks' ) }
-									onDeselect={ () => setAttributes( { bottomWidth: undefined } ) }
-									resetAllFilter={ () => ( {
-										bottomWidth: undefined,
-									} ) }
-									isShownByDefault
-									panelId={ clientId }
-								>
-									<UnitControl
-										__next40pxDefaultSize
-										label={ __( 'Width', 'spectra-blocks' ) }
-										labelPosition="top"
-										value={ bottomWidth }
-										min={ 0 }
-										onChange={ ( value ) => setAttributes( { bottomWidth: value } ) }
-										units={ units }
-									/>
-								</ToolsPanelItem>
-								<ToolsPanelItem
-									hasValue={ () => !! bottomHeight }
-									label={ __( 'Bottom Shape Height', 'spectra-blocks' ) }
-									onDeselect={ () => setAttributes( { bottomHeight: undefined } ) }
-									resetAllFilter={ () => ( {
-										bottomHeight: undefined,
-									} ) }
-									isShownByDefault
-									panelId={ clientId }
-								>
-									<UnitControl
-										__next40pxDefaultSize
-										label={ __( 'Height', 'spectra-blocks' ) }
-										labelPosition="top"
-										value={ bottomHeight }
-										min={ 0 }
-										onChange={ ( value ) => setAttributes( { bottomHeight: value } ) }
-										units={ units }
-									/>
-								</ToolsPanelItem>
-							</>
-						) }
-					</>
-				) }
-			</ToolsPanel>
+	return (
+		<InspectorControls group={ group }>
+			<BackgroundExtensionsSlot />
 		</InspectorControls>
 	);
 } );
@@ -1502,10 +1611,22 @@ const ShapeDividerSettings = memo( ( props ) => {
  */
 const Settings = ( props ) => {
 	const { attributes } = props;
-	const { background } = attributes;
+	const { background, style } = attributes;
 
-	// Show overlay settings when background is not video (for image, none, and undefined)
-	const showOverlaySettings = background?.type !== 'video';
+	/*
+	 * Show Overlay Settings unless EVERY band's background is a video.
+	 *
+	 * This used to read the device-resolved `background`, so the whole panel
+	 * vanished while previewing a breakpoint whose background is a video —
+	 * even though the overlay it edits is a per-device value that applies to
+	 * the other breakpoints. Each band resolves over base, like the CSS.
+	 */
+	const bandBackgroundType = ( state ) => {
+		const band = state ? style?.[ state ]?.background : style?.background;
+		const base = style?.background ?? background;
+		return ( band ?? base )?.type;
+	};
+	const showOverlaySettings = ! [ '', '@tablet', '@mobile' ].every( ( state ) => 'video' === bandBackgroundType( state ) );
 
 	return (
 		<>
@@ -1517,12 +1638,9 @@ const Settings = ( props ) => {
 			<ShadowSettings { ...{ ...props } } />
 			<BorderHoverSettings { ...{ ...props } } />
 			<BlockStyles {...{ ...props }} />
-			{ showOverlaySettings && (
-				<InspectorControls group="styles">
-					<OverlaySettings { ...props } />
-				</InspectorControls>
-			) }
+			{ showOverlaySettings && <OverlaySettings { ...props } /> }
 			<ShapeDividerSettings { ...props } />
+			<MediaPickerExtensions { ...props } />
 		</>
 	);
 };

@@ -193,13 +193,17 @@ const transforms = {
 				// Remove box shadow properties (core blocks don't support these).
 				delete cleanStyle.shadow;
 				
-				// Remove border shadow properties.
+				// Remove border shadow properties. Clone the nested object first —
+				// the top-level spread is shallow, and deleting in place would
+				// mutate the SOURCE block's live style attribute.
 				if ( cleanStyle.border ) {
+					cleanStyle.border = { ...cleanStyle.border };
 					delete cleanStyle.border.shadow;
 				}
 				
-				// Clean typography object.
+				// Clean typography object (cloned for the same reason).
 				if ( cleanStyle.typography ) {
+					cleanStyle.typography = { ...cleanStyle.typography };
 					delete cleanStyle.typography.textShadow;
 					// Remove empty typography object
 					if ( Object.keys( cleanStyle.typography ).length === 0 ) {

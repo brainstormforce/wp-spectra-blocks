@@ -1812,7 +1812,7 @@ class Engine {
 
 		// Container padding lives under the native Gutenberg spacing schema,
 		// keyed per breakpoint under `responsiveControls`:
-		// $attrs['responsiveControls'][ 'lg' | 'md' | 'sm' ]['style']['spacing']['padding'][ 'top' | 'right' | 'bottom' | 'left' ]
+		// $attrs['responsiveControls'][ 'base' | '@tablet' | '@mobile' ]['style']['spacing']['padding'][ 'top' | 'right' | 'bottom' | 'left' ]
 		// Section tokens target vertical padding only so horizontal layout
 		// (max-widths, auto margins) stays under author control.
 		if ( $is_section ) {
@@ -1824,7 +1824,7 @@ class Engine {
 			$token = 'var(--spectra-card-padding)';
 		}
 
-		$devices = array( 'lg', 'md', 'sm' );
+		$devices = array( 'base', '@tablet', '@mobile' );
 
 		if ( ! isset( $attrs['responsiveControls'] ) || ! is_array( $attrs['responsiveControls'] ) ) {
 			$attrs['responsiveControls'] = array();

@@ -50,6 +50,7 @@
 		"spectra/accordion/icon",
 		"spectra/accordion/iconSecondary",
 		"spectra/accordion/size",
+		"spectra/accordion/style",
 		"spectra/accordion/rotation",
 		"spectra/accordion/item/isActiveInEditor"
 	],

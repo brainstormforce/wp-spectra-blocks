@@ -10,6 +10,8 @@ namespace SpectraBlocks;
 use SpectraBlocks\FontManager;
 use SpectraBlocks\Traits\Singleton;
 use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Extensions\ResponsiveControls\ViewportSupport;
+use SpectraBlocks\Extensions\ResponsiveControls;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -615,17 +617,61 @@ class AssetLoader {
 		$icon_chunks = Core::backend_load_font_awesome_icons();
 		$all_icons   = array_merge( ...$icon_chunks );
 
+		/*
+		 * `Singleton::instance()` is documented as returning `object`, so the call
+		 * has to be narrowed before the method is reached — otherwise static
+		 * analysis cannot see `get_media_queries()` on it. Narrowed rather than
+		 * suppressed: the weak return type is real, and an `instanceof` states the
+		 * expectation in code instead of hiding it in the analyser's config.
+		 */
+		$viewport_media_queries = array();
+		$viewport_pixels        = array(
+			'mobile' => 480,
+			'tablet' => 782,
+		);
+		$responsive_controls    = ResponsiveControls::instance();
+
+		if ( $responsive_controls instanceof ResponsiveControls ) {
+			$viewport_media_queries = $responsive_controls->get_media_queries();
+			$viewport_pixels        = $responsive_controls->get_viewport_breakpoint_pixels();
+		}
+
 		$localize = array(
-			'plugin_url'         => SPECTRA_BLOCKS_URL,
-			'is_rtl'             => is_rtl() ? '1' : '',
-			'spectra_pro_status' => $spectra_pro_status,
-			'current_post_id'    => get_the_ID(),
-			'home_url'           => home_url(),
-			'ajax_url'           => admin_url( 'admin-ajax.php' ),
-			'tablet_breakpoint'  => 1024,
-			'mobile_breakpoint'  => 767,
-			'wp_version'         => get_bloginfo( 'version' ),
-			'uagb_svg_icons'     => $all_icons,
+			'plugin_url'             => SPECTRA_BLOCKS_URL,
+			'is_rtl'                 => is_rtl() ? '1' : '',
+			'spectra_pro_status'     => $spectra_pro_status,
+			'current_post_id'        => get_the_ID(),
+			'home_url'               => home_url(),
+			'ajax_url'               => admin_url( 'admin-ajax.php' ),
+			// Band upper bounds in px, from the same resolver as the media
+			// queries below (core's viewport settings, else the fallback).
+			'tablet_breakpoint'      => $viewport_pixels['tablet'],
+			'mobile_breakpoint'      => $viewport_pixels['mobile'],
+			'wp_version'             => get_bloginfo( 'version' ),
+
+			/*
+			 * What the running WordPress can do with per-viewport block styles,
+			 * measured rather than inferred from `wp_version`. The editor picks
+			 * its responsive implementation from this, so both halves decide
+			 * from the same answer — see
+			 * `Extensions\ResponsiveControls\ViewportSupport`.
+			 */
+			'viewport_support'       => ViewportSupport::to_array(),
+
+			/*
+			 * The media queries core's viewport states actually band at, keyed
+			 * `base` / `@tablet` / `@mobile`.
+			 *
+			 * `tablet_breakpoint` and `mobile_breakpoint` above are these same bands
+			 * as numbers (upper bounds in px); they used to be Spectra's historical
+			 * 1024 / 767 regardless of what the site banded at.
+			 *
+			 * Resolved once by `ResponsiveControls::get_media_queries()`, which
+			 * delegates to `WP_Theme_JSON::get_viewport_media_queries()` where
+			 * core offers it, so PHP and the editor cannot disagree.
+			 */
+			'viewport_media_queries' => $viewport_media_queries,
+			'uagb_svg_icons'         => $all_icons,
 		);
 
 		wp_add_inline_script(
