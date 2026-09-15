@@ -1733,7 +1733,7 @@ class HtmlSanitizer {
 	 * @param string $svg Sanitized SVG markup.
 	 * @return string SVG markup with camelCase attribute names restored.
 	 */
-	private static function restore_svg_camelcase_attrs( string $svg ): string {
+	public static function restore_svg_camelcase_attrs( string $svg ): string {
 		// Build the lowercase => camelCase map once; a single regex pass
 		// restores every name. The (\s)…(\s*=) anchors confine matches to
 		// attribute-name position, never element content. Source: SVG_CAMEL_ATTRS.

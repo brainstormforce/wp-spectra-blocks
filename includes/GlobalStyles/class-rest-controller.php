@@ -612,11 +612,7 @@ class RestController {
 			);
 		}
 
-		// Class styles arrive unwrapped one level (`{bucket:{prop:value}}`), so
-		// the value sits at depth 1. Pass base_depth 1 so the CSS-aware value
-		// rules (malformed-var rejection, char whitelist, length cap) — which apply at
-		// depth >= 2 — actually reach the declaration values.
-		$styles = $is_destructive ? array() : Sanitizer::sanitize_json( $styles_input, true, 1 );
+		$styles = $is_destructive ? array() : Sanitizer::sanitize_class_styles( $styles_input );
 		if ( ! $is_destructive ) {
 			$styles = self::normalize_class_styles_to_flat( $styles );
 		}
@@ -891,7 +887,7 @@ class RestController {
 				continue;
 			}
 
-			$sanitized = Sanitizer::sanitize_json( $styles );
+			$sanitized = Sanitizer::sanitize_class_styles( $styles );
 			$sanitized = self::normalize_class_styles_to_flat( $sanitized );
 			if ( empty( $sanitized ) ) {
 				$skipped_classes[] = array(
@@ -1082,7 +1078,7 @@ class RestController {
 				if ( ! self::is_allowed_class_name( $name ) || ! is_array( $styles ) ) {
 					continue;
 				}
-				$sanitized = self::normalize_class_styles_to_flat( Sanitizer::sanitize_json( $styles ) );
+				$sanitized = self::normalize_class_styles_to_flat( Sanitizer::sanitize_class_styles( $styles ) );
 				if ( ! empty( $sanitized ) ) {
 					$user_css['classes'][ $name ] = $sanitized;
 				}

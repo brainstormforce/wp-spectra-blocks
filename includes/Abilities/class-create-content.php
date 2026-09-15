@@ -147,8 +147,14 @@ class CreateContent extends AbstractAbility {
 			}
 		}
 
-		$attrs_json   = wp_json_encode( $attrs );
-		$block_markup = "<!-- wp:spectra/content {$attrs_json} -->\n<{$tag_name} class=\"wp-block-spectra-content\">{$text}</{$tag_name}>\n<!-- /wp:spectra/content -->";
+		$attrs_json = wp_json_encode( $attrs );
+
+		// spectra/content is a dynamic block with no save(), so its stored form
+		// is a self-closing block comment. Emitting an HTML body makes the
+		// editor flag it as invalid, since getSaveContent() returns an empty
+		// string. Match the self-closing form the editor itself writes (and the
+		// other bodyless abilities), carrying the content via the text attr.
+		$block_markup = "<!-- wp:spectra/content {$attrs_json} /-->";
 
 		return $this->maybe_insert_and_return( $block_markup, $params );
 	}

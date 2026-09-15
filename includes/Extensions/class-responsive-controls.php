@@ -1887,6 +1887,51 @@ class ResponsiveControls {
 	}
 
 	/**
+	 * The attribute keys this extension owns on a rendered block.
+	 *
+	 * `process_responsive_attributes()` rewrites a block's attributes on
+	 * `render_block_data`: it adds `responsiveControls` and `spectraId`, and
+	 * `remove_conflicting_core_attributes()` then REMOVES the core attributes and
+	 * per-block keys the per-device store now owns, so that core does not render
+	 * what the generator already emits.
+	 *
+	 * A nested block never sees any of that. `WP_Block` freezes `$this->attributes`
+	 * from the unfiltered parsed block before the filter runs, and core never
+	 * resets it (https://core.trac.wordpress.org/ticket/51612), so a nested block's
+	 * controller reads pre-filter attributes. This list is what a caller has to
+	 * re-sync from `parsed_block['attrs']` to put that right — taking the parsed
+	 * value where the key exists and DROPPING the key where it does not, because a
+	 * removal is as much a part of this contract as a rewrite.
+	 *
+	 * Exposed so the re-sync stays driven by this class rather than duplicating the
+	 * key lists at the call site, where they would drift out of step with the
+	 * stripping above.
+	 *
+	 * @since 1.0.8
+	 * @param string $block_name The block being rendered.
+	 * @return array<int, string> Attribute keys this extension adds or removes.
+	 */
+	public function get_owned_attribute_keys( $block_name ) {
+		$keys = array( 'responsiveControls', 'spectraId', 'style' );
+
+		foreach ( $this->core_attributes as $attribute ) {
+			if ( ! in_array( $attribute, $this->responsive_keys, true ) ) {
+				continue;
+			}
+
+			// Mirrors the exception in `remove_conflicting_core_attributes()`:
+			// container keeps its `layout` so core's layout support can read it.
+			if ( 'layout' === $attribute && 'spectra/container' === $block_name ) {
+				continue;
+			}
+
+			$keys[] = $attribute;
+		}
+
+		return array_values( array_unique( array_merge( $keys, ResponsiveAttributeCSS::get_responsive_attributes( $block_name ) ) ) );
+	}
+
+	/**
 	 * Remove conflicting core attributes to prevent style conflicts.
 	 *
 	 * Core WordPress attributes and style properties can conflict with
