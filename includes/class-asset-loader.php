@@ -10,6 +10,7 @@ namespace SpectraBlocks;
 use SpectraBlocks\FontManager;
 use SpectraBlocks\Traits\Singleton;
 use SpectraBlocks\Helpers\Core;
+use SpectraBlocks\Helpers\HtmlSanitizer;
 use SpectraBlocks\Extensions\ResponsiveControls\ViewportSupport;
 use SpectraBlocks\Extensions\ResponsiveControls;
 
@@ -79,11 +80,11 @@ class AssetLoader {
 		add_filter( 'body_class', array( $this, 'add_zip_builder_body_class' ) );
 		add_filter( 'admin_body_class', array( $this, 'add_zip_builder_admin_body_class' ) );
 
-		// NOTE: the `<canvas>` KSES allowance is NOT registered here. It widens
-		// the allow-list for every `post`-context `wp_kses_post()` call on the
-		// request — comment text, widget text, any third party's — when only the
-		// content block's own call needs it. {@see self::with_canvas_allowed()}
-		// wraps that one call instead.
+		// NOTE: the imported-markup KSES allowance is NOT registered here. It
+		// widens the allow-list for every `post`-context `wp_kses_post()` call on
+		// the request — comment text, widget text, any third party's — when only
+		// the content block's own call needs it.
+		// {@see self::with_imported_markup_allowed()} wraps that one call instead.
 
 		// Import-marker meta (the body-class detector's source of truth) —
 		// registered so the importer can set it over REST at page-write time.
@@ -158,13 +159,16 @@ class AssetLoader {
 	}
 
 	/**
-	 * Frontend: allow the inert `<canvas>` tag through `wp_kses_post` while
-	 * rendering an imported (zip-built) singular view. WordPress' `post` KSES
-	 * context drops `<canvas>`, so the content block's `wp_kses_post( $text )`
-	 * strips a JS-drawn canvas (e.g. an imported hero visualization) before the
-	 * block's `spectraCustomJS` can draw on it. `<canvas>` is inert — no `src`,
-	 * no script, and `on*` handlers are stripped by KSES regardless — so this
-	 * only lets the element survive, adding no script-execution surface.
+	 * Frontend: allow the markup an imported (zip-built) singular view actually
+	 * renders through `wp_kses_post` — `<canvas>` and inert inline SVG.
+	 * WordPress' `post` KSES context has neither, so the content block's
+	 * `wp_kses_post( $text )` strips a JS-drawn canvas before the block's
+	 * `spectraCustomJS` can draw on it, and strips an icon's `<svg>` while
+	 * leaving the `<span>` around it — a filled box with no glyph.
+	 *
+	 * Everything added here is inert: no `src`, no script, no navigation, and
+	 * `on*` handlers are stripped by KSES regardless. The elements survive; no
+	 * script-execution surface comes with them.
 	 *
 	 * @since 1.0.0
 	 *
@@ -172,7 +176,7 @@ class AssetLoader {
 	 * @param string                     $context KSES context (e.g. `post`).
 	 * @return array<string, mixed>|mixed Possibly-extended tags.
 	 */
-	public static function allow_canvas_on_zip_built_pages( $tags, $context ) {
+	public static function allow_imported_markup_on_zip_built_pages( $tags, $context ) {
 		if ( 'post' !== $context || ! is_array( $tags ) ) {
 			return $tags;
 		}
@@ -199,11 +203,72 @@ class AssetLoader {
 			'aria-hidden' => true,
 		);
 
+		foreach ( self::imported_svg_tags() as $tag => $attrs ) {
+			$tags[ $tag ] = $attrs;
+		}
+
 		return $tags;
 	}
 
 	/**
-	 * Run `wp_kses_post()` on imported block text with `<canvas>` permitted.
+	 * Elements of the SVG allow-list that are NOT inert paint — they fetch
+	 * (`image`, `use`), navigate (`a`), carry raw CSS (`style`), or rewrite an
+	 * attribute after render (`animate*`, `set`, `mpath`, whose `attributeName`
+	 * can target `href`). `sanitize_svg()` can afford them because it validates
+	 * structure first and post-sweeps for `javascript:` / `on*`; this lane does
+	 * neither, so it takes only what draws.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @var string[]
+	 */
+	private const SVG_NON_INERT_TAGS = array(
+		'a',
+		'image',
+		'use',
+		'style',
+		'script',
+		'foreignobject',
+		'animate',
+		'animatemotion',
+		'animatetransform',
+		'set',
+		'mpath',
+	);
+
+	/**
+	 * Inline-SVG tags an imported page may render: the plugin's one SVG
+	 * allow-list ({@see HtmlSanitizer::get_svg_allowed_tags()}) minus
+	 * {@see self::SVG_NON_INERT_TAGS} and minus every linking attribute.
+	 *
+	 * Derived, not hand-written — a second parallel list is how two sanitisers
+	 * drift apart.
+	 *
+	 * @since 1.0.6
+	 *
+	 * @return array<string, array<string, bool>> Tag => allowed attributes.
+	 */
+	private static function imported_svg_tags(): array {
+		$out = array();
+
+		foreach ( HtmlSanitizer::get_svg_allowed_tags() as $tag => $attrs ) {
+			if ( in_array( $tag, self::SVG_NON_INERT_TAGS, true ) || ! is_array( $attrs ) ) {
+				continue;
+			}
+
+			// No reference may leave the document. KSES protocol-filters `href`,
+			// but an imported icon has no reason to carry one at all.
+			unset( $attrs['href'], $attrs['xlink:href'] );
+
+			$out[ $tag ] = $attrs;
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Run `wp_kses_post()` on imported block text with the imported-markup
+	 * allowance (`<canvas>` + inert inline SVG) in force.
 	 *
 	 * The allowance is added and removed around THIS call only. Registering the
 	 * filter for the whole request widened the allow-list for every other
@@ -216,14 +281,18 @@ class AssetLoader {
 	 * @param string $text Raw block text.
 	 * @return string Sanitised HTML.
 	 */
-	public static function with_canvas_allowed( string $text ): string {
-		$allow = array( self::class, 'allow_canvas_on_zip_built_pages' );
+	public static function with_imported_markup_allowed( string $text ): string {
+		$allow = array( self::class, 'allow_imported_markup_on_zip_built_pages' );
 
 		add_filter( 'wp_kses_allowed_html', $allow, 10, 2 );
 		$out = wp_kses_post( $text );
 		remove_filter( 'wp_kses_allowed_html', $allow, 10 );
 
-		return $out;
+		// KSES lowercases attribute names; SVG's are case-sensitive (`viewBox`,
+		// `stdDeviation`, `gradientUnits`). Same restore the SVG lane runs, from
+		// the same table — without it a lowercased `viewbox` leaves every icon
+		// unscaled.
+		return HtmlSanitizer::restore_svg_camelcase_attrs( $out );
 	}
 
 	/**

@@ -144,9 +144,13 @@ if ( ! class_exists( 'Spectra_Blocks_Ability_Create_Content' ) ) {
 			);
 
 			$attrs_json = wp_json_encode( $attrs );
-			$markup     = "<!-- wp:spectra/content {$attrs_json} -->\n";
-			$markup    .= "<{$tag_name} class=\"wp-block-spectra-content\">{$text}</{$tag_name}>\n";
-			$markup    .= "<!-- /wp:spectra/content -->\n";
+
+			// spectra/content is a dynamic block with no save(), so its valid
+			// stored form is a self-closing block comment. Emitting an HTML body
+			// makes the editor flag it as invalid (getSaveContent() returns '').
+			// This is the MCP-exposed create-content ability, so the self-closing
+			// form is what fixes the reported MCP repro. See #909.
+			$markup = "<!-- wp:spectra/content {$attrs_json} /-->\n";
 
 			if ( $post_id ) {
 				$result = $this->insert_into_post( $post_id, $markup, $mode );

@@ -11,6 +11,7 @@ use RuntimeException;
 use SpectraBlocks\Blocks\Modal;
 use SpectraBlocks\Blocks\Countdown;
 use SpectraBlocks\Blocks\PopupBuilder;
+use SpectraBlocks\Extensions\ResponsiveControls;
 use SpectraBlocks\Helpers\Core;
 use SpectraBlocks\Traits\Singleton;
 
@@ -146,6 +147,87 @@ class BlockManager {
 		}
 
 		$settings['render_callback'] = function ( $attributes, $content, $block ) use ( $controller_path, $metadata ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+
+			/*
+			 * Re-sync the attributes the responsive extension rewrote.
+			 *
+			 * A TOP-LEVEL block is fine: `render_block()` applies `render_block_data`
+			 * before constructing `WP_Block`, so the callback receives the filtered
+			 * attributes. An INNER block is not. `WP_Block::render()` applies the
+			 * filter to `$inner_block->parsed_block` (`class-wp-block.php:614`) when
+			 * the `WP_Block` object already exists, and `WP_Block::__construct()` has
+			 * by then called `refresh_context_dependents()`, which for any block with
+			 * inner blocks AND `providesContext` reads `$this->attributes` to build
+			 * the child context. That first read freezes the attributes from the
+			 * UNFILTERED parsed block, and core's follow-up
+			 * `refresh_parsed_block_dependents()` rebuilds only `inner_blocks`,
+			 * `inner_html` and `inner_content` — never `$this->attributes`.
+			 * Core gap: https://core.trac.wordpress.org/ticket/51612
+			 *
+			 * So a nested Post block reached its controller with no
+			 * `responsiveControls` store AND with the root `slidesPerView` that
+			 * `remove_conflicting_core_attributes()` strips for a top-level block.
+			 * Both halves pushed the same way: every breakpoint fell back to the root
+			 * value, so the carousel showed one slide count at every width.
+			 *
+			 * Scoped to the keys `ResponsiveControls` owns rather than rebuilding the
+			 * whole attribute set from `parsed_block['attrs']`. Rebuilding would also
+			 * hand nested blocks the Style Guide colour/spacing rewrites and Pro's
+			 * dynamic-content injections, which are broken when nested in the same
+			 * way — but fixing those silently changes how existing pages render, so
+			 * they want their own change and their own QA. This fixes the reported
+			 * bug and leaves every other filter exactly as it behaves today.
+			 *
+			 * The comparison is against `prepare_attributes_for_render( $parsed )` —
+			 * exactly what a TOP-LEVEL block would have received — not against the
+			 * raw parsed attributes. Raw is wrong in both directions: it omits the
+			 * block.json defaults, so unsetting every owned key it lacks deletes
+			 * defaulted values the filters never touched, and it cannot distinguish
+			 * "the filter removed this" from "this was never set". Comparing against
+			 * the prepared set removes only what the filters actually removed and
+			 * restores the defaults for the rest.
+			 *
+			 * A key missing there is unset rather than left alone: the extension
+			 * expresses itself by removing keys as well as rewriting them, and an
+			 * overwrite-only merge leaves the stale root value in place — which
+			 * pinned the desktop band while tablet and mobile came good.
+			 *
+			 * Skipped when the block carries binding metadata. Core merges
+			 * binding-computed values into the attributes just before this callback
+			 * (`class-wp-block.php:569`), and those live only on the object, not on
+			 * `parsed_block`, so copying over them would discard them. No Spectra
+			 * block is binding-supported today — `get_block_bindings_supported_attributes()`
+			 * lists core blocks only — but it is filterable, so this stays a guard
+			 * rather than an assumption.
+			 *
+			 * `\WP_Block` is deliberately root-qualified — this file is namespaced,
+			 * and an unqualified `WP_Block` resolves to `SpectraBlocks\WP_Block`,
+			 * which does not exist, so the guard would silently never match.
+			 */
+			if (
+				$block instanceof \WP_Block
+				&& is_string( $block->name )
+				&& isset( $block->parsed_block['attrs'] )
+				&& is_array( $block->parsed_block['attrs'] )
+				&& empty( $block->parsed_block['attrs']['metadata']['bindings'] )
+			) {
+				$filtered_attrs = $block->block_type->prepare_attributes_for_render( $block->parsed_block['attrs'] );
+
+				// Narrowed with `instanceof` because the Singleton accessor is typed
+				// `object`, matching the existing call site in `class-asset-loader.php`.
+				$responsive_controls = ResponsiveControls::instance();
+
+				if ( $responsive_controls instanceof ResponsiveControls ) {
+					foreach ( $responsive_controls->get_owned_attribute_keys( $block->name ) as $owned_key ) {
+						if ( array_key_exists( $owned_key, $filtered_attrs ) ) {
+							$attributes[ $owned_key ] = $filtered_attrs[ $owned_key ];
+						} else {
+							unset( $attributes[ $owned_key ] );
+						}
+					}
+				}
+			}
+
 			// Include the controller and validate its output.
 			$view = include $controller_path;
 

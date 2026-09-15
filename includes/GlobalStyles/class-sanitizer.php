@@ -23,16 +23,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Sanitizer {
 
 	/**
+	 * Nesting cap for {@see sanitize_class_styles()}. A class map is at most
+	 * at-rule → state/pseudo → declaration; anything deeper is malformed.
+	 *
+	 * @since 1.0.6
+	 * @var int
+	 */
+	private const MAX_STYLE_DEPTH = 4;
+
+	/**
 	 * Sanitize a CSS property name.
 	 *
 	 * Allows standard properties and CSS custom properties (--var-name).
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param mixed $property The CSS property name.
+	 * @param mixed $property  The CSS property name.
+	 * @param bool  $lowercase Fold the validated name to lower case. Pass `false`
+	 *                         when a downstream normalizer owns the casing:
+	 *                         capitals still carry meaning there, and folding
+	 *                         them here is lossy. `--myVar` is case-SENSITIVE, and
+	 *                         `backgroundColor` has to become `background-color`
+	 *                         — neither is recoverable from `--myvar` /
+	 *                         `backgroundcolor`.
 	 * @return string
 	 */
-	public static function sanitize_css_property( $property ): string {
+	public static function sanitize_css_property( $property, bool $lowercase = true ): string {
 		if ( ! is_string( $property ) ) {
 			return '';
 		}
@@ -40,7 +56,7 @@ class Sanitizer {
 		$property = trim( $property );
 
 		if ( preg_match( '/^-{0,2}[a-zA-Z][a-zA-Z0-9-]*$/', $property ) ) {
-			return strtolower( $property );
+			return $lowercase ? strtolower( $property ) : $property;
 		}
 
 		return '';
@@ -202,6 +218,68 @@ class Sanitizer {
 		}
 
 		return self::recursively_sanitize_json( $decoded, $base_depth, $strict );
+	}
+
+	/**
+	 * Sanitize ONE class's style map — buckets and declarations alike.
+	 *
+	 * The single entry point for per-class styles. It does NOT use
+	 * {@see sanitize_json()}'s depth model: that model infers "is this a CSS
+	 * value?" from nesting depth, which is a proxy for structure and forces
+	 * every caller to know how many levels it has already unwrapped. Get the
+	 * depth wrong and declaration values fall to `sanitize_text_field()`, and
+	 * WordPress core's `sanitize_text_field()` deletes every `%XX` sequence —
+	 * silently destroying percent-encoded inline-SVG data URIs
+	 * (`url("data:image/svg+xml,%3Csvg…%3E")` → `url("data:image/svg+xml,svg…")`),
+	 * so the mask stops resolving and the icon renders as an empty box.
+	 *
+	 * Here the shape decides instead, and it is unambiguous: an ARRAY value is a
+	 * state/pseudo/at-rule bucket, a SCALAR value is a declaration. A class map
+	 * is therefore handled correctly whether it arrives bucketed
+	 * (`{hover:{color:red}}`), flat (`{color:red}`), or mixed — and no caller
+	 * can get it wrong.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $styles Per-class style map. Every route declares `styles` as
+	 *                      object|array, so REST hands this an array.
+	 * @param int   $depth  Recursion guard; callers never pass this.
+	 * @return array<int|string, mixed>
+	 */
+	public static function sanitize_class_styles( $styles, int $depth = 0 ): array {
+		if ( ! is_array( $styles ) || $depth > self::MAX_STYLE_DEPTH ) {
+			return array();
+		}
+
+		$sanitized = array();
+		foreach ( $styles as $key => $value ) {
+			if ( is_array( $value ) || is_object( $value ) ) {
+				// A bucket: state (`hover`), pseudo (`before`) or at-rule
+				// (`@media …`). Its key is a label, not a CSS property.
+				$bucket = self::sanitize_class_styles( $value, $depth + 1 );
+				if ( ! empty( $bucket ) ) {
+					$sanitized[ sanitize_text_field( (string) $key ) ] = $bucket;
+				}
+				continue;
+			}
+
+			// A declaration: CSS property key, CSS value. Validate the key but
+			// keep its case — the REST controller kebab-cases every property
+			// right after this (`backgroundColor` → `background-color`,
+			// `WebkitBackgroundClip` → `-webkit-background-clip`) and leaves
+			// case-sensitive custom properties alone. Lower-casing here would
+			// erase the capitals that normalizer reads.
+			$property = self::sanitize_css_property( (string) $key, false );
+			if ( '' === $property ) {
+				continue;
+			}
+			$clean = self::sanitize_css_value( (string) $value, true );
+			if ( '' !== $clean ) {
+				$sanitized[ $property ] = $clean;
+			}
+		}
+
+		return $sanitized;
 	}
 
 	/**

@@ -18,17 +18,16 @@
 	}
 
 
-	// Wrap the child default in `:where()` so it stays at specificity
-	// (0,0,0) and doesn't override authored Tailwind utility classes
-	// such as `-z-10` on decorative children. Without this wrap the
-	// selector resolves at (0,3,0) — three classes including the two
-	// `:not()` filters — and would beat any utility-class z-index the
-	// converter passes through (e.g. `:root .-z-10` at (0,2,0)),
-	// trapping decorative behind-image circles in front of their image.
+	// Direct children are positioned, with no z-index of their own: an
+	// authored `z-index` on one child (a card over its picture) then
+	// orders siblings exactly as written, since an un-authored sibling
+	// sits at `auto`. The `:where()` keeps this at specificity (0,0,0)
+	// so a single utility class such as `absolute` or `-z-10` wins.
+	// The background, overlay and video variants below raise their own
+	// children above their layers inside an isolated stacking context.
 	> :where(
 	*:not(.spectra-container__shape):not(.spectra-background-video__wrapper)
 ) {
-		z-index: 2;
 		position: relative;
 	}
 

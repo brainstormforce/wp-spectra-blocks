@@ -743,7 +743,7 @@ class ContentCreationAbilitiesTest extends WP_UnitTestCase {
 		$this->assertIsArray( $result );
 		$this->assertStringContainsString( '<!-- wp:spectra/content', $result['block_markup'] );
 		$this->assertStringContainsString( 'Hello World', $result['block_markup'] );
-		$this->assertStringContainsString( '<p class="wp-block-spectra-content">', $result['block_markup'] );
+		$this->assertStringContainsString( '"tagName":"p"', $result['block_markup'] );
 	}
 
 	/**
@@ -768,9 +768,8 @@ class ContentCreationAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$this->assertIsArray( $result );
-		$this->assertStringContainsString( '<h2 class="wp-block-spectra-content">', $result['block_markup'] );
-		$this->assertStringContainsString( '</h2>', $result['block_markup'] );
 		$this->assertStringContainsString( '"tagName":"h2"', $result['block_markup'] );
+		$this->assertStringContainsString( '"text":"My Heading"', $result['block_markup'] );
 	}
 
 	/**
@@ -800,7 +799,7 @@ class ContentCreationAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$this->assertIsArray( $result );
-		$this->assertStringContainsString( '<p class="wp-block-spectra-content">', $result['block_markup'] );
+		$this->assertStringContainsString( '"tagName":"p"', $result['block_markup'] );
 	}
 
 	/**
@@ -931,8 +930,9 @@ class ContentCreationAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$this->assertIsArray( $result );
-		$this->assertStringContainsString( '<strong>bold</strong>', $result['block_markup'] );
-		$this->assertStringContainsString( '<em>italic</em>', $result['block_markup'] );
+		// The text lives in the block comment's `text` attr, so wp_json_encode escapes the slashes.
+		$this->assertStringContainsString( '<strong>bold<\/strong>', $result['block_markup'] );
+		$this->assertStringContainsString( '<em>italic<\/em>', $result['block_markup'] );
 	}
 
 	// =========================================================================
