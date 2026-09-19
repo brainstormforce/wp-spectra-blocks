@@ -28,7 +28,7 @@
 		"@wordpress/i18n": "^5.0.0",
 		"@wordpress/notices": "^5.0.0",
 		"@wordpress/prettier-config": "^0.4.0",
-		"@wordpress/scripts": "^31.5.0",
+		"@wordpress/scripts": "^35.0.0",
 		"@tailwindcss/forms": "^0.5.0",
 		"autoprefixer": "^10.4.2",
 		"clean-webpack-plugin": "^4.0.0",
