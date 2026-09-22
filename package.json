@@ -38,7 +38,7 @@
 		"swiper": "^12.1.2"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^31.5.0",
+		"@wordpress/scripts": "^35.0.0",
 		"del-cli": "^7.0.0",
 		"grunt": "^1.6.1",
 		"grunt-text-replace": "^0.4.0",
