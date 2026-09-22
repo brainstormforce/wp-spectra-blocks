@@ -77,3 +77,24 @@
 	}
 }
 
+
+// Core pads any `p` carrying a background: `:root :where(p.has-background)`,
+// specificity (0,1,0). That stylesheet is now a dependency of this block (see
+// block.json), so the rule finally reaches the front end — but this block owns
+// its own spacing, and picking a background should not silently introduce
+// padding the user never asked for.
+// Cancelled at (0,1,1): one notch above core's rule, and below every path that
+// is meant to win — GBS Block Defaults `[class*="wp-block"].default-content`
+// (0,2,0), GBS user classes `[class].{name}.{name}` (0,3,0), GBS utility
+// tokens `:root .{token}` repeated (0,5,1), and the block's own padding
+// attribute, which `ResponsiveControls` strips out of `style.spacing` on
+// `render_block_data` and re-emits at (0,4,0). So the zero is only ever a
+// default: the moment a padding is set anywhere, it wins.
+// Only `p` needs this. Core's heading rule is keyed on
+// `h1..h6:where(.wp-block-heading).has-background`, a class this block does
+// not emit, so `h1`-`h6` are already unpadded — zeroing `p` is what makes
+// `tagName: p` and `tagName: h2` finally agree. `span` and `div` were never
+// padded by core.
+p:where(.wp-block-spectra-content).has-background {
+	padding: 0;
+}

@@ -90,7 +90,7 @@ const SelectButton = memo( ( { onClick, isAvailable, type = 'icon' } ) => {
  * Extracted as a separate component to prevent unnecessary re-renders.
  *
  * @param {Object} props The component props.
- * @since x.x.x
+ * @since 1.0.9
  * @return {Element} The icon picker setting component.
  */
 const IconPickerSetting = memo( ( props ) => {
@@ -252,9 +252,25 @@ const IconPickerInternal = ( props ) => {
 		help,
 	} );
 
-	// Get the stored icons and category lists (memoized to prevent recreation)
-	const defaultIcons = useMemo( () => [ ...wp.UAGBSvgIcons ], [] );
-	const iconCategoryList = useMemo( () => [ ...wp.uagb_icon_category_list ], [] );
+	// Source icons + categories from Spectra Blocks' own namespaced data — NOT
+	// the shared `wp.UAGBSvgIcons` / `wp.uagb_icon_category_list` globals, which
+	// UAGB, SureForms and Spectra Pro also set; whichever loads last wins, so the
+	// "All" list could otherwise be another plugin's (stale) icon set and miss
+	// Spectra Blocks icons. Deriving from our object keeps every view consistent.
+	const defaultIcons = useMemo( () => Object.keys( window.spectra_blocks_info.uagb_svg_icons ), [] );
+	const iconCategoryList = useMemo( () => {
+		const icons = window.spectra_blocks_info.uagb_svg_icons;
+		const seen  = {};
+		Object.values( icons ).forEach( ( icon ) => {
+			( icon.custom_categories || [] ).forEach( ( slug ) => {
+				seen[ slug ] = true;
+			} );
+		} );
+		return Object.keys( seen ).sort().map( ( slug ) => ( {
+			slug,
+			title: slug.replace( /-/g, ' ' ).replace( /\b\w/g, ( c ) => c.toUpperCase() ),
+		} ) );
+	}, [] );
 
 	// State and functions for the modal.
 	const openModal = useCallback( () => {
@@ -354,12 +370,12 @@ const IconPickerInternal = ( props ) => {
  * The Icon Picker component wrapper.
  *
  * @param {Object} props The component props.
- * @since x.x.x
+ * @since 1.0.9
  * @return {Element|null} The icon picker, or null.
  */
 const IconPicker = ( props ) => {
 	// If the required localization asset isn't available, abandon ship.
-	if ( ! wp.UAGBSvgIcons || ! wp.uagb_icon_category_list || ! window?.spectra_blocks_info?.uagb_svg_icons ) {
+	if ( ! window?.spectra_blocks_info?.uagb_svg_icons ) {
 		return null;
 	}
 

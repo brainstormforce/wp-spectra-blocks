@@ -15,6 +15,7 @@ on:
       - 'package.json'
       - '.eslintrc.js'
       - '.stylelintrc.json'
+      - 'tests/contract/**'
       - '.github/workflows/code-analysis.yml'
 
 concurrency:
@@ -69,6 +70,25 @@ jobs:
         run: npm ci
       - name: Lint CSS
         run: npm run lint:css
+
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Fetch SureForms (the contract's coupling probes read its markup as a sibling)
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/sureforms.zip" https://downloads.wordpress.org/plugin/sureforms.latest-stable.zip
+          unzip -q "$RUNNER_TEMP/sureforms.zip" -d "$GITHUB_WORKSPACE/.."
+      - name: Contract test
+        run: npm run test:contract
 
   phpstan:
     runs-on: ubuntu-latest

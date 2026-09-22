@@ -187,6 +187,39 @@ class EngineLayeringTest extends WP_UnitTestCase {
 		wp_deregister_style( 'spectra-gs-utility-classes' );
 	}
 
+	/**
+	 * The site-wide bucket list carries `rootRules` and `atRules` to the renderer:
+	 * dropping either name from it loses every root rule / at-rule on the front end
+	 * while the renderer's own tests stay green.
+	 *
+	 * @return void
+	 */
+	public function test_sitewide_css_carries_root_rules_and_at_rules(): void {
+		update_option(
+			Engine::OPTION_KEY_USER_CSS,
+			array(
+				'rootRules' => array( 'html::before' => array( 'content' => '""' ) ),
+				'atRules'   => array( '@view-transition' => array( 'navigation' => 'auto' ) ),
+			)
+		);
+
+		$engine = Engine::get_instance();
+		$engine->enqueue_stylesheet();
+		$engine->enqueue_gen_sitewide_css();
+
+		// `do_items` skips a handle an earlier test already printed.
+		wp_styles()->done = array_diff( wp_styles()->done, array( 'spectra-gen-sitewide-css', 'spectra-gs-utility-classes' ) );
+		ob_start();
+		wp_styles()->do_items( array( 'spectra-gen-sitewide-css' ) );
+		$printed = (string) ob_get_clean();
+
+		$this->assertStringContainsString( 'html::before { content: ""; }', $printed );
+		$this->assertStringContainsString( '@view-transition { navigation: auto; }', $printed );
+
+		wp_deregister_style( 'spectra-gen-sitewide-css' );
+		wp_deregister_style( 'spectra-gs-utility-classes' );
+	}
+
 	public function test_jit_handle_depends_on_utility_handle(): void {
 		$post_id = $this->factory->post->create(
 			array(

@@ -189,6 +189,14 @@ $popup-color-border: #e6e7e9;
 				transition: 0.2s color linear;
 				left: auto;
 
+				// Newer @wordpress/components ships a larger Modal close icon;
+				// clamp only the SVG so the size matches master while the button
+				// box (and thus the × position) stays exactly as before.
+				svg {
+					width: 20px;
+					height: 20px;
+				}
+
 				&:hover {
 					color: #fff;
 				}

@@ -12,7 +12,7 @@
  * Legacy classes stored as a raw CSS string are automatically migrated to the
  * Default bucket when opened for editing.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 /**
@@ -53,7 +53,7 @@ const BUCKETS = [
 /**
  * ClassEditor — inline editor for a single class's state buckets.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {Object}   props
  * @param {string}   props.className Class name (e.g. 'gs-hero').
@@ -240,7 +240,7 @@ const ClassEditor = forwardRef( ( { className, styles, onSave, onCancel, saving 
 /**
  * CustomClassesPanel component.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {Object}      props                Component props.
  * @param {string|null} props.initialClass   Class name to open for editing on mount (e.g. from flyout).

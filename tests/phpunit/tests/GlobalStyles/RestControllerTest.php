@@ -847,4 +847,453 @@ class RestControllerTest extends WP_UnitTestCase {
 		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
 		$this->assertArrayHasKey( 'my-card', $stored['classes'], 'empty payload must leave user classes untouched' );
 	}
+
+	// ─────────────────────────────────────────────────────────────
+	// /save — rootRules + atRules buckets
+	// ─────────────────────────────────────────────────────────────
+
+	/**
+	 * A payload carrying `rootRules` (base + inside a media query) and
+	 * `atRules` with two accepted keys and two the anchored allow-list rejects.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function root_rules_payload(): array {
+		return array(
+			'v'          => '1',
+			'rootRules'  => array(
+				'html::before'              => array(
+					'content'         => '""',
+					'backgroundColor' => 'red',
+				),
+				'.x'                        => array( 'color' => 'red' ),
+				'html}body{display:none}.y' => array( 'color' => 'red' ),
+				'html[data-motion="none"] [data-poster] :has(> h1) > *' => array( 'animation' => 'none' ),
+			),
+			'atRules'    => array(
+				'@view-transition'                 => array( 'navigation' => 'auto' ),
+				'@property --beam-angle'           => array(
+					'syntax'       => '"<angle>"',
+					'inherits'     => 'false',
+					'initialValue' => '0deg',
+				),
+				'@property --x} body{display:none' => array( 'syntax' => '"*"' ),
+				'@font-face'                       => array( 'font-family' => 'Evil' ),
+				'@property --empty'                => array( 'syntax' => '' ),
+			),
+			'mediaQuery' => array(
+				'(max-width: 960px)' => array(
+					'rootRules' => array(
+						'html::before'  => array( 'display' => 'none', 'backgroundColor' => 'red' ),
+						'body</style>x' => array( 'display' => 'none' ),
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * POST /save: `rootRules` merges like `wrapperStyles` (kebab-normalized
+	 * declarations, base and inside `mediaQuery[q]`) but keeps root-headed keys
+	 * only; `atRules` keeps only the anchored keys, with the `@property`
+	 * descriptors kebab-normalized through the Sanitizer, and reports every
+	 * rejected key in `dropped_at_rules`.
+	 *
+	 * @return void
+	 */
+	public function test_save_merges_root_rules_and_at_rules_and_reports_dropped_keys(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'global' );
+		$request->set_param( 'payload', $this->root_rules_payload() );
+
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(
+			array( '@property --x} body{display:none', '@font-face', '@property --empty' ),
+			$response->get_data()['dropped_at_rules'],
+			'every key the allow-list rejects, or the Sanitizer empties, must be reported back, in payload order'
+		);
+
+		// every root key rejected → no bucket lands, and the ack's `buckets` says so
+		$only_bad = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$only_bad->set_param( 'scope', 'page' );
+		$only_bad->set_param( 'post_id', self::factory()->post->create() );
+		$only_bad->set_param( 'payload', array( 'v' => '1', 'rootRules' => array( '.only-bad' => array( 'color' => 'red' ) ) ) );
+		$this->assertNotContains( 'rootRules', $this->server->dispatch( $only_bad )->get_data()['buckets'] );
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame(
+			array(
+				'html::before' => array(
+					'content'          => '""',
+					'background-color' => 'red',
+				),
+				'html[data-motion="none"] [data-poster] :has(> h1) > *' => array( 'animation' => 'none' ),
+			),
+			$stored['rootRules'],
+			'rootRules keep root-headed selectors only (the child combinator is a selector, not a tag), declarations kebab-normalized'
+		);
+		$this->assertSame(
+			array( 'html::before' => array( 'display' => 'none', 'background-color' => 'red' ) ),
+			$stored['mediaQuery']['(max-width: 960px)']['rootRules'],
+			'mediaQuery[q].rootRules declarations must be kebab-normalized like wrapperStyles'
+		);
+		$this->assertSame(
+			array(
+				'@view-transition'       => array( 'navigation' => 'auto' ),
+				'@property --beam-angle' => array(
+					'syntax'        => '"<angle>"',
+					'inherits'      => 'false',
+					'initial-value' => '0deg',
+				),
+			),
+			$stored['atRules'],
+			'only the anchored at-rule keys may enter the store; accepted descriptors must survive the Sanitizer verbatim'
+		);
+
+		// A payload whose every at-rule is rejected lands NO bucket.
+		delete_option( Engine::OPTION_KEY_USER_CSS );
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'global' );
+		$request->set_param(
+			'payload',
+			array(
+				'v'       => '1',
+				'atRules' => array( '@font-face' => array( 'font-family' => 'Evil' ) ),
+			)
+		);
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( array( '@font-face' ), $response->get_data()['dropped_at_rules'] );
+		$this->assertNotContains( 'atRules', $response->get_data()['buckets'], 'the ack must not name a bucket that never landed' );
+		$this->assertArrayNotHasKey( 'atRules', get_option( Engine::OPTION_KEY_USER_CSS, array() ) );
+	}
+
+	/**
+	 * POST /save with scope `page` writes the same two buckets to the post
+	 * meta and reports `dropped_at_rules` on that ack too.
+	 *
+	 * @return void
+	 */
+	public function test_save_page_scope_merges_root_rules_and_at_rules_into_post_meta(): void {
+		wp_set_current_user( $this->admin_id );
+		$post_id = self::factory()->post->create();
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'page' );
+		$request->set_param( 'post_id', $post_id );
+		$request->set_param( 'payload', $this->root_rules_payload() );
+
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( array( '@property --x} body{display:none', '@font-face', '@property --empty' ), $response->get_data()['dropped_at_rules'] );
+
+		$meta = get_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, true );
+		$this->assertSame( array( 'html::before', 'html[data-motion="none"] [data-poster] :has(> h1) > *' ), array_keys( $meta['rootRules'] ) );
+		$this->assertSame( array( 'content' => '""', 'background-color' => 'red' ), $meta['rootRules']['html::before'] );
+		$this->assertSame( array( '@view-transition', '@property --beam-angle' ), array_keys( $meta['atRules'] ) );
+		$this->assertSame( array( 'html::before' => array( 'display' => 'none', 'background-color' => 'red' ) ), $meta['mediaQuery']['(max-width: 960px)']['rootRules'] );
+	}
+
+	/**
+	 * `replace` resets `rootRules` and `atRules` with the other import-owned
+	 * buckets, on both scopes; a payload that omits them leaves none behind.
+	 *
+	 * @return void
+	 */
+	public function test_save_replace_resets_root_rules_and_at_rules(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$prior = array(
+			'v'         => '1',
+			'classes'   => array( 'my-card' => array( 'default' => array( 'color' => 'red' ) ) ),
+			'rootRules' => array( 'html::before' => array( 'content' => '""' ) ),
+			'atRules'   => array( '@view-transition' => array( 'navigation' => 'auto' ) ),
+		);
+		$fresh = array(
+			'v'          => '1',
+			'rootStyles' => array( 'color' => '#222' ),
+		);
+
+		// global scope: the option.
+		update_option( Engine::OPTION_KEY_USER_CSS, $prior );
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'global' );
+		$request->set_param( 'replace', true );
+		$request->set_param( 'payload', $fresh );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertArrayNotHasKey( 'rootRules', $stored, 'replace must reset rootRules with the other import-owned buckets' );
+		$this->assertArrayNotHasKey( 'atRules', $stored, 'replace must reset atRules with the other import-owned buckets' );
+		$this->assertArrayHasKey( 'my-card', $stored['classes'], 'replace without reset_classes keeps user classes' );
+
+		// page scope: the post meta.
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, $prior );
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'page' );
+		$request->set_param( 'post_id', $post_id );
+		$request->set_param( 'replace', true );
+		$request->set_param( 'payload', $fresh );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$meta = get_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, true );
+		$this->assertArrayNotHasKey( 'rootRules', $meta );
+		$this->assertArrayNotHasKey( 'atRules', $meta );
+	}
+
+	/**
+	 * Dispatch POST /save with a global-scope payload and return the ack data.
+	 *
+	 * @param array<string, mixed> $payload Schema-v1 payload.
+	 * @return array<string, mixed>
+	 */
+	private function save_global( array $payload ): array {
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'global' );
+		$request->set_param( 'payload', $payload );
+		$response = $this->server->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+
+		return (array) $response->get_data();
+	}
+
+	/**
+	 * `inherits` is a `<boolean>` descriptor, so the natural JSON form is a real
+	 * boolean. `(string) false` is `''`, which the Sanitizer drops — and an
+	 * `@property` without `inherits` is invalid and wholly ignored by the browser,
+	 * so the rule used to be stored, printed, and silently dead.
+	 *
+	 * @return void
+	 */
+	public function test_save_at_rule_accepts_json_boolean_descriptors(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$data = $this->save_global(
+			array(
+				'v'       => '1',
+				'atRules' => array(
+					'@property --beam-angle' => array(
+						'syntax'       => '"<angle>"',
+						'inherits'     => false,
+						'initialValue' => '0deg',
+					),
+					'@property --beam-lit'   => array(
+						'syntax'       => '"<color>"',
+						'inherits'     => true,
+						'initialValue' => 'red',
+					),
+				),
+			)
+		);
+
+		$this->assertSame( array(), $data['dropped_at_rules'], 'a boolean descriptor is valid input, not a rejected key' );
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame(
+			array(
+				'syntax'        => '"<angle>"',
+				'inherits'      => 'false',
+				'initial-value' => '0deg',
+			),
+			$stored['atRules']['@property --beam-angle'],
+			'a JSON false must survive as the CSS keyword `false`, not vanish'
+		);
+		$this->assertSame( 'true', $stored['atRules']['@property --beam-lit']['inherits'] );
+	}
+
+	/**
+	 * `@property` is invalid and WHOLLY IGNORED without `syntax` + `inherits`,
+	 * plus `initial-value` unless the syntax is the universal one. Printing a
+	 * partial rule registers nothing, so it must be dropped and reported rather
+	 * than stored as a dead rule the ack claims succeeded.
+	 *
+	 * @return void
+	 */
+	public function test_save_drops_a_property_at_rule_missing_a_required_descriptor(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$data = $this->save_global(
+			array(
+				'v'       => '1',
+				'atRules' => array(
+					// No `inherits`, and a non-universal syntax needs initial-value too.
+					'@property --half'      => array( 'syntax' => '"<length>"' ),
+					// Universal syntax: initial-value is optional, so this one stands.
+					'@property --anything'  => array(
+						'syntax'   => '"*"',
+						'inherits' => 'false',
+					),
+					// `@view-transition` has no required-descriptor rule.
+					'@view-transition'      => array( 'navigation' => 'auto' ),
+					// A nested array is not a descriptor value; it printed nothing.
+					'@property --nested'    => array( 'syntax' => array( 'a' => 'b' ) ),
+				),
+			)
+		);
+
+		$this->assertSame( array( '@property --half', '@property --nested' ), $data['dropped_at_rules'] );
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame( array( '@property --anything', '@view-transition' ), array_keys( $stored['atRules'] ) );
+	}
+
+	/**
+	 * The whole `rootRules` key prints unprefixed, so EVERY top-level compound
+	 * must be root-headed — anchoring only the head let `html, *` through as a
+	 * universal selector wearing a root head. A comma inside `:is()`/`:not()` is
+	 * not a top-level comma and must not split the list.
+	 *
+	 * @return void
+	 */
+	public function test_save_root_rules_require_every_compound_to_be_root_headed(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$data = $this->save_global(
+			array(
+				'v'         => '1',
+				'rootRules' => array(
+					'html, *'                  => array( 'color' => 'red' ),
+					'html,.wp-site-blocks'     => array( 'color' => 'red' ),
+					'html,'                    => array( 'color' => 'red' ),
+					'html, body'               => array( 'color' => 'red' ),
+					'html:not(.a, .b) [data-x]' => array( 'opacity' => '0' ),
+				),
+			)
+		);
+
+		$this->assertSame(
+			array( 'html, *', 'html,.wp-site-blocks', 'html,' ),
+			$data['dropped_root_rules'],
+			'a non-root compound, and a stray trailing comma, must be rejected and reported'
+		);
+		$this->assertSame(
+			array( 'html, body', 'html:not(.a, .b) [data-x]' ),
+			array_keys( get_option( Engine::OPTION_KEY_USER_CSS, array() )['rootRules'] ),
+			'an all-root list stands, and a comma inside a functional pseudo-class does not split the list'
+		);
+	}
+
+	/**
+	 * A CSS comment delimiter in a root selector opens a comment that swallows
+	 * every rule the renderer prints after it — measured as the loss of the whole
+	 * `@media` tier. `remBase` has guarded this at its own store all along.
+	 *
+	 * @return void
+	 */
+	public function test_save_root_rules_reject_a_selector_carrying_a_comment_delimiter(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$data = $this->save_global(
+			array(
+				'v'         => '1',
+				'rootRules' => array(
+					'html/*'    => array( 'content' => '""' ),
+					'html /* x' => array( 'content' => '""' ),
+					'html*/'    => array( 'content' => '""' ),
+				),
+			)
+		);
+
+		$this->assertSame( array( 'html/*', 'html /* x', 'html*/' ), $data['dropped_root_rules'] );
+		$this->assertArrayNotHasKey( 'rootRules', get_option( Engine::OPTION_KEY_USER_CSS, array() ) );
+	}
+
+	/**
+	 * A `null` value DELETES the entry. It is not a rejected write, so it must
+	 * not surface in either dropped list — and it must still delete when the key
+	 * would not pass today's allow-list.
+	 *
+	 * @return void
+	 */
+	public function test_save_null_entry_deletes_without_reporting_a_drop(): void {
+		wp_set_current_user( $this->admin_id );
+
+		update_option(
+			Engine::OPTION_KEY_USER_CSS,
+			array(
+				'v'         => '1',
+				'rootRules' => array(
+					'html::before' => array( 'content' => '""' ),
+					'html::after'  => array( 'content' => '""' ),
+				),
+				'atRules'   => array(
+					'@view-transition'       => array( 'navigation' => 'auto' ),
+					'@property --beam-angle' => array(
+						'syntax'        => '"*"',
+						'inherits'      => 'false',
+						'initial-value' => '0deg',
+					),
+				),
+			)
+		);
+
+		$data = $this->save_global(
+			array(
+				'v'         => '1',
+				'rootRules' => array( 'html::before' => null ),
+				'atRules'   => array( '@view-transition' => null ),
+			)
+		);
+
+		$this->assertSame( array(), $data['dropped_at_rules'] );
+		$this->assertSame( array(), $data['dropped_root_rules'] );
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame( array( 'html::after' ), array_keys( $stored['rootRules'] ) );
+		$this->assertSame( array( '@property --beam-angle' ), array_keys( $stored['atRules'] ) );
+	}
+
+	/**
+	 * Deleting the LAST entry of either new bucket drops the bucket, so the ack's
+	 * `buckets` list never names a bucket that is no longer stored.
+	 *
+	 * @return void
+	 */
+	public function test_save_null_deleting_the_last_entry_removes_the_bucket(): void {
+		wp_set_current_user( $this->admin_id );
+
+		update_option(
+			Engine::OPTION_KEY_USER_CSS,
+			array(
+				'v'         => '1',
+				'rootRules' => array( 'html::before' => array( 'content' => '""' ) ),
+			)
+		);
+
+		$data = $this->save_global( array( 'v' => '1', 'rootRules' => array( 'html::before' => null ) ) );
+
+		$this->assertNotContains( 'rootRules', $data['buckets'] );
+		$this->assertArrayNotHasKey( 'rootRules', get_option( Engine::OPTION_KEY_USER_CSS, array() ) );
+	}
+
+	/**
+	 * `/sitewide` shares `merge_user_css()` but is its own callback with its own
+	 * ack — it is the route the editor read-modify-writes through, so both
+	 * dropped lists must reach it as well.
+	 *
+	 * @return void
+	 */
+	public function test_update_sitewide_stores_both_buckets_and_reports_both_dropped_lists(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/sitewide' );
+		$request->set_param( 'payload', $this->root_rules_payload() );
+		$response = $this->server->dispatch( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$data = (array) $response->get_data();
+		$this->assertSame( array( '@property --x} body{display:none', '@font-face', '@property --empty' ), $data['dropped_at_rules'] );
+		$this->assertSame(
+			array( '.x', 'html}body{display:none}.y', 'body</style>x' ),
+			$data['dropped_root_rules'],
+			'the base bucket and the mediaQuery sub-bucket both report through the same list'
+		);
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame(
+			array( 'html::before', 'html[data-motion="none"] [data-poster] :has(> h1) > *' ),
+			array_keys( $stored['rootRules'] )
+		);
+		$this->assertSame( array( '@view-transition', '@property --beam-angle' ), array_keys( $stored['atRules'] ) );
+	}
 }

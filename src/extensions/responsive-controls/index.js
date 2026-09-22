@@ -6,7 +6,7 @@
  * `@mobile` as viewport states — and switching the preview device never
  * modifies attributes; each control reads its device's value directly.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 /**
@@ -38,6 +38,7 @@ import {
 	DESKTOP,
 	BREAKPOINT_TYPE_MAP,
 	coreViewportStatesAreIndependent,
+	savesAttributesToMarkup,
 	RESPONSIVE_CONTROLS_PANELS,
 	RESPONSIVE_CONTROLS_PANEL_TEXT_DOMAINS,
 	DROPDOWN_MENU_SELECTOR,
@@ -137,7 +138,7 @@ import './layout-orientation-preview';
  * This filter adds a 'responsiveControls' attribute to all supported Spectra blocks,
  * which stores device-specific settings for various properties.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 addFilter( 'blocks.registerBlockType', 'spectra/responsive-controls/add-attributes', extendBlockAttributes );
 
@@ -152,13 +153,27 @@ addFilter( 'blocks.registerBlockType', 'spectra/responsive-controls/add-attribut
  * are in `responsiveControls` and the projection layer puts the previewed
  * device into the root attributes instead.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 if ( coreViewportStatesAreIndependent() ) {
 	addFilter(
 		'blocks.getBlockAttributes',
 		'spectra/responsive-controls/mirror-base-values',
-		( attributes, blockType ) => mirrorBaseValuesToAttributes( attributes, blockType ),
+		( attributes, blockType ) => {
+			/*
+			 * Not for a block whose saved markup carries its attributes.
+			 * Mirroring exists so block-local readers see the base value that
+			 * lives in `style`; on a markup-backed block the ROOT attribute is
+			 * already that value, and filling one the stored HTML never had
+			 * adds a declaration to `save()` output that is not in the post —
+			 * which is #908's third route to a validation failure.
+			 */
+			if ( savesAttributesToMarkup( blockType?.name || '' ) ) {
+				return attributes;
+			}
+
+			return mirrorBaseValuesToAttributes( attributes, blockType );
+		},
 		20
 	);
 }
@@ -207,7 +222,7 @@ if ( coreViewportStatesAreIndependent() ) {
  * reappear inside an already-configured layout.
  * Device switching is deliberately not involved — it never touches attributes.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 if ( coreViewportStatesAreIndependent() ) {
 	addFilter( 'editor.BlockEdit', 'spectra/responsive-controls/with-container-variation-sync', withContainerVariationSync, 11 );
@@ -219,7 +234,7 @@ if ( coreViewportStatesAreIndependent() ) {
  * This filter ensures that when existing blocks with legacy root-level attributes
  * are loaded in the editor, they are mapped to the new responsive structure for backward compatibility.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 if ( coreViewportStatesAreIndependent() ) {
 	addFilter(
@@ -234,7 +249,7 @@ if ( coreViewportStatesAreIndependent() ) {
  * Memory-safe document click handler for responsive control reset actions.
  * Automatically cleaned up when page unloads to prevent memory leaks.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 const ResponsiveControlsClickHandler = {
 	/**

@@ -486,15 +486,18 @@ class AssetLoader {
 	/**
 	 * Whether a post was written by the importer.
 	 *
-	 * Result is memoised per post id — the strip filter runs once per container,
-	 * and a page carries many.
+	 * The canonical "this page came from Zip AI" check — the ERA importer sets
+	 * {@see self::IMPORTED_MARKER_META_KEY} on every page it writes. Public so
+	 * other components (e.g. the Zip AI editor notice) share one definition of
+	 * imported rather than each re-deriving it. Result is memoised per post id —
+	 * the strip filter runs once per container, and a page carries many.
 	 *
 	 * @since 1.0.6
 	 *
 	 * @param int $post_id Post to test.
 	 * @return bool True when the importer marked this post.
 	 */
-	private static function is_zip_built_page( int $post_id ): bool {
+	public static function is_zip_built_page( int $post_id ): bool {
 		static $cache = array();
 
 		if ( ! isset( $cache[ $post_id ] ) ) {

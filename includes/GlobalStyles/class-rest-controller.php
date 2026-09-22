@@ -432,6 +432,160 @@ class RestController {
 	}
 
 	/**
+	 * `atRules` keys the renderer may print verbatim.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const AT_RULE_KEY_PATTERN = '/^@(?:view-transition|property --[A-Za-z0-9_-]+)$/D';
+
+	/**
+	 * `rootRules` keys: the head EVERY compound in the selector list must carry.
+	 * Checked per top-level compound by {@see is_root_rule_selector()} — anchoring
+	 * the whole key only validates the FIRST compound, so `html, *` passed and
+	 * printed unprefixed, which is the opposite of a root-headed lane.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const ROOT_RULE_HEAD_PATTERN = '/^(?:(?:html|body|:root)(?![\w-])|::view-transition)/i';
+
+	/**
+	 * Characters a `rootRules` selector may never contain. `{`/`}`/`;` break out
+	 * of the rule block, `<` closes the `<style>` element, and a CSS comment
+	 * delimiter swallows every rule the renderer prints after it (measured: one
+	 * such key took out the whole `@media` tier). Same guard `remBase` already
+	 * applies at its own store.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const ROOT_RULE_FORBIDDEN_PATTERN = '~[{};<]|/\\*|\\*/~';
+
+	/**
+	 * Sanitize ONE `atRules` entry's descriptor map.
+	 *
+	 * Two things the generic declaration path gets wrong for an at-rule:
+	 *  - JSON booleans. `{"inherits": false}` is the natural authoring form, and
+	 *    `(string) false` is `''`, which the Sanitizer drops — so the descriptor
+	 *    vanished and the rule below lost the half that makes it valid, while the
+	 *    ack still said `updated: true`.
+	 *  - A nested array. The Sanitizer keeps one as a "bucket" (a state/pseudo
+	 *    label), but a descriptor is a single value; kept, it printed nothing and
+	 *    silently invalidated the rule.
+	 *
+	 * `@property` is then invalid and WHOLLY IGNORED by the browser unless it
+	 * carries `syntax` AND `inherits`, plus `initial-value` unless the syntax is
+	 * the universal one (CSS Properties and Values API L1). A partial rule
+	 * registers nothing, so it is dropped here and reported rather than printed
+	 * as a dead rule the front end cannot use.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $key   The at-rule key, already past {@see AT_RULE_KEY_PATTERN}.
+	 * @param mixed  $value Incoming descriptor map.
+	 * @return array<string, string> Sanitized descriptors, or `array()` to drop.
+	 */
+	private static function sanitize_at_rule_descriptors( string $key, $value ): array {
+		$descriptors = array();
+		foreach ( is_array( $value ) ? $value : array() as $descriptor => $descriptor_value ) {
+			$descriptors[ $descriptor ] = is_bool( $descriptor_value )
+				? ( $descriptor_value ? 'true' : 'false' )
+				: $descriptor_value;
+		}
+
+		$sanitized = array();
+		foreach ( Sanitizer::sanitize_class_styles( $descriptors ) as $descriptor => $descriptor_value ) {
+			if ( ! is_string( $descriptor ) || ! is_string( $descriptor_value ) || '' === $descriptor_value ) {
+				continue;
+			}
+			// Kebabbed here rather than through normalize_declaration_keys() so the
+			// map stays string-typed for the required-descriptor check below.
+			$sanitized[ self::css_property_to_kebab( $descriptor ) ] = $descriptor_value;
+		}
+
+		if ( 0 !== strpos( $key, '@property' ) ) {
+			return $sanitized;
+		}
+
+		$syntax   = $sanitized['syntax'] ?? '';
+		$required = in_array( $syntax, array( '"*"', "'*'", '*' ), true )
+			? array( 'syntax', 'inherits' )
+			: array( 'syntax', 'inherits', 'initial-value' );
+		foreach ( $required as $descriptor ) {
+			if ( ! isset( $sanitized[ $descriptor ] ) ) {
+				return array();
+			}
+		}
+
+		return $sanitized;
+	}
+
+	/**
+	 * Is this `rootRules` key a selector list the renderer may print UNPREFIXED?
+	 *
+	 * The list prints with no page scope, so EVERY top-level compound has to be
+	 * root-headed: `html, *` is a universal selector wearing a root head. A comma
+	 * inside `(`/`[` (an `:is()`/`:not()` argument, an attribute value) belongs to
+	 * its compound and does not split the list.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param mixed $selector Candidate selector list.
+	 * @return bool
+	 */
+	private static function is_root_rule_selector( $selector ): bool {
+		if ( ! is_string( $selector ) || '' === trim( $selector ) ) {
+			return false;
+		}
+		if ( 1 === preg_match( self::ROOT_RULE_FORBIDDEN_PATTERN, $selector ) ) {
+			return false;
+		}
+		foreach ( self::split_top_level_commas( $selector ) as $compound ) {
+			if ( 1 !== preg_match( self::ROOT_RULE_HEAD_PATTERN, $compound ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Split a selector list on its TOP-LEVEL commas. Empty compounds are kept so
+	 * a stray comma (`html,`) fails the head check instead of printing an invalid
+	 * selector.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $selector_list Selector list.
+	 * @return string[] Trimmed compounds, in order.
+	 */
+	private static function split_top_level_commas( string $selector_list ): array {
+		$parts   = array();
+		$depth   = 0;
+		$current = '';
+		$length  = strlen( $selector_list );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$char = $selector_list[ $i ];
+			if ( '(' === $char || '[' === $char ) {
+				++$depth;
+			} elseif ( ')' === $char || ']' === $char ) {
+				--$depth;
+			}
+			if ( ',' === $char && 0 === $depth ) {
+				$parts[] = trim( $current );
+				$current = '';
+				continue;
+			}
+			$current .= $char;
+		}
+		$parts[] = trim( $current );
+
+		return $parts;
+	}
+
+	/**
 	 * Regex matching valid keyframe names.
 	 *
 	 * Allows lowerCamelCase or kebab-case identifiers the SaaS emits for
@@ -1007,21 +1161,26 @@ class RestController {
 		// styles AND earlier pages of the same multi-page build survive.
 		// - classes / keyframes: merged per entry (sanitized the same way as the
 		// global-styles/bulk path); on a name collision the latest write wins.
-		// - rootStyles / wrapperStyles / scopeVars / presetLock / mediaQuery:
-		// merged per entry (null entry deletes; null bucket deletes the bucket).
+		// - rootStyles / wrapperStyles / rootRules / atRules / scopeVars /
+		// presetLock / mediaQuery: merged per entry (null entry deletes; null
+		// bucket deletes the bucket).
 		// - imports: union + dedup.
 		// This is the SSOT never-clobber rule — import, website-build and the
 		// editor all POST here and inherit it (the editor's client-side
 		// mergePayload becomes redundant once it posts deltas).
-		$user_css = $this->merge_user_css( $this->get_user_css(), $payload );
+		$dropped_at_rules   = array();
+		$dropped_root_rules = array();
+		$user_css           = $this->merge_user_css( $this->get_user_css(), $payload, $dropped_at_rules, $dropped_root_rules );
 
 		$this->save_user_css( $user_css );
 
 		return rest_ensure_response(
 			array(
-				'option'  => Engine::OPTION_KEY_USER_CSS,
-				'buckets' => array_keys( $user_css ),
-				'updated' => true,
+				'option'             => Engine::OPTION_KEY_USER_CSS,
+				'buckets'            => array_keys( $user_css ),
+				'updated'            => true,
+				'dropped_at_rules'   => $dropped_at_rules,
+				'dropped_root_rules' => $dropped_root_rules,
 			)
 		);
 	}
@@ -1054,8 +1213,14 @@ class RestController {
 	 * Merge a schema-v1 payload INTO an existing GBS payload — the SSOT
 	 * never-clobber contract shared by /sitewide and /save (option AND postmeta):
 	 *  - classes / keyframes: sanitized (same as /bulk) and merged per entry.
-	 *  - rootStyles / wrapperStyles / scopeVars / presetLock / mediaQuery:
-	 *    merged per entry (null entry deletes; null whole bucket deletes it).
+	 *  - rootStyles / wrapperStyles / rootRules / scopeVars / presetLock /
+	 *    mediaQuery: merged per entry (null entry deletes; null whole bucket
+	 *    deletes it).
+	 *  - atRules: merged per entry through the Sanitizer; a key outside
+	 *    {@see AT_RULE_KEY_PATTERN}, or left without the descriptors that make the
+	 *    at-rule valid, is reported in `$dropped_at_rules`.
+	 *  - rootRules: a key {@see is_root_rule_selector()} refuses is not stored and
+	 *    is reported in `$dropped_root_rules`, base and `mediaQuery[q]` alike.
 	 *  - imports: union + dedup.
 	 *
 	 * Merging into an empty base yields a sanitized full payload — that is how
@@ -1063,11 +1228,13 @@ class RestController {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array<string, mixed> $user_css Existing payload (the merge base).
-	 * @param array<string, mixed> $payload  Incoming schema-v1 payload.
+	 * @param array<string, mixed> $user_css           Existing payload (the merge base).
+	 * @param array<string, mixed> $payload            Incoming schema-v1 payload.
+	 * @param string[]             $dropped_at_rules   Out: rejected `atRules` keys.
+	 * @param string[]             $dropped_root_rules Out: rejected `rootRules` keys.
 	 * @return array<string, mixed> Merged payload.
 	 */
-	private function merge_user_css( array $user_css, array $payload ): array {
+	private function merge_user_css( array $user_css, array $payload, array &$dropped_at_rules, array &$dropped_root_rules ): array {
 		$user_css['v'] = isset( $payload['v'] ) ? $payload['v'] : ( $user_css['v'] ?? '1' );
 
 		if ( isset( $payload['classes'] ) && is_array( $payload['classes'] ) ) {
@@ -1119,7 +1286,7 @@ class RestController {
 		// entry — never-clobber, so a multi-page build / batch accumulates instead
 		// of last-write-wins. A null entry deletes that key; a null whole bucket
 		// deletes the bucket.
-		foreach ( array( 'rootStyles', 'wrapperStyles', 'scopeVars', 'presetLock', 'mediaQuery' ) as $bucket ) {
+		foreach ( array( 'rootStyles', 'wrapperStyles', 'rootRules', 'atRules', 'scopeVars', 'presetLock', 'mediaQuery' ) as $bucket ) {
 			if ( ! array_key_exists( $bucket, $payload ) ) {
 				continue;
 			}
@@ -1135,8 +1302,20 @@ class RestController {
 				$user_css[ $bucket ] = array();
 			}
 			foreach ( $incoming as $key => $value ) {
+				// A `null` value DELETES the entry, so it is settled BEFORE the key
+				// gates: a delete is not a rejected write and must not be reported
+				// back as one (it also cannot be judged by a key allow-list, since
+				// the caller may be clearing a key an older allow-list accepted).
 				if ( null === $value ) {
 					unset( $user_css[ $bucket ][ $key ] );
+					continue;
+				}
+				if ( 'atRules' === $bucket && 1 !== preg_match( self::AT_RULE_KEY_PATTERN, (string) $key ) ) {
+					$dropped_at_rules[] = (string) $key;
+					continue;
+				}
+				if ( 'rootRules' === $bucket && ! self::is_root_rule_selector( $key ) ) {
+					$dropped_root_rules[] = (string) $key;
 					continue;
 				}
 				// Kebab-normalize CSS property keys per bucket shape so the store
@@ -1145,16 +1324,31 @@ class RestController {
 				if ( 'rootStyles' === $bucket && is_string( $key ) ) {
 					// Flat {prop:val}: `$key` IS the property.
 					$key = self::css_property_to_kebab( $key );
-				} elseif ( 'wrapperStyles' === $bucket && is_array( $value ) ) {
+				} elseif ( ( 'wrapperStyles' === $bucket || 'rootRules' === $bucket ) && is_array( $value ) ) {
 					// {selector:{prop:val}}: normalize the inner decls, keep selector.
 					$value = self::normalize_declaration_keys( $value );
+				} elseif ( 'atRules' === $bucket ) {
+					// {at-rule:{descriptor:val}}: sanitized, keys kebab, and checked
+					// for the descriptors the at-rule needs to be valid at all.
+					$value = self::sanitize_at_rule_descriptors( (string) $key, $value );
+					if ( array() === $value ) {
+						$dropped_at_rules[] = (string) $key;
+						continue;
+					}
 				} elseif ( 'mediaQuery' === $bucket && is_array( $value ) ) {
-					// {query:{classes,wrapperStyles}}: normalize nested decls.
-					$value = self::normalize_media_query_decls( $value );
+					// {query:{classes,wrapperStyles,rootRules}}: normalize nested decls.
+					$value = self::normalize_media_query_decls( $value, $dropped_root_rules );
 				}
 				$user_css[ $bucket ][ $key ] = $value;
 			}
+			// Every key rejected → no bucket.
+			if ( in_array( $bucket, array( 'atRules', 'rootRules' ), true ) && array() === $user_css[ $bucket ] ) {
+				unset( $user_css[ $bucket ] );
+			}
 		}
+
+		// The same selector rejected in several `mediaQuery` entries reports once.
+		$dropped_root_rules = array_values( array_unique( $dropped_root_rules ) );
 
 		// `imports` is a flat list (font stylesheet URLs) — union + dedup.
 		if ( isset( $payload['imports'] ) && is_array( $payload['imports'] ) ) {
@@ -1205,13 +1399,14 @@ class RestController {
 				return $error;
 			}
 			// replace=true RESETS the import-owned non-class buckets (presetLock /
-			// rootStyles / wrapperStyles / scopeVars / mediaQuery) so a fresh
-			// replace_site whole-site build cannot inherit a PRIOR build's body-level
-			// palette / token overrides — the cross-build "stale presetLock" leak
-			// where a previous build's `body { --wp--preset--color--*: … }` survived
-			// the per-entry merge (an omitted bucket is preserved) and beat the new
-			// build's :root palette. replace=false → plain merge (match_site siblings
-			// / partial writes), unchanged.
+			// rootStyles / wrapperStyles / rootRules / atRules / scopeVars /
+			// mediaQuery) so a fresh replace_site whole-site build cannot inherit a
+			// PRIOR build's body-level palette / token overrides — the cross-build
+			// "stale presetLock" leak where a previous build's
+			// `body { --wp--preset--color--*: … }` survived the per-entry merge (an
+			// omitted bucket is preserved) and beat the new build's :root palette.
+			// replace=false → plain merge (match_site siblings / partial writes),
+			// unchanged.
 			//
 			// `reset_classes` additionally drops the `classes` bucket. The CALLER
 			// decides: a `replace_site` import IS the new site, so a previous build's
@@ -1227,14 +1422,18 @@ class RestController {
 			if ( $replace ) {
 				$base = array_intersect_key( $base, array_flip( $keep ) );
 			}
-			$merged = $this->merge_user_css( $base, $payload );
+			$dropped_at_rules   = array();
+			$dropped_root_rules = array();
+			$merged             = $this->merge_user_css( $base, $payload, $dropped_at_rules, $dropped_root_rules );
 			$this->save_user_css( $merged );
 			return rest_ensure_response(
 				array(
-					'option'   => Engine::OPTION_KEY_USER_CSS,
-					'buckets'  => array_keys( $merged ),
-					'replaced' => $replace,
-					'updated'  => true,
+					'option'             => Engine::OPTION_KEY_USER_CSS,
+					'buckets'            => array_keys( $merged ),
+					'replaced'           => $replace,
+					'updated'            => true,
+					'dropped_at_rules'   => $dropped_at_rules,
+					'dropped_root_rules' => $dropped_root_rules,
 				)
 			);
 		}
@@ -1277,20 +1476,25 @@ class RestController {
 		// replace=true → full overwrite (merge into an empty base = a sanitized full
 		// payload; clears stale gs-* classes on a re-import). replace=false → merge
 		// onto the existing per-page payload (partial writes).
-		$replace  = (bool) $request->get_param( 'replace' );
-		$existing = $replace ? array() : $this->read_page_payload( $post_id );
-		$merged   = $this->merge_user_css( $existing, $payload );
+		$replace            = (bool) $request->get_param( 'replace' );
+		$existing           = $replace ? array() : $this->read_page_payload( $post_id );
+		$dropped_at_rules   = array();
+		$dropped_root_rules = array();
+		$merged             = $this->merge_user_css( $existing, $payload, $dropped_at_rules, $dropped_root_rules );
 
-		// The post meta carries the orphan-stripper sanitize filter, so
-		// update_post_meta re-sanitizes on write.
+		// NOTE: the orphan-stripper sanitize filter on this meta key returns
+		// early unless the value is a STRING, so it is a no-op for the payload
+		// array written here — every bucket's validation is the merge above.
 		update_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, $merged );
 
 		return rest_ensure_response(
 			array(
-				'post_id'  => $post_id,
-				'buckets'  => array_keys( $merged ),
-				'replaced' => $replace,
-				'updated'  => true,
+				'post_id'            => $post_id,
+				'buckets'            => array_keys( $merged ),
+				'replaced'           => $replace,
+				'updated'            => true,
+				'dropped_at_rules'   => $dropped_at_rules,
+				'dropped_root_rules' => $dropped_root_rules,
 			)
 		);
 	}
@@ -1542,15 +1746,17 @@ class RestController {
 	/**
 	 * Kebab-normalize declaration property keys inside one mediaQuery entry's
 	 * nested `classes` (`{ name => { state => { prop => val } } }`) and
-	 * `wrapperStyles` (`{ selector => { prop => val } }`) sub-buckets. @media
-	 * conditions, class names, states, and selectors are left intact.
+	 * `wrapperStyles` / `rootRules` (`{ selector => { prop => val } }`)
+	 * sub-buckets. @media conditions, class names, states, and selectors are
+	 * left intact.
 	 *
 	 * @since 1.0.4
 	 *
-	 * @param array<string, mixed> $entry One mediaQuery entry (its sub-buckets).
+	 * @param array<string, mixed> $entry              One mediaQuery entry (its sub-buckets).
+	 * @param string[]             $dropped_root_rules Out: rejected `rootRules` selectors.
 	 * @return array<string, mixed> Entry with kebab-case declaration keys.
 	 */
-	private static function normalize_media_query_decls( array $entry ): array {
+	private static function normalize_media_query_decls( array $entry, array &$dropped_root_rules ): array {
 		if ( isset( $entry['classes'] ) && is_array( $entry['classes'] ) ) {
 			foreach ( $entry['classes'] as $name => $states ) {
 				if ( is_array( $states ) ) {
@@ -1558,10 +1764,18 @@ class RestController {
 				}
 			}
 		}
-		if ( isset( $entry['wrapperStyles'] ) && is_array( $entry['wrapperStyles'] ) ) {
-			foreach ( $entry['wrapperStyles'] as $selector => $decls ) {
+		foreach ( array( 'wrapperStyles', 'rootRules' ) as $bucket ) {
+			if ( ! isset( $entry[ $bucket ] ) || ! is_array( $entry[ $bucket ] ) ) {
+				continue;
+			}
+			foreach ( $entry[ $bucket ] as $selector => $decls ) {
+				if ( 'rootRules' === $bucket && ! self::is_root_rule_selector( $selector ) ) {
+					unset( $entry[ $bucket ][ $selector ] );
+					$dropped_root_rules[] = (string) $selector;
+					continue;
+				}
 				if ( is_array( $decls ) ) {
-					$entry['wrapperStyles'][ $selector ] = self::normalize_declaration_keys( $decls );
+					$entry[ $bucket ][ $selector ] = self::normalize_declaration_keys( $decls );
 				}
 			}
 		}

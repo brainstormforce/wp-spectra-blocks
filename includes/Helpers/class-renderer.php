@@ -71,7 +71,7 @@ class Renderer {
 			$json = self::$icon_array_merged;
 		}
 
-		// Legacy alias fallback: the library keys icons by FA6 primary name
+		// Legacy alias fallback: the library keys icons by FA7 primary name
 		// only — content authored against an old name ('check-circle')
 		// resolved to nothing and the block rendered an empty wrapper.
 		// Remap through the generated alias index before giving up.

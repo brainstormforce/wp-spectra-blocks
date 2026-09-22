@@ -5,7 +5,7 @@
  * block in the site stylesheet. They can then be used in any CSS as
  * `var(--name)` — useful for design tokens that blocks can reference.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 import { useState, useCallback } from '@wordpress/element';
@@ -42,7 +42,7 @@ function parseBulkVars( text ) {
 /**
  * Serialize a { '--name': 'value' } map to a human-readable CSS block.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {Object} vars Variable map.
  * @return {string} Multi-line text.
@@ -54,7 +54,7 @@ function serializeVars( vars ) {
 /**
  * CustomVarsPanel component.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @return {Element}
  */

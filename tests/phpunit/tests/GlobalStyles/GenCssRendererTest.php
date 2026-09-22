@@ -160,4 +160,133 @@ class GenCssRendererTest extends WP_UnitTestCase {
 			$css,
 		);
 	}
+
+	/**
+	 * Payload carrying the two document-level buckets: `rootRules` (a selector
+	 * headed by `html`/`body`/`:root`, printed with no prefix) and `atRules`
+	 * (`@view-transition` / `@property --name`), at the base and inside a
+	 * media query.
+	 *
+	 * @return array<string,mixed>
+	 */
+	private function root_payload(): array {
+		$payload              = $this->payload();
+		$payload['rootRules'] = array(
+			'html::before'                                    => array( 'content' => '""' ),
+			'html.js:not([data-motion="none"]) [data-reveal]' => array( 'opacity' => '0' ),
+			':root'                                           => array(),
+		);
+		$payload['atRules']   = array(
+			'@view-transition'       => array( 'navigation' => 'auto' ),
+			'@property --beam-angle' => array(
+				'syntax'        => '"<angle>"',
+				'inherits'      => 'false',
+				'initial-value' => '0deg',
+			),
+			'@property --empty'      => array(),
+		);
+
+		$payload['mediaQuery']['(max-width: 960px)']['rootRules'] = array( 'html::before' => array( 'display' => 'none' ) );
+
+		return $payload;
+	}
+
+	/** @return void */
+	public function test_root_rules_render_verbatim_after_wrappers_on_the_frontend() {
+		$css = GenCssRenderer::render( $this->root_payload(), 234, false );
+
+		// No prefix, no selector surgery — the head is printed as stored.
+		$this->assertStringContainsString( "\nhtml::before { content: \"\"; }\n", $css );
+		$this->assertStringContainsString( "\nhtml.js:not([data-motion=\"none\"]) [data-reveal] { opacity: 0; }\n", $css );
+		$this->assertStringNotContainsString( 'body html', $css );
+		// After the wrappers, so a root rule wins by source order. strpos() is
+		// guarded: a miss returns false, and `false < <int>` is true in PHP 8, so
+		// an unguarded comparison passes when the needle is absent.
+		$wrapper_pos = strpos( $css, 'body .wp-block-spectra-icon svg { width: 1em; }' );
+		$root_pos    = strpos( $css, 'html::before { content: ""; }' );
+		$this->assertIsInt( $wrapper_pos, 'the wrapper rule did not print' );
+		$this->assertIsInt( $root_pos, 'the root rule did not print' );
+		$this->assertGreaterThan( $wrapper_pos, $root_pos );
+		// An empty body is skipped.
+		$this->assertStringNotContainsString( "\n:root {", $css );
+		// `mediaQuery[q].rootRules` prints inside its block, after that block's wrappers.
+		$this->assertMatchesRegularExpression(
+			'/@media \(max-width: 960px\) \{\s*\[class\]\.gs-x\.gs-x \{ gap: 1rem; \}\s*body \.x a \{ display: none; \}\s*html::before \{ display: none; \}\s*\}/',
+			$css,
+		);
+	}
+
+	/**
+	 * A root rule reads the page's tokens from the ROOT — `html::before` is a
+	 * pseudo-element of `html`, not a descendant of the page scope — so the custom
+	 * properties (and only those) are printed once more on `html`, right before
+	 * the root rules, and only when the payload carries any.
+	 *
+	 * @return void
+	 */
+	public function test_root_rules_get_the_page_tokens_on_html_before_them() {
+		$payload                              = $this->root_payload();
+		$payload['rootStyles']['--pattern-grid'] = 'linear-gradient(#000 1px, transparent 1px)';
+		$css                                  = GenCssRenderer::render( $payload, 234, false );
+
+		// tokens only — scope vars, custom properties, preset locks; the base declarations stay on the page scope
+		$this->assertStringContainsString( "\nhtml:root { --wp--style--global--content-size: 1164px; --wp--style--global--wide-size: 1280px; --pattern-grid: linear-gradient(#000 1px, transparent 1px); --wp--preset--color--primary: #b36b2c; }\n", $css );
+		$this->assertDoesNotMatchRegularExpression( '/\nhtml:root \{[^}]*font-family/', $css );
+		// before the rules that read them. The needle must be a substring that
+		// actually exists: the token block OPENS with the scope vars, so searching
+		// for "html:root { --pattern-grid" missed, and the unguarded
+		// `false < <int>` comparison passed however the parts were ordered.
+		$tokens_pos = strpos( $css, "\nhtml:root { --wp--style--global--content-size" );
+		$rule_pos   = strpos( $css, "\nhtml::before { content" );
+		$this->assertIsInt( $tokens_pos, 'the html:root token block did not print' );
+		$this->assertIsInt( $rule_pos, 'the root rule did not print' );
+		$this->assertLessThan( $rule_pos, $tokens_pos );
+
+		// no root rule → no html token block (an old payload renders byte-identically)
+		$plain = $this->payload();
+		$plain['rootStyles']['--pattern-grid'] = 'none';
+		$this->assertDoesNotMatchRegularExpression( '/^html:root \{/m', GenCssRenderer::render( $plain, 234, false ) );
+		// …and the two buckets are ADDITIVE: empty ones must not perturb one byte
+		// of the sheet. The absence of `html:root` alone does not prove that — the
+		// at-rule part and the root-rule part are pushed unconditionally too.
+		$this->assertSame(
+			GenCssRenderer::render( $plain, 234, false ),
+			GenCssRenderer::render( $plain + array( 'rootRules' => array(), 'atRules' => array() ), 234, false ),
+			'an empty rootRules/atRules bucket must render byte-identically'
+		);
+		// a root rule only under @media still gets the block
+		$plain['mediaQuery'] = array( '(max-width: 960px)' => array( 'rootRules' => array( 'html::before' => array( 'inset' => '0' ) ) ) );
+		$this->assertMatchesRegularExpression( '/^html:root \{ [^}]*--pattern-grid: none;/m', GenCssRenderer::render( $plain, 234, false ) );
+		// never in the editor
+		$this->assertDoesNotMatchRegularExpression( '/^html:root \{/m', GenCssRenderer::render( $payload, 234, true ) );
+	}
+
+	/** @return void */
+	public function test_at_rules_render_from_declarations_after_imports_on_the_frontend() {
+		$css = GenCssRenderer::render( $this->root_payload(), 234, false );
+
+		$this->assertStringStartsWith(
+			"@import url(\"https://fonts.googleapis.com/css2?family=Lato\");\n@view-transition { navigation: auto; }\n@property --beam-angle { syntax: \"<angle>\"; inherits: false; initial-value: 0deg; }\n",
+			$css,
+		);
+		// An empty body is skipped.
+		$this->assertStringNotContainsString( '@property --empty', $css );
+	}
+
+	/** @return void */
+	public function test_editor_prints_neither_root_rules_nor_at_rules() {
+		$css = GenCssRenderer::render( $this->root_payload(), 234, true );
+
+		$this->assertStringNotContainsString( 'html::before', $css );
+		$this->assertStringNotContainsString( '[data-reveal]', $css );
+		$this->assertStringNotContainsString( '@view-transition', $css );
+		$this->assertStringNotContainsString( '@property', $css );
+		// Nothing unscoped reaches wp-admin: no rule headed by a bare `html`,
+		// `body` or `:root` (the editor root is `body.editor-styles-wrapper`).
+		$this->assertDoesNotMatchRegularExpression( '/^(?:html|:root)\b/m', $css );
+		$this->assertDoesNotMatchRegularExpression( '/^body(?:\s|\{)/m', $css );
+		// The rest of the sheet is untouched by the two buckets.
+		$this->assertStringContainsString( '.editor-styles-wrapper .wp-block-spectra-icon svg { width: 1em; }', $css );
+		$this->assertStringContainsString( '.editor-styles-wrapper .x a { display: none; }', $css );
+	}
 }

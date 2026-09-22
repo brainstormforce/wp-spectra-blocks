@@ -230,21 +230,41 @@ if ( ! empty( $attributes['shadowHover'] ) ) {
 	$custom_classes[] = 'spectra-shadow-hover-override';
 }
 
+// Default link requirements for the button Block.
+$has_link = ! empty( $attributes['linkURL'] );
+
+// The `<a>` owns href/target/rel whenever the block has a link of its own:
+// `view.php` prints them from the block's settings AND prints the wrapper string
+// on the same tag, so an authored copy emitted a SECOND attribute (the first
+// occurrence wins, so the authored one was already inert — this drops the
+// duplicate rather than changing which value applies). Matched case-insensitively
+// because the htmlAttributes pipe lowercases names, the stored keys are raw.
+// `aria-label` is deliberately NOT in this set: an authored label is more
+// specific than the text-derived default and REPLACES it (see below).
+if ( $has_link && ! empty( $attributes['htmlAttributes'] ) && is_array( $attributes['htmlAttributes'] ) ) {
+	foreach ( array_keys( $attributes['htmlAttributes'] ) as $authored_name ) {
+		if ( in_array( strtolower( trim( (string) $authored_name ) ), array( 'href', 'target', 'rel' ), true ) ) {
+			unset( $attributes['htmlAttributes'][ $authored_name ] );
+		}
+	}
+}
+
 // Get the block wrapper attributes, and extend the styles and classes.
 $wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array(), $custom_classes );
 
-// Default link requirements for the button Block.
-$has_link = ! empty( $attributes['linkURL'] );
-$target   = '';
-$rel      = '';
-$aria     = '';
+$target = '';
+$rel    = '';
+$aria   = '';
 
 if ( $has_link ) {
 	// Set the target, and keep a default rel string.
 	$target = $attributes['linkTarget'] ?? '_self';
 
-	// Set default aria-label (normal state) - use text content.
-	$aria = $text;
+	// Default aria-label = text, unless the source authored a USABLE one
+	// (`htmlAttributes`). An empty / non-string authored value is not an
+	// accessible name: suppressing the default for it left the link unnamed.
+	$authored_aria = $attributes['htmlAttributes']['aria-label'] ?? null;
+	$aria          = ( is_string( $authored_aria ) && '' !== trim( $authored_aria ) ) ? '' : $text;
 
 	// Strip HTML tags from aria-label for better accessibility.
 	if ( '' !== $aria ) {
