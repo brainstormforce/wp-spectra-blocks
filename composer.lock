@@ -112,12 +112,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:brainstormforce/gutenberg-templates.git",
-                "reference": "a1a90613440d8ce5138a3895e9907af68c71442b"
+                "reference": "4cbb9e6c8e8cd566cd3e0310b46abd3e09c72dd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/a1a90613440d8ce5138a3895e9907af68c71442b",
-                "reference": "a1a90613440d8ce5138a3895e9907af68c71442b",
+                "url": "https://api.github.com/repos/brainstormforce/gutenberg-templates/zipball/4cbb9e6c8e8cd566cd3e0310b46abd3e09c72dd1",
+                "reference": "4cbb9e6c8e8cd566cd3e0310b46abd3e09c72dd1",
                 "shasum": ""
             },
             "require": {
@@ -176,7 +176,7 @@
                 "source": "https://github.com/brainstormforce/gutenberg-templates/tree/master",
                 "issues": "https://github.com/brainstormforce/gutenberg-templates/issues"
             },
-            "time": "2026-07-17T06:58:11+00:00"
+            "time": "2026-09-21T12:06:41+00:00"
         },
         {
             "name": "brainstormforce/nps-survey",

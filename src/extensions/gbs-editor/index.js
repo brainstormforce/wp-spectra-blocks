@@ -10,7 +10,7 @@
  * The reused panels/hooks/utils live under this folder and are imported by the
  * V2 editor.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 import { useEffect } from '@wordpress/element';

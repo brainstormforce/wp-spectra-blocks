@@ -27,6 +27,7 @@ import { addFilter } from '@wordpress/hooks';
 import { coreViewportStatesAreIndependent } from '../utils/constants';
 import { isAllowedBlock } from '../utils/helpers';
 import { migrateLegacyResponsiveStore } from './migrate-legacy';
+import { withMarkupBackedBasePromotion } from './promote-base';
 import { readLegacyBucket } from './read-bucket';
 
 /**
@@ -113,3 +114,30 @@ addFilter(
 	'spectra/responsive-controls/legacy/read-store',
 	( bucket, responsiveControls, device ) => readLegacyBucket( responsiveControls, device )
 );
+
+/**
+ * Promote a markup-backed block's authored base value, once it is mounted.
+ *
+ * The parse-time migration deliberately leaves the root attribute alone for
+ * these blocks, because rewriting it there is what invalidates them (#908). The
+ * value still has to arrive, so it is applied after validation instead — see
+ * `promote-base.js`.
+ *
+ * Priority 12 puts this OUTSIDE `withResponsiveControls` (10) and
+ * `withContainerVariationSync` (11), so it sees the block's real attributes
+ * rather than the per-device projection those hand down.
+ *
+ * 7.1+ only, like the migration itself: below it the store is still the active
+ * storage and the root is repainted per device by the pre-7.1 projection layer,
+ * so promoting into it would fight that.
+ *
+ * @since 1.0.9
+ */
+if ( coreViewportStatesAreIndependent() ) {
+	addFilter(
+		'editor.BlockEdit',
+		'spectra/responsive-controls/legacy/promote-markup-backed-base',
+		withMarkupBackedBasePromotion,
+		12
+	);
+}

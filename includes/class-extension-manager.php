@@ -40,6 +40,34 @@ class ExtensionManager {
 		$this->init_extensions();
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'register_extensions' ) );
+		add_action( 'init', array( $this, 'register_notice_dismissal' ) );
+	}
+
+	/**
+	 * Registers the site-wide option the Zip AI editor notice writes when
+	 * dismissed.
+	 *
+	 * Dismissal is per-SITE, not per-page: once anyone closes the notice it is
+	 * gone everywhere, permanently. A single boolean option, exposed on the core
+	 * settings REST endpoint (`/wp/v2/settings`) so the editor can persist it in
+	 * one call. The settings endpoint gates writes to `manage_options`, which
+	 * fits a site-wide preference.
+	 *
+	 * @since 1.0.9
+	 *
+	 * @return void
+	 */
+	public function register_notice_dismissal() {
+		register_setting(
+			'spectra_blocks',
+			'spectra_blocks_zipai_notice_dismissed',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Set when a user dismisses the Zip AI page notice; hides it site-wide.', 'spectra-blocks' ),
+				'default'      => false,
+				'show_in_rest' => true,
+			)
+		);
 	}
 
 	/**
@@ -202,6 +230,16 @@ class ExtensionManager {
 			);
 		}
 
+		// Localize the Spectra Pro install/activation state for the upgrade nudge.
+		if ( 'gbs-pro-nudge' === $folder_name ) {
+			wp_localize_script( $handle, 'spectra_blocks_pro_nudge', $this->get_pro_nudge_data() );
+		}
+
+		// Localize the Zip AI / Pro state driving the editor page notice.
+		if ( 'zip-ai-notice' === $folder_name ) {
+			wp_localize_script( $handle, 'spectra_blocks_zipai_notice', $this->get_zipai_notice_data() );
+		}
+
 		/**
 		 * Fires after enqueuing the editor assets for the given extension.
 		 *
@@ -210,5 +248,81 @@ class ExtensionManager {
 		 * @since 3.0.0
 		 */
 		do_action( 'spectra_blocks_extensions_editor_assets', $folder_name, $asset_file );
+	}
+
+	/**
+	 * Builds the Spectra Pro state passed to the block-editor upgrade nudge.
+	 *
+	 * Mirrors the dashboard white-label logic: `active` (Pro running — the nudge
+	 * stands down), `installed` (present but inactive — offer "Activate"), or
+	 * `not_installed` (offer "Upgrade").
+	 *
+	 * @since 1.0.9
+	 *
+	 * @return array<string,string> State plus the activate/upgrade destinations.
+	 */
+	private function get_pro_nudge_data() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$plugin_file = 'spectra-blocks-pro/spectra-blocks-pro.php';
+		$installed   = file_exists( SPECTRA_BLOCKS_DIR . '../' . $plugin_file );
+		$active      = is_plugin_active( $plugin_file );
+		$state       = $active ? 'active' : ( $installed ? 'installed' : 'not_installed' );
+
+		return array(
+			'state'          => $state,
+			'upgradeUrl'     => 'https://wpspectra.com/pricing/?utm_source=free-plugin&utm_medium=block-editor&utm_campaign=gbs-css-js-nudge',
+			'activatePlugin' => 'spectra-blocks-pro/spectra-blocks-pro',
+		);
+	}
+
+	/**
+	 * Builds the state passed to the Zip AI editor page notice.
+	 *
+	 * Identification is decided here, server-side: the notice renders only when
+	 * Zip AI is active, the edited page is Zip AI-built (the canonical
+	 * {@see AssetLoader::is_zip_built_page()} check), and it hasn't already been
+	 * dismissed for this page. The client just honours `shouldRender`.
+	 *
+	 * The copy is the same for everyone; only the "Global Styles" CTA differs by
+	 * the Spectra Pro `state` — `not_installed` links to pricing, `installed`
+	 * opens the upgrade popup, `active` opens the Global Styles editor.
+	 *
+	 * @since 1.0.9
+	 *
+	 * @return array<string,mixed> Render decision, Pro state, and the data the
+	 *                             client needs for the CTA + to persist a dismissal.
+	 */
+	private function get_zipai_notice_data() {
+		if ( ! function_exists( 'is_plugin_active' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$post_id = isset( $GLOBALS['post']->ID ) ? (int) $GLOBALS['post']->ID : 0;
+		if ( ! $post_id ) {
+			// Read-only screen detection — no state change, so no nonce needed.
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$post_id = isset( $_GET['post'] ) ? absint( wp_unslash( $_GET['post'] ) ) : 0;
+		}
+
+		$zip_ai_active = is_plugin_active( 'zip-ai/zip-ai.php' );
+		$is_zip_built  = $post_id > 0 && AssetLoader::is_zip_built_page( $post_id );
+		// Dismissal is site-wide: once closed, the notice is gone everywhere.
+		$is_dismissed = (bool) get_option( 'spectra_blocks_zipai_notice_dismissed', false );
+
+		// Spectra Pro install/activation state — mirrors the gbs-pro-nudge logic
+		// so the CTA lines up with the nudge the same install would show.
+		$pro_file      = 'spectra-blocks-pro/spectra-blocks-pro.php';
+		$pro_installed = file_exists( SPECTRA_BLOCKS_DIR . '../' . $pro_file );
+		$pro_active    = is_plugin_active( $pro_file );
+		$pro_state     = $pro_active ? 'active' : ( $pro_installed ? 'installed' : 'not_installed' );
+
+		return array(
+			'shouldRender'  => $zip_ai_active && $is_zip_built && ! $is_dismissed,
+			'state'         => $pro_state,
+			'gbsUpgradeUrl' => 'https://wpspectra.com/pricing/?utm_source=free-plugin&utm_medium=block-editor&utm_campaign=zipai-page-notice',
+		);
 	}
 }

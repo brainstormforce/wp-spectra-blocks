@@ -47,6 +47,7 @@ import {
 	BLOCK_RESPONSIVE_KEYS,
 	BUCKET_TOP_LEVEL_STYLE_KEYS,
 	ROOT_ATTRIBUTE_PRESET_REFS,
+	savesAttributesToMarkup,
 	STATE_KEYS,
 } from '../utils/constants';
 import { LEGACY_DEVICE_MAP } from './constants';
@@ -189,6 +190,107 @@ const deepMergeObjects = ( base, override ) => {
 };
 
 /**
+ * How a markup-backed block's flat responsive keys map into core's per-state shape.
+ *
+ * Core keeps a `core/image`'s per-viewport dimensions NESTED under `dimensions`
+ * inside the state — `style['@tablet'].dimensions.width` — and reads nothing
+ * from a flat `style['@tablet'].width`. Verified on 7.1: the nested shape emits
+ * a banded rule — `(480px < width <= 782px)` scoped to `.wp-states-… img` with
+ * `width:400px !important` — while the flat shape emits nothing at all.
+ *
+ * `scale` is core's object-fit control and is stored as `objectFit`.
+ *
+ * @since 1.0.9
+ * @type {Object}
+ */
+const MARKUP_BACKED_STATE_PATHS = Object.freeze( {
+	width: 'dimensions.width',
+	height: 'dimensions.height',
+	aspectRatio: 'dimensions.aspectRatio',
+	scale: 'dimensions.objectFit',
+} );
+
+/**
+ * Migrate ONLY the narrower viewport states of a markup-backed block.
+ *
+ * The base layer is deliberately untouched and the legacy store is deliberately
+ * kept — see the guard in `migrateLegacyResponsiveStore()` for why both matter.
+ * What is safe, and necessary, is lifting the narrower buckets into core's own
+ * state shape: core bands those into media queries at render, and the class it
+ * keys them on (`wp-states-…`) is added at RENDER time, not by `save()`. The
+ * states themselves live only in the block delimiter, which block validation
+ * does not compare — so writing them changes nothing about the saved HTML.
+ *
+ * Without this, a block authored below 7.1 renders none of its tablet or mobile
+ * sizes once the site moves to 7.1: Spectra stops painting image dimensions
+ * there (`paints_core_image_dimensions()` is false) and core has no state to
+ * band. The value is in the store, and nothing reads it.
+ *
+ * An authored state always wins; the store only fills gaps.
+ *
+ * @since 1.0.9
+ * @param {Object} attributes Block attributes as parsed.
+ * @param {Object} store      The canonicalised legacy store.
+ * @param {string} blockName  The block name, for its flat keys.
+ * @return {Object} Attributes carrying the migrated states.
+ */
+const migrateMarkupBackedStates = ( attributes, store, blockName ) => {
+	const flatKeys = applyFilters(
+		'spectra.responsive-controls.block-responsive-keys',
+		BLOCK_RESPONSIVE_KEYS[ blockName ] || [],
+		blockName
+	);
+
+	if ( ! flatKeys.length ) {
+		return attributes;
+	}
+
+	const nextStyle = isPlainObject( attributes.style ) ? { ...attributes.style } : {};
+	let wrote = false;
+
+	[ '@tablet', '@mobile' ].forEach( ( state ) => {
+		const bucket = store[ state ];
+
+		if ( ! isPlainObject( bucket ) ) {
+			return;
+		}
+
+		const target = isPlainObject( nextStyle[ state ] ) ? { ...nextStyle[ state ] } : {};
+		let touched = false;
+
+		flatKeys.forEach( ( key ) => {
+			const path = MARKUP_BACKED_STATE_PATHS[ key ];
+
+			if ( ! path || undefined === bucket[ key ] ) {
+				return;
+			}
+
+			// An authored state wins, at either the nested or the flat position.
+			if ( undefined !== getNestedPath( target, path ) || undefined !== target[ key ] ) {
+				return;
+			}
+
+			setNestedPath( target, path, bucket[ key ] );
+			touched = true;
+		} );
+
+		if ( touched ) {
+			nextStyle[ state ] = target;
+			wrote = true;
+		}
+	} );
+
+	if ( ! wrote ) {
+		return attributes;
+	}
+
+	return {
+		...attributes,
+		style: nextStyle,
+	};
+};
+
+/**
  * Migrate one block's attributes from the legacy store into `style`.
  *
  * Idempotent: a block already in the new shape has no store to migrate and is
@@ -204,6 +306,35 @@ export const migrateLegacyResponsiveStore = ( attributes, blockName ) => {
 
 	if ( ! isPlainObject( rawStore ) || ! Object.keys( rawStore ).length ) {
 		return attributes;
+	}
+
+	/*
+	 * A block whose `save()` serialises its attributes is not migrated at all.
+	 *
+	 * This migration exists to move values into core's shape so core's own
+	 * panels can read them. For `core/image` that move cannot be made without
+	 * changing what the block saves, and every part of it causes harm:
+	 *
+	 *   - rewriting the base fails block validation, because WordPress checks
+	 *     stored HTML against `save( attributes-after-filters )`, and on 7.1 it
+	 *     also changes what renders — `paints_core_image_dimensions()` is
+	 *     `! ViewportSupport::renders_states()`, so the inline width stays in
+	 *     the markup and outranks anything this extension emits (#908);
+	 *   - emptying the store destroys the `lg` bucket, which below 7.1 is what
+	 *     renders: there `remove_core_image_inline_dimensions()` DOES run, the
+	 *     inline dimensions are stripped, and the store paints them. Dropping
+	 *     it silently changes those sites on the next save and breaks the
+	 *     downgrade safety `LegacyStore` is built around.
+	 *
+	 * So the store is left exactly as authored and keeps being served through
+	 * `readLegacyBucket()`, which is what the legacy reader is for. The visible
+	 * cost is that core's OWN per-device panels stay empty on Tablet and Mobile
+	 * for this block until the value is re-authored; Spectra's controls read
+	 * the store directly and show it. That is a cosmetic gap on un-re-saved
+	 * legacy content, traded for never losing an authored value.
+	 */
+	if ( savesAttributesToMarkup( blockName ) ) {
+		return migrateMarkupBackedStates( attributes, canonicaliseStore( rawStore ), blockName );
 	}
 
 	const store = canonicaliseStore( rawStore );
@@ -230,6 +361,7 @@ export const migrateLegacyResponsiveStore = ( attributes, blockName ) => {
 
 		// An empty state key means the base layer, which is the root of `style`.
 		const isRoot = '' === state;
+
 		const target = isRoot
 			? nextStyle
 			: { ...( isPlainObject( nextStyle[ state ] ) ? nextStyle[ state ] : {} ) };
@@ -337,6 +469,7 @@ export const migrateLegacyResponsiveStore = ( attributes, blockName ) => {
 	 */
 	const baseBucket = isPlainObject( store.base ) ? store.base : {};
 	const narrowBuckets = [ store[ '@tablet' ], store[ '@mobile' ] ].filter( isPlainObject );
+
 	const bucketHolds = ( bucket, key, topLevel ) => {
 		if ( topLevel && undefined !== bucket[ key ] ) {
 			return true;

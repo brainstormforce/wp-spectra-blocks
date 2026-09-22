@@ -80,13 +80,17 @@ class GenCssRenderer {
 	 *     'classes'       => array( 'gs-link' => array( 'default' => array( 'color' => 'var(--heading)' ),
 	 *                                                    'hover'   => array( 'color' => '#b36b2c' ) ) ),
 	 *     'wrapperStyles' => array( '.wp-block-spectra-icon svg' => array( 'width' => '1em' ) ),
+	 *     'rootRules'     => array( 'html::before' => array( 'content' => '""' ) ),
+	 *     'atRules'       => array( '@view-transition' => array( 'navigation' => 'auto' ) ),
 	 *     'mediaQuery'    => array( '(max-width: 960px)' => array(
 	 *                                  'classes'       => array( 'gs-x' => array( 'default' => array( 'gap' => '1rem' ) ) ),
-	 *                                  'wrapperStyles' => array( '.x a' => array( 'display' => 'none' ) ) ) ),
+	 *                                  'wrapperStyles' => array( '.x a' => array( 'display' => 'none' ) ),
+	 *                                  'rootRules'     => array( 'html::before' => array( 'display' => 'none' ) ) ) ),
 	 *   )
 	 *
 	 * How each bucket is handled — scope depends on context (frontend vs editor):
 	 *   imports       → `@import url("…");`  (first, verbatim)
+	 *   atRules       → `{at-rule} { … }`  (frontend only, after imports)
 	 *   scopeVars     → `<root> { … }`  (editor uses the WIDE content-size value)
 	 *   remBase       → `:root { font-size: … }`  (frontend only — the source's
 	 *                   own document-root font-size; the rem base, never body's)
@@ -97,7 +101,9 @@ class GenCssRenderer {
 	 *                   editor   `.editor-styles-wrapper .{class}{suffix} { … }` (descendant)
 	 *                   (state → suffix via PSEUDO; a raw state like `[open]` is appended verbatim)
 	 *   wrapperStyles → `<sel-prefix> {selector} { … }`
-	 *   mediaQuery    → each wrapped in `@media {query} { …classes…  …wrapperStyles… }`
+	 *   rootRules     → `{selector} { … }`  (frontend only, no prefix, after wrapperStyles;
+	 *                   preceded by `html:root { --… }` so a root pseudo-element can read the tokens)
+	 *   mediaQuery    → each wrapped in `@media {query} { …classes…  …wrapperStyles…  …rootRules… }`
 	 * where  `<root>`       = `body` (frontend) | `body.editor-styles-wrapper, div.editor-styles-wrapper` (editor)
 	 *        `<sel-prefix>` = `body` (frontend) | `.editor-styles-wrapper` (editor)
 	 * Page isolation comes from the per-post enqueue, so NO page id appears in any
@@ -150,6 +156,11 @@ class GenCssRenderer {
 			$parts[] = '@import url("' . $url . '");';
 		}
 
+		// 0b. Document-level at-rules — front end only.
+		if ( ! $is_editor ) {
+			$parts[] = self::render_wrappers( self::assoc( $payload['atRules'] ?? array() ), '' );
+		}
+
 		// 1. Content-width vars (synthetic) on the root. The editor uses the WIDE
 		// value so the canvas isn't squished below the source's mobile breakpoint.
 		$scope_vars = self::assoc( $payload['scopeVars'] ?? array() );
@@ -198,6 +209,17 @@ class GenCssRenderer {
 		$parts[]  = $rendered['base'];
 		$parts[]  = self::render_wrappers( self::assoc( $payload['wrapperStyles'] ?? array() ), $sel_prefix );
 
+		// 5b. Root-headed rules — front end only, after the wrappers. A pseudo-element
+		// of `html` cannot read tokens printed on `body`, so they re-print on `html:root`.
+		$root_rules = $is_editor ? array() : self::assoc( $payload['rootRules'] ?? array() );
+		$media_root = $is_editor ? array() : array_filter( array_column( self::assoc( $payload['mediaQuery'] ?? array() ), 'rootRules' ) );
+		if ( array() !== $root_rules || array() !== $media_root ) {
+			$tokens  = array_merge( $scope_vars, $root_styles, $preset_lock, $custom_vars );
+			$tokens  = array_filter( $tokens, static fn( $prop ) => str_starts_with( (string) $prop, '--' ), ARRAY_FILTER_USE_KEY );
+			$parts[] = array() === $tokens ? '' : 'html:root { ' . self::vars_to_string( $tokens ) . ' }';
+		}
+		$parts[] = self::render_wrappers( $root_rules, '' );
+
 		// 6. Responsive: breakpoint-state rules (from the class lane) and the
 		// payload's mediaQuery bucket (off-grid / wrapper-level) fold into ONE
 		// map keyed by media condition, emitted mobile-first (ascending min-width).
@@ -208,7 +230,10 @@ class GenCssRenderer {
 			}
 			$inner  = self::render_classes( self::assoc( $buckets['classes'] ?? array() ), $class_prefix, $class_joiner )['base'];
 			$inner .= self::render_wrappers( self::assoc( $buckets['wrapperStyles'] ?? array() ), $sel_prefix );
-			$inner  = trim( $inner );
+			if ( ! $is_editor ) {
+				$inner .= self::render_wrappers( self::assoc( $buckets['rootRules'] ?? array() ), '' );
+			}
+			$inner = trim( $inner );
 			if ( '' !== $inner ) {
 				$by_media[ $query ] = isset( $by_media[ $query ] ) ? trim( $by_media[ $query ] ) . "\n" . $inner : $inner;
 			}
@@ -288,7 +313,7 @@ class GenCssRenderer {
 	 * @since 1.0.0
 	 *
 	 * @param array<string,mixed> $wrapper_styles selector → {prop:value}.
-	 * @param string              $page_scope     Scope prefix (descendant).
+	 * @param string              $page_scope     Scope prefix (descendant); `''` = none (rootRules / atRules).
 	 * @return string
 	 */
 	private static function render_wrappers( array $wrapper_styles, string $page_scope ): string {
@@ -312,7 +337,7 @@ class GenCssRenderer {
 			$decls = self::assoc( $decls );
 			$body  = self::decls_to_string( $decls );
 			if ( '' !== $body ) {
-				$out .= $page_scope . ' ' . $selector . ' { ' . $body . ' }' . "\n";
+				$out .= ( '' === $page_scope ? '' : $page_scope . ' ' ) . $selector . ' { ' . $body . ' }' . "\n";
 			}
 		}
 

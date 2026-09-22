@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,14 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.9 - Tuesday, 22nd September 2026 =
+* Improvement: Icon library upgraded to Font Awesome 7 — expands the icon set while keeping existing icons working through automatic name mapping.
+* Improvement: Zip AI–built pages now show an editor notice with a quick link to Global Styles management.
+* Improvement: New block-toolbar hint on free installs points to Spectra Pro's CSS, JS and global-class editor ( shown only when Pro is inactive ).
+* Fix: Image blocks preserve their authored size and serve the correct responsive image at each viewport ( desktop / tablet / mobile ).
+* Fix: Slider pagination dots now navigate correctly when Enable Loop is turned on.
+* Fix: Premium pattern "Get Access" button in Design Library now navigates to the correct upgrade page instead of the pricing page.
 
 = 1.0.8 - Monday, 14th September 2026 =
 * Fix: Nested blocks ( such as carousels ) respect their per-device settings.

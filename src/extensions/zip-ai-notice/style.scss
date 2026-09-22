@@ -1,0 +1,78 @@
+/**
+ * Zip AI page notice — editor banner styling.
+ *
+ * Accent colour follows the Spectra plugin icon (#5644fd). Rendered full-width
+ * at the top of the editor content region so it reads as part of the editor
+ * chrome, above the canvas — matching the ERA design mock.
+ *
+ * @since 1.0.9
+ */
+
+$spectra-brand: #5644fd;
+
+#spectra-zipai-notice-root {
+	width: 100%;
+}
+
+.spectra-zipai-notice {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 14px 20px;
+	background: rgba(86, 68, 253, 0.06);
+	border-left: 4px solid $spectra-brand;
+
+	&__icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 34px;
+		height: 34px;
+		border-radius: 8px;
+		background: $spectra-brand;
+	}
+
+	&__text {
+		flex: 1 1 auto;
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.5;
+		color: #1e1e1e;
+
+		a {
+			color: $spectra-brand;
+			font-weight: 600;
+			text-decoration: underline;
+			cursor: pointer;
+
+			&:hover,
+			&:focus {
+				color: #3f2fe0;
+			}
+		}
+	}
+
+	&__dismiss {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex: 0 0 auto;
+		width: 28px;
+		height: 28px;
+		padding: 0;
+		border: 0;
+		border-radius: 4px;
+		background: transparent;
+		color: #6b7280;
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			color: #1e1e1e;
+			background: rgba(0, 0, 0, 0.05);
+		}
+	}
+}

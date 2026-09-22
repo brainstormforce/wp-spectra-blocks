@@ -1,7 +1,7 @@
 /**
  * KeyframesPanel — create and manage named CSS @keyframes animations.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 import { useState, useCallback, useEffect } from '@wordpress/element';
@@ -60,7 +60,7 @@ const ITERATION_PRESETS = [
  * @param {Object}   root0
  * @param {Object}   root0.meta     Animation metadata (duration, easing, etc.).
  * @param {Function} root0.onChange Change handler.
- * @since x.x.x
+ * @since 1.0.9
  * @return {Element}
  */
 const AnimationMetaFields = ( { meta, onChange } ) => (
@@ -114,7 +114,7 @@ const AnimationMetaFields = ( { meta, onChange } ) => (
  * @param {Function} root0.onSave   Save callback.
  * @param {Function} root0.onCancel Cancel callback.
  * @param {boolean}  root0.saving   Whether a save is in progress.
- * @since x.x.x
+ * @since 1.0.9
  * @return {Element}
  */
 const KeyframeEditor = ( { name, css, meta = DEFAULT_META, onSave, onCancel, saving } ) => {
@@ -222,7 +222,7 @@ const KeyframeEditor = ( { name, css, meta = DEFAULT_META, onSave, onCancel, sav
 /**
  * KeyframesPanel component.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {Object}   root0                Component props.
  * @param {Function} root0.onStatusChange Callback invoked when the panel's save/dirty status changes.

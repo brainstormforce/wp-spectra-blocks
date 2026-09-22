@@ -1,0 +1,643 @@
+/**
+ * GBS Pro Nudge — centered "Manage Global Styles" upgrade modal.
+ *
+ * Mirrors the Pro GBS manager popup: a backdrop overlay, the blurred manager
+ * shell (left nav + Style Guide preview) behind, and the white-label upgrade
+ * card floating on top.
+ *
+ * @since 1.0.9
+ */
+
+$line: #e5e7eb;
+$text: #374151;
+$mut: #6b7280;
+$head: #111827;
+$brand: #6135ff;
+
+// ── Backdrop ────────────────────────────────────────────────────────────────────
+.spectra-gbs-nudge-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	background: rgba(10, 8, 20, 0.55);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+	animation: spectra-gbs-nudge-fade 0.2s ease-out;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+// ── Modal ───────────────────────────────────────────────────────────────────────
+.spectra-gbs-nudge-modal {
+	display: flex;
+	flex-direction: column;
+	width: min(1040px, 100vw - 64px);
+	height: min(680px, 100vh - 120px);
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.45);
+	overflow: hidden;
+	color: $text;
+	animation: spectra-gbs-nudge-pop 0.24s cubic-bezier(0.32, 0.72, 0, 1);
+
+	&__header {
+		flex-shrink: 0;
+		height: 60px;
+		padding: 0 18px;
+		border-bottom: 1px solid $line;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__brand {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		svg {
+			color: $brand;
+		}
+	}
+
+	&__close {
+		position: absolute;
+		top: 14px;
+		right: 16px;
+		z-index: 2;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		font-size: 24px;
+		line-height: 1;
+		color: $mut;
+
+		&:hover {
+			color: $head;
+		}
+	}
+
+	// ── Body: blurred shell + frosted overlay card ──────────────────────────────
+	&__body {
+		flex: 1;
+		min-height: 0;
+		position: relative;
+	}
+
+	&__shell {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		user-select: none;
+		pointer-events: none;
+	}
+
+	// Left nav
+	&__nav {
+		flex: 0 0 220px;
+		border-right: 1px solid $line;
+		padding: 12px 8px;
+		overflow: hidden;
+	}
+
+	&__navgroup + &__navgroup {
+		margin-top: 10px;
+	}
+
+	&__navlabel {
+		margin: 0;
+		padding: 8px 12px 4px;
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: $mut;
+	}
+
+	&__navitem {
+		display: block;
+		padding: 8px 12px;
+		border-radius: 6px;
+		font-size: 13px;
+		color: $text;
+
+		&.is-active {
+			background: rgba(97, 53, 255, 0.1);
+			color: $brand;
+			font-weight: 500;
+		}
+	}
+
+	// Style Guide view
+	&__view {
+		flex: 1;
+		padding: 24px 28px;
+		overflow: hidden;
+	}
+
+	&__viewtitle {
+		margin: 0 0 20px;
+		font-size: 20px;
+		font-weight: 600;
+		color: $head;
+	}
+
+	&__sublabel {
+		margin: 20px 0 10px;
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: $mut;
+	}
+
+	&__swatches {
+		display: flex;
+		gap: 10px;
+	}
+
+	&__swatch {
+		width: 52px;
+		height: 52px;
+		border-radius: 8px;
+		border: 1px solid rgba(0, 0, 0, 0.06);
+	}
+
+	&__type {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		color: $head;
+
+		&-h1 {
+			font-size: 26px;
+			font-weight: 700;
+		}
+
+		&-h2 {
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		&-body {
+			font-size: 14px;
+			color: $text;
+		}
+	}
+
+	&__spacing {
+		display: flex;
+		align-items: flex-end;
+		gap: 12px;
+	}
+
+	&__space {
+		display: block;
+		background: rgba(97, 53, 255, 0.25);
+		border-radius: 3px;
+	}
+
+	// ── Frosted overlay + upgrade card ──────────────────────────────────────────
+	&__overlay {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 24px;
+		background: rgba(255, 255, 255, 0.55);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+	}
+
+	&__card {
+		width: 480px;
+		max-width: 100%;
+		padding: 36px 32px;
+		text-align: center;
+		background: #fff;
+		border: 1px solid $line;
+		border-radius: 16px;
+		box-shadow: 0 24px 56px rgba(0, 0, 0, 0.16);
+	}
+
+	&__lock {
+		display: inline-flex;
+		margin-bottom: 16px;
+		color: $head;
+	}
+
+	&__heading {
+		margin: 0 0 12px;
+		font-size: 21px;
+		font-weight: 700;
+		line-height: 1.3;
+		color: $head;
+	}
+
+	&__heading-name {
+		display: block;
+	}
+
+	&__cardtext {
+		margin: 0 auto 20px;
+		max-width: 400px;
+		font-size: 14px;
+		line-height: 1.55;
+		color: $mut;
+	}
+
+	// Primary upgrade CTA button.
+	&__cta {
+		appearance: none;
+		border: none;
+		cursor: pointer;
+		font-family: inherit;
+		line-height: 1;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 0;
+		padding: 12px 22px;
+		font-size: 14px;
+		font-weight: 600;
+		color: #fff;
+		background: $brand;
+		border-radius: 10px;
+		text-decoration: none;
+		transition: background 0.15s;
+
+		&:hover,
+		&:focus {
+			color: #fff;
+			background: #410cff;
+		}
+
+		svg {
+			flex-shrink: 0;
+		}
+	}
+
+	&__tip {
+		margin: 0 auto;
+		max-width: 400px;
+		padding: 10px 12px;
+		text-align: left;
+		font-size: 12px;
+		line-height: 1.5;
+		color: $mut;
+		background: #f3f4f6;
+		border-radius: 6px;
+	}
+}
+
+// ── Docked flyout (toolbar "Block CSS & JS") ────────────────────────────────────
+.spectra-gbs-nudge-flyout {
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 300px;
+	min-height: 220px;
+	z-index: 100000;
+	background: #fff;
+	border-top: 1px solid $line;
+	box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.06);
+	overflow: hidden;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
+	animation: spectra-gbs-nudge-rise 0.15s ease-out both;
+
+	&__shell {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		pointer-events: none;
+		user-select: none;
+	}
+
+	&__tabbar {
+		display: flex;
+		align-items: stretch;
+		background: #f3f4f6;
+		border-bottom: 1px solid $line;
+		flex-shrink: 0;
+	}
+
+	&__block-label {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 8px 12px;
+		font-size: 12px;
+		font-weight: 500;
+		color: $head;
+		border-right: 1px solid $line;
+
+		svg {
+			color: $brand;
+		}
+	}
+
+	&__token {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		padding: 0 12px;
+		border-right: 1px solid $line;
+		color: $mut;
+
+		code {
+			font-family: Consolas, "SF Mono", "Fira Code", monospace;
+			font-size: 11px;
+			color: $head;
+		}
+
+		span {
+			font-size: 11px;
+		}
+	}
+
+	&__tabs {
+		display: flex;
+		align-items: stretch;
+		gap: 2px;
+		flex: 1;
+		padding: 6px 6px 0;
+		overflow: hidden;
+	}
+
+	&__tab {
+		display: inline-flex;
+		align-items: center;
+		padding: 7px 11px;
+		font-size: 12px;
+		color: $text;
+		white-space: nowrap;
+		border-bottom: 2px solid transparent;
+		border-radius: 8px 8px 0 0;
+
+		&.is-active {
+			color: $head;
+			background: #fff;
+			border-bottom-color: #2563eb;
+			font-weight: 500;
+		}
+	}
+
+	&__panels {
+		flex: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		overflow: hidden;
+	}
+
+	&__panel {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		min-width: 0;
+
+		&--css {
+			border-right: 1px solid $line;
+		}
+	}
+
+	&__panel-header {
+		padding: 6px 12px;
+		background: #f3f4f6;
+		border-bottom: 1px solid $line;
+		font-size: 11px;
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		color: $text;
+		flex-shrink: 0;
+	}
+
+	&__code {
+		margin: 0;
+		padding: 12px 14px;
+		flex: 1;
+		overflow: hidden;
+		font-family: Consolas, "SF Mono", "Fira Code", "Roboto Mono", monospace;
+		font-size: 12.5px;
+		line-height: 1.7;
+		color: $head;
+		white-space: pre;
+
+		.tk-sel,
+		.tk-kw {
+			color: #1d4ed8;
+		}
+
+		.tk-prop {
+			color: #c2410c;
+		}
+
+		.tk-num {
+			color: #2563eb;
+		}
+
+		.tk-str,
+		.tk-var {
+			color: #d97706;
+		}
+
+		.tk-fn {
+			color: #7c3aed;
+		}
+
+		.tk-com {
+			color: #6b7280;
+			font-style: italic;
+		}
+	}
+
+	&__footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+		padding: 8px 14px;
+		background: #f3f4f6;
+		border-top: 1px solid $line;
+		font-size: 11px;
+		color: $mut;
+		flex-shrink: 0;
+
+		code {
+			font-family: Consolas, "SF Mono", "Fira Code", monospace;
+			color: $text;
+			background: #fff;
+			border: 1px solid $line;
+			border-radius: 4px;
+			padding: 1px 6px;
+		}
+	}
+
+	&__overlay {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 20px;
+		background: rgba(255, 255, 255, 0.55);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
+	}
+
+	&__close {
+		position: absolute;
+		top: 8px;
+		right: 12px;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		font-size: 22px;
+		line-height: 1;
+		color: $text;
+
+		&:hover {
+			color: $head;
+		}
+	}
+
+	&__card {
+		width: 440px;
+		max-width: 100%;
+		padding: 20px 24px;
+		text-align: center;
+		background: #fff;
+		border: 1px solid $line;
+		border-radius: 14px;
+		box-shadow: 0 24px 56px rgba(0, 0, 0, 0.16);
+	}
+
+	&__lock {
+		display: inline-flex;
+		margin-bottom: 10px;
+		color: $head;
+
+		svg {
+			width: 26px;
+			height: 26px;
+		}
+	}
+
+	&__heading {
+		margin: 0 0 6px;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.3;
+		color: $head;
+	}
+
+	&__text {
+		margin: 0 auto 14px;
+		max-width: 360px;
+		font-size: 13px;
+		line-height: 1.5;
+		color: $mut;
+	}
+
+	&__cta {
+		appearance: none;
+		border: none;
+		cursor: pointer;
+		font-family: inherit;
+		line-height: 1;
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 0;
+		padding: 12px 22px;
+		font-size: 14px;
+		font-weight: 600;
+		color: #fff;
+		background: $brand;
+		border-radius: 8px;
+		text-decoration: none;
+		transition: background 0.15s;
+
+		&:hover,
+		&:focus {
+			color: #fff;
+			background: #410cff;
+		}
+
+		svg {
+			flex-shrink: 0;
+		}
+	}
+
+	&__tip {
+		margin: 0 auto;
+		max-width: 400px;
+		padding: 10px 12px;
+		text-align: left;
+		font-size: 12px;
+		line-height: 1.5;
+		color: $mut;
+		background: #f3f4f6;
+		border-radius: 6px;
+	}
+}
+
+// ── Block inspector "Global Styles" panel (free nudge) ──────────────────────────
+.spectra-gbs-nudge-inspector {
+
+	&__desc {
+		margin: 0 0 12px;
+		font-size: 12px;
+		line-height: 1.5;
+		color: #757575;
+	}
+
+	&__btn.components-button {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+@keyframes spectra-gbs-nudge-fade {
+
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes spectra-gbs-nudge-rise {
+
+	from {
+		transform: translateY(100%);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+@keyframes spectra-gbs-nudge-pop {
+
+	from {
+		transform: scale(0.96);
+		opacity: 0;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}

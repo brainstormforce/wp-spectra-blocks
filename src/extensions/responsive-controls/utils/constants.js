@@ -5,7 +5,7 @@
  * It includes device types, breakpoint mappings, attribute keys to track,
  * and default data structures for responsive attributes.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 /**
@@ -23,7 +23,7 @@ import { __ } from '@wordpress/i18n';
  *
  * This can be extended by third-party developers using the WordPress filter system.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedResponsiveControlsBlocks', [] );
@@ -34,7 +34,7 @@ export const EXCLUDED_BLOCKS = applyFilters( 'spectra.excludedResponsiveControls
  * This can be extended by third-party developers using the WordPress filter system.
  * Note: Blocks with Spectra prefixes are automatically supported regardless of this list.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const SUPPORTED_BLOCKS = applyFilters( 'spectra.supportedResponsiveControlsBlocks', [ 'core/image' ] );
@@ -44,17 +44,55 @@ export const SUPPORTED_BLOCKS = applyFilters( 'spectra.supportedResponsiveContro
  *
  * Any block with these prefixes will automatically receive responsive control capabilities.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const ALLOWED_PREFIXES = [ 'spectra/', 'spectra-pro/' ];
+
+/**
+ * Does this block's `save()` write its attributes into post markup?
+ *
+ * Spectra's own blocks are server-rendered: `save()` emits nothing that depends
+ * on attributes, so changing an attribute as the block is parsed is invisible to
+ * block validation. Anything else in scope — `core/image` by default, plus
+ * whatever `spectra.supportedResponsiveControlsBlocks` adds — has a real
+ * `save()`, and `core/image` serialises `width` / `height` straight into
+ * `<img style="…">`.
+ *
+ * That difference decides WHAT the legacy migration may touch. WordPress
+ * validates stored HTML against `save( attributes-after-filters )`, so for these
+ * blocks rewriting a serialised attribute IS the validation failure: the block
+ * shows "unexpected or invalid content", and Attempt Block Recovery then
+ * persists the rewrite, losing the authored size (#908).
+ *
+ * It decides more than validation. For `core/image` on 7.1 the base layer is
+ * what the front end actually renders — `paints_core_image_dimensions()` is
+ * `! ViewportSupport::renders_states()`, so `remove_core_image_inline_dimensions()`
+ * never runs and the inline width in the markup stands, with core banding the
+ * viewport states itself. The root attribute is therefore AUTHORED, not the
+ * scratch projection `migrate-legacy.js` assumes it to be. Rewriting it does not
+ * correct a stale value, it silently resizes the image.
+ *
+ * The prefix test rather than a list: a block reaching this extension without a
+ * Spectra prefix arrived through `SUPPORTED_BLOCKS` or the filter above, and
+ * third-party blocks are exactly the ones whose markup we cannot assume is
+ * attribute-independent. New additions get the safe path by default, and so does
+ * an unknown name — an empty block name answers TRUE, because the mutating path
+ * is the one that can corrupt content.
+ *
+ * @since 1.0.9
+ * @param {string} name The block name.
+ * @return {boolean} True when parse-time attribute changes would invalidate the block.
+ */
+export const savesAttributesToMarkup = ( name ) =>
+	! ALLOWED_PREFIXES.some( ( prefix ) => !! name && name.startsWith( prefix ) );
 
 /**
  * Device view type constants.
  *
  * These constants represent the three device views available in the WordPress editor.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {string}
  */
 export const MOBILE = 'Mobile';
@@ -67,7 +105,7 @@ export const DESKTOP = 'Desktop';
  * These are the top-level attributes that can have different values
  * across different device types.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const RESPONSIVE_KEYS = Object.freeze( [ 'style', 'layout', 'fontSize', 'fontFamily', 'borderColor' ] );
@@ -75,7 +113,7 @@ export const RESPONSIVE_KEYS = Object.freeze( [ 'style', 'layout', 'fontSize', '
 /**
  * Specific style categories that should be tracked for responsive behavior.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const STYLE_RESPONSIVE_KEYS = Object.freeze( [ 'spacing', 'border', 'typography', 'shadow', 'layout' ] );
@@ -99,7 +137,7 @@ export const STYLE_RESPONSIVE_KEYS = Object.freeze( [ 'spacing', 'border', 'typo
  *
  * Keep in sync with `ResponsiveControls::BUCKET_TOP_LEVEL_STYLE_KEYS`.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const BUCKET_TOP_LEVEL_STYLE_KEYS = Object.freeze( [
@@ -141,7 +179,7 @@ export const SCRATCH_ROOT_ATTRIBUTE_KEYS = Object.freeze(
  * Iterating only `STYLE_RESPONSIVE_KEYS` never visited `fontSize`, `fontFamily`
  * or `borderColor`, so they were neither read from nor written to a state.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const STATE_KEYS = Object.freeze( [
@@ -158,7 +196,7 @@ export const STATE_KEYS = Object.freeze( [
  * These are WordPress core's viewport state names, adopted so that Spectra's
  * store and core's `style` attribute describe breakpoints identically.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Object}
  */
 
@@ -177,7 +215,7 @@ export const BREAKPOINT_TYPE_MAP = Object.freeze( {
  *
  * Format: [presetAttributeKey, customAttributePath]
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 /**
@@ -338,7 +376,7 @@ export const ROOT_ATTRIBUTE_PRESET_REFS = Object.freeze( {
  * Maps each block name to an array of attributes that should have responsive behavior.
  * Only includes attributes that actually exist in the block's block.json definition.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Object}
  */
 export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
@@ -437,7 +475,7 @@ export const BLOCK_RESPONSIVE_KEYS = Object.freeze( {
 /**
  * List of blocks and their attributes to maintain for backward compatibility.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Object}
  */
 export const BACKWARD_COMPATIBILITY_ATTRIBUTES = {
@@ -453,7 +491,7 @@ export const BACKWARD_COMPATIBILITY_ATTRIBUTES = {
  * IMPORTANT: Panel names must match WordPress core capitalization exactly.
  * These strings are translated by WordPress core using the 'default' textdomain.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Array}
  */
 export const RESPONSIVE_CONTROLS_PANELS = [
@@ -501,7 +539,7 @@ export const RESPONSIVE_CONTROLS_PANEL_TEXT_DOMAINS = [ 'default', 'spectra-bloc
 /**
  * Global constants for DOM selectors and comparison values.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @constant {string} DROPDOWN_MENU_SELECTOR - Selector for dropdown menu elements
  * @constant {string} MENU_ITEM_BUTTON_SELECTOR - Selector for menu item buttons
@@ -516,7 +554,7 @@ export const MENU_ITEM_SELECTOR = '.components-menu-item__item';
  * English reset texts for fast-path checking.
  * For translated versions, use the isResetText() helper function.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @type {Set<string>}
  */
 export const RESET_TEXTS = new Set( [ 'reset', 'reset all' ] );
@@ -527,7 +565,7 @@ export const RESET_TEXTS = new Set( [ 'reset', 'reset all' ] );
  * IMPORTANT: Handles translated reset button text for non-English languages.
  * WordPress core translates "Reset" and "Reset all" to the current language.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {string} text - The text to check (should be already lowercased)
  * @return {boolean} True if text represents a reset action
@@ -556,7 +594,7 @@ export const isResetText = ( text ) => {
  *
  * IMPORTANT: Handles translated "Reset all" button text for non-English languages.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {string} text - The text to check (should be already lowercased)
  * @return {boolean} True if text represents "Reset all"

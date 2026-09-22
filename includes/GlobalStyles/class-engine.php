@@ -348,10 +348,13 @@ class Engine {
 		// '.wp-block-spectra-icon svg'        => array( 'width' => '1em', 'height' => '1em' ),
 		// ':is(.wp-element-button, .wp-block-button__link)' => array( 'line-height' => 'normal' ),
 		// ),
+		// 'rootRules'     => array( 'html::before' => array( 'content' => '""' ) ),   // root-headed, unprefixed
+		// 'atRules'       => array( '@view-transition' => array( 'navigation' => 'auto' ) ),
 		// 'mediaQuery'    => array(                                       // free-form media string
 		// '(max-width: 960px)' => array(
 		// 'classes'       => array( 'tdrx-hdr-nav' => array( 'default' => array( 'gap' => '1.5rem' ) ) ),
 		// 'wrapperStyles' => array( '.tdrx-hdr-nav a:not(.tdrx-hdr-cta)' => array( 'display' => 'none' ) ),
+		// 'rootRules'     => array( 'html::before' => array( 'display' => 'none' ) ),
 		// ),
 		// ),
 		// )
@@ -539,8 +542,9 @@ class Engine {
 
 	/**
 	 * Region-keyed V2: render the import's site-wide NON-CLASS buckets
-	 * (`rootStyles` / `wrapperStyles` / `scopeVars` / `presetLock` / `imports` /
-	 * `mediaQuery`) from the GBS option (`OPTION_KEY_USER_CSS`) into an inline
+	 * (`rootStyles` / `wrapperStyles` / `rootRules` / `atRules` / `scopeVars` /
+	 * `presetLock` / `imports` / `mediaQuery`) from the GBS option
+	 * (`OPTION_KEY_USER_CSS`) into an inline
 	 * stylesheet on every page. The site-wide `classes` + `keyframes` in that
 	 * option are already rendered by `enqueue_stylesheet`/`render_user_classes`,
 	 * so they are excluded here to avoid double output.
@@ -628,7 +632,7 @@ class Engine {
 		// GenCssRenderer's schema, so it is rendered separately below. `variables`
 		// carries the user's custom CSS variables (the `/custom-vars` bucket) — it
 		// is site-wide and rendered on the root by GenCssRenderer.
-		$buckets = array( 'rootStyles', 'wrapperStyles', 'scopeVars', 'presetLock', 'variables', 'imports', 'mediaQuery' );
+		$buckets = array( 'rootStyles', 'wrapperStyles', 'rootRules', 'atRules', 'scopeVars', 'presetLock', 'variables', 'imports', 'mediaQuery' );
 		if ( $pro_owns_utility_sheet ) {
 			$buckets[] = 'classes';
 		}

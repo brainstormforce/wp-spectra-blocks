@@ -1,13 +1,13 @@
 /**
  * Shared helpers for the bucket-based CSS class editor.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 /**
  * Parse a raw "property: value" line into an object or null.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {string} line Raw declaration like "color: red".
  * @return {{ property: string, value: string }|null} Parsed declaration or null.
@@ -25,7 +25,7 @@ export function parseLine( line ) {
 /**
  * Convert a stored bucket (flat dict or array of objects) to display text.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {Object|Array|null} bucket Stored bucket value.
  * @return {string} Multi-line CSS declaration text.
@@ -50,7 +50,7 @@ export function bucketToText( bucket ) {
 /**
  * Parse textarea text back to the flat dict storage format.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {string} text Multi-line declaration text.
  * @return {Object} Flat property→value dict.
@@ -73,7 +73,7 @@ export function textToBucket( text ) {
  * Legacy raw CSS strings are parsed: declarations inside `{ }` are extracted,
  * or the whole string is used verbatim if no braces are found.
  *
- * @since x.x.x
+ * @since 1.0.9
  *
  * @param {string|Object|null} stored Stored class value.
  * @param {string}             bucket Bucket id (e.g. 'default').

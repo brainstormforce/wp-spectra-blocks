@@ -27,3 +27,10 @@
 		}
 	}
 }
+
+// See the note in `blocks/content/style.scss` — this block emits the same core
+// classes and also defaults to `p`, so core's `:root :where(p.has-background)`
+// padding reaches it the same way once `wp-block-paragraph` is a dependency.
+p:where(.wp-block-spectra-modal-child-content).has-background {
+	padding: 0;
+}

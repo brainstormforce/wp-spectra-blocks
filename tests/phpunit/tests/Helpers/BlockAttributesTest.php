@@ -24,6 +24,90 @@ use WP_UnitTestCase;
 class BlockAttributesTest extends WP_UnitTestCase {
 
 	/**
+	 * `htmlAttributes` is source-authored, and core's
+	 * `get_block_wrapper_attributes()` prints the attribute NAME raw while
+	 * escaping only the value — so a second attribute smuggled inside a name
+	 * (`data-a="" onmouseover="…" data-b`) walked straight past the `on*` check.
+	 * The name must match a strict shape, and a URL-valued attribute must have
+	 * its scheme filtered, because `esc_attr()` never blocks `javascript:` and
+	 * `wp_kses_data()` on a bare attribute list is a no-op.
+	 *
+	 * @return void
+	 */
+	public function test_html_attributes_never_print_a_script_url_or_a_second_attribute(): void {
+		// `get_block_wrapper_attributes()` reads the block being rendered.
+		\WP_Block_Supports::$block_to_render = array(
+			'blockName' => 'core/paragraph',
+			'attrs'     => array(),
+		);
+
+		$html = BlockAttributes::get_wrapper_attributes(
+			array(
+				'htmlAttributes' => array(
+					'data-tab'                                => 'pricing',
+					'role'                                    => 'tab',
+					'aria-label'                              => 'Pricing',
+					'Data-Upper'                              => 'kept-lowercased',
+					'href'                                    => 'https://example.test/pricing',
+					'data-a="" onmouseover="alert(1)" data-b' => '1',
+					' onmouseover'                            => 'alert(1)',
+					'onclick'                                 => 'alert(1)',
+					'srcdoc'                                  => '<script>alert(1)</script>',
+				),
+			)
+		);
+
+		// The attributes a design may legitimately author still land.
+		$this->assertStringContainsString( 'data-tab="pricing"', $html );
+		$this->assertStringContainsString( 'role="tab"', $html );
+		$this->assertStringContainsString( 'aria-label="Pricing"', $html );
+		$this->assertStringContainsString( 'data-upper="kept-lowercased"', $html );
+		$this->assertStringContainsString( 'href="https://example.test/pricing"', $html );
+
+		// Nothing that can execute may reach the wrapper.
+		$this->assertStringNotContainsString( 'onmouseover', $html );
+		$this->assertStringNotContainsString( 'onclick', $html );
+		$this->assertStringNotContainsString( 'srcdoc', $html );
+		$this->assertStringNotContainsString( 'data-a', $html );
+	}
+
+	/**
+	 * A `javascript:` URL in an authored `href` is stripped rather than escaped.
+	 * On `spectra/button` the wrapper `href` is the ONLY one on the `<a>` when
+	 * `linkURL` is empty, so `esc_attr()` alone would have shipped a live
+	 * script URL an editor could persist.
+	 *
+	 * @dataProvider provide_script_urls
+	 *
+	 * @param string $url The authored URL.
+	 * @return void
+	 */
+	public function test_html_attributes_strip_script_schemes_from_url_attributes( string $url ): void {
+		\WP_Block_Supports::$block_to_render = array(
+			'blockName' => 'core/paragraph',
+			'attrs'     => array(),
+		);
+
+		$html = BlockAttributes::get_wrapper_attributes( array( 'htmlAttributes' => array( 'href' => $url ) ) );
+
+		$this->assertStringNotContainsString( 'javascript', strtolower( $html ) );
+		$this->assertStringNotContainsString( 'vbscript', strtolower( $html ) );
+	}
+
+	/**
+	 * @return array<string, array{string}>
+	 */
+	public function provide_script_urls(): array {
+		return array(
+			'plain'          => array( 'javascript:alert(1)' ),
+			'spaced'         => array( 'javascript :alert(1)' ),
+			'mixed case'     => array( 'JaVaScRiPt:alert(1)' ),
+			'vbscript'       => array( 'vbscript:msgbox(1)' ),
+			'leading spaces' => array( '   javascript:alert(1)' ),
+		);
+	}
+
+	/**
 	 * When no className is present the legacy helper class is still emitted.
 	 *
 	 * @return void

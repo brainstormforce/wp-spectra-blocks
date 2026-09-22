@@ -4,7 +4,7 @@
  * This module provides on-the-fly support for legacy root-level attributes
  * to the new responsiveControls structure in the block editor for backward compatibility.
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 /**
@@ -27,7 +27,7 @@ import { hasValue, isObject } from './helpers';
  * and if they are missing from all responsive breakpoints. If so, it maps
  * them to the 'base' layer for backward compatibility.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @param {Function} BlockEdit Original block edit component.
  * @return {Function} Wrapped block edit component.
  */
@@ -64,6 +64,14 @@ export const withBackwardCompatibility = createHigherOrderComponent( ( BlockEdit
 				 * store, so checking only the store re-mapped the attribute on
 				 * EVERY open: the write refilled the store, the next parse
 				 * emptied it again, and the post opened dirty forever.
+				 *
+				 * That holds for every block this list can currently name. A
+				 * markup-backed block (`savesAttributesToMarkup()`) keeps its
+				 * store on purpose — only its narrower states are migrated, and
+				 * its base is promoted after validation rather than into
+				 * `style` — so should a `core/*` entry ever join
+				 * `BACKWARD_COMPATIBILITY_ATTRIBUTES`, `inStore` below would
+				 * stay true where the others go false.
 				 */
 				const inStyle = [ style, style?.[ '@tablet' ], style?.[ '@mobile' ] ].some(
 					( layer ) => hasValue( layer?.[ attr ] )

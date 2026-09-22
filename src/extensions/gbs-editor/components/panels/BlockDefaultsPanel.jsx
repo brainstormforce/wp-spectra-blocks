@@ -4,7 +4,7 @@
  * Reads/writes from window.spectra_editor_gs (localized by Pro plugin).
  * Uses iframe postMessage for live preview (same protocol as dashboard).
  *
- * @since x.x.x
+ * @since 1.0.9
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from '@wordpress/element';
@@ -375,7 +375,7 @@ const SELECT_STYLES = {
 /**
  * BlockDefaultsPanel — full port of the dashboard BlockDefaults UI.
  *
- * @since x.x.x
+ * @since 1.0.9
  * @return {Element}
  */
 const BlockDefaultsPanel = () => {

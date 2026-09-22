@@ -93,7 +93,7 @@
 	},
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
+	"style": [ "file:./style-index.css", "wp-block-paragraph" ],
 	"attributes": {
 		"anchor": {
 			"type": "string"

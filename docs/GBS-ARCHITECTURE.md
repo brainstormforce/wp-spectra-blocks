@@ -106,6 +106,13 @@ Everything lives in one PHP array keyed in `spectra_blocks_pro_gs_user_css`:
     'wrapperStyles' => [             // Arbitrary selector → declarations (for elements you don't own)
         '.wp-block-button__link' => [ 'border-radius' => '4px' ],
     ],
+    'rootRules'     => [             // Root-headed selector → declarations; printed VERBATIM (no `body ` prefix), front end only
+        'html::before' => [ 'content' => '""', 'position' => 'fixed' ],
+    ],                               // EVERY top-level compound must be root-headed (`html, *` is refused);
+                                     // a comma inside `:is()`/`:not()` does not split the list
+    'atRules'       => [             // `@view-transition` / `@property --name` → descriptors; keys allow-listed (AT_RULE_KEY_PATTERN), front end only
+        '@view-transition' => [ 'navigation' => 'auto' ],
+    ],
     'scopeVars'     => [             // Overrides WordPress layout variables
         '--wp--style--global--content-size' => '1164px',
     ],
@@ -162,15 +169,28 @@ All import write paths (`/bulk`, `/sitewide`, `/save`) apply a **merge, not repl
 
 - `classes` and `keyframes`: entry-level merge — new entry wins on collision,
   existing entries not in the import are kept.
-- `rootStyles`, `wrapperStyles`, `scopeVars`, `presetLock`, `mediaQuery`:
-  entry-level merge — `null` value deletes the entry.
+- `rootStyles`, `wrapperStyles`, `rootRules`, `atRules`, `scopeVars`,
+  `presetLock`, `mediaQuery`: entry-level merge — `null` value deletes the entry.
+  An `atRules` key outside the allow-list, left with no descriptor by the
+  Sanitizer, or — for `@property` — missing a descriptor the at-rule needs to be
+  valid at all (`syntax` + `inherits`, plus `initial-value` unless the syntax is
+  the universal one) is not stored and comes back in the ack as
+  `dropped_at_rules: string[]`. A `rootRules` key whose every top-level compound
+  is not root-headed (`html` / `body` / `:root` / `::view-transition…`), or which
+  carries `{`/`}`/`;`/`<` or a CSS comment delimiter, is not stored and comes back
+  as `dropped_root_rules: string[]` — base bucket and `mediaQuery[q]` sub-bucket
+  through the same list. Both acks are on `/sitewide` and `/save`, both scopes.
+  A `null` value is a DELETE, settled before either allow-list, and is never
+  reported as a drop.
+  `atRules` descriptors may be JSON booleans (`inherits: false`); they are
+  coerced to the CSS keyword before the Sanitizer sees them.
 - `imports`: union + dedup.
 - `replace: true` (POST `/save`) is the only way to hard-replace. Its semantics
   differ per scope:
   - `scope=page` → full overwrite (merge onto an empty base), clearing stale
     `gs-*` classes on re-import.
   - `scope=global` → resets the **import-owned non-class buckets**
-    (`presetLock`/`rootStyles`/`wrapperStyles`/`scopeVars`/`mediaQuery`) while
+    (`presetLock`/`rootStyles`/`wrapperStyles`/`rootRules`/`atRules`/`scopeVars`/`mediaQuery`) while
     keeping `v`/`classes`/`keyframes`/`imports`, so a fresh `replace_site` build
     cannot inherit a prior build's body-level palette.
   - `reset_classes: true` (global only) additionally drops the `classes` bucket.
