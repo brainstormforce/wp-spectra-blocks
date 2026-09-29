@@ -10,6 +10,8 @@ import { Spinner, Icon } from '@wordpress/components';
 import { edit as editIcon } from '@wordpress/icons';
 import { useKeyframes }        from '../../hooks/useKeyframes.js';
 import { regenerateEditorCSS } from '../../utils/liveVars.js';
+import { gbsNotices }         from '../../notices/gbsNotices.js';
+import { validateName }       from '../../utils/validators.js';
 import CSSAutocomplete         from '../CSSAutocomplete.jsx';
 
 const DEFAULT_CSS = '0%   { opacity: 0; transform: translateY(8px); }\n100% { opacity: 1; transform: translateY(0); }';
@@ -243,29 +245,87 @@ const KeyframesPanel = ( { onStatusChange } ) => {
 	const names = Object.keys( keyframes );
 
 	const handleAdd = useCallback( async () => {
+		// Spaces are folded to hyphens first — a keyframe name is usually typed as
+		// prose ("fade in"), and correcting it silently is kinder than rejecting it.
 		const n = newName.trim().replace( /\s+/g, '-' );
-		if ( ! n ) { setNameError( __( 'Name required.', 'spectra-blocks' ) ); return; }
-		if ( ! /^[a-zA-Z][a-zA-Z0-9_-]*$/.test( n ) ) { setNameError( __( 'Must start with a letter; letters, digits, hyphens, underscores only.', 'spectra-blocks' ) ); return; }
-		if ( keyframes[ n ] ) { setNameError( __( 'A keyframe with this name already exists.', 'spectra-blocks' ) ); return; }
+		const problem = validateName( n, { kind: 'keyframe', taken: Object.keys( keyframes ) } );
+		if ( problem ) {
+			setNameError( problem );
+			return;
+		}
 		setNameError( '' );
-		await saveKeyframe( n, { css: DEFAULT_CSS, meta: newMeta } );
+		try {
+			await saveKeyframe( n, { css: DEFAULT_CSS, meta: newMeta } );
+		} catch ( err ) {
+			// Keep the typed name so the user can retry without re-entering it.
+			setNameError(
+				err?.message || __( 'Could not create the keyframes.', 'spectra-blocks' )
+			);
+			return;
+		}
 		setNewName( '' );
 		setNewMeta( { ...DEFAULT_META } );
 		setEditing( n );
 		regenerateEditorCSS();
+		gbsNotices.success(
+			sprintf(
+				/* translators: %s: keyframe animation name. */
+				__( 'Keyframes %s created.', 'spectra-blocks' ),
+				n
+			)
+		);
 	}, [ newName, newMeta, keyframes, saveKeyframe ] );
 
 	const handleSave = useCallback( async ( name, data ) => {
-		await saveKeyframe( name, data );
+		try {
+			await saveKeyframe( name, data );
+		} catch ( err ) {
+			// Leave the editor open so the unsaved CSS isn't lost.
+			gbsNotices.error(
+				err?.message ||
+					sprintf(
+						/* translators: %s: keyframe animation name. */
+						__( 'Could not save the %s keyframes.', 'spectra-blocks' ),
+						name
+					)
+			);
+			return;
+		}
 		setEditing( null );
 		regenerateEditorCSS();
+		gbsNotices.success(
+			sprintf(
+				/* translators: %s: keyframe animation name. */
+				__( 'Keyframes %s saved.', 'spectra-blocks' ),
+				name
+			)
+		);
 	}, [ saveKeyframe ] );
 
 	const handleDelete = useCallback( async ( name ) => {
-		await deleteKeyframe( name );
+		try {
+			await deleteKeyframe( name );
+		} catch ( err ) {
+			gbsNotices.error(
+				err?.message ||
+					sprintf(
+						/* translators: %s: keyframe animation name. */
+						__( 'Could not delete the %s keyframes.', 'spectra-blocks' ),
+						name
+					)
+			);
+			return;
+		}
 		setConfirmDelete( null );
 		if ( editing === name ) {setEditing( null );}
 		regenerateEditorCSS();
+		gbsNotices.success(
+			sprintf(
+				/* translators: %s: keyframe animation name. */
+				__( 'Keyframes %s deleted.', 'spectra-blocks' ),
+				name
+			)
+		);
 	}, [ deleteKeyframe, editing ] );
 
 	if ( loading ) {

@@ -29,7 +29,7 @@ const here = dirname( fileURLToPath( import.meta.url ) );
 const plugin = resolve( here, '..', '..' );
 
 // Canonical form: strip comments, quotes (the minifier drops them where it can) and
-// whitespace around punctuation, so a pin matches both the pretty SCSS src and the
+// whitespace around punctuation and `>`, so a pin matches both the pretty SCSS src and the
 // minified build (value-internal spaces, e.g. `8px 16px` and descendant
 // combinators, are kept as single spaces). `::after` → `:after` and `0 !important`
 // → `0!important` (the minifier's spellings). Pins go through the same function
@@ -41,7 +41,7 @@ const canon = ( s ) =>
 		.replace( /"/g, '' )
 		.replace( /::/g, ':' )
 		.replace( /\s*!/g, '!' )
-		.replace( /\s*([{};,])\s*/g, '$1' )
+		.replace( /\s*([{};,>])\s*/g, '$1' )
 		.replace( /\s*:\s*/g, ':' )
 		.replace( /;}/g, '}' ) // drop the trailing semicolon src keeps but the minifier strips
 		.replace( /\s+/g, ' ' )
@@ -163,11 +163,6 @@ const PINS = [
 	// field class paints it (backdrop-filter/transform/opacity). Lifting the WRAPPER is
 	// the usability floor — absent, the options paint behind the next block's controls.
 	{ sel: ':where(.srfm-styling-none) .ts-wrapper.dropdown-active', decls: [ 'position:relative', 'z-index:20' ] },
-	// A17 heading revert must cover the axes the HOST's global-styles user layer sets at the
-	// same (0,0,1) tier — absent: imported headings render the host site's uppercase/
-	// capitalize + per-heading letter-spacing (measured 2026-08-16: 125/142 headings across
-	// an 8-template benchmark wore the host's text-transform).
-	{ sel: ':where(.entry-content,.wp-block-template-part) h6', decls: [ 'text-transform:revert', 'letter-spacing:revert' ] },
 	// A16 button revert must cover the theme's `.wp-element-button` padding — absent: a
 	// converted text link that never declared padding inflates 21px → 53px tall and
 	// re-centers its grid row (consulting benchmark, 2026-08-16).
@@ -190,30 +185,64 @@ const ruleBody = ( css, sel ) => {
 	return null;
 };
 
-const check = ( label, css, isBuild ) => {
-	for ( const { sel, decls } of PINS ) {
+const check = ( label, css, isBuild, pins, sheet ) => {
+	for ( const { sel, decls } of pins ) {
 		const body = ruleBody( css, canon( sel ) );
 		if ( body === null ) {
-			fail( `${label} missing rule: ${sel}${isBuild ? ' (rebuild imported-baseline)' : ''}` );
+			fail( `${label} missing rule: ${sel}${isBuild ? ` (rebuild ${sheet})` : ''}` );
 			continue;
 		}
 		for ( const d of decls ) {
 			if ( ! body.includes( canon( d ) ) ) {
-				fail( `${label} rule ${sel} missing "${d}"${isBuild ? ' (STALE build — rebuild imported-baseline)' : ''}` );
+				fail( `${label} rule ${sel} missing "${d}"${isBuild ? ` (STALE build — rebuild ${sheet})` : ''}` );
 			}
 		}
 	}
 };
 
-const srcPath = resolve( plugin, 'src/styles/blocks/imported-baseline.scss' );
-const buildPath = resolve( plugin, 'build/styles/blocks/imported-baseline.css' );
-const src = read( srcPath );
-const build = existsSync( buildPath ) ? read( buildPath ) : null;
+// Checks `pins` against the sheet's src AND its build.
+const checkSheet = ( sheet, pins ) => {
+	const buildPath = resolve( plugin, `build/styles/blocks/${ sheet }.css` );
+	check( `src ${sheet}`, read( resolve( plugin, `src/styles/blocks/${ sheet }.scss` ) ), false, pins, sheet );
+	if ( ! existsSync( buildPath ) ) { fail( `build sheet absent: ${buildPath}` ); }
+	else { check( `build ${sheet}`, read( buildPath ), true, pins, sheet ); }
+};
 
-check( 'src', src, false );
-if ( build === null ) { fail( `build sheet absent: ${buildPath}` ); }
-else { check( 'build', build, true ); }
+checkSheet( 'imported-baseline', PINS );
 if ( failures === 0 ) { ok( `all ${PINS.length} structural rules present in src + build` ); }
+
+// ---------------------------------------------------------------------------
+// 1b. The element tier and the converter markers, pinned WHOLE: a selector that
+//     gains a class or loses a `:where()` changes tier and fails here.
+// ---------------------------------------------------------------------------
+const before = failures;
+// A17 heading revert must cover the axes the HOST's global-styles user layer sets at the
+// same (0,0,1) tier — absent: imported headings render the host site's uppercase/
+// capitalize + per-heading letter-spacing. A33 — absent: the theme's link element
+// `text-decoration:none` strips the underline from a link the source left undecorated.
+checkSheet( 'imported-baseline-elements', [
+	{ sel: ':where(.entry-content,.wp-block-template-part) h6', decls: [ 'text-transform:revert', 'letter-spacing:revert' ] },
+	{ sel: ':where(.entry-content,.wp-block-template-part) a', decls: [ 'text-decoration:revert' ] },
+] );
+// Nav marker — absent: core's own `<ul>` lays a one-column menu out as one row.
+checkSheet( 'common', [
+	{ sel: 'body .spectra-no-nav-container > .wp-block-navigation__container', decls: [ 'display:contents' ] },
+	{ sel: 'body .spectra-no-nav-container .wp-block-navigation-item', decls: [ 'display:revert' ] },
+	{ sel: 'body .wp-block-navigation.spectra-no-nav-container', decls: [ 'flex-wrap:revert', 'align-items:revert', 'gap:revert' ] },
+] );
+// Position marker: the container default and child rule skip a front-end marked container,
+// weightless — absent: an absolute child anchors to a box the source never positioned.
+// Build only (the src is nested SCSS).
+const CONTAINER_ROOT_RULE = '.wp-block-spectra-container:where(:not(.spectra-no-position), .editor-styles-wrapper *)';
+const containerBuild = resolve( plugin, 'build/blocks/container/style-index.css' );
+if ( ! existsSync( containerBuild ) ) { fail( `build sheet absent: ${containerBuild}` ); }
+else {
+	const css = read( containerBuild );
+	check( 'build container', css, true, [ CONTAINER_ROOT_RULE, `${ CONTAINER_ROOT_RULE } > :where(:not(.spectra-container__shape):not(.spectra-background-video__wrapper))` ].map( ( sel ) => ( { sel, decls: [ 'position:relative' ] } ) ), 'container' );
+	// A positive marker rule would outrank the page's own position (a fixed header renders static).
+	if ( css.split( '.spectra-no-position' ).slice( 0, -1 ).some( ( pre ) => ! pre.endsWith( ':not(' ) ) ) { fail( 'build container: .spectra-no-position outside :not( — it must only cancel a default' ); }
+}
+if ( failures === before ) { ok( 'element tier, nav marker and position marker rules present' ); }
 
 // ---------------------------------------------------------------------------
 // 2. Coupling: A19 keys on SureForms's rendered DOM and state classes. If

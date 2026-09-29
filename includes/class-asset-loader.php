@@ -448,9 +448,11 @@ class AssetLoader {
 	/**
 	 * Whether the CURRENT request is a singular view of an imported page.
 	 *
+	 * @since 1.0.10 Public, shared with InlineLeaf and the GBS engine.
+	 *
 	 * @return bool True when the queried object is a zip-built page.
 	 */
-	private static function is_imported_singular(): bool {
+	public static function is_imported_singular(): bool {
 		if ( ! is_singular() ) {
 			return false;
 		}
@@ -468,10 +470,12 @@ class AssetLoader {
 	 * filter added. Matched on the whitespace-delimited token so a longer class
 	 * that merely starts with the same prefix cannot pass.
 	 *
+	 * @since 1.0.10 Public, shared with InlineLeaf.
+	 *
 	 * @param array<string,mixed> $block Parsed block.
 	 * @return bool True when the marker is present.
 	 */
-	private static function has_no_block_gap_marker( $block ): bool {
+	public static function has_no_block_gap_marker( $block ): bool {
 		if ( ! is_array( $block ) || ! isset( $block['attrs'] ) || ! is_array( $block['attrs'] ) ) {
 			return false;
 		}

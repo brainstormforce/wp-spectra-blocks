@@ -14,6 +14,7 @@ namespace SpectraBlocks\Tests\GlobalStyles;
 
 use SpectraBlocks\GlobalStyles\Engine;
 use SpectraBlocks\GlobalStyles\JitCache;
+use SpectraBlocks\GlobalStyles\StateResolver;
 use WP_REST_Request;
 use WP_REST_Server;
 use WP_UnitTestCase;
@@ -21,7 +22,7 @@ use WP_UnitTestCase;
 /**
  * RestControllerTest test case.
  *
- * @since x.x.x
+ * @since 1.0.10
  */
 class RestControllerTest extends WP_UnitTestCase {
 
@@ -530,6 +531,7 @@ class RestControllerTest extends WP_UnitTestCase {
 		$this->assertIsArray( $data );
 		$this->assertArrayHasKey( 'utilities', $data );
 		$this->assertArrayHasKey( 'bracket_prefixes', $data );
+		$this->assertSame( StateResolver::TAIL, $data['contract']['state_tail'] );
 
 		$headers = $response->get_headers();
 		$this->assertArrayHasKey( 'ETag', $headers );
@@ -1295,5 +1297,110 @@ class RestControllerTest extends WP_UnitTestCase {
 			array_keys( $stored['rootRules'] )
 		);
 		$this->assertSame( array( '@view-transition', '@property --beam-angle' ), array_keys( $stored['atRules'] ) );
+	}
+
+	// ─────────────────────────────────────────────────────────────
+	// CSS escapes survive storage
+	// ─────────────────────────────────────────────────────────────
+
+	/**
+	 * A class carrying `content: "\201C"` — a curly quote.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private function escaped_quote_styles(): array {
+		return array( 'default' => array( 'content' => '"\201C"' ) );
+	}
+
+	/**
+	 * Site-wide write: the option keeps the CSS escape's backslash.
+	 *
+	 * @return void
+	 */
+	public function test_css_escape_survives_option_write(): void {
+		wp_set_current_user( $this->admin_id );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/custom-classes' );
+		$request->set_param( 'class_name', 'gs-quote' );
+		$request->set_param( 'styles', $this->escaped_quote_styles() );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$stored = get_option( Engine::OPTION_KEY_USER_CSS, array() );
+		$this->assertSame( '"\201C"', $stored['classes']['gs-quote']['default']['content'] );
+	}
+
+	/**
+	 * Page-scoped class write: update_post_meta() unslashes, so the value is
+	 * pre-slashed — the post meta keeps the CSS escape's backslash.
+	 *
+	 * @return void
+	 */
+	public function test_css_escape_survives_page_class_write(): void {
+		wp_set_current_user( $this->admin_id );
+		$post_id = self::factory()->post->create();
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/custom-classes' );
+		$request->set_param( 'class_name', 'gs-quote' );
+		$request->set_param( 'styles', $this->escaped_quote_styles() );
+		$request->set_param( 'post_id', $post_id );
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$meta = get_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, true );
+		$this->assertSame( '"\201C"', $meta['classes']['gs-quote']['default']['content'] );
+	}
+
+	/**
+	 * Page-scope `/save`: the post meta keeps the CSS escape's backslash, and a
+	 * doubled backslash is not unslashed into an escape the sanitizer never saw
+	 * (`j\\61 vascript:` must not be stored as `j\61 vascript:`).
+	 *
+	 * @return void
+	 */
+	public function test_css_escape_survives_page_save(): void {
+		wp_set_current_user( $this->admin_id );
+		$post_id = self::factory()->post->create();
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'page' );
+		$request->set_param( 'post_id', $post_id );
+		$request->set_param(
+			'payload',
+			array(
+				'v'       => '1',
+				'classes' => array(
+					'gs-quote' => $this->escaped_quote_styles(),
+					'gs-bg'    => array( 'default' => array( 'background-image' => 'url("j\\\\61 vascript:x")' ) ),
+				),
+			)
+		);
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+
+		$meta = get_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, true );
+		$this->assertSame( '"\201C"', $meta['classes']['gs-quote']['default']['content'] );
+		$this->assertSame( 'url("j\\\\61 vascript:x")', $meta['classes']['gs-bg']['default']['background-image'] );
+	}
+
+	/**
+	 * A global replace replaces `imports` instead of unioning them.
+	 *
+	 * @return void
+	 */
+	public function test_global_replace_replaces_imports(): void {
+		wp_set_current_user( $this->admin_id );
+		update_option( Engine::OPTION_KEY_USER_CSS, array( 'imports' => array( 'https://cdn.test/old.css' ) ) );
+
+		$request = new WP_REST_Request( 'POST', '/spectra-blocks/v1/global-styles/save' );
+		$request->set_param( 'scope', 'global' );
+		$request->set_param( 'replace', true );
+		$request->set_param( 'reset_classes', true );
+		$request->set_param(
+			'payload',
+			array(
+				'v'       => '1',
+				'imports' => array( 'https://cdn.test/new.css' ),
+			)
+		);
+		$this->assertSame( 200, $this->server->dispatch( $request )->get_status() );
+		$this->assertSame( array( 'https://cdn.test/new.css' ), get_option( Engine::OPTION_KEY_USER_CSS )['imports'] );
 	}
 }

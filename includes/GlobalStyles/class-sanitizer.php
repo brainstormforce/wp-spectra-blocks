@@ -91,6 +91,39 @@ class Sanitizer {
 		$value = trim( $value );
 		$value = str_replace( chr( 0 ), '', $value );
 
+		// REMOVED: wp_strip_all_tags( $value ) — was destroying SVG data URLs.
+		// CSS values can legitimately contain `<svg>...</svg>` markup inside
+		// `url('data:image/svg+xml;utf8,...')`. wp_strip_all_tags() treats
+		// these as HTML tags and rips them out, leaving a truncated unclosed
+		// `url('data:image/svg+xml;utf8,` that breaks the browser CSS parser
+		// and silently drops every subsequent rule in the inline stylesheet.
+		// XSS surface is covered by the character whitelist and the
+		// dangerous_patterns regex below (blocks <script>, javascript:,
+		// expression(), etc.).
+
+		// The character whitelist keeps the backslash: a CSS escape is part of the
+		// value — `content: "\201C"` is a curly quote, `\2192` an arrow, `\:` an
+		// escaped identifier character — and dropping it ships the hex digits as
+		// text. It keeps every non-ASCII code point (a literal `↔`, `“` or a vowel
+		// sign IS the value, and none can form a blocked token) and `?` (a URL query).
+		// It runs BEFORE the pattern checks: stripping a character can
+		// join the characters around it into a blocked token (`j\<U+0001>61 vascript:`
+		// becomes `j\61 vascript:`), so the checks must see the value as stored.
+		$value = (string) preg_replace( '/[^\w\s\-\.\#\%\(\)\,\'\"\:\;\/\!\@\+\*\=\[\]\{\}\<\>\_\|\&\^\~\`\$\\\\\?\x{80}-\x{10FFFF}]/u', '', $value );
+
+		$max_length = 2000;
+		if ( mb_strlen( $value, 'UTF-8' ) > $max_length ) {
+			$value = mb_substr( $value, 0, $max_length, 'UTF-8' );
+		}
+
+		// A trailing unpaired backslash would escape whatever the stylesheet
+		// prints next — the `;` ending the declaration, or a closing quote — and
+		// merge the following declaration into this one. The length cap above
+		// can leave one by splitting a `\\` pair.
+		if ( 1 === strspn( strrev( $value ), '\\' ) % 2 ) {
+			$value = substr( $value, 0, -1 );
+		}
+
 		$dangerous_patterns = array(
 			'/javascript\s*:/i',
 			'/expression\s*\(/i',
@@ -103,8 +136,12 @@ class Sanitizer {
 			'/data\s*:\s*text\/html/i',
 		);
 
+		// A CSS escape can spell a blocked token one character at a time
+		// (`j\61 vascript:`), so every check runs against the value as a browser
+		// reads it as well as against the value as written.
+		$as_read = self::decode_css_escapes( $value );
 		foreach ( $dangerous_patterns as $pattern ) {
-			if ( preg_match( $pattern, $value ) ) {
+			if ( preg_match( $pattern, $value ) || preg_match( $pattern, $as_read ) ) {
 				return '';
 			}
 		}
@@ -115,30 +152,70 @@ class Sanitizer {
 		// var() whose first token is not a `--` custom property ( e.g.
 		// var(url(...)) or an empty var() ), which is never valid here. Matching
 		// `var(` not immediately followed by `--` flags the malformed form;
-		// well-formed values fall through to the character whitelist below,
-		// which preserves them intact.
-		if ( $strict && preg_match( '/\bvar\s*\((?!\s*--)/i', $value ) ) {
+		// an escaped function name (`v\61r(`) is caught on the value as read.
+		$malformed_var = '/\bvar\s*\((?!\s*--)/i';
+		if ( $strict && ( preg_match( $malformed_var, $value ) || preg_match( $malformed_var, $as_read ) ) ) {
 			return '';
 		}
 
-		// REMOVED: wp_strip_all_tags( $value ) — was destroying SVG data URLs.
-		// CSS values can legitimately contain `<svg>...</svg>` markup inside
-		// `url('data:image/svg+xml;utf8,...')`. wp_strip_all_tags() treats
-		// these as HTML tags and rips them out, leaving a truncated unclosed
-		// `url('data:image/svg+xml;utf8,` that breaks the browser CSS parser
-		// and silently drops every subsequent rule in the inline stylesheet.
-		// XSS surface is already covered by the dangerous_patterns regex
-		// above (blocks <script>, javascript:, expression(), etc.) and the
-		// character whitelist below.
+		// Last, after the checks: they read CSS escapes back, so an escape added
+		// before them would hand the value-as-read check a `</style` it never had.
+		return self::escape_style_end_tag( $value );
+	}
 
-		$value = preg_replace( '/[^\w\s\-\.\#\%\(\)\,\'\"\:\;\/\!\@\+\*\=\[\]\{\}\<\>\_\|\&\^\~\`\$]/u', '', $value );
+	/**
+	 * Keep a `</style` in CSS from ending the `<style>` element it prints in.
+	 *
+	 * The HTML parser ends a `<style>` at the first `</style`, whatever CSS is
+	 * around it, so a stored `red</style><base href=…>` would print live HTML.
+	 * Neither the character whitelist nor core's wp_add_inline_style() stops it.
+	 * `\3c ` is `<` to the CSS parser and plain text to the HTML parser: a string
+	 * or `url()` still reads `</style` (an SVG data URL keeps its own `<style>`
+	 * element), and the element never closes early. Idempotent.
+	 *
+	 * @since 1.0.10
+	 *
+	 * @param string $css CSS text.
+	 * @return string
+	 */
+	public static function escape_style_end_tag( string $css ): string {
+		return (string) preg_replace( '#<(?=/style)#i', '\\\\3c ', $css );
+	}
 
-		$max_length = 2000;
-		if ( strlen( (string) $value ) > $max_length ) {
-			$value = substr( (string) $value, 0, $max_length );
-		}
+	/**
+	 * Read a CSS value the way a browser does.
+	 *
+	 * Follows the CSS Syntax input preprocessing and escape rules: CR, CRLF
+	 * and FF become LF; `\HHHHHH` (one to six hex digits and one optional
+	 * whitespace) becomes that character; a backslash before a newline is a
+	 * line continuation and is removed; any other escaped character becomes
+	 * itself.
+	 *
+	 * Only ASCII code points are spelled out — those are the only ones that
+	 * can form a blocked token; anything higher decodes to a placeholder.
+	 *
+	 * @since 1.0.10
+	 *
+	 * @param string $value The CSS value as written.
+	 * @return string
+	 */
+	public static function decode_css_escapes( string $value ): string {
+		$value = str_replace( array( "\r\n", "\r", "\f" ), "\n", $value );
 
-		return is_string( $value ) ? $value : '';
+		return (string) preg_replace_callback(
+			'/\\\\(?:([0-9a-fA-F]{1,6})[ \t\n]?|(\n)|(.))/su',
+			static function ( array $m ): string {
+				if ( '' !== $m[1] ) {
+					$code = (int) hexdec( $m[1] );
+					return $code < 0x80 ? chr( $code ) : '?';
+				}
+				if ( '' !== $m[2] ) {
+					return '';
+				}
+				return $m[3];
+			},
+			$value
+		);
 	}
 
 	/**

@@ -135,6 +135,22 @@ body .wp-block-spectra-container.spectra-no-width {
 	width: auto;
 }
 
+// Converter nav marker: core's own `<ul>`, `<li>` and wrapper layout step aside so
+// the source list's classes (on the `<nav>`) lay out the items. (0,2,1): below gs-*.
+body .spectra-no-nav-container > .wp-block-navigation__container {
+	display: contents;
+}
+
+body .spectra-no-nav-container .wp-block-navigation-item {
+	display: revert;
+}
+
+body .wp-block-navigation.spectra-no-nav-container {
+	flex-wrap: revert;
+	align-items: revert;
+	gap: revert;
+}
+
 // NO_LINE_HEIGHT marker rule: RETIRED 2026-07-03 (contract T4 amendment).
 // The imported-baseline A16 clause reverts the theme's elements.button
 // line-height at (0,1,1) for ALL imported buttons — `revert` rolls back to

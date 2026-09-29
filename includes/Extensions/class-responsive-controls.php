@@ -530,7 +530,7 @@ class ResponsiveControls {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	const CSS_GENERATOR_VERSION = '29';
+	const CSS_GENERATOR_VERSION = '30';
 
 	/**
 	 * Add inline responsive CSS only once per request.
@@ -2178,7 +2178,8 @@ class ResponsiveControls {
 		 * @return string Modified CSS selector.
 		 */
 		// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-		$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
+		$filtered_selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
+		$selector          = is_string( $filtered_selector ) ? $filtered_selector : $selector;
 
 		// Pattern preview context is signalled by the static flag, set by preview
 		// functions before they enter the render pipeline. This avoids a costly
@@ -2210,7 +2211,8 @@ class ResponsiveControls {
 			 * @return string Modified CSS selector.
 			 */
 			// Cross-plugin extension point — spectra_ prefix is intentional; spectra-blocks-pro hooks into this filter.
-			$selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
+			$filtered_selector = apply_filters( 'spectra_blocks_responsive_css_selector', $selector, $block_name, $spectra_id );
+			$selector          = is_string( $filtered_selector ) ? $filtered_selector : $selector;
 
 			// Special handling for slider-child in pattern preview.
 			if ( 'spectra/slider-child' === $block_name ) {
@@ -2378,20 +2380,42 @@ class ResponsiveControls {
 
 				$combined_css = trim( $popup_spacing_css . ' ' . $other_css );
 				$css_array    = ! empty( $combined_css ) ? array( 'css' => $combined_css ) : false;
-			} elseif ( 'core/image' === $block_name && isset( $device_styles['border'] ) ) {
-				// For core/image blocks, separate border styles from other styles.
-				// Separate border styles and other styles.
-				$border_styles = array( 'border' => $device_styles['border'] );
-				$other_styles  = array_diff_key( $device_styles, array( 'border' => '' ) );
+			} elseif ( 'core/image' === $block_name && ( isset( $device_styles['border'] ) || isset( $device_styles['shadow'] ) ) ) {
+				/*
+				 * `core/image` declares in block.json that border AND shadow paint
+				 * on `.wp-block-image img`, never on the `<figure>` that the wrapper
+				 * selector targets. Border already honoured that; shadow did not, so
+				 * it landed on the figure and drew a second, square-cornered shadow
+				 * at content width beside the correct one on the picture — the radius
+				 * and the border live on the `img`, so the two never lined up.
+				 *
+				 * Group the element-level supports by the selector the block declares
+				 * for each, and emit one rule per distinct selector. Everything else
+				 * stays on the wrapper.
+				 */
+				$element_supports = array( 'border', 'shadow' );
+				$grouped          = array();
 
-				// Generate border CSS with img selector.
-				$border_css = '';
-				if ( ! empty( $border_styles ) ) {
-					$border_css_array = wp_style_engine_get_styles(
-						$border_styles,
-						array( 'selector' => $selector . ' img' )
+				foreach ( $element_supports as $support ) {
+					if ( ! isset( $device_styles[ $support ] ) ) {
+						continue;
+					}
+
+					$support_selector = $this->scope_selector_to_target( $block_name, $selector, $support );
+
+					$grouped[ $support_selector ][ $support ] = $device_styles[ $support ];
+				}
+
+				$other_styles = array_diff_key( $device_styles, array_flip( $element_supports ) );
+
+				// Generate element-level CSS against each declared selector.
+				$element_css = '';
+				foreach ( $grouped as $group_selector => $group_styles ) {
+					$group_css_array = wp_style_engine_get_styles(
+						$group_styles,
+						array( 'selector' => $group_selector )
 					);
-					$border_css       = is_array( $border_css_array ) ? $border_css_array['css'] ?? '' : '';
+					$element_css    .= ( is_array( $group_css_array ) ? $group_css_array['css'] ?? '' : '' ) . ' ';
 				}
 
 				// Generate other styles CSS with figure selector.
@@ -2405,7 +2429,7 @@ class ResponsiveControls {
 				}
 
 				// Combine both CSS strings.
-				$combined_css = trim( $border_css . ' ' . $other_css );
+				$combined_css = trim( $element_css . ' ' . $other_css );
 				$css_array    = ! empty( $combined_css ) ? array( 'css' => $combined_css ) : false;
 			} else {
 				$css_array = wp_style_engine_get_styles(
@@ -2455,6 +2479,11 @@ class ResponsiveControls {
 			 * entirely, at every breakpoint. Take the declaration the engine
 			 * produced (it resolves `var:preset|shadow|…` for us) and emit the
 			 * rule alongside the other raw declarations.
+			 *
+			 * The rule goes to the selector the block declares for `shadow`, not
+			 * to the wrapper. `core/image` paints shadow on `.wp-block-image img`;
+			 * emitting it on the `<figure>` instead drew a second, square-cornered
+			 * shadow at content width beside the correct one on the picture.
 			 */
 			$shadow_css = '';
 
@@ -2463,7 +2492,8 @@ class ResponsiveControls {
 				$box_shadow    = $shadow_styles['declarations']['box-shadow'] ?? '';
 
 				if ( '' !== $box_shadow && ( ! isset( $css_array['css'] ) || false === strpos( (string) $css_array['css'], 'box-shadow' ) ) ) {
-					$shadow_css = $selector . '{box-shadow:' . $box_shadow . ';}';
+					$shadow_selector = $this->scope_selector_to_target( $block_name, $selector, 'shadow' );
+					$shadow_css      = $shadow_selector . '{box-shadow:' . $box_shadow . ';}';
 				}
 			}
 
@@ -2533,6 +2563,75 @@ class ResponsiveControls {
 		$css = apply_filters( 'spectra_blocks_responsive_css', $css, $spectra_id, $block_name );
 
 		return $css;
+	}
+
+	/**
+	 * Scope a block's element-level selector under Spectra's instance selector.
+	 *
+	 * A block may declare in `block.json` that a support paints on an inner
+	 * element rather than on its wrapper: `core/image` puts `border` and
+	 * `shadow` on `.wp-block-image img`, never on the `<figure>`. Spectra's
+	 * instance selector targets the wrapper, so emitting an element-level
+	 * declaration against it paints a SECOND box — for an image, a
+	 * content-width, square-cornered shadow beside the correct one on the
+	 * picture, because the radius and border live on the `img`.
+	 *
+	 * Take the selector core declares for the target, strip the block's root
+	 * class from each of its parts and re-root the remainder on Spectra's
+	 * high-specificity selector, so `.wp-block-image img` becomes
+	 * `<instance selector> img`. A block that declares no selector for the
+	 * target — every Spectra block today — keeps the wrapper selector.
+	 *
+	 * @since 1.0.10
+	 *
+	 * @param string $block_name The block name, e.g. `core/image`.
+	 * @param string $selector   Spectra's instance selector for the wrapper.
+	 * @param string $target     The support to resolve, e.g. `shadow`.
+	 * @return string Selector the declaration should be emitted against.
+	 */
+	private function scope_selector_to_target( $block_name, $selector, $target ) {
+		if ( ! function_exists( 'wp_get_block_css_selector' ) ) {
+			return $selector;
+		}
+
+		$block_type = \WP_Block_Type_Registry::get_instance()->get_registered( $block_name );
+
+		if ( ! $block_type ) {
+			return $selector;
+		}
+
+		$target_selector = wp_get_block_css_selector( $block_type, $target );
+		$root_selector   = wp_get_block_css_selector( $block_type, 'root' );
+
+		if ( empty( $target_selector ) || empty( $root_selector ) || $target_selector === $root_selector ) {
+			return $selector;
+		}
+
+		$scoped = array();
+
+		foreach ( explode( ',', $target_selector ) as $part ) {
+			$part = trim( $part );
+
+			if ( '' === $part || 0 !== strpos( $part, $root_selector ) ) {
+				continue;
+			}
+
+			$suffix = substr( $part, strlen( $root_selector ) );
+
+			/*
+			 * Only a descendant or compound of the root qualifies. Without this
+			 * a sibling class sharing the prefix, `.wp-block-image-caption`
+			 * against a `.wp-block-image` root, would be re-rooted into a
+			 * selector that matches nothing.
+			 */
+			if ( '' !== $suffix && ! preg_match( '/^[\s.:\[>+~]/', $suffix ) ) {
+				continue;
+			}
+
+			$scoped[] = $selector . $suffix;
+		}
+
+		return empty( $scoped ) ? $selector : implode( ',', $scoped );
 	}
 
 	/**

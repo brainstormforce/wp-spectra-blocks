@@ -73,14 +73,55 @@ final class StateResolver {
 	);
 
 	/**
+	 * The class state-tail grammar this plugin renders, advertised in the JIT
+	 * contract: `state_tail` of zipwp-credits-saas config/spectra-contract.json,
+	 * which holds the grammar, the reasons and the vectors. StateResolverTest
+	 * pins this to that file's byte copy in tests/…/fixtures/ and runs
+	 * {@see TAIL_RE} on its vectors.
+	 *
+	 * @since 1.0.10
+	 * @var array<string,int|string>
+	 */
+	public const TAIL = array(
+		'version'           => 1,
+		'class_ident'       => 'A-Za-z0-9_-',
+		'pseudo_ident'      => 'A-Za-z-',
+		'quotes'            => "\"'",
+		'escape'            => '\\',
+		'excluded'          => "<{}\n\r\f",
+		'excluded_unquoted' => '/',
+		'url_ident'         => 'url',
+	);
+
+	/**
+	 * {@see TAIL} as one PCRE, a group per grammar rule: x excluded, e escape,
+	 * s string, c char, a attribute body, p pseudo (its `(` never after `url`).
+	 * ponytail: recursion ceiling ~3500 nested pseudos (JIT; ~580 without) — past
+	 * it preg_match fails and the key renders nothing. A stack scanner if a real
+	 * tail ever nests that deep.
+	 *
+	 * @since 1.0.10
+	 */
+	private const TAIL_RE = '/^(?:\.[A-Za-z0-9_-]++|(?&p)|\[(?&a)\])++\z
+		(?(DEFINE)
+			(?<x> [<{}\n\r\f] )
+			(?<e> \\\\ (?!(?&x)) . )
+			(?<s> " (?:(?&e)|(?!(?&x))[^"\\\\])*+ " | \' (?:(?&e)|(?!(?&x))[^\'\\\\])*+ \' )
+			(?<c> (?!(?&x)) [^\/"\'\\\\()\[\]] )
+			(?<a> (?:(?&s)|(?&e)|(?&c))*+ )
+			(?<p> ::?+ [A-Za-z-]++ (?: (?<!:(?i:url)) \( (?:(?&s)|(?&e)|(?&p)|\[(?&a)\]|(?&c))*+ \) )?+ )
+		)/xs';
+
+	/**
 	 * Resolve a stored state key to its `{ media, suffix }` descriptor.
 	 *
 	 * @since 1.0.0
 	 *
 	 * @param string $state Stored bucket key (`default`, `hover`, `md`, `md_hover`, `[open]`, …).
-	 * @return array{media:string, suffix:string} Empty `media` = base rule (no `@media`).
+	 * @return array{media:string, suffix:string}|null Empty `media` = base rule (no `@media`);
+	 *         `null` = a tail {@see suffix()} drops: render nothing, never the bare class.
 	 */
-	public static function resolve( string $state ): array {
+	public static function resolve( string $state ): ?array {
 		if ( '' === $state || 'default' === $state ) {
 			return array(
 				'media'  => '',
@@ -94,16 +135,19 @@ final class StateResolver {
 		$prefix     = false === $underscore ? $state : substr( $state, 0, $underscore );
 		$remainder  = false === $underscore ? '' : substr( $state, $underscore + 1 );
 
+		$media = '';
 		if ( isset( self::BREAKPOINTS[ $prefix ] ) ) {
-			return array(
-				'media'  => self::BREAKPOINTS[ $prefix ],
-				'suffix' => '' === $remainder ? '' : self::suffix( $remainder ),
-			);
+			$media = self::BREAKPOINTS[ $prefix ];
+			$state = $remainder;
+		}
+		$suffix = '' === $state ? '' : self::suffix( $state );
+		if ( '' !== $state && '' === $suffix ) {
+			return null;
 		}
 
 		return array(
-			'media'  => '',
-			'suffix' => self::suffix( $state ),
+			'media'  => $media,
+			'suffix' => $suffix,
 		);
 	}
 
@@ -118,16 +162,9 @@ final class StateResolver {
 	 * base's lift inverts the source cascade and state UIs (tabs/sliders/
 	 * accordions) render their hidden state (E2E 2026-07-10).
 	 *
-	 * Verbatim tails are shape-validated (class/pseudo/attr segments only; no
-	 * braces, angle brackets, or stray tokens) so a stored state key can never
-	 * break out of the selector position in the emitted stylesheet. `/` and `*`
-	 * are excluded too — a segment body that allowed them could smuggle a raw
-	 * CSS comment delimiter (slash-star / star-slash), which the tokenizer
-	 * honors anywhere in the sheet regardless of selector context, letting one
-	 * stored state key open a comment a second one closes elsewhere on the
-	 * page. This also
-	 * closes the pre-existing hole where any `:`/`[`-prefixed key rode verbatim
-	 * unvalidated.
+	 * Verbatim tails must be tails of {@see TAIL}, so a stored state key can never
+	 * break out of the selector position in the emitted stylesheet: every string,
+	 * comment delimiter, bracket and url-token it could open closes inside it.
 	 *
 	 * @since 1.0.0
 	 *
@@ -140,10 +177,7 @@ final class StateResolver {
 		}
 		$first = $state[0] ?? '';
 		if ( ':' === $first || '[' === $first || '.' === $first ) {
-			return 1 === preg_match(
-				'/^(?:\.[A-Za-z0-9_-]+|:{1,2}[a-zA-Z-]+(?:\([^()<>{}\/*]*\))?|\[[^\]<>{}\/*]*\])+$/',
-				$state
-			) ? $state : '';
+			return 1 === preg_match( self::TAIL_RE, $state ) ? $state : '';
 		}
 		return '';
 	}

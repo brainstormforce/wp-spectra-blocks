@@ -290,20 +290,21 @@ class JitCompiler {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @return array{version:int, variants:array{responsive:array<int,string>, state:array<int,string>, pseudo_element:array<int,string>}, arbitrary:array{property_allowlist:array<int,string>, max_variants_per_token:int}}
+	 * @return array{version:int, variants:array{responsive:array<int,string>, state:array<int,string>, pseudo_element:array<int,string>}, arbitrary:array{property_allowlist:array<int,string>, max_variants_per_token:int}, state_tail:array<string,int|string>}
 	 */
 	public static function export_contract(): array {
 		return array(
-			'version'   => self::CONTRACT_VERSION,
-			'variants'  => array(
+			'version'    => self::CONTRACT_VERSION,
+			'variants'   => array(
 				'responsive'     => array_keys( self::RESPONSIVE_VARIANTS ),
 				'state'          => array_keys( self::STATE_VARIANTS ),
 				'pseudo_element' => array_keys( self::PSEUDO_ELEMENT_VARIANTS ),
 			),
-			'arbitrary' => array(
+			'arbitrary'  => array(
 				'property_allowlist'     => self::ARBITRARY_PROPERTY_ALLOWLIST,
 				'max_variants_per_token' => self::MAX_VARIANTS_PER_TOKEN,
 			),
+			'state_tail' => StateResolver::TAIL,
 		);
 	}
 
@@ -1810,8 +1811,9 @@ class JitCompiler {
 	 *
 	 * Only properties in `ARBITRARY_PROPERTY_ALLOWLIST` are emitted; the value
 	 * travels through `Sanitizer::sanitize_css_value` (the same sanitizer used
-	 * by every bracket resolver), so `url()`, unbalanced brackets, JS protocols,
-	 * `\`, `<`, `>`, and other injection vectors are stripped.
+	 * by every bracket resolver), so JS protocols, `expression()`, event
+	 * handlers and other injection vectors — written plainly or as CSS escapes —
+	 * are rejected, and characters outside its whitelist are stripped.
 	 *
 	 * @since 1.0.0
 	 *

@@ -26,6 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class GlobalStylesBridge {
 
 	/**
+	 * The previous theme's stylesheet, while a switch's font carry waits for a
+	 * request that can write the new theme's styles post.
+	 *
+	 * @var string
+	 */
+	const FONT_CARRY_PENDING_OPTION = 'spectra_style_guide_font_carry_pending';
+
+	/**
 	 * Astra slot index => Style Guide shade token, for the ACTIVE Astra layout.
 	 *
 	 * Used by the render-time surfaces: the `--ast-global-color-{N}` CSS aliases
@@ -210,6 +218,20 @@ class GlobalStylesBridge {
 		// fonts must resolve — sync then, idempotently.
 		add_action( 'add_option_zipai_chrome_mode', array( $this, 'sync_font_library_families' ), 20 );
 		add_action( 'update_option_zipai_chrome_mode', array( $this, 'sync_font_library_families' ), 20 );
+
+		// Theme switch: every theme has its own user global-styles post, so the
+		// families active under the previous theme are unknown to the new one —
+		// and nothing re-syncs, because the install is already done. Only what
+		// the previous theme had active is carried; a family the user turned off
+		// stays off.
+		add_action( 'after_switch_theme', array( $this, 'carry_font_activation' ), 20, 2 );
+		// A switch whose first request could not write the new theme's styles post
+		// (a visitor's) is carried on the next admin request that can.
+		add_action( 'admin_init', array( $this, 'carry_pending_font_activation' ), 20, 0 );
+		// The ZIP AI importer, after an install: the families it just ensured, by
+		// slug — also for an install that found every family present (sites that
+		// switched theme before the hook above existed).
+		add_action( 'zipai_font_library_ready', array( $this, 'activate_font_families' ), 20, 1 );
 	}
 
 	/**
@@ -1604,11 +1626,102 @@ class GlobalStylesBridge {
 	 * @return void
 	 */
 	public function sync_font_library_families(): void {
+		$this->merge_font_library_families( null );
+	}
+
+	/**
+	 * After a theme switch: activate, in the new theme, the Library families the
+	 * previous theme had active. A classic theme prints Library fonts only for
+	 * imported chrome, so it is carried only while `zipai_chrome_mode` is
+	 * `takeover` (the option's own hooks sync only when it changes).
+	 *
+	 * @since 1.0.10
+	 *
+	 * @param string         $old_name  Previous theme name (unused).
+	 * @param \WP_Theme|null $old_theme Previous theme.
+	 * @return void
+	 */
+	public function carry_font_activation( $old_name = '', $old_theme = null ): void {
+		unset( $old_name );
+		if ( ! $old_theme instanceof \WP_Theme ) {
+			return;
+		}
+		if ( ! wp_is_block_theme() && 'takeover' !== get_option( 'zipai_chrome_mode' ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_theme_options' ) && null === $this->theme_styles_post( get_stylesheet() ) ) {
+			update_option( self::FONT_CARRY_PENDING_OPTION, $old_theme->get_stylesheet(), false );
+			return;
+		}
+		// This carry supersedes one an earlier switch left waiting.
+		delete_option( self::FONT_CARRY_PENDING_OPTION );
+		$previous = $this->theme_styles_post( $old_theme->get_stylesheet() );
+		if ( null === $previous ) {
+			return;
+		}
+		$content = json_decode( $previous->post_content, true );
+		$custom  = is_array( $content ) ? ( $content['settings']['typography']['fontFamilies']['custom'] ?? array() ) : array();
+		$slugs   = array();
+		foreach ( is_array( $custom ) ? $custom : array() as $family ) {
+			if ( is_array( $family ) && isset( $family['slug'] ) && is_string( $family['slug'] ) && '' !== $family['slug'] ) {
+				$slugs[] = $family['slug'];
+			}
+		}
+		if ( ! empty( $slugs ) ) {
+			$this->merge_font_library_families( $slugs );
+		}
+	}
+
+	/**
+	 * The carry a theme switch left for a user who can write the styles post.
+	 *
+	 * @since 1.0.10
+	 *
+	 * @return void
+	 */
+	public function carry_pending_font_activation(): void {
+		$previous = get_option( self::FONT_CARRY_PENDING_OPTION, '' );
+		if ( ! is_string( $previous ) || '' === $previous || ! current_user_can( 'edit_theme_options' ) ) {
+			return;
+		}
+		delete_option( self::FONT_CARRY_PENDING_OPTION );
+		$this->carry_font_activation( '', wp_get_theme( $previous ) );
+	}
+
+	/**
+	 * Activate these Library families (by slug) in the active theme.
+	 *
+	 * @since 1.0.10
+	 *
+	 * @param mixed $slugs Family slugs; anything else activates nothing.
+	 * @return void
+	 */
+	public function activate_font_families( $slugs = array() ): void {
+		$only = array();
+		foreach ( is_array( $slugs ) ? $slugs : array() as $slug ) {
+			if ( is_string( $slug ) && '' !== $slug ) {
+				$only[] = $slug;
+			}
+		}
+		if ( ! empty( $only ) ) {
+			$this->merge_font_library_families( $only );
+		}
+	}
+
+	/**
+	 * The active theme's user global-styles post gets the Library families
+	 * (`$only` = just these slugs, null = every family), replace-by-slug.
+	 *
+	 * @param array<int, string>|null $only Slugs to activate, or null for all.
+	 * @return void
+	 */
+	private function merge_font_library_families( ?array $only ): void {
+		// Uncapped: the family a build just installed is the newest post.
 		$families = get_posts(
 			array(
 				'post_type'      => 'wp_font_family',
 				'post_status'    => 'publish',
-				'posts_per_page' => 100,
+				'posts_per_page' => -1,
 				'orderby'        => 'ID',
 				'order'          => 'ASC',
 			)
@@ -1620,6 +1733,9 @@ class GlobalStylesBridge {
 
 		$library_entries = array();
 		foreach ( $families as $family_post ) {
+			if ( null !== $only && ! in_array( $family_post->post_name, $only, true ) ) {
+				continue;
+			}
 			$settings = json_decode( $family_post->post_content, true );
 			$settings = is_array( $settings ) ? $settings : array();
 
@@ -1666,30 +1782,16 @@ class GlobalStylesBridge {
 			return;
 		}
 
-		$query = new \WP_Query(
-			array(
-				'post_type'              => 'wp_global_styles',
-				'posts_per_page'         => 1,
-				'post_status'            => array( 'publish', 'auto-draft' ),
-				'orderby'                => 'date',
-				'order'                  => 'DESC',
-				'no_found_rows'          => true,
-				'ignore_sticky_posts'    => true,
-				'update_post_meta_cache' => false,
-				'update_post_term_cache' => false,
-				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
-				'tax_query'              => array(
-					array(
-						'taxonomy' => 'wp_theme',
-						'field'    => 'name',
-						'terms'    => get_stylesheet(),
-					),
-				),
-			)
-		);
-		$posts = $query->posts;
+		$current = $this->theme_styles_post( get_stylesheet() );
+		$posts   = null !== $current ? array( $current ) : array();
 
 		if ( empty( $posts ) ) {
+			// Created below only by a user who may tag it: core drops the
+			// post's wp_theme term otherwise, and the theme never reads an
+			// untagged post (a theme switch's first request can be a visitor's).
+			if ( ! current_user_can( 'edit_theme_options' ) ) {
+				return;
+			}
 			// Classic themes have no user global-styles post until something
 			// creates one (the Site Editor does on block themes, masking
 			// this bail). Use core's get-or-create so Font Library
@@ -1747,6 +1849,38 @@ class GlobalStylesBridge {
 			array( '%d' )
 		);
 		clean_post_cache( $post->ID );
+	}
+
+	/**
+	 * A theme's user global-styles post, or null when it has none yet.
+	 *
+	 * @param string $stylesheet Theme stylesheet.
+	 * @return \WP_Post|null
+	 */
+	private function theme_styles_post( string $stylesheet ): ?\WP_Post {
+		$query = new \WP_Query(
+			array(
+				'post_type'              => 'wp_global_styles',
+				'posts_per_page'         => 1,
+				'post_status'            => array( 'publish', 'auto-draft' ),
+				'orderby'                => 'date',
+				'order'                  => 'DESC',
+				'no_found_rows'          => true,
+				'ignore_sticky_posts'    => true,
+				'update_post_meta_cache' => false,
+				'update_post_term_cache' => false,
+				// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+				'tax_query'              => array(
+					array(
+						'taxonomy' => 'wp_theme',
+						'field'    => 'name',
+						'terms'    => $stylesheet,
+					),
+				),
+			)
+		);
+		$post = $query->posts[0] ?? null;
+		return $post instanceof \WP_Post ? $post : null;
 	}
 
 	/**

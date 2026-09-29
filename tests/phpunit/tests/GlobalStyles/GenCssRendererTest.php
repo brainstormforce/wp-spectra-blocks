@@ -22,7 +22,7 @@ use WP_UnitTestCase;
 /**
  * GenCssRendererTest test case.
  *
- * @since x.x.x
+ * @since 1.0.10
  */
 class GenCssRendererTest extends WP_UnitTestCase {
 
@@ -288,5 +288,27 @@ class GenCssRendererTest extends WP_UnitTestCase {
 		// The rest of the sheet is untouched by the two buckets.
 		$this->assertStringContainsString( '.editor-styles-wrapper .wp-block-spectra-icon svg { width: 1em; }', $css );
 		$this->assertStringContainsString( '.editor-styles-wrapper .x a { display: none; }', $css );
+	}
+
+	/**
+	 * A rejected state tail renders nothing — never its declarations on the bare class.
+	 *
+	 * @return void
+	 */
+	public function test_rejected_state_tail_renders_nothing(): void {
+		$css = GenCssRenderer::render(
+			array(
+				'v'       => '1',
+				'classes' => array(
+					'x' => array(
+						':has(> .u)'    => array( 'order' => '1' ),
+						':is(url(a"b))' => array( 'order' => '2' ),
+					),
+				),
+			),
+			234
+		);
+		$this->assertStringContainsString( '[class].x.x:has(> .u) { order: 1; }', $css );
+		$this->assertStringNotContainsString( 'order: 2', $css );
 	}
 }

@@ -18,7 +18,7 @@
 /**
  * WordPress dependencies.
  */
-import { useState, useCallback, useEffect, useRef, forwardRef, useImperativeHandle } from '@wordpress/element';
+import { useState, useCallback, useEffect, useRef, useMemo, forwardRef, useImperativeHandle } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Spinner, TextControl, Icon } from '@wordpress/components';
 import { edit as editIcon } from '@wordpress/icons';
@@ -29,6 +29,12 @@ import { edit as editIcon } from '@wordpress/icons';
 import { useCustomClasses } from '../../hooks/useCustomClasses.js';
 import { useEditedPostId } from '../../hooks/useEditedPostId.js';
 import { regenerateEditorCSS, regeneratePageCSS } from '../../utils/liveVars.js';
+import { gbsNotices } from '../../notices/gbsNotices.js';
+import {
+	validateName,
+	validateDeclarations,
+	hasBlockingIssue,
+} from '../../utils/validators.js';
 import CSSAutocomplete from '../CSSAutocomplete.jsx';
 import {
 	textToBucket,
@@ -85,10 +91,36 @@ const ClassEditor = forwardRef( ( { className, styles, onSave, onCancel, saving 
 
 	const isLegacy = typeof styles === 'string' && styles.trim().length > 0;
 
+	// Validate EVERY bucket, not just the visible one: handleSave compiles all of
+	// them, so an error parked on a hidden state would otherwise be saved blind.
+	// `textToBucket` drops any line it cannot parse, which is why a malformed
+	// declaration is an error rather than a warning — saving it loses the work
+	// silently.
+	const bucketIssues = useMemo( () => {
+		const byBucket = {};
+		BUCKETS.forEach( ( { id } ) => {
+			const issues = validateDeclarations( buckets[ id ] ?? '' );
+			if ( issues.length ) {
+				byBucket[ id ] = issues;
+			}
+		} );
+		return byBucket;
+	}, [ buckets ] );
+
+	const blockingBuckets = BUCKETS.filter(
+		( b ) => hasBlockingIssue( bucketIssues[ b.id ] )
+	);
+	const hasBlockingElsewhere = blockingBuckets.length > 0;
+
 	// Which state (bucket) is currently being edited / previewed.
 	const [ activeState, setActiveState ] = useState( 'default' );
 
 	const handleSave = () => {
+		// Also reached through the imperative ref below, so the check lives here
+		// rather than only on the button.
+		if ( hasBlockingElsewhere ) {
+			return;
+		}
 		const compiled = {};
 		BUCKETS.forEach( ( { id } ) => {
 			const parsed = textToBucket( buckets[ id ] ?? '' );
@@ -200,6 +232,37 @@ const ClassEditor = forwardRef( ( { className, styles, onSave, onCancel, saving 
 							rows={ 6 }
 						/>
 					) }
+
+					<div className="spectra-gbs-class-editor__issues">
+						{ ( bucketIssues[ activeState ] ?? [] ).map( ( issue ) => (
+							<p
+								key={ `${ issue.line }-${ issue.message }` }
+								className={ `spectra-gbs-issue is-${ issue.level }` }
+							>
+								<span className="spectra-gbs-issue__line">
+									{ sprintf(
+										/* translators: %d: line number in the CSS editor. */
+										__( 'Line %d', 'spectra-blocks' ),
+										issue.line
+									) }
+								</span>
+								{ issue.message }
+							</p>
+						) ) }
+						{ /* An error on a state the author cannot currently see would
+						     otherwise be an invisible reason for a dead Save button. */ }
+						{ blockingBuckets
+							.filter( ( b ) => b.id !== activeState )
+							.map( ( b ) => (
+								<p key={ b.id } className="spectra-gbs-issue is-error">
+									{ sprintf(
+										/* translators: %s: name of a state tab, e.g. "Hover (:hover)". */
+										__( 'Fix the errors in “%s”.', 'spectra-blocks' ),
+										b.label
+									) }
+								</p>
+							) ) }
+					</div>
 				</div>
 
 				<div className="spectra-gbs-class-editor__preview-pane">
@@ -228,7 +291,7 @@ const ClassEditor = forwardRef( ( { className, styles, onSave, onCancel, saving 
 					type="button"
 					className="spectra-gbs-btn--primary"
 					onClick={ handleSave }
-					disabled={ saving || ! isDirty }
+					disabled={ saving || ! isDirty || hasBlockingElsewhere }
 				>
 					{ saving ? __( 'Saving…', 'spectra-blocks' ) : __( 'Save', 'spectra-blocks' ) }
 				</button>
@@ -277,50 +340,79 @@ const CustomClassesPanel = ( { initialClass = null, onStatusChange } ) => {
 
 	const handleAdd = useCallback( () => {
 		const trimmed = newName.trim().replace( /^gs-/, '' );
-		if ( ! trimmed ) {
-			setNameError( __( 'Enter a name.', 'spectra-blocks' ) );
+		const taken = Object.keys( classes ).map( ( c ) => c.replace( /^gs-/, '' ) );
+
+		// Shared rules, so a class name is judged the same way a variable or
+		// keyframe name is — and reports the same specific reasons.
+		const problem = validateName( trimmed, { kind: 'class', taken } );
+		if ( problem ) {
+			setNameError( problem );
 			return;
 		}
-		if ( ! /^[a-z][a-z0-9-]*$/.test( trimmed ) ) {
-			setNameError(
-				__(
-					'Use lowercase letters, digits and hyphens only.',
-					'spectra-blocks'
-				)
-			);
-			return;
-		}
-		const finalName = `gs-${ trimmed }`;
-		if ( classes[ finalName ] !== undefined ) {
-			setNameError(
-				__( 'A class with this name already exists.', 'spectra-blocks' )
-			);
-			return;
-		}
+
 		setNameError( '' );
 		setNewName( '' );
-		setEditing( finalName );
+		setEditing( `gs-${ trimmed }` );
 	}, [ newName, classes ] );
 
 	const handleSave = useCallback(
 		async ( className, styles ) => {
-			await saveClass( className, styles );
+			try {
+				await saveClass( className, styles );
+			} catch ( err ) {
+				// Leave the editor open so the unsaved CSS isn't lost.
+				gbsNotices.error(
+					err?.message ||
+						sprintf(
+							/* translators: %s: CSS class name. */
+							__( 'Could not save .%s.', 'spectra-blocks' ),
+							className
+						)
+				);
+				return;
+			}
 			setEditing( null );
 			regenerateEditorCSS();
 			regeneratePageCSS( postId );
+			gbsNotices.success(
+				sprintf(
+					/* translators: %s: CSS class name. */
+					__( 'Class .%s saved.', 'spectra-blocks' ),
+					className
+				)
+			);
 		},
 		[ saveClass, postId ]
 	);
 
 	const handleDelete = useCallback(
 		async ( className ) => {
-			await deleteClass( className );
+			try {
+				await deleteClass( className );
+			} catch ( err ) {
+				gbsNotices.error(
+					err?.message ||
+						sprintf(
+							/* translators: %s: CSS class name. */
+							__( 'Could not delete .%s.', 'spectra-blocks' ),
+							className
+						)
+				);
+				return;
+			}
 			setConfirmDelete( null );
 			if ( editing === className ) {
 				setEditing( null );
 			}
 			regenerateEditorCSS();
 			regeneratePageCSS( postId );
+			gbsNotices.success(
+				sprintf(
+					/* translators: %s: CSS class name. */
+					__( 'Class .%s deleted.', 'spectra-blocks' ),
+					className
+				)
+			);
 		},
 		[ deleteClass, editing, postId ]
 	);

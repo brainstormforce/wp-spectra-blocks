@@ -99,7 +99,8 @@ class GenCssRenderer {
 	 *   variables     → `<root> { … }`  (user custom CSS vars from `/custom-vars`)
 	 *   classes       → frontend `[class].{class}{suffix} { … }` (COMPOUND on the `[class]` attribute — matches any element carrying the class);
 	 *                   editor   `.editor-styles-wrapper .{class}{suffix} { … }` (descendant)
-	 *                   (state → suffix via PSEUDO; a raw state like `[open]` is appended verbatim)
+	 *                   (state → suffix via PSEUDO; a raw state like `[open]` is appended verbatim;
+	 *                   a state {@see StateResolver::resolve()} rejects renders nothing)
 	 *   wrapperStyles → `<sel-prefix> {selector} { … }`
 	 *   rootRules     → `{selector} { … }`  (frontend only, no prefix, after wrapperStyles;
 	 *                   preceded by `html:root { --… }` so a root pseudo-element can read the tokens)
@@ -292,7 +293,10 @@ class GenCssRenderer {
 					continue;
 				}
 				$resolved = StateResolver::resolve( (string) $state );
-				$rule     = $prefix . $joiner . self::class_token( $class_name ) . $resolved['suffix'] . ' { ' . $body . ' }' . "\n";
+				if ( null === $resolved ) {
+					continue;
+				}
+				$rule = $prefix . $joiner . self::class_token( $class_name ) . $resolved['suffix'] . ' { ' . $body . ' }' . "\n";
 				if ( '' === $resolved['media'] ) {
 					$base .= $rule;
 				} else {

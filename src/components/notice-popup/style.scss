@@ -1,0 +1,147 @@
+// NoticePopup — the toast the admin dashboard uses, rebuilt for the editor.
+// The admin version is written in Tailwind
+// (`admin/assets/src/dashboard-app/SettingsSavedNotification.js`); the editor
+// bundle has no Tailwind, so the same design is expressed here in plain CSS.
+// The values below are the resolved Tailwind ones, kept literal so the two
+// surfaces can be compared side by side:
+//   inset-10 .......... 2.5rem          z-[9999999] ....... 9999999
+//   max-w-sm .......... 24rem           p-4 ............... 1rem
+//   rounded-lg ........ 0.5rem          ml-3 / ml-4 ....... 0.75rem / 1rem
+//   text-sm ........... 0.875rem/20px     font-medium ....... 500
+//   text-gray-900 ..... #111827         text-gray-400 ..... #9ca3af
+//   text-green-400 .... #4ade80         text-amber-400 .... #fbbf24
+//   text-red-500 ...... #ef4444         hover:text-gray-500  #6b7280
+//   h-6 w-6 (success) . 24px            h-4 w-4 (warn/error)  16px
+// shadow-lg and `ring-1 ring-black ring-opacity-5` are combined into the one
+// box-shadow below, which is what Tailwind emits for that pair.
+
+.spectra-notice-popup {
+	// Offsets are variables so a host can seat the stack inside its own chrome
+	// without the component having to know what that chrome is. The defaults are
+	// the dashboard's `inset-10`, pinned to the top right; a host that wants a
+	// different corner sets the one it wants and leaves the rest `auto`.
+	--spectra-notice-popup-top: 2.5rem;
+	--spectra-notice-popup-right: 2.5rem;
+	--spectra-notice-popup-bottom: auto;
+
+	top: var(--spectra-notice-popup-top);
+	right: var(--spectra-notice-popup-right);
+	bottom: var(--spectra-notice-popup-bottom);
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 1rem;
+	// The region spans the corner but must not swallow clicks; each card takes
+	// its own pointer events back below.
+	pointer-events: none;
+}
+
+// Pinned to the browser window — the admin dashboard's placement, and the right
+// one for a toast raised by the page itself.
+.spectra-notice-popup.is-anchored-viewport {
+	position: fixed;
+	z-index: 9999999;
+}
+
+// Pinned inside the nearest positioned ancestor, so a modal keeps its own save
+// feedback on its own card.
+// The z-index is deliberately small: inside a dialog the stack has to sit above
+// panel content but BELOW anything that takes the surface over, such as an
+// unsaved-changes guard. A window-sized z-index here would let a toast cover the
+// prompt the user has to answer. The host sets it for its own layering.
+.spectra-notice-popup.is-anchored-container {
+	position: absolute;
+	z-index: var(--spectra-notice-popup-z, 15);
+}
+
+.spectra-notice-popup__item {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	max-width: 24rem;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	background: #fff;
+	box-shadow:
+		0 0 0 1px rgb(0 0 0 / 5%),
+		0 10px 15px -3px rgb(0 0 0 / 10%),
+		0 4px 6px -4px rgb(0 0 0 / 10%);
+	pointer-events: auto;
+	// Matches the admin transition: `transform ease-out duration-300`, entering
+	// from `translate-x-2` and `opacity-0`.
+	animation: spectra-notice-popup-in 300ms ease-out;
+}
+
+// The status glyphs are Heroicons outline shapes — stroked, not filled — so the
+// status colour is set as `color` and the SVG inherits it via `currentColor`.
+.spectra-notice-popup__icon {
+	flex-shrink: 0;
+
+	.is-success & {
+		color: #4ade80;
+	}
+
+	.is-warning & {
+		color: #fbbf24;
+	}
+
+	.is-error & {
+		color: #ef4444;
+	}
+}
+
+.spectra-notice-popup__text {
+	flex: 1 1 0;
+	min-width: 0;
+	margin-left: 0.75rem;
+	color: #111827;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 1.4286;
+}
+
+.spectra-notice-popup__dismiss {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 1rem;
+	padding: 0;
+	border: none;
+	background: transparent;
+	color: #9ca3af;
+	cursor: pointer;
+
+	&:hover {
+		color: #6b7280;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #6366f1;
+		outline-offset: 2px;
+	}
+
+	svg {
+		fill: currentcolor;
+	}
+}
+
+@keyframes spectra-notice-popup-in {
+
+	from {
+		opacity: 0;
+		transform: translateX(0.5rem);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.spectra-notice-popup__item {
+		animation: none;
+	}
+}

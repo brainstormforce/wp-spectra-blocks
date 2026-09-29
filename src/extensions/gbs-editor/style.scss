@@ -2108,6 +2108,14 @@ $gbs-nav-width: 200px;
 
 .spectra-gbs-class-editor__code {
 	display: flex;
+	// Column, because the parse issues sit under the editor inside this same
+	// grid cell. They used to be a third child of __split spanning both columns,
+	// which pushed the live preview onto a row of its own instead of letting it
+	// sit beside the editor.
+	flex-direction: column;
+	// Only spaces the issues off the editor; an empty issues list is display:
+	// none below, so there is no gap when the CSS parses cleanly.
+	gap: $gbs-space-2;
 	min-width: 0;
 
 	// Let the textarea fill the (grid-stretched) cell so the code column
@@ -2490,6 +2498,12 @@ $gbs-nav-width: 200px;
 
 	&:focus {
 		border-color: $gbs-blue;
+	}
+
+	// Validation state — set when the row's value cannot round-trip (error) or
+	// looks inconsistent with the variable's name (warning).
+	&.is-error {
+		border-color: #b32d2e;
 	}
 }
 
@@ -4207,4 +4221,58 @@ $gbs-nav-width: 200px;
 .spectra-css-ac__ghost-text {
 	// Muted colour signals this is a suggestion, not committed text.
 	color: rgba(0, 0, 0, 0.38);
+}
+
+// ─── Validation issues ────────────────────────────────────────────────────────
+// Inline problem reports under a field, a textarea, or a class-editor pane.
+// Errors block saving (the input cannot round-trip); warnings are advisory.
+
+.spectra-gbs-issues {
+	margin: $gbs-space-2 0 0;
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: $gbs-space-1;
+}
+
+.spectra-gbs-issue {
+	display: flex;
+	align-items: baseline;
+	gap: $gbs-space-2;
+	margin: $gbs-space-1 0 0;
+	font-family: $gbs-font;
+	font-size: $gbs-fs-small;
+	line-height: 1.45;
+
+	&.is-error {
+		color: #b32d2e;
+	}
+}
+
+// Line reference for multi-line inputs — a fixed-width chip so a run of them
+// stays aligned and the messages start on a common left edge.
+.spectra-gbs-issue__line {
+	flex-shrink: 0;
+	min-width: 52px;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	opacity: 0.8;
+}
+
+// One variable row: the input line plus any message belonging to it.
+.spectra-gbs-var-row {
+	display: flex;
+	flex-direction: column;
+}
+
+.spectra-gbs-class-editor__issues {
+	display: flex;
+	flex-direction: column;
+
+	// No issues means no element, so the parent's gap does not reserve space
+	// above a preview that has nothing to report.
+	&:empty {
+		display: none;
+	}
 }

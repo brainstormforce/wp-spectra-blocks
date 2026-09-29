@@ -10,6 +10,7 @@ namespace SpectraBlocks;
 use SpectraBlocks\Extensions\Animations;
 use SpectraBlocks\Extensions\BlockJsCompiler;
 use SpectraBlocks\Extensions\DisplayConditions;
+use SpectraBlocks\Extensions\FontAwesomeIcons;
 use SpectraBlocks\Extensions\ImageMask;
 use SpectraBlocks\Extensions\ResponsiveConditions;
 use SpectraBlocks\Extensions\ResponsiveControls;
@@ -94,6 +95,8 @@ class ExtensionManager {
 		}
 
 		( ImageMask::instance() )->init();
+
+		FontAwesomeIcons::init();
 
 		// Render per-block `spectraCustomJS` in wp_footer. Lives in free so
 		// imported/authored block JS runs without Spectra Pro.

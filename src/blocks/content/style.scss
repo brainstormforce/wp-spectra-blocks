@@ -98,3 +98,8 @@
 p:where(.wp-block-spectra-content).has-background {
 	padding: 0;
 }
+
+// An `<i>` holding its registry SVG (`FontAwesomeIcons`) drops a loaded Font Awesome glyph.
+i:has(> svg.spectra-icon)::before {
+	content: none;
+}
