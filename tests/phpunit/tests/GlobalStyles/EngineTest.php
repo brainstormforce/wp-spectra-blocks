@@ -18,7 +18,7 @@ use ReflectionClass;
 /**
  * EngineTest test case.
  *
- * @since x.x.x
+ * @since 1.0.10
  */
 class EngineTest extends WP_UnitTestCase {
 
@@ -540,5 +540,51 @@ class EngineTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( '@media (min-width: 768px)', $css );
 		$this->assertStringContainsString( 'padding: 16px 32px;', $css );
 		$this->assertStringContainsString( 'transform: translateY(-2px);', $css );
+	}
+
+	/**
+	 * The option renderer drops a rejected state tail too.
+	 *
+	 * @return void
+	 */
+	public function test_render_user_classes_drops_a_rejected_state_tail(): void {
+		$css = $this->invoke(
+			'render_user_classes',
+			array(
+				array(
+					'x' => array(
+						':has(> .u)'    => array( 'order' => '1' ),
+						':is(url(a"b))' => array( 'order' => '2' ),
+					),
+				),
+			)
+		);
+
+		$this->assertStringContainsString( '.x.x:has(> .u) { order: 1;', $css );
+		$this->assertStringNotContainsString( 'order: 2', $css );
+	}
+
+	/**
+	 * A value stored before the sanitizer escaped `</style` still cannot end
+	 * the utility stylesheet's `<style>` element: the output is escaped too.
+	 *
+	 * @return void
+	 */
+	public function test_stored_style_end_tag_is_escaped_on_output(): void {
+		update_option(
+			Engine::OPTION_KEY_USER_CSS,
+			array(
+				'v'       => '1',
+				'classes' => array(
+					'legacy' => array( 'default' => array( 'background' => 'red</style><b>' ) ),
+				),
+			)
+		);
+
+		Engine::get_instance()->enqueue_stylesheet();
+		$css = implode( "\n", (array) wp_styles()->get_data( 'spectra-gs-utility-classes', 'after' ) );
+
+		$this->assertStringContainsString( 'red\3c /style><b>', $css );
+		$this->assertStringNotContainsString( '</style', $css );
 	}
 }

@@ -23,7 +23,7 @@ use WP_UnitTestCase;
 /**
  * StateResolverTest test case.
  *
- * @since x.x.x
+ * @since 1.0.10
  */
 class StateResolverTest extends WP_UnitTestCase {
 
@@ -92,6 +92,35 @@ class StateResolverTest extends WP_UnitTestCase {
 	 */
 	public function test_drops_a_bare_unformatted_word(): void {
 		$this->assertSame( '', StateResolver::suffix( 'garbage' ) );
+	}
+
+	/**
+	 * TAIL is the published grammar's; every accepted vector renders verbatim,
+	 * bare and under a breakpoint, and every rejected one resolves to null.
+	 *
+	 * @return void
+	 */
+	public function test_state_tail_grammar_and_vectors(): void {
+		$published = wp_json_file_decode( __DIR__ . '/fixtures/spectra-contract.json', array( 'associative' => true ) )['state_tail'];
+		$vectors   = $published['vectors'];
+		unset( $published['$comment'], $published['grammar'], $published['vectors'] );
+		$this->assertSame( $published, StateResolver::TAIL );
+
+		foreach ( $vectors['accepted'] as $tail ) {
+			$this->assertSame( $tail, StateResolver::suffix( $tail ), $tail );
+			$this->assertSame(
+				array(
+					'media'  => StateResolver::BREAKPOINTS['md'],
+					'suffix' => $tail,
+				),
+				StateResolver::resolve( 'md_' . $tail ),
+				$tail
+			);
+		}
+		foreach ( $vectors['rejected'] as $tail ) {
+			$this->assertNull( StateResolver::resolve( $tail ), $tail );
+			$this->assertNull( StateResolver::resolve( 'md_' . $tail ), $tail );
+		}
 	}
 
 	/**

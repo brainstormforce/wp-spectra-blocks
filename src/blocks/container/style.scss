@@ -3,7 +3,11 @@
 	max-width: 100%;
 	padding: 10px;
 	box-sizing: border-box;
-	position: relative;
+
+	// Not on a front-end `spectra-no-position` container; the guard adds no weight.
+	&:where(:not(.spectra-no-position), .editor-styles-wrapper *) {
+		position: relative;
+	}
 
 	// Reset shape-divider and overlay-opacity inheritance for all nested containers.
 	// Color vars (--spectra-background-color / --spectra-background-gradient) are NOT
@@ -21,11 +25,13 @@
 	// Direct children are positioned, with no z-index of their own: an
 	// authored `z-index` on one child (a card over its picture) then
 	// orders siblings exactly as written, since an un-authored sibling
-	// sits at `auto`. The `:where()` keeps this at specificity (0,0,0)
-	// so a single utility class such as `absolute` or `-z-10` wins.
+	// sits at `auto`. The `:where()`s keep this at the container's own
+	// specificity (0,1,0), so a single utility class such as `absolute` or
+	// `-z-10` ties it and source order decides.
 	// The background, overlay and video variants below raise their own
 	// children above their layers inside an isolated stacking context.
-	> :where(
+	// Not under a front-end `spectra-no-position` parent.
+	&:where(:not(.spectra-no-position), .editor-styles-wrapper *) > :where(
 	*:not(.spectra-container__shape):not(.spectra-background-video__wrapper)
 ) {
 		position: relative;

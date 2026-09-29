@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,11 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.10 - Tuesday, 29th September 2026 =
+* Improvement: AI-imported pages now render faithfully to their approved previews — matching spacing, links, icons and special characters.
+* Fix: Images with a shadow no longer show a duplicate shadow line beside the image.
+* Fix: Scroll animations now respect the "Reduce motion" accessibility setting.
 
 = 1.0.9 - Tuesday, 22nd September 2026 =
 * Improvement: Icon library upgraded to Font Awesome 7 — expands the icon set while keeping existing icons working through automatic name mapping.

@@ -16,6 +16,7 @@ import getClassOptions from '../../data/class-options';
 import { useGBSConfig } from '../../hooks/useGBSConfig';
 import { useCustomClasses } from '../../hooks/useCustomClasses.js';
 import { regenerateEditorCSS } from '../../utils/liveVars.js';
+import { gbsNotices } from '../../notices/gbsNotices.js';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -400,8 +401,6 @@ const BlockDefaultsPanel = () => {
 		const v = gs?.block_defaults_enabled;
 		return ( v === false || v === 0 || v === '0' || v === '' ) ? false : true;
 	} );
-	const [ successMsg, setSuccessMsg ]               = useState( '' );
-	const [ errorMsg, setErrorMsg ]                   = useState( '' );
 
 	// The user's saved custom colours (config.custom_colors) — appended to the
 	// colour class groups so they're selectable as block defaults. Recomputed
@@ -431,16 +430,13 @@ const BlockDefaultsPanel = () => {
 
 	// ── Helpers ────────────────────────────────────────────────────────────────
 
-	const showSuccess = ( msg ) => {
-		setSuccessMsg( msg );
-		setErrorMsg( '' );
-		setTimeout( () => setSuccessMsg( '' ), 3000 );
-	};
+	// Feedback goes to the shared notice channel rather than local state: the
+	// old version held the message in this component behind a bare setTimeout,
+	// so closing the modal inside that window left a success message rendering
+	// on a panel that was already unmounting.
+	const showSuccess = ( msg ) => gbsNotices.success( msg );
 
-	const showError = ( msg ) => {
-		setErrorMsg( msg );
-		setSuccessMsg( '' );
-	};
+	const showError = ( msg ) => gbsNotices.error( msg );
 
 	const sendToIframe = ( type, payload = {} ) => {
 		const iframe = iframeRef.current;
@@ -1004,8 +1000,6 @@ const BlockDefaultsPanel = () => {
 								{ isRemovingAll ? __( 'Removing…', 'spectra-blocks' ) : __( 'Remove all block defaults', 'spectra-blocks' ) }
 							</button>
 						) }
-						{ successMsg && <span className="spectra-gbs-bd__status is-success" role="status">{ successMsg }</span> }
-						{ errorMsg && <span className="spectra-gbs-bd__status is-error" role="alert">{ errorMsg }</span> }
 					</div>
 					{ selectedBlock && (
 						<>

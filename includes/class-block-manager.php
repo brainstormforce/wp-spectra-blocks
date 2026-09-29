@@ -10,6 +10,7 @@ namespace SpectraBlocks;
 use RuntimeException;
 use SpectraBlocks\Blocks\Modal;
 use SpectraBlocks\Blocks\Countdown;
+use SpectraBlocks\Blocks\InlineLeaf;
 use SpectraBlocks\Blocks\PopupBuilder;
 use SpectraBlocks\Extensions\ResponsiveControls;
 use SpectraBlocks\Helpers\Core;
@@ -39,6 +40,7 @@ class BlockManager {
 		add_filter( 'block_type_metadata_settings', array( $this, 'configure_block_controller_settings' ), 11, 2 );
 
 		( Countdown::instance() )->init();
+		InlineLeaf::init();
 		add_action( 'init', array( PopupBuilder::instance(), 'register_popup_cpt' ) );
 		add_action( 'init', array( PopupBuilder::instance(), 'register_popup_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( PopupBuilder::instance(), 'enqueue_popup_scripts_for_post' ), 1 );

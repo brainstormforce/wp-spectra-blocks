@@ -19,6 +19,10 @@ import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
 import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
+// Mirrors InlineLeaf::PHRASING_TAGS: only a nested phrasing leaf prints the
+// converter's declared `spaceBefore` / `spaceAfter` (see content/view.php).
+const PHRASING_TAGS = [ 'span', 'a', 'strong', 'em', 'small', 'mark', 'del', 'ins', 'sub', 'sup', 'abbr', 'code', 'kbd', 'samp', 'var', 'output', 'q', 's', 'dfn', 'bdi', 'bdo', 'cite', 'time', 'label' ];
+
 // Static tag configuration - single source of truth.
 // Mirrors $valid_tag_names in controller.php. Icons fall back to the
 // closest semantic icon (p for inline, div for block-level).
@@ -78,7 +82,7 @@ export { TAG_CONFIG, DEFAULT_TAG_NAME };
 /**
  * The Editor Block render.
  *
- * @since x.x.x
+ * @since 1.0.10
  *
  * @param {Object} props The element props.
  * @return {Element} The rendered block.
@@ -275,11 +279,14 @@ const Render = ( props ) => {
 	}
 
 	// Standard case - no wrapper needed.
+	const printsSpaces = ! isRootBlock && PHRASING_TAGS.includes( tagName );
 	return (
 		<>
 			{ toolbarControls }
 			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			{ printsSpaces && attributes.spaceBefore && ' ' }
 			<RichText { ...blockProps } { ...richTextConfig } />
+			{ printsSpaces && attributes.spaceAfter && ' ' }
 		</>
 	);
 };

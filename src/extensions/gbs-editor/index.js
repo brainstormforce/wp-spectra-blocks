@@ -20,6 +20,7 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { regeneratePageCSS, removeOtherPageSheets, regenerateSitewideCSS, refreshStyleGuidePalette, watchExternalPageCssSaves } from './utils/liveVars.js';
 import { useEditedPostId } from './hooks/useEditedPostId.js';
+import '@spectra-components/notice-popup/style.scss';
 import './style.scss';
 
 // ─── Plugin component (renders nothing — editor-side effects only) ───────────────

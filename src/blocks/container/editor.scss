@@ -465,7 +465,7 @@
 // Beats WP's 0,1,0. Beats Spectra Block Spacing UI's 0,1,2. Loses to
 // Tailwind JIT's 0,5,1 — so authored `mt-*` / `mb-*` win.
 // Editor-only — never reaches the frontend or saved markup.
-// @since x.x.x
+// @since 1.0.10
 .sg-section.wp-block-spectra-container > .block-editor-inner-blocks > .block-editor-block-list__layout > *,
 .sg-section
 .wp-block-spectra-container > .block-editor-inner-blocks > .block-editor-block-list__layout > * {

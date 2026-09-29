@@ -27,15 +27,32 @@ class Renderer {
 	public static $icon_array_merged = array();
 
 	/**
+	 * The icon registry as one name => icon map (the chunks merged once).
+	 *
+	 * @since 1.0.10
+	 * @return array<string, array{svg?: array<string, array{width?: int, height?: int, path?: string}>}>
+	 */
+	public static function icons() {
+		if ( empty( self::$icon_array_merged ) ) {
+			foreach ( Core::backend_load_font_awesome_icons() as $value ) {
+				self::$icon_array_merged = array_merge( self::$icon_array_merged, $value );
+			}
+		}
+
+		return self::$icon_array_merged;
+	}
+
+	/**
 	 * Generate SVG.
 	 *
 	 * @since 3.0.0
 	 * @param string  $icon             Icon name or raw SVG content.
 	 * @param boolean $flip_for_rtl     Indicated if the current SVG needs to be flipped in RTL mode.
 	 * @param array   $additional_props Any additional props.
+	 * @param string  $style            Registry variant (`solid`, `regular`, `brands`); else brands, then solid.
 	 * @return void
 	 */
-	public static function svg_html( $icon, $flip_for_rtl = false, $additional_props = array() ) {
+	public static function svg_html( $icon, $flip_for_rtl = false, $additional_props = array(), $style = '' ) {
 		// Handle uploaded SVG (Elementor format).
 		if ( ! empty( $icon ) && is_array( $icon ) && isset( $icon['library'] ) && 'svg' === $icon['library'] && isset( $icon['value']['id'] ) ) {
 			$attachment_id = intval( $icon['value']['id'] );
@@ -60,16 +77,7 @@ class Renderer {
 
 		// Handle FontAwesome icon names (existing logic).
 		$icon = sanitize_text_field( esc_attr( $icon ) );
-		$json = Core::backend_load_font_awesome_icons();
-
-		if ( ! empty( $json ) ) {
-			if ( empty( self::$icon_array_merged ) ) {
-				foreach ( $json as $value ) {
-					self::$icon_array_merged = array_merge( self::$icon_array_merged, $value );
-				}
-			}
-			$json = self::$icon_array_merged;
-		}
+		$json = self::icons();
 
 		// Legacy alias fallback: the library keys icons by FA7 primary name
 		// only — content authored against an old name ('check-circle')
@@ -82,7 +90,7 @@ class Renderer {
 			}
 		}
 
-		$icon_brand_or_solid = isset( $json[ $icon ]['svg']['brands'] ) ? $json[ $icon ]['svg']['brands'] : ( isset( $json[ $icon ]['svg']['solid'] ) ? $json[ $icon ]['svg']['solid'] : array() );
+		$icon_brand_or_solid = $json[ $icon ]['svg'][ $style ] ?? $json[ $icon ]['svg']['brands'] ?? $json[ $icon ]['svg']['solid'] ?? array();
 		$path                = $icon_brand_or_solid['path'] ?? '';
 		$view                = isset( $icon_brand_or_solid['width'] ) && isset( $icon_brand_or_solid['height'] ) ? '0 0 ' . $icon_brand_or_solid['width'] . ' ' . $icon_brand_or_solid['height'] : null;
 

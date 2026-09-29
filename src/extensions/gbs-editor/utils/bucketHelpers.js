@@ -18,7 +18,14 @@ export function parseLine( line ) {
 		return null;
 	}
 	const property = line.slice( 0, idx ).trim();
-	const value = line.slice( idx + 1 ).trim();
+
+	// Drop the author's terminating semicolon. Without this the `;` was kept as
+	// part of the value, so the editor's own placeholder — `color: red;` — stored
+	// `red;` and the generator emitted `color: red;;`. Only a TRAILING one is
+	// removed: a `;` in the middle of a value is a different problem, and
+	// validation reports it rather than silently rewriting what was typed.
+	const value = line.slice( idx + 1 ).replace( /;\s*$/, '' ).trim();
+
 	return property && value ? { property, value } : null;
 }
 
@@ -67,6 +74,55 @@ export function textToBucket( text ) {
 }
 
 /**
+ * Split a run of CSS on its top-level `;` separators.
+ *
+ * Quote- and paren-aware, so a semicolon inside `url( 'a;b.png' )` or
+ * `content: ";"` is part of the value rather than a separator.
+ *
+ * @since 1.0.10
+ *
+ * @param {string} css Declaration run, without the surrounding braces.
+ * @return {string[]} Raw declarations, still untrimmed.
+ */
+function splitDeclarations( css ) {
+	const parts = [];
+	let buffer = '';
+	let quote = null;
+	let depth = 0;
+
+	for ( let i = 0; i < css.length; i++ ) {
+		const char = css[ i ];
+
+		if ( quote ) {
+			buffer += char;
+			if ( '\\' === char && i + 1 < css.length ) {
+				buffer += css[ ++i ];
+			} else if ( char === quote ) {
+				quote = null;
+			}
+			continue;
+		}
+
+		if ( '"' === char || "'" === char ) {
+			quote = char;
+		} else if ( '(' === char ) {
+			depth++;
+		} else if ( ')' === char ) {
+			depth = Math.max( 0, depth - 1 );
+		} else if ( ';' === char && 0 === depth ) {
+			parts.push( buffer );
+			buffer = '';
+			continue;
+		}
+
+		buffer += char;
+	}
+
+	parts.push( buffer );
+	return parts;
+}
+
+/**
  * Extract declaration text from a stored class value — handles both bucket
  * format and legacy raw CSS string format.
  *
@@ -89,9 +145,19 @@ export function getStoredBucketText( stored, bucket ) {
 			return '';
 		}
 		const inside = stored.match( /\{([^}]*)\}/s )?.[ 1 ];
-		return ( inside ?? stored )
-			.replace( /^\s*\/\*[^*]*\*\/\s*/gm, '' )
-			.trim();
+
+		// One declaration per line, matching what `bucketToText` produces for the
+		// object format. Legacy CSS written on a single line — `{ color: red;
+		// font-size: 1rem; }` — otherwise reached the editor as one line, and
+		// `textToBucket` splits on newlines, so the whole run collapsed into a
+		// single property and the later declarations were lost on the first save.
+		// Newlines inside one declaration are folded for the same reason.
+		return splitDeclarations(
+			( inside ?? stored ).replace( /^\s*\/\*[^*]*\*\/\s*/gm, '' )
+		)
+			.map( ( part ) => part.replace( /\s*\n\s*/g, ' ' ).trim() )
+			.filter( Boolean )
+			.join( '\n' );
 	}
 
 	if ( typeof stored === 'object' ) {

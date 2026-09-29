@@ -1,0 +1,37 @@
+// IMPORTED-CONTENT BASELINE — ELEMENT TIER (0,0,1). Ties the theme.json element rules and the
+// page's lowest GBS lane, so it prints between them (Engine::pin_styles_after_theme_globals).
+
+// A17 — theme.json element rules and the host's global-styles user layer size, space and
+// transform headings the source never styled. Not font-family: the theme owns it.
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h1,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h2,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h3,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h4,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h5,
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+h6 {
+	font-size: revert;
+	font-weight: revert;
+	line-height: revert;
+	letter-spacing: revert;
+	margin: revert;
+	text-transform: revert;
+}
+
+// A33 — theme.json `a:where(:not(.wp-element-button))` strips the UA link underline.
+:where(body.spectra-page-zip-builder)
+:where(.entry-content, .wp-block-template-part)
+a {
+	text-decoration: revert;
+}

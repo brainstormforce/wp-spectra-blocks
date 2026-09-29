@@ -17,7 +17,7 @@ use WP_UnitTestCase;
 /**
  * SanitizerTest test case.
  *
- * @since x.x.x
+ * @since 1.0.10
  */
 class SanitizerTest extends WP_UnitTestCase {
 
@@ -122,6 +122,80 @@ class SanitizerTest extends WP_UnitTestCase {
 		$this->assertSame( '', Sanitizer::sanitize_css_value( 'vbscript:msgbox(1)' ) );
 	}
 
+	/**
+	 * A CSS escape cannot spell a blocked token one character at a time: the
+	 * patterns are matched against the value as a browser reads it.
+	 *
+	 * @return void
+	 */
+	public function test_value_blocks_escape_obfuscated_tokens(): void {
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'j\61 vascript:alert(1)' ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'expression\28 alert(1))' ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'url(data:image/svg+xml,<svg \6fnload=alert(1)>)' ) );
+	}
+
+	/**
+	 * decode_css_escapes reads a value the way a browser does.
+	 *
+	 * @return void
+	 */
+	public function test_decode_css_escapes_reads_like_a_browser(): void {
+		$this->assertSame( 'javascript:', Sanitizer::decode_css_escapes( 'j\61 vascript\3a' ) );
+		$this->assertSame( '"', Sanitizer::decode_css_escapes( '\"' ) );
+		$this->assertSame( 'plain', Sanitizer::decode_css_escapes( 'plain' ) );
+		// A backslash before a newline is a line continuation — removed.
+		$this->assertSame( 'javascript:', Sanitizer::decode_css_escapes( "java\\\nscript:" ) );
+		$this->assertSame( 'javascript:', Sanitizer::decode_css_escapes( "java\\\r\nscript:" ) );
+		// CRLF after a hex escape is ONE whitespace, consumed by the escape.
+		$this->assertSame( 'javascript:', Sanitizer::decode_css_escapes( "j\\61\r\nvascript:" ) );
+	}
+
+	/**
+	 * A line continuation or a CRLF after a hex escape cannot split a blocked
+	 * token past the as-read check.
+	 *
+	 * @return void
+	 */
+	public function test_value_blocks_newline_split_tokens(): void {
+		$this->assertSame( '', Sanitizer::sanitize_css_value( "url(\"java\\\nscript:alert(1)\")" ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( "url(\"j\\61\r\nvascript:alert(1)\")" ) );
+	}
+
+	/**
+	 * A character the whitelist strips cannot join its neighbours into a
+	 * blocked token after the checks ran: the checks see the stripped value.
+	 *
+	 * @return void
+	 */
+	public function test_value_blocks_tokens_joined_by_whitelist_strip(): void {
+		$this->assertSame( '', Sanitizer::sanitize_css_value( "url(\"j\\\x0161 vascript:x\")" ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( "java\x01script:alert(1)" ) );
+	}
+
+	/**
+	 * Strict mode reads an escaped function name the way a browser does:
+	 * `v\61r(` is `var(`.
+	 *
+	 * @return void
+	 */
+	public function test_value_strict_rejects_escaped_malformed_var(): void {
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'v\61r(url(x))', true ) );
+		$this->assertSame( 'v\61r(--x)', Sanitizer::sanitize_css_value( 'v\61r(--x)', true ) );
+	}
+
+	/**
+	 * A trailing unpaired backslash is dropped — printed, it would escape the
+	 * `;` ending the declaration. A paired `\\` is an escaped backslash and stays.
+	 *
+	 * @return void
+	 */
+	public function test_value_drops_trailing_unpaired_backslash(): void {
+		$this->assertSame( 'red', Sanitizer::sanitize_css_value( 'red\\' ) );
+		$this->assertSame( '"a\\\\"', Sanitizer::sanitize_css_value( '"a\\\\"' ) );
+		$this->assertSame( 'a\\\\', Sanitizer::sanitize_css_value( 'a\\\\' ) );
+		$this->assertSame( 'a\\\\', Sanitizer::sanitize_css_value( 'a\\\\\\' ) );
+	}
+
 	// ─────────────────────────────────────────────────────────────
 	// sanitize_css_value — preservation
 	// ─────────────────────────────────────────────────────────────
@@ -134,6 +208,18 @@ class SanitizerTest extends WP_UnitTestCase {
 	public function test_value_preserves_css_functions(): void {
 		$this->assertSame( 'calc(100% - 20px)', Sanitizer::sanitize_css_value( 'calc(100% - 20px)' ) );
 		$this->assertSame( 'var(--primary)', Sanitizer::sanitize_css_value( 'var(--primary)' ) );
+	}
+
+	/**
+	 * A CSS escape is part of the value: `content: "\201C"` is a curly quote and
+	 * `\2192` an arrow. Dropping the backslash ships the hex digits as text.
+	 *
+	 * @return void
+	 */
+	public function test_value_preserves_css_escapes(): void {
+		$this->assertSame( '"\201C"', Sanitizer::sanitize_css_value( '"\201C"' ) );
+		$this->assertSame( '"\2192 "', Sanitizer::sanitize_css_value( '"\2192 "' ) );
+		$this->assertSame( '"\201C"', Sanitizer::sanitize_css_value( '"\201C"', true ) );
 	}
 
 	/**
@@ -209,6 +295,26 @@ class SanitizerTest extends WP_UnitTestCase {
 	public function test_value_length_is_capped(): void {
 		$long = str_repeat( 'a', 2500 );
 		$this->assertSame( 2000, strlen( Sanitizer::sanitize_css_value( $long ) ) );
+	}
+
+	/**
+	 * Non-ASCII text and a URL query survive; blocked tokens stay blocked.
+	 *
+	 * @return void
+	 */
+	public function test_value_keeps_non_ascii_and_query(): void {
+		$this->assertSame( "'↔'", Sanitizer::sanitize_css_value( "'↔'" ) );
+		$this->assertSame( 'url("https://x.test/a.jpg?w=1")', Sanitizer::sanitize_css_value( 'url("https://x.test/a.jpg?w=1")' ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'url("↔javascript:alert(1)")' ) );
+	}
+
+	/**
+	 * The length cap counts characters, not bytes.
+	 *
+	 * @return void
+	 */
+	public function test_value_length_cap_counts_characters(): void {
+		$this->assertSame( str_repeat( '↔', 2000 ), Sanitizer::sanitize_css_value( str_repeat( '↔', 2001 ) ) );
 	}
 
 	/**
@@ -447,5 +553,43 @@ class SanitizerTest extends WP_UnitTestCase {
 		$result = Sanitizer::sanitize_keyframe_data( 'not json' );
 		$this->assertSame( '', $result['css'] );
 		$this->assertSame( '0.3s', $result['meta']['defaultDuration'] );
+	}
+
+	/**
+	 * A `</style` in a value is escaped, not printed: the HTML parser would end
+	 * the `<style>` element there and print the rest as live HTML.
+	 *
+	 * @return void
+	 */
+	public function test_value_style_end_tag_is_escaped(): void {
+		$this->assertSame( 'red\3c /style><base href=//evil.test>', Sanitizer::sanitize_css_value( 'red</style><base href=//evil.test>' ) );
+		$this->assertSame( 'red\3c /STYLE ><b>', Sanitizer::sanitize_css_value( 'red</STYLE ><b>' ) );
+		$this->assertSame( 'a\3c /style/x', Sanitizer::sanitize_css_value( 'a</style/x' ) );
+	}
+
+	/**
+	 * An SVG data URL keeps its own `<style>` element: the CSS parser reads the
+	 * escape back, so the URL is unchanged as a browser reads it.
+	 *
+	 * @return void
+	 */
+	public function test_svg_data_url_style_element_survives(): void {
+		$svg = "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\"><style>.a{fill:red}</style><rect class=\"a\"/></svg>')";
+		$out = Sanitizer::sanitize_css_value( $svg );
+
+		$this->assertStringNotContainsString( '</style', $out );
+		$this->assertSame( $svg, Sanitizer::decode_css_escapes( $out ) );
+	}
+
+	/**
+	 * The escape is idempotent, and it never unblocks a blocked token.
+	 *
+	 * @return void
+	 */
+	public function test_style_end_tag_escape_is_idempotent_and_keeps_blocks(): void {
+		$once = Sanitizer::sanitize_css_value( 'red</style>' );
+		$this->assertSame( $once, Sanitizer::sanitize_css_value( $once ) );
+		$this->assertSame( $once, Sanitizer::escape_style_end_tag( $once ) );
+		$this->assertSame( '', Sanitizer::sanitize_css_value( 'x</script>' ) );
 	}
 }

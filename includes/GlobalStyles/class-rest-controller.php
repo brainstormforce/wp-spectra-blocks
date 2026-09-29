@@ -802,7 +802,9 @@ class RestController {
 			} else {
 				$page_payload['classes'][ $class_name ] = $styles;
 			}
-			update_post_meta( $post_id, GenCssOrphanStripper::META_KEY, $page_payload );
+			// update_post_meta() unslashes its value; pre-slash so CSS escapes
+			// (`content: "\201C"`) survive the write.
+			update_post_meta( $post_id, GenCssOrphanStripper::META_KEY, wp_slash( $page_payload ) );
 		} else {
 			// Global write — update the site-wide option.
 			$user_css = $this->get_user_css();
@@ -1405,6 +1407,7 @@ class RestController {
 			// "stale presetLock" leak where a previous build's
 			// `body { --wp--preset--color--*: … }` survived the per-entry merge (an
 			// omitted bucket is preserved) and beat the new build's :root palette.
+			// `imports` too: a prior build's `@import` must not reach the new site.
 			// replace=false → plain merge (match_site siblings / partial writes),
 			// unchanged.
 			//
@@ -1416,8 +1419,8 @@ class RestController {
 			// partial write can never wipe the editor's own classes.
 			$replace = (bool) $request->get_param( 'replace' );
 			$keep    = $request->get_param( 'reset_classes' )
-				? array( 'v', 'keyframes', 'imports' )
-				: array( 'v', 'classes', 'keyframes', 'imports' );
+				? array( 'v', 'keyframes' )
+				: array( 'v', 'classes', 'keyframes' );
 			$base    = $this->get_user_css();
 			if ( $replace ) {
 				$base = array_intersect_key( $base, array_flip( $keep ) );
@@ -1485,7 +1488,9 @@ class RestController {
 		// NOTE: the orphan-stripper sanitize filter on this meta key returns
 		// early unless the value is a STRING, so it is a no-op for the payload
 		// array written here — every bucket's validation is the merge above.
-		update_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, $merged );
+		// update_post_meta() unslashes its value; pre-slash so CSS escapes
+		// (`content: "\201C"`) survive the write.
+		update_post_meta( $post_id, Engine::OPTION_KEY_USER_CSS, wp_slash( $merged ) );
 
 		return rest_ensure_response(
 			array(

@@ -1,6 +1,6 @@
 window.addEventListener( 'load', function () {
 	setTimeout( function () {
-		AOS.init();
+		AOS.init( { disable: window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches } );
 		// Webfonts can finish swapping AFTER `load`, re-metricing text and
 		// shifting the layout below AOS's cached trigger offsets — below-fold
 		// reveals then never fire and their content stays at opacity 0 forever

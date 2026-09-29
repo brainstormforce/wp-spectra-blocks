@@ -19,6 +19,8 @@
 
 namespace SpectraBlocks\GlobalStyles;
 
+use SpectraBlocks\AssetLoader;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -241,7 +243,7 @@ class Engine {
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
 		wp_register_style( $handle, false, array(), null );
 		wp_enqueue_style( $handle );
-		wp_add_inline_style( $handle, $css );
+		wp_add_inline_style( $handle, Sanitizer::escape_style_end_tag( $css ) );
 	}
 
 	/**
@@ -300,7 +302,7 @@ class Engine {
 		// { padding: 10px }`) are unlayered, and @layer rules lose to unlayered
 		// rules at equal specificity. Utilities must also be unlayered so they
 		// win by source order (dynamic styles enqueue after block style-index).
-		wp_add_inline_style( $handle, $css );
+		wp_add_inline_style( $handle, Sanitizer::escape_style_end_tag( $css ) );
 	}
 
 	/**
@@ -508,7 +510,7 @@ class Engine {
 
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
 		wp_register_style( $handle, false, $deps, null );
-		wp_add_inline_style( $handle, $css );
+		wp_add_inline_style( $handle, Sanitizer::escape_style_end_tag( $css ) );
 		wp_enqueue_style( $handle );
 	}
 
@@ -516,13 +518,35 @@ class Engine {
 	 * Make every enqueued `spectra-gen-*` / `spectra-gs-*` style depend on the
 	 * theme's `global-styles` handle so the dependency resolver prints ours
 	 * AFTER theme.json output — deterministic source order instead of hook
-	 * trivia. No-op when the theme has no `global-styles` (classic themes).
+	 * trivia. On an imported page the element-tier reverts print between the two. A
+	 * classic theme loading block assets on demand has only `wp-global-styles-placeholder`,
+	 * which core swaps `global-styles` into. With neither, the reverts still load
+	 * (they only lose the ordering) and nothing is pinned.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
 	public function pin_styles_after_theme_globals(): void {
-		if ( ! wp_style_is( 'global-styles', 'registered' ) && ! wp_style_is( 'global-styles', 'enqueued' ) ) {
+		$anchor = null;
+		foreach ( array( 'global-styles', 'wp-global-styles-placeholder' ) as $slot ) {
+			if ( wp_style_is( $slot, 'registered' ) || wp_style_is( $slot, 'enqueued' ) ) {
+				$anchor = $slot;
+				break;
+			}
+		}
+
+		// Only an imported page wears the body class the reverts are scoped to.
+		// Guarded: a dep on an unregistered handle would drop every sheet pinned to it.
+		$reverts = 'spectra-blocks-imported-baseline-elements';
+		if ( AssetLoader::is_imported_singular() && wp_style_is( $reverts, 'registered' ) ) {
+			if ( null !== $anchor ) {
+				wp_styles()->registered[ $reverts ]->deps[] = $anchor;
+				$anchor                                     = $reverts;
+			}
+			wp_enqueue_style( $reverts );
+		}
+
+		if ( null === $anchor ) {
 			return;
 		}
 
@@ -533,10 +557,10 @@ class Engine {
 				continue;
 			}
 			$registered = $styles->registered[ $handle ] ?? null;
-			if ( null === $registered || in_array( 'global-styles', (array) $registered->deps, true ) ) {
+			if ( null === $registered || in_array( $anchor, (array) $registered->deps, true ) ) {
 				continue;
 			}
-			$registered->deps[] = 'global-styles';
+			$registered->deps[] = $anchor;
 		}
 	}
 
@@ -571,7 +595,7 @@ class Engine {
 		// phpcs:ignore WordPress.WP.EnqueuedResourceParameters -- Inline-only stylesheet; no src/version needed.
 		wp_register_style( $handle, false, $deps, null );
 		wp_enqueue_style( $handle );
-		wp_add_inline_style( $handle, $css );
+		wp_add_inline_style( $handle, Sanitizer::escape_style_end_tag( $css ) );
 	}
 
 	/**
@@ -1170,6 +1194,9 @@ class Engine {
 				}
 
 				$resolved = StateResolver::resolve( (string) $type );
+				if ( null === $resolved ) {
+					continue;
+				}
 				// Repeat the class token (via the shared GenCssRenderer helper) to
 				// lift specificity to (0,3,0) — kept in lockstep with the per-page
 				// renderer so option classes and meta classes never drift.
