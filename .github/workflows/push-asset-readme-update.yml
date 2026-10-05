@@ -15,7 +15,7 @@ jobs:
     environment: production
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: WordPress Plugin Asset Update
         uses: 10up/action-wordpress-plugin-asset-update@stable
