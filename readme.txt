@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,11 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.11 - Monday, 5th October 2026 =
+* Fix: Container background colors and gradients now display reliably on the front end, including inside a parent container that has its own background.
+* Fix: Image overlays no longer cover inner content in the editor, so the editor matches the front end.
+* Fix: Modals no longer cause horizontal scrolling on mobile when the containing section uses a scroll animation.
 
 = 1.0.10 - Tuesday, 29th September 2026 =
 * Improvement: AI-imported pages now render faithfully to their approved previews — matching spacing, links, icons and special characters.

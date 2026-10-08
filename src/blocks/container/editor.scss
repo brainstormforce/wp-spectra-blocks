@@ -74,8 +74,14 @@
 	// Variable based CSS - Background Overlay.
 	&.spectra-background-overlay {
 		position: relative;
-		// Create isolation to prevent opacity from affecting children
-		isolation: isolate;
+		// Isolate ONLY when a real overlay layer exists (.has-container-overlay), so its
+		// opacity/blend is contained. A colour/gradient-only container also gets
+		// .spectra-background-overlay (render.js) but has no overlay layer, so it must NOT
+		// isolate — else an authored child z-index is trapped in the editor while the front
+		// end (which never isolates the colour path) lets it through. Parity for #629/#344. See #1061.
+		&.has-container-overlay {
+			isolation: isolate;
+		}
 
 		// Variable based CSS - Background Image below Overlay.
 		&.spectra-background-image {
@@ -128,9 +134,9 @@
 		}
 
 		// Variable based CSS - Simple Background Color for Editor (only when no background image).
+		// No isolation and no z-index on the scaffold — mirrors the front end so the
+		// editor matches it, and so a child's authored z-index is not trapped. See #1061.
 		&.spectra-background-color:not(.spectra-background-image) {
-			// Create isolation to prevent opacity from affecting children
-			isolation: isolate;
 
 			&::before {
 				content: "";
@@ -142,14 +148,12 @@
 				background: var(--spectra-background-color);
 				opacity: var(--spectra-overlay-opacity);
 				pointer-events: none;
-				z-index: 0;
 			}
 		}
 
 		// Variable based CSS - Simple Background Gradient for Editor (only when no background image).
+		// No isolation and no z-index — mirrors the front end. See #1061.
 		&.spectra-background-gradient:not(.spectra-background-image) {
-			// Create isolation to prevent opacity from affecting children
-			isolation: isolate;
 
 			&::before {
 				content: "";
@@ -161,7 +165,6 @@
 				background: var(--spectra-background-gradient);
 				opacity: var(--spectra-overlay-opacity);
 				pointer-events: none;
-				z-index: 0;
 			}
 		}
 
@@ -295,9 +298,20 @@
 				background-blend-mode: var(--spectra-overlay-blend-mode, normal);
 			}
 
+			// The z-index:2 lift must reach the elements that actually generate
+			// boxes in the editor canvas. The container's only real direct child
+			// is Gutenberg's .block-editor-inner-blocks wrapper, which — with the
+			// non-core-layout .block-editor-block-list__layout below it — is
+			// flattened via display:contents. A display:contents element paints no
+			// box, so a lift on `> *` never lands on the inner blocks and the
+			// ::after overlay paints over them at 100% opacity (#602). Lift the
+			// real blocks: the layout wrapper when a core flex/grid layout keeps
+			// it as a box, otherwise its children. Editor-only. From #1052.
 			> *:not(.spectra-background-video__wrapper):not(
 			.spectra-container__shape
-		) {
+		),
+			> .block-editor-inner-blocks > .block-editor-block-list__layout,
+			> .block-editor-inner-blocks > .block-editor-block-list__layout > * {
 				position: relative;
 				z-index: 2;
 			}

@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spectra Blocks 1.0.9\n"
+"Project-Id-Version: Spectra Blocks 1.0.11\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/spectra-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-21T13:46:38+00:00\n"
+"POT-Creation-Date: 2026-10-01T18:09:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spectra-blocks\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: admin/inc/class-admin-menu.php:389
 #: admin/inc/class-admin-menu.php:399
 #: classes/class-spectra-blocks-onboarding.php:117
-#: includes/class-block-manager.php:274
+#: includes/class-block-manager.php:276
 msgid "Spectra Blocks"
 msgstr ""
 
@@ -2145,7 +2145,7 @@ msgid "Cmplid"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:951
-#: src/blocks/content/render.js:58
+#: src/blocks/content/render.js:62
 msgid "Code"
 msgstr ""
 
@@ -5396,7 +5396,7 @@ msgid "Parachute Box"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:1003
-#: src/blocks/content/render.js:34
+#: src/blocks/content/render.js:38
 msgid "Paragraph"
 msgstr ""
 
@@ -5945,7 +5945,7 @@ msgid "Python"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:5440
-#: src/blocks/content/render.js:64
+#: src/blocks/content/render.js:68
 msgid "Q"
 msgstr ""
 
@@ -6259,7 +6259,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:7812
 #: src/blocks/accordion-child-header-content/settings.js:134
-#: src/blocks/content/render.js:65
+#: src/blocks/content/render.js:69
 msgid "S"
 msgstr ""
 
@@ -10543,15 +10543,15 @@ msgstr ""
 msgid "Apply and remove block extensions like animations, sticky, responsive conditions, z-index, and image masks."
 msgstr ""
 
-#: includes/class-asset-loader.php:529
+#: includes/class-asset-loader.php:533
 msgid "Set by the ERA importer on imported pages; drives the zip-builder body class."
 msgstr ""
 
-#: includes/class-block-manager.php:289
+#: includes/class-block-manager.php:291
 msgid "Spectra Inner Blocks"
 msgstr ""
 
-#: includes/class-extension-manager.php:66
+#: includes/class-extension-manager.php:67
 msgid "Set when a user dismisses the Zip AI page notice; hides it site-wide."
 msgstr ""
 
@@ -10575,16 +10575,16 @@ msgstr ""
 msgid "Styles payload is required."
 msgstr ""
 
-#: includes/GlobalStyles/class-rest-controller.php:865
+#: includes/GlobalStyles/class-rest-controller.php:867
 msgid "Keyframe name is required."
 msgstr ""
 
-#: includes/GlobalStyles/class-rest-controller.php:875
+#: includes/GlobalStyles/class-rest-controller.php:877
 msgid "Keyframe data is required."
 msgstr ""
 
 #. translators: %s: Keyframe name.
-#: includes/GlobalStyles/class-rest-controller.php:914
+#: includes/GlobalStyles/class-rest-controller.php:916
 msgid "A keyframe named \"%s\" already exists with different contents."
 msgstr ""
 
@@ -10600,7 +10600,7 @@ msgid "None"
 msgstr ""
 
 #: includes/Helpers/class-shadow.php:189
-#: src/blocks/content/render.js:51
+#: src/blocks/content/render.js:55
 msgid "Small"
 msgstr ""
 
@@ -11093,7 +11093,7 @@ msgstr ""
 
 #: src/blocks/accordion-child-header/settings.js:88
 #: src/blocks/container/toolbar.js:26
-#: src/blocks/content/render.js:35
+#: src/blocks/content/render.js:39
 msgid "Div"
 msgstr ""
 
@@ -11914,7 +11914,7 @@ msgid "Figure"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:58
-#: src/blocks/content/render.js:43
+#: src/blocks/content/render.js:47
 msgid "Figcaption"
 msgstr ""
 
@@ -11939,7 +11939,7 @@ msgid "OL"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:87
-#: src/blocks/content/render.js:70
+#: src/blocks/content/render.js:74
 msgid "LI"
 msgstr ""
 
@@ -11948,12 +11948,12 @@ msgid "DL"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:95
-#: src/blocks/content/render.js:46
+#: src/blocks/content/render.js:50
 msgid "DT"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:99
-#: src/blocks/content/render.js:47
+#: src/blocks/content/render.js:51
 msgid "DD"
 msgstr ""
 
@@ -11971,12 +11971,12 @@ msgid "Details"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:116
-#: src/blocks/content/render.js:69
+#: src/blocks/content/render.js:73
 msgid "Summary"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:120
-#: src/blocks/content/render.js:39
+#: src/blocks/content/render.js:43
 #: src/blocks/google-map/settings.js:350
 #: src/blocks/google-map/settings.js:360
 msgid "Address"
@@ -12059,7 +12059,7 @@ msgid "WBR"
 msgstr ""
 
 #: src/blocks/container/toolbar.js:271
-#: src/blocks/content/render.js:258
+#: src/blocks/content/render.js:262
 msgid "Change HTML tag"
 msgstr ""
 
@@ -12072,124 +12072,124 @@ msgstr ""
 msgid "Layout Help"
 msgstr ""
 
-#: src/blocks/content/render.js:27
+#: src/blocks/content/render.js:31
 msgid "Heading 1"
 msgstr ""
 
-#: src/blocks/content/render.js:28
+#: src/blocks/content/render.js:32
 msgid "Heading 2"
 msgstr ""
 
-#: src/blocks/content/render.js:29
+#: src/blocks/content/render.js:33
 msgid "Heading 3"
 msgstr ""
 
-#: src/blocks/content/render.js:30
+#: src/blocks/content/render.js:34
 msgid "Heading 4"
 msgstr ""
 
-#: src/blocks/content/render.js:31
+#: src/blocks/content/render.js:35
 msgid "Heading 5"
 msgstr ""
 
-#: src/blocks/content/render.js:32
+#: src/blocks/content/render.js:36
 msgid "Heading 6"
 msgstr ""
 
-#: src/blocks/content/render.js:36
+#: src/blocks/content/render.js:40
 msgid "Span"
 msgstr ""
 
-#: src/blocks/content/render.js:38
+#: src/blocks/content/render.js:42
 msgid "Blockquote"
 msgstr ""
 
-#: src/blocks/content/render.js:40
+#: src/blocks/content/render.js:44
 msgid "Cite"
 msgstr ""
 
-#: src/blocks/content/render.js:41
+#: src/blocks/content/render.js:45
 msgid "Time"
 msgstr ""
 
-#: src/blocks/content/render.js:42
+#: src/blocks/content/render.js:46
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:89
 msgid "Label"
 msgstr ""
 
-#: src/blocks/content/render.js:44
+#: src/blocks/content/render.js:48
 msgid "Caption"
 msgstr ""
 
-#: src/blocks/content/render.js:45
+#: src/blocks/content/render.js:49
 msgid "Legend"
 msgstr ""
 
-#: src/blocks/content/render.js:49
+#: src/blocks/content/render.js:53
 msgid "Strong"
 msgstr ""
 
-#: src/blocks/content/render.js:50
+#: src/blocks/content/render.js:54
 msgid "Em"
 msgstr ""
 
-#: src/blocks/content/render.js:52
+#: src/blocks/content/render.js:56
 msgid "Mark"
 msgstr ""
 
-#: src/blocks/content/render.js:53
+#: src/blocks/content/render.js:57
 msgid "Del"
 msgstr ""
 
-#: src/blocks/content/render.js:54
+#: src/blocks/content/render.js:58
 msgid "Ins"
 msgstr ""
 
-#: src/blocks/content/render.js:55
+#: src/blocks/content/render.js:59
 msgid "Sub"
 msgstr ""
 
-#: src/blocks/content/render.js:56
+#: src/blocks/content/render.js:60
 msgid "Sup"
 msgstr ""
 
-#: src/blocks/content/render.js:57
+#: src/blocks/content/render.js:61
 msgid "Abbr"
 msgstr ""
 
-#: src/blocks/content/render.js:59
+#: src/blocks/content/render.js:63
 msgid "Pre"
 msgstr ""
 
-#: src/blocks/content/render.js:60
+#: src/blocks/content/render.js:64
 msgid "Kbd"
 msgstr ""
 
-#: src/blocks/content/render.js:61
+#: src/blocks/content/render.js:65
 msgid "Samp"
 msgstr ""
 
-#: src/blocks/content/render.js:62
+#: src/blocks/content/render.js:66
 msgid "Var"
 msgstr ""
 
-#: src/blocks/content/render.js:63
+#: src/blocks/content/render.js:67
 msgid "Output"
 msgstr ""
 
-#: src/blocks/content/render.js:66
+#: src/blocks/content/render.js:70
 msgid "Dfn"
 msgstr ""
 
-#: src/blocks/content/render.js:67
+#: src/blocks/content/render.js:71
 msgid "Bdi"
 msgstr ""
 
-#: src/blocks/content/render.js:68
+#: src/blocks/content/render.js:72
 msgid "Bdo"
 msgstr ""
 
-#: src/blocks/content/render.js:244
+#: src/blocks/content/render.js:248
 msgid "Write something – paragraph, heading, or more…"
 msgstr ""
 
