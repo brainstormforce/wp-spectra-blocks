@@ -1728,9 +1728,14 @@ class ResponsiveAttributeCSS {
 			// surface to exist unconditionally; this branch needs the actual colour.
 			$has_non_responsive_color = ! empty( $attrs['backgroundColor'] ) || ! empty( $attrs['backgroundGradient'] );
 			if ( $has_non_responsive_color ) {
+				// No z-index on the colour scaffold. A negative z-index escaped the
+				// layer behind an ancestor's background (#629); `isolation: isolate`
+				// only masked that, at the cost of trapping child z-index (the #344
+				// regression). Direct children are `position: relative` and paint
+				// after `::before`, so they stay above it without either. See #1061.
 				$rules[] = array(
 					'selector'   => '::before',
-					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1);',
+					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1);',
 				);
 			} elseif ( self::has_hover_background( $attrs ) ) {
 				$rules[] = array(
@@ -1740,7 +1745,7 @@ class ResponsiveAttributeCSS {
 
 				$rules[] = array(
 					'selector'   => '.spectra-background-color-hover:hover::before',
-					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
+					'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block;',
 				);
 			}
 			return $rules;
@@ -1773,9 +1778,10 @@ class ResponsiveAttributeCSS {
 				// over blocks that are intentionally set to no background.
 				$has_overlay = ! empty( $attrs['backgroundColor'] ) || ! empty( $attrs['backgroundGradient'] );
 				if ( $has_overlay ) {
+					// No z-index — see the colour scaffold above and #1061.
 					$rules[] = array(
 						'selector'   => '::before',
-						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1);',
+						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block; background: var(--spectra-background-gradient, var(--spectra-background-color)); opacity: var(--spectra-overlay-opacity, 1);',
 					);
 				} else {
 					// Reset inherited vars so parent gradient/color doesn't leak in.
@@ -1787,7 +1793,7 @@ class ResponsiveAttributeCSS {
 				if ( self::has_hover_background( $attrs ) ) {
 					$rules[] = array(
 						'selector'   => '.spectra-background-color-hover:hover::before',
-						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none; display: block;',
+						'style_attr' => 'content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; display: block;',
 					);
 				}
 				return $rules;

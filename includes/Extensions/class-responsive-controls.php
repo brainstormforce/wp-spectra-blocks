@@ -530,7 +530,7 @@ class ResponsiveControls {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	const CSS_GENERATOR_VERSION = '30';
+	const CSS_GENERATOR_VERSION = '31';
 
 	/**
 	 * Add inline responsive CSS only once per request.
