@@ -479,6 +479,31 @@ class ResponsiveAttributeCSS {
 		$defs      = $attr_definitions[ $block_name ];
 
 		/*
+		 * A container's Width only applies at the default alignment. Wide and
+		 * full containers take their width from the alignment, and the editor
+		 * already ignores `width` for them (getContainerSizeStyles() in
+		 * render.js). Emitting it here too kept a width set before the
+		 * alignment was changed: a 500px container switched to Full rendered
+		 * 500px wide on the front end while the canvas showed it full width.
+		 */
+		if ( 'spectra/container' === $block_name && is_array( $defs ) && in_array( $block_attrs['align'] ?? '', array( 'wide', 'full' ), true ) ) {
+			unset( $defs['width'] );
+		}
+
+		/*
+		 * A full container is never clamped by its Max Width either: the editor
+		 * forces `max-width: none !important` on it (class-global-styles-bridge.php)
+		 * and the front-end stylesheet sets `max-width: none` (common.scss), but
+		 * this per-block rule outranked the stylesheet. The theme's full-width
+		 * breakout margins then left an 800px box pinned to the left edge while
+		 * the canvas showed it edge to edge. Wide containers keep their Max
+		 * Width, as the editor does.
+		 */
+		if ( 'spectra/container' === $block_name && is_array( $defs ) && 'full' === ( $block_attrs['align'] ?? '' ) ) {
+			unset( $defs['maxWidth'] );
+		}
+
+		/*
 		 * Turning text shadow OFF for one device has to emit an explicit reset.
 		 * The base layer is unqueried — it applies at every width — so a band
 		 * that simply generates nothing leaves the wider shadow showing, and

@@ -530,7 +530,7 @@ class ResponsiveControls {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	const CSS_GENERATOR_VERSION = '31';
+	const CSS_GENERATOR_VERSION = '34';
 
 	/**
 	 * Add inline responsive CSS only once per request.
@@ -1647,6 +1647,19 @@ class ResponsiveControls {
 			$block_content = $this->remove_core_image_inline_spacing( $block_content );
 
 			/*
+			 * The img's inline BORDER (radius, width, style, colour) is core's
+			 * base output for another group this extension owns — `border` is in
+			 * the painted groups, so `remove_conflicting_core_attributes()`
+			 * strips it from the viewport states and core bands none of it. This
+			 * extension emits all three bands itself, and the same rule as margin
+			 * applies: an inline declaration outranks every banded rule whatever
+			 * its specificity, so the desktop radius stuck at every width (see
+			 * GH #1090). Strip it on every version, keeping any dimension
+			 * properties core also wrote inline on the img.
+			 */
+			$block_content = $this->remove_core_image_inline_border( $block_content );
+
+			/*
 			 * The img's inline style is core's DIMENSION output — width,
 			 * height, aspect ratio, object fit. Where core renders viewport
 			 * states it bands those itself with `!important` and this extension
@@ -2076,11 +2089,18 @@ class ResponsiveControls {
 		 * fixed: switching to a theme that declares its own `settings.viewport`
 		 * changes the media queries without touching a single attribute, and
 		 * cached output would otherwise keep the previous theme's breakpoints.
+		 *
+		 * The alignment is part of it because it is not in the store but the
+		 * output depends on it: a wide or full container drops its `width` and
+		 * its left/right margins. Without it, changing only the alignment kept
+		 * serving the CSS cached at the old one, so a 500px container switched
+		 * to Full stayed 500px wide on the front end.
 		 */
 		$cache_data    = array(
 			'controls'   => $responsive_controls,
 			'block_name' => $block_name,
 			'bands'      => $this->get_media_queries(),
+			'align'      => $attrs['align'] ?? '',
 		);
 		$controls_hash = md5( wp_json_encode( $cache_data ) );
 
@@ -4108,6 +4128,54 @@ class ResponsiveControls {
 		while ( $processor->next_tag( 'img' ) ) {
 			// Simply remove the entire style attribute from img elements.
 			$processor->remove_attribute( 'style' );
+		}
+
+		return $processor->get_updated_html();
+	}
+
+	/**
+	 * Remove core's inline border declarations from a core/image img element.
+	 *
+	 * Core serialises the base `border` group (radius, width, style, colour)
+	 * inline on the `<img>`. This extension paints the whole border group across
+	 * every band, so the inline base is redundant — and because an inline
+	 * declaration outranks every banded rule, it otherwise froze the desktop
+	 * value at all widths (GH #1090). Only `border*` properties are removed; any
+	 * dimension properties core wrote on the same element are preserved.
+	 *
+	 * @since 3.0.0
+	 * @param string $block_content The block's HTML content.
+	 * @return string Modified HTML content with inline border declarations removed.
+	 */
+	private function remove_core_image_inline_border( $block_content ) {
+		$processor = new WP_HTML_Tag_Processor( $block_content );
+
+		while ( $processor->next_tag( array( 'tag_name' => 'img' ) ) ) {
+			$style_attr = $processor->get_attribute( 'style' );
+			if ( ! is_string( $style_attr ) || '' === $style_attr ) {
+				continue;
+			}
+
+			$styles   = $this->parse_inline_styles( $style_attr );
+			$modified = false;
+
+			// Drop every border declaration (shorthand and longhands); dimension
+			// properties such as width/height/aspect-ratio/object-fit do not start
+			// with `border` and are left untouched.
+			foreach ( array_keys( $styles ) as $property ) {
+				if ( 0 === strpos( $property, 'border' ) ) {
+					unset( $styles[ $property ] );
+					$modified = true;
+				}
+			}
+
+			if ( $modified ) {
+				if ( empty( $styles ) ) {
+					$processor->remove_attribute( 'style' );
+				} else {
+					$processor->set_attribute( 'style', $this->build_inline_styles( $styles ) );
+				}
+			}
 		}
 
 		return $processor->get_updated_html();

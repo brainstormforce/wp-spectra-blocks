@@ -1,5 +1,9 @@
 /* CSS file that store all common CSS that can be loaded into blocks if required. */
 
+// Converter-marker rules for one block each, kept with the block (one partial per
+// converted block). Their selectors name only that block's own elements.
+@import "converted/tabs";
+
 // WP core button compatibility: zero-specificity default border-radius so it
 // stays overridable.
 :where(.wp-block-button__link) {

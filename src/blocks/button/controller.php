@@ -16,6 +16,28 @@ $text = $attributes['text'] ?? '';
 // compare below is always against a known string.
 $text = is_scalar( $text ) ? (string) $text : '';
 
+// Expand shortcodes in the button label so a dynamic Spectra Button matches the
+// core Button in FSE areas (templates, template parts, header/footer). Dynamic
+// blocks store their text in the block-comment attribute JSON; the FSE template
+// pipeline (`_wp_apply_block_content_filters()`) runs `do_shortcode` BEFORE
+// `do_blocks` and never again, so a shortcode here reached the frontend as raw
+// text while the core Button - static inner HTML - was expanded by that early
+// pass. Running it here restores parity in that context. Done BEFORE the kses
+// passes below (and `wp_kses_post()` in view.php) so the shortcode OUTPUT is
+// sanitised.
+//
+// Skipped while `the_content` is running: there the pipeline is
+// `do_blocks` (9) -> `wptexturize` (10) -> `do_shortcode` (11), so the label is
+// already expanded by that priority-11 pass - exactly like the core Button and a
+// paragraph. Expanding here (at priority 9) instead would let `wptexturize` curl
+// the output (straight quotes/dashes become entities) and would unescape `[[..]]`
+// into a real shortcode that priority 11 then executes - both diverging from core.
+// Post Content blocks inside templates still run through `the_content`, so they
+// keep the priority-11 pass. See issue #852.
+if ( false !== strpos( $text, '[' ) && ! doing_filter( 'the_content' ) ) {
+	$text = do_shortcode( $text );
+}
+
 $icon = $attributes['icon'] ?? '';
 
 // The label must never contain an anchor: view.php always wraps it in an <a>,

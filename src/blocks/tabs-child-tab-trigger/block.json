@@ -9,6 +9,7 @@
 	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/tabs-child-tab-wrapper" ],
 	"supports": {
+		"html": false,
 		"__experimentalBorder": {
 			"width": true,
 			"color": true,
@@ -168,6 +169,10 @@
 		},
 		"backgroundGradientActiveHover": {
 			"type": "string"
+		},
+		"htmlAttributes": {
+			"type": "object",
+			"default": {}
 		}
 	}
 }

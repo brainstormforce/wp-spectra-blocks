@@ -247,13 +247,13 @@ const Render = ( props ) => {
 	const excludeKey = useMemo( () => ( exclude ? JSON.stringify( exclude ) : '' ), [ exclude ] );
 	const taxQueryKey = useMemo( () => ( taxQuery ? JSON.stringify( taxQuery ) : '' ), [ taxQuery ] );
 
-	// Map taxonomy slugs to their REST base keys (e.g. 'category' -> 'categories')
+	// Map taxonomy slugs to their REST base + hierarchy (e.g. 'category' -> { restBase: 'categories', hierarchical: true })
 	const taxonomyRestBases = useSelect(
 		( select ) => {
 			const { getTaxonomies } = select( coreStore );
 			const taxonomies = getTaxonomies( { type: postType, per_page: -1, context: 'view' } );
 			return ( taxonomies || [] ).reduce( ( acc, tax ) => {
-				acc[ tax.slug ] = tax.rest_base;
+				acc[ tax.slug ] = { restBase: tax.rest_base, hierarchical: tax.hierarchical };
 				return acc;
 			}, {} );
 		},
@@ -304,9 +304,16 @@ const Render = ( props ) => {
 		// Add Taxonomy Filters
 		if ( taxQuery ) {
 			Object.entries( taxQuery ).forEach( ( [ slug, terms ] ) => {
-				const restBase = taxonomyRestBases[ slug ];
-				if ( restBase && terms && terms.length ) {
-					args[ restBase ] = terms;
+				const taxonomy = taxonomyRestBases[ slug ];
+				if ( taxonomy?.restBase && terms && terms.length ) {
+					// For hierarchical taxonomies, use the REST "advanced" form so a
+					// parent term also matches posts in its child terms. The simple
+					// array form defaults to include_children=false on the server,
+					// emptying the editor preview while the front end still renders.
+					// See GH #679.
+					args[ taxonomy.restBase ] = taxonomy.hierarchical
+						? { terms, include_children: true }
+						: terms;
 				}
 			} );
 		}
@@ -355,9 +362,12 @@ const Render = ( props ) => {
 					? post.class_list
 					: Object.values( post.class_list || {} );
 				return {
-					postType: post.type,
-					postId: post.id,
-					classList: [ 'spectra-post-item', ...postClassList, carouselClass ].filter( Boolean ),
+					'postType': post.type,
+					'postId': post.id,
+					'classList': [ 'spectra-post-item', ...postClassList, carouselClass ].filter( Boolean ),
+					// Marks descendant core/post-date blocks as loop items so they
+					// render each post's own date in the editor preview. See #1099.
+					'spectra/post/isLoopItem': true,
 				};
 			} ),
 		[ posts, carouselClass ]

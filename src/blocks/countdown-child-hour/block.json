@@ -22,6 +22,7 @@
 		"spectra/countdown/showLabels": "spectra/countdown/showLabels"
 	 },
 	"supports": {
+		"html": false,
 		"lock": false,
 		"__experimentalBorder": {
 			"width": true,

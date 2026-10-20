@@ -11,8 +11,8 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	<?php echo wp_kses_data( wp_interactivity_data_wp_context( $tabpanel_contexts, 'spectra/tabs' ) ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( wp_interactivity_data_wp_context( $tabpanel_contexts, 'spectra/tabs' ) ); ?>
 	role="tabpanel"
 	tabindex="0"
 	data-wp-init="spectra/tabs::callbacks.initializeTabs"

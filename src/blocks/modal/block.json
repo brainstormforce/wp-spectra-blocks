@@ -28,6 +28,7 @@
 		"uagb"
 	],
 	"supports": {
+		"html": false,
 		"interactivity": true,
 		"__experimentalBorder": {
 			"width": true,

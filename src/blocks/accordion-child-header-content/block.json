@@ -12,6 +12,7 @@
 		"spectra/accordion-child-header/headerElement"
 	],
 	"supports": {
+		"html": false,
 		"typography": {
 			"fontSize": true,
 			"lineHeight": true,

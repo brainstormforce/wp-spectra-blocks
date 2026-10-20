@@ -11,7 +11,7 @@ use SpectraBlocks\Helpers\Core;
 use SpectraBlocks\Helpers\Renderer;
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
 	data-wp-on--click="spectra/modal::actions.close"
 	role="button"
 	tabindex="0"

@@ -161,8 +161,8 @@ if ( 'none' !== $pagination_type && 'carousel' !== $layout_type ) {
 
 ?>
 <div
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	<?php echo wp_kses_data( wp_interactivity_data_wp_context( $post_context, 'spectra/post' ) ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( wp_interactivity_data_wp_context( $post_context, 'spectra/post' ) ); ?>
 	data-wp-interactive="spectra/post"
 	data-wp-router-region="query-<?php echo esc_attr( $query_id ); ?>"
 	data-wp-key="<?php echo esc_attr( $query_id ); ?>"

@@ -11,8 +11,8 @@ use SpectraBlocks\Helpers\Renderer;
 
 ?>
 <button
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	<?php echo wp_kses_data( wp_interactivity_data_wp_context( $tab_button_contexts, 'spectra/tabs' ) ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( wp_interactivity_data_wp_context( $tab_button_contexts, 'spectra/tabs' ) ); ?>
 	role="tab"
 	data-wp-init="spectra/tabs::callbacks.initializeTabs"
 	data-wp-watch--accessibility="spectra/tabs::callbacks.updateTabAttributes"

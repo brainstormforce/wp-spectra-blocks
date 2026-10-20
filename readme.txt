@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,13 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.12 - Tuesday, 20th October 2026 =
+* Fix: Shortcodes used as a Button's label now render correctly in Full Site Editor templates, headers and footers.
+* Fix: Responsive border radius on the Image block now applies correctly on the front end.
+* Fix: Each card in a Post block now shows its own post's dynamic featured image background instead of sharing a single image.
+* Fix: The Post block editor preview now includes posts from child terms when filtering by a parent category or taxonomy.
+* Fix: Opening "Edit as HTML" on a Spectra block no longer flags it as invalid — the option is now hidden on Spectra's server-rendered blocks, matching WordPress core blocks.
 
 = 1.0.11 - Monday, 5th October 2026 =
 * Fix: Container background colors and gradients now display reliably on the front end, including inside a parent container that has its own background.

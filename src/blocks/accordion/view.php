@@ -27,9 +27,9 @@ $wrapper_attributes = BlockAttributes::get_wrapper_attributes(
 
 ?>
 <div
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
 	data-wp-interactive="spectra/accordion"
-	<?php echo wp_kses_data( wp_interactivity_data_wp_context( $accordion_contexts, 'spectra/accordion' ) ); ?>
+	<?php echo spectra_blocks_esc_attributes( wp_interactivity_data_wp_context( $accordion_contexts, 'spectra/accordion' ) ); ?>
 >
 	<?php HtmlSanitizer::render( $content ); ?>
 </div>

@@ -8,7 +8,7 @@
  */
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<span class="spectra-counter-number">
 	<?php
 	if ( isset( $prefix ) && '' !== $prefix ) :

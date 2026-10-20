@@ -26,7 +26,7 @@ use SpectraBlocks\Helpers\Renderer;
 <?php if ( $show_icon_on_hover && '' !== $hover_icon_aria_label ) : ?>
 	data-hover-aria-label="<?php echo esc_attr( $hover_icon_aria_label ); ?>"
 <?php endif; ?>
-<?php echo wp_kses_data( $wrapper_attributes ); ?>
+<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
 >
 <?php
 // Hover icon on top.

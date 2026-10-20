@@ -8,7 +8,7 @@
  */
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<embed
 		class="spectra-google-map__iframe"
 		title="<?php echo esc_attr__( 'Google Map for ', 'spectra-blocks' ) . esc_attr( $address ); ?>"

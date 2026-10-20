@@ -18,7 +18,7 @@ $icon_props = array(
 ?>
 
 <<?php echo esc_html( $wrapper_tag ); ?>
-	<?php echo wp_kses_data( $data['wrapper_attributes'] ); ?>
+	<?php echo spectra_blocks_esc_attributes( $data['wrapper_attributes'] ); ?>
 >
 	<?php if ( 'carousel' === $data['layout_type'] ) : ?>
 		<div class="swiper-wrapper">

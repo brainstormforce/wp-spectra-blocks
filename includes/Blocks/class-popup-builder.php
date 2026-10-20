@@ -61,6 +61,19 @@ class PopupBuilder {
 	protected $popup_rendered_html = array();
 
 	/**
+	 * Whether the pre-rendered popup HTML has already been printed this request.
+	 *
+	 * The HTML is emitted at wp_body_open, with a wp_footer fallback for themes
+	 * that never call wp_body_open(). This guard keeps both hooks from printing
+	 * the same markup twice.
+	 *
+	 * @var bool $popup_html_printed
+	 *
+	 * @since 1.0.12
+	 */
+	protected $popup_html_printed = false;
+
+	/**
 	 * Constructor to Default the Current Instance's Post ID and add the Shortcode if needed.
 	 *
 	 * @return void
@@ -72,6 +85,7 @@ class PopupBuilder {
 		$this->post_id             = 0;
 		$this->popup_ids           = array();
 		$this->popup_rendered_html = array();
+		$this->popup_html_printed  = false;
 	}
 
 	/**
@@ -282,21 +296,80 @@ class PopupBuilder {
 		);
 
 		add_action( 'wp_body_open', array( $this, 'generate_popup_shortcode' ) );
+
+		// Fallback for custom-coded themes that never call wp_body_open(): capture
+		// the page output and inject the popup markup immediately after the opening
+		// <body> tag. This keeps push banners (info bars) — which must sit at the
+		// top of the document to push content down — in the correct position. A
+		// wp_footer fallback would place them at the end of the body where a
+		// position: relative banner cannot push anything.
+		if ( ! empty( $this->popup_ids ) ) {
+			ob_start( array( $this, 'inject_popup_html_after_body' ) );
+		}
 	}
 
 	/**
 	 * Output the pre-rendered popup HTML at wp_body_open.
+	 *
+	 * Falls back to an after-<body> injection (inject_popup_html_after_body) when
+	 * the active theme does not fire wp_body_open.
 	 *
 	 * @return void
 	 *
 	 * @since 3.0.0
 	 */
 	public function generate_popup_shortcode() {
+		if ( $this->popup_html_printed ) {
+			return;
+		}
+
+		$this->popup_html_printed = true;
+
 		foreach ( $this->popup_ids as $popup_id ) {
 			if ( isset( $this->popup_rendered_html[ $popup_id ] ) ) {
 				echo $this->popup_rendered_html[ $popup_id ]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- rendered block HTML
 			}
 		}
+	}
+
+	/**
+	 * Output-buffer callback: inject the popup HTML after the opening <body> tag.
+	 *
+	 * Fallback for themes that never call wp_body_open(). Injecting right after
+	 * <body> — rather than at wp_footer — keeps push banners at the top of the
+	 * document so they render and push content correctly. No-ops when
+	 * wp_body_open already printed the markup, or when no <body> tag is found.
+	 *
+	 * @since 1.0.12
+	 *
+	 * @param string $buffer The buffered page HTML.
+	 * @return string The HTML, with popup markup injected after <body> when needed.
+	 */
+	public function inject_popup_html_after_body( $buffer ) {
+		if ( $this->popup_html_printed || ! is_string( $buffer ) || '' === $buffer ) {
+			return $buffer;
+		}
+
+		$markup = '';
+		foreach ( $this->popup_ids as $popup_id ) {
+			if ( isset( $this->popup_rendered_html[ $popup_id ] ) ) {
+				$markup .= $this->popup_rendered_html[ $popup_id ];
+			}
+		}
+
+		if ( '' === $markup ) {
+			return $buffer;
+		}
+
+		// Insert via byte offset, not preg_replace, so `$` / backslash sequences
+		// in the popup markup are not treated as replacement backreferences.
+		if ( preg_match( '/<body\b[^>]*>/i', $buffer, $match, PREG_OFFSET_CAPTURE ) ) {
+			$insert_at                = $match[0][1] + strlen( $match[0][0] );
+			$this->popup_html_printed = true;
+			return substr( $buffer, 0, $insert_at ) . $markup . substr( $buffer, $insert_at );
+		}
+
+		return $buffer;
 	}
 
 	/**

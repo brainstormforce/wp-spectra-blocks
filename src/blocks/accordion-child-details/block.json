@@ -9,6 +9,7 @@
 	"textdomain": "spectra-blocks",
 	"parent": [ "spectra/accordion-child-item" ],
 	"supports": {
+		"html": false,
 		"shadow": true,
 		"__experimentalBorder": {
 			"style": true,

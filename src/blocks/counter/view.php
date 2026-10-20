@@ -33,7 +33,7 @@ if ( 'circular' === $counter_style ) :
 	$radius        = ( $size_value / 2 ) - ( ( $progress_stroke_width ? $progress_stroke_width : 8 ) / 2 );
 	$circumference = 2 * M_PI * $radius;
 	?>
-	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<div class="spectra-counter-circular-wrapper">
 			<div class="spectra-counter-progress">
 				<svg width="<?php echo esc_attr( $progress_size ? $progress_size : '300px' ); ?>" height="<?php echo esc_attr( $progress_size ? $progress_size : '300px' ); ?>">
@@ -68,7 +68,7 @@ if ( 'circular' === $counter_style ) :
 	<?php
 else :
 	?>
-	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<?php HtmlSanitizer::render( $content ); ?>
 	</div>
 <?php endif; ?>

@@ -1,0 +1,69 @@
+// Converter-marker rules for the Tabs blocks (zipwp-credits-saas block-converter
+// `transforms/tabs.ts`), imported by common.scss. One block's converted-page rules
+// live in one partial, so the next converted block adds its own file and a bad
+// selector in it can only break that block.
+
+// Converter spacing marker on a converted Tabs block's children: a panel's ~11px
+// default padding, a Tab (Div)'s 10px and the theme button padding on a Tab are
+// spacing the source tab and panel never had. (0,2,1), as the container's rule in
+// common.scss: above defaults, below gs-* (0,3,0) and per-block attrs (0,4,0).
+// The Tab Area (tab wrapper) is left out on purpose: it keeps the source list's
+// own padding.
+body .wp-block-spectra-tabs-child-tabpanel.spectra-no-padding,
+body .wp-block-spectra-tabs-child-tab-trigger.spectra-no-padding,
+body .wp-block-spectra-tabs-child-tab-button.spectra-no-padding {
+	padding: 0;
+}
+
+// Converter frame marker (block-converter `NO_FRAME`): a tab panel's default
+// frame — 1px border, 2px radius and the `overflow: hidden` clip that cuts a
+// card's shadow at the panel's edge — is a box the source panel never had.
+// (0,2,1): above the panel's defaults, below gs-* (0,3,0), so a source border wins.
+body .wp-block-spectra-tabs-child-tabpanel.spectra-no-frame {
+	border: 0;
+	border-radius: 0;
+	overflow: visible;
+}
+
+// Converted Tabs: the same two editor wrappers, on the Tabs blocks whose
+// front-end children are direct flex or grid items — the Tabs block lays out
+// its Tab Area and panels, a Tab Area (tab wrapper) lays out its tabs, a
+// Tab (Div) (tab trigger) lays out its icon and label, and a panel that is itself
+// a layout (a split, a stack) lays out its content. Gutenberg nests each
+// block's children inside a boxed `.block-editor-inner-blocks >
+// .block-editor-block-list__layout.is-layout-flow`, so in the editor the
+// source's grid, flex row and `gap` never reached them: core's flow blockGap
+// pushed every tab after the first down ~18px (a tab area 79px tall against
+// 46px on the front end), a Tab (Div)'s icon and label sat in a plain block box
+// with no gap (51px tall against 36px), and a Tabs block's bar sat at the left
+// edge instead of centred, or stacked above a narrow panel instead of beside
+// it (a vertical services section 1159px tall against 401px), with ~18px above
+// each panel the source never had. Flattening both wrappers — what
+// `blocks/container/editor.scss` does for every container, with the same
+// carve-out for a core flex/grid layout wrapper — hands the blocks to the
+// block's own flex or grid box; the margin reset is the container's twin in common.scss,
+// for the flattened layout wrapper that still carries `is-layout-flow`.
+// Scoped to the converter's `spectra-no-block-gap` marker, so a Tabs block
+// authored in the editor keeps Spectra's own editor layout; `.block-editor-*`
+// only exists in the editor canvas, so the front end is untouched. Wrappers
+// ride `:where()`: (0,2,1), the budget of the rules above.
+body :is(.wp-block-spectra-tabs, .wp-block-spectra-tabs-child-tab-wrapper, .wp-block-spectra-tabs-child-tab-trigger, .wp-block-spectra-tabs-child-tabpanel).spectra-no-block-gap > :where(.block-editor-inner-blocks),
+body :is(.wp-block-spectra-tabs, .wp-block-spectra-tabs-child-tab-wrapper, .wp-block-spectra-tabs-child-tab-trigger, .wp-block-spectra-tabs-child-tabpanel).spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout:not([class*="is-layout-flex"]):not([class*="is-layout-grid"])) {
+	display: contents;
+}
+
+body :is(.wp-block-spectra-tabs, .wp-block-spectra-tabs-child-tab-wrapper, .wp-block-spectra-tabs-child-tab-trigger).spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(:not(h4, h5, h6)) {
+	margin-block-start: 0;
+}
+
+// A panel's children are the design's content (a split, a stack of a card and a
+// stat grid, prose), and the front end keeps each one's own margin — a `<p>` its
+// 1em — because imported pages lose core's `is-layout-*` classes. In the editor
+// the flattened layout wrapper still carries `is-layout-flow`, so core's blockGap
+// pushed the panel's second child down (a stat grid 18px under its card, a split's
+// text column 8px below its picture). `revert` rolls only that injected margin back
+// to the element's own, the canonical form the A32 note above asks for, so prose
+// keeps its spacing where a `0` would strip it.
+body .wp-block-spectra-tabs-child-tabpanel.spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(*) {
+	margin-block-start: revert;
+}

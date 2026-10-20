@@ -8,7 +8,7 @@
  */
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<div class="spectra-separator-line"
 	<?php
 	if ( ! empty( $separator_line_style ) ) :

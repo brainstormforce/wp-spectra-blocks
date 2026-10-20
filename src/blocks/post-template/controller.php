@@ -52,6 +52,25 @@ if ( function_exists( 'block_core_post_template_uses_featured_image' ) &&
 	update_post_thumbnail_cache( $query );
 }
 
+/*
+ * WordPress 7.1's core/post-date editor freezes a static `datetime` attribute
+ * (the insert-time timestamp) into the saved markup. Inside a query loop that
+ * frozen value makes every post render the same date, so strip it from the inner
+ * blocks before rendering to force per-post resolution via core's post-data
+ * binding source. See https://github.com/brainstormforce/spectra-blocks/issues/1099.
+ */
+$strip_frozen_post_date = static function ( array $blocks ) use ( &$strip_frozen_post_date ) {
+	foreach ( $blocks as $index => $inner ) {
+		if ( isset( $inner['blockName'] ) && 'core/post-date' === $inner['blockName'] ) {
+			unset( $blocks[ $index ]['attrs']['datetime'] );
+		}
+		if ( ! empty( $inner['innerBlocks'] ) ) {
+			$blocks[ $index ]['innerBlocks'] = $strip_frozen_post_date( $inner['innerBlocks'] );
+		}
+	}
+	return $blocks;
+};
+
 // Build the post items content.
 $posts_content = '';
 while ( $query->have_posts() ) {
@@ -81,6 +100,11 @@ while ( $query->have_posts() ) {
 	$block_instance              = $block->parsed_block;
 	$block_instance['blockName'] = 'core/null';
 
+	// Drop any frozen core/post-date `datetime` so each post resolves its own date.
+	if ( ! empty( $block_instance['innerBlocks'] ) ) {
+		$block_instance['innerBlocks'] = $strip_frozen_post_date( $block_instance['innerBlocks'] );
+	}
+
 	// Set context for inner blocks.
 	$filter_context = static function ( $context ) use ( $current_post_id, $query_post_type ) {
 		$context['postType'] = $query_post_type;
@@ -89,8 +113,19 @@ while ( $query->have_posts() ) {
 	};
 	add_filter( 'render_block_context', $filter_context, 1 );
 
+	// Signal to Spectra Blocks Pro's dynamic-content extension that we are
+	// rendering a loop item, so a dynamic background image on an inner Container
+	// gets a per-post `spectraId` suffix. Without it every card keeps the one
+	// saved id, shares a single background CSS rule, and shows the same image.
+	// Mirrors the Loop Builder; a harmless no-op when Pro is not active.
+	// See https://github.com/brainstormforce/spectra-blocks-pro/issues/248.
+	global $spectra_pro_rendering_loop;
+	$spectra_pro_rendering_loop = true;
+
 	// Render inner blocks.
 	$block_content = ( new WP_Block( $block_instance ) )->render( array( 'dynamic' => false ) );
+
+	$spectra_pro_rendering_loop = false;
 
 	remove_filter( 'render_block_context', $filter_context, 1 );
 

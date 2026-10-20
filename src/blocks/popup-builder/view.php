@@ -65,7 +65,7 @@ $close_aria_label = '' !== $accessibility_label ? $accessibility_label : sprintf
 );
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php
 	if ( 'popup' !== $variant_type ) :
 		Renderer::background_video( ( $has_video_background && null !== $video_background ) ? $video_background : $background, Renderer::video_on_every_band( $attributes ) );

@@ -50,6 +50,7 @@ class Spectra_Blocks_Loader {
 
 		require_once $classes_dir . 'class-spectra-blocks-settings.php';
 		require_once $classes_dir . 'class-spectra-blocks-filesystem.php';
+		require_once $classes_dir . 'spectra-blocks-esc-attributes.php';
 		require_once $classes_dir . 'class-spectra-blocks-security-helper.php';
 		require_once $classes_dir . 'class-spectra-blocks-helper.php';
 		require_once $classes_dir . 'class-spectra-blocks-admin-helper.php';
