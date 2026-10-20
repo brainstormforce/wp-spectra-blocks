@@ -10,7 +10,7 @@
 use SpectraBlocks\Helpers\Renderer;
 
 ?>
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php if ( 'ordered' === $list_type ) : ?>
 		<span class="spectra-list-counter"><?php echo esc_html( $formatted_number ); ?></span>
 	<?php else : ?>

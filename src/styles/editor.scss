@@ -118,34 +118,19 @@ path:last-child {
 	fill: #2271b1;
 }
 
-// Default state
-.edit-site-block-types-item-list
-button[id^="/blocks/spectra"]:not(
-	[id="/blocks/spectra-pro%2Fform-recaptcha"]
-).css-1cyk0hg {
+// Styles > Blocks list in the Site Editor.
+// Core forces `fill: currentColor` on every path here, which paints the white
+// lightning bolt of the Spectra badge the same dark colour as the badge circle.
+.global-styles-ui-block-types-item-list,
+.edit-site-block-types-item-list {
 
-	path {
-
-		&:nth-last-child(2) {
-			fill: #000 !important;
-		}
-
-		&:nth-last-child(1) {
-			fill: #fff;
-		}
+	svg.spectra-block-icon--colored path[fill="white"] {
+		fill: #fff;
 	}
-}
 
-// Hover state
-.edit-site-block-types-item-list
-button[id^="/blocks/spectra"].css-1cyk0hg:hover {
-
-	path {
-		color: #2271b1 !important;
-
-		&:nth-last-child(2) {
-			fill: #2271b1 !important;
-		}
+	// Follow the item's hover colour like core block icons do.
+	.components-item:hover svg.spectra-block-icon--colored {
+		color: inherit;
 	}
 }
 

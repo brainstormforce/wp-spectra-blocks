@@ -12,11 +12,11 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 ?>
 
 <?php if ( 'ordered' === $list_type ) : ?>
-<ol <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<ol <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php HtmlSanitizer::render( $content ); ?>
 </ol>
 <?php else : ?>
-<ul <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<ul <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php HtmlSanitizer::render( $content ); ?>
 </ul>
 <?php endif; ?>

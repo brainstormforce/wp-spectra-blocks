@@ -247,6 +247,7 @@
 		}
 	},
 	"supports": {
+		"html": false,
 	
 		"__experimentalBorder": {
 			"width": true,

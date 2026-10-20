@@ -23,6 +23,15 @@
     <!-- Use the full WordPress coding standard -->
     <rule ref="WordPress"/>
 
+    <!-- Escapes prebuilt attribute strings in block views (classes/spectra-blocks-esc-attributes.php) -->
+    <rule ref="WordPress.Security.EscapeOutput">
+        <properties>
+            <property name="customEscapingFunctions" type="array">
+                <element value="spectra_blocks_esc_attributes"/>
+            </property>
+        </properties>
+    </rule>
+
     <!-- Require PHP 8.1+ features / flag incompatible code -->
     <config name="testVersion" value="8.1-"/>
 

@@ -29,7 +29,7 @@ if ( 'circular' === $counter_style ) :
 	$start_point       = max( 0, min( 100, ( $start_number / $safe_total_number ) * 100 ) );
 	$start_offset      = ( ( 100 - $start_point ) / 100 ) * $circumference;
 	?>
-	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<div class="spectra-counter-progress">
 			<svg width="<?php echo esc_attr( $size_value ); ?>" height="<?php echo esc_attr( $size_value ); ?>">
 				<circle 
@@ -65,7 +65,7 @@ elseif ( 'bar' === $counter_style ) :
 	// Format the initial number display.
 	$formatted_start = number_format( $start_number, $decimal_places, '.', $thousand_separator );
 	?>
-	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<div class="spectra-counter-progress-track">
 			<div
 				class="spectra-counter-progress-bar"

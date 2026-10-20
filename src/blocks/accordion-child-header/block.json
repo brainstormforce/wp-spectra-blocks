@@ -10,6 +10,7 @@
 	"allowedBlocks": [ "spectra/accordion-child-header-content", "spectra/accordion-child-header-icon" ],
 	"parent": [ "spectra/accordion-child-item" ],
 	"supports": {
+		"html": false,
 		"shadow": true,
 		"__experimentalBorder": {
 			"style": true,

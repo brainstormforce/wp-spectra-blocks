@@ -17,6 +17,7 @@
 		"uagb"
 	],
 	"supports": {
+		"html": false,
 		"interactivity": true,
 		"spacing": {
 			"margin": true,

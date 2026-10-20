@@ -15,7 +15,7 @@ $icon_props = array(
 );
 ?>
 
-<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 <?php
 	// Render the background video element if needed.
 	// When any responsive breakpoint uses video, render from that breakpoint's data

@@ -12,6 +12,6 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 
-<li <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+<li <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php HtmlSanitizer::render( $content ); ?>
 </li>

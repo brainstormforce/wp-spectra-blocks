@@ -24,6 +24,7 @@
 		"uagb"
 	],
 	"supports": {
+		"html": false,
 		"anchor": true,
 		"align": [ "wide", "full" ],
 		"spacing": {

@@ -15,7 +15,7 @@ import {
 	BaseControl,
 } from '@wordpress/components';
 import ToolsPanelItem from '@spectra-components/tools-panel-item';
-import { getSettings as getDateSettings } from '@wordpress/date';
+import { getDate } from '@wordpress/date';
 import { memo, useCallback, useMemo } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
@@ -77,9 +77,6 @@ const GeneralSettings = memo( ( props ) => {
 		[ attributes ]
 	);
 
-	// Memoize timezone settings to prevent unnecessary recalculations
-	const timezone = useMemo( () => getDateSettings().timezone, [] );
-
 	/**
 	 * Updates the block's endDateTime attribute based on the new date input.
 	 *
@@ -95,20 +92,16 @@ const GeneralSettings = memo( ( props ) => {
 			// Format the date as a string if it's a Date object.
 			const formattedDate = typeof newDate === 'string' ? newDate : formatDateForPicker( newDate );
 
-			// Ensure the selected value is treated as UTC.
-			const UTCValue = newDate + 'Z'; // Append 'Z' to indicate it's in UTC format.
-			const d = new Date( UTCValue );
-
-			// Adjust for WordPress site timezone offset by removing it from the date.
-			d.setMilliseconds( d.getMilliseconds() - timezone.offset * 60 * 60 * 1000 );
-
-			// Set the attributes: Store both UTC time and the local time for display.
+			// The picker's value is wall-clock time in the site's timezone.
+			// getDate() resolves it with that timezone's own rules, so a date on
+			// the other side of a daylight-saving change gets that date's offset,
+			// not today's.
 			setAttributes( {
-				endDateTime: d.toISOString(), // Store the adjusted UTC time.
+				endDateTime: getDate( formattedDate ).toISOString(), // Store the UTC time.
 				displayEndDateTime: formattedDate, // Store formatted time string for display in input field.
 			} );
 		},
-		[ setAttributes, timezone ]
+		[ setAttributes ]
 	);
 
 	return (
@@ -164,8 +157,17 @@ const GeneralSettings = memo( ( props ) => {
 								'spectra-blocks'
 							) }
 						>
+							{ /*
+							 * `displayEndDateTime` is the picker's own wall-clock string, with
+							 * no timezone. Pass it back as a string so the picker reads it the
+							 * way it wrote it. `new Date()` parsed it in the browser's timezone
+							 * while the picker shows the site's (WordPress 7.1+), so every edit
+							 * shifted the date and time by the difference between the two.
+							 * The space separator from formatDateForPicker() becomes `T`, the
+							 * format every browser parses.
+							 */ }
 							<DateTimePicker
-								currentDate={ displayEndDateTime ? new Date( displayEndDateTime ) : new Date() }
+								currentDate={ displayEndDateTime ? displayEndDateTime.replace( ' ', 'T' ) : new Date() }
 								onChange={ handleDateTimeChange }
 								is12Hour={ true }
 								__nextRemoveHelpButton

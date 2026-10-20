@@ -11,7 +11,7 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <<?php echo esc_html( $header_element ); ?>
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
 	data-wp-bind--id="spectra/accordion::context.headerId"
 	data-wp-on--click="spectra/accordion::actions.toggleAnswer"
 	data-wp-bind--aria-controls="spectra/accordion::context.detailsId"

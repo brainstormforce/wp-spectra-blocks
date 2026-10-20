@@ -11,10 +11,10 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 	<?php if ( $needs_wrapper ) : ?>
 		<div
-		<?php echo wp_kses_data( $content_wrap_attributes ); ?>>
+		<?php echo spectra_blocks_esc_attributes( $content_wrap_attributes ); ?>>
 			<?php HtmlSanitizer::render( $content ); ?>
 		</div>
 	<?php else : ?>

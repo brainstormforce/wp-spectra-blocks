@@ -167,6 +167,11 @@ const PINS = [
 	// converted text link that never declared padding inflates 21px → 53px tall and
 	// re-centers its grid row (consulting benchmark, 2026-08-16).
 	{ sel: ':where(.wp-element-button,.wp-block-button__link)', decls: [ 'padding:revert' ] },
+	// …and the theme's button ink, at rest and on hover — absent: a converted button whose
+	// source set no color wears the theme's white text (an unselected Tab, white on white).
+	// The `;` keeps `background-color:revert` from passing for it.
+	{ sel: ':where(.wp-element-button,.wp-block-button__link)', decls: [ ';color:revert' ] },
+	{ sel: ':where(.wp-element-button,.wp-block-button__link):hover', decls: [ ';color:revert' ] },
 ];
 
 // The declaration body of the rule whose selector list contains `sel` as a WHOLE

@@ -12,8 +12,8 @@ use SpectraBlocks\Helpers\HtmlSanitizer;
 
 ?>
 <div
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	<?php echo wp_kses_data( wp_interactivity_data_wp_context( $tab_contexts, 'spectra/tabs' ) ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( wp_interactivity_data_wp_context( $tab_contexts, 'spectra/tabs' ) ); ?>
 	role="tab"
 	aria-selected="<?php echo esc_attr( $aria_attributes['aria-selected'] ); ?>"
 	tabindex="<?php echo esc_attr( $aria_attributes['tabindex'] ); ?>"

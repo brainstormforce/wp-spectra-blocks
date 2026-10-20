@@ -24,7 +24,7 @@ if ( InlineLeaf::prints_tight( $attributes ) ) {
 	printf(
 		'%4$s<%1$s %2$s>%3$s</%1$s>%5$s',
 		esc_attr( $tag_name ),
-		wp_kses_data( $wrapper_attributes ),
+		spectra_blocks_esc_attributes( $wrapper_attributes ),
 		$spectra_content_html, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_kses_post()'d above.
 		empty( $attributes['spaceBefore'] ) ? '' : ' ',
 		empty( $attributes['spaceAfter'] ) ? '' : ' '
@@ -33,12 +33,12 @@ if ( InlineLeaf::prints_tight( $attributes ) ) {
 }
 ?>
 <?php if ( $needs_span_wrapper ) : ?>
-	<div <?php echo wp_kses_data( $wrapper_attributes ); ?>>
+	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<span><?php echo $spectra_content_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_kses_post()'d above. ?></span>
 	</div>
 <?php else : ?>
 	<<?php echo esc_attr( $tag_name ); ?>
-		<?php echo wp_kses_data( $wrapper_attributes ); ?>>
+		<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<?php echo $spectra_content_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_kses_post()'d above. ?>
 	</<?php echo esc_attr( $tag_name ); ?>>
 <?php endif; ?>

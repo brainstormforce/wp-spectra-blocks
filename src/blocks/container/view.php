@@ -20,14 +20,14 @@ if ( $is_void_tag ) {
 	printf(
 		'<%1$s %2$s />',
 		esc_attr( $html_tag ),
-		wp_kses_data( $wrapper_attributes )
+		spectra_blocks_esc_attributes( $wrapper_attributes )
 	);
 	return;
 }
 ?>
 <<?php echo esc_attr( $html_tag ); ?>
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
-	<?php echo wp_kses_data( $link_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( $link_attributes ); ?>
 >
 	<?php
 		// Render the background video element if needed.

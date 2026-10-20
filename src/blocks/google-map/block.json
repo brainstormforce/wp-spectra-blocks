@@ -31,6 +31,7 @@
 		"uagb"
 	],
 	"supports": {
+		"html": false,
 		"align": [ "wide", "full" ],
 		"shadow": true,
 		"__experimentalBorder": {

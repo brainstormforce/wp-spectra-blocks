@@ -90,9 +90,13 @@ export const insertNewTab = ( clientId ) => {
 			// First set the number of the new tab.
 			tabNumber = block.innerBlocks.length + 1;
 
-			// Then create a new tab block with this number.
+			// Then create a new tab block with this number. It wears the last tab's classes, as a new core
+			// Button copies the one before it: a converted tab keeps its whole look in its classes, so a
+			// tab without them renders as a bare browser button beside the others.
+			const { className } = block.innerBlocks[ block.innerBlocks.length - 1 ]?.attributes ?? {};
 			const newTab = createBlock( 'spectra/tabs-child-tab-button', {
 				placeholder: `Tab ${tabNumber}`,
+				...( className ? { className } : {} ),
 			} );
 
 			// And finally, insert it at the end of the tab wrapper, disabling focus.
@@ -113,10 +117,17 @@ export const insertNewTab = ( clientId ) => {
 	const isVerticalLayout =
 		tabsBlock?.attributes?.layout?.orientation === 'horizontal';
 
+	// The new tabpanel wears the last tabpanel's classes and layout, for the same reason as the new tab.
+	const lastTabpanel = tabsBlock?.innerBlocks
+		.filter( ( block ) => 'spectra/tabs-child-tabpanel' === block.name )
+		.pop();
+	const { className, layout } = lastTabpanel?.attributes ?? {};
+
 	// Create the new tabpanel block with appropriate attributes for vertical layout.
-	const newTabpanel = createBlock(
-		'spectra/tabs-child-tabpanel',
-		isVerticalLayout
+	const newTabpanel = createBlock( 'spectra/tabs-child-tabpanel', {
+		...( className ? { className } : {} ),
+		...( layout ? { layout } : {} ),
+		...( isVerticalLayout
 			? {
 				style: {
 					layout: {
@@ -125,8 +136,8 @@ export const insertNewTab = ( clientId ) => {
 					},
 				},
 			}
-			: {}
-	);
+			: {} ),
+	} );
 
 	// Insert the new tabpanel block, disabling focus.
 	insertBlock( newTabpanel, tabNumber, rootClientId, false );

@@ -246,6 +246,18 @@ body.spectra-page-zip-builder :where(.srfm-styling-none .srfm-input-gdpr) {
 	white-space: nowrap;
 	border: 0;
 }
+// The WP-core / theme `.screen-reader-text:focus` reveal (`top:5px; left:5px`) outranks
+// the `:where()` hider above. Clicking the label focuses this input, so the reveal
+// snaps it to the page's top-left and the browser scrolls there. Keep it in place and
+// hidden while focused.
+body.spectra-page-zip-builder .srfm-styling-none .srfm-input-checkbox:focus,
+body.spectra-page-zip-builder .srfm-styling-none .srfm-input-gdpr:focus {
+	top: auto;
+	left: auto;
+	width: 1px;
+	height: 1px;
+	clip-path: inset(50%);
+}
 
 // Grid and flex items default to `min-width: auto` (= min-content), so a field whose
 // content is wider than its track refuses to shrink and overflows or wraps. The
@@ -643,10 +655,13 @@ body.spectra-page-zip-builder
 	word-break: revert;
 }
 
-// A16 — theme.json elements.button decoration (border/radius/bg/hover-bg/line-height/PADDING)
-// at (0,1,0): purple outline imported buttons never had + severed inherited line-height + the
+// A16 — theme.json elements.button decoration (border/radius/bg/hover-bg/line-height/PADDING/
+// COLOR) at (0,1,0): purple outline imported buttons never had + severed inherited line-height + the
 // 16px/32px `.wp-element-button` padding that inflated a converted text link from 21px to 53px
-// tall and re-centered its whole grid row (measured 2026-08-16, consulting benchmark). Authored
+// tall and re-centered its whole grid row (measured 2026-08-16, consulting benchmark) + the
+// theme's button ink (`color: var(--wp--preset--color--background)`): a converted button whose
+// source set no color wore white text — an unselected Tab white on its own white fill
+// (measured 2026-10-07); `revert` gives it the UA's, as the source had. Authored
 // buttons declare bg + font-size + padding + :hover bg at gs (0,3,0) and win; `padding: revert`
 // governs only buttons whose source never declared padding — returning them to the UA/source
 // baseline instead of the theme skin. HOVER ARM required — theme hover is (0,2,0).
@@ -657,6 +672,7 @@ body.spectra-page-zip-builder
 	background-color: revert;
 	border: revert;
 	border-radius: revert;
+	color: revert;
 	line-height: revert;
 	padding: revert;
 }
@@ -666,6 +682,7 @@ body.spectra-page-zip-builder
 :where(.wp-element-button, .wp-block-button__link):hover {
 	background-color: revert;
 	border: revert;
+	color: revert;
 }
 
 // A27 — the icon block hardcodes display:flex; justify-content:center (0,1,0), so an authored

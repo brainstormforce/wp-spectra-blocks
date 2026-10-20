@@ -9,7 +9,7 @@
 
 ?>
 <<?php echo esc_attr( $tag_name ); ?>
-	<?php echo wp_kses_data( $wrapper_attributes ); ?>
+	<?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>
 	data-wp-context
 	data-wp-on--click="spectra/modal::actions.toggle"
 	role="button"

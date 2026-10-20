@@ -128,7 +128,8 @@ module.exports = [
 			const entries = defaultConfig[ 0 ].entry();
 
 			// Get all style files.
-			const styleFiles = glob.sync( './src/styles/**/*.scss' );
+			// A `_` partial is @imported by its sheet, never built on its own.
+			const styleFiles = glob.sync( './src/styles/**/*.scss' ).filter( ( file ) => ! path.basename( file ).startsWith( '_' ) );
 
 			// Get all extension files (JS and SCSS).
 			const extensionFiles = glob.sync(
