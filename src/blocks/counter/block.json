@@ -95,7 +95,7 @@
 	"editorScript": "file:./index.js",
 	"viewScriptModule": "file:./view.js",
 	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
+	"style": ["file:./style-index.css", "spectra-blocks-common"],
 	"attributes": {
 		"layout": {
 			"type": "object",
@@ -181,10 +181,6 @@
 		},
 		"suffixColor": {
 			"type": "string"
-		},
-		"progressBarPosition": {
-			"type": "string",
-			"default": "after"
 		}
 	}
 }

@@ -21,7 +21,6 @@
 		"spectra/list/textColor",
 		"spectra/list/textColorHover",
 		"spectra/list/iconSize",
-		"spectra/list/iconSpacing",
 		"spectra/list/iconName",
 		"spectra/list/flipForRTL",
 		"spectra/list/rotation"

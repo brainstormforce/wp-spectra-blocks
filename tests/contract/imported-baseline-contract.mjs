@@ -247,7 +247,60 @@ else {
 	// A positive marker rule would outrank the page's own position (a fixed header renders static).
 	if ( css.split( '.spectra-no-position' ).slice( 0, -1 ).some( ( pre ) => ! pre.endsWith( ':not(' ) ) ) { fail( 'build container: .spectra-no-position outside :not( — it must only cancel a default' ); }
 }
-if ( failures === before ) { ok( 'element tier, nav marker and position marker rules present' ); }
+// The simple and bar counter number's tight leading, weightless: the converted number's
+// `spectra-no-type` rule (0,2,1) wins `line-height` only because this rule sits at (0,2,0) —
+// absent the `:where()`, a converted figure goes back to line-height 1. Build only (the src is
+// nested SCSS).
+const counterBuild = resolve( plugin, 'build/blocks/counter/style-index.css' );
+if ( ! existsSync( counterBuild ) ) { fail( `build sheet absent: ${counterBuild}` ); }
+else {
+	check( 'build counter', read( counterBuild ), true, [ 'simple', 'bar' ].map( ( style ) => ( { sel: `.wp-block-spectra-counter.spectra-counter--${ style } :where(.wp-block-spectra-counter-child-number)`, decls: [ 'line-height:1' ] } ) ), 'counter' );
+}
+// Converted Tabs and Accordion: Spectra's frame off a marked panel or item, and the editor's
+// inner-blocks wrappers flattened with core's blockGap margin reset — absent: a converted tab
+// panel or accordion item shows Spectra's 1px border and clips its focus ring, and the editor
+// spaces items ~17px apart that the front end never does; and a selected, highlighted or
+// multi-selected header's overlay keeps its own box, with no transition — absent: on an open
+// item it takes (or sweeps from) the design's +/− marker turn and draws two diagonal lines
+// across the canvas. Converted Countdown: Spectra's root
+// width and type off the marked root and label, and the editor's unit gap reset — absent: a
+// converted timer fills its row, renders at 2.5rem, weight 500, uppercase, with each unset
+// label at 0.375em of that, and the editor drops each label below its number. Converted
+// Counter: Spectra's number type and containment off the marked number, and the editor's gap
+// reset — absent: a converted figure renders at 52px with line-height 1, a unit beside it
+// loses its baseline, and the editor drops the number below the root's top. Build only (the
+// rules live in the converted/ partials common.scss imports, so the src sheet holds only the
+// import).
+const commonBuild = resolve( plugin, 'build/styles/blocks/common.css' );
+if ( ! existsSync( commonBuild ) ) { fail( `build sheet absent: ${commonBuild}` ); }
+else {
+	const TABS = [ '.wp-block-spectra-tabs', '.wp-block-spectra-tabs-child-tab-wrapper', '.wp-block-spectra-tabs-child-tab-trigger', '.wp-block-spectra-tabs-child-tabpanel' ];
+	const ACCORDION = [ '.wp-block-spectra-accordion', '.wp-block-spectra-accordion-child-item', '.wp-block-spectra-accordion-child-header', '.wp-block-spectra-accordion-child-details' ];
+	const COUNTDOWN_UNITS = [ '.wp-block-spectra-countdown-child-day', '.wp-block-spectra-countdown-child-hour', '.wp-block-spectra-countdown-child-minute', '.wp-block-spectra-countdown-child-second' ];
+	const inner = ( blocks ) => `body :is(${ blocks.join( ', ' ) }).spectra-no-block-gap > :where(.block-editor-inner-blocks)`;
+	const layout = '> :where(.block-editor-block-list__layout) >';
+	const frame = [ 'border:0', 'border-radius:0', 'overflow:visible' ];
+	check( 'build common (converted blocks)', read( commonBuild ), true, [
+		{ sel: 'body .wp-block-spectra-tabs-child-tabpanel.spectra-no-frame', decls: frame },
+		{ sel: 'body .wp-block-spectra-accordion-child-item.spectra-no-frame', decls: frame },
+		{ sel: inner( TABS ), decls: [ 'display:contents' ] },
+		{ sel: inner( ACCORDION ), decls: [ 'display:contents' ] },
+		{ sel: `${ inner( TABS.slice( 0, 3 ) ) } ${ layout } :where(:not(h4, h5, h6))`, decls: [ 'margin-block-start:0' ] },
+		{ sel: `${ inner( ACCORDION.slice( 0, 3 ) ) } ${ layout } :where(:not(h4, h5, h6))`, decls: [ 'margin-block-start:0' ] },
+		{ sel: `body .wp-block-spectra-tabs-child-tabpanel.spectra-no-block-gap > :where(.block-editor-inner-blocks) ${ layout } :where(*)`, decls: [ 'margin-block-start:revert' ] },
+		{ sel: `body .wp-block-spectra-accordion-child-details.spectra-no-block-gap > :where(.block-editor-inner-blocks) ${ layout } :where(*)`, decls: [ 'margin-block-start:revert' ] },
+		{ sel: 'body .wp-block-spectra-accordion-child-header.spectra-no-block-gap.block-editor-block-list__block:is(:focus, .is-highlighted, .is-multi-selected):not(.is-dragging)::after', decls: [ 'transform:none!important', 'border:0!important', 'border-radius:0!important', 'inset:0!important', 'transition:none!important' ] },
+		{ sel: 'body .wp-block-spectra-accordion-child-header.spectra-no-block-gap.block-editor-block-list__block:is(:focus, .is-highlighted):not(.is-multi-selected, .is-dragging)::after', decls: [ 'background:none!important' ] },
+		{ sel: 'body .wp-block-spectra-countdown.spectra-no-width', decls: [ 'width:auto' ] },
+		{ sel: 'body .wp-block-spectra-countdown.spectra-no-type', decls: [ 'font-size:inherit', 'font-weight:inherit', 'text-transform:inherit' ] },
+		{ sel: 'body .wp-block-spectra-countdown-child-label.spectra-no-type', decls: [ 'font-size:inherit' ] },
+		{ sel: `body :is(${ COUNTDOWN_UNITS.join( ', ' ) }).spectra-no-block-gap:where(.is-layout-flow) > :where(*)`, decls: [ 'margin-block-start:0' ] },
+		{ sel: 'body .wp-block-spectra-counter-child-number.spectra-no-type', decls: [ 'font-size:inherit', 'line-height:inherit', 'contain:none' ] },
+		{ sel: 'body .wp-block-spectra-counter-child-number.spectra-no-type .spectra-counter-number', decls: [ 'contain:none' ] },
+		{ sel: 'body :is(.wp-block-spectra-counter, .wp-block-spectra-counter-child-wrapper).spectra-no-block-gap:where(.is-layout-flow) > :where(*)', decls: [ 'margin-block-start:0' ] },
+	], 'common' );
+}
+if ( failures === before ) { ok( 'element tier, nav marker, position marker and converted Tabs/Accordion/Countdown/Counter rules present' ); }
 
 // ---------------------------------------------------------------------------
 // 2. Coupling: A19 keys on SureForms's rendered DOM and state classes. If

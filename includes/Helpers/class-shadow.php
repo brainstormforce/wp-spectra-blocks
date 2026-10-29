@@ -60,10 +60,20 @@ class Shadow {
 		$normal_shadow = $attributes[ $config['normal'] ] ?? '';
 		$hover_shadow  = $attributes[ $config['hover'] ] ?? '';
 
+		/*
+		 * `css_var` is null on purpose: both shadows are per-device
+		 * (responsive-controls), so the responsive CSS extension emits the custom
+		 * property per band. Setting it inline here would outrank every band rule
+		 * and the desktop shadow would apply at all widths.
+		 *
+		 * The CLASS still has to be emitted — `style.scss` keys
+		 * `box-shadow: var(--spectra-box-shadow)` off `.spectra-box-shadow`, so
+		 * without it the variable is never read at any breakpoint.
+		 */
 		if ( ! empty( $normal_shadow ) && 'none' !== $normal_shadow ) {
 			$shadow_config[] = array(
 				'key'        => $config['normal'],
-				'css_var'    => '--spectra-box-shadow',
+				'css_var'    => null,
 				'class_name' => 'spectra-box-shadow',
 				'value'      => $normal_shadow,
 			);
@@ -73,7 +83,7 @@ class Shadow {
 		if ( ! empty( $hover_shadow ) && 'none' !== $hover_shadow ) {
 			$shadow_config[] = array(
 				'key'        => $config['hover'],
-				'css_var'    => '--spectra-box-shadow-hover',
+				'css_var'    => null,
 				'class_name' => 'spectra-box-shadow-hover',
 				'value'      => $hover_shadow,
 			);

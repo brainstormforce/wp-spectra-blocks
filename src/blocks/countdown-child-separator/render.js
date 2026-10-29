@@ -10,6 +10,10 @@ import { memo, useMemo } from '@wordpress/element';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * Mapping of time unit child block names to their visibility attribute keys.
@@ -137,6 +141,7 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config );
 
+
 	const blockProps = useBlockProps( {
 		style,
 		className: spectraClassNames( classNames ),
@@ -150,15 +155,33 @@ const Render = ( props ) => {
 		return null;
 	}
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/countdown-child-separator',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
+	} );
+
 	return (
-		<RichText
-			identifier="text"
+		<>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			<RichText
+				identifier="text"
 			{ ...blockProps }
 			tagName="div"
 			placeholder=":"
 			value={ displayText }
 			onChange={ handleTextChange }
 		/>
+		</>
 	);
 };
 

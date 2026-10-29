@@ -3,6 +3,9 @@
 // Converter-marker rules for one block each, kept with the block (one partial per
 // converted block). Their selectors name only that block's own elements.
 @import "converted/tabs";
+@import "converted/accordion";
+@import "converted/countdown";
+@import "converted/counter";
 
 // WP core button compatibility: zero-specificity default border-radius so it
 // stays overridable.
@@ -97,11 +100,16 @@ body .spectra-is-root-container.alignfull {
 	max-width: none;
 }
 
-// Wide: wide width, centered.
+// Wide: wide width, centered — unless the container sits inside another block
+// with its own left/right margin (`spectra-has-side-margin`, controller.php).
+// `:where()` keeps the centring at (0,2,1).
 body .spectra-is-root-container.alignwide {
 	max-width: var(--wp--style--global--wide-size, 1164px);
-	margin-left: auto !important;
-	margin-right: auto !important;
+
+	&:where(:not(.spectra-has-side-margin)) {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
 }
 
 // Keep wide-aligned children within the wide-size bound too.
@@ -109,16 +117,19 @@ body .spectra-is-root-container.alignwide > * {
 	max-width: var(--wp--style--global--wide-size, 1164px);
 }
 
-// Default — neither wide nor full: content width, centered. `:where(:not(...))`
-// keeps the no-align selector at the same (0,2,1) tier instead of rising to
-// (0,3,1).
+// Default — neither wide nor full: content width, centered, with the same
+// side-margin exception as wide. `:where(:not(...))` keeps the no-align
+// selector at the same (0,2,1) tier instead of rising to (0,3,1).
 body
 .wp-block-spectra-container.spectra-is-root-container:where(
 	:not(.alignwide):not(.alignfull)
 ) {
 	max-width: var(--wp--style--global--content-size);
-	margin-left: auto !important;
-	margin-right: auto !important;
+
+	&:where(:not(.spectra-has-side-margin)) {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
 }
 
 // Imported post-content wrapper provides its own width context; don't cap it so

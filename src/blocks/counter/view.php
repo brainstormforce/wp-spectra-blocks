@@ -32,6 +32,14 @@ if ( 'circular' === $counter_style ) :
 	// Calculate radius: half the size minus half the stroke width (stroke is centered on the path).
 	$radius        = ( $size_value / 2 ) - ( ( $progress_stroke_width ? $progress_stroke_width : 8 ) / 2 );
 	$circumference = 2 * M_PI * $radius;
+	// The ring paints the counter's start, as its number does; the view script fills it from there.
+	// Its total resolves as the script's does (`view.js`): the total, else the end, else 100, then
+	// at least the start and the end, so it is never 0.
+	$ring_start   = is_numeric( $start_number ) ? floatval( $start_number ) : 0;
+	$ring_end     = is_numeric( $end_number ) ? floatval( $end_number ) : 100;
+	$ring_total   = is_numeric( $total_number ) && $total_number > 0 ? floatval( $total_number ) : ( $ring_end > 0 ? $ring_end : 100 );
+	$ring_total   = max( $ring_total, abs( $ring_start ), abs( $ring_end ) );
+	$start_offset = ( ( 100 - max( 0, min( 100, ( $ring_start / $ring_total ) * 100 ) ) ) / 100 ) * $circumference;
 	?>
 	<div <?php echo spectra_blocks_esc_attributes( $wrapper_attributes ); ?>>
 		<div class="spectra-counter-circular-wrapper">
@@ -56,7 +64,7 @@ if ( 'circular' === $counter_style ) :
 						fill="none"
 						stroke-linecap="butt"
 						stroke-dasharray="<?php echo esc_attr( $circumference ); ?>"
-						stroke-dashoffset="<?php echo esc_attr( $circumference ); ?>"
+						stroke-dashoffset="<?php echo esc_attr( $start_offset ); ?>"
 					/>
 				</svg>
 			</div>

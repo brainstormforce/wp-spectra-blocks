@@ -10,6 +10,10 @@ import { __, isRTL } from '@wordpress/i18n';
  */
 import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
 
 /**
@@ -66,6 +70,21 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config, customClassNames );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/modal-child-content',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
+	} );
+
 	const blockProps = useBlockProps( {
 		ref: ( element ) => {
 			enterRef( element );
@@ -77,8 +96,10 @@ const Render = ( props ) => {
 	} );
 
 	return (
-		<RichText
-			identifier="text"
+		<>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			<RichText
+				identifier="text"
 			{ ...blockProps }
 			tagName={ tagName || 'p' }
 			placeholder={ __( 'Get started by writing something!', 'spectra-blocks' ) }
@@ -89,6 +110,7 @@ const Render = ( props ) => {
 			onRemove={ () => onReplace( [] ) }
 			withoutInteractiveFormatting
 		/>
+		</>
 	);
 };
 

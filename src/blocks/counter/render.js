@@ -14,6 +14,28 @@ import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
 
 /**
+ * Progress-bar sizing custom properties.
+ *
+ * A standalone function rather than inline entries in `counterStyles` so the
+ * canvas's per-device preview can re-derive the same two declarations per band
+ * — see `helpers/responsive-preview.js`. Base and bands then cannot disagree.
+ *
+ * The `32px` fallback is the one the PHP controller used to apply; it moved
+ * here when the controller stopped painting these inline, so that the front
+ * end's banded CSS can win. Style rules already carry it too, as the fallback
+ * in `var( --spectra-counter-bar-height, 32px )`.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block attributes.
+ * @return {Object} The style object.
+ */
+const getBarSizeStyles = ( attrs ) => ( {
+	'--spectra-counter-bar-height': attrs.barHeight || '32px',
+	'--spectra-counter-bar-border-radius':
+		attrs.barBorderRadius !== undefined ? `${ attrs.barBorderRadius }px` : undefined,
+} );
+
+/**
  * The render function for the Counter block.
  *
  * @param {Object} props The element props.
@@ -39,8 +61,6 @@ const Render = ( props ) => {
 		progressBackgroundColor,
 		progressSize,
 		progressStrokeWidth,
-		barHeight,
-		barBorderRadius,
 		textColor,
 		backgroundColor,
 		backgroundGradient,
@@ -260,7 +280,10 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/counter',
-		producers: [ ( attrs ) => buildSpectraStyles( attrs, buildConfig( attrs ) ).style ],
+		producers: [
+			( attrs ) => buildSpectraStyles( attrs, buildConfig( attrs ) ).style,
+			getBarSizeStyles,
+		],
 	} );
 
 
@@ -274,8 +297,7 @@ const Render = ( props ) => {
 		'--spectra-counter-progress-bg-color': progressBackgroundColor || '#e0e0e0',
 		'--spectra-counter-progress-size': progressSize || '300px',
 		'--spectra-counter-stroke-width': progressStrokeWidth ? `${progressStrokeWidth}px` : '8px',
-		'--spectra-counter-bar-height': barHeight || '32px',
-		'--spectra-counter-bar-border-radius': barBorderRadius !== undefined ? `${barBorderRadius}px` : undefined,
+		...getBarSizeStyles( attributes ),
 	};
 
 	// Create refs for circular progress animation.

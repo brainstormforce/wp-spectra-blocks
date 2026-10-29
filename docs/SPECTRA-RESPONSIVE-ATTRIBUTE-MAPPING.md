@@ -5,16 +5,22 @@
 > *behaves* like a core control — per-device only when "Responsive styles" is on,
 > global otherwise.
 >
-> **Scope.** Block-instance attributes. Two things are covered, and they are
-> genuinely separate problems with separate fixes: **visibility** (§3–§5) and
-> **alignment** (§6). A control can be perfectly aligned and still invisible, or
-> visible and silently writing to the wrong layer.
+> **Scope.** Block-instance attributes. Three things are covered, and they are
+> genuinely separate problems with separate fixes: **visibility** (§3–§5),
+> **alignment** (§6), and **what changes about the attribute once it is
+> responsive** (§7.2). A control can be perfectly aligned and still invisible;
+> visible and silently writing to the wrong layer; or correct on both counts and
+> still paint nothing, because registering it moved the ground under the block's
+> own rendering.
 >
 > **Worked example.** A `spectra/demo-button` block with one custom attribute —
 > **Button Width** — carried end to end: registration, panel, editor, CSS.
 >
 > **Last verified against code:** 2026-08-26 (WordPress 7.1, Gutenberg trunk
-> `36b742ee7f`)
+> `36b742ee7f`). §7.2 verified 2026-09-23 against WordPress **7.1.1** as shipped,
+> each behaviour measured rather than inferred — the three it describes were
+> found the hard way, one per batch, while making `overflow`, background colour
+> and the shadows per-device.
 
 ---
 
@@ -27,6 +33,7 @@
 5. [Handling the attribute in the editor](#5-handling-the-attribute-in-the-editor)
 6. [Aligning changes with core — the crucial part](#6-aligning-changes-with-core--the-crucial-part)
 7. [Generating CSS on the front end](#7-generating-css-on-the-front-end)
+   — incl. [§7.2 what happens once the attribute is responsive](#72-what-happens-to-the-attribute-once-it-is-responsive)
 8. [Reset behaviour](#8-reset-behaviour)
 9. [Checklist](#9-checklist)
 10. [Anti-patterns](#10-anti-patterns)
@@ -594,6 +601,139 @@ a near-duplicate each.
 
 ---
 
+---
+
+### 7.2 What happens to the attribute once it is responsive
+
+Three behaviours change the moment a name goes into `BLOCK_RESPONSIVE_KEYS`, and
+none of them is obvious from the diff. Each one has already cost a debugging
+session: all three fail **silently**, with the value stored correctly and simply
+never reaching the page.
+
+#### The root attribute is stripped before render
+
+Once an attribute is per-device, it is **gone from `$attributes` by the time
+`controller.php` runs**. The per-device values live in the store; the root is no
+longer the source of truth, so it is removed.
+
+That is fine for the value itself — the generator paints it. It is **not** fine
+for anything else the controller derived from that attribute, and the usual
+casualty is a **hook class**:
+
+```php
+// blocks/button/controller.php — this stops emitting the CLASS, because
+// $attributes['shadowHover'] is unset by the time the controller runs
+array(
+    'key'        => 'shadowHover',
+    'css_var'    => '--spectra-shadow-hover',
+    'class_name' => 'spectra-shadow-hover',
+),
+```
+
+```scss
+// blocks/button/style.scss — and this rule therefore never matches,
+// so the variable is set on the element and never read
+&.spectra-shadow-hover:hover { box-shadow: var(--spectra-shadow-hover) !important; }
+```
+
+The value reaches the page in a custom property that nothing consumes. Nothing
+errors.
+
+**So: do not emit a custom property that a class-gated rule reads. Emit the real
+declaration from the generator**, by giving the attribute a formatter in
+`ATTR_DEFINITIONS` that returns a whole rule rather than a value:
+
+```php
+// The shape a formatter returns to emit its own rule. `selector` is appended to
+// the block's, so '' is the block itself and ':hover' its hover state.
+return array(
+    'selector'   => ':hover',
+    'style_attr' => 'box-shadow:' . $shadow . ' !important;',
+);
+```
+
+Carry over the `!important` if the rule you are replacing had one, or the block
+loses ground against themes it previously beat.
+
+Before registering an attribute, grep for its class in the block's SCSS. If a
+rule keys off a class the controller emits, that class is about to disappear.
+
+#### The Style Engine drops custom-property values containing a colour function
+
+`wp_style_engine_get_stylesheet_from_css_rules()` sanitises custom property
+values and discards anything with `rgb()` / `rgba()`. Measured on 7.1.1:
+
+| Declaration | Result |
+|---|---|
+| `--x: 0px 4px 8px 0px red` | emitted |
+| `--x: 0px 4px 8px 0px #123456` | emitted |
+| `--x: 0px 4px 8px 0px rgb(10, 20, 30)` | **dropped** |
+| `--x: 0px 4px 8px 0px rgba(1, 2, 3, .5)` | **dropped** |
+
+The editor's colour picker emits `rgb()` for any non-preset colour, so **the
+common case is the dropped one**, and the rule is simply absent from the output.
+
+**So: if a value can contain a colour, emit it through `style_attr`, not
+`declarations`.** `style_attr` bypasses the engine. The gradient and background
+paths in `ResponsiveAttributeCSS` already do this.
+
+This only affects the Style Engine path. Hand-rolled `sprintf()` CSS like the
+example in §7 is unaffected.
+
+#### The editor canvas needs its own producer, derived from the band
+
+The front end and the canvas are separate paths. `getResponsivePreviewCss()`
+re-runs a block's producers against each band's attributes and emits only what
+**differs from base** — so a producer that cannot see the band emits nothing, and
+the control works on the site while doing nothing in the editor.
+
+The trap is that the usual producer *looks* band-aware:
+
+```js
+producers: [ ( attrs ) => buildSpectraStyles( attrs, config ).style ]
+```
+
+`config` is built once from the block's attributes and bakes an explicit
+`value` — and in `hooks/index.js` an explicit value **wins over the attribute**:
+
+```js
+let finalValue = value !== undefined ? value : attrValue;   // hooks/index.js
+```
+
+So every band re-derives the base, compares equal, and emits nothing.
+
+**So: give the attribute a dedicated producer that reads the band's own
+`attrs`**, and emit the same declaration the PHP formatter does, or the canvas
+and the site will disagree:
+
+```js
+// The shape a producer returns. `selector` is appended to the block's, and the
+// emitter drops anything a band shares with base, so inheritance stays the
+// cascade's job.
+const getDemoShadowStyles = ( attrs ) => {
+    const entries = [];
+
+    if ( attrs?.demoShadow ) {
+        entries.push( { selector: '', styles: { boxShadow: attrs.demoShadow } } );
+    }
+
+    if ( attrs?.demoShadowHover ) {
+        entries.push( { selector: ':hover', styles: { boxShadow: attrs.demoShadowHover } } );
+    }
+
+    return entries;
+};
+```
+
+Then register it in the block's `producers` array — an unregistered producer
+never runs, and nothing else notices.
+
+> **A note on testing these.** All three fail by *absence*, which is exactly what
+> a loose assertion misses. A test asserting that the value "appears in the
+> output" passed while a shadow did not render at all, because the value was
+> reaching a custom property whose rule never matched. **Assert the declaration
+> that makes it render**, not the value you put in.
+
 ## 8. Reset behaviour
 
 Two independent things must be scoped to the active state.
@@ -667,6 +807,13 @@ performed immediately after selecting a block in the responsive view.
 - [ ] Base rule carries no media query.
 - [ ] Values pass a length allow-list; no `wp_strip_all_tags()` on the CSS.
 - [ ] Editor and front end resolve identically (`state ?? base`).
+- [ ] Nothing the block renders depends on the ROOT attribute any more — it is
+      stripped before `controller.php` runs. Grep the block's SCSS for a hook
+      class the controller used to emit (§7.2).
+- [ ] If the value can contain a colour, it is emitted through `style_attr`, not
+      `declarations` — the Style Engine drops `rgb()` in custom properties (§7.2).
+- [ ] The block has a preview producer for the attribute that reads the band's
+      own `attrs`, and it is registered in the `producers` array (§7.2).
 
 **Verification**
 
@@ -674,7 +821,14 @@ performed immediately after selecting a block in the responsive view.
       block's `style`.
 - [ ] Mode on + Tablet → writes `@tablet`; Desktop keeps its own value.
 - [ ] Mode on + Tablet + Reset → clears tablet only.
-- [ ] A pre-existing post opens unchanged.
+- [ ] A pre-existing post opens unchanged **and still renders** — content saved
+      before the change holds the value on the root attribute with no `style`
+      entry, and the generator only runs for blocks carrying per-device data.
+      `backward_compatibility_block_attributes()` bridges it, but only for
+      attributes present in `ATTR_DEFINITIONS`.
+- [ ] The canvas changes when you switch device, not just the front end.
+- [ ] Assertions name the declaration that makes it render, not the value you
+      stored — all three traps in §7.2 fail by absence (§7.2).
 - [ ] On WP 6.x: still stores per-device, console clean.
 
 ---
@@ -694,6 +848,10 @@ performed immediately after selecting a block in the responsive view.
 | `wp_strip_all_tags()` on generated CSS | Truncates at the `<` in core's range syntax | Allow-list the values |
 | A `ToolsPanel` inside a labelled slot | Two headings, two reset menus | Bare `ToolsPanelItem`s |
 | An unmemoised object into `useBlockProps()` | Churns the block root's ref; can disturb typing | `useMemo` |
+| Keep a custom property that a class-gated rule reads | The class stops being emitted — the root attribute is stripped once the attribute is responsive — so the variable is set and never read | Emit the real declaration from the generator (§7.2) |
+| `declarations` for a value that can hold a colour | The Style Engine silently drops custom properties containing `rgb()` / `rgba()` | `style_attr` (§7.2) |
+| Rely on `buildSpectraStyles( attrs, config )` as the preview producer | `config` bakes an explicit `value` that wins over the attribute, so every band re-derives the base and emits nothing | A dedicated producer reading the band's `attrs` (§7.2) |
+| Assert that the value "appears in the output" | Passes while the feature does not render — all three traps above fail by absence | Assert the declaration that makes it render |
 
 ---
 

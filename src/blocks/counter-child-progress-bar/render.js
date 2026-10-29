@@ -9,6 +9,32 @@ import { useBlockProps, getTypographyClassesAndStyles } from '@wordpress/block-e
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import { useCounterAnimation } from '@spectra-hooks/useCounterAnimation';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
+
+/**
+ * Bar sizing custom properties.
+ *
+ * Painted here rather than through the `useSpectraStyles` config so the canvas's
+ * per-device preview can re-derive the same two declarations per band from this
+ * one function — see `helpers/responsive-preview.js`. Base and bands then cannot
+ * disagree.
+ *
+ * No fallbacks: `block.json` defaults these to `32px` and `4`, and `style.scss`
+ * repeats both as `var()` fallbacks, so an unauthored value is already covered
+ * twice over.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block attributes.
+ * @return {Object} The style object.
+ */
+const getBarSizeStyles = ( attrs ) => ( {
+	'--spectra-counter-bar-height': attrs.barHeight,
+	'--spectra-counter-bar-border-radius':
+		attrs.barBorderRadius !== undefined ? `${ attrs.barBorderRadius }px` : undefined,
+} );
 
 /**
  * The render function for the Counter Progress Bar block.
@@ -19,6 +45,7 @@ import { useCounterAnimation } from '@spectra-hooks/useCounterAnimation';
  */
 const Render = ( props ) => {
 	const {
+		clientId,
 		attributes,
 		context: {
 			'spectra/counter/counterStyle': counterStyle = 'simple',
@@ -45,8 +72,6 @@ const Render = ( props ) => {
 	}
 
 	const {
-		barHeight = '32px',
-		barBorderRadius = 4,
 		progressColor: childProgressColor,
 		progressBackgroundColor: childProgressBackgroundColor,
 		prefixColor: childPrefixColor,
@@ -140,8 +165,6 @@ const Render = ( props ) => {
 		{ key: 'progressBackgroundColor', cssVar: '--spectra-counter-progress-bg-color', value: progressBackgroundColor },
 		{ key: 'progressSize', cssVar: '--spectra-counter-progress-size', value: progressSize },
 		{ key: 'progressStrokeWidth', cssVar: '--spectra-counter-stroke-width', value: progressStrokeWidth },
-		{ key: 'barHeight', cssVar: '--spectra-counter-bar-height', value: barHeight },
-		{ key: 'barBorderRadius', cssVar: '--spectra-counter-bar-border-radius', value: barBorderRadius !== undefined ? `${barBorderRadius}px` : undefined },
 		{ key: 'prefixColor', cssVar: '--spectra-prefix-color', value: prefixColor },
 		{ key: 'suffixColor', cssVar: '--spectra-suffix-color', value: suffixColor },
 	];
@@ -149,6 +172,20 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	// eslint-disable-next-line react-hooks/rules-of-hooks -- Early return above is conditional on counterStyle which doesn't change during render
 	const { style, classNames } = useSpectraStyles( attributes, config );
+
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/counter-child-progress-bar',
+		producers: [ getBarSizeStyles,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					prefixColor: '--spectra-prefix-color',
+					suffixColor: '--spectra-suffix-color',
+				} ),
+		],
+	} );
 
 	// eslint-disable-next-line react-hooks/rules-of-hooks -- Early return above is conditional on counterStyle which doesn't change during render
 	const blockProps = useBlockProps( {
@@ -160,6 +197,7 @@ const Render = ( props ) => {
 		style: { 
 			...style, 
 			...typographyProps.style,
+			...getBarSizeStyles( attributes ),
 		},
 	} );
 
@@ -168,6 +206,7 @@ const Render = ( props ) => {
 	if ( counterStyle === 'bar' ) {
 		return (
 			<div { ...blockProps }>
+				{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 				<div className="spectra-counter-progress-track">
 					<div
 						className="spectra-counter-progress-bar"

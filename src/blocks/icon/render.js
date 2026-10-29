@@ -10,7 +10,10 @@ import { memo } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -55,7 +58,10 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/icon',
-		producers: [ getIconSizeStyles ],
+		producers: [
+			getIconSizeStyles,
+			( attrs ) => colourVarStyles( attrs, { textColor: '--spectra-text-color' } ),
+		],
 	} );
 
 	const {

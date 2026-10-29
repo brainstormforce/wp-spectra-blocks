@@ -106,6 +106,15 @@ class GlobalStylesBridge {
 	 * @return void
 	 */
 	public function init(): void {
+		// Force-enable the spacing controls (padding / margin / blockGap) for every
+		// Spectra block that declares the support. Classic themes that do not opt into
+		// `appearance-tools` leave core's `settings.spacing.padding/margin` at their
+		// default `false`, which hides those controls on ALL blocks — including Spectra's
+		// layout blocks, where they are essential (#1071). Not Pro-gated: a free-mode
+		// Container must stay spaceable on any theme. Runs before inject_palette (15 < 20)
+		// but writes a disjoint settings key, so the two never contend.
+		add_filter( 'wp_theme_json_data_theme', array( $this, 'enable_block_spacing_controls' ), 15 );
+
 		// Inject palette into the theme layer so it merges with (not replaces) theme colors.
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'inject_palette' ), 20 );
 
@@ -232,6 +241,76 @@ class GlobalStylesBridge {
 		// slug — also for an install that found every family present (sites that
 		// switched theme before the hook above existed).
 		add_action( 'zipai_font_library_ready', array( $this, 'activate_font_families' ), 20, 1 );
+	}
+
+	/**
+	 * Force-enable each Spectra block's own spacing controls, theme-independent.
+	 *
+	 * A block's `supports.spacing` declaration is NECESSARY but not SUFFICIENT for
+	 * the padding / margin UI to render: core gates that UI on the resolved
+	 * `settings.spacing.{padding,margin}` for the block, which defaults to `false`
+	 * (see core's bundled theme.json). Block themes and classic themes that call
+	 * `add_theme_support( 'appearance-tools' )` flip it to `true`; a plain classic
+	 * theme (BuddyBoss, many commercial themes) never does, so the controls vanish
+	 * from every Spectra block that needs them (#1071).
+	 *
+	 * Writing a block-scoped override — `settings.blocks['spectra/…'].spacing.*` —
+	 * wins over the global default for THOSE blocks only, so Spectra's controls come
+	 * back without force-enabling spacing for unrelated core blocks. Each block is
+	 * granted exactly the keys it already declares in `block.json`; we never enable a
+	 * control the block itself did not ask for.
+	 *
+	 * Hooked to wp_theme_json_data_theme at priority 15. Not Pro-gated.
+	 *
+	 * @since 1.0.13
+	 *
+	 * @param \WP_Theme_JSON_Data $theme_json The theme JSON data object.
+	 * @return \WP_Theme_JSON_Data Modified theme JSON data.
+	 */
+	public function enable_block_spacing_controls( $theme_json ) {
+		if ( ! class_exists( '\WP_Block_Type_Registry' ) ) {
+			return $theme_json;
+		}
+
+		$spacing_keys = array( 'padding', 'margin', 'blockGap' );
+		$blocks       = array();
+
+		foreach ( \WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type ) {
+			if ( ! Core::is_spectra_block( array( 'name' => $block_type->name ) ) ) {
+				continue;
+			}
+
+			$supports = is_array( $block_type->supports ) ? $block_type->supports : array();
+			$spacing  = ( isset( $supports['spacing'] ) && is_array( $supports['spacing'] ) ) ? $supports['spacing'] : array();
+
+			if ( empty( $spacing ) ) {
+				continue;
+			}
+
+			$enable = array();
+			foreach ( $spacing_keys as $key ) {
+				if ( ! empty( $spacing[ $key ] ) ) {
+					$enable[ $key ] = true;
+				}
+			}
+
+			if ( ! empty( $enable ) ) {
+				$blocks[ $block_type->name ] = array( 'spacing' => $enable );
+			}
+		}
+
+		if ( empty( $blocks ) ) {
+			return $theme_json;
+		}
+
+		return $theme_json->update_with(
+			array(
+				'version'  => 2,
+				'settings' => array(
+					'blocks' => $blocks,
+				),
+			)
+		);
 	}
 
 	/**

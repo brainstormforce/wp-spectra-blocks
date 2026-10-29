@@ -150,9 +150,6 @@
 			"type": "boolean",
 			"default": false
 		},
-		"variationType": {
-			"type": "string"
-		},
 		"currentTab": {
 			"type": "number"
 		},

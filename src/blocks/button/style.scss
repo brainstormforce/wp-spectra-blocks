@@ -43,6 +43,9 @@
 		align-items: center;
 		vertical-align: middle;
 		font-size: inherit;
+		// The svg is a flex item of the button: without this a long, wrapping
+		// label takes width from it and the icon squashes below its Icon Size.
+		flex-shrink: 0;
 	}
 
 	:where(.spectra-button__hover-icon) {
@@ -50,6 +53,7 @@
 		align-items: center;
 		vertical-align: middle;
 		font-size: inherit;
+		flex-shrink: 0; // Keep the set Icon Size beside a long label.
 	}
 
 	// Author-set border support.

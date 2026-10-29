@@ -152,7 +152,9 @@
 	&.spectra-counter--simple,
 	&.spectra-counter--bar {
 
-		.wp-block-spectra-counter-child-number {
+		// `:where()` keeps this at (0,2,0), below the gs tier and the converter's
+		// `spectra-no-type` rule (converted/_counter.scss).
+		:where(.wp-block-spectra-counter-child-number) {
 			// Force tight leading on the large number (matches the circular variant)
 			// so it does not inherit the theme/container line-height and gain extra
 			// vertical spacing. An imported counter's explicit line-height still wins

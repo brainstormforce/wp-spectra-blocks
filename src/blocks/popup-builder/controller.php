@@ -35,7 +35,6 @@ $close_overlay_click         = $attributes['closeOverlayClick'] ?? true;
 $close_escape_press          = $attributes['closeEscapePress'] ?? true;
 $has_text_color              = ! empty( $attributes['textColor'] ?? '' );
 // Overlay and styling attributes.
-$close_icon_size     = $attributes['closeIconSize'] ?? '';
 $popup_overlay_color = $attributes['popupOverlayColor'] ?? '';
 $close_icon_rotation = $attributes['rotation'] ?? '';
 
@@ -191,12 +190,18 @@ $style_configs = array(
 		'class_name' => 'spectra-close-icon-color-hover',
 		'value'      => $attributes['closeIconColorHover'],
 	),
-	array(
-		'key'        => 'closeIconSize',
-		'css_var'    => '--spectra-close-icon-size',
-		'class_name' => 'spectra-close-icon-size',
-		'value'      => $close_icon_size . 'px',
-	),
+
+	/*
+	 * `closeIconSize` is per-device (responsive-controls) — the responsive CSS extension
+	 * emits its custom property per band, so it must NOT be set inline here. An
+	 * inline declaration outranks a stylesheet rule of any specificity, and the
+	 * desktop value would apply at every width.
+	 *
+	 * Legacy content that stored it only on the root attribute is bridged onto
+	 * the base layer by `backward_compatibility_block_attributes()`.
+	 */
+	// The class is dropped with it: `spectra-close-icon-size` appears in no
+	// selector — `style.scss` reads the variable from a plain `svg` descendant.
 	array(
 		'key'        => 'width',
 		'css_var'    => '--spectra-popup-width',

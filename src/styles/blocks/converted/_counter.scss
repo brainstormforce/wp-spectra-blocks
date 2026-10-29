@@ -1,0 +1,34 @@
+// Converted-page rules for the Counter blocks ZIP AI's converter builds (block-converter
+// `transforms/counter.ts`), imported by common.scss. One block's converted-page rules per
+// partial; the note in common.scss says why they live with the block. The converter makes
+// the design's figure (`<span class="stat__value">98%</span>`) the counter root, wearing the
+// figure's own classes and the intent markers every converted wrapper wears; the number
+// wears `spectra-no-type`, since Spectra sets the number's own type (52px, line-height 1),
+// which the source figure never had. The number inherits the figure's type from the root.
+// Spectra's tabular digits stay: the design library's count-up sets them on a counting
+// figure too. Every rule sits at (0,2,1) or below, under the gs tier (0,3,0).
+
+// The number takes the figure's size and leading, and drops Spectra's layout containment:
+// a contained box has no baseline, and the design's stat aligns a unit beside the number on
+// its baseline.
+body .wp-block-spectra-counter-child-number.spectra-no-type {
+	font-size: inherit;
+	line-height: inherit;
+	contain: none;
+}
+
+// The number's inner span carries the same containment as the block (both wear
+// `spectra-counter-number`).
+body .wp-block-spectra-counter-child-number.spectra-no-type .spectra-counter-number {
+	contain: none;
+}
+
+// Converted Counter in the editor: the root and the wrapper hold their child directly (no
+// inner-blocks wrapper to flatten), but with the converter's `layout: default` each carries
+// `is-layout-flow` in the canvas, and core's blockGap margin (`:root :where(.is-layout-flow)
+// > *`) pushes the child down by a gap the front end never prints (there Spectra skips core
+// layout support for these blocks). `:where(.is-layout-flow)` keeps the rule to the canvas
+// at (0,2,1).
+body :is(.wp-block-spectra-counter, .wp-block-spectra-counter-child-wrapper).spectra-no-block-gap:where(.is-layout-flow) > :where(*) {
+	margin-block-start: 0;
+}

@@ -2241,6 +2241,11 @@ parameters:
 			path: includes/Extensions/ResponsiveControls/class-responsive-attribute-css.php
 
 		-
+			message: "#^Static method SpectraBlocks\\\\Extensions\\\\ResponsiveControls\\\\ResponsiveAttributeCSS\\:\\:format_colour\\(\\) is unused\\.$#"
+			count: 1
+			path: includes/Extensions/ResponsiveControls/class-responsive-attribute-css.php
+
+		-
 			message: "#^Method SpectraBlocks\\\\Extensions\\\\ResponsiveControls\\\\ResponsiveAttributeCSS\\:\\:format_svg_size\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: includes/Extensions/ResponsiveControls/class-responsive-attribute-css.php
@@ -2327,6 +2332,11 @@ parameters:
 
 		-
 			message: "#^Static method SpectraBlocks\\\\Extensions\\\\ResponsiveControls\\\\ResponsiveAttributeCSS\\:\\:format_image_scale\\(\\) is unused\\.$#"
+			count: 1
+			path: includes/Extensions/ResponsiveControls/class-responsive-attribute-css.php
+
+		-
+			message: "#^Static method SpectraBlocks\\\\Extensions\\\\ResponsiveControls\\\\ResponsiveAttributeCSS\\:\\:format_shadow\\(\\) is unused\\.$#"
 			count: 1
 			path: includes/Extensions/ResponsiveControls/class-responsive-attribute-css.php
 

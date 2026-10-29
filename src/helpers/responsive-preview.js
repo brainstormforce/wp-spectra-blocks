@@ -325,6 +325,35 @@ export const iconDimensionStyles = ( dimension, selector = ' svg' ) => {
 };
 
 /**
+ * Custom properties for per-device colours.
+ *
+ * Colour is the one family where the EDITOR and the FRONT END deliberately paint
+ * differently. On the front end the generator emits the real property, because
+ * registering an attribute as responsive unsets it from the root and the block
+ * stops emitting the `spectra-{name}` class the stylesheet rule depends on. In
+ * the editor nothing is unset — that happens on `render_block_data`, which is
+ * server-side — so the class is still there and setting the variable is enough,
+ * and is what the block already does for its base value.
+ *
+ * Taking a map rather than one attribute keeps a block that bands several
+ * colours to a single producer, and keeps the variable name beside the
+ * attribute it belongs to instead of buried in a `config` array elsewhere.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block attributes, or a band's merge of them.
+ * @param {Object} map   Attribute name to CSS custom property.
+ * @return {Object} The style object.
+ */
+export const colourVarStyles = ( attrs = {}, map = {} ) =>
+	Object.entries( map ).reduce( ( styles, [ attribute, cssVar ] ) => {
+		const value = attrs?.[ attribute ];
+
+		return undefined === value || null === value || '' === value
+			? styles
+			: { ...styles, [ cssVar ]: value };
+	}, {} );
+
+/**
  * Banded CSS for a block's per-device values.
  *
  * @since 1.0.7

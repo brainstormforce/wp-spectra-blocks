@@ -12,6 +12,7 @@ import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { removeAnchorTag, spectraClassNames } from '@spectra-helpers';
 import RenderSVG from '@spectra-helpers/render-svg';
 import {
+	colourVarStyles,
 	getResponsivePreviewCss,
 	iconDimensionStyles,
 	inheritResponsiveKey,
@@ -208,7 +209,11 @@ const Render = ( props ) => {
 		// Bands the tab does not size itself inherit the parent's band.
 		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'size', inheritedStyleColorText, 'size' ) },
 		blockName: 'spectra/tabs-child-tab-button',
-		producers: [ getButtonIconStyles, ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+		producers: [
+			getButtonIconStyles,
+			( attrs ) => buildSpectraStyles( attrs, config ).style,
+			( attrs ) => colourVarStyles( attrs, { textColor: '--spectra-text-color', iconColor: '--spectra-icon-color' } ),
+		],
 	} );
 
 	const blockProps = useBlockProps( {

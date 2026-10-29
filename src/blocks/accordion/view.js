@@ -40,6 +40,55 @@ const getAnimationBounds = ( item, header ) => {
 	};
 };
 
+// The animation each item is running: its frames, its fallback timer and its
+// `transitionend` handler. A toggle that starts while the item still animates
+// cancels the previous run, so a stale cleanup never clears the new run's
+// height or clip.
+const runningAnimations = new WeakMap();
+
+/**
+ * Cancel whatever the item's previous animation still has scheduled.
+ *
+ * @param {HTMLElement} item The accordion child item element.
+ */
+const cancelAnimation = ( item ) => {
+	const running = runningAnimations.get( item );
+	if ( ! running ) {
+		return;
+	}
+	// eslint-disable-next-line no-undef
+	running.frames.forEach( ( frame ) => cancelAnimationFrame( frame ) );
+	clearTimeout( running.timer );
+	if ( running.onEnd ) {
+		item.removeEventListener( 'transitionend', running.onEnd );
+	}
+	runningAnimations.delete( item );
+};
+
+/**
+ * Finish the item's animation when its own height transition ends. A
+ * `transitionend` bubbles, so a child's transition (a design's +/− marker)
+ * would otherwise end the item's animation early; the timer is the fallback
+ * when no transition ends.
+ *
+ * @param {HTMLElement} item    The accordion child item element.
+ * @param {Object}      running The item's running animation.
+ * @param {Function}    finish  What the animation leaves behind when it ends.
+ */
+const finishOnHeightEnd = ( item, running, finish ) => {
+	const cleanup = () => {
+		cancelAnimation( item );
+		finish();
+	};
+	running.onEnd = ( event ) => {
+		if ( event.target === item && event.propertyName === 'max-height' ) {
+			cleanup();
+		}
+	};
+	item.addEventListener( 'transitionend', running.onEnd );
+	running.timer = setTimeout( cleanup, 300 );
+};
+
 // Create the Accordion store.
 store( 'spectra/accordion', {
 	actions: {
@@ -181,14 +230,28 @@ store( 'spectra/accordion', {
 				return;
 			}
 
+			// One animation per item: this run replaces any still in flight.
+			cancelAnimation( ref );
+			const running = { frames: [], timer: 0, onEnd: null };
+			runningAnimations.set( ref, running );
+
+			// The height animation clips the answer to the item's animating box. An item
+			// whose stylesheet lets content overflow at rest (a converted item's
+			// `spectra-no-frame` keeps a focus ring or shadow visible) would otherwise paint
+			// the answer over the items below while it opens or closes.
+			ref.style.overflow = 'hidden';
+
 			if ( isExpanded ) {
 				// Batch DOM reads to minimize layout recalculations
 				accordionDetails.style.display = '';
+				// The bound state follows at once, so a close that cancels this run
+				// (before its cleanup) still changes it and hides the details.
+				context.detailsDisplay = '';
 				ref.style.maxHeight = '';
 
 				// Use a single rAF to batch all DOM measurements
 				// eslint-disable-next-line no-undef
-				requestAnimationFrame( () => {
+				running.frames.push( requestAnimationFrame( () => {
 					// The item uses box-sizing: border-box, so max-height must include
 					// the item's own vertical padding + border. Basing the collapsed
 					// height on the header alone would undershoot the item's true
@@ -200,25 +263,21 @@ store( 'spectra/accordion', {
 
 					// Animate to full height in next frame
 					// eslint-disable-next-line no-undef
-					requestAnimationFrame( () => {
+					running.frames.push( requestAnimationFrame( () => {
 						ref.style.maxHeight = `${ expandedHeight }px`;
 
 						// Clean up after animation
-						const cleanup = () => {
+						finishOnHeightEnd( ref, running, () => {
 							ref.style.maxHeight = '';
+							ref.style.overflow = '';
 							context.detailsDisplay = '';
-						};
-
-						// Use transitionend event instead of setTimeout for more reliable timing
-						ref.addEventListener( 'transitionend', cleanup, { once: true } );
-						// Fallback timeout in case transitionend doesn't fire
-						setTimeout( cleanup, 300 );
-					} );
-				} );
+						} );
+					} ) );
+				} ) );
 			} else {
 				// Batch DOM reads for collapse animation
 				// eslint-disable-next-line no-undef
-				requestAnimationFrame( () => {
+				running.frames.push( requestAnimationFrame( () => {
 					// Include the item's own padding + border so the collapse settles
 					// at the item's true resting height (box-sizing: border-box).
 					const { collapsedHeight, expandedHeight } = getAnimationBounds( ref, accordionHeader );
@@ -228,21 +287,17 @@ store( 'spectra/accordion', {
 
 					// Animate to header height in next frame
 					// eslint-disable-next-line no-undef
-					requestAnimationFrame( () => {
+					running.frames.push( requestAnimationFrame( () => {
 						ref.style.maxHeight = `${ collapsedHeight }px`;
 
 						// Clean up after animation
-						const cleanup = () => {
+						finishOnHeightEnd( ref, running, () => {
 							ref.style.maxHeight = '';
+							ref.style.overflow = '';
 							context.detailsDisplay = 'none';
-						};
-
-						// Use transitionend event instead of setTimeout for more reliable timing
-						ref.addEventListener( 'transitionend', cleanup, { once: true } );
-						// Fallback timeout in case transitionend doesn't fire
-						setTimeout( cleanup, 300 );
-					} );
-				} );
+						} );
+					} ) );
+				} ) );
 			}
 		},
 		// Callback that is run when the display styles of the expanded and collapsed icons needs to be changed.

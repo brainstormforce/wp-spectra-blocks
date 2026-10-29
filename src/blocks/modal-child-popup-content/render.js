@@ -8,7 +8,10 @@ import {
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -108,6 +111,10 @@ const Render = ( props ) => {
 		producers: [
 			( attrs ) => getPopupContentSizeStyles( attrs, maxContainerHeight ),
 			( attrs ) => getBackgroundImageStyles( { ...attrs, backgroundGradient, backgroundGradientHover } ),
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					textColorHover: '--spectra-text-color-hover',
+				} ),
 		],
 	} );
 

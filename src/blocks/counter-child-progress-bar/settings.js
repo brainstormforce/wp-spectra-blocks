@@ -7,7 +7,6 @@ import { memo } from '@wordpress/element';
 import {
 	__experimentalUnitControl as UnitControl,
 	__experimentalUseCustomUnits as useCustomUnits,
-	__experimentalToolsPanel as ToolsPanel,
 } from '@wordpress/components';
 import ToolsPanelItem from '@spectra-components/tools-panel-item';
 
@@ -42,17 +41,8 @@ const GeneralSettings = memo( ( props ) => {
 	} );
 
 	return (
-		<InspectorControls group="settings">
-			<ToolsPanel
-				label={ __( 'Progress Bar', 'spectra-blocks' ) }
-				resetAll={ () => {
-					setAttributes( {
-						barHeight: undefined,
-						barBorderRadius: undefined,
-					} );
-				} }
-				panelId={ clientId }
-			>
+		<InspectorControls group="dimensions">
+			<>
 				{/* This tool panel item will require reset when any of these conditions are met:
 				- Bar height is set to any value. Default: '32px'.
 				- When reset, bar height returns to 32px.
@@ -97,7 +87,7 @@ const GeneralSettings = memo( ( props ) => {
 						step={ 1 }
 					/>
 				</ToolsPanelItem>
-			</ToolsPanel>
+			</>
 		</InspectorControls>
 	);
 } );

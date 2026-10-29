@@ -12,6 +12,7 @@ import { useSpectraStyles } from '@spectra-hooks';
 import { spectraClassNames } from '@spectra-helpers';
 import RenderSVG from '@spectra-helpers/render-svg';
 import {
+	colourVarStyles,
 	getResponsivePreviewCss,
 	iconDimensionStyles,
 	inheritResponsiveKey,
@@ -103,7 +104,10 @@ const Render = ( props ) => {
 		clientId,
 		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'iconSize', listStyleAttr, 'iconSize' ) },
 		blockName: 'spectra/list-child-icon',
-		producers: [ ( attrs ) => iconDimensionStyles( attrs.iconSize || '10px' ) ],
+		producers: [
+			( attrs ) => iconDimensionStyles( attrs.iconSize || '10px' ),
+			( attrs ) => colourVarStyles( attrs, { textColor: '--spectra-text-color' } ),
+		],
 	} );
 	const finalFlipForRTL = ( flipForRTL !== undefined && flipForRTL !== false ) ? flipForRTL : inheritedFlipForRTL;
 	const finalRotation = rotation !== undefined ? rotation : inheritedRotation;

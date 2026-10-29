@@ -81,6 +81,13 @@ class HtmlSanitizer {
 				'type'            => true,
 			),
 			/**
+			 * Template tag: inert markup a script clones — WooCommerce's store
+			 * notices (`<template data-wp-each--notice>`), any Interactivity API
+			 * `data-wp-each` list. Stripped, the script has nothing to clone and
+			 * the region renders as an empty box.
+			 */
+			'template'      => array(),
+			/**
 			 * Picture tag for responsive images (wraps <source> + <img>).
 			 */
 			'picture'       => array(
@@ -870,11 +877,11 @@ class HtmlSanitizer {
 		}
 
 		// Custom tags do not inherit kses' global attributes, so a `<picture>` /
-		// `<source>` loses its `id`, `data-*`, `role` and `aria-*` — breaking
+		// `<source>` / `<template>` loses its `id`, `data-*`, `role` and `aria-*` — breaking
 		// anchor/jump links, lazy-load hooks and accessibility. Grant them the same
 		// global set every standard element carries.
 		$global_attributes = self::global_attributes();
-		foreach ( array( 'picture', 'source' ) as $tag ) {
+		foreach ( array( 'picture', 'source', 'template' ) as $tag ) {
 			if ( isset( $merged[ $tag ] ) && is_array( $merged[ $tag ] ) ) {
 				$merged[ $tag ] = array_merge( $merged[ $tag ], $global_attributes );
 			}

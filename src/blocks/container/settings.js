@@ -626,7 +626,16 @@ const ShadowSettings = memo( ( props ) => {
 				value: boxShadowHover,
 			} }
 			label={ __( 'Box Shadow', 'spectra-blocks' ) }
-			group="styles"
+			/*
+			 * `border`, not `styles`. Core renders only seven inspector slots while a
+			 * viewport state is being edited — typography, color, background, layout,
+			 * dimensions, border, elements — and `styles` is not among them, so in
+			 * `styles` this control simply does not exist on Tablet or Mobile and its
+			 * per-device values would be unreachable. `border` is core's "Border &
+			 * Shadow" panel, which is where the Button block's Shadow Hover already
+			 * sits.
+			 */
+			group="border"
 			showHoverState={ true }
 		/>
 	);
@@ -1635,8 +1644,13 @@ const Settings = ( props ) => {
 			<GradientSettings { ...{ ...props } } />
 			<OpacitySettings { ...{ ...props } } />
 			<DimensionSettings { ...{ ...props } } />
-			<ShadowSettings { ...{ ...props } } />
+			{/*
+			  * Border Hover before Box Shadow: both now fill core's Border panel,
+			  * which lays its items out in fill order, and this is the order the
+			  * panel had before Box Shadow moved into it.
+			  */}
 			<BorderHoverSettings { ...{ ...props } } />
+			<ShadowSettings { ...{ ...props } } />
 			<BlockStyles {...{ ...props }} />
 			{ showOverlaySettings && <OverlaySettings { ...props } /> }
 			<ShapeDividerSettings { ...props } />

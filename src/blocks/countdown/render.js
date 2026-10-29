@@ -17,7 +17,10 @@ import { useCountdownStyles } from './use-countdown-styles';
 import TEMPLATE from './template';
 import { areTimesEqual, calculateRemainingTime, formatDateForPicker } from '@spectra-helpers/countdown';
 import timerManager from './timer-manager';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -308,7 +311,14 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/countdown',
-		producers: [ getCountdownSizeStyles ],
+		producers: [ getCountdownSizeStyles,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
 	} );
 
 	const blockProps = useBlockProps( {

@@ -9,6 +9,10 @@ import { memo, useMemo } from '@wordpress/element';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -19,7 +23,7 @@ import { useSpectraStyles } from '@spectra-hooks';
  * @return {Element} The rendered block.
  */
 const Render = ( props ) => {
-	const { context, attributes } = props;
+	const { context, attributes, clientId } = props;
 
 	const { number: contextNumber = undefined, role = 'timer' } = context;
 	const { number } = attributes;
@@ -46,13 +50,34 @@ const Render = ( props ) => {
 	// Generate styles and class names - only recalculate when attributes change.
 	const { style, classNames } = useSpectraStyles( attributes, config );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/countdown-child-number',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					numberColor: '--spectra-number-color',
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					numberColorHover: '--spectra-number-color-hover',
+				} ),
+		],
+	} );
+
 	const blockProps = useBlockProps( {
 		style,
 		className: spectraClassNames( classNames ),
 		role,
 	} );
 
-	return <div { ...blockProps }>{ formattedNumber }</div>;
+	return (
+		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			{ formattedNumber }
+		</div>
+	);
 };
 
 export default memo( Render );

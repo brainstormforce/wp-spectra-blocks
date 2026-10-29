@@ -9,6 +9,10 @@ import { memo } from '@wordpress/element';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -19,7 +23,7 @@ import { useSpectraStyles } from '@spectra-hooks';
  * @return {Element}     The rendered block.
  */
 const Render = ( props ) => {
-	const { attributes } = props;
+	const { attributes, clientId } = props;
 
 	// Configuration for the useSpectraStyles hook.
 	const config = [
@@ -38,6 +42,20 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/tabs',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorTertiary: '--spectra-background-color',
+					backgroundGradientTertiary: '--spectra-background-gradient',
+				} ),
+		],
+	} );
+
 	// Use the block props, with the added CSS variables and their related classes.
 	const blockProps = useBlockProps( {
 		style,
@@ -46,6 +64,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<InnerBlocks renderAppender={ false } />
 		</div>
 	);

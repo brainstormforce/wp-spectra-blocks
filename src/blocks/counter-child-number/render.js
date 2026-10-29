@@ -8,6 +8,10 @@ import { useBlockProps } from '@wordpress/block-editor';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 import { useCounterAnimation } from '@spectra-hooks/useCounterAnimation';
 
 /**
@@ -19,6 +23,7 @@ import { useCounterAnimation } from '@spectra-hooks/useCounterAnimation';
  */
 const Render = ( props ) => {
 	const {
+		clientId,
 		attributes,
 		context: {
 			'spectra/counter/startNumber': rawStartNumber = 0,
@@ -71,6 +76,20 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/counter-child-number',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					prefixColor: '--spectra-prefix-color',
+					suffixColor: '--spectra-suffix-color',
+				} ),
+		],
+	} );
+
 	const blockProps = useBlockProps( {
 		className: spectraClassNames( classNames, [
 			'wp-block-spectra-counter-child-number',
@@ -81,6 +100,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<span className="spectra-counter-number">
 				{ prefix && <span className="spectra-counter-prefix">{ prefix }</span> }
 				<span className="spectra-counter-value">{ animatedNumber || '0' }</span>

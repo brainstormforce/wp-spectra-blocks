@@ -1,0 +1,42 @@
+// Converted-page rules for the Countdown blocks ZIP AI's converter builds (block-converter
+// `transforms/countdown.ts`), imported by common.scss. One block's converted-page rules
+// per partial; the note in common.scss says why they live with the block. The converter
+// wears each block's own classes from the source and the intent markers every converted
+// wrapper wears (`spectra-no-padding`, `spectra-no-width`, `spectra-no-block-gap`), plus
+// `spectra-no-type` on the root and each label: Spectra sets the countdown's type itself
+// (the root at 2.5rem, weight 500, uppercase; a label at 0.375em of that), which the
+// source timer never had. Every rule sits at (0,2,1), below the gs tier (0,3,0), so a
+// size, weight, case or width the source declares on its own class still wins.
+
+// Spectra's root fills its row (`width: 100%`); the source root is a plain block (or a flex
+// item) that takes its own width, so a timer laid out at its content's width in a row keeps
+// that width.
+body .wp-block-spectra-countdown.spectra-no-width {
+	width: auto;
+}
+
+// The root's type returns to the page's, so a number or label the design leaves unsized
+// renders as it did in the source rather than at 2.5rem, weight 500, uppercase.
+body .wp-block-spectra-countdown.spectra-no-type {
+	font-size: inherit;
+	font-weight: inherit;
+	text-transform: inherit;
+}
+
+// A label inherits its unit's size instead of 0.375em of it; the design sizes the label
+// on its own class.
+body .wp-block-spectra-countdown-child-label.spectra-no-type {
+	font-size: inherit;
+}
+
+// Converted Countdown in the editor: a unit block holds its number and label directly (no
+// inner-blocks wrapper to flatten), but with the converter's `layout: default` the unit
+// itself carries `is-layout-flow` in the canvas, and core's blockGap margin
+// (`:root :where(.is-layout-flow) > *`) pushes the label below the number by a gap the
+// front end never prints (there Spectra skips core layout support for these blocks, so
+// no `is-layout-*` class reaches them). The root needs no rule: its own
+// `countdown-is-layout-flow-constrained` already zeroes its children's margins.
+// `:where(.is-layout-flow)` keeps the rule to the canvas at (0,2,1).
+body :is(.wp-block-spectra-countdown-child-day, .wp-block-spectra-countdown-child-hour, .wp-block-spectra-countdown-child-minute, .wp-block-spectra-countdown-child-second).spectra-no-block-gap:where(.is-layout-flow) > :where(*) {
+	margin-block-start: 0;
+}
