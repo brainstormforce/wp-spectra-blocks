@@ -10,12 +10,13 @@
 use SpectraBlocks\Helpers\BlockAttributes;
 
 // Get context from parent counter block.
+$counter_style    = $block->context['spectra/counter/counterStyle'] ?? 'simple';
 $raw_start_number = $block->context['spectra/counter/startNumber'] ?? 0;
 $raw_end_number   = $block->context['spectra/counter/endNumber'] ?? 100;
 
-// Validation: If start > end, use default values (0 to 100).
-$start_number         = $raw_start_number > $raw_end_number ? 0 : $raw_start_number;
-$end_number           = $raw_start_number > $raw_end_number ? 100 : $raw_end_number;
+// Support reverse counting: allow start > end for decrement animation, as the counter and its bar do.
+$start_number         = is_numeric( $raw_start_number ) ? floatval( $raw_start_number ) : 0;
+$end_number           = is_numeric( $raw_end_number ) ? floatval( $raw_end_number ) : 100;
 $prefix               = $block->context['spectra/counter/prefix'] ?? '';
 $suffix               = $block->context['spectra/counter/suffix'] ?? '';
 $thousand_separator   = $block->context['spectra/counter/thousandSeparator'] ?? '';
@@ -23,8 +24,10 @@ $decimal_places       = $block->context['spectra/counter/decimalPlaces'] ?? 0;
 $context_prefix_color = $block->context['spectra/counter/prefixColor'] ?? '';
 $context_suffix_color = $block->context['spectra/counter/suffixColor'] ?? '';
 
-// Format the initial number display.
-$formatted_number = number_format( $start_number, $decimal_places, '.', $thousand_separator );
+// A counter prints its end value: the figure a crawler, a visitor without scripts and the first
+// paint read. The view script counts from the start value when the counter comes into view. A
+// bar or circular counter prints its start, as its bar and ring do until they fill.
+$formatted_number = number_format( in_array( $counter_style, array( 'bar', 'circular' ), true ) ? $start_number : $end_number, $decimal_places, '.', $thousand_separator );
 
 // Additional classes.
 $custom_classes = array(

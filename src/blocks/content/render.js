@@ -17,7 +17,10 @@ import { helperIcons } from '@spectra-helpers/block-icons';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 // Mirrors InlineLeaf::PHRASING_TAGS: only a nested phrasing leaf prints the
 // converter's declared `spaceBefore` / `spaceAfter` (see content/view.php).
@@ -171,6 +174,12 @@ const Render = ( props ) => {
 		blockName: 'spectra/content',
 		producers: [
 			( attrs ) => buildSpectraStyles( { ...attrs, textShadow: buildTextShadow( attrs ) }, config ).style,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
 		],
 	} );
 

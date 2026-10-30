@@ -208,9 +208,23 @@ $config = array(
 		'css_var'    => '--spectra-icon-color-hover',
 		'class_name' => null,
 	),
+
+	/*
+	 * `shadowHover` is per-device (responsive-controls). The CSS variable is
+	 * emitted per band by the responsive CSS extension, so it must NOT be set
+	 * inline here — an inline declaration outranks a stylesheet rule of any
+	 * specificity, and the desktop value would apply at every width.
+	 *
+	 * The CLASS stays. It is the hook, not the value: `style.scss` applies
+	 * `box-shadow: var(--spectra-shadow-hover)` on `.spectra-shadow-hover:hover`,
+	 * so without it the variable is never read at any breakpoint.
+	 *
+	 * Legacy content that stored the shadow only on the root attribute is
+	 * bridged onto the base layer by `backward_compatibility_block_attributes()`.
+	 */
 	array(
 		'key'        => 'shadowHover',
-		'css_var'    => '--spectra-shadow-hover',
+		'css_var'    => null,
 		'class_name' => 'spectra-shadow-hover',
 	),
 	array(

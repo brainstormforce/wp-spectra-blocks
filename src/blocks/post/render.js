@@ -12,7 +12,10 @@
 import { useInnerBlocksProps, useBlockProps } from '@wordpress/block-editor';
 import { useEffect, useMemo } from '@wordpress/element';
 import { useInstanceId } from '@wordpress/compose';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * Render component for the Post block editor preview.
@@ -81,7 +84,15 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/post',
-		producers: [ getCarouselMetricStyles, getGridMetricStyles ],
+		producers: [ getCarouselMetricStyles, getGridMetricStyles,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					paginationActiveColor: '--spectra-pagination-color-active',
+					paginationBackgroundActiveColor: '--spectra-pagination-bg-color-active',
+					paginationBackgroundHoverColor: '--spectra-pagination-bg-color-hover',
+					paginationHoverColor: '--spectra-pagination-color-hover',
+				} ),
+		],
 	} );
 	const {
 		queryId,

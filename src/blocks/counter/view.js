@@ -300,7 +300,7 @@ class SpectraCounter {
 			}
 			
 			const elapsed = timestamp - startTime;
-		const progress = Math.min( elapsed / duration, 1 );
+		const progress = duration > 0 ? Math.min( elapsed / duration, 1 ) : 1;
 			
 			// Apply linear easing
 			const easedProgress = progress;
@@ -385,6 +385,14 @@ function initCounter( element, options ) {
 }
 
 /**
+ * Whether the visitor asks for reduced motion: the counter then shows its end number at once.
+ *
+ * @since 1.0.13
+ * @return {boolean} True under `prefers-reduced-motion: reduce`.
+ */
+const prefersReducedMotion = () => window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches === true;
+
+/**
  * Initialize counter animations using Intersection Observer
  */
 function initCounterAnimations() {
@@ -409,7 +417,8 @@ function initCounterAnimations() {
 					startNumber: startNum !== undefined && startNum !== '' ? parseFloat( startNum ) : 0,
 					endNumber: endNum !== undefined && endNum !== '' ? parseFloat( endNum ) : 100,
 					totalNumber: totalNum !== undefined && totalNum !== '' ? parseFloat( totalNum ) : 100,
-					duration: parseInt( counter.dataset.counterDuration ) || 2000,
+					// Under reduced motion the count lands on its end at once (a zero duration).
+					duration: prefersReducedMotion() ? 0 : parseInt( counter.dataset.counterDuration ) || 2000,
 					prefix: counter.dataset.counterPrefix || '',
 					suffix: counter.dataset.counterSuffix || '',
 					separator: counter.dataset.counterSeparator !== undefined ? counter.dataset.counterSeparator : ',',

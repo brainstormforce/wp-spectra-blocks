@@ -59,7 +59,10 @@
 	},
 	"editorScript": "file:./index.js",
 	"editorStyle": "file:./index.css",
-	"style": "file:./style-index.css",
+	"style": [
+		"file:./style-index.css",
+		"spectra-blocks-common"
+	],
 	"providesContext": {
 		"spectra/accordion/item/isActiveInEditor": "isActiveInEditor",
 		"spectra/accordion/item/textColorSecondary": "textColorSecondary",

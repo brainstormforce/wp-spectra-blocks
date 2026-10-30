@@ -11,7 +11,10 @@ import { memo, useCallback, useMemo } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 import { getMultiStateShadowStyles } from '@spectra-helpers/shadow';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
 import { useHtmlTagToolbar, DEFAULT_TAG_NAME, VOID_TAGS } from './toolbar';
@@ -25,6 +28,38 @@ import shapes from './shapes';
  * @param {Object} props The element props.
  * @return {Element} The rendered block.
  */
+/**
+ * The box shadows, as the per-device preview emitter needs them.
+ *
+ * Derived from the band's OWN attributes. `buildSpectraStyles()` cannot serve
+ * this: the shadow config it is handed bakes an explicit `value`, and an
+ * explicit value wins over the attribute (`hooks/index.js`), so every band
+ * re-derived the base and emitted nothing.
+ *
+ * Container stores both shadows already flattened, so there is nothing to
+ * convert — only the `:hover` state to place, matching what
+ * `ResponsiveAttributeCSS::format_shadow()` emits on the front end.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Array} Selector-scoped style entries.
+ */
+export const getBoxShadowStyles = ( attrs ) => {
+	const entries = [];
+	const normal = attrs?.boxShadow;
+	const hover = attrs?.boxShadowHover;
+
+	if ( normal && 'none' !== normal ) {
+		entries.push( { selector: '', styles: { boxShadow: normal } } );
+	}
+
+	if ( hover && 'none' !== hover ) {
+		entries.push( { selector: ':hover', styles: { boxShadow: hover } } );
+	}
+
+	return entries;
+};
+
 /**
  * The size, overflow and overlay-opacity styles the container paints inline.
  *
@@ -51,6 +86,50 @@ export const getContainerSizeStyles = ( attrs = {} ) => {
 		...( typeof dimRatio === 'number' && ! isNaN( dimRatio ) ? { '--spectra-overlay-opacity': ( dimRatio / 100 ) } : {} ),
 	};
 };
+
+/**
+ * Blocks that wrap content rendered as a unit (post content, synced patterns,
+ * template parts). A container directly inside one counts as top level, as it
+ * does on the front end (`mark_container_parent()` in class-responsive-controls.php).
+ */
+const TOP_LEVEL_WRAPPERS = [ 'core/post-content', 'core/block', 'core/template-part' ];
+
+/**
+ * Whether a container sits at the top level of the content.
+ *
+ * There its horizontal position belongs to its alignment: default and wide are
+ * centred by `margin-inline: auto`, and full width is placed by the theme. So it
+ * only offers top/bottom margin (see index.js), and the front end drops its
+ * left/right margin (`mark_container_parent()` in class-responsive-controls.php).
+ * Inside any other block the margin is the author's.
+ *
+ * @since 1.0.13
+ * @param {Object} blockEditor The `core/block-editor` selectors.
+ * @param {string} clientId    The container's client ID.
+ * @return {boolean} True at the top level.
+ */
+export const isTopLevelContainer = ( blockEditor, clientId ) => {
+	const parentId = blockEditor.getBlockRootClientId( clientId );
+	return ! parentId || TOP_LEVEL_WRAPPERS.includes( blockEditor.getBlockName( parentId ) );
+};
+
+/**
+ * Whether a left/right margin is set on any device.
+ *
+ * A root container inside another block with one gets `spectra-has-side-margin`,
+ * which stops common.scss centring it (controller.php mirrors this).
+ *
+ * @since 1.0.13
+ * @param {Object} style The block's `style` attribute.
+ * @return {boolean} True when a side margin is set.
+ */
+const hasSideMargin = ( style ) => [ style, style?.[ '@tablet' ], style?.[ '@mobile' ] ].some( ( deviceStyle ) => {
+	const margin = deviceStyle?.spacing?.margin;
+	if ( 'string' === typeof margin ) {
+		return '' !== margin;
+	}
+	return [ margin?.left, margin?.right ].some( ( value ) => undefined !== value && null !== value && '' !== value );
+} );
 
 const Render = ( props ) => {
 	const { attributes, clientId, setAttributes } = props;
@@ -108,6 +187,11 @@ const Render = ( props ) => {
 
 	const hasChildren = useSelect(
 		( select ) => select( 'core/block-editor' ).getBlock( clientId )?.innerBlocks.length > 0,
+		[ clientId ]
+	);
+
+	const isTopLevel = useSelect(
+		( select ) => isTopLevelContainer( select( 'core/block-editor' ), clientId ),
 		[ clientId ]
 	);
 
@@ -186,6 +270,7 @@ const Render = ( props ) => {
 		hasVideoBackground && 'has-video-background',
 		hasImageBackground && 'has-image-background',
 		isBlockRootParent && 'spectra-is-root-container',
+		isBlockRootParent && ! isTopLevel && hasSideMargin( attributes.style ) && 'spectra-has-side-margin',
 		align === 'full' && 'alignfull',
 		align === 'wide' && 'alignwide',
 		( background?.type !== 'video' && overlayType === 'image' && overlayImage?.url ) && 'has-container-overlay',
@@ -221,6 +306,11 @@ const Render = ( props ) => {
 			( attrs ) => buildSpectraStyles( attrs, config ).style,
 			getBackgroundImageStyles,
 			getContainerSizeStyles,
+			getBoxShadowStyles,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					textColorHover: '--spectra-text-color-hover',
+				} ),
 		],
 	} );
 
@@ -318,6 +408,11 @@ const Render = ( props ) => {
 		'style': {
 			...getContainerSizeStyles( attributes ),
 			...getBackgroundStyles,
+			// A top-level container's left/right margin is not painted on the
+			// front end, so hide one saved before it stopped being offered.
+			// `undefined` wins because `useBlockProps` spreads the block's own
+			// style after core's inline margin.
+			...( isTopLevel ? { marginLeft: undefined, marginRight: undefined } : {} ),
 		},
 	} );
 

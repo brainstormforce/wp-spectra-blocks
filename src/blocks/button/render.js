@@ -14,6 +14,47 @@ import RenderSVG from '@spectra-helpers/render-svg';
 import { getResponsivePreviewCss, iconDimensionStyles } from '@spectra-helpers/responsive-preview';
 
 /**
+ * The hover shadow, as the per-device preview emitter needs it.
+ *
+ * Takes the band's OWN attributes rather than closing over the block's, which is
+ * the whole point: `getResponsivePreviewCss()` re-runs each producer against a
+ * band's merge of the attributes, and `buildSpectraStyles()` cannot serve that
+ * here because the config it is given bakes an explicit `value` — and an
+ * explicit value wins over the attribute (`hooks/index.js`), so every band
+ * re-derived the base and emitted nothing.
+ *
+ * Flattened exactly as `ResponsiveAttributeCSS::format_shadow()` does, so the
+ * canvas and the front end cannot disagree, and emitted as `box-shadow` on
+ * `:hover` for the same reason the generator does — the custom property it used
+ * to set is read by a class the controller no longer emits.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block's attributes, or a band's merge of them.
+ * @return {Array} Selector-scoped style entries.
+ */
+export const getShadowHoverStyles = ( attrs ) => {
+	const shadow = attrs?.shadowHover;
+
+	if ( ! shadow ) {
+		return [];
+	}
+
+	// Content saved before the object form, or already flattened upstream.
+	if ( typeof shadow === 'string' ) {
+		return shadow.trim() ? [ { selector: ':hover', styles: { boxShadow: shadow } } ] : [];
+	}
+
+	const { x = 0, y = 4, blur = 8, spread = 0, color = '' } = shadow;
+
+	// A shadow with no colour is not a shadow.
+	if ( ! color || '' === color.trim() ) {
+		return [];
+	}
+
+	return [ { selector: ':hover', styles: { boxShadow: `${ x }px ${ y }px ${ blur }px ${ spread }px ${ color }` } } ];
+};
+
+/**
  * The icon dimensions, painted on the icon children.
  *
  * Both the icon and the hover icon take the same size, so one entry per child
@@ -138,7 +179,7 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/button',
-		producers: [ getButtonIconStyles, ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+		producers: [ getButtonIconStyles, getShadowHoverStyles, ( attrs ) => buildSpectraStyles( attrs, config ).style ],
 	} );
 
 	// Default aria-label for accessibility (normal state).

@@ -27,8 +27,6 @@ $progress_color            = $attributes['progressColor'] ?? '';
 $progress_background_color = $attributes['progressBackgroundColor'] ?? '';
 $progress_size             = $attributes['progressSize'] ?? '';
 $progress_stroke_width     = $attributes['progressStrokeWidth'] ?? '';
-$bar_height                = $attributes['barHeight'] ?? '';
-$bar_border_radius         = isset( $attributes['barBorderRadius'] ) ? $attributes['barBorderRadius'] . 'px' : null;
 $prefix_color              = $attributes['prefixColor'] ?? '';
 $suffix_color              = $attributes['suffixColor'] ?? '';
 $prefix_right_margin       = $attributes['prefixRightMargin'] ?? '';
@@ -84,24 +82,23 @@ if ( 'circular' === $counter_style || 'bar' === $counter_style ) {
 		);
 	}
 
-	if ( 'bar' === $counter_style ) {
-		$config[] = array(
-			'key'        => 'barHeight',
-			'css_var'    => '--spectra-counter-bar-height',
-			'class_name' => 'spectra-counter-bar-height',
-			'value'      => $bar_height ? $bar_height : '32px', // Default applied only when used.
-		);
-
-		// Only add border radius if it's set.
-		if ( null !== $bar_border_radius ) {
-			$config[] = array(
-				'key'        => 'barBorderRadius',
-				'css_var'    => '--spectra-counter-bar-border-radius',
-				'class_name' => 'spectra-counter-bar-border-radius',
-				'value'      => $bar_border_radius,
-			);
-		}
-	}
+	/*
+	 * The `'bar' === $counter_style` branch that stood here painted `barHeight`
+	 * and `barBorderRadius` inline. Both are per-device (responsive-controls)
+	 * now, on this block AND on `counter-child-progress-bar`, which paints the
+	 * same two custom properties. They had to move off the inline path together:
+	 * an inline value here outranks the child's band rules, so banding only the
+	 * child would have left the desktop height applying at every width.
+	 *
+	 * `ResponsiveAttributeCSS` emits both per band instead, and legacy content
+	 * that stored them only on the root attribute is bridged onto the base layer
+	 * by `backward_compatibility_block_attributes()`.
+	 *
+	 * The classes go with them and are not missed — `spectra-counter-bar-height`
+	 * and `spectra-counter-bar-border-radius` appear in no selector. The bar's
+	 * SCSS reads the variables directly, with `32px` / `4px` fallbacks that match
+	 * the defaults this branch used to apply.
+	 */
 }
 
 // Add prefix/suffix colors if set.

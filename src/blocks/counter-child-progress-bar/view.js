@@ -32,7 +32,8 @@ document.addEventListener( 'DOMContentLoaded', function() {
 		this.startNumber = parseFloat( this.counterBlock.dataset.counterStart ) || 0;
 		this.endNumber = parseFloat( this.counterBlock.dataset.counterEnd ) || 100;
 		this.totalNumber = parseFloat( this.counterBlock.dataset.counterTotal ) || 100;
-		this.duration = parseInt( this.counterBlock.dataset.counterDuration ) || 2000;
+		// Under reduced motion the bar lands on its end at once (a zero duration), as the counter does.
+		this.duration = window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches ? 0 : parseInt( this.counterBlock.dataset.counterDuration ) || 2000;
 		this.prefix = this.counterBlock.dataset.counterPrefix || '';
 		this.suffix = this.counterBlock.dataset.counterSuffix || '';
 		this.separator = this.counterBlock.dataset.counterSeparator !== undefined ? this.counterBlock.dataset.counterSeparator : ',';
@@ -132,7 +133,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
 			
 			const animateStep = ( currentTime ) => {
 				const elapsed = currentTime - startTime;
-				const progress = Math.min( elapsed / this.duration, 1 );
+				const progress = this.duration > 0 ? Math.min( elapsed / this.duration, 1 ) : 1;
 				
 				// Linear easing for consistent timing
 				const currentNumber = this.startNumber + ( difference * progress );

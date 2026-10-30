@@ -1,0 +1,83 @@
+// Converted-page rules for the Accordion blocks ZIP AI's converter builds (block-converter
+// `transforms/accordion.ts`), imported by common.scss. One block's converted-page rules
+// per partial; the note in common.scss says why they live with the block. The converter wears each block's own classes from the source and the intent markers every
+// converted wrapper wears (`spectra-no-padding`, `spectra-no-width`, `spectra-no-block-gap`),
+// plus `spectra-no-frame` on the item: Spectra frames an item (a 1px border, a 2px radius,
+// `overflow: hidden`) the source `<details>` never had. The rules sit at (0,2,1), below the
+// gs tier (0,3,0), so a border or radius the source declares still wins. At rest the item
+// lets a focus ring or shadow show past its edge; while it opens or closes, the height
+// animation clips it for its own duration (`accordion/view.js`, `isAnimated`).
+
+body .wp-block-spectra-accordion-child-item.spectra-no-frame {
+	border: 0;
+	border-radius: 0;
+	overflow: visible;
+}
+
+// Converted Accordion in the editor: the same two wrappers Gutenberg nests between a
+// block and its children (`.block-editor-inner-blocks > .block-editor-block-list__layout`),
+// flattened as `_tabs.scss` flattens them for the Tabs blocks, so the root, item, header
+// and details lay their children out as the front end does — the source's own flow, and
+// its flex row on a header the design lays out that way. Scoped to the converter's
+// `spectra-no-block-gap` marker, so an Accordion authored in the editor keeps Spectra's
+// own editor layout; `.block-editor-*` exists only in the canvas. Wrappers ride `:where()`:
+// (0,2,1), the budget of the rule above.
+body :is(.wp-block-spectra-accordion, .wp-block-spectra-accordion-child-item, .wp-block-spectra-accordion-child-header, .wp-block-spectra-accordion-child-details).spectra-no-block-gap > :where(.block-editor-inner-blocks),
+body :is(.wp-block-spectra-accordion, .wp-block-spectra-accordion-child-item, .wp-block-spectra-accordion-child-header, .wp-block-spectra-accordion-child-details).spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout:not([class*="is-layout-flex"]):not([class*="is-layout-grid"])) {
+	display: contents;
+}
+
+// The flattened layout wrapper still carries `is-layout-flow`, so core's blockGap margin
+// (`:root :where(.is-layout-flow) > *`) reached every item after the first and every
+// item's details block: ~17px the front end never prints, measured as a five-item FAQ
+// 452px tall in the canvas against 366px on the front end. The margin reset is the
+// Tabs rule's twin, for the blocks whose children are blocks of the accordion itself.
+body :is(.wp-block-spectra-accordion, .wp-block-spectra-accordion-child-item, .wp-block-spectra-accordion-child-header).spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(:not(h4, h5, h6)) {
+	margin-block-start: 0;
+}
+
+// A details block's children are the design's answer (prose, a list, a stack), and the
+// front end keeps each one's own margin, as a converted tab panel's children keep
+// theirs. `revert` drops core's injected margin and every other author margin below
+// this rule's tier, back to the browser's own (a `<p>`'s 1em); a margin the design sets
+// on the element's own class (the converter's gs tier, (0,3,0)) still wins.
+body .wp-block-spectra-accordion-child-details.spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(*) {
+	margin-block-start: revert;
+}
+
+// While a header block is selected, highlighted from List View or part of a multi-selection,
+// Gutenberg draws that state on the header's `::after` (`.block-editor-block-list__block`
+// `:focus` / `.is-highlighted` / `.is-multi-selected` `::after`: absolute, inset 0 over the
+// block). A design draws its +/− marker on that same pseudo-element (the library's
+// `.acc__q::after`, an AI's `summary::after`), and the converter carries those rules onto
+// the header, so on an open item the outline took the marker's 45° turn and stretched into
+// two diagonal lines across the canvas. While Gutenberg draws it, the pseudo-element is its
+// overlay: the content, box, corners and transform a marker can set go back to the overlay's
+// own, and its transition is off, so the outline never sweeps from the marker's turn.
+// `!important`, because the design's marker rules carry whatever weight the source gave
+// them. `.block-editor-block-list__block` exists only in the canvas, and the converter's
+// `spectra-no-block-gap` keeps an Accordion authored in the editor untouched; the front end
+// has no such overlay and keeps the marker. A dragged header is left to Gutenberg, which
+// hides its `::after`.
+body .wp-block-spectra-accordion-child-header.spectra-no-block-gap.block-editor-block-list__block:is(:focus, .is-highlighted, .is-multi-selected):not(.is-dragging)::after {
+	content: "" !important;
+	position: absolute !important;
+	inset: 0 !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	transform: none !important;
+	translate: none !important;
+	rotate: none !important;
+	scale: none !important;
+	transition: none !important;
+}
+
+// The selection and highlight overlays are transparent, so a marker's own fill (a disc
+// behind the +) would cover the header; a multi-selection's tint is Gutenberg's own
+// background, kept, also while its List View row is hovered.
+body .wp-block-spectra-accordion-child-header.spectra-no-block-gap.block-editor-block-list__block:is(:focus, .is-highlighted):not(.is-multi-selected, .is-dragging)::after {
+	background: none !important;
+}

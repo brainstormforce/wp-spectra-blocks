@@ -59,6 +59,7 @@
 			display: flex;
 			align-items: center;
 			font-size: inherit;
+			flex-shrink: 0; // Keep the set Icon Size beside a long, wrapping label.
 
 			// Default fill for FontAwesome icons (not custom SVGs)
 			&:not(.spectra-custom-svg) {

@@ -43,8 +43,14 @@
 		border-radius: inherit;
 	}
 
+	// `stretch` fills the parent minus the container's own margins; a plain
+	// `100%` adds the margins on top and overflows grid/flex tracks into the
+	// next sibling. `100%` stays first as the fallback for older browsers.
 	&:not(.alignfull) {
 		width: 100%;
+		width: -webkit-fill-available;
+		width: -moz-available;
+		width: stretch;
 	}
 
 	// Only clip overflow when there are background images/videos that need border-radius clipping

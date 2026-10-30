@@ -10,6 +10,10 @@ import { __ } from '@wordpress/i18n';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useCountdownStyles } from '../countdown/use-countdown-styles';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 import TEMPLATE from './template';
 
 /**
@@ -20,7 +24,7 @@ import TEMPLATE from './template';
  * @return {Element} The rendered block.
  */
 const Render = ( props ) => {
-	const { attributes, context } = props;
+	const { attributes, context, clientId } = props;
 	const countdown = context?.countdown || {};
 	const { minutes, showMinutes, minutesLabel, isExpired, showLabels, editorInnerBlocksPreview = false } = countdown;
 
@@ -39,6 +43,7 @@ const Render = ( props ) => {
 
 	// Generate styles and class names.
 	const { style, classNames } = useCountdownStyles( attributes, config );
+
 
 	// Use the block props.
 	const blockProps = useBlockProps( {
@@ -70,8 +75,24 @@ const Render = ( props ) => {
 	// If editorInnerBlocksPreview (Expiry Mode) is true or minutes is not showing, don't render anything.
 	if ( editorInnerBlocksPreview || ! showMinutes ) {return null;}
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/countdown-child-minute',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
+	} );
+
 	return (
 		<BlockContextProvider value={ blockContext }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<div { ...innerBlocksProps } />
 		</BlockContextProvider>
 	);

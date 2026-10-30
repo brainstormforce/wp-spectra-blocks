@@ -61,9 +61,11 @@ body :is(.wp-block-spectra-tabs, .wp-block-spectra-tabs-child-tab-wrapper, .wp-b
 // 1em — because imported pages lose core's `is-layout-*` classes. In the editor
 // the flattened layout wrapper still carries `is-layout-flow`, so core's blockGap
 // pushed the panel's second child down (a stat grid 18px under its card, a split's
-// text column 8px below its picture). `revert` rolls only that injected margin back
-// to the element's own, the canonical form the A32 note above asks for, so prose
-// keeps its spacing where a `0` would strip it.
+// text column 8px below its picture). `revert` drops that injected margin, and every
+// other author margin below this rule's tier, back to the browser's own (a `<p>`'s
+// 1em), the canonical form the A32 note above asks for, so prose keeps its spacing
+// where a `0` would strip it; a margin the design sets on the element's own class
+// (the converter's gs tier, (0,3,0)) still wins.
 body .wp-block-spectra-tabs-child-tabpanel.spectra-no-block-gap > :where(.block-editor-inner-blocks) > :where(.block-editor-block-list__layout) > :where(*) {
 	margin-block-start: revert;
 }

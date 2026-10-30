@@ -54,7 +54,18 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		 * @since 1.0.0
 		 */
 		private function __construct() {
-			add_action( 'init', array( $this, 'register_onboarding' ), 15 );
+			// The product config powers the admin wizard UI only, so register it
+			// just in the admin. This keeps register_onboarding() off the front end
+			// entirely instead of running and bailing on every page load.
+			if ( is_admin() ) {
+				add_action( 'init', array( $this, 'register_onboarding' ), 15 );
+			}
+
+			// The completion and plugin-activation callbacks are fired from the
+			// onboarding REST endpoints, so attach their listeners when the REST
+			// API loads rather than on every request.
+			add_action( 'rest_api_init', array( $this, 'register_rest_listeners' ) );
+
 			add_action( 'admin_init', array( $this, 'maybe_redirect_to_onboarding' ) );
 			add_filter( 'wp_privacy_personal_data_exporters', array( $this, 'register_data_exporter' ) );
 			add_filter( 'wp_privacy_personal_data_erasers', array( $this, 'register_data_eraser' ) );
@@ -96,7 +107,30 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 		}
 
 		/**
+		 * Attach the onboarding REST listeners.
+		 *
+		 * The completion and plugin-activation callbacks are fired exclusively from
+		 * the onboarding REST endpoints, so their listeners only need to exist on
+		 * REST requests. Hooking this on `rest_api_init` keeps them off front-end
+		 * and admin page loads entirely.
+		 *
+		 * @since 1.0.13
+		 * @return void
+		 */
+		public function register_rest_listeners() {
+			if ( ! class_exists( '\\One_Onboarding\\Core\\Register' ) ) {
+				return;
+			}
+
+			add_action( 'one_onboarding_completion_spectra-blocks', array( $this, 'handle_onboarding_completion' ), 10, 2 );
+			add_action( 'one_onboarding_plugin_activated', array( $this, 'handle_plugin_activated' ) );
+		}
+
+		/**
 		 * Register Spectra Blocks with One Onboarding.
+		 *
+		 * The product config is consumed only by the admin wizard UI, so this is
+		 * hooked in the admin context alone (see the constructor).
 		 *
 		 * @since 1.0.0
 		 * @return void
@@ -211,9 +245,6 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 					'select_all_pro_features' => true,
 				)
 			);
-
-			add_action( 'one_onboarding_completion_spectra-blocks', array( $this, 'handle_onboarding_completion' ), 10, 2 );
-			add_action( 'one_onboarding_plugin_activated', array( $this, 'handle_plugin_activated' ) );
 		}
 
 		/**

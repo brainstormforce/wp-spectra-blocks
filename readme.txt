@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,14 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.13 - Thursday, 29th October 2026 =
+* Fix: The Container block's Wide and Full alignment now works correctly in the Site Editor.
+* Fix: A Button's icon now keeps its chosen size when placed next to a long label.
+* Fix: Padding and margin controls now work on classic (non-block) themes.
+* Fix: Spectra block content is now counted in Yoast SEO and Rank Math content analysis.
+* Fix: Selecting text across a Spectra Text block and an adjacent block now merges correctly.
+* Improvement: Left and right margin controls now appear for a Container only when it is nested inside another block, where they actually apply.
 
 = 1.0.12 - Tuesday, 20th October 2026 =
 * Fix: Shortcodes used as a Button's label now render correctly in Full Site Editor templates, headers and footers.

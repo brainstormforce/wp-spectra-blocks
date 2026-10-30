@@ -14,7 +14,10 @@ import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { getBackgroundImageStyles, VideoBackground } from '@spectra-helpers/background';
 import { getAdvancedGradientValue } from '@spectra-helpers/get-advanced-gradient-value';
 import { SliderRootToolbar } from './helper';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 const ALLOWED_BLOCKS = [ 'spectra/slider-child' ];
 
@@ -143,7 +146,15 @@ const Render = memo( ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/slider',
-		producers: [ ( attrs ) => buildSpectraStyles( attrs, config ).style ],
+		producers: [ ( attrs ) => buildSpectraStyles( attrs, config ).style,
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					arrowBackgroundColorHover: '--spectra-arrow-background-color-hover',
+					arrowColorHover: '--spectra-arrow-color-hover',
+					paginationColorActive: '--spectra-pagination-color-active',
+					paginationColorHover: '--spectra-pagination-color-hover',
+				} ),
+		],
 	} );
 
 	// Background styles handling.

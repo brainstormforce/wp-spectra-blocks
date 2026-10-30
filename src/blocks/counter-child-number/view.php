@@ -13,9 +13,5 @@
 	<?php
 	if ( isset( $prefix ) && '' !== $prefix ) :
 		?>
-		<span class="spectra-counter-prefix"><?php echo esc_html( $prefix ); ?></span><?php endif; ?><span class="spectra-counter-value"><?php echo esc_html( $formatted_number ); ?></span>
-		<?php
-		if ( isset( $suffix ) && '' !== $suffix ) :
-			?>
-		<span class="spectra-counter-suffix"><?php echo esc_html( $suffix ); ?></span><?php endif; ?></span>
+		<span class="spectra-counter-prefix"><?php echo esc_html( $prefix ); ?></span><?php endif; ?><span class="spectra-counter-value"><?php echo esc_html( $formatted_number ); ?></span><?php echo ( isset( $suffix ) && '' !== $suffix ) ? '<span class="spectra-counter-suffix">' . esc_html( $suffix ) . '</span>' : ''; ?></span>
 </div>

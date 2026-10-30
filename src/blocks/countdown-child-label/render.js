@@ -9,6 +9,10 @@ import { memo, useMemo } from '@wordpress/element';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -19,7 +23,7 @@ import { useSpectraStyles } from '@spectra-hooks';
  * @return {Element} The rendered block.
  */
 const Render = ( props ) => {
-	const { context, attributes } = props;
+	const { context, attributes, clientId } = props;
 
 	const { label = undefined, showLabels = true } = context;
 	const { text } = attributes;
@@ -40,6 +44,7 @@ const Render = ( props ) => {
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config );
 
+
 	const blockProps = useBlockProps( {
 		style,
 		className: spectraClassNames( classNames ),
@@ -52,7 +57,27 @@ const Render = ( props ) => {
 
 	if ( ! finalText ) {return null;}
 
-	return <div { ...blockProps }>{ finalText }</div>;
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/countdown-child-label',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
+	} );
+
+	return (
+		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
+			{ finalText }
+		</div>
+	);
 };
 
 export default memo( Render );

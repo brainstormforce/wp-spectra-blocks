@@ -32,6 +32,33 @@ import DebouncedRangeControl from '../debounced-range-control';
 import { parseShadowString, generateShadowString } from '@spectra-helpers/shadow';
 
 /**
+ * Inspector groups whose slot core already renders INSIDE a `ToolsPanel`.
+ *
+ * A `ToolsPanel` of our own placed in one of these becomes a grid ITEM of the
+ * surrounding panel rather than a panel in its own right. Core styles
+ * `.components-tools-panel` as `grid-template-columns: repeat( 2, 1fr )` and
+ * only `.components-tools-panel-item` spans both columns, so a nested panel
+ * takes a single column and everything inside it collapses.
+ *
+ * Measured on WordPress 7.1.2, `spectra/container` > Border: the Border grid is
+ * `116px 116px`, the nested Box Shadow panel resolves to `grid-column: auto`,
+ * its own grid to `34px 34px`, and its colour palette and sliders to 84px.
+ *
+ * In these groups we contribute bare `ToolsPanelItem`s instead — the contract
+ * core expects, and what `spectra/button` already does for Shadow Hover.
+ *
+ * @since 1.0.13
+ */
+const CORE_PANEL_GROUPS = [
+	'background',
+	'border',
+	'color',
+	'dimensions',
+	'filter',
+	'typography',
+];
+
+/**
  * Flexible Shadow Control Component
  *
  * @param {Object}   props                   Component props.
@@ -226,6 +253,32 @@ const ShadowControl = memo( ( {
 	}, [ getCurrentShadowState ] );
 
 
+	// Whether our items land inside a panel core has already opened for us.
+	const inCorePanel = CORE_PANEL_GROUPS.includes( group );
+
+	// The state toggle is the first item rendered whenever it is shown at all.
+	const showStateItem = showHoverState && !! shadowHover;
+
+	/*
+	 * Without a panel of our own there is no header carrying `label`, so the
+	 * first item carries it instead — otherwise the controls arrive in core's
+	 * panel with nothing saying what they belong to.
+	 */
+	const heading = inCorePanel ? (
+		<Text weight={ 600 }>{ label }</Text>
+	) : null;
+
+	/*
+	 * Core's "Reset all" only clears what the items in ITS panel declare. Our
+	 * properties are packed into two string attributes, so every item declares
+	 * both: the filters are merged, and clearing an already-cleared attribute
+	 * costs nothing.
+	 */
+	const resetAllFilter = () => ( {
+		[ attributeLabel ]: undefined,
+		...( shadowHover ? { [ shadowHover.label ]: undefined } : {} ),
+	} );
+
 	// Allow extensions to add custom UI.
 	const Extensions = applyFilters( 'spectra.shadowControl.extensions', null, {
 		shadowState,
@@ -242,7 +295,222 @@ const ShadowControl = memo( ( {
 		getCurrentAttributeValue,
 	} );
 
-	// Render the shadow control as ToolsPanel with individual ToolsPanelItems.
+	// The controls themselves, rendered the same way under either wrapper below.
+	const items = (
+		<>
+			{/* State Toggle (Normal/Hover) */}
+			{ showHoverState && shadowHover && (
+				<ToolsPanelItem
+					hasValue={ () => currentState === 'hover' }
+					label={ __( 'Shadow State', 'spectra-blocks' ) }
+					onDeselect={ () => setCurrentState( 'normal' ) }
+					resetAllFilter={ resetAllFilter }
+					isShownByDefault
+					panelId={ clientId }
+				>
+					<VStack spacing={ 2 }>
+						{ heading }
+						<Text>
+							{ __( 'Shadow State', 'spectra-blocks' ) }
+						</Text>
+						<ToggleGroupControl
+							__nextHasNoMarginBottom
+							value={ currentState }
+							onChange={ setCurrentState }
+							isBlock
+						>
+							<ToggleGroupControlOption
+								value="normal"
+								label={ __( 'Normal', 'spectra-blocks' ) }
+							/>
+							<ToggleGroupControlOption
+								value="hover"
+								label={ __( 'Hover', 'spectra-blocks' ) }
+							/>
+						</ToggleGroupControl>
+					</VStack>
+				</ToolsPanelItem>
+			) }
+
+
+			{/* Shadow Color ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'color' ) }
+				label={ __( 'Shadow Color', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'color', '' ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack spacing={ 2 }>
+					{ ! showStateItem && heading }
+					<Text weight={ 600 }>
+						{ __( 'Color', 'spectra-blocks' ) }
+					</Text>
+					<ColorPalette
+						colors={ colorPalette }
+						value={ getCurrentShadowState.color }
+						onChange={ ( color ) => {
+							updateShadow( 'color', color || '' );
+						} }
+						enableAlpha={ true }
+						clearable={ false }
+					/>
+				</VStack>
+			</ToolsPanelItem>
+
+			{/* X Position ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'x' ) }
+				label={ __( 'X Position', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'x', 0 ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack alignment="stretch">
+					<Text>
+						{ __( 'X POSITION', 'spectra-blocks' ) }
+					</Text>
+					<DebouncedRangeControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						value={ getCurrentShadowState.x }
+						onChange={ ( x ) => updateShadow( 'x', x ) }
+						min={ -100 }
+						max={ 100 }
+						step={ 1 }
+						withInputField={ true }
+					/>
+				</VStack>
+			</ToolsPanelItem>
+
+			{/* Y Position ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'y' ) }
+				label={ __( 'Y Position', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'y', 0 ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack alignment="stretch">
+					<Text>
+						{ __( 'Y POSITION', 'spectra-blocks' ) }
+					</Text>
+					<DebouncedRangeControl
+						__nextHasNoMarginBottom
+						__next40pxDefaultSize
+						value={ getCurrentShadowState.y }
+						onChange={ ( y ) => updateShadow( 'y', y ) }
+						min={ -100 }
+						max={ 100 }
+						step={ 1 }
+						withInputField={ true }
+					/>
+				</VStack>
+			</ToolsPanelItem>
+
+			{/* Blur ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'blur' ) }
+				label={ __( 'Blur', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'blur', 0 ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack spacing={ 2 }>
+					<Text>
+						{ __( 'BLUR', 'spectra-blocks' ) }
+					</Text>
+					<DebouncedRangeControl
+						__nextHasNoMarginBottom
+						value={ getCurrentShadowState.blur }
+						onChange={ ( blur ) => updateShadow( 'blur', blur ) }
+						min={ 0 }
+						max={ 100 }
+						step={ 1 }
+						withInputField={ true }
+					/>
+				</VStack>
+			</ToolsPanelItem>
+
+			{/* Spread ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'spread' ) }
+				label={ __( 'Spread', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'spread', 0 ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack spacing={ 2 }>
+					<Text>
+						{ __( 'SPREAD', 'spectra-blocks' ) }
+					</Text>
+					<DebouncedRangeControl
+						__nextHasNoMarginBottom
+						value={ getCurrentShadowState.spread }
+						onChange={ ( spread ) => updateShadow( 'spread', spread ) }
+						min={ -50 }
+						max={ 50 }
+						step={ 1 }
+						withInputField={ true }
+					/>
+				</VStack>
+			</ToolsPanelItem>
+
+			{/* Shadow Type ToolsPanelItem */}
+			<ToolsPanelItem
+				hasValue={ () => hasPropertyValue( 'inset' ) }
+				label={ __( 'Shadow Type', 'spectra-blocks' ) }
+				onDeselect={ () => resetShadowProperty( 'inset', false ) }
+				resetAllFilter={ resetAllFilter }
+				isShownByDefault
+				panelId={ clientId }
+			>
+				<VStack spacing={ 2 }>
+					<Text>
+						{ __( 'SHADOW TYPE', 'spectra-blocks' ) }
+					</Text>
+					<ToggleGroupControl
+						__nextHasNoMarginBottom
+						value={ getCurrentShadowState.inset ? 'inset' : 'outset' }
+						onChange={ ( value ) => updateShadow( 'inset', value === 'inset' ) }
+						isBlock
+					>
+						<ToggleGroupControlOption
+							value="outset"
+							label={ __( 'Outset', 'spectra-blocks' ) }
+						/>
+						<ToggleGroupControlOption
+							value="inset"
+							label={ __( 'Inset', 'spectra-blocks' ) }
+						/>
+					</ToggleGroupControl>
+				</VStack>
+			</ToolsPanelItem>
+		</>
+	);
+
+	/*
+	 * Core has already opened a panel for this group, so the items go straight
+	 * into it. Wrapping them in a panel of our own is what collapsed them to a
+	 * single grid column — see CORE_PANEL_GROUPS.
+	 */
+	if ( inCorePanel ) {
+		return (
+			<InspectorControls group={ group }>
+				{ items }
+
+				{/* Allow extensions to add custom UI */}
+				{ Extensions }
+			</InspectorControls>
+		);
+	}
+
+	// A plain slot such as `styles`, where the control is a panel in its own right.
 	return (
 		<InspectorControls group={ group }>
 			<ToolsPanel
@@ -259,190 +527,7 @@ const ShadowControl = memo( ( {
 				} }
 				panelId={ clientId }
 			>
-				{/* State Toggle (Normal/Hover) */}
-				{ showHoverState && shadowHover && (
-					<ToolsPanelItem
-						hasValue={ () => currentState === 'hover' }
-						label={ __( 'Shadow State', 'spectra-blocks' ) }
-						onDeselect={ () => setCurrentState( 'normal' ) }
-						isShownByDefault
-						panelId={ clientId }
-					>
-						<VStack spacing={ 2 }>
-							<Text>
-								{ __( 'Shadow State', 'spectra-blocks' ) }
-							</Text>
-							<ToggleGroupControl
-								__nextHasNoMarginBottom
-								value={ currentState }
-								onChange={ setCurrentState }
-								isBlock
-							>
-								<ToggleGroupControlOption
-									value="normal"
-									label={ __( 'Normal', 'spectra-blocks' ) }
-								/>
-								<ToggleGroupControlOption
-									value="hover"
-									label={ __( 'Hover', 'spectra-blocks' ) }
-								/>
-							</ToggleGroupControl>
-						</VStack>
-					</ToolsPanelItem>
-				) }
-
-
-				{/* Shadow Color ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'color' ) }
-					label={ __( 'Shadow Color', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'color', '' ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack spacing={ 2 }>
-						<Text weight={ 600 }>
-							{ __( 'Color', 'spectra-blocks' ) }
-						</Text>
-						<ColorPalette
-							colors={ colorPalette }
-							value={ getCurrentShadowState.color }
-							onChange={ ( color ) => {
-								updateShadow( 'color', color || '' );
-							} }
-							enableAlpha={ true }
-							clearable={ false }
-						/>
-					</VStack>
-				</ToolsPanelItem>
-
-				{/* X Position ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'x' ) }
-					label={ __( 'X Position', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'x', 0 ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack alignment="stretch">
-						<Text>
-							{ __( 'X POSITION', 'spectra-blocks' ) }
-						</Text>
-						<DebouncedRangeControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							value={ getCurrentShadowState.x }
-							onChange={ ( x ) => updateShadow( 'x', x ) }
-							min={ -100 }
-							max={ 100 }
-							step={ 1 }
-							withInputField={ true }
-						/>
-					</VStack>
-				</ToolsPanelItem>
-
-				{/* Y Position ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'y' ) }
-					label={ __( 'Y Position', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'y', 0 ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack alignment="stretch">
-						<Text>
-							{ __( 'Y POSITION', 'spectra-blocks' ) }
-						</Text>
-						<DebouncedRangeControl
-							__nextHasNoMarginBottom
-							__next40pxDefaultSize
-							value={ getCurrentShadowState.y }
-							onChange={ ( y ) => updateShadow( 'y', y ) }
-							min={ -100 }
-							max={ 100 }
-							step={ 1 }
-							withInputField={ true }
-						/>
-					</VStack>
-				</ToolsPanelItem>
-
-				{/* Blur ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'blur' ) }
-					label={ __( 'Blur', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'blur', 0 ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack spacing={ 2 }>
-						<Text>
-							{ __( 'BLUR', 'spectra-blocks' ) }
-						</Text>
-						<DebouncedRangeControl
-							__nextHasNoMarginBottom
-							value={ getCurrentShadowState.blur }
-							onChange={ ( blur ) => updateShadow( 'blur', blur ) }
-							min={ 0 }
-							max={ 100 }
-							step={ 1 }
-							withInputField={ true }
-						/>
-					</VStack>
-				</ToolsPanelItem>
-
-				{/* Spread ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'spread' ) }
-					label={ __( 'Spread', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'spread', 0 ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack spacing={ 2 }>
-						<Text>
-							{ __( 'SPREAD', 'spectra-blocks' ) }
-						</Text>
-						<DebouncedRangeControl
-							__nextHasNoMarginBottom
-							value={ getCurrentShadowState.spread }
-							onChange={ ( spread ) => updateShadow( 'spread', spread ) }
-							min={ -50 }
-							max={ 50 }
-							step={ 1 }
-							withInputField={ true }
-						/>
-					</VStack>
-				</ToolsPanelItem>
-
-				{/* Shadow Type ToolsPanelItem */}
-				<ToolsPanelItem
-					hasValue={ () => hasPropertyValue( 'inset' ) }
-					label={ __( 'Shadow Type', 'spectra-blocks' ) }
-					onDeselect={ () => resetShadowProperty( 'inset', false ) }
-					isShownByDefault
-					panelId={ clientId }
-				>
-					<VStack spacing={ 2 }>
-						<Text>
-							{ __( 'SHADOW TYPE', 'spectra-blocks' ) }
-						</Text>
-						<ToggleGroupControl
-							__nextHasNoMarginBottom
-							value={ getCurrentShadowState.inset ? 'inset' : 'outset' }
-							onChange={ ( value ) => updateShadow( 'inset', value === 'inset' ) }
-							isBlock
-						>
-							<ToggleGroupControlOption
-								value="outset"
-								label={ __( 'Outset', 'spectra-blocks' ) }
-							/>
-							<ToggleGroupControlOption
-								value="inset"
-								label={ __( 'Inset', 'spectra-blocks' ) }
-							/>
-						</ToggleGroupControl>
-					</VStack>
-				</ToolsPanelItem>
+				{ items }
 			</ToolsPanel>
 
 			{/* Allow extensions to add custom UI */}

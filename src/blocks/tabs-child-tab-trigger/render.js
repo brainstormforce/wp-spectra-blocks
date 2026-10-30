@@ -10,6 +10,10 @@ import { memo, useEffect } from '@wordpress/element';
  */
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 import { RenderFullWidthAppenderWhenEmpty } from '@spectra-components/block-appender';
 
 /**
@@ -166,6 +170,28 @@ const Render = ( props ) => {
 	// Generate styles and class names
 	const { style, classNames } = useSpectraStyles( attributes, config, customClassNames );
 
+	// Per-device preview for the canvas — see `helpers/responsive-preview.js`.
+	const responsivePreviewCss = getResponsivePreviewCss( {
+		clientId,
+		attributes,
+		blockName: 'spectra/tabs-child-tab-trigger',
+		producers: [
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					backgroundGradient: '--spectra-background-gradient',
+					backgroundColorActive: '--spectra-background-color-active',
+					backgroundColorActiveHover: '--spectra-background-color-active-hover',
+					backgroundColorHover: '--spectra-background-color-hover',
+					backgroundGradientActive: '--spectra-background-gradient-active',
+					backgroundGradientActiveHover: '--spectra-background-gradient-active-hover',
+					backgroundGradientHover: '--spectra-background-gradient-hover',
+					textColorActive: '--spectra-text-color-active',
+					textColorActiveHover: '--spectra-text-color-active-hover',
+					textColorHover: '--spectra-text-color-hover',
+				} ),
+		],
+	} );
+
 
 	// Parent block properties
 	const blockProps = useBlockProps( {
@@ -185,6 +211,7 @@ const Render = ( props ) => {
 
 	return (
 		<div { ...blockProps }>
+			{ responsivePreviewCss && <style>{ responsivePreviewCss }</style> }
 			<InnerBlocks renderAppender={ RenderFullWidthAppenderWhenEmpty( clientId ) } >
 				{ hasChildren ? <InnerBlocks.Content /> : null }
 			</InnerBlocks>

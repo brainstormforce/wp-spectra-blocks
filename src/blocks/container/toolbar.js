@@ -3,21 +3,33 @@
  */
 import { __ } from '@wordpress/i18n';
 import { memo, useMemo, useState } from '@wordpress/element';
-import { 
+import {
 	BlockControls,
-	BlockAlignmentToolbar,
 } from '@wordpress/block-editor';
 import {
 	ToolbarButton,
 	ToolbarGroup,
 	ToolbarDropdownMenu,
 } from '@wordpress/components';
+import { alignNone, stretchWide, stretchFullWidth } from '@wordpress/icons';
 
 /**
  * Internal dependencies.
  */
 import ContainerLayoutGuide from '@spectra-components/container-layout-guide';
 import { helperIcons } from '@spectra-helpers/block-icons';
+
+// Root-container alignment options. The container applies `.alignfull` / `.alignwide` itself
+// ( render.js / controller.php ) rather than relying on the editor layout's supported alignments,
+// so we render our own always-available control instead of core's BlockAlignmentToolbar. The core
+// control is gated by useAvailableAlignments(), which resolves to an empty set at the Site Editor
+// template root and hides the button there — leaving the block stuck at align="full" with no way to
+// change it ( #552 ). This layout-independent control keeps alignment editable in every context.
+const ALIGN_CONTROLS = [
+	{ align: 'none', icon: alignNone, title: __( 'None', 'spectra-blocks' ) },
+	{ align: 'wide', icon: stretchWide, title: __( 'Wide width', 'spectra-blocks' ) },
+	{ align: 'full', icon: stretchFullWidth, title: __( 'Full width', 'spectra-blocks' ) },
+];
 
 // Static tag configuration for container HTML tags.
 // Tags without a dedicated helperIcon fall back to the generic container icon.
@@ -321,13 +333,24 @@ const ContainerToolbar = memo( ( props ) => {
 			{ tagToolbarControls }
 
 			<BlockControls>
-				{/* Block Alignment Controls - Only for root containers */}
+				{/* Block Alignment Controls - Only for root containers.
+				    Uses a layout-independent dropdown so it stays available in the Site Editor
+				    template root as well as the post/page editor ( #552 ). */}
 				{ attributes.isBlockRootParent && (
-					<BlockAlignmentToolbar
-						value={ attributes.align }
-						onChange={ ( align ) => setAttributes( { align } ) }
-						controls={ [ 'wide', 'full' ] }
-					/>
+					<ToolbarGroup>
+						<ToolbarDropdownMenu
+							icon={ ( ALIGN_CONTROLS.find( ( c ) => c.align === ( attributes.align || 'none' ) ) || ALIGN_CONTROLS[ 0 ] ).icon }
+							label={ __( 'Align', 'spectra-blocks' ) }
+							controls={ ALIGN_CONTROLS.map( ( control ) => ( {
+								...control,
+								isActive: ( attributes.align || 'none' ) === control.align,
+								role: 'menuitemradio',
+								onClick: () => setAttributes( {
+									align: 'none' === control.align ? undefined : control.align,
+								} ),
+							} ) ) }
+						/>
+					</ToolbarGroup>
 				) }
 
 				{/* Layout and Variation Controls */}

@@ -16,7 +16,10 @@ import {
 } from '@spectra-helpers/background';
 import RenderSVG from '@spectra-helpers/render-svg';
 import { select } from '@wordpress/data';
-import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -37,6 +40,32 @@ import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
  * @param {boolean} fixedHeight Whether the popup has a fixed height.
  * @return {Object} A React style object.
  */
+/**
+ * The close icon's sizing custom property.
+ *
+ * Separate from `getPopupDimensionStyles()` because it sizes the close button,
+ * not the popup box, and separate from the inline object below so the canvas's
+ * per-device preview derives base and bands from one function — see
+ * `helpers/responsive-preview.js`.
+ *
+ * Emits nothing when unset, matching `format_length()` on the PHP side: a band
+ * with no value must inherit through the cascade rather than paint `undefinedpx`.
+ * `style.scss` and `editor.scss` carry a `20px` fallback in their `var()` calls.
+ *
+ * @since 1.0.13
+ * @param {Object} attrs The block attributes.
+ * @return {Object} The style object.
+ */
+export const getCloseIconSizeStyles = ( attrs = {} ) => {
+	const size = attrs.closeIconSize;
+
+	if ( undefined === size || null === size || '' === size ) {
+		return {};
+	}
+
+	return { '--spectra-close-icon-size': `${ size }px` };
+};
+
 export const getPopupDimensionStyles = ( attrs = {}, fixedHeight ) => ( {
 	...( attrs.height ? { height: attrs.height } : {} ),
 	...( attrs.minWidth ? { minWidth: attrs.minWidth } : {} ),
@@ -168,6 +197,11 @@ const Render = ( props ) => {
 		producers: [
 			( attrs ) => getPopupDimensionStyles( attrs, fixedHeight ),
 			( attrs ) => getBackgroundImageStyles( { ...attrs, backgroundGradient, backgroundGradientHover } ),
+			getCloseIconSizeStyles,
+			( attrs ) => colourVarStyles( attrs, { textColor: '--spectra-text-color',
+					popupOverlayColor: '--spectra-popup-overlay-color',
+					closeIconColorHover: '--spectra-close-icon-color-hover',
+				} ),
 		],
 	} );
 
@@ -218,7 +252,7 @@ const Render = ( props ) => {
 		'min-height': minHeight,
 		'max-width': maxWidth,
 		'max-height': maxHeight,
-		'--spectra-close-icon-size': `${ closeIconSize }px`,
+		...getCloseIconSizeStyles( attributes ),
 		'--spectra-close-icon-color': closeIconColor,
 		'--spectra-close-icon-color-hover': closeIconColorHover,
 		'--spectra-close-icon-bg': closeIconBgColor,

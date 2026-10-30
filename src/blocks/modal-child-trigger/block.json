@@ -75,15 +75,7 @@
 		"spectra/modal-child-trigger/cssClass": "cssClass"
 	},
 	"usesContext": [
-		"spectra/modal/modalTrigger",
-		"spectra/modal/cssClass",
-		"spectra/modal/cssId",
-		"spectra/modal/exitIntent",
-		"spectra/modal/showAfterSeconds",
-		"spectra/modal/enableCookies",
-		"spectra/modal/noOfSecondsToShow",
-		"spectra/modal/setCookiesOn",
-		"spectra/modal/hideForDays"
+		"spectra/modal/modalTrigger"
 	],
 	"attributes": {
 		"anchor": {

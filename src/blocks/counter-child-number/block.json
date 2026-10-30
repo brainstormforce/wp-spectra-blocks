@@ -9,6 +9,7 @@
 	"textdomain": "spectra-blocks",
 	"parent": ["spectra/counter", "spectra/counter-child-wrapper", "spectra/container"],
 	"usesContext": [
+		"spectra/counter/counterStyle",
 		"spectra/counter/startNumber",
 		"spectra/counter/endNumber",
 		"spectra/counter/animationDuration",

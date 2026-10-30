@@ -530,7 +530,7 @@ class ResponsiveControls {
 	 * @var string
 	 * @since 1.0.0
 	 */
-	const CSS_GENERATOR_VERSION = '34';
+	const CSS_GENERATOR_VERSION = '35';
 
 	/**
 	 * Add inline responsive CSS only once per request.
@@ -887,6 +887,9 @@ class ResponsiveControls {
 
 		add_filter( 'render_block_data', array( $this, 'backward_compatibility_block_attributes' ), 5, 1 );
 
+		// Flag containers that render inside another block (see mark_container_parent()).
+		add_filter( 'render_block_data', array( $this, 'mark_container_parent' ), 10, 3 );
+
 		// Add unique block identifier for CSS targeting and generate responsive styles.
 		add_filter( 'render_block', array( $this, 'process_block_and_add_responsive_styles' ), 10, 2 );
 		// Pre-7.1 front-end support for core's viewport states. Self-contained
@@ -903,6 +906,36 @@ class ResponsiveControls {
 
 		// Handle duplicate spectraIds after post save.
 		add_action( 'save_post', array( $this, 'ensure_unique_spectra_ids' ), 20, 2 );
+	}
+
+	/**
+	 * Flags a container that renders inside another block.
+	 *
+	 * A top-level container is placed by its alignment and the theme, so its
+	 * left/right margin is dropped (see generate_responsive_css()). Inside
+	 * another block (a Group, Row, Columns and so on) the margin is the
+	 * author's and is kept. Post content and template parts are rendered
+	 * through `do_blocks()`, so a container at their top level has no parent
+	 * here. A synced pattern renders its blocks as its own inner blocks, so its
+	 * `core/block` parent is ignored the same way. This matches what the editor
+	 * treats as top level (`isTopLevelContainer()` in render.js).
+	 *
+	 * Set while rendering and never saved.
+	 *
+	 * @since 1.0.13
+	 * @param array<string, mixed> $parsed_block The block being rendered.
+	 * @param array<string, mixed> $source_block The block before any filter ran.
+	 * @param \WP_Block|null       $parent_block The parent block, or null at the top level.
+	 * @return array<string, mixed> The block, flagged when it is a container with a parent.
+	 */
+	public function mark_container_parent( $parsed_block, $source_block, $parent_block ) {
+		if ( null !== $parent_block && 'core/block' !== $parent_block->name && 'spectra/container' === ( $parsed_block['blockName'] ?? '' ) ) {
+			$attrs                   = is_array( $parsed_block['attrs'] ?? null ) ? $parsed_block['attrs'] : array();
+			$attrs['hasParentBlock'] = true;
+			$parsed_block['attrs']   = $attrs;
+		}
+
+		return $parsed_block;
 	}
 
 	/**
@@ -1605,6 +1638,51 @@ class ResponsiveControls {
 		$responsive_controls = $attrs['responsiveControls'] ?? array();
 		$block_name          = $block['blockName'] ?? '';
 
+		/*
+		 * The store is normally built on `render_block_data`, by
+		 * `build_store_from_style()` at priority 4 and
+		 * `backward_compatibility_block_attributes()` at priority 5. That filter
+		 * does not reach every block.
+		 *
+		 * Core applies it in exactly two places: `render_block()`, for a block
+		 * rendered from the post's own content, and the inner-block loop inside
+		 * `WP_Block::render()`. A block whose PARENT renders it by calling
+		 * `$inner_block->render()` directly passes through neither — that call
+		 * applies the filter to the inner block's OWN children, never to the
+		 * inner block itself.
+		 *
+		 * `core/navigation` does exactly that, in
+		 * `get_markup_for_inner_block()` and `get_template_part_blocks_html()`,
+		 * so `spectra-pro/mega-menu` arrived here with an empty store and was
+		 * turned away by the guard below: no `data-spectra-id`, no CSS, and a
+		 * per-device value that the editor saved but nothing ever painted.
+		 *
+		 * Building the store here as well makes the pipeline independent of how
+		 * a parent chose to render its children. Both calls are cheap no-ops
+		 * when there is nothing to do — the first returns immediately without a
+		 * `style` attribute, the second without responsive attributes for the
+		 * block — and both are skipped entirely whenever `render_block_data`
+		 * already did the work.
+		 *
+		 * @since 1.0.13
+		 */
+		if ( empty( $responsive_controls ) ) {
+			$this->hydrate_store_from_style( $attrs, $block_name );
+
+			$bridged = $this->backward_compatibility_block_attributes(
+				array(
+					'blockName' => $block_name,
+					'attrs'     => $attrs,
+				)
+			);
+
+			if ( isset( $bridged['attrs'] ) && is_array( $bridged['attrs'] ) ) {
+				$attrs = $bridged['attrs'];
+			}
+
+			$responsive_controls = $attrs['responsiveControls'] ?? array();
+		}
+
 		// Skip processing if no ID or no responsive controls.
 		if ( empty( $spectra_id ) || empty( $responsive_controls ) ) {
 			return $block_content;
@@ -1927,6 +2005,11 @@ class ResponsiveControls {
 	public function get_owned_attribute_keys( $block_name ) {
 		$keys = array( 'responsiveControls', 'spectraId', 'style' );
 
+		// Added by mark_container_parent().
+		if ( 'spectra/container' === $block_name ) {
+			$keys[] = 'hasParentBlock';
+		}
+
 		foreach ( $this->core_attributes as $attribute ) {
 			if ( ! in_array( $attribute, $this->responsive_keys, true ) ) {
 				continue;
@@ -2094,13 +2177,16 @@ class ResponsiveControls {
 		 * output depends on it: a wide or full container drops its `width` and
 		 * its left/right margins. Without it, changing only the alignment kept
 		 * serving the CSS cached at the old one, so a 500px container switched
-		 * to Full stayed 500px wide on the front end.
+		 * to Full stayed 500px wide on the front end. Whether the container sits
+		 * inside another block is part of it for the same reason: it decides
+		 * whether those margins are dropped.
 		 */
 		$cache_data    = array(
 			'controls'   => $responsive_controls,
 			'block_name' => $block_name,
 			'bands'      => $this->get_media_queries(),
 			'align'      => $attrs['align'] ?? '',
+			'in_block'   => ! empty( $attrs['hasParentBlock'] ),
 		);
 		$controls_hash = md5( wp_json_encode( $cache_data ) );
 
@@ -2323,8 +2409,12 @@ class ResponsiveControls {
 		// and overflows. Drop only the LEFT/RIGHT margins for aligned containers so
 		// the theme handles horizontal alignment; vertical margins are unaffected.
 		// Specificity is left untouched, so Global Styles compatibility is intact.
+		// Inside another block there is no break-out to protect, so a container
+		// there keeps its margins (see mark_container_parent()).
 		$block_align    = $attrs['align'] ?? '';
-		$strip_x_margin = 'spectra/container' === $block_name && in_array( $block_align, array( 'full', 'wide' ), true );
+		$strip_x_margin = 'spectra/container' === $block_name
+			&& empty( $attrs['hasParentBlock'] )
+			&& in_array( $block_align, array( 'full', 'wide' ), true );
 
 		// Generate CSS for each device breakpoint (mobile, tablet, desktop).
 		foreach ( $this->get_media_queries() as $device => $media ) {

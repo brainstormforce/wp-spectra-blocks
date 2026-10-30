@@ -14,7 +14,11 @@ import {
 } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
-import { getResponsivePreviewCss, iconDimensionStyles } from '@spectra-helpers/responsive-preview';
+import {
+	colourVarStyles,
+	getResponsivePreviewCss,
+	iconDimensionStyles,
+} from '@spectra-helpers/responsive-preview';
 
 /**
  * The Editor Block render.
@@ -39,7 +43,13 @@ const Render = ( props ) => {
 		clientId,
 		attributes,
 		blockName: 'spectra/modal-child-icon',
-		producers: [ ( attrs ) => iconDimensionStyles( attrs.size || '30px' ) ],
+		producers: [
+			( attrs ) => iconDimensionStyles( attrs.size || '30px' ),
+			( attrs ) =>
+				colourVarStyles( attrs, {
+					textColor: '--spectra-text-color',
+				} ),
+		],
 	} );
 
 	const modalTrigger = context['spectra/modal/modalTrigger'];

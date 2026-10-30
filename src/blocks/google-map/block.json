@@ -87,10 +87,6 @@
 		"zoom": {
 			"type": "number",
 			"default": 15
-		},
-		"mapTypeId": {
-			"type": "string",
-			"default": "roadmap"
 		}
 	}
 }

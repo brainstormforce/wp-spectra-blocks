@@ -37,11 +37,23 @@ class ResponsiveAttributeCSS {
 	 */
 	const ATTR_DEFINITIONS = array(
 		'spectra/container'                    => array(
+			'textColorHover'              => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
 			'minWidth'                    => array(
 				'property' => 'min-width',
 				'selector' => '.wp-block-spectra-container',
 			),
 			'orientationReverse'          => array(),
+			'boxShadow'                   => array(
+				'formatter' => 'format_shadow',
+			),
+			'boxShadowHover'              => array(
+				'state'     => ':hover',
+				'formatter' => 'format_shadow',
+			),
 			'minHeight'                   => array(
 				'property' => 'min-height',
 				'selector' => '.wp-block-spectra-container',
@@ -114,12 +126,27 @@ class ResponsiveAttributeCSS {
 			'advBgGradientHoverLocation2' => array(),
 		),
 		'spectra/content'                      => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
 			// Text shadow attributes - handled specially in generate_css method.
-			'enableTextShadow'  => array(),
-			'textShadowColor'   => array(),
-			'textShadowBlur'    => array(),
-			'textShadowOffsetX' => array(),
-			'textShadowOffsetY' => array(),
+			'enableTextShadow'        => array(),
+			'textShadowColor'         => array(),
+			'textShadowBlur'          => array(),
+			'textShadowOffsetX'       => array(),
+			'textShadowOffsetY'       => array(),
 		),
 		'spectra/google-map'                   => array(
 			'height' => array(
@@ -128,21 +155,226 @@ class ResponsiveAttributeCSS {
 				'selector' => '.wp-block-spectra-google-map',
 			),
 		),
+		'spectra/countdown-child-number'       => array(
+			'numberColorHover'        => array(
+				'property'  => 'color',
+				'selector'  => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'numberColor'             => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/counter-child-number'         => array(
+			'prefixColor' => array(
+				'property'  => 'color',
+				'selector'  => ' .spectra-counter-prefix',
+				'formatter' => 'format_colour',
+			),
+			'suffixColor' => array(
+				'property'  => 'color',
+				'selector'  => ' .spectra-counter-suffix',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/modal-child-button'           => array(
+			'iconColor' => array(
+				'property'  => 'fill',
+				'selector'  => ' .spectra-button__icon',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
+				'default'   => '16px',
+				'selector'  => ' svg.spectra-icon',
+				'formatter' => 'format_svg_size',
+			),
+			'gap'       => array(
+				'default'  => '10px',
+				'property' => 'gap',
+				'selector' => '.wp-block-spectra-modal-child-button',
+			),
+		),
+		'spectra/modal-child-icon'             => array(
+			'textColor' => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
+				'default'   => '30px',
+				'selector'  => ' svg.spectra-icon',
+				'formatter' => 'format_svg_size',
+			),
+		),
+		'spectra/countdown-child-day'          => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/countdown-child-hour'         => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/countdown-child-label'        => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/countdown-child-minute'       => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/countdown-child-second'       => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/countdown-child-separator'    => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/icons'                        => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
+		'spectra/modal-child-content'          => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+		),
 		'spectra/button'                       => array(
-			'size' => array(
+			'iconColor'   => array(
+				'property'  => 'fill',
+				'selector'  => ' .spectra-button__icon',
+				'formatter' => 'format_colour',
+			),
+			'shadowHover' => array(
+				'state'     => ':hover',
+				'formatter' => 'format_shadow',
+			),
+			'size'        => array(
 				'default'   => '16px',
 				'selector'  => ' svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
 
-			'gap'  => array(
+			'gap'         => array(
 				'default'  => '10px',
 				'property' => 'gap',
 				'selector' => '.wp-block-spectra-button.wp-block-button__link',
 			),
 		),
 		'spectra/icon'                         => array(
-			'size' => array(
+			'textColor' => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
 				'default'   => '48px',
 				'selector'  => ' svg.spectra-icon',
 				'formatter' => 'format_svg_size',
@@ -168,71 +400,180 @@ class ResponsiveAttributeCSS {
 			),
 		),
 		'spectra/accordion-child-header-icon'  => array(
-			'size' => array(
+			'textColor' => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
 				'selector'  => '.wp-block-spectra-accordion-child-header-icon svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
 		),
 		'spectra/tabs'                         => array(
-			'size' => array(
+			'backgroundColorTertiary'    => array(
+				'property'  => 'background-color',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientTertiary' => array(
+				'property'  => 'background-image',
+				'formatter' => 'format_colour',
+			),
+			'size'                       => array(
 				'default'   => '16px',
 				'selector'  => ' .wp-block-spectra-tabs-child-tab-button > svg',
 				'formatter' => 'format_svg_size',
 			),
 		),
 		'spectra/tabs-child-tab-button'        => array(
-			'size' => array(
+			'iconColor' => array(
+				'property'  => 'fill',
+				'selector'  => ' .spectra-button__icon',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
 				'selector'  => '.wp-block-spectra-tabs-child-tab-button > svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
-			'gap'  => array(
+			'gap'       => array(
 				'default'  => '10px',
 				'property' => 'gap',
 			),
 		),
 		'spectra/countdown'                    => array(
-			'width'     => array(
+			'backgroundColorHover'    => array(
+				'property'  => 'background-color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover' => array(
+				'property'  => 'background-image',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'          => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
+			'width'                   => array(
 				'property' => 'width',
 			),
-			'height'    => array(
+			'height'                  => array(
 				'property' => 'height',
 				'default'  => 'auto',
 			),
-			'minWidth'  => array(
+			'minWidth'                => array(
 				'property' => 'min-width',
 			),
-			'minHeight' => array(
+			'minHeight'               => array(
 				'property' => 'min-height',
 			),
-			'maxWidth'  => array(
+			'maxWidth'                => array(
 				'property' => 'max-width',
 			),
-			'maxHeight' => array(
+			'maxHeight'               => array(
 				'property' => 'max-height',
 			),
 		),
 		'spectra/tabs-child-tab-trigger'       => array(
-			'width'     => array(
+			'backgroundColorActive'         => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-block-is-active',
+				'formatter' => 'format_colour',
+			),
+			'backgroundColorActiveHover'    => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-block-is-active:hover, .spectra-block-is-active:focus-visible',
+				'formatter' => 'format_colour',
+			),
+			'backgroundColorHover'          => array(
+				'property'  => 'background',
+				'selector'  => ':hover:not(.spectra-block-is-active)',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientActive'      => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-block-is-active',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientActiveHover' => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-block-is-active:hover, .spectra-block-is-active:focus-visible',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradientHover'       => array(
+				'property'  => 'background',
+				'selector'  => ':hover:not(.spectra-block-is-active)',
+				'formatter' => 'format_colour',
+			),
+			'textColorActive'               => array(
+				'property'  => 'color',
+				'selector'  => '.spectra-block-is-active',
+				'formatter' => 'format_colour',
+			),
+			'textColorActiveHover'          => array(
+				'property'  => 'color',
+				'selector'  => '.spectra-block-is-active:hover, .spectra-block-is-active:focus-visible',
+				'formatter' => 'format_colour',
+			),
+			'textColorHover'                => array(
+				'property'  => 'color',
+				'selector'  => ':hover:not(.spectra-block-is-active)',
+				'formatter' => 'format_colour',
+			),
+			'backgroundGradient'            => array(
+				'property'  => 'background-image',
+				'formatter' => 'format_colour',
+			),
+			'width'                         => array(
 				'property' => 'width',
 			),
-			'height'    => array(
+			'height'                        => array(
 				'property' => 'height',
 				'default'  => 'auto',
 			),
-			'minWidth'  => array(
+			'minWidth'                      => array(
 				'property' => 'min-width',
 			),
-			'minHeight' => array(
+			'minHeight'                     => array(
 				'property' => 'min-height',
 			),
-			'maxWidth'  => array(
+			'maxWidth'                      => array(
 				'property' => 'max-width',
 			),
-			'maxHeight' => array(
+			'maxHeight'                     => array(
 				'property' => 'max-height',
 			),
 		),
+		'spectra/counter-child-progress-bar'   => array(
+			'prefixColor'     => array(
+				'property'  => 'color',
+				'selector'  => ' .spectra-counter-progress-label .spectra-counter-prefix',
+				'formatter' => 'format_colour',
+			),
+			'suffixColor'     => array(
+				'property'  => 'color',
+				'selector'  => ' .spectra-counter-progress-label .spectra-counter-suffix',
+				'formatter' => 'format_colour',
+			),
+			'barHeight'       => array(
+				'property'  => '--spectra-counter-bar-height',
+				'formatter' => 'format_length',
+			),
+			'barBorderRadius' => array(
+				'property'  => '--spectra-counter-bar-border-radius',
+				'formatter' => 'format_length',
+			),
+		),
 		'spectra/counter'                      => array(
+			'barHeight'         => array(
+				'property'  => '--spectra-counter-bar-height',
+				'formatter' => 'format_length',
+			),
+			'barBorderRadius'   => array(
+				'property'  => '--spectra-counter-bar-border-radius',
+				'formatter' => 'format_length',
+			),
 			'prefixRightMargin' => array(
 				'property'  => 'margin-right',
 				'default'   => '0px',
@@ -254,34 +595,58 @@ class ResponsiveAttributeCSS {
 			),
 		),
 		'spectra/list-child-icon'              => array(
-			'iconSize' => array(
+			'textColor' => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+			'iconSize'  => array(
 				'selector'  => ' > svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
 		),
 		'spectra/slider'                       => array(
-			'sliderHeight'        => array(
+			'arrowBackgroundColorHover' => array(
+				'property'  => 'background-color',
+				'selector'  => ' .swiper-button-prev:hover, .swiper-button-prev:focus, .swiper-button-next:hover, .swiper-button-next:focus',
+				'formatter' => 'format_colour',
+			),
+			'arrowColorHover'           => array(
+				'property'  => 'color',
+				'selector'  => ' .swiper-button-prev:hover, .swiper-button-prev:focus, .swiper-button-next:hover, .swiper-button-next:focus',
+				'formatter' => 'format_colour',
+			),
+			'paginationColorActive'     => array(
+				'property'  => 'outline',
+				'selector'  => ' .swiper-pagination .swiper-pagination-bullet:focus-visible',
+				'formatter' => 'format_colour',
+			),
+			'paginationColorHover'      => array(
+				'property'  => 'background-color',
+				'selector'  => ' .swiper-pagination .swiper-pagination-bullet:hover, .swiper-pagination .swiper-pagination-bullet:focus',
+				'formatter' => 'format_colour',
+			),
+			'sliderHeight'              => array(
 				'default'   => 'auto',
 				'formatter' => 'format_slider_height',
 			),
-			'navigationSize'      => array(
+			'navigationSize'            => array(
 				'default'  => '40px',
 				'property' => array( 'width', 'height' ),
 				'selector' => ' .swiper-button-prev, .swiper-button-next',
 			),
-			'navigationIconSize'  => array(
+			'navigationIconSize'        => array(
 				'default'   => '20px',
 				'selector'  => ' .swiper-button-prev svg, .swiper-button-next svg',
 				'formatter' => 'format_svg_size',
 			),
-			'arrowDistance'       => array(
+			'arrowDistance'             => array(
 				'formatter' => 'format_slider_arrow_distance',
 			),
-			'paginationTopMargin' => array(
+			'paginationTopMargin'       => array(
 				'selector'  => ' .swiper-pagination, .swiper-horizontal > .swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal, .swiper-pagination-custom, .swiper-pagination-fraction',
 				'formatter' => 'format_slider_pagination_top_margin',
 			),
-			'background'          => array(
+			'background'                => array(
 				'formatter' => 'format_background',
 			),
 			// CSS-less: read per device by the slider controller for the swiper
@@ -289,8 +654,8 @@ class ResponsiveAttributeCSS {
 			// hydration copy their `@tablet` / `@mobile` values from `style`
 			// back into the store — the editor-side list already has both, and
 			// the mismatch silently dropped them on the front end.
-			'slidesPerView'       => array(),
-			'spaceBetween'        => array(),
+			'slidesPerView'             => array(),
+			'spaceBetween'              => array(),
 		),
 		'spectra/slider-child'                 => array(
 			'background' => array(
@@ -304,33 +669,23 @@ class ResponsiveAttributeCSS {
 			'separatorStyle'  => array(),
 			'separatorAlign'  => array(),
 		),
-		'spectra/modal-child-button'           => array(
-			'size' => array(
-				'default'   => '16px',
-				'selector'  => ' svg.spectra-icon',
-				'formatter' => 'format_svg_size',
-			),
-			'gap'  => array(
-				'default'  => '10px',
-				'property' => 'gap',
-				'selector' => '.wp-block-spectra-modal-child-button',
-			),
-		),
-		'spectra/modal-child-icon'             => array(
-			'size' => array(
-				'default'   => '30px',
-				'selector'  => ' svg.spectra-icon',
-				'formatter' => 'format_svg_size',
-			),
-		),
 		'spectra/modal-child-popup-close-icon' => array(
-			'size' => array(
+			'textColor' => array(
+				'property'  => 'fill',
+				'formatter' => 'format_colour',
+			),
+			'size'      => array(
 				'default'   => '25px',
 				'selector'  => ' svg.spectra-icon',
 				'formatter' => 'format_svg_size',
 			),
 		),
 		'spectra/modal-popup-content'          => array(
+			'textColorHover'  => array(
+				'property'  => 'color',
+				'state'     => ':hover',
+				'formatter' => 'format_colour',
+			),
 			'contentHeight'   => array(),
 			'containerWidth'  => array(),
 			'containerHeight' => array(),
@@ -339,48 +694,86 @@ class ResponsiveAttributeCSS {
 			),
 		),
 		'spectra/popup-builder'                => array(
-			'width'      => array(
+			'closeIconColorHover' => array(
+				'property'  => 'fill',
+				'selector'  => '.spectra-popup-builder button.spectra-popup-builder__close svg:not(.spectra-custom-svg):hover',
+				'formatter' => 'format_colour',
+			),
+			'popupOverlayColor'   => array(
+				'property'  => 'background-color',
+				'selector'  => '.spectra-popup-has-overlay',
+				'formatter' => 'format_colour',
+			),
+			'textColor'           => array(
+				'property'  => 'color',
+				'formatter' => 'format_colour',
+			),
+			'closeIconSize'       => array(
+				'property'  => '--spectra-close-icon-size',
+				'formatter' => 'format_length',
+			),
+			'width'               => array(
 				'property' => 'width',
 				'selector' => ' .spectra-popup-builder__wrapper',
 			),
-			'height'     => array(
+			'height'              => array(
 				'property'  => 'height',
 				'formatter' => 'format_popup_builder_height',
 			),
 			// Background attributes.
-			'background' => array(
+			'background'          => array(
 				'formatter' => 'format_background',
 			),
 		),
 		'spectra/post'                         => array(
-			'columns'             => array(
+			'paginationActiveColor'           => array(
+				'property'  => 'color',
+				'selector'  => '.spectra-pagination-layout-filled .spectra-post-pagination-numbers a.current',
+				'formatter' => 'format_colour',
+			),
+			'paginationBackgroundActiveColor' => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-pagination-layout-filled .spectra-post-pagination-numbers a.current',
+				'formatter' => 'format_colour',
+			),
+			'paginationBackgroundHoverColor'  => array(
+				'property'  => 'background',
+				'selector'  => '.spectra-pagination-layout-filled .spectra-post-pagination-numbers a:focus, .spectra-pagination-layout-filled .spectra-post-pagination-numbers a:hover',
+				'formatter' => 'format_colour',
+			),
+			'paginationHoverColor'            => array(
+				'property'  => 'color',
+				'selector'  => '.spectra-pagination-layout-filled .spectra-post-pagination-numbers a:focus, .spectra-pagination-layout-filled .spectra-post-pagination-numbers a:hover',
+				'formatter' => 'format_colour',
+			),
+			'columns'                         => array(
 				'property' => '--spectra-post-columns',
 				'selector' => '.spectra-post-layout-grid .spectra-post-loop-wrapper, .spectra-post-layout-masonry .spectra-post-loop-wrapper',
 				'default'  => 3,
 			),
-			'columnGap'           => array(
+			'columnGap'                       => array(
 				'property' => '--spectra-post-column-gap',
 				'selector' => '.spectra-post-layout-grid .spectra-post-loop-wrapper, .spectra-post-layout-masonry .spectra-post-loop-wrapper',
 				'default'  => '20px',
 			),
-			'rowGap'              => array(
+			'rowGap'                          => array(
 				'property' => '--spectra-post-row-gap',
 				'selector' => '.spectra-post-layout-grid .spectra-post-loop-wrapper, .spectra-post-layout-masonry .spectra-post-loop-wrapper',
 				'default'  => '20px',
 			),
-			'slidesPerView'       => array(),
-			'spaceBetween'        => array(),
-			'arrowSize'           => array(
+			'slidesPerView'                   => array(),
+			'spaceBetween'                    => array(),
+			'arrowSize'                       => array(
 				'property' => '--spectra-carousel-arrow-size',
 				'selector' => '.spectra-post-layout-carousel',
 				'default'  => '20px',
 			),
-			'arrowDistance'       => array(
+			'arrowDistance'                   => array(
 				'property' => '--spectra-carousel-arrow-distance',
 				'selector' => '.spectra-post-layout-carousel',
 				'default'  => '-20px',
 			),
-			'paginationTopMargin' => array(
+			'paginationTopMargin'             => array(
 				'property' => '--spectra-carousel-pagination-margin-top',
 				'selector' => '.spectra-post-layout-carousel',
 				'default'  => '-15px',
@@ -943,7 +1336,7 @@ class ResponsiveAttributeCSS {
 		foreach ( $css_rules as $rule ) {
 			if ( isset( $rule['style_attr'] ) ) {
 				// Handle rules with style_attr directly.
-				$full_selector   = $selector . ( $rule['selector'] ?? '' );
+				$full_selector   = self::compose_selector( $selector, (string) ( $rule['selector'] ?? '' ) );
 				$style_attr_css .= $full_selector . '{' . $rule['style_attr'] . '}';
 			} else {
 				$regular_rules[] = $rule;
@@ -976,31 +1369,232 @@ class ResponsiveAttributeCSS {
 		$selector = $def['selector'] ?? '';
 		$state    = $def['state'] ?? '';
 
-		// Handle comma-separated selectors.
-		if ( strpos( $selector, ',' ) !== false ) {
-			// First, check if the selector starts with a space (descendant selector).
-			$needs_space = strpos( $selector, ' ' ) === 0;
-
-			$parts          = explode( ',', $selector );
-			$combined_parts = array_map(
-				function ( $part ) use ( $base_selector, $state, $needs_space ) {
-					// Trim the part but preserve the leading space logic.
-					$part = trim( $part );
-
-					// If original selector had leading space, ensure we add it back.
-					if ( $needs_space && strpos( $part, ' ' ) !== 0 ) {
-						$part = ' ' . $part;
-					}
-
-					return $base_selector . $part . $state;
-				},
-				$parts
-			);
-			return implode( ', ', $combined_parts );
+		if ( '' === trim( $selector ) ) {
+			return self::compose_selector( $base_selector, $state );
 		}
 
-		// Single selector.
-		return $base_selector . $selector . $state;
+		// A descendant selector's leading space is significant and `trim()` eats it.
+		$needs_space = 0 === strpos( $selector, ' ' );
+		$combined    = array();
+
+		foreach ( self::split_selector_list( $selector ) as $part ) {
+			if ( $needs_space && 0 !== strpos( $part, ' ' ) ) {
+				$part = ' ' . $part;
+			}
+
+			$combined[] = self::compose_selector( $base_selector, $part . $state );
+		}
+
+		return implode( ', ', $combined );
+	}
+
+	/**
+	 * Join a suffix onto a base selector, distributing it across a selector list.
+	 *
+	 * A suffix appended to a comma-separated selector binds to the LAST item
+	 * only: `'.a, .b' . ':hover'` is `.a, .b:hover`, which leaves `.a`
+	 * unconditional. Blocks whose base selector is a list therefore painted
+	 * every state at rest.
+	 *
+	 * Measured on `spectra-pro/loop-builder-child-filter-button`, whose base
+	 * selector arrives from `spectra_blocks_responsive_css_selector` as the
+	 * button plus its siblings — filter buttons are generated per term, so the
+	 * rule has to reach all of them. Its hover and active colours applied to an
+	 * unhovered, inactive button.
+	 *
+	 * @since 1.0.13
+	 * @param string $base_selector The block's selector, possibly a list.
+	 * @param string $suffix        Suffix to append to each item — a state, a descendant, or both.
+	 * @return string The composed selector.
+	 */
+	private static function compose_selector( string $base_selector, string $suffix ): string {
+		if ( '' === $suffix ) {
+			return $base_selector;
+		}
+
+		$bases = self::split_selector_list( $base_selector );
+
+		if ( count( $bases ) < 2 ) {
+			return $base_selector . $suffix;
+		}
+
+		return implode(
+			', ',
+			array_map(
+				static function ( $base ) use ( $suffix ) {
+					return $base . $suffix;
+				},
+				$bases
+			)
+		);
+	}
+
+	/**
+	 * Split a selector list on its top-level commas.
+	 *
+	 * `explode( ',', … )` is wrong here: a comma inside `:where()`, `:not()`,
+	 * `:is()` or an attribute value is part of one selector, not a separator.
+	 * `spectra/button` alone ships `:where(div, button, a)`, which a naive split
+	 * would tear into three broken fragments.
+	 *
+	 * @since 1.0.13
+	 * @param string $selector The selector, possibly a list.
+	 * @return array<int, string> The trimmed items; a single empty string when there are none.
+	 */
+	private static function split_selector_list( string $selector ): array {
+		$parts  = array();
+		$buffer = '';
+		$depth  = 0;
+		$quote  = '';
+		$length = strlen( $selector );
+
+		for ( $i = 0; $i < $length; $i++ ) {
+			$char = $selector[ $i ];
+
+			if ( '' !== $quote ) {
+				$buffer .= $char;
+
+				if ( $char === $quote && ( 0 === $i || '\\' !== $selector[ $i - 1 ] ) ) {
+					$quote = '';
+				}
+
+				continue;
+			}
+
+			if ( "'" === $char || '"' === $char ) {
+				$quote   = $char;
+				$buffer .= $char;
+				continue;
+			}
+
+			if ( '(' === $char || '[' === $char ) {
+				++$depth;
+			} elseif ( ')' === $char || ']' === $char ) {
+				$depth = max( 0, $depth - 1 );
+			}
+
+			if ( ',' === $char && 0 === $depth ) {
+				$parts[] = $buffer;
+				$buffer  = '';
+				continue;
+			}
+
+			$buffer .= $char;
+		}
+
+		$parts[] = $buffer;
+
+		$parts = array_values(
+			array_filter(
+				array_map( 'trim', $parts ),
+				static function ( $part ) {
+					return '' !== $part;
+				}
+			)
+		);
+
+		return empty( $parts ) ? array( '' ) : $parts;
+	}
+
+	/**
+	 * Flatten a shadow object into a CSS shadow string.
+	 *
+	 * `shadowHover` is stored as `{x, y, blur, spread, color}` and each block
+	 * flattens it before painting. The generator has to flatten it the SAME way
+	 * per breakpoint, or a band emits the raw array and the browser drops the
+	 * declaration — a shadow that works on desktop and silently vanishes on
+	 * mobile. Kept byte-identical to the controllers' `sprintf()`.
+	 *
+	 * A shadow with no colour is not a shadow: both the controller and
+	 * `render.js` bail on an empty colour, so this returns null to match rather
+	 * than emitting `0px 4px 8px 0px `.
+	 *
+	 * RETURNS A RAW RULE, NOT A VALUE — deliberately.
+	 *
+	 * The obvious shape is `'property' => '--spectra-shadow-hover'` and a string
+	 * return, letting the Style Engine emit the declaration. It silently drops
+	 * it. `wp_style_engine_get_stylesheet_from_css_rules()` sanitises custom
+	 * property VALUES and discards anything containing a colour function —
+	 * measured on 7.1:
+	 *
+	 *   `0px 4px 8px 0px red`              -> emitted
+	 *   `0px 4px 8px 0px #123456`          -> emitted
+	 *   `0px 4px 8px 0px rgb(10, 20, 30)`  -> DROPPED
+	 *   `0px 4px 8px 0px rgba(1, 2, 3, .5)`-> DROPPED
+	 *
+	 * The editor's own colour picker emits `rgb()` for any non-preset colour,
+	 * and this block's default hover shadow is `rgba(0,0,0,0.2)`, so the common
+	 * case is the dropped one — and it fails silently, with the rule simply
+	 * absent. `style_attr` bypasses the engine, which is what the gradient and
+	 * background paths in this class already do for the same reason.
+	 *
+	 * AND IT EMITS `box-shadow`, NOT A CUSTOM PROPERTY.
+	 *
+	 * The blocks paint these through a custom property that a class-gated rule
+	 * consumes — `.spectra-box-shadow { box-shadow: var(--spectra-box-shadow) }`.
+	 * That cannot survive the move to per-device, because registering an
+	 * attribute as responsive STRIPS it from the root before render: measured,
+	 * `$attributes['shadowHover']` is unset by the time `controller.php` runs.
+	 * The controller therefore cannot emit the hook class, and a variable with
+	 * no matching rule paints nothing — the value reaches the page and is never
+	 * read.
+	 *
+	 * So the rule is emitted whole. `!important` matches what the stylesheet it
+	 * replaces already used, so specificity against themes is unchanged.
+	 *
+	 * @since 1.0.13
+	 * @param mixed                $val The stored shadow — object, or an already-flattened string.
+	 * @param array<string, mixed> $def The attribute definition; `state` names the selector suffix.
+	 * @return array<string, string>|null A raw rule for the block root, or null.
+	 */
+	private static function format_shadow( $val, $def = array() ) {
+		// `$def` is free-form, so narrow rather than trust it — an array or null
+		// here would otherwise reach `shadow_rule()` as a selector suffix.
+		$state = isset( $def['state'] ) && is_string( $def['state'] ) ? $def['state'] : '';
+
+		/*
+		 * Container stores an already-flattened CSS string; Button stores the
+		 * object. Both arrive here, so both are handled.
+		 */
+		if ( is_string( $val ) ) {
+			return '' !== trim( $val ) && 'none' !== $val ? self::shadow_rule( $val, $state ) : null;
+		}
+
+		if ( ! is_array( $val ) ) {
+			return null;
+		}
+
+		$color = $val['color'] ?? '';
+		if ( ! is_string( $color ) || '' === trim( $color ) ) {
+			return null;
+		}
+
+		return self::shadow_rule(
+			sprintf(
+				'%dpx %dpx %dpx %dpx %s',
+				isset( $val['x'] ) ? intval( $val['x'] ) : 0,
+				isset( $val['y'] ) ? intval( $val['y'] ) : 4,
+				isset( $val['blur'] ) ? intval( $val['blur'] ) : 8,
+				isset( $val['spread'] ) ? intval( $val['spread'] ) : 0,
+				$color
+			),
+			$state
+		);
+	}
+
+	/**
+	 * Wrap a flattened shadow in a raw rule on the block root.
+	 *
+	 * @since 1.0.13
+	 * @param string $shadow The flattened CSS shadow value.
+	 * @param string $state  Selector suffix — `:hover` for a hover shadow.
+	 * @return array<string, string> A rule the caller appends to `$css_rules`.
+	 */
+	private static function shadow_rule( string $shadow, string $state ): array {
+		return array(
+			'selector'   => $state,
+			'style_attr' => 'box-shadow:' . $shadow . ' !important;',
+		);
 	}
 
 	/**
@@ -1008,18 +1602,190 @@ class ResponsiveAttributeCSS {
 	 *
 	 * Sets both width and height properties for SVG elements.
 	 *
+	 * The value goes through `format_length()` because the blocks that use this
+	 * do not agree on storage: `spectra-pro/form-icon` keeps a full CSS length
+	 * (`16px`) while `spectra-pro/mega-menu` keeps a bare number (`12`). Emitting
+	 * the bare number produced `width:12`, which is not a length and was dropped
+	 * by the parser, so a band silently did nothing.
+	 *
 	 * @param mixed $val The size value.
-	 * @return array CSS properties for SVG sizing.
+	 * @return array CSS properties for SVG sizing, empty when there is nothing to paint.
 	 */
 	private static function format_svg_size( $val ): array {
-		if ( is_null( $val ) ) {
+		$length = self::format_length( $val );
+
+		if ( null === $length ) {
 			return array();
 		}
 
 		return array(
-			'width'  => $val,
-			'height' => $val,
+			'width'  => $length,
+			'height' => $length,
 		);
+	}
+
+	/**
+	 * Emit a per-device colour as a real CSS declaration.
+	 *
+	 * TWO REASONS THIS IS NOT THE ORDINARY `'property'` PATH.
+	 *
+	 * 1. The WordPress Style Engine DROPS any value containing a colour
+	 *    function. Measured on 7.1.1, for real properties as well as custom
+	 *    properties:
+	 *
+	 *        background-color: red               -> emitted
+	 *        background-color: #123456           -> emitted
+	 *        background-color: rgb(10, 20, 30)   -> DROPPED
+	 *        background-color: rgba(1, 2, 3, .5) -> DROPPED
+	 *
+	 *    The editor's colour picker emits `rgb()` for every non-preset colour,
+	 *    so the common case fails, silently, with the declaration simply absent.
+	 *    `style_attr` bypasses the engine; the gradient and background paths in
+	 *    this class already do the same, undocumented, presumably for this.
+	 *
+	 * 2. The value cannot be emitted as `--spectra-background-color` either.
+	 *    That variable is read back by `.spectra-background-color { … }`, and
+	 *    the class is emitted by the block's controller from the ROOT attribute
+	 *    — which `remove_conflicting_core_attributes()` unsets for anything
+	 *    registered as responsive. The variable would reach the page and never
+	 *    be read. So the real property is emitted instead.
+	 *
+	 * The property comes from the definition and is REQUIRED: this emits `color`,
+	 * `fill`, `background-color` and `opacity` across the batch, and guessing
+	 * from the attribute name would be wrong often enough to matter — Spectra has
+	 * `iconColor` painting `fill` on one block and `color` on another.
+	 *
+	 * `background-color` rather than the `background` shorthand wherever a block's
+	 * own stylesheet uses the shorthand: the shorthand also resets
+	 * `background-image`, which would wipe a gradient or image set alongside.
+	 *
+	 * The returned `selector` is a SUFFIX, not a full selector: rules carrying a
+	 * `style_attr` are emitted as `$selector . $rule['selector']`, so returning
+	 * the scoped selector here would produce `.sel .sel select`. Caught by the
+	 * Pro case, which asserts the element each block paints on; the free case
+	 * asserted only the declaration and missed it.
+	 *
+	 * @since 1.0.13
+	 * @param mixed                $val   The stored colour.
+	 * @param array<string, mixed> $def   The attribute definition; `property` is required.
+	 * @param array<string, mixed> $attrs The block's attributes.
+	 * @return array<string, string>|array<int, array<string, string>>|null One CSS
+	 *         rule, a list of them when the selector is a comma list, or null when
+	 *         there is nothing to paint.
+	 */
+	private static function format_colour( $val, $def = array(), $attrs = array() ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		$property = $def['property'] ?? '';
+
+		if ( '' === $property ) {
+			return null;
+		}
+
+		if ( 'opacity' === $property && is_numeric( $val ) ) {
+			/*
+			 * `opacity` is the one numeric member of this family. Gated on the
+			 * property rather than on the value: without the gate a bare `123`
+			 * was accepted as `background-color: 123`, which is not a colour and
+			 * is dropped by the parser. Caught by `test_empty_emits_nothing()`.
+			 */
+			$colour = (string) $val;
+		} elseif ( is_string( $val ) && '' !== trim( $val ) ) {
+			$colour = trim( $val );
+		} else {
+			return null;
+		}
+
+		/*
+		 * `style_attr` is emitted raw, so a value carrying `;` or `{}` could
+		 * close this declaration and open another. Colours never need those
+		 * characters, so anything containing them is refused rather than
+		 * escaped — there is no legitimate value to preserve.
+		 */
+		if ( preg_match( '/[;{}<>]|\/\*/', $colour ) ) {
+			return null;
+		}
+
+		$suffix = ( $def['selector'] ?? '' ) . ( $def['state'] ?? '' );
+
+		/*
+		 * A COMMA LIST becomes one rule per part.
+		 *
+		 * Spectra's stylesheets routinely write a state as `&:focus, &:hover`,
+		 * so a single colour belongs on both. Emission concatenates the block's
+		 * scoped selector with whatever a rule carries, which would turn
+		 * `:focus, :hover` into `.block:focus, :hover` — the second part losing
+		 * its scope and matching every hovered element on the page. Splitting
+		 * here keeps each part scoped.
+		 */
+		$style_attr = $property . ':' . $colour . ';';
+		$parts      = array_values(
+			array_filter(
+				array_map( 'trim', explode( ',', $suffix ) ),
+				static function ( $part ) {
+					return '' !== $part;
+				}
+			)
+		);
+
+		if ( count( $parts ) > 1 ) {
+			/*
+			 * `trim()` above eats the descendant combinator, which is load
+			 * bearing: ` .child` and `.child` are different selectors — the
+			 * first matches a descendant, the second an element carrying both
+			 * classes. When the suffix is a descendant, EVERY part is one, so
+			 * the space goes back on all of them and not just the first.
+			 */
+			$combinator = ' ' === substr( $suffix, 0, 1 ) ? ' ' : '';
+			$rules      = array();
+
+			foreach ( $parts as $part ) {
+				$rules[] = array(
+					'selector'   => $combinator . $part,
+					'style_attr' => $style_attr,
+				);
+			}
+
+			return $rules;
+		}
+
+		return array(
+			'selector'   => $suffix,
+			'style_attr' => $style_attr,
+		);
+	}
+
+	/**
+	 * Normalise a stored length into a CSS value.
+	 *
+	 * Blocks store these inconsistently: `barHeight` keeps a full CSS length,
+	 * `barBorderRadius` an integer, `closeIconSize` a bare numeric string. Each
+	 * block's controller appends its own unit, so the generator has to do the
+	 * same or a band emits `9` where the base emitted `9px`.
+	 *
+	 * Returns null rather than a default when there is nothing stored, so an
+	 * unauthored value emits no rule at all. `format_counter_margin()` answers
+	 * `0px` in that case, which is why it is not reused here — a default emitted
+	 * per block at the generator's specificity would override author CSS that
+	 * previously won.
+	 *
+	 * @since 1.0.13
+	 * @param mixed                $val The stored length.
+	 * @param array<string, mixed> $def The attribute definition.
+	 * @return string|null The CSS length, or null when there is nothing to paint.
+	 */
+	private static function format_length( $val, $def = array() ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+		if ( is_null( $val ) || '' === $val ) {
+			return null;
+		}
+
+		if ( is_string( $val ) && preg_match( '/(px|em|rem|%|vh|vw|ch|ex)$/', $val ) ) {
+			return $val;
+		}
+
+		if ( ! is_numeric( $val ) ) {
+			return null;
+		}
+
+		return $val . 'px';
 	}
 
 	/**

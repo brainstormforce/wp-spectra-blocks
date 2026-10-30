@@ -25,4 +25,14 @@ registerBlockType( metadata.name, {
 	icon: blockIcons.content(),
 	edit,
 	transforms,
+	// Join text across a block boundary (Shift+Arrow selection, Backspace at the
+	// start of a block) instead of selecting whole blocks. Without a `merge`
+	// handler the editor treats the selection as unmergeable and highlights full
+	// blocks. Only `text` is merged, so block one's tag and attributes are kept —
+	// same behaviour as core/paragraph. See #1165.
+	merge( attributes, attributesToMerge ) {
+		return {
+			text: ( attributes.text || '' ) + ( attributesToMerge.text || '' ),
+		};
+	},
 } );

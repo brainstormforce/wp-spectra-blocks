@@ -31,8 +31,6 @@ $child_progress_background_color = $attributes['progressBackgroundColor'] ?? '';
 $child_prefix_color              = $attributes['prefixColor'] ?? '';
 $child_suffix_color              = $attributes['suffixColor'] ?? '';
 $text_color                      = $attributes['textColor'] ?? '';
-$bar_height                      = $attributes['barHeight'] ?? '32px';
-$bar_border_radius               = $attributes['barBorderRadius'] ?? 4;
 
 // Use context colors from parent if available, otherwise use child's own colors.
 $progress_color            = $context_progress_color ? $context_progress_color : ( $child_progress_color ? $child_progress_color : '#4A90E2' );
@@ -69,18 +67,16 @@ $config = array(
 		'class_name' => null,
 		'value'      => $progress_background_color,
 	),
-	array(
-		'key'        => 'barHeight',
-		'css_var'    => '--spectra-counter-bar-height',
-		'class_name' => null,
-		'value'      => $bar_height,
-	),
-	array(
-		'key'        => 'barBorderRadius',
-		'css_var'    => '--spectra-counter-bar-border-radius',
-		'class_name' => null,
-		'value'      => is_numeric( $bar_border_radius ) ? $bar_border_radius . 'px' : $bar_border_radius,
-	),
+
+	/*
+	 * `barHeight` and `barBorderRadius` is per-device (responsive-controls) — the responsive CSS extension
+	 * emits its custom property per band, so it must NOT be set inline here. An
+	 * inline declaration outranks a stylesheet rule of any specificity, and the
+	 * desktop value would apply at every width.
+	 *
+	 * Legacy content that stored it only on the root attribute is bridged onto
+	 * the base layer by `backward_compatibility_block_attributes()`.
+	 */
 );
 
 // Add prefix/suffix colors if set.

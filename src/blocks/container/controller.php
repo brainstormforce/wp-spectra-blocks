@@ -287,6 +287,21 @@ $config = array_merge( $config, $border_hover_config );
 // Overlay CSS variables are now handled by ResponsiveAttributeCSS.php.
 
 // Custom classes.
+// A root container inside another block keeps a left/right margin set on any
+// device, so common.scss stops centring it (render.js mirrors this).
+$has_side_margin = false;
+if ( ( $attributes['isBlockRootParent'] ?? false ) && ! empty( $attributes['hasParentBlock'] ) ) {
+	foreach ( array( 'base', '@tablet', '@mobile' ) as $device ) {
+		$margin          = $responsive_controls[ $device ]['style']['spacing']['margin'] ?? null;
+		$has_side_margin = is_string( $margin )
+			? '' !== $margin
+			: ( ( isset( $margin['left'] ) && '' !== $margin['left'] ) || ( isset( $margin['right'] ) && '' !== $margin['right'] ) );
+		if ( $has_side_margin ) {
+			break;
+		}
+	}
+}
+
 // Only add classes that are actually used in frontend styles.
 $custom_classes = array(
 	// Video background class is required for proper positioning (from common.scss).
@@ -302,6 +317,7 @@ $custom_classes = array(
 	( ( 'video' !== $background_type && 'image' === $overlay_type && ! empty( $overlay_image['url'] ) ) || $has_responsive_overlay ) ? 'has-container-overlay' : '',
 	// Add root container class.
 	( $attributes['isBlockRootParent'] ?? false ) ? 'spectra-is-root-container' : '',
+	$has_side_margin ? 'spectra-has-side-margin' : '',
 	// Add alignment classes.
 	( $attributes['align'] ?? '' ) === 'full' ? 'alignfull' : '',
 	( $attributes['align'] ?? '' ) === 'wide' ? 'alignwide' : '',

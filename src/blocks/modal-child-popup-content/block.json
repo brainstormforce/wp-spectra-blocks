@@ -83,20 +83,12 @@
 			"type": "boolean",
 			"default": false
 		},
-        "defaultTemplate": {
-            "type": "boolean",
-            "default": false
-        },
 		"icon": {
 			"type": ["string", "object"],
 			"default": "xmark"
 		},
 		"iconPosition": {
 			"type": "string"
-		},
-		"keyPress": {
-			"type": "boolean",
-			"default": true
 		},
 		"overlayClick": {
 			"type": "boolean",

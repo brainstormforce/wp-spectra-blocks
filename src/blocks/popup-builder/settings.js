@@ -453,7 +453,6 @@ const PopupCloseSettings = memo( ( props ) => {
 		accessibilityMode,
 		accessibilityLabel,
 		closeIconPosition,
-		closeIconSize,
 		variantType,
 		haltBackgroundInteraction,
 		hasOverlay,
@@ -533,7 +532,6 @@ const PopupCloseSettings = memo( ( props ) => {
 						closeIconPosition: 'top-right',
 						closeOverlayClick: true,
 						closeEscapePress: true,
-						closeIconSize: 20,
 						closeIconColor: '',
 						closeIconColorHover: '',
 					} );
@@ -744,29 +742,6 @@ const PopupCloseSettings = memo( ( props ) => {
 						}
 					/>
 				</ToolsPanelItem>
-				<ToolsPanelItem
-					hasValue={ () => !! closeIconSize }
-					label={ __(
-						'Close Icon Size',
-						'spectra-blocks'
-					) }
-					panelId={ clientId }
-					onDeselect={ () =>
-						setAttributes( { closeIconSize: 20 } )
-					}
-					resetAllFilter={ () => ( { closeIconSize: 20 } ) }
-				>
-					<RangeControl
-						__nextHasNoMarginBottom
-						label={ __( 'Size', 'spectra-blocks' ) }
-						value={ closeIconSize }
-						onChange={ ( value ) =>
-							setAttributes( { closeIconSize: value } )
-						}
-						min={ 0 }
-						max={ 100 }
-					/>
-				</ToolsPanelItem>
 				<div className='spectra-popup__close-class-option-element-notice'>
 				<p
 					className={ spectraClassNames( [
@@ -959,7 +934,7 @@ const PopupDimensionSettings = memo( ( props ) => {
 	const {
 		clientId,
 		setAttributes,
-		attributes: { width, height, variantType },
+		attributes: { width, height, variantType, closeIconSize },
 	} = props;
 
 	const [ availableUnits ] = useSettings( 'spacing.units' );
@@ -1010,6 +985,29 @@ const PopupDimensionSettings = memo( ( props ) => {
 							setAttributes( { height: value } )
 						}
 						units={ units }
+					/>
+				</ToolsPanelItem>
+
+				{/* Close icon size — lives in Dimensions so it stays reachable
+				while editing Tablet/Mobile viewport styles. */}
+				<ToolsPanelItem
+					hasValue={ () => !! closeIconSize }
+					label={ __( 'Close Icon Size', 'spectra-blocks' ) }
+					panelId={ clientId }
+					onDeselect={ () =>
+						setAttributes( { closeIconSize: 20 } )
+					}
+					resetAllFilter={ () => ( { closeIconSize: 20 } ) }
+				>
+					<RangeControl
+						__nextHasNoMarginBottom
+						label={ __( 'Close Icon Size', 'spectra-blocks' ) }
+						value={ closeIconSize }
+						onChange={ ( value ) =>
+							setAttributes( { closeIconSize: value } )
+						}
+						min={ 0 }
+						max={ 100 }
 					/>
 				</ToolsPanelItem>
 			</>

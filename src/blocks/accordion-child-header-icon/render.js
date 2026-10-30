@@ -12,6 +12,7 @@ import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import RenderSVG from '@spectra-helpers/render-svg';
 import {
+	colourVarStyles,
 	getResponsivePreviewCss,
 	iconDimensionStyles,
 	inheritResponsiveKey,
@@ -105,7 +106,10 @@ const Render = ( props ) => {
 		clientId,
 		attributes: { ...attributes, style: inheritResponsiveKey( attributes.style, 'size', accordionStyle, 'size' ) },
 		blockName: 'spectra/accordion-child-header-icon',
-		producers: [ ( attrs ) => iconDimensionStyles( attrs.size || '24px' ) ],
+		producers: [
+			( attrs ) => iconDimensionStyles( attrs.size || '24px' ),
+			( attrs ) => colourVarStyles( attrs, { textColor: '--spectra-text-color' } ),
+		],
 	} );
 
 	return (
