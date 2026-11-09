@@ -85,10 +85,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": [
-		"file:./style-index.css",
-		"spectra-blocks-components-block-appender"
-	],
+	"editorStyle": [ "file:./index.css", "spectra-blocks-components-block-appender" ],
+	"style": "file:./style-index.css",
 	"render": "file:./view.php"
 }

@@ -10,6 +10,7 @@
 namespace SpectraBlocks;
 
 use SpectraBlocks\Traits\Singleton;
+use SpectraBlocks\Abilities\AbstractAbility;
 use SpectraBlocks\Abilities\ListAvailableBlocks;
 use SpectraBlocks\Abilities\GetBlockConfig;
 use SpectraBlocks\Abilities\GeneratePageLayout;
@@ -212,8 +213,26 @@ class AbilitiesManager {
 			RemoveDisplayConditions::class,
 		);
 
+		// "Enable Edit Abilities" gates every write/destructive ability. When it is off,
+		// only read-only abilities (get/list/search) are registered, so connected AI
+		// clients can inspect the site but cannot create, modify or delete anything.
+		$edit_enabled = 'enabled' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_edit_abilities', 'enabled' );
+
 		foreach ( $abilities as $ability_class ) {
-			( $ability_class::instance() )->register();
+			$ability = $ability_class::instance();
+
+			if ( ! $ability instanceof AbstractAbility ) {
+				continue;
+			}
+
+			if ( ! $edit_enabled ) {
+				$annotations = $ability->get_annotations();
+				if ( empty( $annotations['readonly'] ) ) {
+					continue;
+				}
+			}
+
+			$ability->register();
 		}
 	}
 }

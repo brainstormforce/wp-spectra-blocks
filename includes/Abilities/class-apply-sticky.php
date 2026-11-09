@@ -50,7 +50,7 @@ class ApplySticky extends AbstractAbility {
 	 * @return string
 	 */
 	public function get_description(): string {
-		return __( 'Makes a container block sticky by setting the UAGPosition attribute. The block will remain fixed in position during scroll.', 'spectra-blocks' );
+		return __( 'Makes a container block sticky by enabling its stickyContainer setting. The block will remain fixed in position during scroll.', 'spectra-blocks' );
 	}
 
 	/**
@@ -156,7 +156,14 @@ class ApplySticky extends AbstractAbility {
 		$block_name                        = $all_blocks[ $raw_index ]['blockName'];
 		$all_blocks[ $raw_index ]['attrs'] = array_merge(
 			$all_blocks[ $raw_index ]['attrs'] ?? array(),
-			array( 'UAGPosition' => 'sticky' )
+			array(
+				'stickyContainer' => array(
+					'stickyEnabled'    => true,
+					'stickAt'          => 'top',
+					'offset'           => '0px',
+					'keepInsideParent' => false,
+				),
+			)
 		);
 
 		$result = $this->update_post_blocks( $post_id, $all_blocks );

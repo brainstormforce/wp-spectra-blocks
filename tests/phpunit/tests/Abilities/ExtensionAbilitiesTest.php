@@ -231,7 +231,15 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['success'] );
 
 		$attrs = $this->get_block_attrs( $post_id );
-		$this->assertSame( 'sticky', $attrs['UAGPosition'] );
+		$this->assertSame(
+			array(
+				'stickyEnabled'    => true,
+				'stickAt'          => 'top',
+				'offset'           => '0px',
+				'keepInsideParent' => false,
+			),
+			$attrs['stickyContainer']
+		);
 	}
 
 	/**
@@ -284,7 +292,7 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		$this->assertTrue( $result['success'] );
 
 		$attrs = $this->get_block_attrs( $post_id );
-		$this->assertArrayNotHasKey( 'UAGPosition', $attrs );
+		$this->assertArrayNotHasKey( 'stickyContainer', $attrs );
 	}
 
 	/**
@@ -779,7 +787,7 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test ApplySticky overwrites existing UAGPosition value.
+	 * Test ApplySticky enables the sticky container on a block with a legacy position.
 	 */
 	public function test_apply_sticky_overwrites_existing_position() {
 		$content = '<!-- wp:spectra/container {"block_id":"test","UAGPosition":"fixed"} --><div></div><!-- /wp:spectra/container -->';
@@ -798,7 +806,15 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$attrs = $this->get_block_attrs( $post_id );
-		$this->assertSame( 'sticky', $attrs['UAGPosition'] );
+		$this->assertSame(
+			array(
+				'stickyEnabled'    => true,
+				'stickAt'          => 'top',
+				'offset'           => '0px',
+				'keepInsideParent' => false,
+			),
+			$attrs['stickyContainer']
+		);
 	}
 
 	// =========================================================================
@@ -1280,7 +1296,7 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$attrs = $this->get_block_attrs( $post_id );
-		$this->assertSame( 'sticky', $attrs['UAGPosition'] );
+		$this->assertTrue( $attrs['stickyContainer']['stickyEnabled'] );
 
 		RemoveSticky::instance()->execute(
 			array(
@@ -1290,7 +1306,7 @@ class ExtensionAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$attrs = $this->get_block_attrs( $post_id );
-		$this->assertArrayNotHasKey( 'UAGPosition', $attrs );
+		$this->assertArrayNotHasKey( 'stickyContainer', $attrs );
 	}
 
 	/**

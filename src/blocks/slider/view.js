@@ -164,6 +164,9 @@ const initSlider = ( sliderId ) => {
 		spaceBetween: 'number' === typeof( params?.spaceBetween ) ? params.spaceBetween : 30,
 		loop: params.loop === true,
 		watchOverflow: true,
+		// Populate swiper.visibleSlides / .swiper-slide-visible so focus
+		// management can expose every on-screen slide, not just the active one.
+		watchSlidesProgress: true,
 		allowTouchMove: params.allowTouchMove !== false,
 		keyboard: {
 			enabled: true,
@@ -218,6 +221,9 @@ const initSlider = ( sliderId ) => {
 			init( swiper ) {
 				setTimeout( () => {
 					swiper.update();
+					// Set the initial focus state so visible slides are exposed
+					// before any navigation happens.
+					manageSlideFocus( swiper );
 					// Initialize AOS for the initial slide.
 					if ( typeof window.AOS !== 'undefined' ) {
 						window.AOS.init();
@@ -285,6 +291,14 @@ const initSlider = ( sliderId ) => {
 				manageSlideFocus( swiper );
 			},
 			slideChange( swiper ) {
+				manageSlideFocus( swiper );
+			},
+			// Breakpoints and resizes change how many slides are visible, so
+			// re-evaluate which slides should be exposed.
+			breakpoint( swiper ) {
+				manageSlideFocus( swiper );
+			},
+			resize( swiper ) {
 				manageSlideFocus( swiper );
 			},
 		},
@@ -368,16 +382,26 @@ function setupAccessibilityFeatures( swiper ) {
 function manageSlideFocus( swiper ) {
 	const slides = swiper.slides;
 	const activeIndex = swiper.activeIndex;
-	
+	const visibleSlides = swiper.visibleSlides || [];
+
 	slides.forEach( ( slide, index ) => {
 		const isActive = index === activeIndex;
+		// A slide is exposed when it is on screen, not only when it is active.
+		// Requires watchSlidesProgress in the Swiper config.
+		const isVisible = isActive || visibleSlides.includes( slide );
                const focusableElements = slide.querySelectorAll( FOCUSABLE_SELECTOR );
-		
+
+		// aria-current marks the active slide only.
 		if ( isActive ) {
-			// Active slide: make content focusable and mark as current.
 			slide.setAttribute( 'aria-current', 'true' );
+		} else {
+			slide.removeAttribute( 'aria-current' );
+		}
+
+		if ( isVisible ) {
+			// Visible slides: readable by screen readers and keyboard-reachable.
 			slide.removeAttribute( 'aria-hidden' );
-			
+
 			// Restore original tabindex values for focusable elements.
 			focusableElements.forEach( el => {
 				const originalTabindex = el.getAttribute( 'data-original-tabindex' );
@@ -391,14 +415,16 @@ function manageSlideFocus( swiper ) {
 				}
 			} );
 		} else {
-			// Inactive slides: hide from screen readers and make content non-focusable.
-			slide.removeAttribute( 'aria-current' );
+			// Off-screen slides: hide from screen readers and make content non-focusable.
 			slide.setAttribute( 'aria-hidden', 'true' );
-			
-			// Store original tabindex and make elements non-focusable.
+
+			// Store original tabindex and make elements non-focusable. Guard against
+			// clobbering a previously stored value when a slide stays hidden across calls.
 			focusableElements.forEach( el => {
-				const currentTabindex = el.getAttribute( 'tabindex' );
-				el.setAttribute( 'data-original-tabindex', currentTabindex || 'null' );
+				if ( el.getAttribute( 'data-original-tabindex' ) === null ) {
+					const currentTabindex = el.getAttribute( 'tabindex' );
+					el.setAttribute( 'data-original-tabindex', currentTabindex || 'null' );
+				}
 				el.setAttribute( 'tabindex', '-1' );
 			} );
 		}

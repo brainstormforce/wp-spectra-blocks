@@ -18,7 +18,7 @@ use WP_UnitTestCase;
 /**
  * JitCompilerTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class JitCompilerTest extends WP_UnitTestCase {
 

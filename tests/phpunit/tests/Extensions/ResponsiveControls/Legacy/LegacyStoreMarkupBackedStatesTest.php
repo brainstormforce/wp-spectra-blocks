@@ -36,7 +36,7 @@ use WP_UnitTestCase;
 /**
  * LegacyStoreMarkupBackedStatesTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 
@@ -47,7 +47,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	 * every breakpoint from the store, so the method deliberately does nothing
 	 * and there is no contract to assert.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function set_up() {
@@ -61,7 +61,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * Build a block array in the shape `render_block_data` passes around.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed>      $store      The `responsiveControls` store.
 	 * @param array<string, mixed>|null $style      Optional. An authored `style` attribute.
 	 * @param string                    $block_name Optional. Block name. Defaults to the core image.
@@ -83,7 +83,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * Read the `style` attribute back out of a filtered block.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $block Block data.
 	 * @return array<string, mixed> The style attribute.
 	 */
@@ -94,7 +94,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * The narrower buckets land under `dimensions`, which is what core reads.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_narrower_buckets_are_written_under_dimensions() {
@@ -120,7 +120,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	 *
 	 * The root attribute is the saved markup; rewriting it is #908.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_the_base_bucket_is_never_written() {
@@ -136,7 +136,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * An authored state wins; the store only fills gaps.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_an_authored_state_is_not_overwritten() {
@@ -155,7 +155,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * `scale` is core's object-fit control and is stored as `objectFit`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_scale_is_written_as_object_fit() {
@@ -182,7 +182,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	 * Its markup carries none of its attributes, so it is migrated on parse in
 	 * the ordinary way and has no need of this.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_a_spectra_block_is_untouched() {
@@ -202,7 +202,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	/**
 	 * A block with no legacy store is returned unchanged.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_a_block_without_a_store_is_unchanged() {
@@ -217,7 +217,7 @@ class LegacyStoreMarkupBackedStatesTest extends WP_UnitTestCase {
 	 * The filter can run again on a re-render; the second pass finds the state
 	 * already present and leaves it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_it_is_idempotent() {

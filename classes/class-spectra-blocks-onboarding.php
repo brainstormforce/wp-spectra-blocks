@@ -299,11 +299,17 @@ if ( ! class_exists( 'Spectra_Blocks_Onboarding' ) ) {
 				$user_info = isset( $completion_data['user_info'] ) && is_array( $completion_data['user_info'] ) ? $completion_data['user_info'] : array();
 				$optin     = ! empty( $user_info['optIn'] );
 
-				update_site_option( 'spectra_blocks_usage_optin', $optin ? 'yes' : 'no' );
-				// Mirror to the dashboard analytics setting so both consent sources stay coherent.
-				update_option( 'spectra_blocks_analytics_optin', $optin ? 'yes' : 'no' );
-
+				/*
+				 * Only record consent on an explicit opt-in. When the user does not
+				 * opt in, leave the options unset so the bsf-analytics tri-state is
+				 * preserved ( false = not-yet-asked ) and its usage-tracking notice
+				 * keeps re-prompting. Writing 'no' here would permanently suppress
+				 * that notice and is the main reason opt-in reach stayed low.
+				 */
 				if ( $optin ) {
+					update_site_option( 'spectra_blocks_usage_optin', 'yes' );
+					// Mirror to the dashboard analytics setting so both consent sources stay coherent.
+					update_option( 'spectra_blocks_analytics_optin', 'yes' );
 					self::generate_lead( $user_info );
 				}
 			}

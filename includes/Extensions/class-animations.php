@@ -160,16 +160,11 @@ class Animations {
 			return;
 		}
 
-		if ( ! wp_script_is( 'spectra-blocks-aos-js', 'registered' ) ) {
-			wp_register_script( 'spectra-blocks-aos-js', SPECTRA_BLOCKS_URL . 'assets/js/aos.min.js', array(), SPECTRA_BLOCKS_VER, true );
-		}
-
-		if ( ! wp_style_is( 'spectra-blocks-aos-css', 'registered' ) ) {
-			wp_register_style( 'spectra-blocks-aos-css', SPECTRA_BLOCKS_URL . 'assets/css/aos.min.css', array(), SPECTRA_BLOCKS_VER );
-		}
-
-		wp_enqueue_style( 'spectra-blocks-aos-css' );
-		wp_enqueue_script( 'spectra-blocks-aos-js' );
+		// Frontend AOS assets load conditionally in wp_footer via
+		// handle_frontend_assets(), gated on $this->needs_assets — set by the
+		// render_block filter only when a block on the page actually animates.
+		// Enqueuing here shipped the ~22 KB AOS library on every page regardless
+		// of whether anything on it used an animation.
 	}
 
 	/**
@@ -278,6 +273,16 @@ class Animations {
 	 * @return void
 	 */
 	private function register_animation_assets() {
+		// Register the AOS library (script + styles) that the init script and
+		// the conditional frontend enqueue both depend on.
+		if ( ! wp_script_is( 'spectra-blocks-aos-js', 'registered' ) ) {
+			wp_register_script( 'spectra-blocks-aos-js', SPECTRA_BLOCKS_URL . 'assets/js/aos.min.js', array(), SPECTRA_BLOCKS_VER, true );
+		}
+
+		if ( ! wp_style_is( 'spectra-blocks-aos-css', 'registered' ) ) {
+			wp_register_style( 'spectra-blocks-aos-css', SPECTRA_BLOCKS_URL . 'assets/css/aos.min.css', array(), SPECTRA_BLOCKS_VER );
+		}
+
 		// Register AOS init JS.
 		wp_register_script(
 			'spectra-aos-init',

@@ -301,10 +301,13 @@ class SearchAbilitiesTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Test SearchPostsByBlock excludes draft posts.
+	 * Test SearchPostsByBlock includes draft posts.
+	 *
+	 * Editors need to locate blocks in unpublished drafts, so the search covers
+	 * publish, draft, pending, private and future statuses.
 	 */
-	public function test_search_posts_by_block_excludes_drafts() {
-		self::factory()->post->create(
+	public function test_search_posts_by_block_includes_drafts() {
+		$draft_id = self::factory()->post->create(
 			array(
 				'post_content' => '<!-- wp:spectra/counter {"block_id":"draft"} --><div></div><!-- /wp:spectra/counter -->',
 				'post_status'  => 'draft',
@@ -315,14 +318,10 @@ class SearchAbilitiesTest extends WP_UnitTestCase {
 			array( 'block_name' => 'counter' )
 		);
 
-		// Draft posts should not appear in results; verify all returned posts are published.
 		$this->assertIsArray( $result['posts'] );
-		foreach ( $result['posts'] as $post ) {
-			$actual_status = get_post_status( $post['id'] );
-			$this->assertSame( 'publish', $actual_status );
-		}
-		// No published counter posts were created, so total should be 0.
-		$this->assertSame( 0, $result['total'] );
+		$this->assertSame( 1, $result['total'] );
+		$found_ids = wp_list_pluck( $result['posts'], 'id' );
+		$this->assertContains( $draft_id, $found_ids );
 	}
 
 	// =========================================================================

@@ -310,7 +310,7 @@ class IntegrationAbilitiesTest extends WP_UnitTestCase {
 		$attrs = $read_result['blocks'][0]['attributes'];
 		$this->assertSame( 'fadeIn', $attrs['UAGAnimationType'] );
 		$this->assertSame( 1000, $attrs['UAGAnimationTime'] );
-		$this->assertSame( 'sticky', $attrs['UAGPosition'] );
+		$this->assertTrue( $attrs['stickyContainer']['stickyEnabled'] );
 		$this->assertSame( 50, $attrs['spectraZIndex'] );
 		$this->assertTrue( $attrs['UAGHideMob'] );
 		$this->assertTrue( $attrs['UAGResponsiveConditions'] );
@@ -367,7 +367,7 @@ class IntegrationAbilitiesTest extends WP_UnitTestCase {
 
 		$attrs = $read_result['blocks'][0]['attributes'];
 		$this->assertArrayNotHasKey( 'UAGAnimationType', $attrs );
-		$this->assertSame( 'sticky', $attrs['UAGPosition'] );
+		$this->assertTrue( $attrs['stickyContainer']['stickyEnabled'] );
 		$this->assertSame( 10, $attrs['spectraZIndex'] );
 	}
 

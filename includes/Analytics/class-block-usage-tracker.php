@@ -28,6 +28,15 @@ class BlockUsageTracker {
 	 */
 	const ANALYTICS_KEY = 'spectra_blocks_block_analytics';
 
+	/**
+	 * Minimum number of Spectra-built pages for a site to qualify as "super".
+	 *
+	 * Spectra Blocks is a selective page builder — users build a handful of
+	 * high-value layout pages rather than their whole site — so "super" is a
+	 * flat breadth count, not a share of total content.
+	 */
+	const SUPER_SITE_PAGE_THRESHOLD = 10;
+
 
 	/**
 	 * Initialize the analytics tracker.
@@ -477,7 +486,18 @@ class BlockUsageTracker {
 	}
 
 	/**
-	 * Get site activity level based on Spectra block edits in the last 180 days.
+	 * Get site activity level based on Spectra block usage.
+	 *
+	 * Classification:
+	 *
+	 * INACTIVE           — no post has ever used Spectra blocks.
+	 * ACTIVE_SITE        — at least 1 Spectra page edited in the last 180 days.
+	 * SUPER_SITE         — at least SUPER_SITE_PAGE_THRESHOLD Spectra pages edited in the last 180 days.
+	 * DORMANT_SITE       — used Spectra in the past, but nothing in the last 180 days.
+	 * SUPER_DORMANT_SITE — met the super page count in the past, but nothing in the last 180 days.
+	 *
+	 * Spectra Blocks is a selective page builder, so "super" is a flat count of
+	 * pages built with Spectra — not a share of total site content.
 	 *
 	 * @since 1.0.0
 	 *
@@ -490,7 +510,8 @@ class BlockUsageTracker {
 		$analytics_data = get_option( self::ANALYTICS_KEY, array() );
 		$usage_data     = $analytics_data['usage_data'] ?? array();
 
-		$active_pages_count = 0;
+		$total_pages  = 0; // Pages that currently use Spectra blocks (lifetime).
+		$recent_pages = 0; // Subset edited within the last 180 days.
 
 		foreach ( $usage_data as $post_id => $post_data ) {
 			if ( ! empty( $post_data['trashed'] ) ) {
@@ -502,26 +523,47 @@ class BlockUsageTracker {
 				continue;
 			}
 
-			$updated_time = $post_data['updated'] ?? 0;
+			++$total_pages;
 
+			$updated_time = $post_data['updated'] ?? 0;
 			if ( $updated_time >= $cutoff_time ) {
-				++$active_pages_count;
+				++$recent_pages;
 			}
 		}
 
-		$site_type = 'inactive';
-		if ( $active_pages_count >= 15 ) {
-			$site_type = 'super_site';
-		} elseif ( $active_pages_count >= 1 ) {
-			$site_type = 'active_site';
-		}
+		$site_type = $this->classify_site_type( $total_pages, $recent_pages );
 
 		return array(
-			'active_pages_180d' => $active_pages_count,
-			'site_type'         => $site_type,
-			'is_active_site'    => $active_pages_count >= 1,
-			'is_super_site'     => $active_pages_count >= 15,
+			'active_pages_180d'  => $recent_pages,
+			'active_pages_total' => $total_pages,
+			'site_type'          => $site_type,
+			'is_active_site'     => in_array( $site_type, array( 'active_site', 'super_site' ), true ),
+			'is_super_site'      => 'super_site' === $site_type,
+			'is_dormant_site'    => in_array( $site_type, array( 'dormant_site', 'super_dormant_site' ), true ),
 		);
+	}
+
+	/**
+	 * Classify the site type from lifetime and recent Spectra page counts.
+	 *
+	 * @since 1.0.14
+	 *
+	 * @param int $total_pages  Pages that currently use Spectra blocks (lifetime).
+	 * @param int $recent_pages Pages edited with Spectra in the last 180 days.
+	 * @return string One of: inactive, active_site, super_site, dormant_site, super_dormant_site.
+	 */
+	private function classify_site_type( $total_pages, $recent_pages ) {
+		if ( 0 === $total_pages ) {
+			return 'inactive';
+		}
+
+		// No recent edits — dormant based on lifetime page count.
+		if ( 0 === $recent_pages ) {
+			return $total_pages >= self::SUPER_SITE_PAGE_THRESHOLD ? 'super_dormant_site' : 'dormant_site';
+		}
+
+		// Recent edits — active or super based on recent page count.
+		return $recent_pages >= self::SUPER_SITE_PAGE_THRESHOLD ? 'super_site' : 'active_site';
 	}
 
 	/**
@@ -584,6 +626,7 @@ class BlockUsageTracker {
 					'total_blocks_available'  => $analytics_data['total_blocks_available'],
 					'adoption_rate_percent'   => $analytics_data['adoption_rate_percent'],
 					'active_pages_180d'       => $site_activity['active_pages_180d'],
+					'active_pages_total'      => $site_activity['active_pages_total'],
 				)
 			),
 			'boolean_values'        => array(
@@ -591,6 +634,7 @@ class BlockUsageTracker {
 				'high_adoption_rate'   => $analytics_data['adoption_rate_percent'] > 50,
 				'is_active_site'       => $site_activity['is_active_site'],
 				'is_super_site'        => $site_activity['is_super_site'],
+				'is_dormant_site'      => $site_activity['is_dormant_site'],
 			),
 			'top_used_blocks'       => $analytics_data['top_blocks'],
 			'most_popular_block'    => $analytics_data['most_popular_block'],
@@ -599,7 +643,7 @@ class BlockUsageTracker {
 		);
 
 		// Merge numeric_values by adding numbers if they already exist.
-		if ( isset( $spectra_3_stats['numeric_values'], $stats['plugin_data']['spectra_blocks']['numeric_values'] )
+		if ( isset( $stats['plugin_data']['spectra_blocks']['numeric_values'] )
 			&& is_array( $spectra_3_stats['numeric_values'] )
 			&& is_array( $stats['plugin_data']['spectra_blocks']['numeric_values'] ) ) {
 

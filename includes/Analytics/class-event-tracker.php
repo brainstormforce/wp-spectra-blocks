@@ -34,6 +34,17 @@ class EventTracker {
 	use Singleton;
 
 	/**
+	 * Definition version for the site_classification snapshot.
+	 *
+	 * Bump when the active/super thresholds or states change so the series
+	 * segments instead of silently mutating. Mirrors the classifier in
+	 * BlockUsageTracker::get_site_activity_level().
+	 *
+	 * @var int
+	 */
+	const SITE_CLASSIFICATION_DEFINITION_VERSION = 1;
+
+	/**
 	 * Previous plugin version captured before an update.
 	 *
 	 * @var string
@@ -86,6 +97,12 @@ class EventTracker {
 
 		// Flush queued milestone events into the analytics payload so they are transmitted.
 		add_filter( 'bsf_core_stats', array( $this, 'add_events_stats' ), 40 );
+
+		// Append the recurring site classification snapshot after the event flush (40).
+		add_filter( 'bsf_core_stats', array( $this, 'append_site_classification_snapshot' ), 45 );
+
+		// Append the recurring per-block usage snapshot after the event flush (40).
+		add_filter( 'bsf_core_stats', array( $this, 'append_block_usage_snapshot' ), 46 );
 	}
 
 	/**
@@ -110,6 +127,119 @@ class EventTracker {
 
 		$plugin_data = ( isset( $stats['plugin_data'] ) && is_array( $stats['plugin_data'] ) ) ? $stats['plugin_data'] : array();
 		$bucket      = ( isset( $plugin_data['spectra_blocks'] ) && is_array( $plugin_data['spectra_blocks'] ) ) ? $plugin_data['spectra_blocks'] : array();
+
+		$bucket['events_record']       = $events;
+		$plugin_data['spectra_blocks'] = $bucket;
+		$stats['plugin_data']          = $plugin_data;
+
+		return $stats;
+	}
+
+	/**
+	 * Append a point-in-time site classification snapshot to the analytics payload.
+	 *
+	 * The classification (active / super / dormant, etc.) is a site-level state,
+	 * so it is emitted as a recurring `site_classification` event that rides the
+	 * existing events channel — ingestion already persists event_name/event_value/
+	 * properties, so no server-side schema change is required. The dashboard reads
+	 * the latest value per domain via argMax( event_value, date ).
+	 *
+	 * Runs at priority 45 so it appends AFTER add_events_stats() (40) has populated
+	 * events_record from the pending queue. Not sent via Events::track() because
+	 * that dedupes one-shot events by name, whereas a snapshot must re-emit each
+	 * send cycle. A 24h transient prevents duplicate appends within a single send.
+	 *
+	 * @since 1.0.14
+	 * @param array<string, mixed> $stats Aggregated stats passed through the bsf_core_stats filter.
+	 * @return array<string, mixed>
+	 */
+	public function append_site_classification_snapshot( $stats ) {
+		if ( 'yes' !== get_site_option( 'spectra_blocks_usage_optin', 'no' ) ) {
+			return $stats;
+		}
+
+		if ( false !== get_transient( 'spectra_blocks_site_classification_sent' ) ) {
+			return $stats;
+		}
+		set_transient( 'spectra_blocks_site_classification_sent', 1, DAY_IN_SECONDS );
+
+		$activity = BlockUsageTracker::instance()->get_site_activity_level();
+
+		$plugin_data = ( isset( $stats['plugin_data'] ) && is_array( $stats['plugin_data'] ) ) ? $stats['plugin_data'] : array();
+		$bucket      = ( isset( $plugin_data['spectra_blocks'] ) && is_array( $plugin_data['spectra_blocks'] ) ) ? $plugin_data['spectra_blocks'] : array();
+		$events      = ( isset( $bucket['events_record'] ) && is_array( $bucket['events_record'] ) ) ? $bucket['events_record'] : array();
+
+		$events[] = array(
+			'event_name'  => 'site_classification',
+			'event_value' => (string) $activity['site_type'],
+			'properties'  => array(
+				'is_active_site'     => (int) $activity['is_active_site'],
+				'is_super_site'      => (int) $activity['is_super_site'],
+				'is_dormant_site'    => (int) $activity['is_dormant_site'],
+				'active_pages_180d'  => (int) $activity['active_pages_180d'],
+				'active_pages_total' => (int) $activity['active_pages_total'],
+				'definition_version' => self::SITE_CLASSIFICATION_DEFINITION_VERSION,
+			),
+			'date'        => wp_date( 'Y-m-d H:i:s' ),
+		);
+
+		$bucket['events_record']       = $events;
+		$plugin_data['spectra_blocks'] = $bucket;
+		$stats['plugin_data']          = $plugin_data;
+
+		return $stats;
+	}
+
+	/**
+	 * Append a per-block usage snapshot to the analytics payload.
+	 *
+	 * Emits one `block_usage_snapshot` event whose properties map each in-use
+	 * Spectra block to its instance count (e.g. `spectra/container` => 12),
+	 * riding the existing events channel — ingestion already persists
+	 * event_name/event_value/properties to `spectra_blocks_events`, so no
+	 * server-side schema change is required. The dashboard ranks most/least used
+	 * blocks from the latest snapshot per domain (argMax by date, then
+	 * arrayJoin the properties map).
+	 *
+	 * Runs at priority 46 (after add_events_stats() at 40). Not sent via
+	 * Events::track() (which dedupes one-shot events by name and sanitises
+	 * property keys — that would mangle the `namespace/block` slug). Opt-in
+	 * gated; a 24h transient prevents duplicate appends within a single send.
+	 *
+	 * @since 1.0.14
+	 * @param array<string, mixed> $stats Aggregated stats passed through the bsf_core_stats filter.
+	 * @return array<string, mixed>
+	 */
+	public function append_block_usage_snapshot( $stats ) {
+		if ( 'yes' !== get_site_option( 'spectra_blocks_usage_optin', 'no' ) ) {
+			return $stats;
+		}
+
+		if ( false !== get_transient( 'spectra_blocks_block_usage_sent' ) ) {
+			return $stats;
+		}
+		set_transient( 'spectra_blocks_block_usage_sent', 1, DAY_IN_SECONDS );
+
+		$counts = IncrementalBlockTracker::instance()->get_block_usage_counts();
+		if ( empty( $counts ) ) {
+			return $stats; // No Spectra blocks in use — nothing to report.
+		}
+
+		$properties = array();
+		foreach ( $counts as $block => $count ) {
+			$properties[ $block ] = (int) $count;
+		}
+
+		$plugin_data = ( isset( $stats['plugin_data'] ) && is_array( $stats['plugin_data'] ) ) ? $stats['plugin_data'] : array();
+		$bucket      = ( isset( $plugin_data['spectra_blocks'] ) && is_array( $plugin_data['spectra_blocks'] ) ) ? $plugin_data['spectra_blocks'] : array();
+		$events      = ( isset( $bucket['events_record'] ) && is_array( $bucket['events_record'] ) ) ? $bucket['events_record'] : array();
+
+		$events[] = array(
+			'event_name'  => 'block_usage_snapshot',
+			'event_value' => (string) count( $properties ), // Distinct blocks in use.
+			'properties'  => $properties,
+			'date'        => wp_date( 'Y-m-d H:i:s' ),
+		);
 
 		$bucket['events_record']       = $events;
 		$plugin_data['spectra_blocks'] = $bucket;

@@ -23,14 +23,14 @@ use WP_UnitTestCase;
 /**
  * ContainerOverlayPerBandTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ContainerOverlayPerBandTest extends WP_UnitTestCase {
 
 	/**
 	 * Render a container and return its own `::after` rules per band.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $style The `style` attribute.
 	 * @return array{base: array<int, string>, tablet: array<int, string>, mobile: array<int, string>} Rule bodies.
 	 */
@@ -71,7 +71,7 @@ class ContainerOverlayPerBandTest extends WP_UnitTestCase {
 	 *
 	 * The report's Bug 9 case. Before, no band painted the overlay at all.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_video_on_one_band_does_not_kill_the_overlay_elsewhere() {
@@ -102,7 +102,7 @@ class ContainerOverlayPerBandTest extends WP_UnitTestCase {
 	/**
 	 * With no overlay anywhere nothing extra is emitted.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_no_overlay_means_no_overlay_rules() {
@@ -125,7 +125,7 @@ class ContainerOverlayPerBandTest extends WP_UnitTestCase {
 	 * An overlay set only on Tablet is painted by every non-video band; the
 	 * per-band variables decide where it is visible.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_overlay_on_one_band_is_carried_by_the_variables() {

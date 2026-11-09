@@ -34,14 +34,14 @@ use WP_UnitTestCase;
 /**
  * LegacyStoreVocabularyTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 
 	/**
 	 * Build a block array in the shape `render_block_data` passes around.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $store      The `responsiveControls` store.
 	 * @param string               $block_name Optional. Block name. Defaults to the container.
 	 * @return array<string, mixed> Block data.
@@ -59,7 +59,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * Read the store back out of a filtered block.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $block Block data.
 	 * @return array<string, mixed> The store.
 	 */
@@ -70,7 +70,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * The three legacy keys map onto core's vocabulary.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_legacy_keys_are_rewritten_to_core_vocabulary() {
@@ -100,7 +100,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	 *
 	 * It is the one the current editor wrote, so it is the newer intent.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_canonical_value_wins_over_legacy_for_the_same_breakpoint() {
@@ -126,7 +126,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	 * Tablet is copied under mobile so a tablet-only value still applies on
 	 * phones, as it did before the move to core's per-viewport model.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_tablet_cascades_into_mobile_for_migrated_content() {
@@ -149,7 +149,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * An explicit mobile value still beats the cascaded tablet one.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_explicit_mobile_beats_the_cascaded_tablet_value() {
@@ -176,7 +176,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	 * base, and baking tablet into mobile here would invent a value the author
 	 * never set.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_core_shaped_content_is_not_cascaded() {
@@ -197,7 +197,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * Blocks belonging to other plugins are never touched.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_foreign_blocks_are_left_untouched() {
@@ -215,7 +215,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * Pro blocks ARE in scope — they share the store.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_pro_blocks_are_in_scope() {
@@ -233,7 +233,7 @@ class LegacyStoreVocabularyTest extends WP_UnitTestCase {
 	/**
 	 * A block with no store is returned unchanged.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_a_block_without_a_store_is_untouched() {

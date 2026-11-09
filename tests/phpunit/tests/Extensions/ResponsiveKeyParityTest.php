@@ -46,14 +46,14 @@ use WP_UnitTestCase;
 /**
  * ResponsiveKeyParityTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ResponsiveKeyParityTest extends WP_UnitTestCase {
 
 	/**
 	 * The editor's per-block responsive keys, read from the JS source.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return array<string, array<string>> Block name to attribute names.
 	 */
 	private function editor_keys(): array {
@@ -91,7 +91,7 @@ class ResponsiveKeyParityTest extends WP_UnitTestCase {
 	 * A regex that quietly stops matching would turn every assertion below into
 	 * a no-op, so the shape of the result is checked against known landmarks.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_the_editor_key_map_parses_to_a_plausible_shape() {
@@ -110,7 +110,7 @@ class ResponsiveKeyParityTest extends WP_UnitTestCase {
 	/**
 	 * No attribute may be stored per device without a painter behind it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_every_editor_key_has_a_renderer_painting_it() {
@@ -137,7 +137,7 @@ class ResponsiveKeyParityTest extends WP_UnitTestCase {
 	/**
 	 * No painter may band an attribute the editor cannot author per device.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_no_painter_bands_an_attribute_the_editor_cannot_author() {
@@ -167,7 +167,7 @@ class ResponsiveKeyParityTest extends WP_UnitTestCase {
 	 * free plugin's own blocks carry on working — a failure that is invisible
 	 * from inside this repository.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_third_party_definitions_can_be_added_through_the_filter() {
@@ -198,7 +198,7 @@ class ResponsiveKeyParityTest extends WP_UnitTestCase {
 	/**
 	 * An unknown block resolves to nothing rather than erroring.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_an_unknown_block_has_no_responsive_attributes() {

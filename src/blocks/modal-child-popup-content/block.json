@@ -66,11 +66,10 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
+	"editorStyle": [ "file:./index.css", "spectra-blocks-components-block-appender" ],
 	"style": [
 		"file:./style-index.css",
-		"spectra-blocks-common",
-		"spectra-blocks-components-block-appender"
+		"spectra-blocks-common"
 	],
 	"usesContext": [
 		"spectra/modal/modalPosition",

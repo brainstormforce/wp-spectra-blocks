@@ -27,14 +27,14 @@ use WP_UnitTestCase;
 /**
  * AssetLoaderLayoutStripTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 
 	/**
 	 * A rendered container carrying the classes core's layout support adds.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var string
 	 */
 	const CONTAINER_HTML = '<div class="wp-block-spectra-container gs-hero is-layout-flow wp-block-spectra-container-is-layout-flow wp-container-core-group-is-layout-1"><p>x</p></div>';
@@ -42,7 +42,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	/**
 	 * Put a page on the singular frontend query the filter gates on.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @param bool $imported Whether to set the importer marker.
 	 * @return int Post ID.
@@ -60,7 +60,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	/**
 	 * Run the filter the way `render_block_spectra/container` would.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @param string $layout_type Value for `attrs.layout.type` ('' = attribute absent).
 	 * @return string Filtered markup.
@@ -84,7 +84,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * The importer emits every container with `layout: {type:'default'}`, so
 	 * flow is exactly the imported surface the blockGap injection rides.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -112,7 +112,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * A flex/grid/constrained container keeps its layout classes — they carry
 	 * its display, gap and direction (or its content-width and alignments).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -135,7 +135,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * them deletes its layout. Reading absent as flow hit every container that
 	 * never wrote the attribute.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -161,7 +161,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * The strip must be reachable through the hook with the block payload —
 	 * the whole gate is inert without it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -184,7 +184,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	/**
 	 * A page the importer never wrote is untouched whatever its layout.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -202,7 +202,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * WITH it. Without this, core's flow blockGap re-margined the section
 	 * (measured 2026-08-21: 17.81px on a flex button row's second button).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -226,7 +226,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * container would delete its layout outright — the block takes display and
 	 * gap from core layout support, so a row would collapse to a stack.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -240,7 +240,7 @@ class AssetLoaderLayoutStripTest extends WP_UnitTestCase {
 	 * Whitespace-delimited token match: a longer class that merely starts with the
 	 * marker's text is NOT the marker.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */

@@ -18,7 +18,7 @@ use WP_UnitTestCase;
 /**
  * GenCssOrphanStripperTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class GenCssOrphanStripperTest extends WP_UnitTestCase {
 

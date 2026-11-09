@@ -340,9 +340,9 @@ class LayoutAbilitiesTest extends WP_UnitTestCase {
 		);
 
 		$this->assertIsArray( $result );
-		$this->assertStringContainsString( '<!-- wp:core/paragraph -->', $result['block_markup'] );
+		$this->assertStringContainsString( '<!-- wp:paragraph -->', $result['block_markup'] );
 		$this->assertStringContainsString( '<p>Hello World</p>', $result['block_markup'] );
-		$this->assertStringContainsString( '<!-- /wp:core/paragraph -->', $result['block_markup'] );
+		$this->assertStringContainsString( '<!-- /wp:paragraph -->', $result['block_markup'] );
 	}
 
 	/**
@@ -379,7 +379,7 @@ class LayoutAbilitiesTest extends WP_UnitTestCase {
 		$this->assertIsArray( $result );
 		$markup = $result['block_markup'];
 		$this->assertStringContainsString( '<!-- wp:spectra/container', $markup );
-		$this->assertStringContainsString( '<!-- wp:core/paragraph -->', $markup );
+		$this->assertStringContainsString( '<!-- wp:paragraph -->', $markup );
 		$this->assertStringContainsString( 'Nested paragraph', $markup );
 		$this->assertStringContainsString( '<!-- /wp:spectra/container -->', $markup );
 	}

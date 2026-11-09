@@ -23,7 +23,7 @@ use WP_UnitTestCase;
 /**
  * PagePaletteTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class PagePaletteTest extends WP_UnitTestCase {
 

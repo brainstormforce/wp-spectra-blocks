@@ -33,7 +33,7 @@ use WP_UnitTestCase;
 /**
  * VariantParityTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class VariantParityTest extends WP_UnitTestCase {
 

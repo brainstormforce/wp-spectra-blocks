@@ -23,14 +23,14 @@ use WP_UnitTestCase;
 /**
  * HtmlSanitizerDataUriTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 
 	/**
 	 * More than ten, to cover the placeholder prefix-collision regression.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var int
 	 */
 	const URI_COUNT = 12;
@@ -38,7 +38,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	/**
 	 * Every one of a dozen data URIs comes back byte-identical.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_all_data_uris_survive_beyond_ten() {
@@ -65,7 +65,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	/**
 	 * `poster` is shielded too, and non-image mediatypes still lose the scheme.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_poster_is_shielded_but_data_text_html_is_not() {
@@ -86,7 +86,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	 * safe. `<iframe>`/`<embed>`/`<object>` are a document context and run the SVG's
 	 * `<script>` — and `iframe`/`embed` are allowlisted in the sanitizer itself.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @dataProvider provide_script_executing_tags
 	 *
 	 * @param string $markup Markup whose `data:` URI must not survive.
@@ -102,7 +102,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	/**
 	 * Markup for {@see self::test_script_executing_tags_are_not_shielded()}.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return array<string,array<int,string>>
 	 */
 	public function provide_script_executing_tags() {
@@ -128,7 +128,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	 * key instead would make this test unfailable: it would stay green even after
 	 * someone removed the salt, which is precisely the regression it guards.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_forged_placeholder_in_href_is_not_restored() {
@@ -151,7 +151,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	 * case-sensitive fast-path guard made the outcome depend on whether some
 	 * unrelated image in the same string happened to be lowercase.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_uppercase_scheme_is_shielded_on_its_own() {
@@ -169,7 +169,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	 * literal `<script>` sequence it never emitted before — which matters for the
 	 * `preg`-based minifiers and cache rewriters this output is fed to.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_angle_brackets_in_a_data_uri_are_not_re_emitted() {
@@ -186,7 +186,7 @@ class HtmlSanitizerDataUriTest extends WP_UnitTestCase {
 	/**
 	 * The shield must not widen kses anywhere else.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_classic_vectors_are_still_stripped() {

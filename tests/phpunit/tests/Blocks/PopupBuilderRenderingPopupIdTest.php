@@ -27,21 +27,21 @@ use WP_UnitTestCase;
 /**
  * PopupBuilderRenderingPopupIdTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class PopupBuilderRenderingPopupIdTest extends WP_UnitTestCase {
 
 	/**
 	 * Popup content with NO `popupId` attribute — the case that fell back to the page.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 */
 	private const CONTENT = '<!-- wp:spectra/popup-builder {"variationSelected":true,"variantType":"popup","spectraId":"popup-id-test"} --><!-- wp:paragraph --><p>Popup</p><!-- /wp:paragraph --><!-- /wp:spectra/popup-builder -->';
 
 	/**
 	 * Create a published, enabled popup carrying the fixture content.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return int Popup post ID.
 	 */
 	private function create_popup(): int {
@@ -61,7 +61,7 @@ class PopupBuilderRenderingPopupIdTest extends WP_UnitTestCase {
 	/**
 	 * The shortcode path renders the popup under its own id, not the page's.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_shortcode_render_uses_the_popup_id() {
@@ -80,7 +80,7 @@ class PopupBuilderRenderingPopupIdTest extends WP_UnitTestCase {
 	/**
 	 * The display-rule path renders the popup under its own id, not the page's.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_display_rule_render_uses_the_popup_id() {
@@ -105,7 +105,7 @@ class PopupBuilderRenderingPopupIdTest extends WP_UnitTestCase {
 	/**
 	 * The published id is scoped to the render — nothing leaks afterwards.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_rendering_popup_id_does_not_leak() {
@@ -119,7 +119,7 @@ class PopupBuilderRenderingPopupIdTest extends WP_UnitTestCase {
 	/**
 	 * An explicit `popupId` attribute still wins over the pipeline's id.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_explicit_attribute_still_wins() {

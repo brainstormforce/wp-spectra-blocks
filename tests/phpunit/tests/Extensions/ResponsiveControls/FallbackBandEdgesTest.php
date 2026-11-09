@@ -30,14 +30,14 @@ use WP_UnitTestCase;
 /**
  * FallbackBandEdgesTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class FallbackBandEdgesTest extends WP_UnitTestCase {
 
 	/**
 	 * Run the fallback for a viewport value.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param mixed $viewport Raw `settings.viewport` value.
 	 * @return array<string, string> Bands keyed by state.
 	 */
@@ -51,7 +51,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * Read the `min-width` / `max-width` pixel numbers out of a band.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param string $band A media condition.
 	 * @return array{min: float|null, max: float|null} The edges in px.
 	 */
@@ -68,7 +68,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * With no theme viewport the three default bands are disjoint.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_default_bands_do_not_share_an_edge() {
@@ -85,7 +85,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	 * 480 and 782 are the widths that used to match two bands; 481 and 783 are
 	 * the first widths of the next band up. Every one must match exactly one.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_each_breakpoint_width_matches_exactly_one_band() {
@@ -111,7 +111,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * A theme's own pixel breakpoints keep the step.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_theme_pixel_breakpoints_are_disjoint() {
@@ -130,7 +130,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * Fractional theme values are formatted without trailing zeros.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_fractional_pixel_breakpoints_format_cleanly() {
@@ -148,7 +148,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * `em` / `rem` breakpoints keep their unit; the step goes through `calc()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_relative_units_step_through_calc() {
@@ -167,7 +167,7 @@ class FallbackBandEdgesTest extends WP_UnitTestCase {
 	/**
 	 * A theme declaring a single breakpoint yields two disjoint bands.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_single_breakpoint_shapes_are_disjoint() {

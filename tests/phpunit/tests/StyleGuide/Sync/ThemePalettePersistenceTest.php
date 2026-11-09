@@ -27,7 +27,7 @@ use WP_UnitTestCase;
 /**
  * ThemePalettePersistenceTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ThemePalettePersistenceTest extends WP_UnitTestCase {
 

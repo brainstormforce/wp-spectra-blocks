@@ -20,7 +20,7 @@ use WP_UnitTestCase;
 /**
  * JitSelectorEscapeTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class JitSelectorEscapeTest extends WP_UnitTestCase {
 

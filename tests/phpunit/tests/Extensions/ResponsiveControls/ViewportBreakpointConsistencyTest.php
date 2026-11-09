@@ -27,14 +27,14 @@ use WP_UnitTestCase;
 /**
  * ViewportBreakpointConsistencyTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 
 	/**
 	 * Theme viewport injected by the current test, if any.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var array<string, string>|null
 	 */
 	private $theme_viewport = null;
@@ -42,7 +42,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * Remove the theme viewport override and its caches.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function tear_down() {
@@ -55,7 +55,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * Clear every cache between the theme.json data and `wp_get_global_settings()`.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	private function reset_global_settings_cache() {
@@ -68,7 +68,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * Filter callback: declare `settings.viewport` as if the theme had.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param \WP_Theme_JSON_Data $theme_json The theme's data.
 	 * @return \WP_Theme_JSON_Data Data with the viewport set.
 	 */
@@ -88,7 +88,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * Point the site at a theme viewport for the rest of the test.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, string> $viewport Mobile / tablet upper bounds.
 	 * @return void
 	 */
@@ -109,7 +109,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * With nothing declared, the numbers are WordPress core's defaults.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_defaults_are_core_breakpoints() {
@@ -127,7 +127,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	 * the tablet bound — otherwise a Swiper key and the CSS band it is meant
 	 * to shadow would disagree at the boundary.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_numbers_agree_with_the_media_queries() {
@@ -143,7 +143,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * A theme's own breakpoints drive the numbers too — including Spectra's old ones.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_theme_viewport_is_followed() {
@@ -163,7 +163,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	/**
 	 * A nonsensical theme viewport (tablet not above mobile) falls back sanely.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_inverted_theme_viewport_falls_back_for_tablet() {
@@ -187,7 +187,7 @@ class ViewportBreakpointConsistencyTest extends WP_UnitTestCase {
 	 * defaults instead; the controllers must take their Swiper keys from the
 	 * resolver. Either drifting back to 768 / 1024 is what this catches.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_sources_carry_no_historical_bands() {

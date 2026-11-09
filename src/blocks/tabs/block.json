@@ -91,11 +91,8 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": [
-		"file:./style-index.css",
-		"spectra-blocks-components-variation-picker"
-	],
+	"editorStyle": [ "file:./index.css", "spectra-blocks-components-variation-picker" ],
+	"style": "file:./style-index.css",
 	"viewScriptModule": "file:./view.js",
 	"providesContext": {
 		"spectra/tabs/currentTab": "currentTab",

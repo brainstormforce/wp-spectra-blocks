@@ -19,7 +19,7 @@ use WP_UnitTestCase;
 /**
  * ParityV4Test test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ParityV4Test extends WP_UnitTestCase {
 

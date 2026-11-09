@@ -19,7 +19,7 @@ use WP_UnitTestCase;
 /**
  * BlockAttributesTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class BlockAttributesTest extends WP_UnitTestCase {
 

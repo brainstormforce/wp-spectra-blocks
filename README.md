@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.1  
 **Requires PHP:** 8.1  
-**Stable tag:** 1.0.13  
+**Stable tag:** 1.0.14  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -342,6 +342,10 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 ## Changelog ##
+
+### 1.0.14 - Friday, 6th November 2026 ###
+* Improvement: Faster front-end performance — Spectra loads block styles and scripts more efficiently, so pages do less work on each load.
+* Improvement: The Slider block now exposes every visible slide to screen readers and keyboard navigation.
 
 ### 1.0.13 - Thursday, 29th October 2026 ###
 * Fix: The Container block's Wide and Full alignment now works correctly in the Site Editor.

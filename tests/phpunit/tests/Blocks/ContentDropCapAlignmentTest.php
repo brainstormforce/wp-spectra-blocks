@@ -23,14 +23,14 @@ use WP_UnitTestCase;
 /**
  * ContentDropCapAlignmentTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ContentDropCapAlignmentTest extends WP_UnitTestCase {
 
 	/**
 	 * Render a drop-cap paragraph with the given `style` and report the class.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $style The `style` attribute.
 	 * @return bool Whether `has-drop-cap` was emitted.
 	 */
@@ -51,7 +51,7 @@ class ContentDropCapAlignmentTest extends WP_UnitTestCase {
 	/**
 	 * Left / unset alignment keeps the drop cap.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_left_or_unset_alignment_keeps_the_drop_cap() {
@@ -62,7 +62,7 @@ class ContentDropCapAlignmentTest extends WP_UnitTestCase {
 	/**
 	 * Centred or right-aligned base text has no drop cap, as in the editor.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_centred_or_right_base_alignment_disables_the_drop_cap() {
@@ -73,7 +73,7 @@ class ContentDropCapAlignmentTest extends WP_UnitTestCase {
 	/**
 	 * Alignment on a narrower device alone does not gate the (per-element) drop cap.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_device_only_alignment_does_not_gate() {

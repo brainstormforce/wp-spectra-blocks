@@ -24,14 +24,14 @@ use WP_UnitTestCase;
 /**
  * ChildLayoutWidthPerBandTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ChildLayoutWidthPerBandTest extends WP_UnitTestCase {
 
 	/**
 	 * Render an icon inside Icons and return its flex declarations per band.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $style The icon's `style` attribute.
 	 * @return array{base: string, tablet: string, mobile: string} Declarations.
 	 */
@@ -69,7 +69,7 @@ class ChildLayoutWidthPerBandTest extends WP_UnitTestCase {
 	/**
 	 * Fixed → Fill → Fit across the three bands: each band states both properties.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_each_choice_resets_the_other_flex_property() {
@@ -95,7 +95,7 @@ class ChildLayoutWidthPerBandTest extends WP_UnitTestCase {
 	 * Only the older `fixed` value was recognised, so a width fixed in the 7.1
 	 * editor rendered as Fit on the front end — the report that started this.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_fixed_no_shrink_paints_a_fixed_width() {
@@ -116,7 +116,7 @@ class ChildLayoutWidthPerBandTest extends WP_UnitTestCase {
 	/**
 	 * A band that says nothing about Width inherits the desktop choice.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_an_unset_band_inherits() {
@@ -139,7 +139,7 @@ class ChildLayoutWidthPerBandTest extends WP_UnitTestCase {
 	/**
 	 * Fixed set only on Tablet: desktop and mobile untouched, tablet gets the basis.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_fixed_on_one_band_only() {

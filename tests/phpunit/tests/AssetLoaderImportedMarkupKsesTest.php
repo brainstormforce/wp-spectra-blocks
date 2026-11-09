@@ -24,14 +24,14 @@ use WP_UnitTestCase;
 /**
  * AssetLoaderImportedMarkupKsesTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 
 	/**
 	 * Markup the content block would hand to KSES.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var string
 	 */
 	const CANVAS_HTML = '<p>chart</p><canvas id="c" width="300" height="150"></canvas>';
@@ -39,7 +39,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	/**
 	 * Put a zip-built page on the singular frontend query the filter gates on.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @param bool $imported Whether to set the importer marker.
 	 * @return int Post ID.
@@ -55,7 +55,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -77,7 +77,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -96,7 +96,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	 * across repeated use — a leaked `add_filter` is exactly the failure mode
 	 * the wrapper exists to prevent, and it would only show on the second call.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -123,13 +123,13 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	 * text returned `<span class="icon-box"><title>…</title></span>`, byte-equal
 	 * to what the page served.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var string
 	 */
 	const SVG_HTML = '<span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-label="Cal" role="img" data-era-art="1" class="gs-0f26f6-svg"><title>Reservation calendar</title><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M8 3v4"></path></svg></span>';
 
 	/**
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -154,7 +154,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	 * neither, so they must not ride in with the shapes, and no shape may carry
 	 * a reference out of the document.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */
@@ -184,7 +184,7 @@ class AssetLoaderImportedMarkupKsesTest extends WP_UnitTestCase {
 	 * The allowance is gated on the page being zip-built — an ordinary post must
 	 * keep WordPress' own list.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return void
 	 */

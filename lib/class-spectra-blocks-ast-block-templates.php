@@ -5,7 +5,7 @@
  * Bootstraps the bundled gutenberg-templates library and customises the
  * Design Library button label and branding for Spectra Blocks.
  *
- * @since x.x.x
+ * @since 1.0.14
  * @package Spectra_Blocks
  */
 
@@ -18,14 +18,14 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 	/**
 	 * Loads the bundled gutenberg-templates library.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 */
 	class Spectra_Blocks_Ast_Block_Templates {
 
 		/**
 		 * Singleton instance.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 * @var self|null
 		 */
 		private static $instance = null;
@@ -33,7 +33,7 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		/**
 		 * Returns the singleton instance.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 *
 		 * @return self
 		 */
@@ -48,7 +48,7 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		/**
 		 * Constructor.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 */
 		private function __construct() {
 			$this->version_check();
@@ -62,7 +62,7 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		 * Skipped when Astra Sites is active because that plugin manages its
 		 * own branding for the same library.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 *
 		 * @param array $vars Localised JS vars passed to the editor script.
 		 * @return array
@@ -85,7 +85,7 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		 * Registers the bundled library version with the global version-negotiation
 		 * mechanism so multiple plugins can share the newest copy.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 *
 		 * @return void
 		 */
@@ -124,7 +124,7 @@ if ( ! class_exists( 'Spectra_Blocks_Ast_Block_Templates' ) ) :
 		/**
 		 * Includes the winning (highest-version) gutenberg-templates entry point.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.14
 		 *
 		 * @return void
 		 */

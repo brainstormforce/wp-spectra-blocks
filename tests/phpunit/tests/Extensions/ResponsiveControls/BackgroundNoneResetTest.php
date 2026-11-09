@@ -24,7 +24,7 @@ use WP_UnitTestCase;
 /**
  * BackgroundNoneResetTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class BackgroundNoneResetTest extends WP_UnitTestCase {
 
@@ -34,7 +34,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	 * Each call uses a fresh `spectraId` — the extension emits a block's CSS
 	 * once per id per request.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param string               $block Block name.
 	 * @param array<string, mixed> $attrs Block attributes (without spectraId).
 	 * @param string               $inner Save markup, `%s` for the id.
@@ -70,7 +70,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * The background-image values a band declares for the block, in order.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param string $band One band's CSS.
 	 * @param string $id   The block's spectraId.
 	 * @return array<int, string> Values, e.g. `url(…)` or `none`.
@@ -84,7 +84,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * Container: image on Desktop, None on Tablet, Video on Mobile.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_container_none_and_video_bands_reset_the_image() {
@@ -122,7 +122,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * The reset lands on the same selector the image rule used, so it wins on order.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_reset_uses_the_image_rules_selector() {
@@ -150,7 +150,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * A band that stores no background inherits — no reset is emitted for it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_an_unset_band_does_not_reset() {
@@ -174,7 +174,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * Slider and Modal Popup Content share the component and the fix.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_slider_and_modal_content_reset_too() {
@@ -196,7 +196,7 @@ class BackgroundNoneResetTest extends WP_UnitTestCase {
 	/**
 	 * Legacy 7.0.4 content: tablet None baked into mobile by the cascade (BACK 2).
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_legacy_cascaded_none_resets_on_mobile() {

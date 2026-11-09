@@ -223,7 +223,7 @@ Steps:
 					</Tooltip>
 				</div>
 				<pre
-					className="p-4 pr-24 overflow-x-auto text-sm leading-relaxed font-mono m-0"
+					className="p-4 pr-24 whitespace-pre-wrap break-words text-sm leading-relaxed font-mono m-0"
 					style={ { color: '#cdd6f4' } }
 				>
 					{ mcpConfig }

@@ -72,21 +72,40 @@ class CreateContainer extends AbstractAbility {
 			'type'       => 'object',
 			'properties' => array_merge(
 				array(
-					'htmlTag'   => array(
+					'htmlTag'    => array(
 						'type'        => 'string',
 						'description' => __( 'HTML element tag: div, section, header, footer, main, article, aside, or nav.', 'spectra-blocks' ),
 						'enum'        => array( 'div', 'section', 'header', 'footer', 'main', 'article', 'aside', 'nav' ),
 						'default'     => 'div',
 					),
-					'width'     => array(
+					'width'      => array(
 						'type'        => 'string',
 						'description' => __( 'Container width (CSS value, e.g. "100%", "1200px").', 'spectra-blocks' ),
 					),
-					'minHeight' => array(
+					'minHeight'  => array(
 						'type'        => 'string',
 						'description' => __( 'Container minimum height (CSS value, e.g. "400px").', 'spectra-blocks' ),
 					),
-					'content'   => array(
+					'direction'  => array(
+						'type'        => 'string',
+						'description' => __( 'Flex direction of the children: "row" (horizontal) or "column" (vertical).', 'spectra-blocks' ),
+						'enum'        => array( 'row', 'column' ),
+					),
+					'justify'    => array(
+						'type'        => 'string',
+						'description' => __( 'Main-axis alignment of the children.', 'spectra-blocks' ),
+						'enum'        => array( 'left', 'center', 'right', 'space-between' ),
+					),
+					'alignItems' => array(
+						'type'        => 'string',
+						'description' => __( 'Cross-axis alignment of the children: "top", "center", or "bottom".', 'spectra-blocks' ),
+						'enum'        => array( 'top', 'center', 'bottom' ),
+					),
+					'gap'        => array(
+						'type'        => 'string',
+						'description' => __( 'Gap between children (CSS value, e.g. "20px", "1rem").', 'spectra-blocks' ),
+					),
+					'content'    => array(
 						'type'        => 'string',
 						'description' => __( 'Inner block markup to place inside the container. Should be serialized block comments.', 'spectra-blocks' ),
 					),
@@ -116,8 +135,15 @@ class CreateContainer extends AbstractAbility {
 	 * @return array|\WP_Error
 	 */
 	public function execute( array $params ) {
+		// Pre-populate the attributes the container's editor assigns on mount
+		// (unique id, root-parent flag, full align). Without them the block writes
+		// these on open and the post opens with unsaved changes (#10). A top-level
+		// container inserted into a post is a root parent, which core aligns full.
 		$attrs = array(
 			'variationSelected' => true,
+			'isBlockRootParent' => true,
+			'align'             => 'full',
+			'spectraId'         => 'spectra-' . substr( md5( uniqid( (string) wp_rand(), true ) ), 0, 12 ),
 		);
 
 		if ( ! empty( $params['htmlTag'] ) ) {
@@ -134,6 +160,34 @@ class CreateContainer extends AbstractAbility {
 
 		if ( ! empty( $params['minHeight'] ) ) {
 			$attrs['minHeight'] = sanitize_text_field( $params['minHeight'] );
+		}
+
+		// Flex layout: direction, alignment and gap live on the core `layout` attribute
+		// (plus style.spacing.blockGap for the gap), matching what the block editor writes.
+		$layout = array(
+			'type'              => 'flex',
+			'flexWrap'          => 'nowrap',
+			'orientation'       => 'vertical',
+			'justifyContent'    => 'left',
+			'verticalAlignment' => 'center',
+		);
+		if ( ! empty( $params['direction'] ) && in_array( $params['direction'], array( 'row', 'column' ), true ) ) {
+			$layout['orientation'] = 'row' === $params['direction'] ? 'horizontal' : 'vertical';
+		}
+		if ( ! empty( $params['justify'] ) && in_array( $params['justify'], array( 'left', 'center', 'right', 'space-between' ), true ) ) {
+			$layout['justifyContent'] = $params['justify'];
+		}
+		if ( ! empty( $params['alignItems'] ) && in_array( $params['alignItems'], array( 'top', 'center', 'bottom' ), true ) ) {
+			$layout['verticalAlignment'] = $params['alignItems'];
+		}
+		$attrs['layout'] = $layout;
+
+		if ( ! empty( $params['gap'] ) ) {
+			$attrs['style'] = array(
+				'spacing' => array(
+					'blockGap' => sanitize_text_field( $params['gap'] ),
+				),
+			);
 		}
 
 		$inner_content = '';

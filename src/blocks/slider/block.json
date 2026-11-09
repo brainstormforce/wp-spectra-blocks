@@ -200,8 +200,8 @@
 		}
 	},
 	"editorScript": [ "spectra-blocks-swiper-script", "file:./index.js" ],
-	"editorStyle": [ "spectra-blocks-swiper-style", "file:./index.css" ],
-	"style": [ "file:./style-index.css", "spectra-blocks-common", "spectra-blocks-components-icon-picker" ],
+	"editorStyle": [ "spectra-blocks-swiper-style", "file:./index.css", "spectra-blocks-components-icon-picker" ],
+	"style": [ "file:./style-index.css", "spectra-blocks-common" ],
 	"render": "file:./view.php",
 	"viewScript": [ "spectra-blocks-swiper-script", "file:./view.js" ],
 	"viewStyle": [ "spectra-blocks-swiper-style", "spectra-blocks-common" ],
