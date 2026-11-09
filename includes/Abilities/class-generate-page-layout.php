@@ -200,11 +200,38 @@ class GeneratePageLayout extends AbstractAbility {
 		$inner_html = isset( $block['innerHTML'] ) ? wp_kses_post( $block['innerHTML'] ) : '';
 		$has_inner  = ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] );
 
+		// Pre-populate the attributes a spectra/container's editor assigns on mount, so a
+		// generated page does not open with unsaved changes (#2 / #10): variationSelected
+		// resolves the empty "Select a container layout" picker; a unique spectraId stops
+		// the id being generated on open; a top-level (depth 0) container is a root parent
+		// that core aligns full.
+		if ( 'spectra/container' === $block_name ) {
+			if ( ! isset( $attrs['variationSelected'] ) ) {
+				$attrs['variationSelected'] = true;
+			}
+			if ( ! isset( $attrs['spectraId'] ) ) {
+				$attrs['spectraId'] = 'spectra-' . substr( md5( uniqid( (string) wp_rand(), true ) ), 0, 12 );
+			}
+			if ( 0 === $depth ) {
+				if ( ! isset( $attrs['isBlockRootParent'] ) ) {
+					$attrs['isBlockRootParent'] = true;
+				}
+				if ( ! isset( $attrs['align'] ) ) {
+					$attrs['align'] = 'full';
+				}
+			}
+		}
+
+		// Core blocks serialize without their namespace (`wp:paragraph`, not
+		// `wp:core/paragraph`); emitting the prefixed form re-serializes differently in the
+		// editor and marks the post changed on open.
+		$comment_name = ( 0 === strpos( $block_name, 'core/' ) ) ? substr( $block_name, 5 ) : $block_name;
+
 		$attrs_json = ! empty( $attrs ) ? ' ' . wp_json_encode( $attrs ) : '';
 
 		// Self-closing block (no inner content and no inner blocks).
 		if ( ! $has_inner && empty( $inner_html ) ) {
-			return '<!-- wp:' . $block_name . $attrs_json . ' /-->';
+			return '<!-- wp:' . $comment_name . $attrs_json . ' /-->';
 		}
 
 		// Block with inner content.
@@ -220,8 +247,8 @@ class GeneratePageLayout extends AbstractAbility {
 			$inner_content = $inner_html . ( ! empty( $inner_html ) ? "\n" : '' ) . $nested;
 		}
 
-		return '<!-- wp:' . $block_name . $attrs_json . ' -->'
+		return '<!-- wp:' . $comment_name . $attrs_json . ' -->'
 			. "\n" . $inner_content . "\n"
-			. '<!-- /wp:' . $block_name . ' -->';
+			. '<!-- /wp:' . $comment_name . ' -->';
 	}
 }

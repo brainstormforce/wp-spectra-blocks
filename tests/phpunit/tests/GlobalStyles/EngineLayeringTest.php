@@ -23,7 +23,7 @@ use ReflectionClass;
 /**
  * EngineLayeringTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class EngineLayeringTest extends WP_UnitTestCase {
 

@@ -28,6 +28,7 @@ class RemoveResponsiveConditions extends AbstractAbility {
 	 * @var string[]
 	 */
 	private const CONDITION_KEYS = array(
+		'responsiveConditions',
 		'UAGHideDesktop',
 		'UAGHideMob',
 		'UAGHideTab',

@@ -20,14 +20,14 @@ use WP_UnitTestCase;
 /**
  * ZeroLabelRenderTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ZeroLabelRenderTest extends WP_UnitTestCase {
 
 	/**
 	 * Blocks whose visible label is user-authored text.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @return array<string, array{0:string, 1:array<string,mixed>}>
 	 */
@@ -54,7 +54,7 @@ class ZeroLabelRenderTest extends WP_UnitTestCase {
 	/**
 	 * @dataProvider zero_label_blocks
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 *
 	 * @param string               $name  Registered block name.
 	 * @param array<string, mixed> $attrs Block attributes.

@@ -19,14 +19,14 @@ use ReflectionClass;
 /**
  * PreflightTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class PreflightTest extends WP_UnitTestCase {
 
 	/**
 	 * Cached preflight CSS output.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var string
 	 */
 	private string $css = '';

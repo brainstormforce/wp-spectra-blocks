@@ -19,7 +19,7 @@ use WP_UnitTestCase;
 /**
  * JitSecurityTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class JitSecurityTest extends WP_UnitTestCase {
 

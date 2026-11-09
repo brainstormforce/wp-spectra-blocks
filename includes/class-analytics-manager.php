@@ -44,6 +44,9 @@ class AnalyticsManager {
 		// Initialize milestone event tracker so spectra_blocks_events populates.
 		( \Spectra\Analytics\EventTracker::instance() )->init();
 
+		// Maintain accurate, delta-based per-block usage counts for adoption analytics.
+		( \Spectra\Analytics\IncrementalBlockTracker::instance() )->init();
+
 		// Keep the dashboard analytics toggle in sync with the canonical send gate.
 		add_action( 'add_option_spectra_blocks_analytics_optin', array( $this, 'sync_usage_optin' ) );
 		add_action( 'update_option_spectra_blocks_analytics_optin', array( $this, 'sync_usage_optin' ) );

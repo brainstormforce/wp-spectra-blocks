@@ -16,7 +16,7 @@ use WP_UnitTestCase;
 /**
  * ColorRolesTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ColorRolesTest extends WP_UnitTestCase {
 

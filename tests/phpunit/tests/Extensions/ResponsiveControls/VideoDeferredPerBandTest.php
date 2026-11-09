@@ -23,14 +23,14 @@ use WP_UnitTestCase;
 /**
  * VideoDeferredPerBandTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class VideoDeferredPerBandTest extends WP_UnitTestCase {
 
 	/**
 	 * Render a container and return the wrapper's video data and the video tag.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $style The `style` attribute.
 	 * @return array{data: array<string, string>|null, video: string} Parsed `data-responsive-videos` and the `<video …>` tag.
 	 */
@@ -50,7 +50,7 @@ class VideoDeferredPerBandTest extends WP_UnitTestCase {
 	/**
 	 * Video on Desktop, None on Tablet: no autoplay, no preload, tablet marked as no video.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_a_band_without_video_defers_the_element() {
@@ -80,7 +80,7 @@ class VideoDeferredPerBandTest extends WP_UnitTestCase {
 	/**
 	 * Video everywhere: unchanged — autoplay stays, nothing deferred.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_video_on_every_band_keeps_autoplay() {
@@ -101,7 +101,7 @@ class VideoDeferredPerBandTest extends WP_UnitTestCase {
 	/**
 	 * The helper resolves each band over base, like the CSS does.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_video_on_every_band_resolves_over_base() {

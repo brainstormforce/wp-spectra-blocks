@@ -21,14 +21,14 @@ use WP_UnitTestCase;
 /**
  * ModalContentHeightBandsTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ModalContentHeightBandsTest extends WP_UnitTestCase {
 
 	/**
 	 * The `spectraId` of the block rendered by the current test.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @var string
 	 */
 	private $id = '';
@@ -36,11 +36,11 @@ class ModalContentHeightBandsTest extends WP_UnitTestCase {
 	/**
 	 * Render a popup-content block and return the CSS keyed by band.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * Each call uses a fresh `spectraId`: the extension emits a block's CSS once
 	 * per id per request, so a reused id renders nothing the second time.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param array<string, mixed> $style The block's `style` attribute.
 	 * @return array{base: string, tablet: string, mobile: string} CSS per band.
 	 */
@@ -75,7 +75,7 @@ class ModalContentHeightBandsTest extends WP_UnitTestCase {
 	/**
 	 * The `height` declaration a band emits for the popup, or null.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @param string $band_css One band's CSS.
 	 * @return string|null The value of `height`, null when the band emits none.
 	 */
@@ -86,7 +86,7 @@ class ModalContentHeightBandsTest extends WP_UnitTestCase {
 	/**
 	 * Custom on Desktop, Auto on Mobile: the mobile band resets the height.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_auto_at_a_breakpoint_emits_an_explicit_reset() {
@@ -105,7 +105,7 @@ class ModalContentHeightBandsTest extends WP_UnitTestCase {
 	/**
 	 * Auto on Desktop, Custom on Tablet: the tablet band carries the fixed height.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_custom_at_a_breakpoint_emits_its_height() {
@@ -126,7 +126,7 @@ class ModalContentHeightBandsTest extends WP_UnitTestCase {
 	/**
 	 * A band that says nothing inherits the base height — no reset is emitted for it.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_an_unset_band_inherits_the_fixed_height() {

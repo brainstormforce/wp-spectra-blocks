@@ -845,6 +845,14 @@ class AssetLoader {
 			wp_enqueue_script( 'spectra-blocks-swiper-script' );
 			wp_enqueue_script( 'spectra-blocks-modal-script' );
 		}
+
+		// The modal runtime (ESC / overlay-click close) is needed whenever a
+		// modal is on the page. It used to ship on every page via
+		// Modal::enqueue_block_assets(); that is now editor-only, so load it here
+		// when the modal block is actually present (see #736).
+		if ( has_block( 'spectra/modal' ) ) {
+			wp_enqueue_script( 'spectra-blocks-modal-script' );
+		}
 	}
 
 	/**
@@ -855,8 +863,71 @@ class AssetLoader {
 	 * @return void
 	 */
 	public function enqueue_extensions_frontend_assets() {
-		wp_enqueue_style( 'spectra-blocks-extensions-image-mask' );
-		wp_enqueue_style( 'spectra-blocks-extensions-z-index' );
+		// The editor needs both utilities available for live block previews, so
+		// keep loading them unconditionally there. On the frontend they used to
+		// ship on EVERY page even when nothing used them; enqueue each only when
+		// a block on the current page actually uses that extension.
+		//
+		// Scope limit: usage is read from the queried post's own content, so an
+		// extension applied only inside a template part or a query-loop item on
+		// an archive is not detected — an acceptable trade for not loading unused
+		// CSS site-wide, and the editor path stays unconditional regardless.
+		if ( is_admin() ) {
+			wp_enqueue_style( 'spectra-blocks-extensions-image-mask' );
+			wp_enqueue_style( 'spectra-blocks-extensions-z-index' );
+			return;
+		}
+
+		$post   = get_post();
+		$blocks = ( $post instanceof \WP_Post && '' !== $post->post_content ) ? parse_blocks( $post->post_content ) : array();
+
+		if ( self::blocks_use_extension( $blocks, 'image-mask' ) ) {
+			wp_enqueue_style( 'spectra-blocks-extensions-image-mask' );
+		}
+
+		if ( self::blocks_use_extension( $blocks, 'z-index' ) ) {
+			wp_enqueue_style( 'spectra-blocks-extensions-z-index' );
+		}
+	}
+
+	/**
+	 * Whether any block in a parsed tree uses the given attribute-driven
+	 * extension. Recurses into inner blocks. Mirrors the detection the CSS
+	 * generator uses ({@see Spectra_CSS_Generator::has_extension_usage()}) so
+	 * the utility stylesheet ships on exactly the pages its rules can match.
+	 *
+	 * @since 1.0.14
+	 *
+	 * @param array<int|string, array<string, mixed>> $blocks    Parsed blocks.
+	 * @param string                                  $extension Extension key ('image-mask' | 'z-index').
+	 * @return bool True when at least one block uses the extension.
+	 */
+	private static function blocks_use_extension( array $blocks, string $extension ): bool {
+		foreach ( $blocks as $block ) {
+			if ( ! is_array( $block ) ) {
+				continue;
+			}
+
+			$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+			if ( 'image-mask' === $extension
+				&& 'core/image' === ( $block['blockName'] ?? '' )
+				&& ! empty( $attrs['spectraMask']['shape'] )
+				&& 'none' !== $attrs['spectraMask']['shape'] ) {
+				return true;
+			}
+
+			if ( 'z-index' === $extension && ! empty( $attrs['spectraZIndex'] ) ) {
+				return true;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] )
+				&& self::blocks_use_extension( $block['innerBlocks'], $extension ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

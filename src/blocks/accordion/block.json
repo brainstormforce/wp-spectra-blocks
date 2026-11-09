@@ -94,11 +94,8 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": [
-		"file:./style-index.css",
-		"spectra-blocks-components-icon-picker"
-	],
+	"editorStyle": [ "file:./index.css", "spectra-blocks-components-icon-picker" ],
+	"style": "file:./style-index.css",
 	"render": "file:./view.php",
 	"viewScriptModule": "file:./view.js",
 	"providesContext": {

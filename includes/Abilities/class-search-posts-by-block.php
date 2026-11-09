@@ -175,7 +175,7 @@ class SearchPostsByBlock extends AbstractAbility {
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT ID, post_title, post_type FROM {$wpdb->posts} WHERE post_content LIKE %s AND post_type IN ({$post_type_placeholders}) AND post_status = 'publish' ORDER BY post_date DESC LIMIT %d",
+				"SELECT ID, post_title, post_type FROM {$wpdb->posts} WHERE post_content LIKE %s AND post_type IN ({$post_type_placeholders}) AND post_status IN ( 'publish', 'draft', 'pending', 'private', 'future' ) ORDER BY post_date DESC LIMIT %d",
 				array_merge(
 					array( '%<!-- ' . $search_term ),
 					$post_types,

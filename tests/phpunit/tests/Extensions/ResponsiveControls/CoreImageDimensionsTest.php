@@ -27,21 +27,21 @@ use WP_UnitTestCase;
 /**
  * CoreImageDimensionsTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class CoreImageDimensionsTest extends WP_UnitTestCase {
 
 	/**
 	 * A core/image with a desktop size and a core-shaped tablet size.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 */
 	private const MARKUP = '<!-- wp:image {"spectraId":"cimg","width":"500px","height":"300px","scale":"cover","style":{"@tablet":{"dimensions":{"width":"350px","height":"220px"}}}} --><figure class="wp-block-image"><img src="http://x/a.png" alt="" style="width:500px;height:300px;object-fit:cover"/></figure><!-- /wp:image -->';
 
 	/**
 	 * Render the fixture and return Spectra's inline CSS and the HTML.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return array{0: string, 1: string} CSS, HTML.
 	 */
 	private function render(): array {
@@ -55,7 +55,7 @@ class CoreImageDimensionsTest extends WP_UnitTestCase {
 	/**
 	 * Spectra emits no dimension rules for the image.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_no_dimension_rules_are_emitted_where_core_renders_states() {
@@ -71,7 +71,7 @@ class CoreImageDimensionsTest extends WP_UnitTestCase {
 	/**
 	 * The img keeps core's inline base style.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_core_inline_style_is_left_alone_where_core_renders_states() {

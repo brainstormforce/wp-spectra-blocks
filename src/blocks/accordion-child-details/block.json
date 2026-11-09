@@ -45,9 +45,7 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"style": [
-		"spectra-blocks-components-block-appender"
-	],
+	"editorStyle": "spectra-blocks-components-block-appender",
 	"render": "file:./view.php",
 	"usesContext": [
 		"spectra/accordion/item/isActiveInEditor"

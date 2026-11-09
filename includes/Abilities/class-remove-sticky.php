@@ -156,7 +156,7 @@ class RemoveSticky extends AbstractAbility {
 		$block_name = $all_blocks[ $raw_index ]['blockName'];
 		$attrs      = $all_blocks[ $raw_index ]['attrs'] ?? array();
 
-		unset( $attrs['UAGPosition'] );
+		unset( $attrs['stickyContainer'], $attrs['UAGPosition'] );
 
 		$all_blocks[ $raw_index ]['attrs'] = $attrs;
 

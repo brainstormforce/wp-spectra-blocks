@@ -20,7 +20,7 @@ use ReflectionMethod;
 /**
  * AdapterTranslationTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class AdapterTranslationTest extends WP_UnitTestCase {
 

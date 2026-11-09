@@ -109,7 +109,7 @@ const Mcp = () => {
 					'Creates a dedicated Spectra Blocks MCP endpoint that AI clients like Claude can connect to. When disabled, the endpoint is removed and external AI clients cannot discover or call any Spectra Blocks abilities.',
 					'spectra-blocks'
 				),
-				learnMoreHref: 'https://make.wordpress.org/ai/2025/07/17/mcp-adapter/',
+				learnMoreHref: 'https://github.com/brainstormforce/spectra-blocks/wiki/MCP-guide',
 				value: mcpServerOn,
 				onChange: updateEnableMcpServer,
 				inactive: ! abilitiesOn,
@@ -121,12 +121,12 @@ const Mcp = () => {
 					design="stack"
 					title={ __( 'MCP Adapter plugin not detected', 'spectra-blocks' ) }
 					content={ __(
-						'To connect AI clients to your site, the WP MCP Adapter plugin is required. It will be included in WordPress 7.0 by default. Until then, download it from GitHub, upload via Plugins > Add New > Upload, and activate.',
+						'To connect AI clients to your site, the WP MCP Adapter plugin is required. It is a separate plugin: search for "MCP Adapter" under Plugins > Add New, install it from the WordPress.org plugin directory, and activate it.',
 						'spectra-blocks'
 					) }
 					action={ {
-						label: __( 'Download from GitHub', 'spectra-blocks' ),
-						onClick: () => window.open( 'https://github.com/WordPress/mcp-adapter/releases', '_blank' ),
+						label: __( 'Get MCP Adapter', 'spectra-blocks' ),
+						onClick: () => window.open( 'https://wordpress.org/plugins/mcp-adapter/', '_blank' ),
 						type: 'link',
 					} }
 				/>

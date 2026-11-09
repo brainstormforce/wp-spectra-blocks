@@ -15,7 +15,7 @@ use WP_UnitTestCase;
 /**
  * ThemeColorMappingTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ThemeColorMappingTest extends WP_UnitTestCase {
 

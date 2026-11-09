@@ -226,6 +226,24 @@ class ApplyResponsiveConditions extends AbstractAbility {
 			}
 		}
 
+		// Device visibility also writes the modern `responsiveConditions` object. The
+		// block editor's visibility toggles read this object, while the UAGHide* keys
+		// above only drive the front-end fallback — writing both keeps the editor and
+		// the rendered output in agreement.
+		$responsive_hide = array();
+		if ( array_key_exists( 'hide_desktop', $params ) ) {
+			$responsive_hide['hideOnDesktop'] = (bool) $params['hide_desktop'];
+		}
+		if ( array_key_exists( 'hide_tablet', $params ) ) {
+			$responsive_hide['hideOnTablet'] = (bool) $params['hide_tablet'];
+		}
+		if ( array_key_exists( 'hide_mobile', $params ) ) {
+			$responsive_hide['hideOnMobile'] = (bool) $params['hide_mobile'];
+		}
+		if ( ! empty( $responsive_hide ) ) {
+			$conditions['responsiveConditions'] = $responsive_hide;
+		}
+
 		// Enable responsive conditions flag.
 		$conditions['UAGResponsiveConditions'] = true;
 

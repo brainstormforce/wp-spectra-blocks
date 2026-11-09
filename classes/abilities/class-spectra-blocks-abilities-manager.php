@@ -56,11 +56,6 @@ if ( ! class_exists( 'Spectra_Blocks_Abilities_Manager' ) ) {
 				return;
 			}
 
-			$this->load_ability_classes();
-
-			add_action( 'wp_abilities_api_categories_init', array( $this, 'register_categories' ) );
-			add_action( 'wp_abilities_api_init', array( $this, 'register_abilities' ) );
-
 			// Register dedicated Spectra MCP server when enabled and MCP Adapter is active.
 			if (
 				'enabled' === \Spectra_Blocks_Admin_Helper::get_admin_settings_option( 'spectra_blocks_enable_mcp_server', 'disabled' )
@@ -71,67 +66,10 @@ if ( ! class_exists( 'Spectra_Blocks_Abilities_Manager' ) ) {
 		}
 
 		/**
-		 * Load ability class files.
-		 *
-		 * @since 1.0.0
-		 * @return void
-		 */
-		private function load_ability_classes() {
-			$dir = SPECTRA_BLOCKS_DIR . 'classes/abilities/';
-
-			require_once $dir . 'class-spectra-blocks-abstract-ability.php';
-			require_once $dir . 'trait-spectra-blocks-insert-into-post.php';
-			require_once $dir . 'class-spectra-blocks-ability-create-container.php';
-			require_once $dir . 'class-spectra-blocks-ability-create-content.php';
-		}
-
-		/**
-		 * Register ability categories.
-		 *
-		 * @since 1.0.0
-		 * @return void
-		 */
-		public function register_categories() {
-			wp_register_ability_category(
-				'spectra-layout',
-				array(
-					'label'       => __( 'Spectra Blocks - Layout', 'spectra-blocks' ),
-					'description' => __( 'Create and configure layout blocks like containers.', 'spectra-blocks' ),
-				)
-			);
-
-			wp_register_ability_category(
-				'spectra-content',
-				array(
-					'label'       => __( 'Spectra Blocks - Content', 'spectra-blocks' ),
-					'description' => __( 'Create and manage content blocks like headings and paragraphs.', 'spectra-blocks' ),
-				)
-			);
-		}
-
-		/**
-		 * Register all abilities.
-		 *
-		 * @since 1.0.0
-		 * @return void
-		 */
-		public function register_abilities() {
-			$abilities = array(
-				new Spectra_Blocks_Ability_Create_Container(),
-				new Spectra_Blocks_Ability_Create_Content(),
-			);
-
-			foreach ( $abilities as $ability ) {
-				if ( $ability->is_enabled() ) {
-					$ability->register();
-				}
-			}
-		}
-
-		/**
 		 * Register a dedicated Spectra MCP server.
 		 *
-		 * Creates an MCP server at spectra-blocks/v1/mcp exposing only spectra/ abilities.
+		 * Creates an MCP server at spectra-blocks/v1/mcp exposing every Spectra ability
+		 * (the `spectra-blocks/*` abilities registered by the core abilities manager).
 		 *
 		 * @since 1.0.0
 		 * @param object $adapter The MCP adapter instance.
@@ -146,7 +84,7 @@ if ( ! class_exists( 'Spectra_Blocks_Abilities_Manager' ) ) {
 			$tools     = array();
 
 			foreach ( $abilities as $ability ) {
-				if ( 0 === strpos( $ability->get_name(), 'spectra/' ) ) {
+				if ( 0 === strpos( $ability->get_name(), 'spectra-blocks/' ) ) {
 					$tools[] = $ability->get_name();
 				}
 			}

@@ -248,7 +248,7 @@ const AIPage = () => {
 									variant="ghost"
 									icon={ <ExternalLink /> }
 									iconPosition="right"
-									onClick={ () => window.open( 'https://wpspectra.com/docs/', '_blank' ) }
+									onClick={ () => window.open( 'https://wpspectra.com/docs/connect-zip-ai/', '_blank' ) }
 								>
 									{ __( 'Learn More', 'spectra-blocks' ) }
 								</Button>
@@ -266,16 +266,16 @@ const AIPage = () => {
 					</div>
 				</div>
 
-				{ /* ── 2. ZIPWP ACCOUNT ─────────────────────────────────────────── */ }
-				<div className="bg-background-primary rounded-xl border border-solid border-border-subtle py-7 px-8">
-					<div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
-						<div className="flex flex-col gap-1.5 flex-1 min-w-0">
-							<div className="flex items-center gap-3 flex-wrap">
-								<PlugIcon size={ 22 } className="text-brand-primary-600 shrink-0" />
-								<span className="font-semibold text-xl text-text-primary">
-									{ __( 'ZipWP Account', 'spectra-blocks' ) }
-								</span>
-								{ isAuthorized ? (
+				{ /* ── 2. ZIPWP ACCOUNT (shown only once the account is connected) ── */ }
+				{ isAuthorized && (
+					<div className="bg-background-primary rounded-xl border border-solid border-border-subtle py-7 px-8">
+						<div className="flex flex-col sm:flex-row items-start sm:justify-between gap-4">
+							<div className="flex flex-col gap-1.5 flex-1 min-w-0">
+								<div className="flex items-center gap-3 flex-wrap">
+									<PlugIcon size={ 22 } className="text-brand-primary-600 shrink-0" />
+									<span className="font-semibold text-xl text-text-primary">
+										{ __( 'ZipWP Account', 'spectra-blocks' ) }
+									</span>
 									<Badge
 										icon={ <CheckCircle2 size={ 11 } /> }
 										label={ __( 'Active', 'spectra-blocks' ) }
@@ -284,36 +284,29 @@ const AIPage = () => {
 										variant="green"
 										className="!text-[13px]"
 									/>
-								) : (
-									<Badge
-										label={ __( 'Inactive', 'spectra-blocks' ) }
-										size="sm"
-										type="pill"
-										variant="primary"
-									/>
-								) }
+								</div>
+								<p className="text-[15px] text-text-secondary m-0">
+									{ __(
+										'ZIP AI runs on your free ZipWP account. Connect once inside the ZIP AI panel to unlock AI site building, page generation, and credits.',
+										'spectra-blocks'
+									) }
+								</p>
 							</div>
-							<p className="text-[15px] text-text-secondary m-0">
-								{ __(
-									'ZIP AI runs on your free ZipWP account. Connect once inside the ZIP AI panel to unlock AI site building, page generation, and credits.',
-									'spectra-blocks'
-								) }
-							</p>
-						</div>
 
-						<div className="flex items-center gap-3 shrink-0 pt-1">
-							<Button
-								className="spectra-blocks-remove-ring !text-brand-primary-600 !font-semibold !text-[15px]"
-								variant="outline"
-								icon={ <ExternalLink /> }
-								iconPosition="right"
-								onClick={ () => window.open( 'https://app.zipwp.com/account-settings', '_blank' ) }
-							>
-								{ __( 'Manage Account', 'spectra-blocks' ) }
-							</Button>
+							<div className="flex items-center gap-3 shrink-0 pt-1">
+								<Button
+									className="spectra-blocks-remove-ring !text-brand-primary-600 !font-semibold !text-[15px]"
+									variant="outline"
+									icon={ <ExternalLink /> }
+									iconPosition="right"
+									onClick={ () => window.open( 'https://app.zipwp.com/account-settings', '_blank' ) }
+								>
+									{ __( 'Manage Account', 'spectra-blocks' ) }
+								</Button>
+							</div>
 						</div>
 					</div>
-				</div>
+				) }
 
 				{ /* ── 3. AI-POWERED FEATURES ───────────────────────────────────── */ }
 				<div className="bg-background-primary rounded-xl border border-solid border-border-subtle p-10 flex flex-col gap-4">

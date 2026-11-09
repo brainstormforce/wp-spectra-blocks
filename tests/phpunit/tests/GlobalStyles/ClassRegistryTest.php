@@ -22,7 +22,7 @@ use ReflectionMethod;
 /**
  * ClassRegistryTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ClassRegistryTest extends WP_UnitTestCase {
 
@@ -1157,7 +1157,7 @@ class ClassRegistryTest extends WP_UnitTestCase {
 			/**
 			 * Override get_sg_config to return test data.
 			 *
-			 * @since x.x.x
+			 * @since 1.0.14
 			 *
 			 * @return array
 			 */

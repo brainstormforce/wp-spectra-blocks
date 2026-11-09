@@ -91,7 +91,7 @@ tests_add_filter(
 /**
  * Register the Spectra Blocks plugin for testing.
  *
- * @since x.x.x
+ * @since 1.0.14
  * @return void
  */
 function _register_spectra_blocks() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- PHPUnit bootstrap convention
@@ -101,3 +101,22 @@ tests_add_filter( 'muplugins_loaded', '_register_spectra_blocks' );
 
 // Start WP.
 require "$_tests_dir/includes/bootstrap.php";
+
+/*
+ * Re-create the uploads directory the WordPress test suite just deleted.
+ *
+ * WordPress trunk's test bootstrap points `UPLOADS` at
+ * `wp-content/test-suite-uploads` and deletes that folder once per run — after
+ * `wp-settings.php` has loaded every plugin. `wp_upload_dir()` memoises the
+ * directories it has already created in a static, so once anything touched
+ * the uploads dir during load, no later call re-creates it, and
+ * `WP_UnitTestCase::scan_user_uploads()` throws on the missing directory in
+ * `set_up()` for every test. Creating it again here restores the state the
+ * upstream bootstrap intended. On versions without that logic this creates a
+ * directory that already exists.
+ */
+$_spectra_test_uploads = wp_upload_dir( null, false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+if ( ! empty( $_spectra_test_uploads['path'] ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+	wp_mkdir_p( $_spectra_test_uploads['path'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound -- PHPUnit bootstrap convention
+}
+unset( $_spectra_test_uploads );

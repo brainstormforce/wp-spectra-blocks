@@ -42,11 +42,8 @@
 		}
 	},
 	"editorScript": "file:./index.js",
-	"editorStyle": "file:./index.css",
-	"style": [
-		"file:./style-index.css",
-		"spectra-blocks-components-icon-picker"
-	],
+	"editorStyle": [ "file:./index.css", "spectra-blocks-components-icon-picker" ],
+	"style": "file:./style-index.css",
 	"usesContext": [
 		"spectra/accordion/icon",
 		"spectra/accordion/iconSecondary",

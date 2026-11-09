@@ -110,9 +110,18 @@ includes/Abilities/
 └── class-generate-page-layout.php   Generates a full page from a text prompt
 ```
 
-## Backward Compatibility Note
+## Attribute Names by Extension
 
-Extensions apply attributes with `UAG`-prefixed names (e.g. `UAGAnimationType`, `UAGDisplayConditions`). When building block markup for abilities that touch these extensions, use the exact attribute names — do not rename them.
+The extensions do **not** share one namespace. Write the exact key each extension's
+renderer *and* editor controls read, or the ability produces markup that silently does
+nothing:
+
+- **Animations** → `spectraAnimation*` (`spectraAnimationType`, `spectraAnimationTime`, `spectraAnimationDelay`, `spectraAnimationEasing`, `spectraAnimationOnce`). `includes/Extensions/class-animations.php` reads only these.
+- **Sticky container** → the `stickyContainer` object (`stickyEnabled`, `stickAt`, `offset`, `keepInsideParent`). `UAGPosition` is not read.
+- **Responsive visibility** → the `responsiveConditions` object (`hideOnDesktop`, `hideOnTablet`, `hideOnMobile`) is what the editor controls read; the legacy `UAGHideDesktop` / `UAGHideTab` / `UAGHideMob` keys drive only the front-end fallback — write **both** so the editor and rendered output agree.
+- **Display conditions** (login state, role, browser, OS, day) → keep the `UAG`-prefixed names (`UAGDisplayConditions`, `UAGUserRole`, `UAGBrowser`, `UAGSystem`, `UAGDay`, `UAGLoggedIn`, `UAGLoggedOut`).
+
+Do not rename the keys that saved content already relies on.
 
 ## WP Version Guard
 

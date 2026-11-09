@@ -20,7 +20,7 @@ use WP_UnitTestCase;
 /**
  * PageCssMetaReadTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class PageCssMetaReadTest extends WP_UnitTestCase {
 
@@ -41,7 +41,7 @@ class PageCssMetaReadTest extends WP_UnitTestCase {
 	/**
 	 * The stored meta payload is returned as-is.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_reads_meta_payload(): void {
@@ -54,7 +54,7 @@ class PageCssMetaReadTest extends WP_UnitTestCase {
 	/**
 	 * No row → null.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_returns_null_when_absent(): void {
@@ -66,7 +66,7 @@ class PageCssMetaReadTest extends WP_UnitTestCase {
 	/**
 	 * Empty arrays and non-array values are absent — never returned.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_empty_or_malformed_values_are_absent(): void {
@@ -79,7 +79,7 @@ class PageCssMetaReadTest extends WP_UnitTestCase {
 	/**
 	 * Invalid post id → null, no queries that could fatal.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_invalid_post_id_is_null(): void {

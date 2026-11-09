@@ -52,8 +52,11 @@ class Modal {
 	public function enqueue_block_assets() {
 		$this->register_modal_assets();
 
-		// Enqueue only in editor.
-		if ( wp_script_is( 'spectra-blocks-modal-settings', 'registered' ) ) {
+		// Enqueue only in the editor. `enqueue_block_assets` also fires on the
+		// front end, so without the is_admin() guard the modal script shipped on
+		// every page. The front end loads the modal runtime conditionally in
+		// AssetLoader::enqueue_frontend_assets() when a modal block is present.
+		if ( is_admin() && wp_script_is( 'spectra-blocks-modal-settings', 'registered' ) ) {
 			wp_enqueue_script( 'spectra-blocks-modal-settings' );
 		}
 	}

@@ -28,14 +28,14 @@ use WP_UnitTestCase;
 /**
  * ViewportBandsScriptTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class ViewportBandsScriptTest extends WP_UnitTestCase {
 
 	/**
 	 * Deregister the handle so each test starts clean.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function tear_down() {
@@ -50,7 +50,7 @@ class ViewportBandsScriptTest extends WP_UnitTestCase {
 	/**
 	 * The payload is the resolver's bands under the keys the scripts read.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_payload_mirrors_the_css_resolver() {
@@ -73,7 +73,7 @@ class ViewportBandsScriptTest extends WP_UnitTestCase {
 	/**
 	 * The bands are published through a registered handle with the JSON inline.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_handle_is_registered_with_the_bands_inline() {
@@ -94,7 +94,7 @@ class ViewportBandsScriptTest extends WP_UnitTestCase {
 	 * Several enqueue paths may ask for the handle; the second call must be a
 	 * no-op rather than appending a second inline script.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_registering_twice_is_idempotent() {
@@ -114,7 +114,7 @@ class ViewportBandsScriptTest extends WP_UnitTestCase {
 	 * only per-device script is the video switch, and it would silently fall
 	 * back to its own breakpoints.
 	 *
-	 * @since x.x.x
+	 * @since 1.0.14
 	 * @return void
 	 */
 	public function test_video_script_depends_on_the_bands() {

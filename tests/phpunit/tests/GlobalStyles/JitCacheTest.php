@@ -16,7 +16,7 @@ use WP_UnitTestCase;
 /**
  * JitCacheTest test case.
  *
- * @since x.x.x
+ * @since 1.0.14
  */
 class JitCacheTest extends WP_UnitTestCase {
 
