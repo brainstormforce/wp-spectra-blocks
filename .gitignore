@@ -13,4 +13,3 @@ wp-org-submission-report*.md
 tests/playwright/screenshots/
 .phpunit.result.cache
 .vscode/
-config.bat
