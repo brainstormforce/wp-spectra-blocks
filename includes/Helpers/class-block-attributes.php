@@ -501,47 +501,8 @@ class BlockAttributes {
 			}
 		}
 
-		// 2026-05-18: pipe source-authored HTML attrs (role/aria/tabindex/
-		// data-*/title/lang/dir/etc.) through to the wrapper. Skip event
-		// handlers (on*) and the cascade-owning attrs (class/id/style)
-		// that have dedicated paths above.
-		//
-		// The NAME is validated against a strict shape because
-		// get_block_wrapper_attributes() emits `$name="esc_attr( $value )"` and
-		// escapes the value only — a name carrying a space (`foo onmouseover`)
-		// was emitted as TWO attributes and walked straight past the `on*` check.
-		// wp_kses_data() on the rendered string is NOT a second line of defence
-		// here: the wrapper string is a bare attribute list with no `<`, so
-		// wp_kses_split() passes it through and wp_kses_bad_protocol() never runs.
-		// URL-valued attributes therefore get their scheme filtered explicitly —
-		// they are allowed through (an imported design may legitimately author an
-		// `href`), but `javascript:` and friends are stripped, which esc_attr()
-		// alone does not do.
-		if ( isset( $attributes['htmlAttributes'] ) && is_array( $attributes['htmlAttributes'] ) ) {
-			$denied_attrs = array( 'class', 'id', 'style', 'srcdoc' );
-			$url_attrs    = array( 'href', 'src', 'action', 'formaction', 'poster', 'cite', 'data', 'ping', 'background' );
-			foreach ( $attributes['htmlAttributes'] as $name => $value ) {
-				$name = strtolower( trim( (string) $name ) );
-				if ( '' === $name
-					|| str_starts_with( $name, 'on' )
-					|| in_array( $name, $denied_attrs, true )
-					|| 1 !== preg_match( '/^[a-z][a-z0-9-]*$/D', $name )
-				) {
-					continue;
-				}
-				if ( ! is_scalar( $value ) ) {
-					continue;
-				}
-				$value = (string) $value;
-				if ( in_array( $name, $url_attrs, true ) ) {
-					$value = wp_kses_bad_protocol( $value, wp_allowed_protocols() );
-					if ( '' === trim( $value ) ) {
-						continue;
-					}
-				}
-				$wrapper_attrs[ $name ] = $value;
-			}
-		}
+		// htmlAttributes are applied by the HtmlAttributes extension via the
+		// render_block filter using WP_HTML_Tag_Processor. No handling needed here.
 
 		// Call get_block_wrapper_attributes() which will merge our attributes with WordPress block supports.
 		// Note: If WordPress's apply_block_supports() also adds an ID from anchor, it will be concatenated.

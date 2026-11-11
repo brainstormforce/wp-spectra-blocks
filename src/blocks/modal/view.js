@@ -20,6 +20,21 @@ function manageZIndexInterference() {
 	}
 }
 
+// Release the page scroll lock for every close path.
+// The overlay-click and Escape close handlers live in assets/js/modal-script.js
+// and close the modal without going through the store's close() action, so they
+// never update activeModals and the body lock class is left behind. All close
+// paths dispatch spectra:modal:closed, so release the lock here to keep the body
+// class in sync no matter which path closed the modal.
+document.addEventListener( 'spectra:modal:closed', ( event ) => {
+	const blockId = event?.detail?.blockId;
+	if ( ! blockId ) {
+		return;
+	}
+	activeModals.delete( blockId );
+	manageZIndexInterference();
+} );
+
 export const { actions } = store( 'spectra/modal', {
 
 	actions: {

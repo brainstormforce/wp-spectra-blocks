@@ -39,3 +39,19 @@
 .wp-block-spectra-content br[data-rich-text-line-break="true"] {
 	display: none;
 }
+
+// Editor-only: a converted label of words keeps a box, so it can be edited.
+// ZIP AI's converter wraps a run of words it adds (a converted button's or
+// tab's label) in a content block marked `spectra-dissolve`, and the imported
+// page's CSS gives that marker `display: contents` so the wrapper adds no box
+// on the front end. In the editor that element is the block's RichText field,
+// and an element with no box takes no caret: a click selects the parent block
+// and typing does nothing. A box around words alone lays out as the words did,
+// so only a label without an element of its own (a soft break and the empty
+// placeholder aside) takes one: a box around an element would move it. The
+// page rule reaches the canvas as
+// `.editor-styles-wrapper [class].spectra-dissolve.spectra-dissolve` (0,4,0)
+// and loads after this stylesheet, so this rule takes (0,5,0).
+.editor-styles-wrapper .wp-block-spectra-content.spectra-dissolve.block-editor-rich-text__editable.rich-text:not(:has(> :not(br, [data-rich-text-placeholder]))) {
+	display: inline;
+}

@@ -330,8 +330,8 @@
 			"type": "object"
 		},
 		"htmlAttributes": {
-			"type": "object",
-			"default": {}
+			"type": "array",
+			"default": []
 		}
 	}
 }

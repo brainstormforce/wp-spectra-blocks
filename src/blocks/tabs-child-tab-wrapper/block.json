@@ -87,8 +87,8 @@
 			"default": false
 		},
 		"htmlAttributes": {
-			"type": "object",
-			"default": {}
+			"type": "array",
+			"default": []
 		}
 	}
 }
