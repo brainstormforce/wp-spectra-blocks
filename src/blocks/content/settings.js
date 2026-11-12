@@ -12,7 +12,8 @@ import {
 } from '@wordpress/components';
 import ToolsPanelItem from '@spectra-components/tools-panel-item';
 import { memo } from '@wordpress/element';
-import { __, isRTL } from '@wordpress/i18n';
+import { useDispatch } from '@wordpress/data';
+import { __, _n, sprintf, isRTL } from '@wordpress/i18n';
 
 /**
  * Internal dependencies.
@@ -20,6 +21,8 @@ import { __, isRTL } from '@wordpress/i18n';
 import InspectorColor from '@spectra-components/inspector-color';
 import DebouncedRangeControl from '@spectra-components/debounced-range-control';
 import { TAG_CONFIG, DEFAULT_TAG_NAME } from './render';
+import { ContextualTagItems, CustomAttributesSection, normalizeAttrs } from '../../extensions/html-attributes/controls';
+import { getContextualAttrNames } from '../../extensions/html-attributes/utils/helpers';
 
 // Derive SelectControl options from TAG_CONFIG (SSOT).
 const TAG_OPTIONS = Object.entries( TAG_CONFIG ).map( ( [ value, { label } ] ) => ( { value, label } ) );
@@ -39,18 +42,24 @@ const BlockSettings = memo( ( props ) => {
 		setAttributes,
 		attributes: {
 			tagName,
-		}
+			htmlAttributes: rawAttrs = [],
+		},
 	} = props;
 
 	const defaultTagName = DEFAULT_TAG_NAME;
+	const htmlAttributes = normalizeAttrs( rawAttrs );
+	const activeTag = ( tagName || defaultTagName ).toLowerCase();
+	const { createNotice } = useDispatch( 'core/notices' );
 
 	return (
 		<InspectorControls group="settings">
 			<ToolsPanel
 				label={ __( 'General', 'spectra-blocks' ) }
 				resetAll={ () => {
+					const contextualNames = getContextualAttrNames( activeTag );
 					setAttributes( {
 						tagName: defaultTagName,
+						htmlAttributes: htmlAttributes.filter( ( item ) => ! contextualNames.has( item.attribute ) ),
 					} );
 				} }
 				panelId={ clientId }
@@ -69,10 +78,47 @@ const BlockSettings = memo( ( props ) => {
 						value={ tagName || defaultTagName }
 						variant="default"
 						options={ TAG_OPTIONS }
-						onChange={ ( value ) => setAttributes( { tagName: value } ) }
+						onChange={ ( newValue ) => {
+							const oldContextual = getContextualAttrNames( activeTag );
+							const newContextual = getContextualAttrNames( newValue.toLowerCase() );
+							const droppedCount = htmlAttributes.filter(
+								( item ) => oldContextual.has( item.attribute ) &&
+									! newContextual.has( item.attribute ) &&
+									item.value !== ''
+							).length;
+							setAttributes( {
+								tagName: newValue,
+								htmlAttributes: htmlAttributes.filter(
+									( item ) => ! oldContextual.has( item.attribute ) || newContextual.has( item.attribute )
+								),
+							} );
+							if ( droppedCount > 0 ) {
+								createNotice(
+									'info',
+									sprintf(
+										/* translators: 1: number of attributes, 2: previous HTML tag name */
+										_n(
+											'%1$d tag attribute cleared after switching from <%2$s>.',
+											'%1$d tag attributes cleared after switching from <%2$s>.',
+											droppedCount,
+											'spectra-blocks'
+										),
+										droppedCount,
+										activeTag
+									),
+									{ isDismissible: true, type: 'snackbar' }
+								);
+							}
+						} }
 						help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'spectra-blocks' ) }
 					/>
 				</ToolsPanelItem>
+				<ContextualTagItems
+					tag={ activeTag }
+					htmlAttributes={ htmlAttributes }
+					clientId={ clientId }
+					setAttributes={ setAttributes }
+				/>
 			</ToolsPanel>
 		</InspectorControls>
 	);
@@ -384,13 +430,23 @@ const TextShadowSettings = memo( ( props ) => {
  * @param {Object} props The element props.
  * @return {Element} The rendered settings.
  */
-const Settings = ( props ) => (
-	<>
-		<BlockSettings { ...{ ...props } } />
-		<ColorSettings { ...{ ...props } } />
-		<TypographySettings { ...{ ...props } } />
-		<TextShadowSettings { ...{ ...props } } />
-	</>
-);
+const Settings = ( props ) => {
+	const { attributes: { tagName, htmlAttributes: rawAttrs = [] } = {}, setAttributes } = props;
+	const htmlAttributes = normalizeAttrs( rawAttrs );
+	const activeTag = ( tagName || '' ).toLowerCase();
+	return (
+		<>
+			<BlockSettings { ...{ ...props } } />
+			<CustomAttributesSection
+				tag={ activeTag }
+				htmlAttributes={ htmlAttributes }
+				setAttributes={ setAttributes }
+			/>
+			<ColorSettings { ...{ ...props } } />
+			<TypographySettings { ...{ ...props } } />
+			<TextShadowSettings { ...{ ...props } } />
+		</>
+	);
+};
 
 export default memo( Settings );

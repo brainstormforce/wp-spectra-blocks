@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spectra Blocks 1.0.14\n"
+"Project-Id-Version: Spectra Blocks 1.0.15\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/spectra-blocks\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-01T18:09:26+00:00\n"
+"POT-Creation-Date: 2026-11-10T13:46:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spectra-blocks\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: admin/inc/class-admin-menu.php:366
 #: admin/inc/class-admin-menu.php:389
 #: admin/inc/class-admin-menu.php:399
-#: classes/class-spectra-blocks-onboarding.php:117
+#: classes/class-spectra-blocks-onboarding.php:164
 #: includes/class-block-manager.php:276
 msgid "Spectra Blocks"
 msgstr ""
@@ -316,7 +316,7 @@ msgid "Fast and customizable theme for your website."
 msgstr ""
 
 #: admin/inc/class-admin-menu.php:126
-#: classes/class-spectra-blocks-onboarding.php:422
+#: classes/class-spectra-blocks-onboarding.php:472
 msgid "Starter Templates"
 msgstr ""
 
@@ -389,7 +389,7 @@ msgstr ""
 
 #: admin/inc/class-admin-menu.php:379
 #: admin/inc/class-admin-menu.php:380
-#: classes/class-spectra-blocks-onboarding.php:338
+#: classes/class-spectra-blocks-onboarding.php:388
 msgid "Popup Builder"
 msgstr ""
 
@@ -1203,7 +1203,7 @@ msgid "Bong"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-0.php:6071
-#: src/blocks/container/settings.js:1396
+#: src/blocks/container/settings.js:1442
 msgid "Book"
 msgstr ""
 
@@ -2145,7 +2145,7 @@ msgid "Cmplid"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:951
-#: src/blocks/content/render.js:62
+#: src/blocks/content/render.js:66
 msgid "Code"
 msgstr ""
 
@@ -2659,6 +2659,8 @@ msgid "Down Long"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:4862
+#: src/extensions/html-attributes/index.js:59
+#: src/extensions/html-attributes/utils/constants.js:208
 msgid "Download"
 msgstr ""
 
@@ -4272,8 +4274,8 @@ msgid "Igloo"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:5167
-#: src/blocks/container/settings.js:853
-#: src/blocks/container/toolbar.js:159
+#: src/blocks/container/settings.js:899
+#: src/blocks/container/toolbar.js:171
 #: src/components/background/index.js:252
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:51
 msgid "Image"
@@ -4631,7 +4633,7 @@ msgid "Lines Leaning"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:7804
-#: src/blocks/container/toolbar.js:74
+#: src/blocks/container/toolbar.js:86
 msgid "Link"
 msgstr ""
 
@@ -4906,7 +4908,7 @@ msgid "Medapps"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:9950
-#: includes/Helpers/class-shadow.php:193
+#: includes/Helpers/class-shadow.php:203
 msgid "Medium"
 msgstr ""
 
@@ -5396,7 +5398,7 @@ msgid "Parachute Box"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:1003
-#: src/blocks/content/render.js:38
+#: src/blocks/content/render.js:42
 msgid "Paragraph"
 msgstr ""
 
@@ -5945,7 +5947,7 @@ msgid "Python"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:5440
-#: src/blocks/content/render.js:68
+#: src/blocks/content/render.js:72
 msgid "Q"
 msgstr ""
 
@@ -6074,9 +6076,9 @@ msgid "Renren"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:6419
-#: src/blocks/container/settings.js:1064
-#: src/blocks/container/settings.js:1071
-#: src/blocks/container/settings.js:1075
+#: src/blocks/container/settings.js:1110
+#: src/blocks/container/settings.js:1117
+#: src/blocks/container/settings.js:1121
 #: src/components/background/index.js:139
 #: src/extensions/gbs-editor/components/panels/KeyframesPanel.jsx:95
 #: src/extensions/image-mask/edit.js:120
@@ -6259,7 +6261,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:7812
 #: src/blocks/accordion-child-header-content/settings.js:134
-#: src/blocks/content/render.js:69
+#: src/blocks/content/render.js:73
 msgid "S"
 msgstr ""
 
@@ -6368,7 +6370,7 @@ msgid "Scribd"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:8678
-#: src/blocks/container/settings.js:1054
+#: src/blocks/container/settings.js:1100
 #: src/blocks/tabs-child-tab-trigger/settings.js:198
 #: src/components/background/index.js:512
 msgid "Scroll"
@@ -6387,7 +6389,7 @@ msgid "Searchengin"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:8804
-#: src/blocks/container/toolbar.js:46
+#: src/blocks/container/toolbar.js:58
 msgid "Section"
 msgstr ""
 
@@ -7214,7 +7216,7 @@ msgid "T"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:2534
-#: src/blocks/container/toolbar.js:125
+#: src/blocks/container/toolbar.js:137
 msgid "Table"
 msgstr ""
 
@@ -7272,8 +7274,8 @@ msgid "Tachograph Digital"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:2985
-#: src/blocks/container/settings.js:176
-#: src/blocks/content/settings.js:60
+#: src/blocks/container/settings.js:182
+#: src/blocks/content/settings.js:69
 #: src/blocks/modal-child-trigger-content/settings.js:54
 #: src/blocks/modal-child-trigger-content/settings.js:65
 msgid "Tag"
@@ -8032,7 +8034,7 @@ msgid "Viber"
 msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:8862
-#: src/blocks/container/toolbar.js:169
+#: src/blocks/container/toolbar.js:181
 #: src/components/background/index.js:256
 msgid "Video"
 msgstr ""
@@ -8477,91 +8479,12 @@ msgstr ""
 msgid "Vector Square"
 msgstr ""
 
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:98
-msgid "Spectra Blocks - Layout"
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:99
-msgid "Create and configure layout blocks like containers."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:106
-msgid "Spectra Blocks - Content"
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:107
-msgid "Create and manage content blocks like headings and paragraphs."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:162
+#: classes/abilities/class-spectra-blocks-abilities-manager.php:100
 msgid "Spectra Blocks MCP Server"
 msgstr ""
 
-#: classes/abilities/class-spectra-blocks-abilities-manager.php:163
+#: classes/abilities/class-spectra-blocks-abilities-manager.php:101
 msgid "Spectra Blocks MCP server for AI-assisted block creation and content generation."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-container.php:42
-msgid "Create Container Block"
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-container.php:49
-msgid "Creates a spectra/container block with configurable flex layout, direction, alignment, and gap. Optionally inserts it into a post. Inner blocks can be provided as serialized block markup."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-container.php:95
-msgid "Gap between children, e.g. \"16px\" or \"1rem\"."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-container.php:100
-msgid "Raw block markup to place inside the container. If omitted, an empty container is created."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-container.php:105
-#: classes/abilities/class-spectra-blocks-ability-create-content.php:95
-msgid "Post/page ID to insert into. If omitted, returns markup only."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-content.php:42
-msgid "Create Content Block"
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-content.php:49
-msgid "Creates a spectra/content block — replaces core heading and paragraph. Supports tagName (h1-h6, p, div, span) and text alignment. Optionally inserts into a post."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-content.php:81
-msgid "The text content."
-msgstr ""
-
-#: classes/abilities/class-spectra-blocks-ability-create-content.php:131
-msgid "Text content cannot be empty."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:36
-msgid "Post not found."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:39
-msgid "Cannot edit this post."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:42
-msgid "This post type does not support block editing."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:45
-msgid "Cannot edit blocks in a trashed post."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:80
-#: includes/Abilities/class-abstract-ability.php:331
-msgid "Failed to update post content."
-msgstr ""
-
-#: classes/abilities/trait-spectra-blocks-insert-into-post.php:83
-#: includes/Abilities/class-abstract-ability.php:339
-msgid "Post was modified concurrently. Please retry."
 msgstr ""
 
 #: classes/class-spectra-blocks-admin-learn-actions.php:135
@@ -8627,255 +8550,255 @@ msgstr ""
 msgid "To publish/save your page click here."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:114
-#: classes/class-spectra-blocks-onboarding.php:563
+#: classes/class-spectra-blocks-onboarding.php:161
+#: classes/class-spectra-blocks-onboarding.php:613
 msgid "Spectra Blocks Onboarding"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:122
+#: classes/class-spectra-blocks-onboarding.php:169
 msgid "Welcome to Spectra Blocks"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:123
+#: classes/class-spectra-blocks-onboarding.php:170
 msgid "Design your WordPress site with blocks that stay fast. Setup takes about two minutes."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:127
+#: classes/class-spectra-blocks-onboarding.php:174
 msgid "Getting Started with"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:131
+#: classes/class-spectra-blocks-onboarding.php:178
 msgid "Import ready-made patterns and templates in one click"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:132
+#: classes/class-spectra-blocks-onboarding.php:179
 msgid "Full design control without writing code"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:133
+#: classes/class-spectra-blocks-onboarding.php:180
 msgid "Works inside the WordPress editor you already know"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:137
+#: classes/class-spectra-blocks-onboarding.php:184
 msgid "Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:142
+#: classes/class-spectra-blocks-onboarding.php:189
 msgid "WordPress Plugin Directory"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:143
+#: classes/class-spectra-blocks-onboarding.php:190
 msgid "Google Search"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:144
+#: classes/class-spectra-blocks-onboarding.php:191
 msgid "Social Media"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:145
+#: classes/class-spectra-blocks-onboarding.php:192
 msgid "YouTube"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:146
+#: classes/class-spectra-blocks-onboarding.php:193
 msgid "A friend or colleague"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:147
-#: classes/class-spectra-blocks-onboarding.php:154
+#: classes/class-spectra-blocks-onboarding.php:194
+#: classes/class-spectra-blocks-onboarding.php:201
 #: src/components/icon-picker/modal-container.js:200
 msgid "Other"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:150
+#: classes/class-spectra-blocks-onboarding.php:197
 msgid "Advanced design flexibility without a bloated builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:151
+#: classes/class-spectra-blocks-onboarding.php:198
 msgid "AI and templates help me design quickly"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:152
+#: classes/class-spectra-blocks-onboarding.php:199
 msgid "I need a page builder that loads fast"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:153
+#: classes/class-spectra-blocks-onboarding.php:200
 msgid "Regular updates and support from Brainstorm Force"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:158
+#: classes/class-spectra-blocks-onboarding.php:205
 msgid "Privacy Policy"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:161
+#: classes/class-spectra-blocks-onboarding.php:208
 msgid "Stay in the loop and help shape Spectra Blocks! Get feature updates, and help us build a better Spectra Blocks by sharing how you use the plugin."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:166
+#: classes/class-spectra-blocks-onboarding.php:213
 msgid "Spectra Blocks features"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:167
+#: classes/class-spectra-blocks-onboarding.php:214
 msgid "Powerful features to design faster and build better with Spectra Blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:172
+#: classes/class-spectra-blocks-onboarding.php:219
 msgid "Add anything else you need"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:173
+#: classes/class-spectra-blocks-onboarding.php:220
 msgid "Optional free plugins from the same team. Install them now or later. None of them are required for Spectra Blocks to work."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:177
+#: classes/class-spectra-blocks-onboarding.php:224
 msgid "You are set up"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:178
+#: classes/class-spectra-blocks-onboarding.php:225
 msgid "Spectra Blocks is ready. The fastest way to see what it does is to build one page."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:179
+#: classes/class-spectra-blocks-onboarding.php:226
 msgid "What to do next"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:181
-#: classes/class-spectra-blocks-onboarding.php:187
+#: classes/class-spectra-blocks-onboarding.php:228
+#: classes/class-spectra-blocks-onboarding.php:234
 msgid "Create your first page"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:182
-#: classes/class-spectra-blocks-onboarding.php:191
+#: classes/class-spectra-blocks-onboarding.php:229
+#: classes/class-spectra-blocks-onboarding.php:238
 msgid "Visit the dashboard"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:183
-#: classes/class-spectra-blocks-onboarding.php:195
+#: classes/class-spectra-blocks-onboarding.php:230
+#: classes/class-spectra-blocks-onboarding.php:242
 msgid "Read the documentation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:201
+#: classes/class-spectra-blocks-onboarding.php:248
 msgid "Exit setup"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:334
+#: classes/class-spectra-blocks-onboarding.php:384
 msgid "Advanced Layout Controls"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:335
+#: classes/class-spectra-blocks-onboarding.php:385
 msgid "Build flexible layouts with containers, spacing, and responsive controls."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:339
+#: classes/class-spectra-blocks-onboarding.php:389
 msgid "Create engaging popups for promotions, announcements, and lead generation."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:343
+#: classes/class-spectra-blocks-onboarding.php:393
 msgid "Global Block Styles"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:344
+#: classes/class-spectra-blocks-onboarding.php:394
 msgid "Apply custom styles, classes, and CSS to any block from a unified style editor."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:349
+#: classes/class-spectra-blocks-onboarding.php:399
 msgid "Motion Effects"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:350
+#: classes/class-spectra-blocks-onboarding.php:400
 msgid "Add scroll-triggered animations and motion effects to blocks for an engaging experience."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:355
+#: classes/class-spectra-blocks-onboarding.php:405
 msgid "SVG Animation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:356
+#: classes/class-spectra-blocks-onboarding.php:406
 msgid "Bring SVG graphics to life with custom animations and interactive effects."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:361
+#: classes/class-spectra-blocks-onboarding.php:411
 msgid "Block Positioning"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:362
+#: classes/class-spectra-blocks-onboarding.php:412
 msgid "Position blocks with absolute, fixed, or sticky placement for advanced layout control."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:367
+#: classes/class-spectra-blocks-onboarding.php:417
 msgid "Dynamic Content"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:368
+#: classes/class-spectra-blocks-onboarding.php:418
 msgid "Connect your content and display dynamic data across your website with ease."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:373
+#: classes/class-spectra-blocks-onboarding.php:423
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:102
 msgid "Loop Builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:374
+#: classes/class-spectra-blocks-onboarding.php:424
 msgid "Design custom layouts for blog posts, archives, and dynamic content."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:379
+#: classes/class-spectra-blocks-onboarding.php:429
 msgid "Login & Registration Forms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:380
+#: classes/class-spectra-blocks-onboarding.php:430
 msgid "Create custom login and registration forms to manage user access on your website."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:415
+#: classes/class-spectra-blocks-onboarding.php:465
 msgid "ZIP AI"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:417
+#: classes/class-spectra-blocks-onboarding.php:467
 msgid "Describe your site in plain language and get a complete, editable layout built from Spectra blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:424
+#: classes/class-spectra-blocks-onboarding.php:474
 msgid "Launch a site quickly with hundreds of professionally designed templates."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:428
+#: classes/class-spectra-blocks-onboarding.php:478
 msgid "SureForms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:430
+#: classes/class-spectra-blocks-onboarding.php:480
 msgid "Create forms that feel conversational instead of like paperwork."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:434
+#: classes/class-spectra-blocks-onboarding.php:484
 msgid "SureMails"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:436
+#: classes/class-spectra-blocks-onboarding.php:486
 msgid "Reliable email delivery so your emails actually reach the inbox."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:440
+#: classes/class-spectra-blocks-onboarding.php:490
 msgid "SureRank"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:442
+#: classes/class-spectra-blocks-onboarding.php:492
 msgid "Simple, lightweight SEO assistant to help your site rank higher."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:527
-#: classes/class-spectra-blocks-onboarding.php:542
+#: classes/class-spectra-blocks-onboarding.php:577
+#: classes/class-spectra-blocks-onboarding.php:592
 msgid "Spectra Blocks Onboarding Data"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:567
+#: classes/class-spectra-blocks-onboarding.php:617
 msgid "First Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:571
+#: classes/class-spectra-blocks-onboarding.php:621
 msgid "Last Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:575
+#: classes/class-spectra-blocks-onboarding.php:625
 msgid "Email"
 msgstr ""
 
@@ -8930,6 +8853,14 @@ msgstr ""
 
 #: includes/Abilities/class-abstract-ability.php:262
 msgid "Cannot modify a trashed post."
+msgstr ""
+
+#: includes/Abilities/class-abstract-ability.php:331
+msgid "Failed to update post content."
+msgstr ""
+
+#: includes/Abilities/class-abstract-ability.php:339
+msgid "Post was modified concurrently. Please retry."
 msgstr ""
 
 #: includes/Abilities/class-abstract-ability.php:365
@@ -9011,7 +8942,7 @@ msgstr ""
 #: includes/Abilities/class-remove-animation.php:113
 #: includes/Abilities/class-remove-block.php:96
 #: includes/Abilities/class-remove-display-conditions.php:96
-#: includes/Abilities/class-remove-responsive-conditions.php:117
+#: includes/Abilities/class-remove-responsive-conditions.php:118
 #: includes/Abilities/class-remove-sticky.php:96
 #: includes/Abilities/class-update-block-attributes.php:96
 msgid "The post ID containing the block."
@@ -9025,7 +8956,7 @@ msgstr ""
 #: includes/Abilities/class-apply-zindex.php:100
 #: includes/Abilities/class-remove-animation.php:117
 #: includes/Abilities/class-remove-display-conditions.php:100
-#: includes/Abilities/class-remove-responsive-conditions.php:121
+#: includes/Abilities/class-remove-responsive-conditions.php:122
 #: includes/Abilities/class-remove-sticky.php:100
 msgid "The 0-based block index."
 msgstr ""
@@ -9101,7 +9032,7 @@ msgstr ""
 #: includes/Abilities/class-remove-animation.php:157
 #: includes/Abilities/class-remove-block.php:136
 #: includes/Abilities/class-remove-display-conditions.php:139
-#: includes/Abilities/class-remove-responsive-conditions.php:160
+#: includes/Abilities/class-remove-responsive-conditions.php:161
 #: includes/Abilities/class-remove-sticky.php:135
 msgid "The post_id and block_index parameters are required."
 msgstr ""
@@ -9208,7 +9139,7 @@ msgid "Apply Sticky to Block"
 msgstr ""
 
 #: includes/Abilities/class-apply-sticky.php:53
-msgid "Makes a container block sticky by setting the UAGPosition attribute. The block will remain fixed in position during scroll."
+msgid "Makes a container block sticky by enabling its stickyContainer setting. The block will remain fixed in position during scroll."
 msgstr ""
 
 #: includes/Abilities/class-apply-zindex.php:42
@@ -9313,6 +9244,22 @@ msgid "Container minimum height (CSS value, e.g. \"400px\")."
 msgstr ""
 
 #: includes/Abilities/class-create-container.php:91
+msgid "Flex direction of the children: \"row\" (horizontal) or \"column\" (vertical)."
+msgstr ""
+
+#: includes/Abilities/class-create-container.php:96
+msgid "Main-axis alignment of the children."
+msgstr ""
+
+#: includes/Abilities/class-create-container.php:101
+msgid "Cross-axis alignment of the children: \"top\", \"center\", or \"bottom\"."
+msgstr ""
+
+#: includes/Abilities/class-create-container.php:106
+msgid "Gap between children (CSS value, e.g. \"20px\", \"1rem\")."
+msgstr ""
+
+#: includes/Abilities/class-create-container.php:110
 msgid "Inner block markup to place inside the container. Should be serialized block comments."
 msgstr ""
 
@@ -10137,11 +10084,11 @@ msgstr ""
 msgid "The font \"%s\" is not in the selected fonts list."
 msgstr ""
 
-#: includes/Abilities/class-remove-responsive-conditions.php:63
+#: includes/Abilities/class-remove-responsive-conditions.php:64
 msgid "Remove Responsive Conditions"
 msgstr ""
 
-#: includes/Abilities/class-remove-responsive-conditions.php:74
+#: includes/Abilities/class-remove-responsive-conditions.php:75
 msgid "Removes all responsive visibility conditions from a block, making it visible on all devices and to all users."
 msgstr ""
 
@@ -10401,145 +10348,145 @@ msgstr ""
 msgid "At least one field to update must be provided (title, content, type, enabled, or repetition)."
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:444
-#: includes/Blocks/class-popup-builder.php:502
+#: includes/Blocks/class-popup-builder.php:517
+#: includes/Blocks/class-popup-builder.php:575
 msgctxt "plural"
 msgid "Popup Builder"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:445
-#: includes/Blocks/class-popup-builder.php:503
+#: includes/Blocks/class-popup-builder.php:518
+#: includes/Blocks/class-popup-builder.php:576
 msgctxt "singular"
 msgid "Spectra Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:446
+#: includes/Blocks/class-popup-builder.php:519
 msgid "View Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:447
+#: includes/Blocks/class-popup-builder.php:520
 msgid "Create Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:448
+#: includes/Blocks/class-popup-builder.php:521
 msgid "Create New Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:449
+#: includes/Blocks/class-popup-builder.php:522
 msgid "Edit Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:450
+#: includes/Blocks/class-popup-builder.php:523
 msgid "New Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:451
+#: includes/Blocks/class-popup-builder.php:524
 msgid "Search Popups"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:452
+#: includes/Blocks/class-popup-builder.php:525
 msgid "No Popups Found"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:453
+#: includes/Blocks/class-popup-builder.php:526
 msgid "No Popups in Trash"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:454
+#: includes/Blocks/class-popup-builder.php:527
 msgid "All Popups"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:455
+#: includes/Blocks/class-popup-builder.php:528
 msgid "Popup Published"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:456
+#: includes/Blocks/class-popup-builder.php:529
 msgid "Popup Updated"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:666
+#: includes/Blocks/class-popup-builder.php:739
 #: src/components/advanced-gradient-control/index.js:433
 msgid "Type"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:667
+#: includes/Blocks/class-popup-builder.php:740
 msgid "Author"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:685
+#: includes/Blocks/class-popup-builder.php:758
 msgid "Enable/Disable"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:736
+#: includes/Blocks/class-popup-builder.php:809
 msgid "Toggle popup status"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:749
+#: includes/Blocks/class-popup-builder.php:822
 #: src/blocks/popup-builder/variations.js:9
 msgid "Info Bar"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:752
+#: includes/Blocks/class-popup-builder.php:825
 #: src/blocks/popup-builder/settings.js:189
 #: src/blocks/popup-builder/variations.js:874
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:99
 msgid "Popup"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:755
+#: includes/Blocks/class-popup-builder.php:828
 msgid "Unset"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:849
+#: includes/Blocks/class-popup-builder.php:922
 msgid "Want to do more with Popup Builder?"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:851
+#: includes/Blocks/class-popup-builder.php:924
 msgid "Maximize your popup potential with Spectra Blocks Pro. Unlock enhanced features, intuitive design options, and increased conversions!"
 msgstr ""
 
-#: includes/Blocks/class-popup-builder.php:853
+#: includes/Blocks/class-popup-builder.php:926
 #: src/extensions/gbs-pro-nudge/index.js:163
 msgid "Upgrade Now"
 msgstr ""
 
-#: includes/class-abilities-manager.php:112
+#: includes/class-abilities-manager.php:113
 msgid "Spectra Blocks — Discovery"
 msgstr ""
 
-#: includes/class-abilities-manager.php:113
+#: includes/class-abilities-manager.php:114
 msgid "Discover available blocks, read post content, search for blocks across the site, and view analytics."
 msgstr ""
 
-#: includes/class-abilities-manager.php:116
+#: includes/class-abilities-manager.php:117
 msgid "Spectra Blocks — Content"
 msgstr ""
 
-#: includes/class-abilities-manager.php:117
+#: includes/class-abilities-manager.php:118
 msgid "Create, update, move, duplicate, and remove blocks and popups in posts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:120
+#: includes/class-abilities-manager.php:121
 msgid "Spectra Blocks — Layout"
 msgstr ""
 
-#: includes/class-abilities-manager.php:121
+#: includes/class-abilities-manager.php:122
 msgid "Create containers, modals, sliders, and generate full page layouts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:124
+#: includes/class-abilities-manager.php:125
 msgid "Spectra Blocks — Configuration"
 msgstr ""
 
-#: includes/class-abilities-manager.php:125
+#: includes/class-abilities-manager.php:126
 msgid "Manage plugin settings, block activation, and Google Fonts."
 msgstr ""
 
-#: includes/class-abilities-manager.php:128
+#: includes/class-abilities-manager.php:129
 msgid "Spectra Blocks — Extensions"
 msgstr ""
 
-#: includes/class-abilities-manager.php:129
+#: includes/class-abilities-manager.php:130
 msgid "Apply and remove block extensions like animations, sticky, responsive conditions, z-index, and image masks."
 msgstr ""
 
@@ -10551,7 +10498,7 @@ msgstr ""
 msgid "Spectra Inner Blocks"
 msgstr ""
 
-#: includes/class-extension-manager.php:67
+#: includes/class-extension-manager.php:68
 msgid "Set when a user dismisses the Zip AI page notice; hides it site-wide."
 msgstr ""
 
@@ -10588,9 +10535,10 @@ msgstr ""
 msgid "A keyframe named \"%s\" already exists with different contents."
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:185
-#: src/blocks/container/settings.js:849
-#: src/blocks/container/settings.js:1376
+#: includes/Helpers/class-shadow.php:195
+#: src/blocks/container/settings.js:895
+#: src/blocks/container/settings.js:1422
+#: src/blocks/container/toolbar.js:29
 #: src/blocks/post/settings/pagination-settings.js:78
 #: src/blocks/slider/settings.js:378
 #: src/components/background/index.js:248
@@ -10599,24 +10547,24 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:189
-#: src/blocks/content/render.js:55
+#: includes/Helpers/class-shadow.php:199
+#: src/blocks/content/render.js:59
 msgid "Small"
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:197
+#: includes/Helpers/class-shadow.php:207
 msgid "Large"
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:201
+#: includes/Helpers/class-shadow.php:211
 msgid "Extra Large"
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:205
+#: includes/Helpers/class-shadow.php:215
 msgid "Inner Small"
 msgstr ""
 
-#: includes/Helpers/class-shadow.php:209
+#: includes/Helpers/class-shadow.php:219
 msgid "Inner Medium"
 msgstr ""
 
@@ -10702,91 +10650,91 @@ msgid "Accordion Title"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:42
-#: src/blocks/countdown/render.js:86
-#: src/blocks/countdown/settings.js:363
-#: src/blocks/countdown/settings.js:413
-#: src/blocks/countdown/settings.js:416
-#: src/blocks/countdown/settings.js:423
+#: src/blocks/countdown/render.js:89
+#: src/blocks/countdown/settings.js:365
+#: src/blocks/countdown/settings.js:415
+#: src/blocks/countdown/settings.js:418
+#: src/blocks/countdown/settings.js:425
 msgid "Day"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:43
-#: src/blocks/countdown-child-day/render.js:56
+#: src/blocks/countdown-child-day/render.js:61
 #: src/blocks/countdown-child-day/template.js:20
-#: src/blocks/countdown/render.js:85
-#: src/blocks/countdown/settings.js:362
-#: src/blocks/countdown/settings.js:397
-#: src/blocks/countdown/settings.js:400
-#: src/blocks/countdown/settings.js:407
+#: src/blocks/countdown/render.js:88
+#: src/blocks/countdown/settings.js:364
+#: src/blocks/countdown/settings.js:399
+#: src/blocks/countdown/settings.js:402
+#: src/blocks/countdown/settings.js:409
 #: src/blocks/popup-builder/variations.js:350
 msgid "Days"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:44
-#: src/blocks/countdown/render.js:88
-#: src/blocks/countdown/settings.js:365
-#: src/blocks/countdown/settings.js:445
-#: src/blocks/countdown/settings.js:448
-#: src/blocks/countdown/settings.js:455
+#: src/blocks/countdown/render.js:91
+#: src/blocks/countdown/settings.js:367
+#: src/blocks/countdown/settings.js:447
+#: src/blocks/countdown/settings.js:450
+#: src/blocks/countdown/settings.js:457
 msgid "Hour"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:45
-#: src/blocks/countdown-child-hour/render.js:56
+#: src/blocks/countdown-child-hour/render.js:61
 #: src/blocks/countdown-child-hour/template.js:20
-#: src/blocks/countdown/render.js:87
-#: src/blocks/countdown/settings.js:364
-#: src/blocks/countdown/settings.js:429
-#: src/blocks/countdown/settings.js:432
-#: src/blocks/countdown/settings.js:439
+#: src/blocks/countdown/render.js:90
+#: src/blocks/countdown/settings.js:366
+#: src/blocks/countdown/settings.js:431
+#: src/blocks/countdown/settings.js:434
+#: src/blocks/countdown/settings.js:441
 #: src/blocks/popup-builder/variations.js:447
 msgid "Hours"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:46
-#: src/blocks/countdown/render.js:90
-#: src/blocks/countdown/settings.js:367
-#: src/blocks/countdown/settings.js:477
-#: src/blocks/countdown/settings.js:480
-#: src/blocks/countdown/settings.js:487
+#: src/blocks/countdown/render.js:93
+#: src/blocks/countdown/settings.js:369
+#: src/blocks/countdown/settings.js:479
+#: src/blocks/countdown/settings.js:482
+#: src/blocks/countdown/settings.js:489
 msgid "Minute"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:47
-#: src/blocks/countdown-child-minute/render.js:56
+#: src/blocks/countdown-child-minute/render.js:61
 #: src/blocks/countdown-child-minute/template.js:20
-#: src/blocks/countdown/render.js:89
-#: src/blocks/countdown/settings.js:366
-#: src/blocks/countdown/settings.js:461
-#: src/blocks/countdown/settings.js:464
-#: src/blocks/countdown/settings.js:471
+#: src/blocks/countdown/render.js:92
+#: src/blocks/countdown/settings.js:368
+#: src/blocks/countdown/settings.js:463
+#: src/blocks/countdown/settings.js:466
+#: src/blocks/countdown/settings.js:473
 #: src/blocks/popup-builder/variations.js:544
 msgid "Minutes"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:48
-#: src/blocks/countdown/render.js:92
-#: src/blocks/countdown/settings.js:369
-#: src/blocks/countdown/settings.js:509
-#: src/blocks/countdown/settings.js:512
-#: src/blocks/countdown/settings.js:519
+#: src/blocks/countdown/render.js:95
+#: src/blocks/countdown/settings.js:371
+#: src/blocks/countdown/settings.js:511
+#: src/blocks/countdown/settings.js:514
+#: src/blocks/countdown/settings.js:521
 msgid "Second"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:49
-#: src/blocks/countdown-child-second/render.js:56
+#: src/blocks/countdown-child-second/render.js:61
 #: src/blocks/countdown-child-second/template.js:20
-#: src/blocks/countdown/render.js:91
-#: src/blocks/countdown/settings.js:368
-#: src/blocks/countdown/settings.js:493
-#: src/blocks/countdown/settings.js:496
-#: src/blocks/countdown/settings.js:503
+#: src/blocks/countdown/render.js:94
+#: src/blocks/countdown/settings.js:370
+#: src/blocks/countdown/settings.js:495
+#: src/blocks/countdown/settings.js:498
+#: src/blocks/countdown/settings.js:505
 #: src/blocks/popup-builder/variations.js:641
 msgid "Seconds"
 msgstr ""
 
 #: src/blocks/countdown/controller.php:88
-#: src/blocks/countdown/render.js:323
+#: src/blocks/countdown/render.js:333
 msgid "Countdown timer"
 msgstr ""
 
@@ -10800,7 +10748,7 @@ msgstr ""
 #: src/blocks/icon/settings.js:61
 #: src/blocks/modal-child-popup-close-icon/settings.js:59
 #: src/blocks/modal-child-trigger-icon/settings.js:59
-#: src/blocks/popup-builder/settings.js:503
+#: src/blocks/popup-builder/settings.js:502
 msgid "An icon named %s"
 msgstr ""
 
@@ -10811,7 +10759,7 @@ msgstr ""
 #: src/blocks/icon/settings.js:68
 #: src/blocks/modal-child-popup-close-icon/settings.js:66
 #: src/blocks/modal-child-trigger-icon/settings.js:66
-#: src/blocks/popup-builder/settings.js:510
+#: src/blocks/popup-builder/settings.js:509
 msgid "An image named %s"
 msgstr ""
 
@@ -10823,7 +10771,7 @@ msgid "Close modal"
 msgstr ""
 
 #: src/blocks/modal-child-trigger-content/controller.php:55
-#: src/blocks/modal-child-trigger-content/render.js:84
+#: src/blocks/modal-child-trigger-content/render.js:105
 msgid "Get started by writing something!"
 msgstr ""
 
@@ -10903,8 +10851,8 @@ msgstr ""
 
 #: src/blocks/accordion-child-header-content/settings.js:63
 #: src/blocks/accordion-child-header-content/settings.js:71
-#: src/blocks/container/settings.js:187
-#: src/blocks/content/settings.js:68
+#: src/blocks/container/settings.js:193
+#: src/blocks/content/settings.js:77
 msgid "HTML Tag"
 msgstr ""
 
@@ -10967,7 +10915,7 @@ msgstr ""
 #: src/blocks/modal-child-trigger-icon/settings.js:98
 #: src/blocks/modal-child-trigger-icon/settings.js:273
 #: src/blocks/modal/settings.js:52
-#: src/blocks/popup-builder/settings.js:549
+#: src/blocks/popup-builder/settings.js:547
 #: src/blocks/tabs-child-tab-button/settings.js:97
 #: src/blocks/tabs-child-tab-button/settings.js:117
 #: src/blocks/tabs-child-tab-button/settings.js:400
@@ -10984,7 +10932,7 @@ msgstr ""
 #: src/blocks/modal-child-popup-close-icon/settings.js:118
 #: src/blocks/modal-child-trigger-button/settings.js:139
 #: src/blocks/modal-child-trigger-icon/settings.js:118
-#: src/blocks/popup-builder/settings.js:573
+#: src/blocks/popup-builder/settings.js:571
 #: src/blocks/tabs-child-tab-button/settings.js:130
 msgid "Flip Icon for Right-To-Left"
 msgstr ""
@@ -11020,8 +10968,8 @@ msgstr ""
 #: src/blocks/modal-child-popup-close-icon/settings.js:137
 #: src/blocks/modal-child-trigger-icon/settings.js:129
 #: src/blocks/modal-child-trigger-icon/settings.js:137
-#: src/blocks/popup-builder/settings.js:592
-#: src/blocks/popup-builder/settings.js:602
+#: src/blocks/popup-builder/settings.js:590
+#: src/blocks/popup-builder/settings.js:600
 #: src/blocks/tabs-child-tab-button/settings.js:180
 #: src/blocks/tabs-child-tab-button/settings.js:193
 msgid "Rotation"
@@ -11029,8 +10977,8 @@ msgstr ""
 
 #: src/blocks/accordion-child-header-icon/settings.js:189
 #: src/blocks/accordion-child-header-icon/settings.js:199
-#: src/blocks/container/settings.js:1085
-#: src/blocks/container/settings.js:1092
+#: src/blocks/container/settings.js:1131
+#: src/blocks/container/settings.js:1138
 #: src/blocks/counter/settings.js:451
 #: src/blocks/counter/settings.js:459
 #: src/blocks/icon/settings.js:238
@@ -11039,7 +10987,6 @@ msgstr ""
 #: src/blocks/modal-child-popup-close-icon/settings.js:227
 #: src/blocks/modal-child-trigger-icon/settings.js:217
 #: src/blocks/modal-child-trigger-icon/settings.js:227
-#: src/blocks/popup-builder/settings.js:761
 #: src/extensions/image-mask/edit.js:331
 #: src/extensions/image-mask/edit.js:339
 msgid "Size"
@@ -11073,7 +11020,7 @@ msgstr ""
 
 #: src/blocks/accordion-child-header/settings.js:64
 #: src/blocks/accordion-child-item/settings.js:115
-#: src/blocks/container/toolbar.js:30
+#: src/blocks/container/toolbar.js:42
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:75
 msgid "Header"
 msgstr ""
@@ -11092,8 +11039,8 @@ msgid "Button"
 msgstr ""
 
 #: src/blocks/accordion-child-header/settings.js:88
-#: src/blocks/container/toolbar.js:26
-#: src/blocks/content/render.js:39
+#: src/blocks/container/toolbar.js:38
+#: src/blocks/content/render.js:43
 msgid "Div"
 msgstr ""
 
@@ -11178,28 +11125,28 @@ msgstr ""
 msgid "Header Text Hover/Focus"
 msgstr ""
 
-#: src/blocks/button/render.js:249
+#: src/blocks/button/render.js:290
 msgid "Add text…"
 msgstr ""
 
 #: src/blocks/button/settings.js:72
-#: src/blocks/container/settings.js:691
+#: src/blocks/container/settings.js:737
 #: src/blocks/tabs-child-tab-button/settings.js:466
 msgid "Border Hover"
 msgstr ""
 
 #: src/blocks/button/settings.js:83
-#: src/blocks/container/settings.js:702
+#: src/blocks/container/settings.js:748
 msgid "Enable Border Hover"
 msgstr ""
 
 #: src/blocks/button/settings.js:91
-#: src/blocks/container/settings.js:710
+#: src/blocks/container/settings.js:756
 msgid "Enable border hover to customize the border color on hover."
 msgstr ""
 
 #: src/blocks/button/settings.js:96
-#: src/blocks/container/settings.js:715
+#: src/blocks/container/settings.js:761
 msgid "Border Hover Color"
 msgstr ""
 
@@ -11255,8 +11202,8 @@ msgstr ""
 #: src/blocks/button/settings.js:368
 #: src/blocks/button/settings.js:379
 #: src/blocks/button/settings.js:440
-#: src/blocks/container/settings.js:922
-#: src/blocks/container/settings.js:970
+#: src/blocks/container/settings.js:968
+#: src/blocks/container/settings.js:1016
 #: src/blocks/modal-child-trigger-button/settings.js:155
 #: src/blocks/modal-child-trigger-button/settings.js:166
 #: src/blocks/popup-builder/settings.js:243
@@ -11338,15 +11285,15 @@ msgid "e.g., Learn more"
 msgstr ""
 
 #: src/blocks/button/settings.js:549
-#: src/blocks/container/settings.js:444
-#: src/blocks/content/settings.js:105
+#: src/blocks/container/settings.js:481
+#: src/blocks/content/settings.js:151
 #: src/blocks/countdown-child-day/settings.js:36
 #: src/blocks/countdown-child-hour/settings.js:36
 #: src/blocks/countdown-child-label/settings.js:36
 #: src/blocks/countdown-child-minute/settings.js:36
 #: src/blocks/countdown-child-second/settings.js:36
 #: src/blocks/countdown-child-separator/settings.js:36
-#: src/blocks/countdown/settings.js:807
+#: src/blocks/countdown/settings.js:809
 #: src/blocks/list/settings.js:308
 #: src/blocks/modal-child-popup-content/settings.js:200
 #: src/blocks/modal-child-trigger-button/settings.js:210
@@ -11359,8 +11306,8 @@ msgstr ""
 
 #: src/blocks/button/settings.js:561
 #: src/blocks/buttons/settings.js:37
-#: src/blocks/container/settings.js:474
-#: src/blocks/content/settings.js:112
+#: src/blocks/container/settings.js:511
+#: src/blocks/content/settings.js:158
 #: src/blocks/countdown-child-day/settings.js:43
 #: src/blocks/countdown-child-hour/settings.js:43
 #: src/blocks/countdown-child-label/settings.js:43
@@ -11368,7 +11315,7 @@ msgstr ""
 #: src/blocks/countdown-child-number/settings.js:38
 #: src/blocks/countdown-child-second/settings.js:43
 #: src/blocks/countdown-child-separator/settings.js:43
-#: src/blocks/countdown/settings.js:814
+#: src/blocks/countdown/settings.js:816
 #: src/blocks/icon/settings.js:287
 #: src/blocks/icons/settings.js:37
 #: src/blocks/list-child-icon/settings.js:193
@@ -11379,7 +11326,7 @@ msgstr ""
 #: src/blocks/modal-child-trigger-button/settings.js:222
 #: src/blocks/modal-child-trigger-content/settings.js:119
 #: src/blocks/modal-child-trigger-icon/settings.js:266
-#: src/blocks/popup-builder/settings.js:842
+#: src/blocks/popup-builder/settings.js:817
 #: src/blocks/tabs-child-tab-button/settings.js:309
 #: src/blocks/tabs-child-tab-trigger/settings.js:271
 #: src/blocks/tabs-child-tabpanel/settings.js:46
@@ -11419,7 +11366,7 @@ msgid "Add Text…"
 msgstr ""
 
 #: src/blocks/container/edit.js:333
-#: src/blocks/container/settings.js:160
+#: src/blocks/container/settings.js:169
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:53
 #: src/extensions/gbs-pro-nudge/index.js:292
 msgid "Container"
@@ -11429,81 +11376,89 @@ msgstr ""
 msgid "Select a container layout"
 msgstr ""
 
-#: src/blocks/container/settings.js:68
+#: src/blocks/container/settings.js:72
 msgid "a generic container with no semantic meaning. Best for styling and layout purposes."
 msgstr ""
 
-#: src/blocks/container/settings.js:69
+#: src/blocks/container/settings.js:73
 msgid "represents introductory content, typically containing navigation aids and headings."
 msgstr ""
 
-#: src/blocks/container/settings.js:70
+#: src/blocks/container/settings.js:74
 msgid "represents a footer for its nearest sectioning content, containing information about the author, copyright, or links."
 msgstr ""
 
-#: src/blocks/container/settings.js:71
+#: src/blocks/container/settings.js:75
 msgid "represents the dominant content of the page. There should be only one main element per page."
 msgstr ""
 
-#: src/blocks/container/settings.js:72
+#: src/blocks/container/settings.js:76
 msgid "represents a standalone piece of content that could be distributed independently, like a blog post or news article."
 msgstr ""
 
-#: src/blocks/container/settings.js:73
+#: src/blocks/container/settings.js:77
 msgid "represents a thematic grouping of content, typically with a heading. Use when no other semantic element is appropriate."
 msgstr ""
 
-#: src/blocks/container/settings.js:74
+#: src/blocks/container/settings.js:78
 msgid "represents content that is tangentially related to the main content, like a sidebar or callout box."
 msgstr ""
 
-#: src/blocks/container/settings.js:75
+#: src/blocks/container/settings.js:79
 msgid "represents self-contained content, like images, diagrams, or code snippets, often with a caption."
 msgstr ""
 
-#: src/blocks/container/settings.js:76
+#: src/blocks/container/settings.js:80
 msgid "represents a caption or legend describing the content of its parent figure element."
 msgstr ""
 
-#: src/blocks/container/settings.js:77
+#: src/blocks/container/settings.js:81
 msgid "represents a summary, caption, or legend for a details element's disclosure box."
 msgstr ""
 
-#: src/blocks/container/settings.js:78
+#: src/blocks/container/settings.js:82
 msgid "represents a section of navigation links to other pages or parts within the current page."
 msgstr ""
 
-#: src/blocks/container/settings.js:79
+#: src/blocks/container/settings.js:83
 msgid "creates a hyperlink to other pages, files, email addresses, or locations within the same page."
 msgstr ""
 
-#: src/blocks/container/settings.js:134
+#: src/blocks/container/settings.js:143
 msgid "Flex Direction"
 msgstr ""
 
-#: src/blocks/container/settings.js:137
-#: src/blocks/container/settings.js:149
+#: src/blocks/container/settings.js:146
+#: src/blocks/container/settings.js:158
 msgid "Orientation Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:152
+#: src/blocks/container/settings.js:161
 msgid "When enabled, reverses the visual order of flex items. Use this to reverse the layout of containers within this block."
 msgstr ""
 
-#: src/blocks/container/settings.js:192
-#: src/blocks/content/settings.js:73
+#. translators: 1: number of attributes, 2: previous HTML tag name
+#: src/blocks/container/settings.js:216
+#: src/blocks/content/settings.js:100
+msgid "%1$d tag attribute cleared after switching from <%2$s>."
+msgid_plural "%1$d tag attributes cleared after switching from <%2$s>."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/blocks/container/settings.js:229
+#: src/blocks/content/settings.js:113
 msgid "Select the appropriate HTML element for semantic markup and accessibility."
 msgstr ""
 
 #. translators: 1: HTML tag name, 2: tag description
-#: src/blocks/container/settings.js:205
+#: src/blocks/container/settings.js:241
 msgid "The %1$s HTML tag %2$s"
 msgstr ""
 
-#: src/blocks/container/settings.js:224
-#: src/blocks/container/settings.js:237
-#: src/blocks/countdown/settings.js:295
-#: src/blocks/countdown/settings.js:303
+#: src/blocks/container/settings.js:261
+#: src/blocks/container/settings.js:274
+#: src/blocks/countdown/settings.js:297
+#: src/blocks/countdown/settings.js:305
 #: src/blocks/slider/settings.js:403
 #: src/blocks/slider/settings.js:416
 #: src/blocks/tabs-child-tab-trigger/settings.js:163
@@ -11511,50 +11466,50 @@ msgstr ""
 msgid "Overflow"
 msgstr ""
 
-#: src/blocks/container/settings.js:352
-#: src/blocks/container/settings.js:390
-#: src/blocks/countdown/settings.js:665
-#: src/blocks/countdown/settings.js:741
-#: src/blocks/popup-builder/settings.js:979
+#: src/blocks/container/settings.js:389
+#: src/blocks/container/settings.js:427
+#: src/blocks/countdown/settings.js:667
+#: src/blocks/countdown/settings.js:743
+#: src/blocks/popup-builder/settings.js:954
 #: src/blocks/tabs-child-tab-trigger/settings.js:61
 msgid "Sizes"
 msgstr ""
 
-#: src/blocks/container/settings.js:457
+#: src/blocks/container/settings.js:494
 #: src/blocks/modal-child-popup-content/settings.js:207
-#: src/blocks/popup-builder/settings.js:856
+#: src/blocks/popup-builder/settings.js:831
 #: src/blocks/slider-child/settings.js:86
 #: src/blocks/slider/settings.js:859
 #: src/components/background/index.js:200
 msgid "Background"
 msgstr ""
 
-#: src/blocks/container/settings.js:490
+#: src/blocks/container/settings.js:527
 msgid "Top Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:502
+#: src/blocks/container/settings.js:539
 msgid "Bottom Divider"
 msgstr ""
 
-#: src/blocks/container/settings.js:525
+#: src/blocks/container/settings.js:562
 #: src/blocks/slider-child/settings.js:111
 #: src/blocks/slider/settings.js:884
 msgid "Advanced BG"
 msgstr ""
 
-#: src/blocks/container/settings.js:534
+#: src/blocks/container/settings.js:571
 msgid "Advanced BG Hover"
 msgstr ""
 
-#: src/blocks/container/settings.js:550
+#: src/blocks/container/settings.js:587
 #: src/blocks/slider-child/settings.js:125
 #: src/blocks/slider/settings.js:898
 msgid "Advanced gradients will override the basic background colors/gradients when set."
 msgstr ""
 
-#: src/blocks/container/settings.js:575
-#: src/blocks/container/settings.js:585
+#: src/blocks/container/settings.js:612
+#: src/blocks/container/settings.js:622
 #: src/blocks/modal-child-popup-content/settings.js:252
 #: src/blocks/modal-child-popup-content/settings.js:262
 #: src/blocks/slider-child/settings.js:151
@@ -11564,324 +11519,325 @@ msgstr ""
 msgid "Background Color Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:586
+#: src/blocks/container/settings.js:623
 msgid "Opacity of the background colour or gradient. The overlay image has its own opacity under Overlay Settings."
 msgstr ""
 
-#: src/blocks/container/settings.js:628
-#: src/components/shadow-control/index.js:59
+#: src/blocks/container/settings.js:665
+#: src/components/shadow-control/index.js:86
 msgid "Box Shadow"
 msgstr ""
 
-#: src/blocks/container/settings.js:665
-#: src/components/shadow-control/index.js:74
+#: src/blocks/container/settings.js:711
+#: src/components/shadow-control/index.js:101
 msgid "Theme"
 msgstr ""
 
-#: src/blocks/container/settings.js:672
-#: src/blocks/container/settings.js:963
-#: src/blocks/container/settings.js:1098
+#: src/blocks/container/settings.js:718
+#: src/blocks/container/settings.js:1009
+#: src/blocks/container/settings.js:1144
 #: src/components/background/index.js:133
 #: src/components/background/index.js:584
-#: src/components/shadow-control/index.js:81
+#: src/components/shadow-control/index.js:108
 #: src/extensions/image-mask/edit.js:94
 msgid "Custom"
 msgstr ""
 
-#: src/blocks/container/settings.js:679
-#: src/blocks/container/settings.js:959
+#: src/blocks/container/settings.js:725
+#: src/blocks/container/settings.js:1005
 #: src/components/background/index.js:580
-#: src/components/shadow-control/index.js:88
+#: src/components/shadow-control/index.js:115
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:39
 #: src/extensions/gbs-editor/components/panels/CustomClassesPanel.jsx:46
 msgid "Default"
 msgstr ""
 
-#: src/blocks/container/settings.js:716
+#: src/blocks/container/settings.js:762
 msgid "Set the border color that appears when hovering over the container. The border width and style will match the normal border."
 msgstr ""
 
-#: src/blocks/container/settings.js:805
+#: src/blocks/container/settings.js:851
 msgid "Overlay Settings"
 msgstr ""
 
-#: src/blocks/container/settings.js:814
-#: src/blocks/container/settings.js:822
+#: src/blocks/container/settings.js:860
+#: src/blocks/container/settings.js:868
 msgid "Overlay Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:879
+#: src/blocks/container/settings.js:925
 msgid "Add Overlay Image"
 msgstr ""
 
-#: src/blocks/container/settings.js:893
+#: src/blocks/container/settings.js:939
 msgid "Image failed to load"
 msgstr ""
 
-#: src/blocks/container/settings.js:897
+#: src/blocks/container/settings.js:943
 #: src/components/background/index.js:325
 #: src/extensions/image-mask/edit.js:291
 msgid "Replace"
 msgstr ""
 
-#: src/blocks/container/settings.js:904
+#: src/blocks/container/settings.js:950
 #: src/components/background/index.js:339
+#: src/extensions/html-attributes/controls.js:299
 #: src/extensions/image-mask/edit.js:308
 msgid "Remove"
 msgstr ""
 
-#: src/blocks/container/settings.js:943
+#: src/blocks/container/settings.js:989
 msgid "Overlay Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:981
+#: src/blocks/container/settings.js:1027
 #: src/components/background/index.js:609
 msgid "Centralized Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:994
+#: src/blocks/container/settings.js:1040
 #: src/components/background/index.js:625
-#: src/components/shadow-control/index.js:322
+#: src/components/shadow-control/index.js:365
 msgid "X Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:1017
+#: src/blocks/container/settings.js:1063
 #: src/components/background/index.js:651
-#: src/components/shadow-control/index.js:347
+#: src/components/shadow-control/index.js:391
 msgid "Y Position"
 msgstr ""
 
-#: src/blocks/container/settings.js:1044
-#: src/blocks/container/settings.js:1051
+#: src/blocks/container/settings.js:1090
+#: src/blocks/container/settings.js:1097
 msgid "Attachment"
 msgstr ""
 
-#: src/blocks/container/settings.js:1055
+#: src/blocks/container/settings.js:1101
 #: src/components/background/index.js:513
 msgid "Fixed"
 msgstr ""
 
-#: src/blocks/container/settings.js:1056
+#: src/blocks/container/settings.js:1102
 #: src/components/background/index.js:514
 msgid "Inherit"
 msgstr ""
 
-#: src/blocks/container/settings.js:1074
+#: src/blocks/container/settings.js:1120
 #: src/components/background/index.js:138
 #: src/extensions/image-mask/edit.js:116
 msgid "No Repeat"
 msgstr ""
 
-#: src/blocks/container/settings.js:1076
+#: src/blocks/container/settings.js:1122
 #: src/components/background/index.js:140
 #: src/extensions/image-mask/edit.js:124
 msgid "Repeat X"
 msgstr ""
 
-#: src/blocks/container/settings.js:1077
+#: src/blocks/container/settings.js:1123
 #: src/components/background/index.js:141
 #: src/extensions/image-mask/edit.js:128
 msgid "Repeat Y"
 msgstr ""
 
-#: src/blocks/container/settings.js:1095
+#: src/blocks/container/settings.js:1141
 #: src/components/background/index.js:130
 #: src/extensions/image-mask/edit.js:105
 msgid "Cover"
 msgstr ""
 
-#: src/blocks/container/settings.js:1096
+#: src/blocks/container/settings.js:1142
 #: src/components/background/index.js:131
 #: src/extensions/image-mask/edit.js:109
 msgid "Contain"
 msgstr ""
 
-#: src/blocks/container/settings.js:1097
+#: src/blocks/container/settings.js:1143
 #: src/blocks/tabs-child-tab-trigger/settings.js:205
 #: src/components/background/index.js:132
 #: src/extensions/image-mask/edit.js:101
 msgid "Auto"
 msgstr ""
 
-#: src/blocks/container/settings.js:1114
-#: src/blocks/container/settings.js:1127
+#: src/blocks/container/settings.js:1160
+#: src/blocks/container/settings.js:1173
 msgid "Overlay Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1151
-#: src/blocks/container/settings.js:1158
+#: src/blocks/container/settings.js:1197
+#: src/blocks/container/settings.js:1204
 msgid "Blend Mode"
 msgstr ""
 
-#: src/blocks/container/settings.js:1161
-#: src/components/shadow-control/index.js:283
+#: src/blocks/container/settings.js:1207
+#: src/components/shadow-control/index.js:324
 msgid "Normal"
 msgstr ""
 
-#: src/blocks/container/settings.js:1162
+#: src/blocks/container/settings.js:1208
 msgid "Multiply"
 msgstr ""
 
-#: src/blocks/container/settings.js:1163
+#: src/blocks/container/settings.js:1209
 msgid "Screen"
 msgstr ""
 
-#: src/blocks/container/settings.js:1164
+#: src/blocks/container/settings.js:1210
 #: src/blocks/popup-builder/settings.js:295
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:98
 msgid "Overlay"
 msgstr ""
 
-#: src/blocks/container/settings.js:1165
+#: src/blocks/container/settings.js:1211
 msgid "Darken"
 msgstr ""
 
-#: src/blocks/container/settings.js:1166
+#: src/blocks/container/settings.js:1212
 msgid "Lighten"
 msgstr ""
 
-#: src/blocks/container/settings.js:1167
+#: src/blocks/container/settings.js:1213
 msgid "Color Dodge"
 msgstr ""
 
-#: src/blocks/container/settings.js:1168
+#: src/blocks/container/settings.js:1214
 msgid "Saturation"
 msgstr ""
 
-#: src/blocks/container/settings.js:1169
-#: src/components/shadow-control/index.js:305
+#: src/blocks/container/settings.js:1215
+#: src/components/shadow-control/index.js:348
 msgid "Color"
 msgstr ""
 
-#: src/blocks/container/settings.js:1177
-#: src/blocks/container/settings.js:1184
+#: src/blocks/container/settings.js:1223
+#: src/blocks/container/settings.js:1230
 msgid "Overlay Image Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1256
+#: src/blocks/container/settings.js:1302
 #: src/extensions/animations/utils/constants.js:51
 msgid "Flip"
 msgstr ""
 
-#: src/blocks/container/settings.js:1264
+#: src/blocks/container/settings.js:1310
 msgid "Invert"
 msgstr ""
 
-#: src/blocks/container/settings.js:1272
+#: src/blocks/container/settings.js:1318
 msgid "Bring To Front"
 msgstr ""
 
-#: src/blocks/container/settings.js:1283
+#: src/blocks/container/settings.js:1329
 msgid "Shape Divider Width"
 msgstr ""
 
-#: src/blocks/container/settings.js:1293
+#: src/blocks/container/settings.js:1339
 msgid "Shape Divider Height"
 msgstr ""
 
-#: src/blocks/container/settings.js:1377
+#: src/blocks/container/settings.js:1423
 msgid "Tilt"
 msgstr ""
 
-#: src/blocks/container/settings.js:1378
+#: src/blocks/container/settings.js:1424
 msgid "Mountains"
 msgstr ""
 
-#: src/blocks/container/settings.js:1379
+#: src/blocks/container/settings.js:1425
 msgid "Wave Brush"
 msgstr ""
 
-#: src/blocks/container/settings.js:1380
+#: src/blocks/container/settings.js:1426
 msgid "Waves"
 msgstr ""
 
-#: src/blocks/container/settings.js:1381
+#: src/blocks/container/settings.js:1427
 msgid "Waves Pattern"
 msgstr ""
 
-#: src/blocks/container/settings.js:1382
+#: src/blocks/container/settings.js:1428
 msgid "Triangle"
 msgstr ""
 
-#: src/blocks/container/settings.js:1383
+#: src/blocks/container/settings.js:1429
 msgid "Drops"
 msgstr ""
 
-#: src/blocks/container/settings.js:1384
+#: src/blocks/container/settings.js:1430
 msgid "Clouds"
 msgstr ""
 
-#: src/blocks/container/settings.js:1385
+#: src/blocks/container/settings.js:1431
 msgid "ZigZag"
 msgstr ""
 
-#: src/blocks/container/settings.js:1386
+#: src/blocks/container/settings.js:1432
 msgid "Pyramids"
 msgstr ""
 
-#: src/blocks/container/settings.js:1387
+#: src/blocks/container/settings.js:1433
 msgid "Triangle Asymmetrical"
 msgstr ""
 
-#: src/blocks/container/settings.js:1388
+#: src/blocks/container/settings.js:1434
 msgid "Tilt Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1389
+#: src/blocks/container/settings.js:1435
 msgid "Fan Opacity"
 msgstr ""
 
-#: src/blocks/container/settings.js:1390
+#: src/blocks/container/settings.js:1436
 msgid "Curve"
 msgstr ""
 
-#: src/blocks/container/settings.js:1391
+#: src/blocks/container/settings.js:1437
 msgid "Curve Asymmetrical"
 msgstr ""
 
-#: src/blocks/container/settings.js:1392
+#: src/blocks/container/settings.js:1438
 msgid "Curve Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:1393
+#: src/blocks/container/settings.js:1439
 msgid "Curve Asymmetrical Reverse"
 msgstr ""
 
-#: src/blocks/container/settings.js:1394
+#: src/blocks/container/settings.js:1440
 msgid "Arrow"
 msgstr ""
 
-#: src/blocks/container/settings.js:1395
+#: src/blocks/container/settings.js:1441
 msgid "Arrow Split"
 msgstr ""
 
-#: src/blocks/container/settings.js:1432
+#: src/blocks/container/settings.js:1478
 msgid "Top Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1443
+#: src/blocks/container/settings.js:1489
 msgid "Bottom Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1512
-#: src/blocks/container/settings.js:1520
+#: src/blocks/container/settings.js:1558
+#: src/blocks/container/settings.js:1566
 msgid "Shape Dividers"
 msgstr ""
 
-#: src/blocks/container/settings.js:1538
+#: src/blocks/container/settings.js:1584
 msgid "Shape Divider Type"
 msgstr ""
 
-#: src/blocks/container/settings.js:1545
-#: src/blocks/container/settings.js:1559
+#: src/blocks/container/settings.js:1591
+#: src/blocks/container/settings.js:1605
 #: src/blocks/popup-builder/settings.js:265
 #: src/blocks/popup-builder/settings.js:414
 #: src/extensions/sticky-container/controls.js:121
 msgid "Top"
 msgstr ""
 
-#: src/blocks/container/settings.js:1549
-#: src/blocks/container/settings.js:1560
+#: src/blocks/container/settings.js:1595
+#: src/blocks/container/settings.js:1606
 #: src/blocks/popup-builder/settings.js:279
 #: src/blocks/popup-builder/settings.js:421
 #: src/extensions/sticky-container/controls.js:125
@@ -11889,312 +11845,324 @@ msgid "Bottom"
 msgstr ""
 
 #. translators: %s: the sides that have a shape divider, e.g. "Top, Bottom".
-#: src/blocks/container/settings.js:1557
+#: src/blocks/container/settings.js:1603
 msgid "Divider set on: %s"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:34
+#: src/blocks/container/toolbar.js:30
+msgid "Wide width"
+msgstr ""
+
+#: src/blocks/container/toolbar.js:31
+msgid "Full width"
+msgstr ""
+
+#: src/blocks/container/toolbar.js:46
 msgid "Footer"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:38
+#: src/blocks/container/toolbar.js:50
 msgid "Main"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:42
+#: src/blocks/container/toolbar.js:54
 msgid "Article"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:50
+#: src/blocks/container/toolbar.js:62
 msgid "Aside"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:54
+#: src/blocks/container/toolbar.js:66
 msgid "Figure"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:58
-#: src/blocks/content/render.js:47
+#: src/blocks/container/toolbar.js:70
+#: src/blocks/content/render.js:51
 msgid "Figcaption"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:62
+#: src/blocks/container/toolbar.js:74
 msgid "Nav"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:66
+#: src/blocks/container/toolbar.js:78
 msgid "Hgroup"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:70
+#: src/blocks/container/toolbar.js:82
 msgid "Dialog"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:79
+#: src/blocks/container/toolbar.js:91
 msgid "UL"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:83
+#: src/blocks/container/toolbar.js:95
 msgid "OL"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:87
-#: src/blocks/content/render.js:74
+#: src/blocks/container/toolbar.js:99
+#: src/blocks/content/render.js:78
 msgid "LI"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:91
+#: src/blocks/container/toolbar.js:103
 msgid "DL"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:95
-#: src/blocks/content/render.js:50
+#: src/blocks/container/toolbar.js:107
+#: src/blocks/content/render.js:54
 msgid "DT"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:99
-#: src/blocks/content/render.js:51
+#: src/blocks/container/toolbar.js:111
+#: src/blocks/content/render.js:55
 msgid "DD"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:104
+#: src/blocks/container/toolbar.js:116
 msgid "Form"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:108
+#: src/blocks/container/toolbar.js:120
 msgid "Fieldset"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:112
+#: src/blocks/container/toolbar.js:124
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:76
 msgid "Details"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:116
-#: src/blocks/content/render.js:73
+#: src/blocks/container/toolbar.js:128
+#: src/blocks/content/render.js:77
 msgid "Summary"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:120
-#: src/blocks/content/render.js:43
+#: src/blocks/container/toolbar.js:132
+#: src/blocks/content/render.js:47
 #: src/blocks/google-map/settings.js:350
 #: src/blocks/google-map/settings.js:360
 msgid "Address"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:129
+#: src/blocks/container/toolbar.js:141
 msgid "Colgroup"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:133
+#: src/blocks/container/toolbar.js:145
 msgid "THead"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:137
+#: src/blocks/container/toolbar.js:149
 msgid "TBody"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:141
+#: src/blocks/container/toolbar.js:153
 msgid "TFoot"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:145
+#: src/blocks/container/toolbar.js:157
 msgid "TR"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:149
+#: src/blocks/container/toolbar.js:161
 msgid "TD"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:153
+#: src/blocks/container/toolbar.js:165
 msgid "TH"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:164
+#: src/blocks/container/toolbar.js:176
 msgid "Picture"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:174
+#: src/blocks/container/toolbar.js:186
 msgid "Audio"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:179
+#: src/blocks/container/toolbar.js:191
 msgid "Source"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:184
+#: src/blocks/container/toolbar.js:196
 msgid "Track"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:189
+#: src/blocks/container/toolbar.js:201
 msgid "Iframe"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:194
+#: src/blocks/container/toolbar.js:206
 msgid "Embed"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:199
+#: src/blocks/container/toolbar.js:211
 msgid "Object"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:204
+#: src/blocks/container/toolbar.js:216
 msgid "Canvas"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:209
+#: src/blocks/container/toolbar.js:221
 msgid "SVG"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:214
+#: src/blocks/container/toolbar.js:226
 msgid "HR"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:218
+#: src/blocks/container/toolbar.js:231
 msgid "BR"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:223
+#: src/blocks/container/toolbar.js:236
 msgid "WBR"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:271
-#: src/blocks/content/render.js:262
+#: src/blocks/container/toolbar.js:284
+#: src/blocks/content/render.js:280
 msgid "Change HTML tag"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:338
+#: src/blocks/container/toolbar.js:344
+msgid "Align"
+msgstr ""
+
+#: src/blocks/container/toolbar.js:362
 #: src/components/container-layout-guide/index.js:162
 msgid "Change Layout"
 msgstr ""
 
-#: src/blocks/container/toolbar.js:346
+#: src/blocks/container/toolbar.js:370
 msgid "Layout Help"
 msgstr ""
 
-#: src/blocks/content/render.js:31
+#: src/blocks/content/render.js:35
 msgid "Heading 1"
 msgstr ""
 
-#: src/blocks/content/render.js:32
+#: src/blocks/content/render.js:36
 msgid "Heading 2"
 msgstr ""
 
-#: src/blocks/content/render.js:33
+#: src/blocks/content/render.js:37
 msgid "Heading 3"
 msgstr ""
 
-#: src/blocks/content/render.js:34
+#: src/blocks/content/render.js:38
 msgid "Heading 4"
 msgstr ""
 
-#: src/blocks/content/render.js:35
+#: src/blocks/content/render.js:39
 msgid "Heading 5"
 msgstr ""
 
-#: src/blocks/content/render.js:36
+#: src/blocks/content/render.js:40
 msgid "Heading 6"
 msgstr ""
 
-#: src/blocks/content/render.js:40
+#: src/blocks/content/render.js:44
 msgid "Span"
 msgstr ""
 
-#: src/blocks/content/render.js:42
+#: src/blocks/content/render.js:46
 msgid "Blockquote"
 msgstr ""
 
-#: src/blocks/content/render.js:44
+#: src/blocks/content/render.js:48
 msgid "Cite"
 msgstr ""
 
-#: src/blocks/content/render.js:45
+#: src/blocks/content/render.js:49
 msgid "Time"
 msgstr ""
 
-#: src/blocks/content/render.js:46
+#: src/blocks/content/render.js:50
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:89
 msgid "Label"
 msgstr ""
 
-#: src/blocks/content/render.js:48
+#: src/blocks/content/render.js:52
 msgid "Caption"
 msgstr ""
 
-#: src/blocks/content/render.js:49
+#: src/blocks/content/render.js:53
 msgid "Legend"
 msgstr ""
 
-#: src/blocks/content/render.js:53
+#: src/blocks/content/render.js:57
 msgid "Strong"
 msgstr ""
 
-#: src/blocks/content/render.js:54
+#: src/blocks/content/render.js:58
 msgid "Em"
 msgstr ""
 
-#: src/blocks/content/render.js:56
+#: src/blocks/content/render.js:60
 msgid "Mark"
 msgstr ""
 
-#: src/blocks/content/render.js:57
+#: src/blocks/content/render.js:61
 msgid "Del"
 msgstr ""
 
-#: src/blocks/content/render.js:58
+#: src/blocks/content/render.js:62
 msgid "Ins"
 msgstr ""
 
-#: src/blocks/content/render.js:59
+#: src/blocks/content/render.js:63
 msgid "Sub"
 msgstr ""
 
-#: src/blocks/content/render.js:60
+#: src/blocks/content/render.js:64
 msgid "Sup"
 msgstr ""
 
-#: src/blocks/content/render.js:61
+#: src/blocks/content/render.js:65
 msgid "Abbr"
 msgstr ""
 
-#: src/blocks/content/render.js:63
+#: src/blocks/content/render.js:67
 msgid "Pre"
 msgstr ""
 
-#: src/blocks/content/render.js:64
+#: src/blocks/content/render.js:68
 msgid "Kbd"
 msgstr ""
 
-#: src/blocks/content/render.js:65
+#: src/blocks/content/render.js:69
 msgid "Samp"
 msgstr ""
 
-#: src/blocks/content/render.js:66
+#: src/blocks/content/render.js:70
 msgid "Var"
 msgstr ""
 
-#: src/blocks/content/render.js:67
+#: src/blocks/content/render.js:71
 msgid "Output"
 msgstr ""
 
-#: src/blocks/content/render.js:70
+#: src/blocks/content/render.js:74
 msgid "Dfn"
 msgstr ""
 
-#: src/blocks/content/render.js:71
+#: src/blocks/content/render.js:75
 msgid "Bdi"
 msgstr ""
 
-#: src/blocks/content/render.js:72
+#: src/blocks/content/render.js:76
 msgid "Bdo"
 msgstr ""
 
-#: src/blocks/content/render.js:248
+#: src/blocks/content/render.js:267
 msgid "Write something – paragraph, heading, or more…"
 msgstr ""
 
-#: src/blocks/content/settings.js:50
-#: src/blocks/countdown/settings.js:125
+#: src/blocks/content/settings.js:57
+#: src/blocks/countdown/settings.js:118
 #: src/blocks/counter/settings.js:54
 #: src/blocks/google-map/settings.js:336
 #: src/blocks/modal-child-trigger-content/settings.js:43
@@ -12202,30 +12170,30 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/blocks/content/settings.js:158
+#: src/blocks/content/settings.js:204
 #: src/blocks/modal-child-trigger-content/settings.js:165
 msgid "Not available for span tag."
 msgstr ""
 
-#: src/blocks/content/settings.js:161
+#: src/blocks/content/settings.js:207
 #: src/blocks/modal-child-trigger-content/settings.js:168
 msgid "Not available for aligned text."
 msgstr ""
 
-#: src/blocks/content/settings.js:164
+#: src/blocks/content/settings.js:210
 #: src/blocks/modal-child-trigger-content/settings.js:171
 msgid "Showing large initial letter."
 msgstr ""
 
-#: src/blocks/content/settings.js:167
+#: src/blocks/content/settings.js:213
 #: src/blocks/modal-child-trigger-content/settings.js:174
 msgid "Show a large initial letter."
 msgstr ""
 
-#: src/blocks/content/settings.js:176
-#: src/blocks/content/settings.js:177
-#: src/blocks/content/settings.js:184
-#: src/blocks/content/settings.js:189
+#: src/blocks/content/settings.js:222
+#: src/blocks/content/settings.js:223
+#: src/blocks/content/settings.js:230
+#: src/blocks/content/settings.js:235
 #: src/blocks/modal-child-trigger-content/settings.js:183
 #: src/blocks/modal-child-trigger-content/settings.js:184
 #: src/blocks/modal-child-trigger-content/settings.js:192
@@ -12233,27 +12201,27 @@ msgstr ""
 msgid "Drop cap"
 msgstr ""
 
-#: src/blocks/content/settings.js:237
+#: src/blocks/content/settings.js:283
 msgid "Text Shadow"
 msgstr ""
 
-#: src/blocks/content/settings.js:259
+#: src/blocks/content/settings.js:305
 msgid "Enable Text Shadow"
 msgstr ""
 
-#: src/blocks/content/settings.js:260
+#: src/blocks/content/settings.js:306
 msgid "Enable text shadow to customize the shadow properties."
 msgstr ""
 
-#: src/blocks/content/settings.js:293
+#: src/blocks/content/settings.js:339
 msgid "Text Shadow X Offset"
 msgstr ""
 
-#: src/blocks/content/settings.js:328
+#: src/blocks/content/settings.js:374
 msgid "Text Shadow Y Offset"
 msgstr ""
 
-#: src/blocks/content/settings.js:363
+#: src/blocks/content/settings.js:409
 msgid "Text Shadow Blur Radius"
 msgstr ""
 
@@ -12266,170 +12234,166 @@ msgstr ""
 msgid "Number Hover"
 msgstr ""
 
-#: src/blocks/countdown/render.js:365
+#: src/blocks/countdown/render.js:375
 msgid "Please enable at least one time unit (Days, Hours, Minutes, or Seconds)."
 msgstr ""
 
-#: src/blocks/countdown/settings.js:153
+#: src/blocks/countdown/settings.js:146
 msgid "Timer End Date & Time"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:161
+#: src/blocks/countdown/settings.js:154
 msgid "End Date & Time"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:162
+#: src/blocks/countdown/settings.js:155
 msgid "Select a future date and time for the countdown."
 msgstr ""
 
-#: src/blocks/countdown/settings.js:184
-#: src/blocks/countdown/settings.js:190
+#: src/blocks/countdown/settings.js:186
+#: src/blocks/countdown/settings.js:192
 msgid "Show Days"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:202
-#: src/blocks/countdown/settings.js:208
+#: src/blocks/countdown/settings.js:204
+#: src/blocks/countdown/settings.js:210
 msgid "Show Hours"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:221
-#: src/blocks/countdown/settings.js:227
+#: src/blocks/countdown/settings.js:223
+#: src/blocks/countdown/settings.js:229
 msgid "Show Minutes"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:240
-#: src/blocks/countdown/settings.js:246
+#: src/blocks/countdown/settings.js:242
+#: src/blocks/countdown/settings.js:248
 msgid "Show Seconds"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:259
-#: src/blocks/countdown/settings.js:268
+#: src/blocks/countdown/settings.js:261
+#: src/blocks/countdown/settings.js:270
 msgid "ARIA Live Type"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:269
+#: src/blocks/countdown/settings.js:271
 msgid "Choose how screen readers announce countdown updates: Off (no announcement), Polite (announces calmly), or Assertive (announces immediately)."
 msgstr ""
 
-#: src/blocks/countdown/settings.js:276
+#: src/blocks/countdown/settings.js:278
 msgid "Off"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:278
+#: src/blocks/countdown/settings.js:280
 msgid "Polite"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:282
+#: src/blocks/countdown/settings.js:284
 msgid "Assertive"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:304
+#: src/blocks/countdown/settings.js:306
 msgid "Decide how extra content is shown: Visible (shows all), Hidden (cuts off), or Auto (adds scrollbars when needed)."
 msgstr ""
 
-#: src/blocks/countdown/settings.js:358
+#: src/blocks/countdown/settings.js:360
 msgid "Labels"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:381
-#: src/blocks/countdown/settings.js:387
+#: src/blocks/countdown/settings.js:383
+#: src/blocks/countdown/settings.js:389
 msgid "Show Labels"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:398
-#: src/blocks/countdown/settings.js:406
+#: src/blocks/countdown/settings.js:400
+#: src/blocks/countdown/settings.js:408
 msgid "Days Label (Plural)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:414
-#: src/blocks/countdown/settings.js:422
+#: src/blocks/countdown/settings.js:416
+#: src/blocks/countdown/settings.js:424
 msgid "Day Label (Singular)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:430
-#: src/blocks/countdown/settings.js:438
+#: src/blocks/countdown/settings.js:432
+#: src/blocks/countdown/settings.js:440
 msgid "Hours Label (Plural)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:446
-#: src/blocks/countdown/settings.js:454
+#: src/blocks/countdown/settings.js:448
+#: src/blocks/countdown/settings.js:456
 msgid "Hour Label (Singular)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:462
-#: src/blocks/countdown/settings.js:470
+#: src/blocks/countdown/settings.js:464
+#: src/blocks/countdown/settings.js:472
 msgid "Minutes Label (Plural)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:478
-#: src/blocks/countdown/settings.js:486
+#: src/blocks/countdown/settings.js:480
+#: src/blocks/countdown/settings.js:488
 msgid "Minute Label (Singular)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:494
-#: src/blocks/countdown/settings.js:502
+#: src/blocks/countdown/settings.js:496
+#: src/blocks/countdown/settings.js:504
 msgid "Seconds Label (Plural)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:510
-#: src/blocks/countdown/settings.js:518
+#: src/blocks/countdown/settings.js:512
+#: src/blocks/countdown/settings.js:520
 msgid "Second Label (Singular)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:556
+#: src/blocks/countdown/settings.js:558
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:56
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:90
 msgid "Separator"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:572
-#: src/blocks/countdown/settings.js:578
+#: src/blocks/countdown/settings.js:574
+#: src/blocks/countdown/settings.js:580
 msgid "Show Separator"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:594
-#: src/blocks/countdown/settings.js:603
+#: src/blocks/countdown/settings.js:596
+#: src/blocks/countdown/settings.js:605
 msgid "Separator Type"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:608
+#: src/blocks/countdown/settings.js:610
 msgid "Colon (:)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:612
+#: src/blocks/countdown/settings.js:614
 msgid "Line (|)"
 msgstr ""
 
-#: src/blocks/countdown/settings.js:616
+#: src/blocks/countdown/settings.js:618
 msgid "Slash (/)"
 msgstr ""
 
 #: src/blocks/counter-child-number/settings.js:35
-#: src/blocks/counter-child-progress-bar/settings.js:127
+#: src/blocks/counter-child-progress-bar/settings.js:117
 #: src/blocks/counter/settings.js:524
 msgid "Prefix Color"
 msgstr ""
 
 #: src/blocks/counter-child-number/settings.js:41
-#: src/blocks/counter-child-progress-bar/settings.js:133
+#: src/blocks/counter-child-progress-bar/settings.js:123
 #: src/blocks/counter/settings.js:530
 msgid "Suffix Color"
 msgstr ""
 
-#: src/blocks/counter-child-progress-bar/settings.js:47
-msgid "Progress Bar"
-msgstr ""
-
-#: src/blocks/counter-child-progress-bar/settings.js:62
-#: src/blocks/counter-child-progress-bar/settings.js:70
+#: src/blocks/counter-child-progress-bar/settings.js:52
+#: src/blocks/counter-child-progress-bar/settings.js:60
 #: src/blocks/google-map/settings.js:463
 #: src/blocks/modal-child-popup-content/settings.js:95
 #: src/blocks/modal-child-popup-content/settings.js:103
 msgid "Height"
 msgstr ""
 
-#: src/blocks/counter-child-progress-bar/settings.js:85
-#: src/blocks/counter-child-progress-bar/settings.js:92
+#: src/blocks/counter-child-progress-bar/settings.js:75
+#: src/blocks/counter-child-progress-bar/settings.js:82
 msgid "Border Radius"
 msgstr ""
 
@@ -12886,21 +12850,21 @@ msgstr ""
 #: src/blocks/icon/settings.js:169
 #: src/blocks/modal-child-popup-close-icon/settings.js:150
 #: src/blocks/modal-child-trigger-icon/settings.js:150
-#: src/blocks/popup-builder/settings.js:618
+#: src/blocks/popup-builder/settings.js:616
 msgid "Accessibility"
 msgstr ""
 
 #: src/blocks/icon/settings.js:184
 #: src/blocks/modal-child-popup-close-icon/settings.js:165
 #: src/blocks/modal-child-trigger-icon/settings.js:165
-#: src/blocks/popup-builder/settings.js:633
+#: src/blocks/popup-builder/settings.js:631
 msgid "Accessibiltiy Mode"
 msgstr ""
 
 #: src/blocks/icon/settings.js:196
 #: src/blocks/modal-child-popup-close-icon/settings.js:176
 #: src/blocks/modal-child-trigger-icon/settings.js:176
-#: src/blocks/popup-builder/settings.js:645
+#: src/blocks/popup-builder/settings.js:643
 msgid "Accessibiltiy Label"
 msgstr ""
 
@@ -13005,7 +12969,7 @@ msgid "Show Tab Panel"
 msgstr ""
 
 #: src/blocks/modal/settings.js:53
-#: src/blocks/popup-builder/settings.js:831
+#: src/blocks/popup-builder/settings.js:806
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:54
 msgid "Text"
 msgstr ""
@@ -13024,13 +12988,13 @@ msgstr ""
 
 #: src/blocks/modal/settings.js:76
 #: src/blocks/modal/settings.js:92
-#: src/blocks/popup-builder/settings.js:729
+#: src/blocks/popup-builder/settings.js:727
 msgid "Top Left"
 msgstr ""
 
 #: src/blocks/modal/settings.js:77
 #: src/blocks/modal/settings.js:93
-#: src/blocks/popup-builder/settings.js:736
+#: src/blocks/popup-builder/settings.js:734
 msgid "Top Right"
 msgstr ""
 
@@ -13050,8 +13014,8 @@ msgstr ""
 
 #: src/blocks/modal/settings.js:178
 #: src/blocks/modal/settings.js:189
-#: src/blocks/popup-builder/settings.js:682
-#: src/blocks/popup-builder/settings.js:694
+#: src/blocks/popup-builder/settings.js:680
+#: src/blocks/popup-builder/settings.js:692
 msgid "Close on Overlay Click"
 msgstr ""
 
@@ -13061,7 +13025,7 @@ msgstr ""
 
 #: src/blocks/modal/settings.js:202
 #: src/blocks/modal/settings.js:211
-#: src/blocks/popup-builder/settings.js:707
+#: src/blocks/popup-builder/settings.js:705
 msgid "Icon Position"
 msgstr ""
 
@@ -13149,50 +13113,51 @@ msgstr ""
 msgid "Push page content down when banner is shown."
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:526
+#: src/blocks/popup-builder/settings.js:525
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:100
 msgid "Close Icon"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:580
+#: src/blocks/popup-builder/settings.js:578
 msgid "Enable this for your RTL visitors if you are using a direction-specific icon. Like 'Arrow Right', 'Chart Line', etc."
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:656
-#: src/blocks/popup-builder/settings.js:668
+#: src/blocks/popup-builder/settings.js:654
+#: src/blocks/popup-builder/settings.js:666
 msgid "Close with Escape"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:721
+#: src/blocks/popup-builder/settings.js:719
 msgid "Close Icon Position"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:749
-msgid "Close Icon Size"
-msgstr ""
-
-#: src/blocks/popup-builder/settings.js:789
+#: src/blocks/popup-builder/settings.js:764
 msgid "Copy and paste the class above into the Additional Classes field of any block in this popup to close it."
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:869
+#: src/blocks/popup-builder/settings.js:844
 msgid "Close Icon Color"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:877
+#: src/blocks/popup-builder/settings.js:852
 msgid "Close Icon Hover Color"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:891
+#: src/blocks/popup-builder/settings.js:866
 msgid "Overlay Color"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:921
+#: src/blocks/popup-builder/settings.js:896
 msgid "Background Overlay Opacity"
 msgstr ""
 
-#: src/blocks/popup-builder/settings.js:934
+#: src/blocks/popup-builder/settings.js:909
 msgid "Background Opacity"
+msgstr ""
+
+#: src/blocks/popup-builder/settings.js:995
+#: src/blocks/popup-builder/settings.js:1004
+msgid "Close Icon Size"
 msgstr ""
 
 #: src/blocks/popup-builder/variations.js:735
@@ -13812,7 +13777,7 @@ msgid "Choose when autoplay should pause based on user interaction."
 msgstr ""
 
 #: src/blocks/slider/settings.js:368
-#: src/components/shadow-control/index.js:287
+#: src/components/shadow-control/index.js:328
 msgid "Hover"
 msgstr ""
 
@@ -13995,15 +13960,15 @@ msgstr ""
 msgid "Select a tab layout to get started"
 msgstr ""
 
-#: src/blocks/tabs/helpers.js:418
+#: src/blocks/tabs/helpers.js:429
 msgid "Add a new tab and tabpanel"
 msgstr ""
 
-#: src/blocks/tabs/helpers.js:431
+#: src/blocks/tabs/helpers.js:442
 msgid "Remove this tab and tabpanel"
 msgstr ""
 
-#: src/blocks/tabs/helpers.js:435
+#: src/blocks/tabs/helpers.js:446
 msgid "Remove the last tab and tabpanel"
 msgstr ""
 
@@ -14386,52 +14351,52 @@ msgstr ""
 msgid "Dismiss notification"
 msgstr ""
 
-#: src/components/shadow-control/index.js:266
-#: src/components/shadow-control/index.js:273
+#: src/components/shadow-control/index.js:305
+#: src/components/shadow-control/index.js:314
 msgid "Shadow State"
 msgstr ""
 
-#: src/components/shadow-control/index.js:298
+#: src/components/shadow-control/index.js:339
 msgid "Shadow Color"
 msgstr ""
 
-#: src/components/shadow-control/index.js:329
+#: src/components/shadow-control/index.js:373
 msgid "X POSITION"
 msgstr ""
 
-#: src/components/shadow-control/index.js:354
+#: src/components/shadow-control/index.js:399
 msgid "Y POSITION"
 msgstr ""
 
-#: src/components/shadow-control/index.js:372
+#: src/components/shadow-control/index.js:417
 msgid "Blur"
 msgstr ""
 
-#: src/components/shadow-control/index.js:379
+#: src/components/shadow-control/index.js:425
 msgid "BLUR"
 msgstr ""
 
-#: src/components/shadow-control/index.js:396
+#: src/components/shadow-control/index.js:442
 msgid "Spread"
 msgstr ""
 
-#: src/components/shadow-control/index.js:403
+#: src/components/shadow-control/index.js:450
 msgid "SPREAD"
 msgstr ""
 
-#: src/components/shadow-control/index.js:420
+#: src/components/shadow-control/index.js:467
 msgid "Shadow Type"
 msgstr ""
 
-#: src/components/shadow-control/index.js:427
+#: src/components/shadow-control/index.js:475
 msgid "SHADOW TYPE"
 msgstr ""
 
-#: src/components/shadow-control/index.js:437
+#: src/components/shadow-control/index.js:485
 msgid "Outset"
 msgstr ""
 
-#: src/components/shadow-control/index.js:441
+#: src/components/shadow-control/index.js:489
 msgid "Inset"
 msgstr ""
 
@@ -15540,6 +15505,284 @@ msgstr ""
 
 #: src/extensions/gbs-pro-nudge/index.js:500
 msgid "Apply reusable global classes and manage design tokens, CSS and JS across your blocks from one place."
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:175
+msgid "Use a valid datetime format, e.g. 2024–06–15 or 14:30"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:278
+msgid "Attribute name"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:279
+msgid "Name"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:290
+msgid "Attribute value"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:291
+#: src/extensions/html-attributes/controls.js:399
+#: src/extensions/html-attributes/utils/constants.js:231
+msgid "Value"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:308
+msgid "Event handler — will be stripped on save."
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:309
+msgid "Managed by block settings — not allowed here."
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:398
+msgid "Attribute"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:417
+msgid "Add Attribute"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:446
+msgid "Custom Attributes"
+msgstr ""
+
+#: src/extensions/html-attributes/controls.js:510
+msgid "Block Attributes"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:61
+msgid "Prompts the browser to download the linked file instead of navigating to it"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:69
+#: src/extensions/html-attributes/utils/constants.js:148
+#: src/extensions/html-attributes/utils/constants.js:152
+msgid "ARIA Role"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:71
+msgid "e.g. group — identifies this as a button group for assistive technology"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:75
+#: src/extensions/html-attributes/index.js:84
+#: src/extensions/html-attributes/index.js:92
+#: src/extensions/html-attributes/index.js:100
+#: src/extensions/html-attributes/utils/constants.js:128
+#: src/extensions/html-attributes/utils/constants.js:131
+#: src/extensions/html-attributes/utils/constants.js:134
+#: src/extensions/html-attributes/utils/constants.js:137
+#: src/extensions/html-attributes/utils/constants.js:140
+#: src/extensions/html-attributes/utils/constants.js:143
+#: src/extensions/html-attributes/utils/constants.js:149
+#: src/extensions/html-attributes/utils/constants.js:153
+#: src/extensions/html-attributes/utils/constants.js:158
+#: src/extensions/html-attributes/utils/constants.js:161
+#: src/extensions/html-attributes/utils/constants.js:167
+#: src/extensions/html-attributes/utils/constants.js:171
+#: src/extensions/html-attributes/utils/constants.js:174
+#: src/extensions/html-attributes/utils/constants.js:207
+msgid "ARIA Label"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:77
+msgid "Accessible name for the button group"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:86
+msgid "Accessible name for the tabbed interface — required when a page has multiple tab sets"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:94
+msgid "Accessible name for the accordion region"
+msgstr ""
+
+#: src/extensions/html-attributes/index.js:102
+msgid "Accessible name for the slider/carousel region"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:104
+msgid "Date/Time"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:106
+msgid "Machine–readable date/time value — e.g. 2024–01–15, 2024–01, 14:30"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:112
+msgid "For (Input ID)"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:114
+msgid "ID of the form control this label is associated with"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:120
+msgid "Cite URL"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:122
+msgid "URL of the source being quoted"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:128
+#: src/extensions/html-attributes/utils/constants.js:131
+#: src/extensions/html-attributes/utils/constants.js:134
+#: src/extensions/html-attributes/utils/constants.js:137
+#: src/extensions/html-attributes/utils/constants.js:140
+#: src/extensions/html-attributes/utils/constants.js:143
+msgid "Accessible name when the visible heading text is not descriptive enough"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:148
+msgid "Landmark or widget role (e.g. region, presentation, list)"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:149
+msgid "Accessible name for this element when no visible label is present"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:152
+msgid "Widget role for this inline element"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:153
+msgid "Accessible name for screen readers"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:158
+msgid "Distinguishes multiple headers on the page; omit for the main site header"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:161
+msgid "Distinguishes multiple footers on the page; omit for the main site footer"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:164
+#: src/extensions/html-attributes/utils/constants.js:168
+#: src/extensions/html-attributes/utils/constants.js:177
+#: src/extensions/html-attributes/utils/constants.js:185
+msgid "ARIA Labelledby"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:164
+msgid "ID of the heading that names this article"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:167
+msgid "Section only becomes a landmark when it has an accessible name"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:168
+msgid "ID of the heading that labels this section (alternative to ARIA Label)"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:171
+msgid "Label this complementary landmark"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:174
+msgid "Required when a page has more than one nav element"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:177
+msgid "ID of the figcaption element inside this figure"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:180
+msgid "ID"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:180
+msgid "Reference target for aria-labelledby on the parent figure"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:185
+msgid "ID of the element that names this dialog"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:186
+msgid "ARIA Modal"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:186
+msgid "Marks this as a modal dialog for assistive technology"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:187
+msgid "Open by default"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:187
+msgid "Renders the dialog in the open (visible) state on page load"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:192
+msgid "Href"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:192
+msgid "URL this link points to"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:195
+msgid "Target"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:198
+#: src/extensions/html-attributes/utils/constants.js:219
+msgid "— Default —"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:204
+msgid "Where to open the link"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:206
+msgid "Rel"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:206
+msgid "Link relationship; noopener noreferrer is added automatically when target is _blank"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:207
+msgid "Accessible label when the visible link text is not descriptive"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:208
+msgid "Prompts the browser to download the resource instead of navigating to it"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:213
+msgid "Start"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:213
+msgid "Starting value for the ordered list counter"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:216
+msgid "Marker Type"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:226
+msgid "Numbering type for list markers"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:228
+msgid "Reversed"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:228
+msgid "Count down instead of up"
+msgstr ""
+
+#: src/extensions/html-attributes/utils/constants.js:231
+msgid "Sets the counter for this item and all subsequent items"
 msgstr ""
 
 #: src/extensions/image-mask/edit.js:74

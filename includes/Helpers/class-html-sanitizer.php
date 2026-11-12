@@ -1212,6 +1212,39 @@ class HtmlSanitizer {
 	}
 
 	/**
+	 * Tells whether the author of the content being rendered may post unfiltered
+	 * HTML — WordPress' own trust boundary for inline `<script>`.
+	 *
+	 * When a user WITHOUT `unfiltered_html` saves a post, core runs the whole
+	 * content through `wp_kses_post()` (`wp_filter_post_kses`), so the inline
+	 * script is already gone before this class ever sees it. An inline `<script>`
+	 * that survives to render time was therefore authored by a trusted user — one
+	 * who could place the identical script in a bare Custom HTML block outside any
+	 * wrapper. Re-stripping it inside a Spectra wrapper only breaks that trusted
+	 * user's embedded forms/widgets (Fluent Forms, Gravity Forms, CF7, … and their
+	 * per-instance AJAX config scripts) without adding any protection core has not
+	 * already applied.
+	 *
+	 * The capability is resolved against the POST AUTHOR, not the viewer: at
+	 * front-end render the current user is whoever is browsing (usually nobody),
+	 * while the trust that matters belongs to whoever wrote the markup. Falls back
+	 * to `false` — today's strict behaviour — when there is no identifiable post
+	 * author (a template part or widget rendered outside the loop), so unknown
+	 * provenance stays untrusted.
+	 *
+	 * @since 1.0.15
+	 *
+	 * @return bool True when the current post's author may post unfiltered HTML.
+	 */
+	private static function content_author_trusts_html(): bool {
+		$post = get_post();
+		if ( $post instanceof \WP_Post && $post->post_author ) {
+			return user_can( (int) $post->post_author, 'unfiltered_html' );
+		}
+		return false;
+	}
+
+	/**
 	 * Drops inline `<script>` elements that are not JSON-LD.
 	 *
 	 * External scripts (with `src`) are passed through — they load from a
@@ -1278,6 +1311,27 @@ class HtmlSanitizer {
 	 * @return string|void Sanitized HTML string if not echoed, otherwise nothing.
 	 */
 	public static function render( string $content, ?array $allowed_tags = null, bool $should_echo = true ) {
+		// A trusted author — one WordPress itself lets post unfiltered HTML — has
+		// their post content stored verbatim (core skips its save-time
+		// wp_kses_post for them), and a core Group/Columns wrapper emits that
+		// content without a second sanitising pass. Dynamic child blocks such as a
+		// Gravity Forms or Fluent Forms embed likewise render trusted,
+		// plugin-generated markup. Running this extra render-time kses over that
+		// content only corrupts it — HTML-escaping inline <script> bodies
+		// (`>= 0` becomes `&gt;= 0`, a SyntaxError), dropping `on*` handlers and
+		// rewriting `about:blank` to `blank` — which breaks the very forms and
+		// widgets the markup implements. Match core: when the content's author is
+		// trusted, emit the already-rendered inner content unchanged. Untrusted
+		// authors keep the full sanitiser below ({@see content_author_trusts_html}).
+		if ( self::content_author_trusts_html() ) {
+			if ( $should_echo ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Rendered inner-block output of a post whose author holds unfiltered_html; WordPress core emits this same content verbatim.
+				echo $content;
+				return;
+			}
+			return $content;
+		}
+
 		// Use default full list if no custom tags provided.
 		$allowed_tags = $allowed_tags ?? self::get_allowed_tags();
 

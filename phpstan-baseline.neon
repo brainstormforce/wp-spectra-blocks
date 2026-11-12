@@ -3116,6 +3116,21 @@ parameters:
 			path: includes/Extensions/class-zindex.php
 
 		-
+			message: "#^Method SpectraBlocks\\\\Extensions\\\\HtmlAttributes\\:\\:apply_html_attributes\\(\\) has parameter \\$block with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/Extensions/class-html-attributes.php
+
+		-
+			message: "#^Method SpectraBlocks\\\\Extensions\\\\HtmlAttributes\\:\\:sanitize_attributes\\(\\) has parameter \\$raw with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: includes/Extensions/class-html-attributes.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: includes/Extensions/class-html-attributes.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: includes/Extensions/class-zindex.php
@@ -4112,7 +4127,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method object\\:\\:init\\(\\)\\.$#"
-			count: 8
+			count: 9
 			path: includes/class-extension-manager.php
 
 		-

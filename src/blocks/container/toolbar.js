@@ -225,6 +225,7 @@ const TAG_CONFIG = {
 	hr: {
 		label: __( 'HR', 'spectra-blocks' ),
 		icon: helperIcons.container.div(),
+		hidden: true,
 	},
 	br: {
 		label: __( 'BR', 'spectra-blocks' ),

@@ -1,0 +1,109 @@
+// HTML Attributes Extension — editor panel styles.
+
+.spectra-html-attrs-panel {
+	padding: 12px 0 4px;
+	border-top: 1px solid #e0e0e0;
+
+	.spectra-html-attrs-label {
+		font-size: 11px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: #1e1e1e;
+		margin: 0 0 10px;
+	}
+
+	// Column header row ("ATTRIBUTE" / "VALUE")
+	.spectra-attr-headers {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin-bottom: 4px;
+		padding-right: 24px; // align with rows that have a remove button
+
+		span {
+			flex: 1;
+			font-size: 10px;
+			font-weight: 600;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			color: #757575;
+		}
+	}
+
+	// Empty state shown when there are no committed rows
+	.spectra-attr-empty {
+		font-size: 12px;
+		color: #949494;
+		margin: 0 0 8px;
+		font-style: italic;
+	}
+
+	// Datetime validation error state
+	.spectra-field-invalid {
+
+		input.components-input-control__input {
+			border-color: #cc1818;
+			box-shadow: 0 0 0 1px #cc1818;
+		}
+	}
+
+	.spectra-field-error {
+		font-size: 11px;
+		color: #cc1818;
+		margin: 2px 0 6px;
+	}
+
+	// Each attribute row
+	.spectra-attr-row {
+		margin-bottom: 6px;
+
+		// Drop the default base-control bottom margin on the name/value fields
+		// (not suppressed by __nextHasNoMarginBottom in this WP version).
+		.spectra-attr-name,
+		.spectra-attr-value {
+			margin-bottom: 0;
+		}
+
+		// Name input — monospace so attribute names are easy to read/compare
+		.spectra-attr-name input.components-input-control__input {
+			font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+			font-size: 12px;
+		}
+
+		// Blocked attribute highlight
+		.spectra-attr-name--blocked input.components-input-control__input {
+			border-color: #cc1818;
+			box-shadow: 0 0 0 1px #cc1818;
+		}
+
+		.spectra-attr-warning {
+			font-size: 11px;
+			color: #cc1818;
+			margin: 2px 0 6px;
+		}
+
+		// Remove button — compact, centered against the input fields
+		.spectra-attr-remove {
+			flex: none;
+			align-self: center;
+			width: 20px;
+			min-width: 20px;
+			height: 20px;
+			padding: 0;
+
+			svg {
+				width: 14px;
+				height: 14px;
+			}
+		}
+	}
+
+	// Add Attribute button
+	.spectra-attr-add-btn {
+		margin-top: 4px;
+		margin-bottom: 20px;
+		width: 100%;
+		justify-content: center;
+	}
+}

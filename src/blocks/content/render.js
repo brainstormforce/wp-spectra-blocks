@@ -17,6 +17,7 @@ import { helperIcons } from '@spectra-helpers/block-icons';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles, buildSpectraStyles } from '@spectra-hooks';
 import { useOnEnter, useOnDelete } from '@spectra-helpers/richtext';
+import { useIsControlLabel, useLabelEnter } from '@spectra-helpers/control-label';
 import {
 	colourVarStyles,
 	getResponsivePreviewCss,
@@ -137,6 +138,10 @@ const Render = ( props ) => {
 	const enterRef = useOnEnter( { clientId } );
 	const deleteRef = useOnDelete( { clientId } );
 
+	// A control's label (the words of a converted button or a Tab (Div)) edits as a label, not a paragraph.
+	const isControlLabel = useIsControlLabel( clientId, tagName );
+	const labelEnterRef = useLabelEnter();
+
 	// Get the alignment.
 	const align = props.attributes?.style?.typography?.textAlign || '';
 
@@ -201,6 +206,11 @@ const Render = ( props ) => {
 
 	const blockProps = useBlockProps( {
 		ref: ( element ) => {
+			// A label gains no block on Enter and is not removed on Backspace.
+			if ( isControlLabel ) {
+				labelEnterRef( element );
+				return;
+			}
 			enterRef( element );
 			deleteRef( element );
 		},
@@ -257,10 +267,9 @@ const Render = ( props ) => {
 		placeholder: __( 'Write something – paragraph, heading, or more…', 'spectra-blocks' ),
 		value: text,
 		onChange: ( value ) => setAttributes( { text: value } ),
-		onMerge: mergeBlocks,
-		onReplace,
-		onRemove: () => onReplace( [] ),
-	} ), [ currentTag, text, setAttributes, mergeBlocks, onReplace ] );
+		// A label neither merges, splits nor removes itself, as the label of Spectra's own Button and Tab blocks.
+		...( isControlLabel ? {} : { onMerge: mergeBlocks, onReplace, onRemove: () => onReplace( [] ) } ),
+	} ), [ currentTag, text, setAttributes, mergeBlocks, onReplace, isControlLabel ] );
 
 	// Memoized toolbar controls - only re-renders when tagOptions or currentTagIcon change.
 	const toolbarControls = useMemo( () => (

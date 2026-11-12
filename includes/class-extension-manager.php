@@ -15,6 +15,7 @@ use SpectraBlocks\Extensions\ImageMask;
 use SpectraBlocks\Extensions\ResponsiveConditions;
 use SpectraBlocks\Extensions\ResponsiveControls;
 use SpectraBlocks\Extensions\StickyContainer;
+use SpectraBlocks\Extensions\HtmlAttributes;
 use SpectraBlocks\Extensions\ZIndex;
 use SpectraBlocks\GlobalStyles\Engine as GlobalStylesEngine;
 use SpectraBlocks\StyleGuide\Engine as StyleGuideEngine;
@@ -109,6 +110,7 @@ class ExtensionManager {
 
 		( StickyContainer::instance() )->init();
 		( ZIndex::instance() )->init();
+		( HtmlAttributes::instance() )->init();
 		StyleGuideEngine::init();
 		GlobalStylesEngine::init();
 	}
@@ -229,6 +231,17 @@ class ExtensionManager {
 				array(
 					'pluginUrl' => trailingslashit( SPECTRA_BLOCKS_URL ),
 					'assetsUrl' => trailingslashit( SPECTRA_BLOCKS_URL ) . 'assets/',
+				)
+			);
+		}
+
+		// Localize capability flag for the html-attributes extension.
+		if ( 'html-attributes' === $folder_name ) {
+			wp_localize_script(
+				$handle,
+				'spectraBlocksHtmlAttrs',
+				array(
+					'canEdit' => current_user_can( 'unfiltered_html' ),
 				)
 			);
 		}

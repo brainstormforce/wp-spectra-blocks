@@ -2,8 +2,8 @@
  * External dependencies.
  */
 import { memo, useState, useEffect, useMemo } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { useDispatch, useSelect } from '@wordpress/data';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import useLayoutInspectorGroup from '@spectra-hooks/useLayoutInspectorGroup';
 import StylePanel from '@spectra-components/style-panel';
 import {
@@ -44,6 +44,8 @@ import AdvancedGradientControlsGroup from '@spectra-components/advanced-gradient
 import ShadowControl from '@spectra-components/shadow-control';
 import useInspectorStyleGroup from '@spectra-hooks/useInspectorStyleGroup';
 import { TAG_CONFIG } from './toolbar';
+import { ContextualTagItems, CustomAttributesSection, normalizeAttrs } from '../../extensions/html-attributes/controls';
+import { getContextualAttrNames } from '../../extensions/html-attributes/utils/helpers';
 /*
  * `constants` only, deliberately: the extension's `utils/helpers.js` imports
  * its entry point, so reaching it from here would close a cycle.
@@ -55,7 +57,9 @@ import {
 } from '../../extensions/responsive-controls/utils/constants';
 
 // Derive SelectControl options from TAG_CONFIG (SSOT).
-const TAG_OPTIONS = Object.entries( TAG_CONFIG ).map( ( [ value, { label } ] ) => ( { value, label } ) );
+const TAG_OPTIONS = Object.entries( TAG_CONFIG )
+	.filter( ( [ , { hidden } ] ) => ! hidden )
+	.map( ( [ value, { label } ] ) => ( { value, label } ) );
 
 /**
  * Get description for HTML tag
@@ -94,12 +98,15 @@ const getTagDescription = ( tag ) => {
 const BlocksSettings = memo( ( props ) => {
 	const { attributes, setAttributes, clientId } = props;
 
-	const { htmlTag, overflow, linkURL, linkTarget, linkRel, orientationReverse, layout } = attributes;
-	
+	const { htmlTag, overflow, linkURL, linkTarget, linkRel, orientationReverse, layout, htmlAttributes: rawAttrs = [] } = attributes;
+	const htmlAttributes = normalizeAttrs( rawAttrs );
+	const activeTag = ( htmlTag || 'div' ).toLowerCase();
+	const { createNotice } = useDispatch( 'core/notices' );
+
 	// State for showing the tag description notice - always show by default.
-	const [ showTagNotice] = useState( true );
+	const [ showTagNotice ] = useState( true );
 	const [ previousTag, setPreviousTag ] = useState( htmlTag );
-	
+
 	// Update previous tag when tag changes (notice stays visible).
 	useEffect( () => {
 		if ( htmlTag !== previousTag ) {
@@ -107,6 +114,8 @@ const BlocksSettings = memo( ( props ) => {
 		}
 	}, [ htmlTag, previousTag ] );
 
+	// Container handles href/target/rel via BlockControlLink — exclude from contextual items.
+	const CONTAINER_LINK_ATTRS = [ 'href', 'target', 'rel' ];
 	const { group: layoutGroup, isHosted: layoutHosted } = useLayoutInspectorGroup();
 
 	return (
@@ -159,18 +168,15 @@ const BlocksSettings = memo( ( props ) => {
 				<ToolsPanel
 					label={ __( 'Container', 'spectra-blocks' ) }
 					resetAll={ () => {
+						const contextualNames = getContextualAttrNames( activeTag );
 						setAttributes( {
 							htmlTag: 'div',
 							overflow: 'visible',
-						} )
+							htmlAttributes: htmlAttributes.filter( ( item ) => ! contextualNames.has( item.attribute ) ),
+						} );
 					} }
 					panelId={ clientId }
 				>
-					{/* 
-						This tool panel item controls the HTML tag for the block.
-						Reset conditions:
-						- The htmlTag attribute is set. Default: 'div'.
-					*/}
 					<ToolsPanelItem
 						hasValue={ () => !! htmlTag }
 						label={ __( 'Tag', 'spectra-blocks' ) }
@@ -188,16 +194,46 @@ const BlocksSettings = memo( ( props ) => {
 							value={ htmlTag }
 							variant="default"
 							options={ TAG_OPTIONS }
-							onChange={ ( newHtmlTag ) => setAttributes( { htmlTag: newHtmlTag } ) }
+							onChange={ ( newHtmlTag ) => {
+								const oldContextual = getContextualAttrNames( activeTag );
+								const newContextual = getContextualAttrNames( newHtmlTag.toLowerCase() );
+								const droppedCount = htmlAttributes.filter(
+									( item ) => oldContextual.has( item.attribute ) &&
+										! newContextual.has( item.attribute ) &&
+										item.value !== ''
+								).length;
+								setAttributes( {
+									htmlTag: newHtmlTag,
+									htmlAttributes: htmlAttributes.filter(
+										( item ) => ! oldContextual.has( item.attribute ) || newContextual.has( item.attribute )
+									),
+								} );
+								if ( droppedCount > 0 ) {
+									createNotice(
+										'info',
+										sprintf(
+											/* translators: 1: number of attributes, 2: previous HTML tag name */
+											_n(
+												'%1$d tag attribute cleared after switching from <%2$s>.',
+												'%1$d tag attributes cleared after switching from <%2$s>.',
+												droppedCount,
+												'spectra-blocks'
+											),
+											droppedCount,
+											activeTag
+										),
+										{ isDismissible: true, type: 'snackbar' }
+									);
+								}
+							} }
 							help={ __( 'Select the appropriate HTML element for semantic markup and accessibility.', 'spectra-blocks' ) }
 						/>
-						
-						{/* Notice showing tag description */}
+
 						{ showTagNotice && (
 							<>
 								<Spacer marginY={ 3 } />
-								<Notice 
-									status="info" 
+								<Notice
+									status="info"
 									isDismissible={ false }
 								>
 									{ sprintf(
@@ -212,13 +248,14 @@ const BlocksSettings = memo( ( props ) => {
 								</Notice>
 							</>
 						) }
-						
 					</ToolsPanelItem>
-					{/* 
-						This tool panel item controls the overflow property for the block.
-						Reset conditions:
-						- The overflow attribute is set. Default: 'visible'.
-					*/}
+					<ContextualTagItems
+						tag={ activeTag }
+						htmlAttributes={ htmlAttributes }
+						clientId={ clientId }
+						setAttributes={ setAttributes }
+						excludeAttrs={ CONTAINER_LINK_ATTRS }
+					/>
 					<ToolsPanelItem
 						hasValue={ () => !! overflow }
 						label={ __( 'Overflow', 'spectra-blocks' ) }
@@ -1619,8 +1656,10 @@ const MediaPickerExtensions = memo( () => {
  * @return {Element} The rendered settings.
  */
 const Settings = ( props ) => {
-	const { attributes } = props;
-	const { background, style } = attributes;
+	const { attributes, setAttributes } = props;
+	const { background, style, htmlTag, htmlAttributes: rawAttrs = [] } = attributes;
+	const htmlAttributes = normalizeAttrs( rawAttrs );
+	const activeTag = ( htmlTag || '' ).toLowerCase();
 
 	/*
 	 * Show Overlay Settings unless EVERY band's background is a video.
@@ -1640,6 +1679,11 @@ const Settings = ( props ) => {
 	return (
 		<>
 			<BlocksSettings { ...{ ...props } } />
+			<CustomAttributesSection
+				tag={ activeTag }
+				htmlAttributes={ htmlAttributes }
+				setAttributes={ setAttributes }
+			/>
 			<ColorSettings { ...{ ...props } } />
 			<GradientSettings { ...{ ...props } } />
 			<OpacitySettings { ...{ ...props } } />

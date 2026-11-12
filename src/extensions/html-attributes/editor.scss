@@ -1,0 +1,67 @@
+.spectra-html-attrs-panel {
+	padding: 0 16px 8px;
+
+	.spectra-html-attrs-label {
+		margin: 0 0 8px;
+		font-size: 11px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		color: #1e1e1e;
+	}
+
+	.spectra-attr-row {
+		margin-bottom: 4px;
+
+		// Make name + value columns equal width; remove extra margins.
+		.components-flex {
+			align-items: center;
+		}
+
+		.spectra-attr-name,
+		.spectra-attr-value {
+			flex: 1;
+			min-width: 0; // allow shrink past content width
+
+			.components-text-control__input {
+				border-radius: 2px;
+				font-size: 13px;
+				padding: 4px 8px;
+				height: 36px;
+			}
+		}
+
+		// Red left-border on blocked attribute name fields.
+		.spectra-attr-name--blocked .components-text-control__input {
+			border-color: #cc1818;
+			outline: none;
+			box-shadow: 0 0 0 1px #cc1818;
+		}
+
+		.spectra-attr-remove {
+			flex-shrink: 0;
+			width: 24px;
+			height: 36px;
+			padding: 0;
+			min-width: unset;
+			color: #cc1818;
+
+			&:hover {
+				background: #fce7e7;
+			}
+
+			svg {
+				width: 16px;
+				height: 16px;
+			}
+		}
+
+		// Compact inline warning — just small red text, no block.
+		.spectra-attr-warning {
+			margin: 2px 0 4px 0;
+			font-size: 11px;
+			color: #cc1818;
+			line-height: 1.4;
+		}
+	}
+}

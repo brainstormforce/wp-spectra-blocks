@@ -156,8 +156,8 @@
 			"type": "string"
 		},
 		"htmlAttributes": {
-			"type": "object",
-			"default": {}
+			"type": "array",
+			"default": []
 		}
 	}
 }

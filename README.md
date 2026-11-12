@@ -4,7 +4,7 @@
 **Requires at least:** 6.6  
 **Tested up to:** 7.1  
 **Requires PHP:** 8.1  
-**Stable tag:** 1.0.14  
+**Stable tag:** 1.0.15  
 **License:** GPL-2.0-or-later  
 **License URI:** https://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -342,6 +342,11 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 ## Changelog ##
+
+### 1.0.15 - Wednesday, 11th November 2026 ###
+* New: Custom HTML Attributes — add your own HTML attributes (such as data-* or aria-*) to supported blocks right from the block settings.
+* Fix: Modals now release the page scroll lock when closed by clicking the overlay or pressing Escape.
+* Fix: Inline configuration scripts for embedded forms are now kept inside Container and other wrapper blocks for users allowed to add custom HTML.
 
 ### 1.0.14 - Friday, 6th November 2026 ###
 * Improvement: Faster front-end performance — Spectra loads block styles and scripts more efficiently, so pages do less work on each load.
