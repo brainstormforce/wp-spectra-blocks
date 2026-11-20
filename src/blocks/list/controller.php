@@ -46,6 +46,15 @@ $additional_classes = array(
 	'spectra-list-' . $list_type,
 );
 
+// A list the owner has given an icon setting of its own: numbers, an icon, its size at any
+// device, its rotation or RTL flip. A converted list (`spectra-no-list-icon`) shows the
+// page's own marker until then; this class hands every item's marker to Spectra
+// (converted/_list.scss). An icon set on one item hands over that item's marker alone (the
+// item icon's controller). render.js mirrors it through `icon-setting.js`.
+if ( 'ordered' === $list_type || BlockAttributes::has_icon_setting( $attributes ) ) {
+	$additional_classes[] = 'spectra-list-styled';
+}
+
 // Style and class configurations.
 $config = array(
 	array(

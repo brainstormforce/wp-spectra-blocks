@@ -541,4 +541,42 @@ class BlockAttributes {
 
 		return $wrapper_attributes_string;
 	}
+
+	/**
+	 * Whether a List, or one item's icon, carries an icon setting of the owner's own: an
+	 * icon other than the default circle, its size at any device, its rotation or RTL flip.
+	 *
+	 * On a list ZIP AI's converter built (`spectra-no-list-icon`) the page's own marker shows
+	 * until then. The List's setting hands every item's marker to Spectra
+	 * (`spectra-list-styled`); an item's setting hands over that item's alone
+	 * (`spectra-list-icon-own`). See `converted/_list.scss`; `list/icon-setting.js` mirrors it.
+	 *
+	 * @since 1.0.16
+	 *
+	 * @param array<string, mixed> $attributes The List's or the item icon's attributes.
+	 * @return bool True when the attributes carry an icon setting.
+	 */
+	public static function has_icon_setting( array $attributes ): bool {
+		if ( ( ! empty( $attributes['icon'] ) && 'circle' !== $attributes['icon'] )
+			|| isset( $attributes['rotation'] )
+			|| ! empty( $attributes['flipForRTL'] ) ) {
+			return true;
+		}
+
+		$controls = $attributes['responsiveControls'] ?? array();
+		$style    = $attributes['style'] ?? array();
+		$layers   = is_array( $controls ) ? array_values( array_filter( $controls, 'is_array' ) ) : array();
+		$layers[] = $attributes;
+		if ( is_array( $style ) ) {
+			$layers[] = $style['@tablet'] ?? array();
+			$layers[] = $style['@mobile'] ?? array();
+		}
+		foreach ( $layers as $layer ) {
+			if ( is_array( $layer ) && isset( $layer['iconSize'] ) && '' !== $layer['iconSize'] ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

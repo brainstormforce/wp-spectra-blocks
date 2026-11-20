@@ -1,0 +1,36 @@
+// Converted-page rules for the Separator ZIP AI's converter builds from a marked `<hr>`
+// (block-converter `native/separator/`), imported by common.scss. One block's converted-page
+// rules per partial; the note in common.scss says why they live with the block.
+// The converter keeps the rule's own classes on the separator, so the page's own CSS draws
+// the line on the wrapper (the design library's `.divider`: a top border in the theme's
+// colour), and it adds `spectra-no-line`. Spectra's own line stays hidden until the owner
+// gives the separator a setting of its own; the controller and render.js then add
+// `spectra-separator-styled`, Spectra draws the line, and the page's border steps aside, so
+// the owner's choice wins. Resetting every setting hands the line back to the page.
+
+// The wrapper's 5px padding: the source rule never had it.
+body .wp-block-spectra-separator.spectra-no-padding {
+	padding: 0;
+}
+
+// The wrapper's 100% width: the source rule took its width from its own classes and its
+// parent, as an `<hr>` does, so a rule with side margins stays inside its parent. The same
+// lift the converted Container and Countdown have.
+body .wp-block-spectra-separator.spectra-no-width {
+	width: auto;
+}
+
+// Until the owner styles the separator, the page's rule is the line.
+body .wp-block-spectra-separator.spectra-no-line:not(.spectra-separator-styled) > .spectra-separator-line {
+	display: none;
+}
+
+// Once the owner styles it, Spectra's line is the line and the page's own line steps aside,
+// whatever drew it: a border, or a height and a background. At (0,3,1) this sits one step
+// above the page's own class rules (0,3,0), on purpose: it only ever applies after the
+// owner's edit.
+body .wp-block-spectra-separator.spectra-no-line.spectra-separator-styled {
+	border: 0;
+	background: none;
+	height: auto;
+}

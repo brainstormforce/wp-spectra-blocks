@@ -20,8 +20,29 @@ $config = array(
 // Custom classes.
 $custom_classes = array( 'wp-block-spectra-separator' );
 
-// Get the block wrapper attributes - responsive CSS is handled automatically.
-$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array(), $custom_classes );
+// A separator the owner has given a setting of its own, at any device. A converted
+// separator (`spectra-no-line`) shows the page's own rule until then; this class hands
+// the line to Spectra (converted/_separator.scss). render.js `hasOwnLine` mirrors it.
+$separator_settings = array( 'separatorStyle', 'separatorAlign', 'separatorWidth', 'separatorHeight', 'separatorColor', 'separatorSize' );
+$separator_layers   = array_values( array_filter( $attributes['responsiveControls'] ?? array(), 'is_array' ) );
+$separator_layers[] = $attributes;
+$separator_layers[] = $attributes['style']['@tablet'] ?? array();
+$separator_layers[] = $attributes['style']['@mobile'] ?? array();
+foreach ( $separator_layers as $separator_layer ) {
+	if ( ! is_array( $separator_layer ) ) {
+		continue;
+	}
+	foreach ( $separator_settings as $separator_setting ) {
+		if ( isset( $separator_layer[ $separator_setting ] ) && '' !== $separator_layer[ $separator_setting ] ) {
+			$custom_classes[] = 'spectra-separator-styled';
+			break 2;
+		}
+	}
+}
+
+// Get the block wrapper attributes - responsive CSS is handled automatically. The wrapper
+// is a `<div>`, so it names itself a separator for assistive technology.
+$wrapper_attributes = BlockAttributes::get_wrapper_attributes( $attributes, $config, array( 'role' => 'separator' ), $custom_classes );
 
 // SVG data URLs for custom separator patterns — mirrors separator-svg.js on the JS side.
 $custom_svg_urls = array(

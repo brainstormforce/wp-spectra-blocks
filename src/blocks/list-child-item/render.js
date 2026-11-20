@@ -12,10 +12,18 @@ import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 
 /**
+ * The spacing markers a converted item's container wears (zipwp-credits-saas block-converter
+ * `markers.ts`), so an item the owner adds sits like the converted ones beside it.
+ *
+ * @since 1.0.16
+ */
+const CONVERTED_CONTAINER_MARKERS = 'spectra-no-padding spectra-no-width spectra-no-block-gap spectra-no-position';
+
+/**
  * The render function for the List Item block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.16
  * @return {Element} Element to render.
  */
 const Render = ( props ) => {
@@ -39,17 +47,19 @@ const Render = ( props ) => {
         const wpBackgroundColor = blockStyle?.color?.background;
 
 
-        const { hasChildBlocks, itemIndex, blockChildren, isNested } = useSelect(
+        const { hasChildBlocks, itemIndex, blockChildren, isNested, isConvertedList } = useSelect(
                 ( select ) => {
                         const {
                                 getBlockOrder,
                                 getBlockRootClientId,
                                 getBlocks,
                                 getBlockParentsByBlockName,
+                                getBlockAttributes,
                         } = select( blockEditorStore );
 
                         const parentListIds = getBlockParentsByBlockName( clientId, 'spectra/list' );
                         const isNestedList = parentListIds.length > 1;
+                        const parentListClassName = getBlockAttributes( parentListIds[ parentListIds.length - 1 ] )?.className || '';
 
                         const parentId = getBlockRootClientId( clientId );
                         let index = 0;
@@ -66,12 +76,13 @@ const Render = ( props ) => {
                                 blockChildren: getBlocks( clientId ),
                                 isNested: isNestedList,
                                 totalItems: total,
+                                isConvertedList: parentListClassName.split( ' ' ).includes( 'spectra-no-list-icon' ),
                         };
                 },
                 [ clientId ]
         );
 
-        const { updateBlockAttributes } = useDispatch( blockEditorStore );
+        const { updateBlockAttributes, __unstableMarkNextChangeAsNotPersistent: markNotPersistent } = useDispatch( blockEditorStore );
 
         // Configuration for the useSpectraStyles hook.
         const config = [
@@ -103,10 +114,14 @@ const Render = ( props ) => {
                 },
         } );
 
-        // Always include list-icon block, it will conditionally render number or icon
+        // Always include list-icon block, it will conditionally render number or icon. An item of a
+        // converted list gets the container its siblings have: the spacing markers, and a Text
+        // `<span>` to type its words into.
         const template = [
                 ['spectra/list-child-icon', { itemIndex, level, rotation, flipForRTL, isNested }],
-                ['spectra/container', { variationSelected: true }]
+                isConvertedList
+                        ? ['spectra/container', { variationSelected: true, htmlTag: 'div', layout: { type: 'default' }, className: CONVERTED_CONTAINER_MARKERS }, [ ['spectra/content', { tagName: 'span' }] ]]
+                        : ['spectra/container', { variationSelected: true }]
         ];
 
         // Propagate variation selection to inner blocks when required.
@@ -121,26 +136,31 @@ const Render = ( props ) => {
                 }
         }, [ blockChildren, updateBlockAttributes ] );
 
-        // Keep list-child-icon attributes in sync with position
+        // Keep list-child-icon attributes in sync with position. A position is derived from the
+        // tree, so its sync joins the change that moved the item, never an undo step of its own:
+        // an Undo that restored the old value would only see it written again.
         useEffect( () => {
                 if ( blockChildren && blockChildren.length > 0 ) {
                         const iconBlock = blockChildren.find( ( child ) => child.name === 'spectra/list-child-icon' );
-                        if ( iconBlock ) {
+                        const current = iconBlock?.attributes ?? {};
+                        if ( iconBlock && ( current.itemIndex !== itemIndex || current.isNested !== isNested ) ) {
+                                markNotPersistent();
                                 updateBlockAttributes( iconBlock.clientId, {
                                         itemIndex,
-                                        level,
                                         isNested,
                                 } );
                         }
                 }
-        }, [ blockChildren, itemIndex, level, isNested, updateBlockAttributes ] );
+        }, [ blockChildren, itemIndex, isNested, updateBlockAttributes, markNotPersistent ] );
 
-        // Persist current index attribute for frontend numbering.
+        // Persist current index attribute for frontend numbering, as part of the change that moved
+        // the item (see the icon sync above).
         useEffect( () => {
                 if ( attributes.index !== itemIndex ) {
+                        markNotPersistent();
                         updateBlockAttributes( clientId, { index: itemIndex } );
                 }
-        }, [ attributes.index, itemIndex, clientId, updateBlockAttributes ] );
+        }, [ attributes.index, itemIndex, clientId, updateBlockAttributes, markNotPersistent ] );
 
         const innerBlocksProps = useInnerBlocksProps(
                 {},

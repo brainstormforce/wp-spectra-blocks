@@ -14,6 +14,7 @@ import { useCallback } from '@wordpress/element';
 import { spectraClassNames } from '@spectra-helpers';
 import { useSpectraStyles } from '@spectra-hooks';
 import { helperIcons } from '../../helpers/block-icons';
+import { hasIconSetting } from './icon-setting';
 
 /**
  * Hook for outdenting a list.
@@ -94,7 +95,7 @@ function OutdentUI( { clientId } ) {
  * The render function for the List block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.16
  * @return {Element} Element to render.
  */
 const Render = ( props ) => {
@@ -113,9 +114,15 @@ const Render = ( props ) => {
 		textColorHover,
 	} = attributes;
 
+	// An item added to a converted list wears the item before it: a converted item keeps its
+	// whole look in its classes, so an item without them renders without the page's marker
+	// and spacing, as a new Tab copies the one before it.
+	const isConverted = ( attributes.className || '' ).split( ' ' ).includes( 'spectra-no-list-icon' );
 	const DEFAULT_BLOCK = {
 		name: 'spectra/list-child-item',
+		...( isConverted ? { attributesToCopy: [ 'className', 'spectraGSClasses', 'layout' ] } : {} ),
 	};
+
 	const TEMPLATE = [ [ 'spectra/list-child-item' ] ];
 
 	// Configuration for the useSpectraStyles hook.
@@ -128,8 +135,11 @@ const Render = ( props ) => {
 		{ key: 'backgroundGradientHover' },
 	];
 
-	// Generate styles and class names.
-	const { style, classNames } = useSpectraStyles( attributes, config );
+	// Generate styles and class names. The List's own icon setting hands every item's marker
+	// to Spectra on a converted list; an item's own icon hands over its marker alone (the
+	// item icon's render.js).
+	const hasListIcon = 'ordered' === attributes.listType || hasIconSetting( attributes );
+	const { style, classNames } = useSpectraStyles( attributes, config, [ hasListIcon && 'spectra-list-styled' ] );
 
 	// Add additional props for ordered lists
 	const listProps = {};

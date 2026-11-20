@@ -177,6 +177,9 @@ class Spectra_Blocks_Loader {
 
 		// Sync lib text domains to plugin slug for WP.org compliance.
 		add_filter( 'zip_ai_library_textdomain', array( __CLASS__, 'sync_library_textdomain' ) );
+
+		// Claim the ZipWP signup source so Spectra Blocks hand-offs to Zip AI keep their referral attribution.
+		add_filter( 'zipai_signup_source', array( __CLASS__, 'claim_zip_ai_signup_source' ) );
 	}
 
 	/**
@@ -188,6 +191,26 @@ class Spectra_Blocks_Loader {
 	 */
 	public static function sync_library_textdomain( $textdomain ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
 		return 'spectra-blocks';
+	}
+
+	/**
+	 * Claim the ZipWP signup source for Spectra Blocks.
+	 *
+	 * When a user launches Zip AI from Spectra Blocks, Spectra Blocks installs and
+	 * activates the standalone zip-ai plugin, which then builds its own ZipWP auth URL
+	 * with a hardcoded source. This filter overrides that source so accounts created
+	 * through the Spectra Blocks hand-off are attributed to Spectra, not Zip AI.
+	 *
+	 * Only claims the signup when the user started ZIP AI from Spectra Blocks (the
+	 * install/activate AJAX handlers set the flag). ZIP AI installed on its own also
+	 * prompts for Spectra Blocks, so "Spectra Blocks is active" alone is not a referral.
+	 *
+	 * @since 1.0.16
+	 * @param string $source The default signup source.
+	 * @return string The Spectra signup source, or $source when not a Spectra hand-off.
+	 */
+	public static function claim_zip_ai_signup_source( $source ) {
+		return Spectra_Blocks_Settings::get( 'zip_ai_referral' ) ? 'spectra' : $source;
 	}
 
 	/**

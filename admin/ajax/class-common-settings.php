@@ -716,6 +716,9 @@ class Common_Settings extends Ajax_Base {
 	public function install_zip_ai() {
 		$this->check_permission_nonce( 'spectra_blocks_install_zip_ai', 'install_plugins' );
 
+		// The user started ZIP AI from Spectra Blocks, so its ZipWP signup is a Spectra referral.
+		\Spectra_Blocks_Settings::update( 'zip_ai_referral', true );
+
 		if ( is_plugin_active( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE ) ) {
 			wp_send_json_success( array( 'status' => 'already_active' ) );
 		}
@@ -751,6 +754,9 @@ class Common_Settings extends Ajax_Base {
 	 */
 	public function activate_zip_ai() {
 		$this->check_permission_nonce( 'spectra_blocks_activate_zip_ai', 'activate_plugins' );
+
+		// The user started ZIP AI from Spectra Blocks, so its ZipWP signup is a Spectra referral.
+		\Spectra_Blocks_Settings::update( 'zip_ai_referral', true );
 
 		if ( is_plugin_active( SPECTRA_BLOCKS_ZIP_AI_PLUGIN_FILE ) ) {
 			wp_send_json_success( array( 'status' => 'already_active' ) );

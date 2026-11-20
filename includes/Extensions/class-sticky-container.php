@@ -69,6 +69,14 @@ class StickyContainer {
 			return $block_content;
 		}
 
+		// Sticky on some devices only: the script sticks the container only while this media query matches.
+		$sticky_settings['media'] = $this->get_device_media_query( $sticky_settings['devices'] );
+
+		// Sticky on no device, or on none the site's breakpoints resolve: leave the container as it is.
+		if ( null === $sticky_settings['media'] ) {
+			return $block_content;
+		}
+
 		// Mark that we need assets.
 		$this->needs_assets = true;
 
@@ -125,11 +133,55 @@ class StickyContainer {
 		// Get keepInsideParent value (only applies to top sticky).
 		$keep_inside_parent = $sticky_container['keepInsideParent'] ?? false;
 
+		// Containers saved before the device settings existed have no keys, which means sticky everywhere.
+		$devices = array(
+			'desktop' => wp_validate_boolean( $sticky_container['stickyOnDesktop'] ?? true ),
+			'tablet'  => wp_validate_boolean( $sticky_container['stickyOnTablet'] ?? true ),
+			'mobile'  => wp_validate_boolean( $sticky_container['stickyOnMobile'] ?? true ),
+		);
+
 		return array(
 			'stickAt'          => $stick_at,
 			'offset'           => $offset,
 			'keepInsideParent' => $keep_inside_parent,
+			'devices'          => $devices,
 		);
+	}
+
+	/**
+	 * The media query the container sticks under, from the devices it sticks on.
+	 *
+	 * The bands come from `ResponsiveControls::get_device_media_queries()`, the
+	 * resolver "Hide on Desktop / Tablet / Mobile" uses, so "not sticky on
+	 * mobile" and "hidden on mobile" switch at the same width.
+	 *
+	 * @since 1.0.16
+	 *
+	 * @param array<string, bool> $devices Whether sticky applies, keyed `desktop` / `tablet` / `mobile`.
+	 * @return string|null An empty string when sticky applies on every device,
+	 *                     a media query list when on some, null when on none.
+	 */
+	private function get_device_media_query( $devices ) {
+		if ( ! in_array( false, $devices, true ) ) {
+			return '';
+		}
+
+		$responsive = ResponsiveControls::instance();
+
+		if ( ! $responsive instanceof ResponsiveControls ) {
+			return null;
+		}
+
+		$bands   = $responsive->get_device_media_queries();
+		$queries = array();
+
+		foreach ( $devices as $device => $enabled ) {
+			if ( $enabled && ! empty( $bands[ '@' . $device ] ) ) {
+				$queries[] = $bands[ '@' . $device ];
+			}
+		}
+
+		return array() === $queries ? null : implode( ', ', $queries );
 	}
 
 	/**
@@ -185,6 +237,10 @@ class StickyContainer {
 		$new_style = $existing_style ? rtrim( trim( $existing_style ), ';' ) . '; ' . $offset_style . ' ' . $keep_inside_parent_style : $offset_style . ' ' . $keep_inside_parent_style;
 
 		$processor->set_attribute( 'style', $new_style );
+
+		if ( ! empty( $sticky_settings['media'] ) ) {
+			$processor->set_attribute( 'data-spectra-sticky-media', $sticky_settings['media'] );
+		}
 
 		return $processor->get_updated_html();
 	}

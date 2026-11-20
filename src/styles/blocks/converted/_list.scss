@@ -1,0 +1,85 @@
+// Converted-page rules for the List ZIP AI's converter builds from a marked `<ul>`
+// (block-converter `native/list/`), imported by common.scss. One block's converted-page
+// rules per partial; the note in common.scss says why they live with the block.
+// The converter keeps the list's and each item's own classes, so the page's own CSS lays the
+// list out and draws each item's marker (the design library's `.check-list__item::before`
+// tick, `.list__item::before` dot), and it adds `spectra-no-list-icon`. Spectra's own icon
+// stays hidden until the owner gives the list an icon setting of its own; the controller and
+// render.js then add `spectra-list-styled`, Spectra draws the icon, and the page's marker
+// steps aside, so the owner's choice wins. An icon setting on one item hands over that item's
+// marker alone (`spectra-list-icon-own`). Resetting every icon setting hands the marker back
+// to the page.
+
+// The item's 10px bottom margin and centred alignment: the source item never had them. At
+// (0,2,1), below the page's own class rules (0,3,0), so a margin or an alignment the item's
+// class sets still wins.
+body .wp-block-spectra-list.spectra-no-list-icon > :where(.wp-block-spectra-list-child-item) {
+	margin-bottom: 0;
+	align-items: normal;
+}
+
+// In the editor the list and each item lay their blocks out in a wrapper carrying
+// `is-layout-flow` (the converter writes `layout: default`), so core's blockGap margin
+// (`:root :where(.is-layout-flow) > *`) reached every item after the first and each item's
+// box: about 16px the front end never prints. The items stood 20px apart in the canvas
+// against the 4px the page's gap gives, and each item's words sat that far below its marker.
+// The Accordion and Tabs rules' twin. `.block-editor-*` exists only in the canvas, so the
+// front end is untouched; wrappers ride `:where()`, (0,2,1) as above.
+body .wp-block-spectra-list.spectra-no-list-icon:where(.block-editor-block-list__layout) > :where(.wp-block-spectra-list-child-item),
+body .wp-block-spectra-list.spectra-no-list-icon > :where(.wp-block-spectra-list-child-item) > :where(.block-editor-block-list__layout) > :where(*) {
+	margin-block-start: 0;
+}
+
+// The same layout `<div>` holds Spectra's icon and the item's words in the canvas, so the gap
+// the item's own class sets (the page's `check-list__item` 12px, a `cluster` 8px) lands between
+// that `<div>` and nothing: the words sat against the icon, where the site, whose icon and words
+// are the item's own children, sets them that gap apart. The `<div>` takes the item's gap. An
+// item showing only the page's marker has one child in it, so nothing moves there.
+body .wp-block-spectra-list.spectra-no-list-icon > .wp-block-spectra-list-child-item > :where(.block-editor-block-list__layout) {
+	gap: inherit;
+}
+
+// Until the owner styles the list, the page's marker is the marker. The site prints the icon
+// in the item; the editor puts the item's blocks in a layout `<div>` of its own. An item
+// whose icon the owner set (`spectra-list-icon-own`) shows it.
+body .wp-block-spectra-list.spectra-no-list-icon:not(.spectra-list-styled) > .wp-block-spectra-list-child-item > .wp-block-spectra-list-child-icon:not(.spectra-list-icon-own),
+body .wp-block-spectra-list.spectra-no-list-icon:not(.spectra-list-styled) > .wp-block-spectra-list-child-item > .block-editor-block-list__layout > .wp-block-spectra-list-child-icon:not(.spectra-list-icon-own) {
+	display: none;
+}
+
+// An icon the owner sets on one item is that item's marker: the page's own marker steps
+// aside for that item alone, and the other items keep theirs. Before this, an icon on one
+// item styled the whole list, and every other item swapped the page's marker for Spectra's
+// default bullet. At (0,5,2), above the page's marker rule (0,3,1), as the rule below.
+body .wp-block-spectra-list.spectra-no-list-icon > .wp-block-spectra-list-child-item:has(> .wp-block-spectra-list-child-icon.spectra-list-icon-own)::before,
+body .wp-block-spectra-list.spectra-no-list-icon > .wp-block-spectra-list-child-item:has(> .block-editor-block-list__layout > .wp-block-spectra-list-child-icon.spectra-list-icon-own)::before {
+	display: none;
+}
+
+// Once the owner styles it, Spectra's icon is the marker and the page's own marker steps
+// aside. At (0,4,2) this sits above the page's marker rule (a class's `::before`, (0,3,1)),
+// on purpose: it only ever applies after the owner's edit.
+body .wp-block-spectra-list.spectra-no-list-icon.spectra-list-styled > .wp-block-spectra-list-child-item::before {
+	display: none;
+}
+
+// Spectra's icon on a converted tick or dot list sits on the item's first line, where the
+// page's own marker sits: its box starts at the top of the item and is one line tall, so
+// the icon centres on that line. Before this, on an item of two lines, the editor stretched
+// the box and centred the icon between the lines, and the site pinned it above the first.
+// An icon list (`spectra-no-icon-box`) keeps its source's own alignment.
+body .wp-block-spectra-list.spectra-no-list-icon:not(.spectra-no-icon-box) > .wp-block-spectra-list-child-item > .wp-block-spectra-list-child-icon,
+body .wp-block-spectra-list.spectra-no-list-icon:not(.spectra-no-icon-box) > .wp-block-spectra-list-child-item > .block-editor-block-list__layout > .wp-block-spectra-list-child-icon {
+	align-self: flex-start;
+	min-height: 1lh;
+}
+
+// An icon list: the converter carries the page's icon onto the List itself and adds
+// `spectra-no-icon-box`. The icon's box is then the one the page drew: as wide as the icon,
+// with no 24px minimum, and never narrowed by long words. Numbers the owner switches to keep
+// Spectra's box, which lines their words up. Every other list keeps Spectra's box.
+body .wp-block-spectra-list.spectra-no-icon-box > .wp-block-spectra-list-child-item > .wp-block-spectra-list-child-icon:not(.spectra-list-icon-ordered),
+body .wp-block-spectra-list.spectra-no-icon-box > .wp-block-spectra-list-child-item > .block-editor-block-list__layout > .wp-block-spectra-list-child-icon:not(.spectra-list-icon-ordered) {
+	min-width: 0;
+	flex-shrink: 0;
+}

@@ -140,10 +140,12 @@ if ( 'ordered' === $list_type ) {
 // Set the attributes with fallback if required.
 $icon = 'ordered' === $list_type ? null : $icon_name;
 
-// Set the default props required for the icon.
+// Set the default props required for the icon. A list's icon is its marker, decoration a
+// screen reader skips: the item's words are what it reads.
 $icon_props = array(
-	'focusable' => 'false',
-	'style'     => array(
+	'focusable'   => 'false',
+	'aria-hidden' => 'true',
+	'style'       => array(
 		'transform' => ! empty( $rotation ) ? 'rotate(' . $rotation . 'deg)' : '',
 	),
 );
@@ -153,6 +155,13 @@ $custom_classes = array(
 	'spectra-list-icon',
 	'spectra-list-icon-' . $list_type,
 );
+
+// An icon setting the owner gave this one item. On a converted list (`spectra-no-list-icon`)
+// Spectra then draws this item's marker and the page's own steps aside for this item alone;
+// the other items keep the page's (converted/_list.scss). render.js mirrors it.
+if ( BlockAttributes::has_icon_setting( $attributes ) ) {
+	$custom_classes[] = 'spectra-list-icon-own';
+}
 
 // Style and class configurations.
 $config = array(
