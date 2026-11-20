@@ -16,7 +16,7 @@ import { getResponsivePreviewCss } from '@spectra-helpers/responsive-preview';
  * The Editor Block render.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.16
  * @return {Element} The rendered block.
  */
 /**
@@ -58,6 +58,34 @@ export const getSeparatorStyles = ( attrs = {}, processedColor ) => {
 	];
 };
 
+/**
+ * The settings an owner can give a separator.
+ *
+ * @since 1.0.16
+ */
+const SEPARATOR_SETTINGS = [ 'separatorStyle', 'separatorAlign', 'separatorWidth', 'separatorHeight', 'separatorColor', 'separatorSize' ];
+
+/**
+ * Whether the owner has given the separator a setting of its own, at any device.
+ *
+ * A converted separator (`spectra-no-line`) shows the page's own rule until then;
+ * `spectra-separator-styled` hands the line to Spectra (converted/_separator.scss).
+ * Mirrors the controller's check, so the canvas and the site agree.
+ *
+ * @since 1.0.16
+ * @param {Object} attributes The block's attributes.
+ * @return {boolean} True when some device carries a separator setting.
+ */
+export const hasOwnLine = ( attributes = {} ) => {
+	const layers = [
+		attributes,
+		attributes.style?.[ '@tablet' ],
+		attributes.style?.[ '@mobile' ],
+		...Object.values( attributes.responsiveControls || {} ),
+	];
+	return layers.some( ( layer ) => layer && 'object' === typeof layer && SEPARATOR_SETTINGS.some( ( key ) => undefined !== layer[ key ] && '' !== layer[ key ] ) );
+};
+
 const Render = ( props ) => {
 	const { attributes, clientId } = props;
 
@@ -92,7 +120,7 @@ const Render = ( props ) => {
 	};
 
 	// Custom class names
-	const customClassNames = ['wp-block-spectra-separator'];
+	const customClassNames = [ 'wp-block-spectra-separator', hasOwnLine( attributes ) && 'spectra-separator-styled' ];
 
 	// Generate styles and class names.
 	const { style, classNames } = useSpectraStyles( attributes, config, customClassNames, customStyles );

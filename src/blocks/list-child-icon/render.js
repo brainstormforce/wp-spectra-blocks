@@ -18,12 +18,13 @@ import {
 	inheritResponsiveKey,
 	resolveInheritedResponsiveValue,
 } from '@spectra-helpers/responsive-preview';
+import { hasIconSetting } from '../list/icon-setting';
 
 /**
  * The render function for the List Icon block.
  *
  * @param {Object} props The element props.
- * @since x.x.x
+ * @since 1.0.16
  * @return {Element} Element to render.
  */
 const Render = ( props ) => {
@@ -128,10 +129,13 @@ const Render = ( props ) => {
 	// Determine if this is an ordered list
 	const isOrdered = listType === 'ordered';
 	
-	// Custom class names.
+	// Custom class names. `spectra-list-icon-own`: an icon setting the owner gave this one
+	// item, so on a converted list Spectra draws this item's marker and the page's own steps
+	// aside for this item alone (converted/_list.scss). Mirrors controller.php.
 	const customClassNames = [
 		'spectra-list-icon',
 		`spectra-list-icon-${ listType || 'unordered' }`,
+		hasIconSetting( attributes ) && 'spectra-list-icon-own',
 	];
 
 	// Generate styles and class names.
@@ -254,9 +258,10 @@ const Render = ( props ) => {
 				svg={finalIcon}
 				needsRTL={finalFlipForRTL}
 				extraProps={{
-					width: finalIconSize,
-					height: finalIconSize,
-					style: {
+					'aria-hidden': 'true',
+					'width': finalIconSize,
+					'height': finalIconSize,
+					'style': {
 						width: finalIconSize,
 						height: finalIconSize,
 						transform: finalRotation ? `rotate(${finalRotation}deg)` : undefined,

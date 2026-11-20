@@ -117,7 +117,7 @@ renderer *and* editor controls read, or the ability produces markup that silentl
 nothing:
 
 - **Animations** → `spectraAnimation*` (`spectraAnimationType`, `spectraAnimationTime`, `spectraAnimationDelay`, `spectraAnimationEasing`, `spectraAnimationOnce`). `includes/Extensions/class-animations.php` reads only these.
-- **Sticky container** → the `stickyContainer` object (`stickyEnabled`, `stickAt`, `offset`, `keepInsideParent`). `UAGPosition` is not read.
+- **Sticky container** → the `stickyContainer` object (`stickyEnabled`, `stickAt`, `offset`, `keepInsideParent`, and `stickyOnDesktop` / `stickyOnTablet` / `stickyOnMobile`, where a missing key means sticky on that device). `UAGPosition` is not read.
 - **Responsive visibility** → the `responsiveConditions` object (`hideOnDesktop`, `hideOnTablet`, `hideOnMobile`) is what the editor controls read; the legacy `UAGHideDesktop` / `UAGHideTab` / `UAGHideMob` keys drive only the front-end fallback — write **both** so the editor and rendered output agree.
 - **Display conditions** (login state, role, browser, OS, day) → keep the `UAG`-prefixed names (`UAGDisplayConditions`, `UAGUserRole`, `UAGBrowser`, `UAGSystem`, `UAGDay`, `UAGLoggedIn`, `UAGLoggedOut`).
 

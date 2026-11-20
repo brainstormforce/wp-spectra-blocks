@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spectra Blocks 1.0.15\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/spectra-blocks\n"
+"Project-Id-Version: Spectra Blocks 1.0.16\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/_sb-release-1.0.16\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-10T13:46:10+00:00\n"
+"POT-Creation-Date: 2026-11-20T09:39:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spectra-blocks\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: admin/inc/class-admin-menu.php:366
 #: admin/inc/class-admin-menu.php:389
 #: admin/inc/class-admin-menu.php:399
-#: classes/class-spectra-blocks-onboarding.php:164
+#: classes/class-spectra-blocks-onboarding.php:151
 #: includes/class-block-manager.php:276
 msgid "Spectra Blocks"
 msgstr ""
@@ -102,11 +102,11 @@ msgstr ""
 msgid "Unable to save setting."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:740
+#: admin/ajax/class-common-settings.php:743
 msgid "Plugin installation failed."
 msgstr ""
 
-#: admin/ajax/class-common-settings.php:835
+#: admin/ajax/class-common-settings.php:841
 msgid "Cached styles cleared successfully!"
 msgstr ""
 
@@ -316,7 +316,7 @@ msgid "Fast and customizable theme for your website."
 msgstr ""
 
 #: admin/inc/class-admin-menu.php:126
-#: classes/class-spectra-blocks-onboarding.php:472
+#: classes/class-spectra-blocks-onboarding.php:459
 msgid "Starter Templates"
 msgstr ""
 
@@ -389,7 +389,7 @@ msgstr ""
 
 #: admin/inc/class-admin-menu.php:379
 #: admin/inc/class-admin-menu.php:380
-#: classes/class-spectra-blocks-onboarding.php:388
+#: classes/class-spectra-blocks-onboarding.php:375
 msgid "Popup Builder"
 msgstr ""
 
@@ -2486,6 +2486,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-1.php:3528
 #: src/extensions/responsive-controls/control-injection.js:40
+#: src/extensions/sticky-container/controls.js:90
 msgid "Desktop"
 msgstr ""
 
@@ -5022,6 +5023,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-2.php:10813
 #: src/extensions/responsive-controls/control-injection.js:50
+#: src/extensions/sticky-container/controls.js:92
 msgid "Mobile"
 msgstr ""
 
@@ -5331,7 +5333,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-3.php:510
 #: src/blocks/list-child-item/edit.js:150
-#: src/blocks/list/render.js:84
+#: src/blocks/list/render.js:85
 msgid "Outdent"
 msgstr ""
 
@@ -7254,6 +7256,7 @@ msgstr ""
 
 #: blocks-config/spectra-blocks-controls/spectra-icons-v6-4.php:2830
 #: src/extensions/responsive-controls/control-injection.js:45
+#: src/extensions/sticky-container/controls.js:91
 msgid "Tablet"
 msgstr ""
 
@@ -8550,255 +8553,255 @@ msgstr ""
 msgid "To publish/save your page click here."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:161
-#: classes/class-spectra-blocks-onboarding.php:613
+#: classes/class-spectra-blocks-onboarding.php:148
+#: classes/class-spectra-blocks-onboarding.php:600
 msgid "Spectra Blocks Onboarding"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:169
+#: classes/class-spectra-blocks-onboarding.php:156
 msgid "Welcome to Spectra Blocks"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:170
+#: classes/class-spectra-blocks-onboarding.php:157
 msgid "Design your WordPress site with blocks that stay fast. Setup takes about two minutes."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:174
+#: classes/class-spectra-blocks-onboarding.php:161
 msgid "Getting Started with"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:178
+#: classes/class-spectra-blocks-onboarding.php:165
 msgid "Import ready-made patterns and templates in one click"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:179
+#: classes/class-spectra-blocks-onboarding.php:166
 msgid "Full design control without writing code"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:180
+#: classes/class-spectra-blocks-onboarding.php:167
 msgid "Works inside the WordPress editor you already know"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:184
+#: classes/class-spectra-blocks-onboarding.php:171
 msgid "Get helpful updates, new features, and tips to make your website better—while helping us improve Spectra."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:189
+#: classes/class-spectra-blocks-onboarding.php:176
 msgid "WordPress Plugin Directory"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:190
+#: classes/class-spectra-blocks-onboarding.php:177
 msgid "Google Search"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:191
+#: classes/class-spectra-blocks-onboarding.php:178
 msgid "Social Media"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:192
+#: classes/class-spectra-blocks-onboarding.php:179
 msgid "YouTube"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:193
+#: classes/class-spectra-blocks-onboarding.php:180
 msgid "A friend or colleague"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:194
-#: classes/class-spectra-blocks-onboarding.php:201
+#: classes/class-spectra-blocks-onboarding.php:181
+#: classes/class-spectra-blocks-onboarding.php:188
 #: src/components/icon-picker/modal-container.js:200
 msgid "Other"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:197
+#: classes/class-spectra-blocks-onboarding.php:184
 msgid "Advanced design flexibility without a bloated builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:198
+#: classes/class-spectra-blocks-onboarding.php:185
 msgid "AI and templates help me design quickly"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:199
+#: classes/class-spectra-blocks-onboarding.php:186
 msgid "I need a page builder that loads fast"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:200
+#: classes/class-spectra-blocks-onboarding.php:187
 msgid "Regular updates and support from Brainstorm Force"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:205
+#: classes/class-spectra-blocks-onboarding.php:192
 msgid "Privacy Policy"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:208
+#: classes/class-spectra-blocks-onboarding.php:195
 msgid "Stay in the loop and help shape Spectra Blocks! Get feature updates, and help us build a better Spectra Blocks by sharing how you use the plugin."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:213
+#: classes/class-spectra-blocks-onboarding.php:200
 msgid "Spectra Blocks features"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:214
+#: classes/class-spectra-blocks-onboarding.php:201
 msgid "Powerful features to design faster and build better with Spectra Blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:219
+#: classes/class-spectra-blocks-onboarding.php:206
 msgid "Add anything else you need"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:220
+#: classes/class-spectra-blocks-onboarding.php:207
 msgid "Optional free plugins from the same team. Install them now or later. None of them are required for Spectra Blocks to work."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:224
+#: classes/class-spectra-blocks-onboarding.php:211
 msgid "You are set up"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:225
+#: classes/class-spectra-blocks-onboarding.php:212
 msgid "Spectra Blocks is ready. The fastest way to see what it does is to build one page."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:226
+#: classes/class-spectra-blocks-onboarding.php:213
 msgid "What to do next"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:228
-#: classes/class-spectra-blocks-onboarding.php:234
+#: classes/class-spectra-blocks-onboarding.php:215
+#: classes/class-spectra-blocks-onboarding.php:221
 msgid "Create your first page"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:229
-#: classes/class-spectra-blocks-onboarding.php:238
+#: classes/class-spectra-blocks-onboarding.php:216
+#: classes/class-spectra-blocks-onboarding.php:225
 msgid "Visit the dashboard"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:230
-#: classes/class-spectra-blocks-onboarding.php:242
+#: classes/class-spectra-blocks-onboarding.php:217
+#: classes/class-spectra-blocks-onboarding.php:229
 msgid "Read the documentation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:248
+#: classes/class-spectra-blocks-onboarding.php:235
 msgid "Exit setup"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:384
+#: classes/class-spectra-blocks-onboarding.php:371
 msgid "Advanced Layout Controls"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:385
+#: classes/class-spectra-blocks-onboarding.php:372
 msgid "Build flexible layouts with containers, spacing, and responsive controls."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:389
+#: classes/class-spectra-blocks-onboarding.php:376
 msgid "Create engaging popups for promotions, announcements, and lead generation."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:393
+#: classes/class-spectra-blocks-onboarding.php:380
 msgid "Global Block Styles"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:394
+#: classes/class-spectra-blocks-onboarding.php:381
 msgid "Apply custom styles, classes, and CSS to any block from a unified style editor."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:399
+#: classes/class-spectra-blocks-onboarding.php:386
 msgid "Motion Effects"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:400
+#: classes/class-spectra-blocks-onboarding.php:387
 msgid "Add scroll-triggered animations and motion effects to blocks for an engaging experience."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:405
+#: classes/class-spectra-blocks-onboarding.php:392
 msgid "SVG Animation"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:406
+#: classes/class-spectra-blocks-onboarding.php:393
 msgid "Bring SVG graphics to life with custom animations and interactive effects."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:411
+#: classes/class-spectra-blocks-onboarding.php:398
 msgid "Block Positioning"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:412
+#: classes/class-spectra-blocks-onboarding.php:399
 msgid "Position blocks with absolute, fixed, or sticky placement for advanced layout control."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:417
+#: classes/class-spectra-blocks-onboarding.php:404
 msgid "Dynamic Content"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:418
+#: classes/class-spectra-blocks-onboarding.php:405
 msgid "Connect your content and display dynamic data across your website with ease."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:423
+#: classes/class-spectra-blocks-onboarding.php:410
 #: src/extensions/gbs-editor/components/panels/BlockDefaultsPanel.jsx:102
 msgid "Loop Builder"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:424
+#: classes/class-spectra-blocks-onboarding.php:411
 msgid "Design custom layouts for blog posts, archives, and dynamic content."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:429
+#: classes/class-spectra-blocks-onboarding.php:416
 msgid "Login & Registration Forms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:430
+#: classes/class-spectra-blocks-onboarding.php:417
 msgid "Create custom login and registration forms to manage user access on your website."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:465
+#: classes/class-spectra-blocks-onboarding.php:452
 msgid "ZIP AI"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:467
+#: classes/class-spectra-blocks-onboarding.php:454
 msgid "Describe your site in plain language and get a complete, editable layout built from Spectra blocks."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:474
+#: classes/class-spectra-blocks-onboarding.php:461
 msgid "Launch a site quickly with hundreds of professionally designed templates."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:478
+#: classes/class-spectra-blocks-onboarding.php:465
 msgid "SureForms"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:480
+#: classes/class-spectra-blocks-onboarding.php:467
 msgid "Create forms that feel conversational instead of like paperwork."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:484
+#: classes/class-spectra-blocks-onboarding.php:471
 msgid "SureMails"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:486
+#: classes/class-spectra-blocks-onboarding.php:473
 msgid "Reliable email delivery so your emails actually reach the inbox."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:490
+#: classes/class-spectra-blocks-onboarding.php:477
 msgid "SureRank"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:492
+#: classes/class-spectra-blocks-onboarding.php:479
 msgid "Simple, lightweight SEO assistant to help your site rank higher."
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:577
-#: classes/class-spectra-blocks-onboarding.php:592
+#: classes/class-spectra-blocks-onboarding.php:564
+#: classes/class-spectra-blocks-onboarding.php:579
 msgid "Spectra Blocks Onboarding Data"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:617
+#: classes/class-spectra-blocks-onboarding.php:604
 msgid "First Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:621
+#: classes/class-spectra-blocks-onboarding.php:608
 msgid "Last Name"
 msgstr ""
 
-#: classes/class-spectra-blocks-onboarding.php:625
+#: classes/class-spectra-blocks-onboarding.php:612
 msgid "Email"
 msgstr ""
 
@@ -11832,7 +11835,7 @@ msgstr ""
 #: src/blocks/container/settings.js:1605
 #: src/blocks/popup-builder/settings.js:265
 #: src/blocks/popup-builder/settings.js:414
-#: src/extensions/sticky-container/controls.js:121
+#: src/extensions/sticky-container/controls.js:178
 msgid "Top"
 msgstr ""
 
@@ -11840,7 +11843,7 @@ msgstr ""
 #: src/blocks/container/settings.js:1606
 #: src/blocks/popup-builder/settings.js:279
 #: src/blocks/popup-builder/settings.js:421
-#: src/extensions/sticky-container/controls.js:125
+#: src/extensions/sticky-container/controls.js:182
 msgid "Bottom"
 msgstr ""
 
@@ -12868,25 +12871,25 @@ msgstr ""
 msgid "Accessibiltiy Label"
 msgstr ""
 
-#: src/blocks/list/render.js:85
+#: src/blocks/list/render.js:86
 msgid "Outdent list"
 msgstr ""
 
-#: src/blocks/list/render.js:164
+#: src/blocks/list/render.js:174
 #: src/blocks/list/settings.js:78
 msgid "Unordered"
 msgstr ""
 
-#: src/blocks/list/render.js:165
+#: src/blocks/list/render.js:175
 msgid "Convert to unordered list"
 msgstr ""
 
-#: src/blocks/list/render.js:171
+#: src/blocks/list/render.js:181
 #: src/blocks/list/settings.js:79
 msgid "Ordered"
 msgstr ""
 
-#: src/blocks/list/render.js:172
+#: src/blocks/list/render.js:182
 msgid "Convert to ordered list"
 msgstr ""
 
@@ -13455,8 +13458,8 @@ msgstr ""
 
 #: src/blocks/post/settings/general-settings.js:250
 #: src/blocks/post/settings/general-settings.js:256
-#: src/extensions/sticky-container/controls.js:131
-#: src/extensions/sticky-container/controls.js:138
+#: src/extensions/sticky-container/controls.js:188
+#: src/extensions/sticky-container/controls.js:195
 msgid "Offset"
 msgstr ""
 
@@ -15877,38 +15880,47 @@ msgstr ""
 msgid "Turn On"
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:82
-#: src/extensions/sticky-container/controls.js:89
+#: src/extensions/sticky-container/controls.js:107
+#: src/extensions/sticky-container/controls.js:114
 msgid "Sticky Container"
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:90
+#: src/extensions/sticky-container/controls.js:115
 msgid "Keeps this container fixed while scrolling. Note: Sticky behavior works on the frontend only."
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:102
-#: src/extensions/sticky-container/controls.js:109
-msgid "Stick at"
+#: src/extensions/sticky-container/controls.js:127
+#: src/extensions/sticky-container/controls.js:141
+msgid "Sticky On"
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:110
-msgid "Choose whether the container sticks to the top or bottom of the screen."
-msgstr ""
-
-#: src/extensions/sticky-container/controls.js:139
-msgid "Set how far from the edge the container stays when sticky. Positive values add space; negative values allow overlap."
+#: src/extensions/sticky-container/controls.js:134
+msgid "Choose the devices the container sticks on. On the others it scrolls with the page."
 msgstr ""
 
 #: src/extensions/sticky-container/controls.js:159
-#: src/extensions/sticky-container/controls.js:170
+#: src/extensions/sticky-container/controls.js:166
+msgid "Stick at"
+msgstr ""
+
+#: src/extensions/sticky-container/controls.js:167
+msgid "Choose whether the container sticks to the top or bottom of the screen."
+msgstr ""
+
+#: src/extensions/sticky-container/controls.js:196
+msgid "Set how far from the edge the container stays when sticky. Positive values add space; negative values allow overlap."
+msgstr ""
+
+#: src/extensions/sticky-container/controls.js:216
+#: src/extensions/sticky-container/controls.js:227
 msgid "Keep Inside Parent"
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:171
+#: src/extensions/sticky-container/controls.js:228
 msgid "Restricts the sticky container to stay within its parent container boundaries."
 msgstr ""
 
-#: src/extensions/sticky-container/controls.js:213
+#: src/extensions/sticky-container/controls.js:270
 msgid "Sticky"
 msgstr ""
 

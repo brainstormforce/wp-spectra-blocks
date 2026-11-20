@@ -1,7 +1,7 @@
 /**
  * Sticky Container Extension Helper Functions.
  *
- * @since x.x.x
+ * @since 1.0.16
  */
 
 /**
@@ -13,7 +13,7 @@ import { DEFAULT_STICKY_SETTINGS } from './constants';
  * Checks if a block is allowed to have sticky container.
  * Only container blocks are allowed to use sticky positioning.
  *
- * @since x.x.x
+ * @since 1.0.16
  *
  * @param {Object} block - Block object with name property.
  * @return {boolean} Whether the block supports sticky container.
@@ -28,9 +28,23 @@ export const isAllowedBlock = ( block ) => {
 };
 
 /**
+ * Whether the container sticks on a device.
+ *
+ * A key missing from the saved object means sticky, so containers saved
+ * before the device settings existed keep sticking everywhere.
+ *
+ * @since 1.0.16
+ *
+ * @param {Object} stickyContainer - The stickyContainer attribute.
+ * @param {string} key             - One of STICKY_DEVICE_KEYS.
+ * @return {boolean} Whether sticky applies on that device.
+ */
+export const isStickyOnDevice = ( stickyContainer, key ) => false !== stickyContainer?.[ key ];
+
+/**
  * Extends block attributes with sticky container settings.
  *
- * @since x.x.x
+ * @since 1.0.16
  *
  * @param {Object} settings - Block settings.
  * @param {string} name     - Block name.

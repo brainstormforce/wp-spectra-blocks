@@ -3,7 +3,10 @@
  */
 import { InspectorControls, useSettings, store as blockEditorStore } from '@wordpress/block-editor';
 import {
+	BaseControl,
+	CheckboxControl,
 	ToggleControl,
+	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
 	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
 	__experimentalUnitControl as UnitControl,
@@ -18,8 +21,15 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies.
  */
-import { DEFAULT_STICKY_SETTINGS, DEFAULT_OFFSET, STICKY_POSITION, MIN_OFFSET, MAX_OFFSET } from './utils/constants';
-import { isAllowedBlock } from './utils/helpers';
+import {
+	DEFAULT_STICKY_SETTINGS,
+	DEFAULT_OFFSET,
+	STICKY_POSITION,
+	STICKY_DEVICE_KEYS,
+	MIN_OFFSET,
+	MAX_OFFSET,
+} from './utils/constants';
+import { isAllowedBlock, isStickyOnDevice } from './utils/helpers';
 
 /**
  * Sticky Container Options Panel.
@@ -27,7 +37,7 @@ import { isAllowedBlock } from './utils/helpers';
  * Provides UI controls for managing sticky positioning on container blocks,
  * allowing users to enable sticky behavior, choose position (top/bottom), and set offset.
  *
- * @since x.x.x
+ * @since 1.0.16
  *
  * @param {Object} props - Component props.
  * @return {Element} Sticky container options panel component.
@@ -76,6 +86,21 @@ const StickyContainerOptions = ( props ) => {
 		} );
 	};
 
+	const deviceLabels = {
+		stickyOnDesktop: __( 'Desktop', 'spectra-blocks' ),
+		stickyOnTablet: __( 'Tablet', 'spectra-blocks' ),
+		stickyOnMobile: __( 'Mobile', 'spectra-blocks' ),
+	};
+
+	const resetDevices = () => {
+		setAttributes( {
+			stickyContainer: {
+				...stickyContainer,
+				...Object.fromEntries( STICKY_DEVICE_KEYS.map( ( key ) => [ key, true ] ) ),
+			},
+		} );
+	};
+
 	return (
 		<>
 			<ToolsPanelItem
@@ -98,6 +123,38 @@ const StickyContainerOptions = ( props ) => {
 
 			{ stickyContainer.stickyEnabled && (
 				<>
+					<ToolsPanelItem
+						label={ __( 'Sticky On', 'spectra-blocks' ) }
+						hasValue={ () => STICKY_DEVICE_KEYS.some( ( key ) => ! isStickyOnDevice( stickyContainer, key ) ) }
+						onDeselect={ resetDevices }
+						isShownByDefault={ true }
+					>
+						<BaseControl
+							__nextHasNoMarginBottom
+							help={ __(
+								'Choose the devices the container sticks on. On the others it scrolls with the page.',
+								'spectra-blocks'
+							) }
+						>
+							<fieldset>
+								<BaseControl.VisualLabel as="legend">
+									{ __( 'Sticky On', 'spectra-blocks' ) }
+								</BaseControl.VisualLabel>
+								<HStack justify="flex-start" spacing={ 4 } wrap>
+									{ STICKY_DEVICE_KEYS.map( ( key ) => (
+										<CheckboxControl
+											__nextHasNoMarginBottom
+											key={ key }
+											label={ deviceLabels[ key ] }
+											checked={ isStickyOnDevice( stickyContainer, key ) }
+											onChange={ ( value ) => updateStickySettings( key, value ) }
+										/>
+									) ) }
+								</HStack>
+							</fieldset>
+						</BaseControl>
+					</ToolsPanelItem>
+
 					<ToolsPanelItem
 						label={ __( 'Stick at', 'spectra-blocks' ) }
 						hasValue={ () => stickyContainer.stickAt !== DEFAULT_STICKY_SETTINGS.stickAt }
@@ -186,7 +243,7 @@ const StickyContainerOptions = ( props ) => {
 /**
  * Higher-order component to add sticky container controls to block settings.
  *
- * @since x.x.x
+ * @since 1.0.16
  *
  * @param {Function} BlockEdit - Original block edit component.
  * @return {Function} Enhanced block edit component with sticky container controls.

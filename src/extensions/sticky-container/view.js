@@ -3,7 +3,7 @@
  *
  * Uses JavaScript to handle sticky positioning for better control and compatibility.
  *
- * @since x.x.x
+ * @since 1.0.16
  */
 
 ( function () {
@@ -34,10 +34,12 @@
 				transition: '',
 			};
 			this.aosAttributes = null; // Store AOS attributes.
+			this.deviceQuery = null; // MediaQueryList of the devices it sticks on; null means every device.
 
 			// Bind handlers once to prevent memory leaks.
 			this.boundOnScroll = this.onScroll.bind( this );
 			this.boundHandleResize = this.handleResize.bind( this );
+			this.boundHandleDeviceChange = this.handleDeviceChange.bind( this );
 
 			// Get settings from CSS custom properties and data attributes.
 			this.settings = this.getSettings();
@@ -152,7 +154,7 @@
 				// Restore transform.
 				this.element.style.transform = originalTransform;
 
-				if ( alreadyInStickyPosition ) {
+				if ( alreadyInStickyPosition && this.isStickyOnThisDevice() ) {
 					// Element is already at sticky position - activate immediately.
 					// Add aos-animate class to ensure element is visible and passes aosReadyToStick check.
 					this.element.classList.add( 'aos-animate' );
@@ -180,7 +182,7 @@
 		 * when AOS adds the 'aos-animate' class.
 		 *
 		 * @param {Function} callback - Function to call after AOS has animated.
-		 * @since x.x.x
+		 * @since 1.0.16
 		 */
 		waitForAOS( callback ) {
 			// Check if element already has aos-animate class (already animated).
@@ -258,6 +260,34 @@
 			// Use passive listeners for better scroll performance.
 			window.addEventListener( 'scroll', this.boundOnScroll, { passive: true } );
 			window.addEventListener( 'resize', this.boundHandleResize );
+
+			// Set by PHP only when sticky is turned off for some devices.
+			const deviceMedia = this.element.getAttribute( 'data-spectra-sticky-media' );
+			if ( deviceMedia && typeof window.matchMedia === 'function' ) {
+				this.deviceQuery = window.matchMedia( deviceMedia );
+				this.deviceQuery.addEventListener( 'change', this.boundHandleDeviceChange );
+			}
+		}
+
+		/**
+		 * Whether sticky applies at the current viewport width.
+		 *
+		 * @since 1.0.16
+		 * @return {boolean} True when the container may stick on this device.
+		 */
+		isStickyOnThisDevice() {
+			return ! this.deviceQuery || this.deviceQuery.matches;
+		}
+
+		/**
+		 * Re-check when the viewport crosses into or out of a device the container sticks on.
+		 *
+		 * `resize` alone misses this when the container is not stuck at that moment.
+		 *
+		 * @since 1.0.16
+		 */
+		handleDeviceChange() {
+			this.checkPosition();
 		}
 
 		/**
@@ -278,6 +308,14 @@
 		}
 
 		checkPosition() {
+			// Not sticky on this device: release it if it was stuck, then behave as a normal container.
+			if ( ! this.isStickyOnThisDevice() ) {
+				if ( this.isSticky ) {
+					this.deactivate();
+				}
+				return;
+			}
+
 			const elementRect = this.getElementRect();
 			const offset = this.settings.offset;
 
@@ -347,7 +385,7 @@
 		 * Prevents activating sticky on elements that are mid-animation or hidden.
 		 * Checks computed opacity and visibility to ensure element is truly visible.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.16
 		 * @return {boolean} True if element is visible.
 		 */
 		isElementVisible() {
@@ -492,7 +530,7 @@
 		 * Saves all AOS-related attributes and removes them from the element,
 		 * then manually triggers AOS refresh if available.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.16
 		 */
 		disableAOS() {
 			// Check if element has AOS attributes.
@@ -540,7 +578,7 @@
 		 * Restores all previously saved AOS attributes and triggers AOS refresh.
 		 * Respects user's "Play Repeatedly on Scroll" setting.
 		 *
-		 * @since x.x.x
+		 * @since 1.0.16
 		 */
 		enableAOS() {
 			// Check if we have saved AOS attributes.
@@ -596,6 +634,9 @@
 			}
 			window.removeEventListener( 'scroll', this.boundOnScroll );
 			window.removeEventListener( 'resize', this.boundHandleResize );
+			if ( this.deviceQuery ) {
+				this.deviceQuery.removeEventListener( 'change', this.boundHandleDeviceChange );
+			}
 		}
 	}
 

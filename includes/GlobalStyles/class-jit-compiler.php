@@ -615,26 +615,35 @@ class JitCompiler {
 
 			$rule = self::compile_token( $token, $known );
 			if ( null === $rule ) {
-				// Never silent (SaaS remediation plan 1C/Phase-3B; audit
-				// CSS-4/AR-1): an unresolved token paints NOTHING on the
-				// frontend, and without a log a SaaS-side "valid" class is
-				// an undiagnosable no-op. Counted + sampled (1-in-10) so a
-				// page full of typos doesn't flood the log; gated on
-				// WP_DEBUG by default, filterable for prod telemetry.
-				static $unresolved_count = 0;
-				++$unresolved_count;
-				$should_log = apply_filters(
-					'spectra_gs_jit_log_unresolved_tokens',
-					defined( 'WP_DEBUG' ) && WP_DEBUG
-				);
-				if ( $should_log && 1 === ( $unresolved_count % 10 ) ) {
-					error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-						sprintf(
-							'[spectra-gs-jit] unresolved class token "%s" produced no CSS (sampled 1/10; %d unresolved so far this request)',
-							$token,
-							$unresolved_count
-						)
-					);
+				// Unresolved is the normal case, not an error: the compiler
+				// sees every class on the page, and most are core, theme,
+				// Spectra Legacy or custom classes styled elsewhere. Logging
+				// is opt-in, for tracing utility classes that failed to
+				// compile. Only tokens the filter accepts are counted, so the
+				// 1-in-10 sampling never skips a token a developer picked.
+
+				/**
+				 * Filters whether an unresolved class token is written to the
+				 * PHP error log.
+				 *
+				 * @since 1.0.0
+				 * @since 1.0.16 Defaults to false (was WP_DEBUG) and passes the token.
+				 *
+				 * @param bool   $should_log Whether to log the token. Default false.
+				 * @param string $token      Class token that produced no CSS.
+				 */
+				if ( apply_filters( 'spectra_gs_jit_log_unresolved_tokens', false, $token ) ) {
+					static $unresolved_count = 0;
+					++$unresolved_count;
+					if ( 1 === ( $unresolved_count % 10 ) ) {
+						error_log( // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+							sprintf(
+								'[spectra-gs-jit] unresolved class token "%s" produced no CSS (sampled 1/10; %d unresolved so far this request)',
+								$token,
+								$unresolved_count
+							)
+						);
+					}
 				}
 				continue;
 			}

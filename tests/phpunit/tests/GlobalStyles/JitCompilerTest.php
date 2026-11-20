@@ -221,6 +221,82 @@ class JitCompilerTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Custom classes that produce no CSS are not logged by default, even with
+	 * WP_DEBUG on. Ten tokens cover every position of the 1-in-10 sampling, so
+	 * a regression always writes a line here.
+	 *
+	 * @return void
+	 */
+	public function test_unresolved_tokens_are_not_logged_by_default(): void {
+		$log = $this->capture_error_log( $this->unresolved_tokens() );
+
+		$this->assertStringNotContainsString( '[spectra-gs-jit]', $log );
+	}
+
+	/**
+	 * Opting in through the filter logs a sampled line and passes each token
+	 * to the callback.
+	 *
+	 * @return void
+	 */
+	public function test_unresolved_tokens_are_logged_when_filter_opts_in(): void {
+		$tokens = $this->unresolved_tokens();
+		$seen   = array();
+
+		add_filter(
+			'spectra_gs_jit_log_unresolved_tokens',
+			static function ( $should_log, $token ) use ( &$seen ) {
+				unset( $should_log );
+				$seen[] = $token;
+				return true;
+			},
+			10,
+			2
+		);
+
+		$log = $this->capture_error_log( $tokens );
+
+		$this->assertSame( $tokens, $seen );
+		$this->assertSame( 1, substr_count( $log, '[spectra-gs-jit] unresolved class token' ) );
+	}
+
+	/**
+	 * Ten distinct custom classes the compiler cannot resolve.
+	 *
+	 * @return array<int, string>
+	 */
+	private function unresolved_tokens(): array {
+		$tokens = array();
+		for ( $i = 1; $i <= 10; $i++ ) {
+			$tokens[] = 'new-css-class-' . $i;
+		}
+		return $tokens;
+	}
+
+	/**
+	 * Compile the given tokens and return what was written to the PHP error log.
+	 *
+	 * @param array<int, string> $tokens Class tokens.
+	 * @return string Log contents.
+	 */
+	private function capture_error_log( array $tokens ): string {
+		$file     = tempnam( sys_get_temp_dir(), 'spectra-jit-log' );
+		$previous = ini_get( 'error_log' );
+		ini_set( 'error_log', $file ); // phpcs:ignore WordPress.PHP.IniSet.Risky -- Redirect the log to a temp file for this test only.
+
+		try {
+			JitCompiler::compile( $tokens );
+		} finally {
+			ini_set( 'error_log', (string) $previous ); // phpcs:ignore WordPress.PHP.IniSet.Risky -- Restore the original log target.
+		}
+
+		$contents = (string) file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local temp file.
+		wp_delete_file( $file );
+
+		return $contents;
+	}
+
+	/**
 	 * Full-property `[prop:value]` brackets are retired and produce no CSS.
 	 *
 	 * @return void

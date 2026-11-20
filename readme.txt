@@ -4,7 +4,7 @@ Tags: ai website builder, gutenberg blocks, page builder, block editor, website 
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,10 @@ Service URL: https://wpspectra.com/whats-new/feed/
 [Terms of Service](https://www.brainstormforce.com/terms-and-conditions/) | [Privacy Policy](https://wpspectra.com/privacy-policy/)
 
 == Changelog ==
+
+= 1.0.16 - Friday, 20th November 2026 =
+* New: Sticky Container — choose which devices (desktop, tablet, mobile) a container sticks on.
+* Fix: Custom CSS class names are no longer written to the debug log.
 
 = 1.0.15 - Wednesday, 11th November 2026 =
 * New: Custom HTML Attributes — add your own HTML attributes (such as data-* or aria-*) to supported blocks right from the block settings.
