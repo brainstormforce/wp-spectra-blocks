@@ -40,7 +40,7 @@
 	"devDependencies": {
 		"@wordpress/scripts": "^31.5.0",
 		"del-cli": "^7.0.0",
-		"grunt": "^1.6.1",
+		"grunt": "^1.6.3",
 		"grunt-text-replace": "^0.4.0",
 		"grunt-wp-readme-to-markdown": "^2.1.0"
 	},
